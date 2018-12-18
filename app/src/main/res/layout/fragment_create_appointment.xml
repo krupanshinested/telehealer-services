@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/action_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:id="@+id/info_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/in_the_case_of_emergency_please_cancel_this_request_and_call_911"
+                android:textColor="@android:color/holo_red_light"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/doctor_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:arrow_visible="true"
+                app:title_text="@string/Click_here_to_select_doctor"
+                app:sub_title_visible="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/info_tv"
+                app:view_label="@string/choose_doctor" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/patient_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:arrow_visible="true"
+                app:title_text="@string/Click_here_to_select_patient"
+                app:sub_title_visible="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/doctor_ocv"
+                app:view_label="@string/choose_patient" />
+
+            <TextView
+                android:id="@+id/appointment_time_tv"
+                style="@style/text_app_color"
+                android:text="@string/appointment_time"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/patient_ocv" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/slots_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appointment_time_tv" />
+
+            <TextView
+                android:id="@+id/slot_info_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@string/slot_info"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/slots_rv" />
+
+            <TextView
+                android:id="@+id/add_slot_tv"
+                style="@style/text_app_color"
+                android:layout_width="match_parent"
+                android:drawableStart="@drawable/ic_add_circle_black_24dp"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/app_gradient_start"
+                android:gravity="center|left"
+                android:text="@string/add_slots"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/slot_info_tv" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/reason_til"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/add_slot_tv">
+
+                <EditText
+                    android:id="@+id/reason_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:hint="@string/reason_for_visit" />
+            </android.support.design.widget.TextInputLayout>
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/demograph_ocv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@id/demograph_update_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reason_til"
+                app:view_label="@string/demographic_info"
+                app:view_visible="false" />
+
+            <com.thealer.telehealer.common.CustomButton
+                android:id="@+id/demograph_update_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/update"
+                android:visibility="gone"
+                app:corner_radius="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reason_til"
+                app:stroke_color="@color/app_gradient_start"
+                app:stroke_width="2"
+                app:text_color="@color/app_gradient_start" />
+
+            <View
+                android:id="@+id/demograph_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/colorGrey_light"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/demograph_ocv" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/insurance_ocv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@id/demograph_update_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/demograph_view"
+                app:sub_title_visible="false"
+                app:view_label="@string/InsuranceInfo"
+                app:view_visible="false" />
+
+            <com.thealer.telehealer.common.CustomButton
+                android:id="@+id/insurance_update_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/update"
+                android:visibility="gone"
+                app:corner_radius="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/demograph_view"
+                app:stroke_color="@color/app_gradient_start"
+                app:stroke_width="2"
+                app:text_color="@color/app_gradient_start" />
+
+            <LinearLayout
+                android:id="@+id/insurance_front_ll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@id/insurance_back_ll"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/insurance_ocv">
+
+                <ImageView
+                    android:id="@+id/front_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp" />
+
+                <TextView
+                    android:id="@+id/front_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="@string/FrontSide"
+                    android:textColor="@color/colorBlack" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/insurance_back_ll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/insurance_front_ll"
+                app:layout_constraintTop_toBottomOf="@+id/insurance_ocv">
+
+                <ImageView
+                    android:id="@+id/back_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp" />
+
+                <TextView
+                    android:id="@+id/back_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="@string/BackSide"
+                    android:textColor="@color/colorBlack" />
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/action_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_enable_disable_selector"
+        android:text="@string/request_appointment"
+        android:textColor="@color/colorWhite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</android.support.constraint.ConstraintLayout>

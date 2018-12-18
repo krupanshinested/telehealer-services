@@ -56,6 +56,7 @@
         <activity android:name=".views.home.DoctorOnBoardingActivity"/>
         <activity android:name="iHealth.pairing.VitalCreationActivity"/>
         <activity android:name=".views.home.vitals.BluetoothEnableActivity"/>
+        <activity android:name=".views.home.schedules.CreateNewScheduleActivity"/>
         <activity android:name=".views.inviteUser.InviteUserActivity"/>
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"

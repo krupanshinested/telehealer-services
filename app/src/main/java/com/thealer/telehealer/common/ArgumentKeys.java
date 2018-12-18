@@ -25,6 +25,7 @@ public class ArgumentKeys {
     public static final String SELECTED_ASSOCIATION_DETAIL = "selected_association_detail";
     public static final String SEARCH_TYPE = "search_type";
     public static final String SEARCH_ASSOCIATION = "search_association";
+    public static final String SEARCH_ASSOCIATION_DOCTOR = "search_association_doctor";
     public static final String SEARCH_DOCTOR = "search_doctor";
     public static final String SEARCH_COPY_TO = "copy_to";
     public static final String IS_EDIT_MODE = "is_edit_mode";
@@ -48,6 +49,9 @@ public class ArgumentKeys {
     public static final String SELECTED_RECENT_DETAIL = "selectedRecentDetail";
     public static final String ORDER_ID = "order_id";
     public static final String TRANSCRIPTION_DETAIL = "transcription_detail";
+    public static final String SCHEDULE_DETAIL = "schedule_detail";
+    public static final String DOCTOR_GUID = "doctor_guid";
+    public static final String SELECTED_TIME_SLOT = "selected_time_slot";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
