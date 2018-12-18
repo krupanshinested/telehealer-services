@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ class SlotsListAdapter extends RecyclerView.Adapter<SlotsListAdapter.ViewHolder>
     private FragmentActivity activity;
     private CreateScheduleViewModel createScheduleViewModel;
     private List<String> slotsList;
+    private SlotSelectionDialogFragment slotSelectionDialogFragment;
 
     public SlotsListAdapter(FragmentActivity activity) {
         this.activity = activity;
@@ -37,6 +39,7 @@ class SlotsListAdapter extends RecyclerView.Adapter<SlotsListAdapter.ViewHolder>
                 notifyDataSetChanged();
             }
         });
+        slotSelectionDialogFragment = new SlotSelectionDialogFragment();
     }
 
     @NonNull
@@ -53,11 +56,12 @@ class SlotsListAdapter extends RecyclerView.Adapter<SlotsListAdapter.ViewHolder>
         viewHolder.slotItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SlotSelectionDialogFragment slotSelectionDialogFragment = new SlotSelectionDialogFragment();
+                viewHolder.slotItem.setEnabled(false);
                 Bundle bundle = new Bundle();
                 bundle.putInt(ArgumentKeys.SELECTED_TIME_SLOT, i);
                 slotSelectionDialogFragment.setArguments(bundle);
                 slotSelectionDialogFragment.show(activity.getSupportFragmentManager(), slotSelectionDialogFragment.getClass().getSimpleName());
+                viewHolder.slotItem.setEnabled(true);
             }
         });
     }
