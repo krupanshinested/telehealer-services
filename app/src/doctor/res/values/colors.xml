@@ -2,6 +2,7 @@
 <resources>
     <color name="app_gradient_start">#FF8A14</color> // orange start
     <color name="app_gradient_end">#FFA938</color>  // orange end
+    <color name="calendar_event_color">#EED1B0</color>
     <color name="app_status_bar_color1">#c55b00</color>
     <color name="app_status_bar_color2">#ff6d00</color>
     <color name="app_status_bar_color3">#f57c00</color>

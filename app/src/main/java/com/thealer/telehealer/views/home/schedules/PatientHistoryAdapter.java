@@ -39,11 +39,18 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
             "Are there any new medical providers since your last visit?"));
     private List<HistoryBean> patientHistory;
     private CreateScheduleViewModel createScheduleViewModel;
+    private boolean isEditmode = true;
 
     public PatientHistoryAdapter(FragmentActivity activity) {
         this.activity = activity;
         createScheduleViewModel = ViewModelProviders.of(activity).get(CreateScheduleViewModel.class);
         patientHistory = createScheduleViewModel.getPatientHistory();
+    }
+
+    public PatientHistoryAdapter(FragmentActivity activity, boolean isEditMode, List<HistoryBean> historyList) {
+        this.activity = activity;
+        this.patientHistory = historyList;
+        this.isEditmode = isEditMode;
     }
 
     @NonNull
@@ -56,6 +63,7 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.itemSwitch.setText(questions.get(i));
+
         viewHolder.itemSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -65,7 +73,9 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
                     viewHolder.commentsEt.setVisibility(View.GONE);
                 }
 
-                createScheduleViewModel.getPatientHistory().get(i).setIsYes(isChecked);
+                if (createScheduleViewModel != null) {
+                    createScheduleViewModel.getPatientHistory().get(i).setIsYes(isChecked);
+                }
             }
         });
 
@@ -82,17 +92,23 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
 
             @Override
             public void afterTextChanged(Editable s) {
-                createScheduleViewModel.getPatientHistory().get(i).setReason(s.toString());
+                if (createScheduleViewModel != null) {
+                    createScheduleViewModel.getPatientHistory().get(i).setReason(s.toString());
+                }
             }
         });
 
         if (patientHistory != null && patientHistory.size() >= questions.size()) {
             viewHolder.itemSwitch.setChecked(patientHistory.get(i).isIsYes());
-            if (patientHistory.get(i).getReason() != null) {
+            if (patientHistory.get(i).getReason() != null && !patientHistory.get(i).getReason().isEmpty()) {
                 viewHolder.commentsEt.setText(patientHistory.get(i).getReason());
+            }else {
+                viewHolder.commentsEt.setVisibility(View.GONE);
             }
         }
 
+        viewHolder.itemSwitch.setClickable(isEditmode);
+        viewHolder.commentsEt.setEnabled(isEditmode);
     }
 
     @Override

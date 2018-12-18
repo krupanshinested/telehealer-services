@@ -124,6 +124,11 @@ dependencies {
     //pubnub
     implementation group: 'com.pubnub', name: 'pubnub', version: '4.2.0'
 
+    //calendar view
+    implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
+
+    //timeline view
+    implementation 'com.github.Aswinhub:Android-Week-View:3.1.7'
 
     //ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.9.3'

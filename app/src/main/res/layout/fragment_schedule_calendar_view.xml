@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:id="@+id/parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:animateLayoutChanges="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:background="@color/app_gradient_start"
+            android:paddingBottom="4dp"
+            android:splitMotionEvents="false"
+            app:mcv_calendarMode="week"
+            app:mcv_dateTextAppearance="@style/calendar_text_appearance"
+            app:mcv_headerTextAppearance="@style/text_light"
+            app:mcv_leftArrowMask="@drawable/ic_keyboard_arrow_left_white_24dp"
+            app:mcv_rightArrowMask="@drawable/ic_keyboard_arrow_right_white_24dp"
+            app:mcv_selectionColor="@color/colorWhite"
+            app:mcv_selectionMode="single"
+            app:mcv_showOtherDates="other_months"
+            app:mcv_tileSize="36dp"
+            app:mcv_tileWidth="match_parent"
+            app:mcv_titleAnimationOrientation="horizontal"
+            app:mcv_weekDayTextAppearance="@style/text_light" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/parent">
+
+        <com.alamkanak.weekview.WeekView
+            android:id="@+id/weekView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:columnGap="1dp"
+            app:defaultEventColor="@color/app_gradient_end"
+            app:eventMarginVertical="1dp"
+            app:eventPadding="3dp"
+            app:eventTextSize="8sp"
+            app:eventTextColor="@android:color/black"
+            app:headerRowPadding="0dp"
+            app:headerRowTextSize="0dp"
+            app:horizontalScrollingEnabled="true"
+            app:hourHeight="75dp"
+            app:maxHourHeight="75dp"
+            app:minHourHeight="75dp"
+            app:nowLineColor="@color/app_gradient_start"
+            app:nowLineStrokeWidth="2dp"
+            app:numberOfVisibleDays="1"
+            app:overlappingEventGap="1dp"
+            app:scrollDuration="2"
+            app:showNowLine="true"
+            app:timeColumnPadding="8dp"
+            app:timeColumnTextSize="12sp"
+            app:xScrollingSpeed="1" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/recycler_empty_state_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:background="@color/colorWhite"
+            android:clickable="false"
+            android:gravity="center"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <ImageView
+                android:id="@+id/empty_iv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/empty_title_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent=".3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent=".4" />
+
+            <TextView
+                android:id="@+id/empty_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="@string/dummy_text"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/empty_message_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="@string/dummy_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/empty_title_tv" />
+        </android.support.constraint.ConstraintLayout>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/ic_add_white_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</android.support.constraint.ConstraintLayout>
