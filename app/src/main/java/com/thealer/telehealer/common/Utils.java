@@ -7,17 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
-import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
-import android.text.InputType;
 import android.text.Spanned;
 import android.text.method.KeyListener;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
@@ -140,6 +137,20 @@ public class Utils {
             return false;
         }
     }
+    public static boolean isDateTimeExpired(String date) {
+        try {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date inputDate = dateFormat.parse(date);
+            Date currentDate = new Date();
+
+            return currentDate.compareTo(inputDate) >= 0;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public static int getUserTypeFromRole(String role) {
         switch (role) {
@@ -206,7 +217,7 @@ public class Utils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
 
     public static Date getDateFromString(String dateString) {
@@ -261,7 +272,7 @@ public class Utils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
 
     public static String getDayMonth(String date) {
@@ -275,7 +286,7 @@ public class Utils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
     public static String getDayMonthTime(String date) {
 
@@ -288,7 +299,7 @@ public class Utils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
 
     public static String getDoctorDisplayName(String first_name, String last_name, String title) {
@@ -339,7 +350,7 @@ public class Utils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
 
     public static String getCurrentFomatedTime() {
@@ -367,7 +378,7 @@ public class Utils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
 
     public static void hideKeyboard(Activity activity) {
@@ -385,4 +396,90 @@ public class Utils {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    public static String getUTCfromGMT(String timeStamp){
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        inputFormat.setTimeZone(TimeZone.getDefault());
+        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            return outputFormat.format(inputFormat.parse(timeStamp));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String getSlotDate(String timeStamp){
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        inputFormat.setTimeZone(TimeZone.getDefault());
+        DateFormat outputFormat = new SimpleDateFormat("EE, dd MMM, yyyy");
+
+        outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            return outputFormat.format(inputFormat.parse(timeStamp));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    public static String getSlotTime(String timeStamp){
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        DateFormat outputFormat = new SimpleDateFormat("hh:mm aa");
+        try {
+            return outputFormat.format(inputFormat.parse(timeStamp));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    public static String getSlotTimeDate(String timeStamp){
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat outputFormat = new SimpleDateFormat("hh:mm aa EE dd MMM, yyyy");
+        outputFormat.setTimeZone(TimeZone.getDefault());
+        try {
+            return outputFormat.format(inputFormat.parse(timeStamp));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String getIncreasedTime(int timeDifference, String timeStamp) {
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(inputFormat.parse(timeStamp));
+            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + timeDifference);
+            return inputFormat.format(calendar.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String getSelectedSlotDate(String timeSlot) {
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat outputFormat = new SimpleDateFormat("EE, dd MMM, yyyy");
+        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        outputFormat.setTimeZone(TimeZone.getDefault());
+        try {
+            return outputFormat.format(inputFormat.parse(timeSlot));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    public static String getSelectedSlotTime(String timeSlot) {
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat outputFormat = new SimpleDateFormat("hh:mm aa");
+        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        outputFormat.setTimeZone(TimeZone.getDefault());
+        try {
+            return outputFormat.format(inputFormat.parse(timeSlot));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 }

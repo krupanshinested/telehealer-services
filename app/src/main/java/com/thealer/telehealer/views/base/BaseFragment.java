@@ -116,7 +116,9 @@ public class BaseFragment extends Fragment {
 
     public void showSuccessView(Fragment fragment, int requestId) {
         SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-        successViewDialogFragment.setTargetFragment(fragment, requestId);
+        if (fragment != null){
+            successViewDialogFragment.setTargetFragment(fragment, requestId);
+        }
         successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
     }
 

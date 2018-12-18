@@ -9,13 +9,15 @@ public class HistoryBean implements Serializable {
 
     private boolean isYes;
     private String question;
+    private String reason;
 
     public HistoryBean() {
     }
 
-    public HistoryBean(boolean isYes, String question) {
+    public HistoryBean(boolean isYes, String question, String reason) {
         this.isYes = isYes;
         this.question = question;
+        this.reason = reason;
     }
 
     public boolean isIsYes() {
@@ -32,6 +34,14 @@ public class HistoryBean implements Serializable {
 
     public void setQuestion(String question) {
         this.question = question;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }
 

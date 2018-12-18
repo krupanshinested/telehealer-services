@@ -3,17 +3,17 @@ package com.thealer.telehealer.views.home;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
@@ -32,7 +32,7 @@ import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 /**
  * Created by Aswin on 13,November,2018
  */
-public class DoctorPatientListingFragment extends BaseFragment {
+public class DoctorPatientListingFragment extends BaseFragment implements View.OnClickListener {
 
     private RecyclerView doctorPatientListRv;
     private AssociationApiViewModel associationApiViewModel;
@@ -42,6 +42,7 @@ public class DoctorPatientListingFragment extends BaseFragment {
     private OnOrientationChangeInterface onOrientationChangeInterface;
     private CustomRecyclerView doctorPatientListCrv;
     private boolean isApiRequested = false;
+    private FloatingActionButton addFab;
 
     @Override
     public void onAttach(Context context) {
@@ -62,7 +63,7 @@ public class DoctorPatientListingFragment extends BaseFragment {
                 if (baseApiResponseModel != null) {
                     AssociationApiResponseModel associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
 
-                    if (associationApiResponseModel.getResult().size() > 0){
+                    if (associationApiResponseModel.getResult().size() > 0) {
                         showProposer();
                     }
                     if (doctorPatientListAdapter != null) {
@@ -103,14 +104,14 @@ public class DoctorPatientListingFragment extends BaseFragment {
 
     private void initView(View view) {
         doctorPatientListCrv = (CustomRecyclerView) view.findViewById(R.id.doctor_patient_list_crv);
+        addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
 
-        if (UserType.isUserPatient()){
+        addFab.setOnClickListener(this);
+
+        if (UserType.isUserPatient() || UserType.isUserAssistant()) {
             doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_WITH_BTN);
-        }else if (UserType.isUserDoctor()){
+        } else if (UserType.isUserDoctor()) {
             doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_PATIENT_WITH_BTN);
-        }else if (UserType.isUserAssistant()){
-            //TODO handle patient listing or doctor listing
-            doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_SEARCH);
         }
 
         doctorPatientListRv = doctorPatientListCrv.getRecyclerView();
@@ -138,6 +139,17 @@ public class DoctorPatientListingFragment extends BaseFragment {
     private void getAssociationsList() {
         if (!isApiRequested) {
             associationApiViewModel.getAssociationList(page, true);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.add_fab:
+                if (!UserType.isUserDoctor()){
+                    startActivity(new Intent(getActivity(), AddConnectionActivity.class));
+                }
+                break;
         }
     }
 }

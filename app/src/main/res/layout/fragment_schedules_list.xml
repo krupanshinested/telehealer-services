@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.thealer.telehealer.common.CustomRecyclerView
-        android:id="@+id/doctor_patient_list_crv"
+    <com.thealer.telehealer.common.CustomExpandableListView
+        android:id="@+id/schedules_elv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
