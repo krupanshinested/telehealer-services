@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/appbar_back_with_title_app_color" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/cancel_ll"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/doctor_ocv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@id/doctor_chat_iv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:view_label="@string/doctor"
+                app:view_visible="false" />
+
+            <ImageView
+                android:id="@+id/doctor_chat_iv"
+                android:layout_width="22dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_chat_black_24dp"
+                android:tint="@color/app_gradient_start"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/doctor_ocv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/doctor_ocv" />
+
+            <View
+                android:id="@+id/doctor_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/colorGrey_light"
+                app:layout_constraintTop_toBottomOf="@+id/doctor_ocv" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/appointment_time_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/doctor_view"
+                app:sub_title_visible="false"
+                app:view_label="@string/appointment_time" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/patient_ocv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@id/patient_call_iv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appointment_time_ocv"
+                app:view_label="@string/patient_detail"
+                app:view_visible="false" />
+
+            <ImageView
+                android:id="@+id/patient_chat_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_chat_black_24dp"
+                android:tint="@color/app_gradient_start"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/patient_ocv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/patient_ocv" />
+
+            <ImageView
+                android:id="@+id/patient_call_iv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:src="@drawable/ic_call_black_24dp"
+                android:tint="@color/app_gradient_start"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/patient_ocv"
+                app:layout_constraintEnd_toStartOf="@id/patient_chat_iv"
+                app:layout_constraintTop_toTopOf="@+id/patient_ocv" />
+
+            <View
+                android:id="@+id/patient_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/colorGrey_light"
+                app:layout_constraintTop_toBottomOf="@+id/patient_ocv" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/reason_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/patient_view"
+                app:sub_title_visible="false"
+                app:view_label="@string/reason" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/cancel_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <include layout="@layout/order_bottom_cancel_view" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

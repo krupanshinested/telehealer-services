@@ -197,8 +197,13 @@ public class UserDetailPreferenceManager {
         appPreference.setString(PreferenceConstants.USER_LICENSES, license);
     }
 
+    public static WhoAmIApiResponseModel getWhoAmIResponse(){
+        return new Gson().fromJson(appPreference.getString(PreferenceConstants.WHO_AM_I_RESPONSE), WhoAmIApiResponseModel.class);
+    }
+
     public static void insertUserDetail(WhoAmIApiResponseModel whoAmIApiResponseModel) {
-        Log.e("aswin", "insertUserDetail: " + new Gson().toJson(whoAmIApiResponseModel));
+        String response = new Gson().toJson(whoAmIApiResponseModel);
+        appPreference.setString(PreferenceConstants.WHO_AM_I_RESPONSE, response);
 
         setAppt_length(whoAmIApiResponseModel.getAppt_length());
         setDob(whoAmIApiResponseModel.getDob());

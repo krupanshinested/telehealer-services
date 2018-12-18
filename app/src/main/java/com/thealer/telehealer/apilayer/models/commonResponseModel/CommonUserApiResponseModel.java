@@ -1,10 +1,15 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.apilayer.models.createuser.VisitAddressBean;
 import com.thealer.telehealer.common.Utils;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -78,13 +83,21 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
     }
 
     public String getUserDisplay_name() {
-        if (getFirst_name() != null && !getFirst_name().isEmpty()) {
+        if (getRole().equals(Constants.ROLE_PATIENT)) {
+            if (getFirst_name() != null && !getFirst_name().isEmpty()) {
 
-            char c = getFirst_name().charAt(0);
-            return getFirst_name().replace(c, String.valueOf(c).toUpperCase().charAt(0)) + " " + getLast_name();
-
-        } else
-            return "";
+                char c = getFirst_name().charAt(0);
+                return getFirst_name().replace(c, String.valueOf(c).toUpperCase().charAt(0)) + " " + getLast_name();
+            }
+        } else if (getRole().equals(Constants.ROLE_DOCTOR)) {
+            String title = null;
+            if (getUser_detail() != null && getUser_detail().getData() != null
+                    && getUser_detail().getData().getTitle() != null && !getUser_detail().getData().getTitle().isEmpty()) {
+                title = ", " + getUser_detail().getData().getTitle();
+            }
+            return Utils.getDoctorDisplayName(getFirst_name(), getLast_name(), title);
+        }
+        return "";
     }
 
     public String getDoctorAddress() {
@@ -102,27 +115,27 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
         }
     }
 
-    public String getDoctorPhone(){
+    public String getDoctorPhone() {
         if (getUser_detail() != null &&
                 getUser_detail().getData() != null &&
                 getUser_detail().getData().getPractices() != null &&
                 getUser_detail().getData().getPractices().size() > 0 &&
                 getUser_detail().getData().getPractices().get(0).getPhones() != null &&
-                getUser_detail().getData().getPractices().get(0).getPhones().size() > 0){
+                getUser_detail().getData().getPractices().get(0).getPhones().size() > 0) {
 
             return getUser_detail().getData().getPractices().get(0).getPhones().get(0).getNumber();
 
-        }else {
+        } else {
             return "";
         }
     }
 
-    public String getDoctorNpi(){
+    public String getDoctorNpi() {
 
         if (getUser_detail() != null &&
-                getUser_detail().getData() != null){
+                getUser_detail().getData() != null) {
             return getUser_detail().getData().getNpi();
-        }else {
+        } else {
             return "";
         }
     }
@@ -245,6 +258,23 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
 
     public String getUnformattedDob() {
         return dob;
+    }
+
+    public String getAge() {
+        String age = null;
+        if (dob != null) {
+            DateFormat inputFormat = new SimpleDateFormat("dd MMM, yyyy");
+            DateFormat outputFormat = new SimpleDateFormat("yyyy");
+            try {
+                int year = Integer.parseInt(outputFormat.format(inputFormat.parse(dob)));
+                Calendar calendar = Calendar.getInstance();
+                int currentYear = calendar.get(Calendar.YEAR);
+                age = String.valueOf(currentYear - year).concat(" Yrs");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return age;
     }
 
     public void setDob(String dob) {

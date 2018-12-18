@@ -15,6 +15,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 
@@ -28,7 +29,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatientListAdapter.ViewHolder> {
     private FragmentActivity fragmentActivity;
-    private int userType;
     private List<CommonUserApiResponseModel> associationApiResponseModelResult;
     private OnActionCompleteInterface onActionCompleteInterface;
 
@@ -42,7 +42,6 @@ class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatientListAda
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(fragmentActivity).inflate(R.layout.adapter_doctor_patient_list, viewGroup, false);
-        userType = TeleHealerApplication.appPreference.getInt(Constants.USER_TYPE);
         return new ViewHolder(view);
     }
 
@@ -52,11 +51,11 @@ class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatientListAda
         viewHolder.titleTv.setText(associationApiResponseModelResult.get(i).getUserDisplay_name());
         loadAvatar(viewHolder.avatarCiv, associationApiResponseModelResult.get(i).getUser_avatar());
 
-        if (userType == Constants.TYPE_DOCTOR) {
+        if (UserType.isUserDoctor()) {
             viewHolder.actionIv.setVisibility(View.VISIBLE);
             viewHolder.subTitleTv.setText(associationApiResponseModelResult.get(i).getDob());
             Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, associationApiResponseModelResult.get(i).getGender());
-        } else if (userType == Constants.TYPE_PATIENT) {
+        } else if (UserType.isUserPatient() || UserType.isUserAssistant()) {
             viewHolder.subTitleTv.setText(associationApiResponseModelResult.get(i).getDoctorSpecialist());
             viewHolder.actionIv.setVisibility(View.GONE);
         }
