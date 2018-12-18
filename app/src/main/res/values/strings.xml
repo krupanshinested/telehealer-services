@@ -37,7 +37,7 @@
     <string name="accept">Accept</string>
     <string name="terms_and_conditions_info">By creating an account, you agree to all the terms and conditions stated here.</string>
     <string name="choose_your_payment_method">Choose your payment method</string>
-    <string name="cash">cash</string>
+    <string name="cash">Cash</string>
     <string name="insurance">insurance</string>
     <string name="insurance_details">Insurance Details</string>
     <string name="front_side">FRONT SIDE</string>
@@ -365,6 +365,7 @@
     <string name="share">share</string>
     <string name="save_fax"><![CDATA[save & fax]]></string>
     <string name="save">save</string>
+    <string name="Save">Save</string>
     <string name="do_not_disturb">DO NOT DISTURB</string>
     <string name="lab_description">LAB DESCRIPTION</string>
     <string name="add_test">Add Test</string>
@@ -563,7 +564,7 @@
     <string name="choose_doctor">Choose Doctor</string>
     <string name="choose_patient">Choose Patient</string>
     <string name="slot_info">Try and select more than one slot. Remember, the time slot represents a window when the doctor can reach you.</string>
-    <string name="add_slots">Add Slots</string>
+    <string name="add_slots">Add Slot</string>
     <string name="reason_for_visit">Reason for visit</string>
     <string name="demographic_info">Demographic Info</string>
     <string name="InsuranceInfo">Insurance info</string>

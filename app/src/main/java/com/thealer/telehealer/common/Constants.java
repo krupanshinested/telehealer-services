@@ -116,6 +116,7 @@ public class Constants {
     public static final int CREATE_MODE = 0;
     public static final int EDIT_MODE = 1;
     public static final int VIEW_MODE = 2;
+    public static final int SCHEDULE_CREATION_MODE = 3;
 
     public static final int LOCATION_SETTINGS_REQUEST = 108;
 

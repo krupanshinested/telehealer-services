@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -175,11 +176,19 @@ public class SchedulesListFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.e("aswin", "onResume: ");
         if (UserType.isUserAssistant()) {
             getDoctorsList();
         } else {
             getSchedulesList(page);
         }
+    }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.e("aswin", "setUserVisibleHint: " + getUserVisibleHint());
     }
 
     private void getDoctorsList() {
