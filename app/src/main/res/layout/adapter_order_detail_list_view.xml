@@ -28,6 +28,7 @@
             android:gravity="center|left"
             android:padding="8dp"
             android:textColor="@color/colorBlack"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/item_sub_title_tv"
             app:layout_constraintEnd_toStartOf="@id/status_iv"
             app:layout_constraintStart_toEndOf="@+id/item_civ"

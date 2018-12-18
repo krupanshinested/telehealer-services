@@ -8,7 +8,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -42,16 +41,16 @@ import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
 import com.thealer.telehealer.views.home.recents.RecentDetailView;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
+import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
-import iHealth.pairing.VitalCreationActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
-public class HomeActivity extends BaseActivity implements AttachObserverInterface, View.OnClickListener,
+public class HomeActivity extends BaseActivity implements AttachObserverInterface,
         OnActionCompleteInterface, NavigationView.OnNavigationItemSelectedListener, OnOrientationChangeInterface,
         OnCloseActionInterface, ShowSubFragmentInterface, SuccessViewInterface, ChangeTitleInterface,ToolBarInterface,OnViewChangeInterface {
     private Toolbar toolbar;
@@ -64,7 +63,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private int selecteMenuItem = 0;
     private final String IS_CHILD_VISIBLE = "isChildVisible";
     private final String SELECTED_MENU_ITEM = "selecteMenuItem";
-    private FloatingActionButton addFab;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -144,32 +142,36 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         fragmentManager = this.getSupportFragmentManager();
 
         if (UserType.isUserPatient()) {
-            navigationView.getMenu().removeItem(R.id.menu_bnv_patient);
-            //set patient menus
+            navigationView.getMenu().removeItem(R.id.menu_patient);
         } else if (UserType.isUserDoctor()) {
-            //set doctor menus
-            navigationView.getMenu().removeItem(R.id.menu_bnv_doctor);
+            navigationView.getMenu().removeItem(R.id.menu_doctor);
             navigationView.getMenu().removeItem(R.id.menu_vitals);
+        }else if (UserType.isUserAssistant()){
+            navigationView.getMenu().removeItem(R.id.menu_patient);
+            navigationView.getMenu().removeItem(R.id.menu_vitals);
+            navigationView.getMenu().removeItem(R.id.menu_orders);
+            navigationView.getMenu().findItem(R.id.menu_schedules).setChecked(true);
+            selecteMenuItem = R.id.menu_schedules;
         }
 
         switch (selecteMenuItem) {
             case 0:
-            case R.id.menu_bnv_doctor:
-            case R.id.menu_bnv_patient:
+            case R.id.menu_doctor:
+            case R.id.menu_patient:
                 navigationView.getMenu().getItem(0).setChecked(true);
                 showDoctorPatientList();
                 break;
-            case R.id.menu_bnv_recent:
+            case R.id.menu_recent:
                 showRecentView();
                 break;
             case R.id.menu_profile_settings:
                 Intent intent = new Intent(HomeActivity.this, ProfileSettingsActivity.class);
                 this.startActivity(intent);
                 break;
+            case R.id.menu_schedules:
+                showSchedulesFragment();
+                break;
         }
-
-        addFab = (FloatingActionButton) findViewById(R.id.add_fab);
-        addFab.setOnClickListener(this);
     }
 
     private BroadcastReceiver profileListener = new BroadcastReceiver() {
@@ -216,7 +218,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void setDoctorPatientTitle() {
-        if (UserType.isUserPatient()) {
+        if (UserType.isUserPatient() || UserType.isUserAssistant()) {
             setToolbarTitle(getString(R.string.Doctors));
         } else {
             setToolbarTitle(getString(R.string.Patients));
@@ -225,27 +227,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void setToolbarTitle(String title) {
         toolbar.setTitle(title);
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.add_fab:
-                addFab.setClickable(false);
-                if (UserType.isUserPatient()) {
-                    startActivity(new Intent(this, AddConnectionActivity.class));
-                }else {
-                    startActivity(new Intent(this, InviteUserActivity.class));
-                }
-                break;
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        addFab.setClickable(true);
     }
 
     @Override
@@ -306,16 +287,17 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.menu_bnv_doctor:
-            case R.id.menu_bnv_patient:
-                selecteMenuItem = R.id.menu_bnv_doctor;
+            case R.id.menu_doctor:
+            case R.id.menu_patient:
+                selecteMenuItem = R.id.menu_doctor;
                 showDoctorPatientList();
-                showOrHideFab(true);
                 break;
-            case R.id.menu_bnv_recent:
-                selecteMenuItem = R.id.menu_bnv_recent;
+            case R.id.menu_schedules:
+                showSchedulesFragment();
+                break;
+            case R.id.menu_recent:
+                selecteMenuItem = R.id.menu_recent;
                 showRecentView();
-                showOrHideFab(false);
                 break;
             case R.id.menu_profile_settings:
                 Intent intent = new Intent(HomeActivity.this, ProfileSettingsActivity.class);
@@ -323,24 +305,19 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 break;
             case R.id.menu_vitals:
                 showVitalsView();
-                //TODO show fab for patients to add new vital device flow.
-                showOrHideFab(false);
                 break;
             case R.id.menu_orders:
                 showOrdersView();
-                showOrHideFab(false);
                 break;
         }
         toggleDrawer();
         return true;
     }
 
-    private void showOrHideFab(boolean isShow) {
-        if (isShow) {
-            addFab.show();
-        } else {
-            addFab.hide();
-        }
+    private void showSchedulesFragment() {
+        setToolbarTitle(getString(R.string.schedules));
+        SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
+        setFragment(schedulesListFragment);
     }
 
     private void showOrdersView() {

@@ -4,8 +4,9 @@
 
     <item
         android:id="@+id/menu_event"
-        android:icon="@drawable/ic_event_24dp"
+        android:icon="@drawable/ic_drawer_schedule"
         android:title="events"
+        android:iconTint="@color/colorWhite"
         app:showAsAction="always"
         android:visible="false"/>
     <item
