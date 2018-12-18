@@ -1,10 +1,13 @@
 package com.thealer.telehealer.views.home.schedules;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Utils;
@@ -73,61 +77,39 @@ public class SlotSelectionDialogFragment extends BaseBottomSheetDialogFragment {
             selectedTime = Utils.getSelectedSlotTime(createScheduleViewModel.getTimeSlots().getValue().get(position));
         }
 
-
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        for (int k = 0; k < 30; k++) {
-            calendar.set(year, month, day + k);
+        int endHour = 21;
+        int timeDifference = createScheduleViewModel.getDoctorCommonModel().getAppt_length();
+        int endMinute = 60 - timeDifference;
+
+        for (int i = 0; i < 30; i++) {
+
             List<String> timeList = new ArrayList<>();
             Map<String, String> timeMap = new HashMap<>();
 
             int startHour = 8;
-            int endHour = 21;
             int startMinute = 0;
-            int endMinute = 30;
-            int timeDifference = 15;
 
-            if (k == 0) {
-                startHour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
-                if (minute < 15) {
-                    startMinute = 15;
-                } else if (minute < 30) {
-                    startMinute = 30;
-                } else if (minute < 45) {
-                    startMinute = 45;
-                } else if (minute < 60) {
-                    startMinute = 60;
-                }
+            Calendar startCal = Calendar.getInstance();
+            startCal.set(year, month, day + i, startHour, startMinute, 0);
+            startCal.set(Calendar.MILLISECOND, 0);
 
-                if (startHour >= endHour && startMinute >= endMinute) {
-                    continue;
-                }
-            }
+            Calendar endCal = Calendar.getInstance();
+            endCal.set(year, month, day + i, endHour, endMinute, 0);
+            endCal.set(Calendar.MILLISECOND, 0);
 
-            String timeStamp = new Timestamp(calendar.getTimeInMillis()).toString();
+
+            String timeStamp = new Timestamp(startCal.getTimeInMillis()).toString();
             String date = Utils.getSlotDate(timeStamp);
 
-            if (!dateList.contains(date)) {
-                dateList.add(date);
-            }
+            while (startCal.getTime().compareTo(endCal.getTime()) <= 0) {
 
-            for (int i = startHour; i <= endHour; i++) {
-                for (int j = startMinute; j <= 60; j = j + timeDifference) {
-                    if (i == endHour && j > endMinute) {
-                        break;
-                    }
-
-                    calendar.set(Calendar.HOUR_OF_DAY, i);
-                    calendar.set(Calendar.MINUTE, j);
-                    calendar.set(Calendar.SECOND, 0);
-                    calendar.set(Calendar.MILLISECOND, 0);
-
-                    timeStamp = new Timestamp(calendar.getTimeInMillis()).toString();
-
+                if (calendar.getTime().compareTo(startCal.getTime()) < 0) {
+                    timeStamp = new Timestamp(startCal.getTimeInMillis()).toString();
                     String time = Utils.getSlotTime(timeStamp);
 
                     if (!createScheduleViewModel.getUnAvaliableTimeSlots().contains(Utils.getUTCfromGMT(timeStamp))) {
@@ -137,10 +119,19 @@ public class SlotSelectionDialogFragment extends BaseBottomSheetDialogFragment {
                         timeMap.put(time, Utils.getUTCfromGMT(timeStamp));
                     }
                 }
+
+                startCal.add(Calendar.MINUTE, timeDifference);
             }
-            dateMap.put(date, timeList);
-            timeMaps.put(date, timeMap);
+
+            if (timeList.size() > 0) {
+                if (!dateList.contains(date)) {
+                    dateList.add(date);
+                }
+                dateMap.put(date, timeList);
+                timeMaps.put(date, timeMap);
+            }
         }
+
 
         date = dateList.toArray(new String[0]);
         dateNp.setMaxValue(date.length - 1);
@@ -162,9 +153,9 @@ public class SlotSelectionDialogFragment extends BaseBottomSheetDialogFragment {
                 if (slotList == null) {
                     slotList = new ArrayList<>();
                 }
-                if (selectedDate != null){
+                if (selectedDate != null) {
                     slotList.set(position, timeMaps.get(date[dateNp.getValue()]).get(time[timeNp.getValue()]));
-                }else {
+                } else {
                     slotList.add(timeMaps.get(date[dateNp.getValue()]).get(time[timeNp.getValue()]));
                 }
                 createScheduleViewModel.getTimeSlots().setValue(slotList);
@@ -198,4 +189,14 @@ public class SlotSelectionDialogFragment extends BaseBottomSheetDialogFragment {
             timeNp.setMaxValue(timeNp.getDisplayedValues().length - 1);
         }
     }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (getTargetFragment() != null) {
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
+        }
+        super.onDismiss(dialog);
+
+    }
+
 }

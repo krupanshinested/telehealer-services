@@ -10,14 +10,14 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_event"
-        android:icon="@drawable/ic_drawer_schedule"
+        android:icon="@drawable/ic_calendar"
         android:iconTint="@color/colorWhite"
         android:title="events"
-        android:visible="false"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        android:visible="false"/>
     <item
         android:id="@+id/menu_schedules"
-        android:icon="@drawable/ic_view_agenda_24dp"
+        android:icon="@drawable/ic_schedule_list"
         android:title="schedules"
         android:visible="false"
         app:showAsAction="always" />

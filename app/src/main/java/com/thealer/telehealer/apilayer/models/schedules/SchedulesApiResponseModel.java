@@ -22,7 +22,7 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
         this.result = result;
     }
 
-    public static class ResultBean extends BaseApiResponseModel implements Serializable {
+    public static class ResultBean extends BaseApiResponseModel{
 
         private int schedule_id;
         private Object response_id;
@@ -115,7 +115,7 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
             this.scheduled_by_user = scheduled_by_user;
         }
 
-        public static class DetailBean {
+        public static class DetailBean implements Serializable{
 
             private boolean change_demographic;
             private String reason;
@@ -163,11 +163,7 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
                 this.dates = dates;
             }
 
-            public static class DatesBean {
-                /**
-                 * start : 2018-12-18T11:30:00.000Z
-                 * end : 2018-12-18T11:45:00.000Z
-                 */
+            public static class DatesBean implements Serializable{
 
                 private String start;
                 private String end;

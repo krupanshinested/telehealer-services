@@ -23,6 +23,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="4dp"
+        android:textSize="18sp"
         android:textColor="@color/colorBlack"
         app:layout_constraintEnd_toStartOf="@+id/arrow_iv"
         app:layout_constraintStart_toStartOf="parent"

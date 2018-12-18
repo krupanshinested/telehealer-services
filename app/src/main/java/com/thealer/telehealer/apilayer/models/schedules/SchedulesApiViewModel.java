@@ -36,12 +36,12 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getUserUpcomingSchedules(String user_guid, String doctorGuid, boolean isShowProgress) {
+    public void getUserSchedules(String user_guid, String doctorGuid, boolean isUpcoming, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserUpcomingSchedules(user_guid, true, doctorGuid)
+                    getAuthApiService().getUserUpcomingSchedules(user_guid, isUpcoming, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAListObserver<SchedulesApiResponseModel.ResultBean>(getProgress(isShowProgress)) {
                                 @Override
