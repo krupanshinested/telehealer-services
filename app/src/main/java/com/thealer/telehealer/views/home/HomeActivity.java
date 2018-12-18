@@ -16,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,6 +44,7 @@ import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
 import com.thealer.telehealer.views.home.recents.RecentDetailView;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
+import com.thealer.telehealer.views.home.schedules.ScheduleCalendarFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
@@ -63,6 +65,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private int selecteMenuItem = 0;
     private final String IS_CHILD_VISIBLE = "isChildVisible";
     private final String SELECTED_MENU_ITEM = "selecteMenuItem";
+    private Menu optionsMenu;
+    private final int scheduleTypeCalendar = 0;
+    private final int scheduleTypeList = 1;
     private int helpContent = 0;
 
     @Override
@@ -162,6 +167,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             selecteMenuItem = R.id.menu_schedules;
         }
 
+        attachView();
+    }
+
+    private void attachView() {
         switch (selecteMenuItem) {
             case 0:
             case R.id.menu_doctor:
@@ -172,12 +181,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_recent:
                 showRecentView();
                 break;
-            case R.id.menu_profile_settings:
-                Intent intent = new Intent(HomeActivity.this, ProfileSettingsActivity.class);
-                this.startActivity(intent);
-                break;
             case R.id.menu_schedules:
-                showSchedulesFragment();
+                showSchedulesFragment(scheduleTypeCalendar);
                 break;
         }
     }
@@ -197,6 +202,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        optionsMenu = menu;
         getMenuInflater().inflate(R.menu.appbar_home_menu, menu);
         return true;
     }
@@ -206,6 +212,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         switch (item.getItemId()) {
             case android.R.id.home:
                 toggleDrawer();
+                break;
+            case R.id.menu_event:
+                showSchedulesFragment(scheduleTypeCalendar);
+                break;
+            case R.id.menu_schedules:
+                showSchedulesFragment(scheduleTypeList);
                 break;
             case R.id.menu_help:
                 showHelpContent();
@@ -310,6 +322,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        showScheduleToolbarOptions(false, 0);
         switch (menuItem.getItemId()) {
             case R.id.menu_doctor:
             case R.id.menu_patient:
@@ -317,7 +330,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 showDoctorPatientList();
                 break;
             case R.id.menu_schedules:
-                showSchedulesFragment();
+                selecteMenuItem = R.id.menu_schedules;
+                showSchedulesFragment(scheduleTypeCalendar);
                 break;
             case R.id.menu_recent:
                 selecteMenuItem = R.id.menu_recent;
@@ -338,11 +352,38 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         return true;
     }
 
-    private void showSchedulesFragment() {
+    private void showScheduleToolbarOptions(boolean visible, int scheduleType) {
+        if (optionsMenu != null) {
+            if (visible) {
+                if (scheduleType == scheduleTypeCalendar) {
+                    optionsMenu.findItem(R.id.menu_schedules).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_event).setVisible(false);
+                } else if (scheduleType == scheduleTypeList) {
+                    optionsMenu.findItem(R.id.menu_schedules).setVisible(false);
+                    optionsMenu.findItem(R.id.menu_event).setVisible(true);
+
+                }
+            } else {
+                optionsMenu.findItem(R.id.menu_schedules).setVisible(false);
+                optionsMenu.findItem(R.id.menu_event).setVisible(false);
+            }
+        }
+    }
+
+    private void showSchedulesFragment(int scheduleType) {
         helpContent = HelpContent.HELP_SCHEDULES;
+        showScheduleToolbarOptions(true, scheduleType);
         setToolbarTitle(getString(R.string.schedules));
-        SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
-        setFragment(schedulesListFragment);
+        Fragment fragment = null;
+        switch (scheduleType) {
+            case scheduleTypeCalendar:
+                fragment = new ScheduleCalendarFragment();
+                break;
+            case scheduleTypeList:
+                fragment = new SchedulesListFragment();
+                break;
+        }
+        setFragment(fragment);
     }
 
     private void showOrdersView() {
@@ -401,7 +442,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
         if (isRefreshRequired) {
-            initView();
+            attachView();
         }
     }
 

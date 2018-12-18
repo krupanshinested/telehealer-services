@@ -10,9 +10,8 @@
 
     <color name="battery_color">#20a914</color>
 
-    <color name="card_view_background">#E4E4E5</color>
+    <color name="card_view_background">#ECECEC</color>
 
     <color name="red">#f7193e</color>
     <color name="color_blue">#03a9f4</color>
-
 </resources>

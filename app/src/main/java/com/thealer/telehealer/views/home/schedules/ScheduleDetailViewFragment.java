@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -29,6 +32,10 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Aswin on 18,December,2018
@@ -56,6 +63,8 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private OnCloseActionInterface onCloseActionInterface;
 
     private SchedulesApiResponseModel.ResultBean resultBean;
+    private RecyclerView patientHistoryRv;
+    private TextView statusTv;
 
     @Override
     public void onAttach(Context context) {
@@ -75,7 +84,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                onCloseActionInterface.onClose(false);
+                                                onCloseActionInterface.onClose(true);
                                             }
                                         }, null);
                             }
@@ -109,6 +118,8 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         topView = (View) view.findViewById(R.id.top_view);
         cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
         reasonOcv = (OrdersCustomView) view.findViewById(R.id.reason_ocv);
+        patientHistoryRv = (RecyclerView) view.findViewById(R.id.patient_history_rv);
+        statusTv = (TextView) view.findViewById(R.id.status_tv);
 
         cancelTv.setText(getString(R.string.cancel_appointment));
         toolbarTitle.setText(getString(R.string.appointment_detail));
@@ -131,6 +142,41 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         if (getArguments() != null) {
             resultBean = (SchedulesApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SCHEDULE_DETAIL);
             if (resultBean != null) {
+
+                String statusInfo = "Patient %s has been updated";
+                String detail = "";
+                if (resultBean.getDetail().isChange_medical_info()) {
+                    detail = "history";
+                } else if (resultBean.getDetail().isChange_demographic()) {
+                    detail = "demographic";
+                } else if (resultBean.getDetail().isInsurance_to_date()) {
+                    detail = "insurance";
+                } else if (resultBean.getDetail().isChange_medical_info() &&
+                        resultBean.getDetail().isChange_demographic()) {
+                    detail = "demographic and history";
+                } else if (resultBean.getDetail().isChange_medical_info() &&
+                        resultBean.getDetail().isInsurance_to_date()) {
+                    detail = "insurance and history";
+                } else if (resultBean.getDetail().isChange_demographic() &&
+                        resultBean.getDetail().isInsurance_to_date()) {
+                    detail = "demographic and insurance";
+                }
+                if (!detail.isEmpty()) {
+                    statusInfo = String.format(statusInfo, detail);
+                    statusTv.setText(statusInfo);
+                    statusTv.setVisibility(View.VISIBLE);
+                }
+
+                List<HistoryBean> historyList = new ArrayList<>();
+                if (resultBean.getScheduled_with_user().getRole().equals(Constants.ROLE_PATIENT)) {
+                    historyList = resultBean.getScheduled_with_user().getHistory();
+                } else if (resultBean.getScheduled_by_user().getRole().equals(Constants.ROLE_PATIENT)) {
+                    historyList = resultBean.getScheduled_by_user().getHistory();
+                }
+                patientHistoryRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+                PatientHistoryAdapter patientHistoryAdapter = new PatientHistoryAdapter(getActivity(), false, historyList);
+                patientHistoryRv.setAdapter(patientHistoryAdapter);
+
                 reasonOcv.setTitleTv(resultBean.getDetail().getReason());
                 appointmentTimeOcv.setTitleTv(Utils.getDayMonth(resultBean.getStart()) + " - " + Utils.getFormatedTime(resultBean.getStart()));
 

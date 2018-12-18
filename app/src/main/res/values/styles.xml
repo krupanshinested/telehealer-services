@@ -82,5 +82,8 @@
         <item name="android:enabled">false</item>
     </style>
 
+    <style name="calendar_text_appearance" parent="TextAppearance.MaterialCalendarWidget.Date">
+        <item name="android:textColor">@color/calendar_date_selector</item>
+    </style>
 
 </resources>
