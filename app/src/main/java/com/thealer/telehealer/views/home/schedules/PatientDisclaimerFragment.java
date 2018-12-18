@@ -54,7 +54,7 @@ public class PatientDisclaimerFragment extends BaseFragment {
                 "<html>\n" +
                 "<body>\n" +
                 "<h3><font color=\"red\">DISCLAIMER:</font></h3>\n" +
-                "<h5><font color=\"red\">DO NOT USE THIS FORM IF YOU ARE SEEKING URGENT OR EMERGENCY MEDICAL ATTENTION.</font></h5>\n" +
+                "<P><font color=\"red\">DO NOT USE THIS FORM IF YOU ARE SEEKING URGENT OR EMERGENCY MEDICAL ATTENTION.</font></p>\n" +
                 "<p><font color=\"black\">If you are experiencing chest pain, sudden or serious pain, bleeding or other serious complications, call</font> <font color=\"red\">911</font><font color=\"black\"> or go to the nearest emergency room.<br> If you have feelings of wanting to harm yourself or someone else, call</font> <font color=\"red\">911</font><font color=\"black\"> or the Suicide Prevention Crisis Line at <b>1-800-784-2433</b>.<br>By scheduling this appointment you acknowledge that you are not experiencing an emergency.</font></p>\n" +
                 "<p><b><font color=\"black\">By clicking the Continue button I acknowledge that I have read and understand the above disclaimer</font></b></p>\n" +
                 "</body>\n" +

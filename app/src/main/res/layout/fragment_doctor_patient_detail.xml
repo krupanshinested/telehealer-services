@@ -41,6 +41,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/user_detail_tab" />
 
         </android.support.constraint.ConstraintLayout>
+
     </android.support.design.widget.CoordinatorLayout>
 
     <LinearLayout

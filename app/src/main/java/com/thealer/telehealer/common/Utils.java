@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -17,7 +16,6 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.method.KeyListener;
 import android.util.Base64;
-import android.util.Base64InputStream;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
@@ -32,8 +30,6 @@ import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
@@ -284,6 +280,20 @@ public class Utils {
         return "";
     }
 
+    public static String getYearMonthDay(String date) {
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat returnFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        returnFormat.setTimeZone(TimeZone.getDefault());
+        try {
+            return returnFormat.format(dateFormat.parse(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static String getDayMonth(String date) {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -513,6 +523,19 @@ public class Utils {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static Calendar getCalendar(String timeStamp) {
+        Calendar calendar = Calendar.getInstance();
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            calendar.setTime(inputFormat.parse(timeStamp));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return calendar;
     }
 
     public static String serialize(Object object) throws IOException {

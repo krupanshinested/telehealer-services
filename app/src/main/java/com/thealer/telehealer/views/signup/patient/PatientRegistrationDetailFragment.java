@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signup.patient;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
@@ -60,7 +62,7 @@ import static com.thealer.telehealer.common.Constants.TYPE_DOB;
 
 public class PatientRegistrationDetailFragment extends BaseFragment implements
         View.OnFocusChangeListener, View.OnClickListener,
-        DoCurrentTransactionInterface, CameraInterface,BundleReceiver {
+        DoCurrentTransactionInterface, CameraInterface, BundleReceiver {
 
     private CircleImageView profileCiv;
     private EditText firstnameEt;
@@ -71,8 +73,8 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
     //not for Registration
     private LinearLayout insurance_lay;
-    private ImageView insurance_front_iv,insurance_back_iv;
-    private TextView cash_tv,gender_value;
+    private ImageView insurance_front_iv, insurance_back_iv;
+    private TextView cash_tv, gender_value;
     private HorizontalScrollView insurance_image;
 
     private String[] genderList;
@@ -96,6 +98,31 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private int isCashSelected = -1;
     private int currentDisplayType = Constants.CREATE_MODE;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onViewChangeInterface = (OnViewChangeInterface) getActivity();
+        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            profileImgPath = savedInstanceState.getString(getString(R.string.image_path));
+        }
+        addObservers();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (profileImgPath != null)
+            outState.putString(getString(R.string.image_path), profileImgPath);
+
+        outState.putInt(ArgumentKeys.VIEW_TYPE, currentDisplayType);
+        outState.putInt("isCashSelected", isCashSelected);
+    }
 
     @Nullable
     @Override
@@ -107,10 +134,19 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
         createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
 
+        Bundle bundle = getArguments();
+
+        if (savedInstanceState == null && bundle != null) {
+            currentDisplayType = bundle.getInt(ArgumentKeys.VIEW_TYPE);
+        } else if (savedInstanceState != null) {
+            currentDisplayType = savedInstanceState.getInt(ArgumentKeys.VIEW_TYPE);
+        }
+
         initView(view);
 
         checkAllFields();
 
+        Log.e("aswin", "onCreateView: " + currentDisplayType);
         if (currentDisplayType != Constants.CREATE_MODE) {
             if (whoAmi == null) {
                 whoAmIApiViewModel.checkWhoAmI();
@@ -124,114 +160,13 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         }
 
         if (savedInstanceState != null) {
-            isCashSelected = savedInstanceState.getInt("isCashSelected",-1);
+            isCashSelected = savedInstanceState.getInt("isCashSelected", -1);
         }
 
         return view;
     }
 
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        updateUserRequestModel();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            profileImgPath = savedInstanceState.getString(getString(R.string.image_path));
-        }
-
-        Bundle bundle = getArguments();
-
-        if (savedInstanceState == null && bundle != null) {
-            currentDisplayType = bundle.getInt(ArgumentKeys.VIEW_TYPE, Constants.CREATE_MODE);
-        } else if (savedInstanceState != null) {
-            currentDisplayType = savedInstanceState.getInt(ArgumentKeys.VIEW_TYPE,Constants.CREATE_MODE);
-        } else {
-            currentDisplayType = Constants.CREATE_MODE;
-        }
-
-        addObservers();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(dateBroadcastReceiver, new IntentFilter(Constants.DATE_PICKER_INTENT));
-
-        if (currentDisplayType == Constants.CREATE_MODE) {
-            onViewChangeInterface.updateTitle(getString(R.string.profile));
-        } else {
-            onViewChangeInterface.updateTitle(UserDetailPreferenceManager.getUserDisplayName());
-        }
-
-        onViewChangeInterface.hideOrShowNext(true);
-
-        reloadUI();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(dateBroadcastReceiver);
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (profileImgPath != null)
-            outState.putString(getString(R.string.image_path), profileImgPath);
-
-        outState.putInt(ArgumentKeys.VIEW_TYPE,currentDisplayType);
-        outState.putInt("isCashSelected",isCashSelected);
-    }
-
-    private void reloadUI() {
-        switch (currentDisplayType){
-            case Constants.EDIT_MODE:
-                updateAllViews(true);
-                onViewChangeInterface.updateNextTitle(getString(R.string.update));
-                break;
-            case Constants.CREATE_MODE:
-                updateAllViews(true);
-                onViewChangeInterface.updateNextTitle(getString(R.string.next));
-                break;
-            case Constants.VIEW_MODE:
-                updateAllViews(false);
-                onViewChangeInterface.updateNextTitle(getString(R.string.edit));
-                Utils.hideKeyboardFrom(getActivity(),this.getView());
-                break;
-        }
-
-        checkAllFields();
-    }
-
-    private void updateAllViews(Boolean enabled) {
-        Utils.setEditable(firstnameEt,enabled);
-        Utils.setEditable(lastnameEt,enabled);
-
-        if (enabled) {
-            gender_value.setVisibility(View.GONE);
-            genderSp.setVisibility(View.VISIBLE);
-        } else {
-            gender_value.setVisibility(View.VISIBLE);
-            genderSp.setVisibility(View.GONE);
-        }
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        onViewChangeInterface = (OnViewChangeInterface) getActivity();
-        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-    }
-
-    private void  initView(View view) {
+    private void initView(View view) {
         profileCiv = (CircleImageView) view.findViewById(R.id.profile_civ);
         firstnameEt = (EditText) view.findViewById(R.id.firstname_et);
         lastnameEt = (EditText) view.findViewById(R.id.lastname_et);
@@ -248,6 +183,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
         insurance_front_iv.setOnClickListener(this);
         insurance_back_iv.setOnClickListener(this);
+        cash_tv.setOnClickListener(this);
 
         dobEt.setOnFocusChangeListener(this);
 
@@ -265,7 +201,45 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         updateUI();
     }
 
+    private void reloadUI() {
+        switch (currentDisplayType) {
+            case Constants.SCHEDULE_CREATION_MODE:
+                updateAllViews(true);
+                onViewChangeInterface.updateNextTitle(getString(R.string.Save));
+                break;
+            case Constants.EDIT_MODE:
+                updateAllViews(true);
+                onViewChangeInterface.updateNextTitle(getString(R.string.update));
+                break;
+            case Constants.CREATE_MODE:
+                updateAllViews(true);
+                onViewChangeInterface.updateNextTitle(getString(R.string.next));
+                break;
+            case Constants.VIEW_MODE:
+                updateAllViews(false);
+                onViewChangeInterface.updateNextTitle(getString(R.string.edit));
+                Utils.hideKeyboardFrom(getActivity(), this.getView());
+                break;
+        }
+
+        checkAllFields();
+    }
+
+    private void updateAllViews(Boolean enabled) {
+        Utils.setEditable(firstnameEt, enabled);
+        Utils.setEditable(lastnameEt, enabled);
+
+        if (enabled) {
+            gender_value.setVisibility(View.GONE);
+            genderSp.setVisibility(View.VISIBLE);
+        } else {
+            gender_value.setVisibility(View.VISIBLE);
+            genderSp.setVisibility(View.GONE);
+        }
+    }
+
     private void updateUI() {
+        Log.e("aswin", "updateUI: " + currentDisplayType);
         if (currentDisplayType != Constants.CREATE_MODE) {
             insurance_lay.setVisibility(View.VISIBLE);
             title_tv.setVisibility(View.GONE);
@@ -280,7 +254,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     }
 
     private void updateUI(WhoAmIApiResponseModel whoAmIApiResponseModel) {
-        Log.d("PatientRegistration","updateUI");
+        Log.d("PatientRegistration", "updateUI");
         createUserRequestModel.setUser_data(new CreateUserRequestModel.UserDataBean(whoAmIApiResponseModel));
 
         try {
@@ -313,9 +287,11 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     }
 
     private void updateInsurance() {
-        Log.d("PatientRegistration","updateInsurance");
+        Log.d("PatientRegistration", "updateInsurance");
 
-        if (createUserRequestModel.getInsurance_front_path() != null && createUserRequestModel.getInsurance_back_path() != null) {
+        insurance_lay.setVisibility(View.VISIBLE);
+        if (createUserRequestModel.getInsurance_front_path() != null &&
+                createUserRequestModel.getInsurance_back_path() != null) {
             Bitmap front = getBitmpaFromPath(createUserRequestModel.getInsurance_front_path());
             Bitmap back = getBitmpaFromPath(createUserRequestModel.getInsurance_back_path());
             if (front != null) {
@@ -324,12 +300,13 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
             if (back != null)
                 insurance_back_iv.setImageBitmap(back);
+
             insurance_image.setVisibility(View.VISIBLE);
             cash_tv.setVisibility(View.GONE);
         } else if (createUserRequestModel.getUser_detail().getData().isInsurancePresent()) {
 
-            Utils.setImageWithGlide(getContext(), insurance_front_iv,createUserRequestModel.getUser_detail().getData().getInsurance_front(), getContext().getDrawable(R.drawable.placeholder_insurance), true);
-            Utils.setImageWithGlide(getContext(), insurance_back_iv,createUserRequestModel.getUser_detail().getData().getInsurance_back(), getContext().getDrawable(R.drawable.placeholder_insurance), true);
+            Utils.setImageWithGlide(getContext(), insurance_front_iv, createUserRequestModel.getUser_detail().getData().getInsurance_front(), getActivity().getDrawable(R.drawable.placeholder_insurance), true);
+            Utils.setImageWithGlide(getContext(), insurance_back_iv, createUserRequestModel.getUser_detail().getData().getInsurance_back(), getActivity().getDrawable(R.drawable.placeholder_insurance), true);
 
             insurance_image.setVisibility(View.VISIBLE);
             cash_tv.setVisibility(View.GONE);
@@ -337,8 +314,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             insurance_image.setVisibility(View.GONE);
             cash_tv.setVisibility(View.VISIBLE);
         }
-
-
     }
 
     private void updateUserRequestModel() {
@@ -358,7 +333,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             if (profileImg != null)
                 profileCiv.setImageBitmap(profileImg);
         } else if (createUserRequestModel.getUser_data().getUser_avatar() != null) {
-            Utils.setImageWithGlide(getContext(), profileCiv,createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true);
+            Utils.setImageWithGlide(getContext(), profileCiv, createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true);
         }
     }
 
@@ -403,13 +378,18 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
                 if (baseApiResponseModel != null) {
 
-                    whoAmIApiViewModel.checkWhoAmI();
+                    if (currentDisplayType == Constants.SCHEDULE_CREATION_MODE) {
+                        getActivity().setResult(Activity.RESULT_OK);
+                        getActivity().finish();
+                    } else {
+                        whoAmIApiViewModel.checkWhoAmI();
 
-                    onViewChangeInterface.enableNext(true);
-                    currentDisplayType = Constants.VIEW_MODE;
-                    reloadUI();
+                        onViewChangeInterface.enableNext(true);
+                        currentDisplayType = Constants.VIEW_MODE;
+                        reloadUI();
 
-                    updatedProfile();
+                        updatedProfile();
+                    }
                 }
 
             }
@@ -473,6 +453,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             case R.id.profile_civ:
                 CameraUtil.with(getActivity()).showImageSelectionAlert();
                 break;
+            case R.id.cash_tv:
             case R.id.insurance_back_iv:
             case R.id.insurance_front_iv:
             case R.id.insurance_lay:
@@ -484,17 +465,17 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     @Override
     public void doCurrentTransaction() {
         switch (currentDisplayType) {
+            case Constants.SCHEDULE_CREATION_MODE:
             case Constants.EDIT_MODE:
                 onViewChangeInterface.enableNext(false);
                 updateUserRequestModel();
 
-                updateProfileModel.updatePatient(createUserRequestModel);
-
                 if (isCashSelected == 1) {
-                    UpdateProfileModel updateProfileModel = new UpdateProfileModel(getActivity().getApplication());
+                    Log.e("aswin", "doCurrentTransaction: " + new Gson().toJson(createUserRequestModel));
+                    UpdateProfileModel updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
                     updateProfileModel.deleteInsurance();
                 }
-
+                updateProfileModel.updatePatient(createUserRequestModel);
 
                 break;
             case Constants.VIEW_MODE:
@@ -522,13 +503,13 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
     @Override
     public void didReceiveIntent(Bundle bundle, String type) {
-        Log.d("PatientRegistration","didReceiveIntent:"+type);
+        Log.d("PatientRegistration", "didReceiveIntent:" + type);
         switch (type) {
             case RequestID.INSURANCE_CHANGE_RESULT:
                 if (bundle != null) {
                     if (bundle.getBoolean(ArgumentKeys.CASH_SELECTED)) {
                         isCashSelected = 1;
-                        Log.d("PatientRegistration","cash selected:");
+                        Log.d("PatientRegistration", "cash selected:");
                         createUserRequestModel.setInsurance_back_path(null);
                         createUserRequestModel.setInsurance_front_path(null);
 
@@ -536,7 +517,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                         createUserRequestModel.getUser_detail().getData().setInsurance_back(null);
                     } else {
                         isCashSelected = 0;
-                        Log.d("PatientRegistration","path");
+                        Log.d("PatientRegistration", "path");
                         createUserRequestModel.setInsurance_front_path(bundle.getString(ArgumentKeys.INSURANCE_FRONT));
                         createUserRequestModel.setInsurance_back_path(bundle.getString(ArgumentKeys.INSURANCE_BACK));
                     }
@@ -545,4 +526,34 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                 break;
         }
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        updateUserRequestModel();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(dateBroadcastReceiver, new IntentFilter(Constants.DATE_PICKER_INTENT));
+
+        if (currentDisplayType == Constants.CREATE_MODE) {
+            onViewChangeInterface.updateTitle(getString(R.string.profile));
+        } else {
+            onViewChangeInterface.updateTitle(UserDetailPreferenceManager.getUserDisplayName());
+        }
+
+        onViewChangeInterface.hideOrShowNext(true);
+
+        reloadUI();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(dateBroadcastReceiver);
+    }
+
 }

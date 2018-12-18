@@ -246,7 +246,11 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> deleteAccount();
 
     @PUT("api/users/profile")
-    Observable<BaseApiResponseModel> updateAppointmentLength(@Body RequestBody body);
+    Observable<BaseApiResponseModel> updateUserDetail(@Body RequestBody body);
+
+    @Multipart
+    @PUT("api/users/profile")
+    Observable<BaseApiResponseModel> updateUserHistory(@Part("history") RequestBody history);
 
     @PUT("api/users/profile")
     Observable<BaseApiResponseModel> updateUserDetail(@Body WhoAmIApiResponseModel whoAmIApiResponseModel);

@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -43,9 +42,11 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
+import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,6 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
     private RecyclerView slotsRv;
     private TextView slotInfoTv;
     private TextView addSlotTv;
-    private TextInputLayout reasonTil;
     private EditText reasonEt;
     private OrdersCustomView demographOcv;
     private CustomButton demographUpdateBtn;
@@ -81,12 +81,13 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
     private AttachObserverInterface attachObserverInterface;
     private CreateScheduleViewModel createScheduleViewModel;
     private SchedulesApiViewModel schedulesApiViewModel;
+    private ChangeTitleInterface changeTitleInterface;
 
     private CommonUserApiResponseModel patientDetailModel, selectedPatientDetailModel, doctorDetailCommonModel;
     private WhoAmIApiResponseModel whoAmIApiResponseModel;
     private List<String> doctorSchedulesTimeList = new ArrayList<>();
     private List<String> patientSchedulesTimeList = new ArrayList<>();
-    private boolean isDoctorSchedules = false, isPatientSchedules = false;
+    private boolean isDoctorSchedules = false, isPatientSchedules = false, isDemographicUpdated = false, isInsuranceUpdated = false;
     private String requestee_name;
 
     @Override
@@ -94,18 +95,60 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
         super.onAttach(context);
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
+        changeTitleInterface = (ChangeTitleInterface) getActivity();
 
         createScheduleViewModel = ViewModelProviders.of(getActivity()).get(CreateScheduleViewModel.class);
         schedulesApiViewModel = ViewModelProviders.of(this).get(SchedulesApiViewModel.class);
         whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
         attachObserverInterface.attachObserver(whoAmIApiViewModel);
 
+        createScheduleViewModel.getTimeSlots().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(@Nullable List<String> list) {
+                if (list != null) {
+                    if (list.size() == 3) {
+                        addSlotTv.setVisibility(View.GONE);
+                    } else {
+                        addSlotTv.setVisibility(View.VISIBLE);
+                    }
+                    enableOrDisableBtn();
+                }
+            }
+        });
+
         whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+
                     if (UserType.isUserPatient()) {
+                        if (createScheduleViewModel.getPatientCommonModel() != null &&
+                                createScheduleViewModel.getPatientCommonModel().getUser_detail() != null &&
+                                createScheduleViewModel.getPatientCommonModel().getUser_detail().getData() != null) {
+
+                            if (!createScheduleViewModel.getPatientCommonModel().getFirst_name().equals(whoAmIApiResponseModel.getFirst_name()) ||
+                                    !createScheduleViewModel.getPatientCommonModel().getLast_name().equals(whoAmIApiResponseModel.getLast_name()) ||
+                                    !createScheduleViewModel.getPatientCommonModel().getDob().equals(whoAmIApiResponseModel.getDob()) ||
+                                    !createScheduleViewModel.getPatientCommonModel().getGender().equals(whoAmIApiResponseModel.getGender())) {
+                                isDemographicUpdated = true;
+                            }
+
+                            if (createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front() != null &&
+                                    createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_back() != null &&
+                                    whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front() != null &&
+                                    whoAmIApiResponseModel.getUser_detail().getData().getInsurance_back() != null) {
+
+                                if (!createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front()
+                                        .equals(whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front()) ||
+                                        !createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_back()
+                                                .equals(whoAmIApiResponseModel.getUser_detail().getData().getInsurance_back())) {
+
+                                    isInsuranceUpdated = true;
+                                }
+                            }
+                        }
                         createScheduleViewModel.setPatientCommonModel(whoAmIApiResponseModel);
                     } else {
                         createScheduleViewModel.setDoctorCommonModel(whoAmIApiResponseModel);
@@ -123,15 +166,17 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                     ArrayList<SchedulesApiResponseModel.ResultBean> arrayList = (ArrayList<SchedulesApiResponseModel.ResultBean>) (Object) baseApiResponseModels;
                     for (SchedulesApiResponseModel.ResultBean resultBean : arrayList) {
                         if (isDoctorSchedules) {
-                            isDoctorSchedules = false;
                             doctorSchedulesTimeList.add(resultBean.getStart());
-                            doctorSchedulesTimeList.add(resultBean.getEnd());
+//                            doctorSchedulesTimeList.add(resultBean.getEnd());
                         } else {
-                            isPatientSchedules = false;
                             patientSchedulesTimeList.add(resultBean.getStart());
-                            patientSchedulesTimeList.add(resultBean.getEnd());
+//                            patientSchedulesTimeList.add(resultBean.getEnd());
                         }
                     }
+
+                    isDoctorSchedules = false;
+                    isPatientSchedules = false;
+
                 }
             }
         });
@@ -173,7 +218,6 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
         slotsRv = (RecyclerView) view.findViewById(R.id.slots_rv);
         slotInfoTv = (TextView) view.findViewById(R.id.slot_info_tv);
         addSlotTv = (TextView) view.findViewById(R.id.add_slot_tv);
-        reasonTil = (TextInputLayout) view.findViewById(R.id.reason_til);
         reasonEt = (EditText) view.findViewById(R.id.reason_et);
         demographOcv = (OrdersCustomView) view.findViewById(R.id.demograph_ocv);
         demographUpdateBtn = (CustomButton) view.findViewById(R.id.demograph_update_btn);
@@ -232,11 +276,21 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
             }
         });
 
+        if (UserType.isUserPatient()) {
+            createScheduleViewModel.setPatientCommonModel(UserDetailPreferenceManager.getWhoAmIResponse());
+        } else if (UserType.isUserDoctor()) {
+            createScheduleViewModel.setDoctorCommonModel(UserDetailPreferenceManager.getWhoAmIResponse());
+        }
+
         if (getArguments() != null) {
             if (UserType.isUserPatient()) {
+                doctorOcv.setOnClickListener(null);
+                doctorOcv.setArrow_visible(false);
                 doctorDetailCommonModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 createScheduleViewModel.setDoctorCommonModel(doctorDetailCommonModel);
             } else if (UserType.isUserDoctor()) {
+                patientOcv.setOnClickListener(null);
+                patientOcv.setArrow_visible(false);
                 patientDetailModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 createScheduleViewModel.setPatientCommonModel(patientDetailModel);
             }
@@ -289,6 +343,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                             patientDetailModel.getUser_detail().getData().getInsurance_back() == null) {
                         showAsCash();
                     } else {
+                        insuranceOcv.setTitle_visible(false);
                         insuranceFrontLl.setVisibility(View.VISIBLE);
                         insuranceBackLl.setVisibility(View.VISIBLE);
                         Utils.setImageWithGlide(getActivity(), frontIv, patientDetailModel.getUser_detail().getData().getInsurance_front(), null, true);
@@ -298,6 +353,8 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                     showAsCash();
                 }
             }
+        } else if (UserType.isUserDoctor() && createScheduleViewModel.getDoctorCommonModel() == null) {
+            whoAmIApiViewModel.checkWhoAmI();
         }
 
         if (createScheduleViewModel.getTimeSlots().getValue() == null) {
@@ -312,12 +369,12 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
 
     private void getPatientScheduleList(String user_guid, String doctorGuid) {
         isPatientSchedules = true;
-        schedulesApiViewModel.getUserUpcomingSchedules(user_guid, doctorGuid, true);
+        schedulesApiViewModel.getUserSchedules(user_guid, doctorGuid, true, true);
     }
 
     private void getDoctorScheduleList(String user_guid) {
         isDoctorSchedules = true;
-        schedulesApiViewModel.getUserUpcomingSchedules(user_guid, null, true);
+        schedulesApiViewModel.getUserSchedules(user_guid, null, true, true);
     }
 
     private void enableOrDisableBtn() {
@@ -347,6 +404,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
 
     private void showAsCash() {
         insuranceOcv.setTitleTv(getString(R.string.cash));
+        insuranceOcv.setTitle_visible(true);
         insuranceFrontLl.setVisibility(View.GONE);
         insuranceBackLl.setVisibility(View.GONE);
     }
@@ -403,8 +461,8 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                 }
                 break;
             case R.id.demograph_update_btn:
-                break;
             case R.id.insurance_update_btn:
+                goToProfileUpdate();
                 break;
             case R.id.action_btn:
                 SchedulesCreateRequestModel schedulesCreateRequestModel = new SchedulesCreateRequestModel();
@@ -426,11 +484,13 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                 for (int i = 0; i < createScheduleViewModel.getTimeSlots().getValue().size(); i++) {
                     SchedulesCreateRequestModel.Requestdetails.Dates dates = new SchedulesCreateRequestModel.Requestdetails.Dates();
                     dates.setStart(createScheduleViewModel.getTimeSlots().getValue().get(i));
-                    dates.setEnd(Utils.getIncreasedTime(15, createScheduleViewModel.getTimeSlots().getValue().get(i)));
+                    dates.setEnd(Utils.getIncreasedTime(createScheduleViewModel.getDoctorCommonModel().getAppt_length(), createScheduleViewModel.getTimeSlots().getValue().get(i)));
                     datesList.add(dates);
                 }
                 requestdetails.setDates(datesList);
                 requestdetails.setReason(reasonEt.getText().toString());
+                requestdetails.setInsurance_to_date(isInsuranceUpdated);
+                requestdetails.setChange_demographic(isDemographicUpdated);
 
                 schedulesCreateRequestModel.setDetail(requestdetails);
                 createScheduleViewModel.setSchedulesCreateRequestModel(schedulesCreateRequestModel);
@@ -451,7 +511,15 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
         }
     }
 
+    private void goToProfileUpdate() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ArgumentKeys.VIEW_TYPE, Constants.SCHEDULE_CREATION_MODE);
+        startActivityForResult(new Intent(getActivity(), ProfileSettingsActivity.class).putExtras(bundle), RequestID.REQ_PROFILE_UPDATE);
+    }
+
     private void showSlotSelectionDialogFragment() {
+        addSlotTv.setClickable(false);
+
         List<String> unavailableTimeSlots = new ArrayList<>();
 
         if (UserType.isUserPatient()) {
@@ -463,10 +531,14 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
             unavailableTimeSlots.addAll(patientSchedulesTimeList);
         }
 
+        if (createScheduleViewModel.getTimeSlots().getValue() != null) {
+            unavailableTimeSlots.addAll(createScheduleViewModel.getTimeSlots().getValue());
+        }
         createScheduleViewModel.getUnAvaliableTimeSlots().clear();
         createScheduleViewModel.setUnAvaliableTimeSlots(unavailableTimeSlots);
 
         SlotSelectionDialogFragment slotSelectionDialogFragment = new SlotSelectionDialogFragment();
+        slotSelectionDialogFragment.setTargetFragment(this, RequestID.REQ_SLOT_SELECTION);
         slotSelectionDialogFragment.show(getActivity().getSupportFragmentManager(), slotSelectionDialogFragment.getClass().getSimpleName());
     }
 
@@ -479,6 +551,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                         dialog.dismiss();
                     }
                 }, null);
+        addSlotTv.setEnabled(true);
     }
 
     private void showAssociationSelection(int requestCode, String searchType, String user_guid) {
@@ -507,6 +580,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                         createScheduleViewModel.setPatientCommonModel(selectedPatientDetailModel);
                         patientSchedulesTimeList.clear();
                         createScheduleViewModel.getTimeSlots().setValue(new ArrayList<>());
+                        enableOrDisableBtn();
                     }
                     break;
                 case RequestID.REQ_SELECT_ASSOCIATION_DOCTOR:
@@ -515,11 +589,22 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                         doctorSchedulesTimeList.clear();
                         createScheduleViewModel.setDoctorCommonModel(doctorDetailCommonModel);
                         createScheduleViewModel.getTimeSlots().setValue(new ArrayList<>());
+                        enableOrDisableBtn();
                     }
+                    break;
+                case RequestID.REQ_PROFILE_UPDATE:
+                    whoAmIApiViewModel.checkWhoAmI();
+                    break;
+                case RequestID.REQ_SLOT_SELECTION:
+                    addSlotTv.setClickable(true);
                     break;
             }
         }
-
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        changeTitleInterface.onTitleChange(getString(R.string.new_appointment));
+    }
 }
