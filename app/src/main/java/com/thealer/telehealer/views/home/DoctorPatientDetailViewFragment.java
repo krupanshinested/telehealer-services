@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -16,10 +17,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,6 +39,7 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
+import com.thealer.telehealer.views.home.schedules.CreateNewScheduleActivity;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 
@@ -68,6 +72,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private List<String> titleList;
     private ViewPagerAdapter viewPagerAdapter;
     private FloatingActionButton addFab;
+    private AppBarLayout userDetailAppbarLayout;
+    private TextView nextTv;
+    private LinearLayout bottomView;
+    private BottomNavigationView userDetailBnv;
 
     @Override
     public void onAttach(Context context) {
@@ -111,9 +119,24 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         actionBtn = (Button) view.findViewById(R.id.action_btn);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
+        userDetailAppbarLayout = (AppBarLayout) view.findViewById(R.id.user_detail_appbar_layout);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+        bottomView = (LinearLayout) view.findViewById(R.id.bottom_view);
+        userDetailBnv = (BottomNavigationView) view.findViewById(R.id.user_detail_bnv);
 
+        userDetailBnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.menu_schedules:
+                        startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+                        break;
+                }
+                return true;
+            }
+        });
 
-        if (UserType.isUserAssistant()){
+        if (UserType.isUserAssistant()) {
             addFab.show();
             addFab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -121,6 +144,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     startActivity(new Intent(getActivity(), InviteUserActivity.class).putExtras(getArguments()));
                 }
             });
+
+            userDetailBnv.setVisibility(View.GONE);
+        }else {
+            userDetailBnv.setVisibility(View.VISIBLE);
         }
 
         appbarLayout.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {
@@ -178,6 +205,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
                         userDetailTab.setVisibility(View.GONE);
                         actionBtn.setVisibility(View.VISIBLE);
+                        userDetailBnv.setVisibility(View.GONE);
 
                         CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
 

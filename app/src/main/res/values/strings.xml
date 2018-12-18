@@ -549,4 +549,32 @@
     <string name="transcript_file">Transcript File</string>
 
 
+    <string name="schedules">Schedules</string>
+    <string name="appointment_time">Appointment Time</string>
+    <string name="patient_detail">Patient Details</string>
+    <string name="cancel_appointment">Cancel Appointment</string>
+    <string name="appointment_detail">Appointment Detail</string>
+    <string name="cancel_schedule">Cancel Schedule</string>
+    <string name="cancel_schedule_conformation">Do you really want to cancel this schedule?</string>
+    <string name="schedule_deleted">Schedule deleted</string>
+    <string name="new_appointment">New Appointment</string>
+    <string name="Continue">Continue</string>
+    <string name="in_the_case_of_emergency_please_cancel_this_request_and_call_911">In the case of emergency, please cancel this request and call 911</string>
+    <string name="choose_doctor">Choose Doctor</string>
+    <string name="choose_patient">Choose Patient</string>
+    <string name="slot_info">Try and select more than one slot. Remember, the time slot represents a window when the doctor can reach you.</string>
+    <string name="add_slots">Add Slots</string>
+    <string name="reason_for_visit">Reason for visit</string>
+    <string name="demographic_info">Demographic Info</string>
+    <string name="InsuranceInfo">Insurance info</string>
+    <string name="FrontSide">Front Side</string>
+    <string name="BackSide">Back Side</string>
+    <string name="request_appointment">Request Appointment</string>
+    <string name="patient_history">Patient History</string>
+    <string name="post_your_comments">Post your comments</string>
+    <string name="Click_here_to_select_doctor">Click here to select doctor</string>
+    <string name="please_select_a_doctor">Please select a doctor</string>
+    <string name="select_patient_to_add_slot">Select a patient to add slots</string>
+    <string name="select_doctor_to_add_slot">Select a doctor to add slots</string>
+    <string name="posting_your_appointment">Posting your appointment...</string>
 </resources>

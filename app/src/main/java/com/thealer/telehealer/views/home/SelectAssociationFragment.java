@@ -28,6 +28,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -85,6 +86,20 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                     associationRv.hideProgressBar();
 
                     associationListAdapter.setCommonUserApiResponseModelList(associationApiResponseModel.getResult(), page);
+                }
+            }
+        });
+
+        associationApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                if (baseApiResponseModels != null) {
+                    ArrayList<CommonUserApiResponseModel> commonUserApiResponseModelArrayList = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
+                    associationRv.setTotalCount(commonUserApiResponseModelArrayList.size());
+                    associationRv.setScrollable(true);
+                    associationRv.hideProgressBar();
+                    List<CommonUserApiResponseModel> responseModelList = new ArrayList<>(commonUserApiResponseModelArrayList);
+                    associationListAdapter.setCommonUserApiResponseModelList(responseModelList, page);
                 }
             }
         });
@@ -192,6 +207,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             }
 
             selectionType = getArguments().getString(ArgumentKeys.SEARCH_TYPE);
+            Log.e("aswin", "initView: "+ selectionType);
 
             if (selectionType != null) {
 
@@ -211,6 +227,12 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                     case ArgumentKeys.SEARCH_ASSOCIATION:
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_PATIENT_SEARCH);
                         changeTitleInterface.onTitleChange(getString(R.string.patient_name));
+                        getAssociationList(true);
+                        break;
+                    case ArgumentKeys.SEARCH_ASSOCIATION_DOCTOR:
+                        changeTitleInterface.onTitleChange(getString(R.string.specialist));
+                        associationRv.setEmptyState(EmptyViewConstants.EMPTY_SPECIALIST);
+                        searchEt.setHint(getString(R.string.search_doctors));
                         getAssociationList(true);
                         break;
                 }
@@ -234,7 +256,11 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
     }
 
     private void getAssociationList(boolean isShowProgress) {
-        associationApiViewModel.getAssociationList(page, isShowProgress);
+        String doctorGuid = null;
+        if (getArguments() != null && getArguments().getString(ArgumentKeys.DOCTOR_GUID) != null) {
+            doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+        }
+        associationApiViewModel.getAssociationList(isShowProgress, doctorGuid);
     }
 
     @Override

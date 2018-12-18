@@ -59,13 +59,16 @@ public class AssociationListAdapter extends RecyclerView.Adapter<AssociationList
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Bundle bundle = new Bundle();
 
-        if (selectionType.equals(ArgumentKeys.SEARCH_ASSOCIATION)) {
+        if (selectionType.equals(ArgumentKeys.SEARCH_ASSOCIATION) || selectionType.equals(ArgumentKeys.SEARCH_ASSOCIATION_DOCTOR)) {
 
             viewHolder.titleTv.setText(commonUserApiResponseModelList.get(i).getUserDisplay_name());
-            viewHolder.subTitleTv.setText(commonUserApiResponseModelList.get(i).getDob());
+            if (selectionType.equals(ArgumentKeys.SEARCH_ASSOCIATION)){
+                viewHolder.subTitleTv.setText(commonUserApiResponseModelList.get(i).getDob());
+            }else {
+                viewHolder.subTitleTv.setText(commonUserApiResponseModelList.get(i).getDoctorSpecialist());
+            }
             Utils.setImageWithGlide(context, viewHolder.avatarCiv, commonUserApiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
             bundle.putSerializable(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL, commonUserApiResponseModelList.get(i));
-
         }
 
         if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR) || selectionType.equals(ArgumentKeys.SEARCH_COPY_TO)) {

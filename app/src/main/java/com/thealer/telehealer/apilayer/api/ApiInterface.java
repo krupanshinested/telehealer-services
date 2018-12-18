@@ -34,6 +34,8 @@ import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponse
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.requestotp.OtpVerificationResponseModel;
+import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
+import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
@@ -163,6 +165,9 @@ public interface ApiInterface {
     @GET("api/associations")
     Observable<AssociationApiResponseModel> getAssociations(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
+    @GET("api/associations")
+    Observable<ArrayList<CommonUserApiResponseModel>> getAssociations(@Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String doctorGuid);
+
     @GET("api/correspondence-history")
     Observable<RecentsApiResponseModel> getUserCorrespondentHistory(@Query(USER_GUID) String user_guid, @Query(CALLS) boolean calls, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
@@ -230,6 +235,9 @@ public interface ApiInterface {
     @PUT("api/users/profile")
     Observable<BaseApiResponseModel> updateAppointmentLength(@Body RequestBody body);
 
+    @PUT("api/users/profile")
+    Observable<BaseApiResponseModel> updateUserDetail(@Body WhoAmIApiResponseModel whoAmIApiResponseModel);
+
     @POST("api/vitals")
     Observable<BaseApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel);
 
@@ -287,6 +295,19 @@ public interface ApiInterface {
 
     @GET("api/referrals/x-rays")
     Observable<GetRadiologyResponseModel> getUserRadiologyList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid);
+
+    @GET("api/schedule")
+    Observable<SchedulesApiResponseModel> getSchedules(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuidList);
+
+    @POST("api/requests")
+    Observable<BaseApiResponseModel> createSchedules(@Query(DOCTOR_GUID) String doctorGuidList, @Body SchedulesCreateRequestModel createRequestModel);
+
+    @GET("api/schedule")
+    Observable<ArrayList<SchedulesApiResponseModel.ResultBean>> getUserUpcomingSchedules(@Query(USER_GUID) String user_guid, @Query("upcoming") boolean upcoming,  @Query(DOCTOR_GUID) String doctorGuid);
+
+    @DELETE("api/schedule")
+    Observable<BaseApiResponseModel> deleteSchedule(@Query("schedule_id") int schedule_id);
+
 
     @POST("api/setup/invite")
     Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);
