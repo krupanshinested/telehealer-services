@@ -321,8 +321,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     }
 
     public void handleError(Throwable e) {
-        isRefreshToken = false;
-        isQuickLoginReceiverEnabled = false;
         Log.e(TAG, "onError: " + e.getMessage());
         try {
             HttpException httpException = (HttpException) e;
@@ -369,6 +367,9 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             isLoadingLiveData.setValue(false);
             errorModelLiveData.setValue(new ErrorModel(-1, "Oops something went wrong", e1.getMessage()));
         }
+
+        isRefreshToken = false;
+        isQuickLoginReceiverEnabled = false;
 
     }
 

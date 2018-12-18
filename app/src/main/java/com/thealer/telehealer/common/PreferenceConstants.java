@@ -32,4 +32,5 @@ public class PreferenceConstants {
     public static final String USER_NAME = "user_name";
     public static final String IS_USER_ACTIVATED = "is_user_activated";
     public static final String IS_USER_VALIDATED = "is_user_validated";
+    public static final String WHO_AM_I_RESPONSE = "whoAmIResponse";
 }
