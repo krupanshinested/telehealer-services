@@ -2,6 +2,7 @@ package com.thealer.telehealer.apilayer.api;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileResponseModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionRequestModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
@@ -62,6 +63,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 /**
  * Created by Aswin on 08,October,2018
@@ -90,6 +92,8 @@ public interface ApiInterface {
     String DOCTOR_GUID = "doctor_guid";
     String REFRESH_TOKEN = "refresh_token";
     String CHANNEL = "channel";
+    String SESSION_ID = "sessionId";
+    String CALL_QUALITY = "call_quality";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -320,9 +324,29 @@ public interface ApiInterface {
 
     @POST("api/pubnub/grant_access")
     Observable<BaseApiResponseModel> grantPubnubAccess(@Query(CHANNEL) String channel);
+
     @GET("api/download")
     Observable<DownloadTranscriptResponseModel> downloadTranscript(@Query("path") String path, @Query("decrypt") boolean isDecrypt);
 
     @GET("api/sources/{id}")
     Observable<BaseApiResponseModel> getExperimentalFeature(@Path(ID) String id);
+
+    @GET("api/token")
+    Observable<TokenFetchModel> getOpenTokToken(@Query(SESSION_ID) String sessionId);
+
+    @GET("api/users/{id}")
+    Observable<CommonUserApiResponseModel> getUserDetail(@Path(ID) String id);
+
+    @PUT("api/call/{id}")
+    Observable<BaseApiResponseModel> updateCallStatus(@Path(ID) String sessionId, @QueryMap Map<String, String> param);
+
+    @GET("api/archive/start")
+    Observable<CommonUserApiResponseModel> startArchive(@Query(SESSION_ID) String sessionId);
+
+    @GET("api/session")
+    Observable<TokenFetchModel> getSessionId(@Query(CALL_QUALITY) String call_quality,@Query(DOCTOR_GUID) String doctor_guid);
+
+    @POST("api/call")
+    Observable<BaseApiResponseModel> postaVOIPCall(@Query(DOCTOR_GUID) String doctor_guid, @Body Map<String, String> param);
+
 }

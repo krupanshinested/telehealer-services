@@ -1,0 +1,167 @@
+package com.thealer.telehealer.apilayer.models.OpenTok;
+
+import android.app.Application;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
+import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
+import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.ResultFetcher;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.PubNubResult;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
+import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
+import com.thealer.telehealer.views.base.BaseViewInterface;
+
+import java.util.HashMap;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.application;
+
+/**
+ * Created by rsekar on 12/27/18.
+ */
+
+public class OpenTokViewModel extends BaseApiViewModel {
+
+    public OpenTokViewModel(@NonNull Application application) {
+        super(application);
+    }
+
+    public void getTokenForSession(String sessionId,OpenTokTokenFetcher fetcher) {
+
+        if (BaseApiViewModel.isAuthExpired()) {
+
+            getAuthApiService().refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN))
+                    .compose(applySchedulers())
+                    .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                        @Override
+                        public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+
+                            SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
+                            if (signinApiResponseModel.isSuccess()) {
+
+                                //Setting the temp token
+                                TokBox.shared.setTempToken(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+                                appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
+
+                                getToken(sessionId,fetcher);
+                            }
+
+
+                        }
+                    });
+        } else {
+            getToken(sessionId,fetcher);
+        }
+    }
+
+    private void getToken(String sessionId,OpenTokTokenFetcher fetcher) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getOpenTokToken(sessionId)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<TokenFetchModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(TokenFetchModel tokenFetchModel) {
+
+                                    fetcher.didFetched(tokenFetchModel);
+
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void updateCallStatus(String sessionId, HashMap<String, String> params) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().updateCallStatus(sessionId,params)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void startArchieve(String sessionId) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().startArchive(sessionId)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void postaVoipCall(@Nullable  String doctorGuid,String toGuid,String sessionId,
+                              @Nullable String scheduleId,String callType,String uuid,ResultFetcher resultFetcher) {
+
+        HashMap<String,String> result = new HashMap<>();
+        result.put("user_guid",toGuid);
+        result.put("order_id",sessionId);
+        if (scheduleId != null) {
+            result.put("schedule_id",scheduleId);
+        }
+        result.put("from",UserDetailPreferenceManager.getUser_guid());
+        result.put("type",callType);
+
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().postaVOIPCall(doctorGuid,result)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+
+
+                                    PushPayLoad pushPayLoad = PubNubNotificationPayload.getCallInvitePayload(
+                                            UserDetailPreferenceManager.getUserDisplayName()
+                                            ,UserDetailPreferenceManager.getUser_guid(), toGuid,
+                                            uuid,callType,sessionId,doctorGuid);
+                                    PubnubUtil.shared.publishVoipMessage(pushPayLoad, new PubNubResult() {
+                                        @Override
+                                        public void didSend(Boolean isSuccess) {
+
+                                            if (isSuccess) {
+                                                resultFetcher.didFetched(baseApiResponseModel);
+                                            }
+
+                                        }
+                                    });
+
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+}

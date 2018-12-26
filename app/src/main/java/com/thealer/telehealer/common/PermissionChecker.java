@@ -65,6 +65,10 @@ public class PermissionChecker {
                 if (isLocationPermissionGranted() && isWriteStoragePermissionGranted())  {
                     return true;
                 }
+            case PermissionConstants.PERMISSION_MICROPHONE:
+                if (isMicPermissionGranted()) {
+                    return  true;
+                }
         }
 
         return false;

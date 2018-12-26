@@ -13,4 +13,15 @@
         <attr name="background_drawable" format="reference"/>
         <attr name="app_gradient" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="RoundCornerConstraintLayout">
+        <attr name="lay_stroke_color" format="color" />
+        <attr name="lay_background_color" format="color" />
+        <attr name="lay_top_left_corner" format="dimension" />
+        <attr name="lay_top_right_corner" format="dimension" />
+        <attr name="lay_bottom_left_corner" format="dimension" />
+        <attr name="lay_bottom_right_corner" format="dimension" />
+        <attr name="lay_corner_radius" format="dimension" />
+    </declare-styleable>
+
 </resources>

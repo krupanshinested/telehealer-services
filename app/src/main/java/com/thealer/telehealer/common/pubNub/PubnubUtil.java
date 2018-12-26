@@ -1,7 +1,9 @@
-package com.thealer.telehealer.common.firebase;
+package com.thealer.telehealer.common.pubNub;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.callbacks.PNCallback;
@@ -15,7 +17,7 @@ import com.pubnub.api.models.consumer.push.PNPushAddChannelResult;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.Pubnub.PubNubViewModel;
 import com.thealer.telehealer.common.Config;
-import com.thealer.telehealer.common.firebase.models.PushPayLoad;
+import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 
 import java.util.Collections;
 
@@ -115,7 +117,7 @@ public class PubnubUtil {
                 });
     }
 
-    public void publishPushMessage(PushPayLoad pushPayLoad) {
+    public void publishPushMessage(PushPayLoad pushPayLoad,@Nullable PubNubResult resultPNCallback) {
         pubnub.publish()
                 .message(pushPayLoad)
                 .channel(pushPayLoad.getPn_apns().getTo())
@@ -126,11 +128,18 @@ public class PubnubUtil {
                             System.out.println("pub timetoken: " + result.getTimetoken());
                         }
                         System.out.println("pub status code: " + status.getStatusCode());
+
+                        if (resultPNCallback != null) {
+                            resultPNCallback.didSend(!status.isError());
+                        }
                     }
                 });
     }
 
-    public void publishVoipMessage(PushPayLoad pushPayLoad) {
+    public void publishVoipMessage(PushPayLoad pushPayLoad,@Nullable PubNubResult resultPNCallback) {
+        Gson gson = new Gson();
+        Log.d("PubnubUtil", gson.toJson(pushPayLoad));
+
        voipPubnub.publish()
                 .message(pushPayLoad)
                 .channel(pushPayLoad.getPn_apns().getTo())
@@ -141,6 +150,10 @@ public class PubnubUtil {
                             System.out.println("pub timetoken: " + result.getTimetoken());
                         }
                         System.out.println("pub status code: " + status.getStatusCode());
+
+                        if (resultPNCallback != null) {
+                            resultPNCallback.didSend(!status.isError());
+                        }
                     }
                 });
     }

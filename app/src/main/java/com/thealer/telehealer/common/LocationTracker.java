@@ -136,12 +136,12 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
                 Log.e("aswin", "onSuccess: " + location);
                 if (locationTrackerInterface != null) {
                     if (location == null) {
-                        locationTrackerInterface.onLocationUpdated(null);
+                        locationTrackerInterface.onLocationUpdated(null,null);
                     } else {
                         Geocoder geocoder = new Geocoder(context);
                         try {
                             List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                            locationTrackerInterface.onLocationUpdated(addressList.get(0).getLocality());
+                            locationTrackerInterface.onLocationUpdated(addressList.get(0).getLocality(),addressList.get(0).getSubAdminArea());
                             Log.e("aswin", "onSuccess: " + addressList.get(0).getLocality());
                         } catch (IOException e) {
                             e.printStackTrace();

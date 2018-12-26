@@ -34,7 +34,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.firebase.TelehealerFirebaseMessagingService;
+import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.home.HomeActivity;

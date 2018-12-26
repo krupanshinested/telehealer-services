@@ -209,4 +209,27 @@ public class BaseActivity extends AppCompatActivity {
     public boolean isSplitModeNeeded() {
         return isDeviceXLarge() && isModeLandscape();
     }
+
+    public void showAlertDialog(String title,String message,
+                                @Nullable String positiveTitle,
+                                @Nullable String negativeTitle,
+                                @Nullable DialogInterface.OnClickListener positiveListener,
+                                @Nullable DialogInterface.OnClickListener negativeListener) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(BaseActivity.this);
+
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setCancelable(false);
+        if (positiveTitle != null) {
+            alertDialog.setPositiveButton(positiveTitle, positiveListener);
+        }
+
+        if (negativeTitle != null) {
+            alertDialog.setNegativeButton(negativeTitle, negativeListener);
+        }
+        alertDialog.create();
+        alertDialog.show();
+    }
+
 }
+
