@@ -1,4 +1,4 @@
-package com.thealer.telehealer.common.firebase.models;
+package com.thealer.telehealer.common.pubNub.models;
 
 import android.support.annotation.Nullable;
 

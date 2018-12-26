@@ -176,8 +176,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     baseViewInterface.onStatus(true);
                 } else {
                     JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
-                    Date date = new Date();
-                    jwt.isExpired(60);
 
                     /**
                      * if auth token expired
@@ -195,7 +193,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                      *          proceed api call
                      */
 
-                    if (date.compareTo(jwt.getExpiresAt()) >= 0) {
+                    if (isAuthExpired()) {
                         baseViewInterfaceList.add(baseViewInterface);
                         if (!isRefreshToken) {
                             isRefreshToken = true;
@@ -218,6 +216,12 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
         new Handler().post(runnable);
 
+    }
+
+    public static Boolean isAuthExpired() {
+        JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+        Date date = new Date();
+        return date.compareTo(jwt.getExpiresAt()) >= 0;
     }
 
     private void makeRefreshTokenApiCall() {
@@ -331,6 +335,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
             Log.e(TAG, "onError: " + new Gson().toJson(httpException));
             Log.e(TAG, "onError: " + response);
+
+            errorModel.setStatusCode(httpException.code());
 
             switch (httpException.code()) {
                 case 400:

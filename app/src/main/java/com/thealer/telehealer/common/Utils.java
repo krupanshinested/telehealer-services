@@ -9,12 +9,15 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.KeyListener;
+import android.util.Base64;
+import android.util.Base64InputStream;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
@@ -25,9 +28,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.Headers;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -481,5 +489,16 @@ public class Utils {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static String serialize(Object object) throws IOException {
+        Gson gson = new Gson();
+        String json = gson.toJson(object);
+        return Base64.encodeToString(json.getBytes("utf-8"),Base64.DEFAULT);
+    }
+
+    public static <T> T deserialize(String string, Type type) throws IOException {
+        byte[] valueDecoded = Base64.decode(string.getBytes("utf-8"),Base64.DEFAULT);
+        return new Gson().fromJson(new String(valueDecoded), type);
     }
 }

@@ -5,7 +5,7 @@ package com.thealer.telehealer.apilayer.baseapimodel;
  */
 public class ErrorModel {
 
-
+    private int statusCode;
     private int code;
     private boolean success;
     private String message;
@@ -39,5 +39,13 @@ public class ErrorModel {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
     }
 }

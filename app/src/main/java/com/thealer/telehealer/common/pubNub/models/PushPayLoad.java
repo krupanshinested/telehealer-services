@@ -1,4 +1,4 @@
-package com.thealer.telehealer.common.firebase.models;
+package com.thealer.telehealer.common.pubNub.models;
 
 /**
  * Created by rsekar on 12/26/18.
@@ -12,7 +12,6 @@ public class PushPayLoad {
     public APNSPayload getPn_apns() {
         return pn_apns;
     }
-
     public GCMPayload getPn_gcm() {
         return pn_gcm;
     }

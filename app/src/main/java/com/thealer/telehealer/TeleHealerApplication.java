@@ -1,26 +1,22 @@
 package com.thealer.telehealer;
 
-import android.app.Activity;
 import android.app.Application;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.arch.lifecycle.ProcessLifecycleOwner;
-import android.os.Bundle;
+import android.content.Intent;
 import android.util.Log;
 
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Logger;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.thealer.telehealer.common.AppPreference;
-import com.thealer.telehealer.common.firebase.TelehealerFirebaseMessagingService;
-import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
+import com.thealer.telehealer.views.call.CallActivity;
 
 
 /**
@@ -56,6 +52,19 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onMoveToForeground() {
         // app moved to foreground
+
+        if (TokBox.shared.isActiveCallPreset()) {
+            if (!TokBox.shared.isActivityPresent()) {
+                Intent intent = new Intent(this, CallActivity.class);
+                startActivity(intent);
+                Log.d("TeleHealerApplication","Active call present no activity present");
+            } else {
+                Log.d("TeleHealerApplication","Active and activity present");
+            }
+        } else {
+            Log.d("TeleHealerApplication","no active call present");
+        }
+
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

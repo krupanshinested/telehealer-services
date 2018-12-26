@@ -1,25 +1,21 @@
-package com.thealer.telehealer.common.firebase;
+package com.thealer.telehealer.common.pubNub;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
-import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
+import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
-import com.thealer.telehealer.common.firebase.models.APNSPayload;
-import com.thealer.telehealer.common.firebase.models.GCMPayload;
+import com.thealer.telehealer.common.pubNub.models.APNSPayload;
+import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 
 /**
  * Created by rsekar on 12/25/18.
@@ -46,7 +42,6 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
     }
 
     @Override
@@ -71,12 +66,19 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
     private void extractMessage(APNSPayload data) {
         switch (data.getType()) {
             case APNSPayload.audio:
-                break;
             case APNSPayload.video:
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayIncomingCall(data);
+                    }
+                });
                 break;
             case APNSPayload.endCall:
+                TokBox.shared.endCall(data.getCall_rejection());
                 break;
             case APNSPayload.busyInAnotherCall:
+                TokBox.shared.endCall(OpenTokConstants.busyInAnotherLine);
                 break;
             case APNSPayload.text:
                 break;
@@ -98,6 +100,41 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 break;
         }
     }
+
+    // Display the incoming call to the user
+    private void dismissCall(APNSPayload data) {
+        String currentUUID = TokBox.shared.getCurrentUUID();
+
+        if (currentUUID != null && !currentUUID.equals(data.getUuid())) {
+            return;
+        }
+
+        if (TokBox.shared.getConnectingDate() == null && TokBox.shared.getConnectedDate() == null) {
+            //TODO : need to add local tray missed call notification
+            //AppDelegate.showMissedCallNotifiation(userInfo: call.userinfo ?? [:],isVideo : TokBoxSession.shared.type == CallType.video)
+        }
+
+        if (data.getCall_rejection() != null) {
+            TokBox.shared.endCall(data.getCall_rejection());
+        } else {
+            TokBox.shared.endCall(OpenTokConstants.other);
+        }
+
+    }
+
+    private void displayIncomingCall(APNSPayload data) {
+        if (!TokBox.shared.isActiveCallPreset()) {
+             TokBox.shared.didRecieveIncoming(data);
+        } else {
+            PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForBusyInAnotherCall(UserDetailPreferenceManager.getUser_guid(),data.getFrom(),data.getUuid());
+            PubnubUtil.shared.publishVoipMessage(pushPayLoad,null);
+
+            //TODO local notification
+            /*let notification = prepareUserInfoForMissedCall(userInfo: userinfo,isVideo: hasVideo)
+            self.displayLoaclNotification(notification: notification)*/
+        }
+    }
+
 }
 
 

@@ -577,4 +577,35 @@
     <string name="select_patient_to_add_slot">Select a patient to add slots</string>
     <string name="select_doctor_to_add_slot">Select a doctor to add slots</string>
     <string name="posting_your_appointment">Posting your appointment...</string>
+    <string name="VITALS">VITALS</string>
+    <string name="ended">Ended</string>
+
+    <string name="fallback_message">Temporarily falling back to audio, since your connection is poor</string>
+    <string name="fallback_message_with_user">Temporarily falling back to audio, since %1$s\'s connection is poor.</string>
+    <string name="requested_video_call">%1$s requested for video call,Do you want to switch?</string>
+    <string name="other_person">Other Person</string>
+    <string name="video_call_request">Video Call Request</string>
+    <string name="requested_video_no_camera">%1$s requested for video call,since you didn\'t provide us the camera permission we denied that request.</string>
+    <string name="request_rejected">Request Rejected</string>
+    <string name="video_call_request_confirmation">Do you really want to switch this to an video call?</string>
+    <string name="video_switch_request_declined">Video switch request declined</string>
+    <string name="mute_audio_video">%1$s muted audio and disabled video</string>
+    <string name="mute_audio">%1$s muted audio</string>
+    <string name="disabled_video">%1$s disabled video</string>
+    <string name="telehealer_video">Telehealer Video....</string>
+    <string name="telehealer_audio">Telehealer Audio....</string>
+    <string name="skip">Skip</string>
+    <string name="proceed">PROCEED</string>
+    <string name="trial_period_expired_doc_sec_1">Thank you for using Telehealer! \n\nUnfortunately, your free trial period has now ended. Please provide a payment method to continue using the platform. \n\nVisit </string>
+    <string name="trial_period_expired_doc_sec_2">for details around pricing</string>
+    <string name="trial_period_expired_ma_sec_1">Thank you for using Telehealer! \n\nUnfortunately, the free trial period has now ended. Please request %1$s to add a payment method to continue using the platform.</string>
+    <string name="payment_information_required">Payment Information Required</string>
+    <string name="call">Call</string>
+    <string name="ringing">Ringing...</string>
+    <string name="choose_call_type">Choose Call type</string>
+    <string name="audio_call">Audio Call</string>
+    <string name="video_call">Video Call</string>
+    <string name="calling_from_outside">Calling from outside licensed state…</string>
+    <string name="payment_dues">By accepting this call, you consent to receiving care remotely via a tele medicine visit and to pay any remaining dues of this visit after insurance payments</string>
+
 </resources>
