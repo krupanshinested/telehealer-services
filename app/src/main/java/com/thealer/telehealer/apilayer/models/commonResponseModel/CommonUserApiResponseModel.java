@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.commonResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.apilayer.models.createuser.VisitAddressBean;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 
 import java.io.Serializable;
@@ -137,6 +138,28 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
             return getUser_detail().getData().getNpi();
         } else {
             return "";
+        }
+    }
+
+    public String getDisplayName() {
+        switch (role) {
+            case Constants.ROLE_DOCTOR:
+                return getDoctorDisplayName();
+            default:
+                return getUserDisplay_name();
+        }
+    }
+
+    public String getDisplayInfo() {
+        switch (role) {
+            case Constants.ROLE_DOCTOR:
+                return getDoctorSpecialist();
+            case Constants.ROLE_PATIENT:
+                return getDob();
+            case Constants.ROLE_ASSISTANT:
+                return getUser_detail().getData().getTitle().toUpperCase();
+            default:
+                return "";
         }
     }
 
