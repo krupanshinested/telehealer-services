@@ -331,7 +331,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     }
 
     @Override
-    public void onLocationUpdated(String city) {
+    public void onLocationUpdated(String city,String state) {
         if (city == null) {
             getLastKnownLocation();
         } else {

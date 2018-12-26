@@ -73,4 +73,22 @@ public class ArgumentKeys {
     public static final String CASH_SELECTED = "CASH_SELECTED";
     public static final String INSURANCE_FRONT = "INSURANCE_FRONT";
     public static final String INSURANCE_BACK = "INSURANCE_BACK";
+
+    public static final String IS_OUTGOING_CALL = "IS_OUTGOING_CALL";
+    public static final String CALL_TIMER_VALUE = "CALL_TIMER_VALUE";
+
+
+    public static final String TITLE = "TITLE";
+    public static final String DESCRIPTION = "DESCRIPTION";
+    public static final String IS_ATTRIBUTED_DESCRIPTION = "IS_ATTRIBUTED_DESCRIPTION";
+    public static final String RESOURCE_ICON = "RESOURCE_ICON";
+    public static final String IS_SKIP_NEEDED = "IS_SKIP_NEEDED";
+    public static final String OK_BUTTON_TITLE = "OK_BUTTON_TITLE";
+
+    public static final String IS_SKIPPED = "IS_SKIPPED";
+    public static final String CALL_INITIATE_MODEL = "CALL_INITIATE_MODEL";
+    public static final String CALL_QUALITY = "CALL_QUALITY";
+    public static final String IS_DISCLAIMER_DISMISSED = "IS_DISCLAIMER_DISMISSED";
+
+
 }

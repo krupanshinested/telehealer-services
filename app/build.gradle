@@ -121,4 +121,10 @@ dependencies {
 
     //ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.9.3'
+
+    //Open Tok
+    implementation 'com.opentok.android:opentok-android-sdk:2.15.2'
+
+    //Ripple effect
+    implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
 }
