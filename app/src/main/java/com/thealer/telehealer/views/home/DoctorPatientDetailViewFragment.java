@@ -29,12 +29,17 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
+import com.thealer.telehealer.views.base.CallPlacingFragment;
+import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
@@ -49,7 +54,7 @@ import java.util.List;
 /**
  * Created by Aswin on 14,November,2018
  */
-public class DoctorPatientDetailViewFragment extends BaseFragment {
+public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
 
     private AppBarLayout appbarLayout;
     private CollapsingToolbarLayout collapsingToolbar;
@@ -130,6 +135,30 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 switch (menuItem.getItemId()){
                     case R.id.menu_schedules:
                         startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+                        break;
+                    case R.id.menu_call:
+                        CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+                        ArrayList<String> callTypes = new ArrayList<>();
+                        callTypes.add(getString(R.string.audio_call));
+                        callTypes.add(getString(R.string.video_call));
+                        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type),callTypes, new PickerListener() {
+                            @Override
+                            public void didSelectedItem(int position) {
+
+                                CallInitiateModel callInitiateModel = new CallInitiateModel(commonUserApiResponseModel.getUser_guid(),commonUserApiResponseModel,null,null,null,position == 0 ? OpenTokConstants.audio : OpenTokConstants.video);
+                                openCallIfPossible(callInitiateModel);
+
+                            }
+
+                            @Override
+                            public void didCancelled() {
+
+                            }
+                        });
+                        itemPickerDialog.setCancelable(false);
+                        itemPickerDialog.show();
+
                         break;
                 }
                 return true;

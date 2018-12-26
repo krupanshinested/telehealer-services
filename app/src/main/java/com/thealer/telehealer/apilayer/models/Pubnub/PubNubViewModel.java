@@ -5,13 +5,9 @@ import android.support.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
-import com.thealer.telehealer.common.firebase.PubnubUtil;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
-
-import java.util.ArrayList;
 
 /**
  * Created by rsekar on 12/26/18.
