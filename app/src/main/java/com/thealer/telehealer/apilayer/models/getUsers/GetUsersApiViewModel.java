@@ -2,12 +2,14 @@ package com.thealer.telehealer.apilayer.models.getUsers;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserDetailFetcher;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
@@ -52,4 +54,30 @@ public class GetUsersApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+
+    public void getUserDetail(String userGuid, @Nullable UserDetailFetcher userDetailFetcher) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getUserDetail(userGuid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<CommonUserApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(CommonUserApiResponseModel commonUserApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(commonUserApiResponseModel);
+
+                                    if (userDetailFetcher != null) {
+                                        userDetailFetcher.didFetchedDetails(commonUserApiResponseModel);
+                                    }
+
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+
 }
