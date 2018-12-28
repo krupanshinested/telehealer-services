@@ -20,88 +20,84 @@ import android.widget.ProgressBar;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiViewModel;
+import com.thealer.telehealer.apilayer.models.getDoctorsModel.TypeAHeadResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Aswin on 23,October,2018
  */
 public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentTransactionInterface {
-
-    private OnActionCompleteInterface onActionCompleteInterface;
-    private OnViewChangeInterface onViewChangeInterface;
     private EditText searchEt;
     private ImageView clearIv;
     private RecyclerView searchListRv;
-    private GetDoctorsApiViewModel getDoctorsApiViewModel;
-    private SearchListAdapter searchListAdapter;
-    private int page = 0;
-    private int nextPage;
     private ProgressBar progressbar;
-    private boolean isMakeApiRequestEnabled = true;
+
+    private OnActionCompleteInterface onActionCompleteInterface;
+    private OnViewChangeInterface onViewChangeInterface;
+    private GetDoctorsApiViewModel getDoctorsApiViewModel;
+    private TypeAHeadResponseModel typeAHeadResponseModel;
+
+    private SearchListAdapter searchListAdapter;
+    private int page = 1;
+    private boolean isApiRequested = false, isSearch = true;
+    private List<String> doctorsNameList = new ArrayList<>();
+    private LinearLayoutManager linearLayoutManager;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onViewChangeInterface = (OnViewChangeInterface) getActivity();
+        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
+        getDoctorsApiViewModel = ViewModelProviders.of(this).get(GetDoctorsApiViewModel.class);
+        onViewChangeInterface.attachObserver(getDoctorsApiViewModel);
+        getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                isApiRequested = false;
+                progressbar.setVisibility(View.GONE);
+                if (baseApiResponseModel != null) {
+                    typeAHeadResponseModel = (TypeAHeadResponseModel) baseApiResponseModel;
+
+                    if (page == 1) {
+                        doctorsNameList.clear();
+                        doctorsNameList.add(" ");
+                    }
+                    doctorsNameList.addAll(typeAHeadResponseModel.getData());
+                    setSearchList();
+                }
+            }
+        });
+
+        getDoctorsApiViewModel.getErrorModelLiveData().observe(this,
+                new Observer<ErrorModel>() {
+                    @Override
+                    public void onChanged(@Nullable ErrorModel errorModel) {
+                        isApiRequested = false;
+                        progressbar.setVisibility(View.GONE);
+                    }
+                });
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_doctor_search_name, container, false);
+
+        onViewChangeInterface.hideOrShowNext(true);
+        onViewChangeInterface.enableNext(false);
+
         initView(view);
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getDoctorsApiViewModel = ViewModelProviders.of(getActivity()).get(GetDoctorsApiViewModel.class);
-        onViewChangeInterface.attachObserver(getDoctorsApiViewModel);
-
-        getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    GetDoctorsApiResponseModel getDoctorsApiResponseModel = (GetDoctorsApiResponseModel) baseApiResponseModel;
-                    if (getDoctorsApiResponseModel.getData().size() > 0) {
-
-                        if (getDoctorsApiResponseModel.getCurrent_page() == 1) {
-                            getDoctorsApiViewModel.getDoctorsApiResponseModelMutableLiveData.setValue(getDoctorsApiResponseModel);
-                        } else {
-                            if (getDoctorsApiResponseModel.getCurrent_page() > getDoctorsApiViewModel.getDoctorsApiResponseModelMutableLiveData.getValue().getCurrent_page()) {
-                                getDoctorsApiViewModel.getDoctorsApiResponseModelMutableLiveData.getValue().getData().addAll(getDoctorsApiResponseModel.getData());
-                                getDoctorsApiViewModel.getDoctorsApiResponseModelMutableLiveData.getValue().setCurrent_page(getDoctorsApiResponseModel.getCurrent_page());
-                            }
-                        }
-
-                        progressbar.setVisibility(View.GONE);
-                        isMakeApiRequestEnabled = true;
-                        nextPage = getDoctorsApiResponseModel.getNext_page();
-                    } else {
-                        progressbar.setVisibility(View.GONE);
-                    }
-                } else {
-                    progressbar.setVisibility(View.GONE);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        onViewChangeInterface = (OnViewChangeInterface) getActivity();
-    }
-
-    @Override
-    public void doCurrentTransaction() {
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.SEARCH_KEY, searchEt.getText().toString());
-
-        isMakeApiRequestEnabled = false;
-        onActionCompleteInterface.onCompletionResult(null, true, bundle);
     }
 
     private void initView(View view) {
@@ -109,44 +105,6 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
         clearIv = (ImageView) view.findViewById(R.id.clear_iv);
         searchListRv = (RecyclerView) view.findViewById(R.id.search_list_rv);
         progressbar = (ProgressBar) view.findViewById(R.id.progressbar);
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        searchListRv.setLayoutManager(linearLayoutManager);
-        searchListAdapter = new SearchListAdapter(getActivity());
-        searchListRv.setAdapter(searchListAdapter);
-
-        searchListRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                if (linearLayoutManager.getItemCount() > 0) {
-                    if (linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1) {
-                        page = nextPage;
-                        makeDoctorsListApiCall(searchEt.getText().toString());
-                        progressbar.setVisibility(View.VISIBLE);
-                        isMakeApiRequestEnabled = false;
-                    } else {
-                        progressbar.setVisibility(View.GONE);
-                    }
-                } else {
-                    progressbar.setVisibility(View.GONE);
-                }
-            }
-        });
-
-
-        clearIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchEt.setText("");
-                getDoctorsApiViewModel.getDoctorsApiResponseModelMutableLiveData.setValue(null);
-            }
-        });
-
-        onViewChangeInterface.hideOrShowNext(true);
-        onViewChangeInterface.enableNext(false);
-        clearIv.setVisibility(View.INVISIBLE);
 
         searchEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -161,27 +119,109 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().isEmpty()) {
-                    isMakeApiRequestEnabled = true;
-                    onViewChangeInterface.enableNext(false);
-                    clearIv.setVisibility(View.INVISIBLE);
-                    getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.setValue(null);
-                } else {
-                    onViewChangeInterface.enableNext(true);
-                    clearIv.setVisibility(View.VISIBLE);
+                if (isSearch) {
                     page = 1;
-                    makeDoctorsListApiCall(s.toString());
+                    if (searchListAdapter != null) {
+                        searchListAdapter.setData(new ArrayList<>());
+                    }
+                    if (!s.toString().isEmpty()) {
+                        makeApiCall(s.toString());
+                        onViewChangeInterface.enableNext(true);
+                        clearIv.setVisibility(View.VISIBLE);
+                    } else {
+                        onViewChangeInterface.enableNext(false);
+                        clearIv.setVisibility(View.GONE);
+                    }
                 }
             }
         });
 
+        clearIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchEt.setText(null);
+                doctorsNameList.clear();
+            }
+        });
+
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setSmoothScrollbarEnabled(true);
+        searchListRv.setLayoutManager(linearLayoutManager);
+
+        searchListRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                switch (newState) {
+                    case RecyclerView.SCROLL_STATE_IDLE:
+
+                        if (linearLayoutManager.getItemCount() > 0 && linearLayoutManager.findFirstVisibleItemPosition() < doctorsNameList.size()) {
+                            if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() > 0) {
+                                isSearch = false;
+                                linearLayoutManager.setSmoothScrollbarEnabled(true);
+                                linearLayoutManager.scrollToPositionWithOffset(linearLayoutManager.findFirstCompletelyVisibleItemPosition(), 0);
+                                searchEt.setText(doctorsNameList.get(linearLayoutManager.findFirstCompletelyVisibleItemPosition()));
+                                searchEt.setSelection(searchEt.getText().toString().length());
+                                isSearch = true;
+                            }
+                        }
+                        break;
+                    case RecyclerView.SCROLL_STATE_DRAGGING:
+                        break;
+                    case RecyclerView.SCROLL_STATE_SETTLING:
+                        break;
+
+                }
+
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (linearLayoutManager.getItemCount() > 0 && linearLayoutManager.getItemCount() < typeAHeadResponseModel.getTotal_count()) {
+                    if (linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1) {
+                        page = page + 1;
+                        makeApiCall(searchEt.getText().toString());
+                        progressbar.setVisibility(View.VISIBLE);
+                    } else {
+                        progressbar.setVisibility(View.GONE);
+                    }
+                } else {
+                    progressbar.setVisibility(View.GONE);
+                }
+            }
+        });
 
     }
 
-    private void makeDoctorsListApiCall(String name) {
-        if (!name.isEmpty() && isMakeApiRequestEnabled) {
-            getDoctorsApiViewModel.getDoctorsDetailList(page, name, false);
+    private void setSearchList() {
+        searchListAdapter = new SearchListAdapter(getActivity(), doctorsNameList, new OnListItemSelectInterface() {
+            @Override
+            public void onListItemSelected(int position, Bundle bundle) {
+                isSearch = false;
+                searchEt.setText(doctorsNameList.get(position));
+                searchEt.setSelection(searchEt.getText().toString().length());
+                linearLayoutManager.scrollToPositionWithOffset(position, 0);
+                isSearch = true;
+            }
+        });
+        searchListRv.setAdapter(searchListAdapter);
+
+    }
+
+    private void makeApiCall(String name) {
+        if (!isApiRequested) {
+            isApiRequested = true;
+            getDoctorsApiViewModel.getTypeAHeadResult(page, name, false);
         }
     }
 
+    @Override
+    public void doCurrentTransaction() {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.SEARCH_KEY, searchEt.getText().toString());
+
+        onActionCompleteInterface.onCompletionResult(null, true, bundle);
+    }
 }

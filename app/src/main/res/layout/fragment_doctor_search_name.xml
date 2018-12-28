@@ -13,6 +13,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/search_list_rv"
+        android:layout_width="0dp"
+        android:overScrollMode="always"
+        android:layout_height="0dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/progressbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/search_rl"
+        app:layout_constraintWidth_max="@dimen/max_width" />
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="20dp"
+        android:indeterminate="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <RelativeLayout
         android:id="@+id/search_rl"
         android:layout_width="0dp"
@@ -41,6 +64,7 @@
             android:layout_height="40dp"
             android:layout_alignParentEnd="true"
             android:padding="4dp"
+            android:visibility="gone"
             android:src="@drawable/ic_circle_clear_24"
             android:tint="@color/colorGrey" />
 
@@ -51,28 +75,5 @@
             android:layout_below="@+id/search_et"
             android:background="@color/colorGrey" />
     </RelativeLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/search_list_rv"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_rl"
-        app:layout_constraintWidth_max="@dimen/max_width" />
-
-    <ProgressBar
-        android:id="@+id/progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:indeterminate="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_list_rv" />
 
 </android.support.constraint.ConstraintLayout>
