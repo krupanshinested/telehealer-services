@@ -14,6 +14,7 @@
         android:id="@+id/test_list_rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/card_view_background"
         app:layout_constraintBottom_toTopOf="@+id/next_btn"
         app:layout_constraintTop_toBottomOf="@+id/bottom_view" />
 

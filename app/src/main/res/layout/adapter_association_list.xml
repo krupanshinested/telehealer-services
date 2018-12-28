@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/view_item_cl"
-    android:padding="8dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar_civ"
         android:layout_width="@dimen/card_image_view_size"
         android:layout_height="@dimen/card_image_view_size"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/profile_placeholder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,38 +20,31 @@
 
     <TextView
         android:id="@+id/title_tv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:gravity="bottom"
-        android:padding="8dp"
-        android:textColor="@color/colorBlack"
+        style="@style/text_title_dark"
+        android:gravity="left"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/sub_title_tv"
-        app:layout_constraintEnd_toStartOf="@+id/action_iv"
         app:layout_constraintStart_toEndOf="@+id/avatar_civ"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/dummy_text" />
 
     <TextView
         android:id="@+id/sub_title_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:gravity="top"
-        android:padding="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="8dp"
         app:layout_constraintEnd_toStartOf="@+id/action_iv"
         app:layout_constraintStart_toEndOf="@+id/avatar_civ"
-        app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/title_tv"
+        tools:text="@string/dummy_text" />
 
     <ImageView
         android:id="@+id/action_iv"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:visibility="gone"
         android:src="@drawable/ic_done_green_24dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

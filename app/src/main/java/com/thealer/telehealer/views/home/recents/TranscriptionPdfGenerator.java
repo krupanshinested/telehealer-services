@@ -1,7 +1,13 @@
 package com.thealer.telehealer.views.home.recents;
 
+import android.content.Context;
+import android.support.v4.app.FragmentActivity;
+
+import com.thealer.telehealer.BuildConfig;
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 
 import java.text.DateFormat;
@@ -13,79 +19,134 @@ import java.util.Date;
  * Created by Aswin on 26,December,2018
  */
 public class TranscriptionPdfGenerator {
-    private String transcriptionHeader = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
-            "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
-            "    <head>\n" +
-            "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n" +
-            "        <title>Chat Details</title>\n" +
-            "    </head>\n" +
-            "    <body style=\"margin:40px; overflow: visible;\" >\n" +
-            "        <style>\n" +
-            "            div {\n" +
-            "                text-align: center;\n" +
-            "                position: relative;\n" +
-            "                overflow: visible;\n" +
-            "            }\n" +
-            "        span {\n" +
-            "            display: inline-block;\n" +
-            "            overflow: visible;\n" +
-            "        }\n" +
-            "        span:before,\n" +
-            "        span:after {\n" +
-            "            border-top: 1px solid black;\n" +
-            "            display: block;\n" +
-            "            height: 1px;\n" +
-            "            content: \" \";\n" +
-            "            width: 40%;\n" +
-            "            position: absolute;\n" +
-            "            left: 0;\n" +
-            "            top: 0.5em;\n" +
-            "        }\n" +
-            "        span:after {\n" +
-            "            right: 0;\n" +
-            "            left: auto;\n" +
-            "        }\n" +
-            "        </style>\n" +
-            "        <table width=\"100%\" height=\"250\">\n" +
-            "            <div style=\"background-color:black; padding-left: 4px; padding-right: 4px;\">\n" +
-            "                <h4 align = \"left\" style = \"padding-top : 8px;padding-bottom : 8px;\">\n" +
-            "                    <font color = \"white\"> Chat Details</font> </h4>\n" +
-            "            </div>\n" +
-            "            <tr>\n" +
-            "                <td width=\"25%\">Date</td>\n" +
-            "                <td width=\"75%\"><h4><b>#DATE#</b></h4></td>\n" +
-            "            </tr>\n" +
-            "            <tr>\n" +
-            "                <td width=\"25%\">Duration</td>\n" +
-            "                <td width=\"75%\"><h4><b>#DURATION#</b></h4></td>\n" +
-            "            </tr>\n" +
-            "            <tr>\n" +
-            "                <td width=\"25%\">Type</td>\n" +
-            "                <td width=\"75%\"><h4><b>#TYPE#</b></h4></td>\n" +
-            "            </tr>\n" +
-            "            <tr>\n" +
-            "                <td width=\"25%\">Patient</td>\n" +
-            "                <td width=\"75%\"><h4><b>#PATIENT_NAME#</b></h4></td>\n" +
-            "            </tr>\n" +
-            "            <tr>\n" +
-            "                <td width=\"25%\">Doctor</td>\n" +
-            "                <td width=\"75%\"><h4><b>#DOCTOR_NAME#</b></h4></td>\n" +
-            "            </tr>\n" +
-            "        </table>\n" +
-            "        <br>\n" +
-            "        <div><span>Transcript Begins</span></div>\n" +
-            "        <br>\n" +
-            "        <table width = \"100%\" height = \"50\">\n" +
-            "            #MESSAGE_INFO#\n" +
-            "        </table>\n" +
-            "        \n" +
-            "    </body>\n" +
-            "</html>";
-    private String transcriptionBody = "<tr style=\"padding-left: 4px; padding-right: 4px; margin-top:5px; margin-top:5px;\">\n" +
-            "    <td style=\"width: 25% ; vertical-align:top\"><h4><b>#SENDER#</b></h4></td>\n" +
-            "    <td width=\"75%\">#MESSAGE#</td>\n" +
-            "</tr>";
+    private String transcriptionHeader;
 
+    {
+        transcriptionHeader = "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "    <head>\n" +
+                "        <meta charset=\"utf-8\" />\n" +
+                "        <title>Chat Details</title>\n" +
+                "    </head>\n" +
+                "    <body style=\"margin:40px;overflow: visible;\">\n" +
+                "        <style>\n" +
+                "            div {\n" +
+                "                text-align: center;\n" +
+                "                position: relative;\n" +
+                "                overflow: visible;\n" +
+                "            }\n" +
+                "        span {\n" +
+                "            display: inline-block;\n" +
+                "            overflow: visible;\n" +
+                "        }\n" +
+                "        span:before,\n" +
+                "        span:after {\n" +
+                "            border-top: 1px solid black;\n" +
+                "            display: block;\n" +
+                "            height: 1px;\n" +
+                "            content: \" \";\n" +
+                "            width: 40%;\n" +
+                "            position: absolute;\n" +
+                "            left: 0;\n" +
+                "            top: 0.5em;\n" +
+                "        }\n" +
+                "        span:after {\n" +
+                "            right: 0;\n" +
+                "            left: auto;\n" +
+                "        }\n" +
+                "        \n" +
+                "        h2 {\n" +
+                "            display: block;\n" +
+                "            font-size: 1.90em;\n" +
+                "            margin-top: 0.33em;\n" +
+                "            margin-bottom: 0.33em;\n" +
+                "            margin-left: 0;\n" +
+                "            margin-right: 0;\n" +
+                "            font-weight: bold;\n" +
+                "        }\n" +
+                "        \n" +
+                "        h4 {\n" +
+                "            display: block;\n" +
+                "            font-size: 1.20em;\n" +
+                "            margin-top: 0.33em;\n" +
+                "            margin-bottom: 0.33em;\n" +
+                "            margin-left: 0;\n" +
+                "            margin-right: 0;\n" +
+                "            font-weight: bold;\n" +
+                "        }\n" +
+                "        \n" +
+                "        footer {\n" +
+                "            margin-top: 20px;\n" +
+                "            margin-bottom: 10px;\n" +
+                "        }\n" +
+                "        \n" +
+                "        </style>\n" +
+                "        <table width=\"100%\" height=\"20\">\n" +
+                "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
+                "                <td width=\"60%\">\n" +
+                "                    <h2><b><font face=\"Helvetica Neue\">#CHAT_TITLE#</font><b></h2>\n" +
+                "                    <h4><font face=\"Helvetica Neue\" color=\"gray\">#CHAT_DATE#</font></h4>\n" +
+                "                </td>\n" +
+                "                <td width=\"40%\" align = \"right\">\n" +
+                "                    <table><tr><td><img src=\"#LOGO_DATA#\" alt=\"LOGO\" height=\"60\" width=\"60\"></td><td> <h2><b><font face=\"Helvetica Neue\">Telehealer</font><b></h2></td></tr></table>\n" +
+                "                </td>\n" +
+                "            </tr>\n" +
+                "        </table>\n" +
+                "        <hr color = \"#BACKGROUND_COLOR#\">\n" +
+                "        <br>\n" +
+                "        <table width=\"100%\" height=\"20\">\n" +
+                "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
+                "                <td width=\"20%\" align=\"right\"><font face=\"Helvetica Neue\" size=\"4\">#DOCTOR_NAME_LABEL#</font></td>\n" +
+                "                <td width=\"80%\" style=\"padding-left: 20px;\"><h4><b><font face=\"Helvetica Neue\">#DOCTOR_NAME#</font></b></h4></td>\n" +
+                "            </tr>\n" +
+                "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
+                "                <td width=\"20%\" align=\"right\"><font face=\"Helvetica Neue\" size=\"4\">#PATIENT_NAME_LABEL#</font></td>\n" +
+                "                <td width=\"80%\" style=\"padding-left: 20px;\"><h4><b><font face=\"Helvetica Neue\">#PATIENT_NAME#</font></b></h4></td>\n" +
+                "            </tr>\n" +
+                "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
+                "                <td width=\"20%\" align=\"right\"><font face=\"Helvetica Neue\" size=\"4\">#TYPE_LABEL#</font></td>\n" +
+                "                <td width=\"80%\" style=\"padding-left: 20px;\"><h4><b><font face=\"Helvetica Neue\">#TYPE#</font></b></h4></td>\n" +
+                "            </tr>\n" +
+                "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
+                "                <td width=\"20%\" align=\"right\"><font face=\"Helvetica Neue\" size=\"4\">#DATE_LABEL#</font></td>\n" +
+                "                <td width=\"80%\" style=\"padding-left: 20px;\"><h4><b><font face=\"Helvetica Neue\">#DATE#</font></b></h4></td>\n" +
+                "            </tr>\n" +
+                "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
+                "                <td width=\"20%\" align=\"right\"><font face=\"Helvetica Neue\" size=\"4\">#DURATION_LABEL#</font></td>\n" +
+                "                <td width=\"80%\" style=\"padding-left: 20px;\"><h4><b><font face=\"Helvetica Neue\">#DURATION#</font></b></h4></td>\n" +
+                "            </tr>\n" +
+                "        </table>\n" +
+                "        <br>\n" +
+                "        <hr color = \"#BACKGROUND_COLOR#\">\n" +
+                "        <table width = \"100%\" height = \"50\">\n" +
+                "            #MESSAGE_INFO#\n" +
+                "        </table>\n" +
+                "        <footer>\n" +
+                "            <hr color = \"#BACKGROUND_COLOR#\">\n" +
+                "            <h4><font face=\"Helvetica Neue\" color=\"gray\">#TRANSCRIPT_NOTE#</font></h4>\n" +
+                "            <br>\n" +
+                "        </footer>\n" +
+                "    </body>\n" +
+                "</html>";
+    }
+
+    private String transcriptionBody;
+
+    {
+        transcriptionBody = "<tr style=\"padding-left: 4px; padding-right: 4px; margin-top:5px; margin-top:5px;\">\n" +
+                "    <td width=\"20%\" align=\"right\"><font face=\"Helvetica Neue\" size=\"4\">#SENDER#</font></td>\n" +
+                "    <td width=\"80%\" style=\"padding-left: 20px;\"><font face=\"Helvetica Neue\" size=\"4\">#MESSAGE#</font></td></tr>";
+    }
+
+    private String CHAT_TITLE_LABEL = "#CHAT_TITLE#";
+    private String CHAT_DATE_LABEL = "#CHAT_DATE#";
+    private String APP_LOGO = "#LOGO_DATA#";
+    private String PDF_BACKGROUND_COLOR = "#BACKGROUND_COLOR#";
+    private String DATE_LABEL = "#DATE_LABEL#";
+    private String DURATION_LABEL = "#DURATION_LABEL#";
+    private String TYPE_LABEL = "#TYPE_LABEL#";
+    private String PATIENT_NAME_LABEL = "#PATIENT_NAME_LABEL#";
+    private String DOCTOR_NAME_LABEL = "#DOCTOR_NAME_LABEL#";
     private String DATE = "#DATE#";
     private String DURATION = "#DURATION#";
     private String TYPE = "#TYPE#";
@@ -94,18 +155,21 @@ public class TranscriptionPdfGenerator {
     private String MESSAGE_INFO = "#MESSAGE_INFO#";
     private String SENDER = "#SENDER#";
     private String MESSAGE = "#MESSAGE#";
+    private String TRANSCRIPTION_NOTE = "#TRANSCRIPT_NOTE#";
 
+    private Context context;
 
-    public TranscriptionPdfGenerator() {
+    public TranscriptionPdfGenerator(Context context) {
+        this.context = context;
     }
 
     public String getTranscriptPdf(TranscriptionApiResponseModel transcriptionApiResponseModel,
-                                   DownloadTranscriptResponseModel downloadTranscriptResponseModel) {
+                                   DownloadTranscriptResponseModel downloadTranscriptResponseModel, String transcript_info) {
 
         String chatDetail = getChatDetails(transcriptionApiResponseModel);
         String transcriptDetail = getTranscriptDetails(downloadTranscriptResponseModel);
 
-        return chatDetail.replace(MESSAGE_INFO, transcriptDetail);
+        return chatDetail.replace(MESSAGE_INFO, transcriptDetail).replace(TRANSCRIPTION_NOTE, "*" + transcript_info);
     }
 
     private String getTranscriptDetails(DownloadTranscriptResponseModel downloadTranscriptResponseModel) {
@@ -118,7 +182,7 @@ public class TranscriptionPdfGenerator {
             String speaker = downloadTranscriptResponseModel.getSpeakerLabels().get(i).getSpeaker_label().replace("spk_", "");
             int person = Integer.parseInt(speaker) + 1;
 
-            String sender = "Speaker " + person + ":";
+            String sender = "Speaker " + person + " :";
             String message = downloadTranscriptResponseModel.getSpeakerLabels().get(i).getTranscript();
 
             transcriptList = transcriptList.replace(SENDER, sender)
@@ -135,11 +199,28 @@ public class TranscriptionPdfGenerator {
 
         String date = Utils.getDayMonthYear(transcriptionApiResponseModel.getOrder_start_time());
         String duration = getDuration(transcriptionApiResponseModel.getOrder_start_time(), transcriptionApiResponseModel.getOrder_end_time());
-        String type = transcriptionApiResponseModel.getType().toUpperCase();
-        String patientName = transcriptionApiResponseModel.getPatient().getFirst_name() + " " + transcriptionApiResponseModel.getPatient().getLast_name();
-        String doctorName = "Dr. " + transcriptionApiResponseModel.getDoctor().getFirst_name() + " " + transcriptionApiResponseModel.getDoctor().getLast_name();
+        String type = transcriptionApiResponseModel.getType();
+        String patientName = Utils.getPatientDisplayName(transcriptionApiResponseModel.getPatient().getFirst_name(), transcriptionApiResponseModel.getPatient().getLast_name());
+        String doctorName = Utils.getDoctorDisplayName(transcriptionApiResponseModel.getDoctor().getFirst_name(), transcriptionApiResponseModel.getDoctor().getLast_name(), "");
 
-        chatDetails = chatDetails.replace(DATE, date)
+        String icon;
+        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+            icon = "app_icon_patient.png";
+        } else {
+            icon = "app_icon_doctor.png";
+        }
+
+        chatDetails = chatDetails
+                .replace(CHAT_TITLE_LABEL, context.getString(R.string.chat_transcript))
+                .replace(CHAT_DATE_LABEL, Utils.getCurrentFomatedDate())
+                .replace(APP_LOGO, icon)
+                .replace(DATE_LABEL, context.getString(R.string.date).concat(" :"))
+                .replace(PDF_BACKGROUND_COLOR, context.getString(R.string.app_gradient_start))
+                .replace(DURATION_LABEL, context.getString(R.string.duration).concat(" :"))
+                .replace(TYPE_LABEL, context.getString(R.string.type).concat(" :"))
+                .replace(PATIENT_NAME_LABEL, context.getString(R.string.patient_name).concat(" :"))
+                .replace(DOCTOR_NAME_LABEL, context.getString(R.string.doctor_name).concat(" :"))
+                .replace(DATE, date)
                 .replace(DURATION, duration)
                 .replace(TYPE, type)
                 .replace(PATIENT_NAME, patientName)

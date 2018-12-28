@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:nestedScrollingEnabled="true">
+    android:fillViewport="true">
 
     <com.thealer.telehealer.common.CustomExpandableListView
         android:id="@+id/recents_celv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:nestedScrollingEnabled="true" />
-</LinearLayout>
+        android:background="@color/card_view_background" />
+</android.support.v4.widget.NestedScrollView>

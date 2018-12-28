@@ -17,6 +17,8 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.SignUpActivity;
 
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
 /**
  * Created by Aswin on 10,October,2018
  */
@@ -70,6 +72,7 @@ public class OnBoardingActionFragment extends BaseFragment implements View.OnCli
                 getActivity().finish();
                 break;
             case R.id.signup_btn:
+                appPreference.deletePreference();
                 startActivity(new Intent(getActivity(), SignUpActivity.class));
                 getActivity().finish();
                 break;
