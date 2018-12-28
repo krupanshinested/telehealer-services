@@ -16,4 +16,20 @@ public class PushPayLoad {
     public GCMPayload getPn_gcm() {
         return pn_gcm;
     }
+
+    public void setPn_apns(APNSPayload pn_apns) {
+        this.pn_apns = pn_apns;
+    }
+
+    public void setPn_gcm(GCMPayload pn_gcm) {
+        this.pn_gcm = pn_gcm;
+    }
+
+    public PushPayLoad(APNSPayload pn_apns) {
+        this.pn_apns = pn_apns;
+        this.pn_gcm = new GCMPayload(pn_apns);
+    }
+
+    public PushPayLoad() {
+    }
 }
