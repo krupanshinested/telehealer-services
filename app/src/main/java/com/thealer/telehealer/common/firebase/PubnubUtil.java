@@ -2,8 +2,6 @@ package com.thealer.telehealer.common.firebase;
 
 import android.util.Log;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.callbacks.PNCallback;
@@ -19,7 +17,6 @@ import com.thealer.telehealer.apilayer.models.Pubnub.PubNubViewModel;
 import com.thealer.telehealer.common.Config;
 import com.thealer.telehealer.common.firebase.models.PushPayLoad;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -119,17 +116,8 @@ public class PubnubUtil {
     }
 
     public void publishPushMessage(PushPayLoad pushPayLoad) {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-
-        String json = "";
-        try {
-            json = ow.writeValueAsString(pushPayLoad);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         pubnub.publish()
-                .message(json)
+                .message(pushPayLoad)
                 .channel(pushPayLoad.getPn_apns().getTo())
                 .async(new PNCallback<PNPublishResult>() {
                     @Override
@@ -143,17 +131,8 @@ public class PubnubUtil {
     }
 
     public void publishVoipMessage(PushPayLoad pushPayLoad) {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-
-        String json = "";
-        try {
-            json = ow.writeValueAsString(pushPayLoad);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        voipPubnub.publish()
-                .message(json)
+       voipPubnub.publish()
+                .message(pushPayLoad)
                 .channel(pushPayLoad.getPn_apns().getTo())
                 .async(new PNCallback<PNPublishResult>() {
                     @Override

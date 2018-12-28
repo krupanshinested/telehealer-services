@@ -212,7 +212,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private void updateAllViews(Boolean enabled) {
         Utils.setEditable(firstnameEt,enabled);
         Utils.setEditable(lastnameEt,enabled);
-        Utils.setEditable(dobEt,enabled);
 
         if (enabled) {
             gender_value.setVisibility(View.GONE);
