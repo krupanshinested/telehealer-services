@@ -12,10 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
@@ -26,8 +28,6 @@ import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
-import java.util.ArrayList;
-
 /**
  * Created by Aswin on 23,October,2018
  */
@@ -35,9 +35,59 @@ public class DoctorListFragment extends BaseFragment implements DoCurrentTransac
     private TextView searchCountTv;
     private RecyclerView resultListRv;
     private TextView registerManuallyTv;
+
     private OnActionCompleteInterface onActionCompleteInterface;
     private OnViewChangeInterface onViewChangeInterface;
     private GetDoctorsApiViewModel getDoctorsApiViewModel;
+    private GetDoctorsApiResponseModel getDoctorsApiResponseModel;
+
+    private int page = 0, totalCount = 0;
+    private String searchName;
+    private ProgressBar progressbar;
+    private DoctorResultListAdapter doctorResultListAdapter;
+    private boolean isApiRequested = false;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
+        onViewChangeInterface = (OnViewChangeInterface) getActivity();
+        getDoctorsApiViewModel = ViewModelProviders.of(this).get(GetDoctorsApiViewModel.class);
+        onViewChangeInterface.attachObserver(getDoctorsApiViewModel);
+
+        getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    getDoctorsApiResponseModel = (GetDoctorsApiResponseModel) baseApiResponseModel;
+                    totalCount = getDoctorsApiResponseModel.getTotal_count();
+                    setDoctorsList();
+                }
+                isApiRequested = false;
+                progressbar.setVisibility(View.GONE);
+            }
+        });
+
+        getDoctorsApiViewModel.getErrorModelLiveData().observe(this,
+                new Observer<ErrorModel>() {
+                    @Override
+                    public void onChanged(@Nullable ErrorModel errorModel) {
+                        isApiRequested = false;
+                        progressbar.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void setDoctorsList() {
+        setSearchCount(getDoctorsApiResponseModel.getTotal_count());
+        if (getDoctorsApiResponseModel.getData().size() > 0) {
+            doctorResultListAdapter.setData(getDoctorsApiResponseModel.getData(), page);
+        } else {
+            if (page == 1) {
+                createManually();
+            }
+        }
+    }
 
     @Nullable
     @Override
@@ -47,42 +97,79 @@ public class DoctorListFragment extends BaseFragment implements DoCurrentTransac
         return view;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void initView(View view) {
 
-        getDoctorsApiViewModel = ViewModelProviders.of(getActivity()).get(GetDoctorsApiViewModel.class);
+        onViewChangeInterface.hideOrShowNext(false);
+        page = 1;
 
-        getDoctorsApiViewModel.getDoctorsApiResponseModelMutableLiveData.observe(this, new Observer<GetDoctorsApiResponseModel>() {
+        if (getArguments() != null) {
+            searchName = getArguments().getString(Constants.SEARCH_KEY);
+        }
+
+        searchCountTv = (TextView) view.findViewById(R.id.search_count_tv);
+        resultListRv = (RecyclerView) view.findViewById(R.id.result_list_rv);
+        registerManuallyTv = (TextView) view.findViewById(R.id.register_manually_tv);
+        progressbar = (ProgressBar) view.findViewById(R.id.progressbar);
+
+        registerManuallyTv.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(@Nullable GetDoctorsApiResponseModel doctorsApiResponseModel) {
-                if (doctorsApiResponseModel != null) {
-                    if (doctorsApiResponseModel.getData().size() == 0) {
-                        setSearchCount(0);
-                        createManually();
-                        getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.setValue(null);
+            public void onClick(View v) {
+                createManually();
+            }
+        });
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        resultListRv.setLayoutManager(linearLayoutManager);
+        doctorResultListAdapter = new DoctorResultListAdapter(getActivity());
+        resultListRv.setAdapter(doctorResultListAdapter);
+
+        resultListRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (linearLayoutManager.getItemCount() > 0 && linearLayoutManager.getItemCount() < totalCount) {
+                    if (linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1) {
+                        page = page + 1;
+                        getDoctors(false);
+                        progressbar.setVisibility(View.VISIBLE);
                     } else {
-                        setSearchCount(doctorsApiResponseModel.getData().size());
+                        progressbar.setVisibility(View.GONE);
                     }
-                }else {
-                    setSearchCount(0);
+                } else {
+                    progressbar.setVisibility(View.GONE);
                 }
             }
         });
 
+
+        if (getDoctorsApiResponseModel == null) {
+            getDoctors(true);
+        } else if (getDoctorsApiResponseModel.getData().size() > 0) {
+            page = 1;
+            setDoctorsList();
+        }
     }
+
+    private void getDoctors(boolean isShowProgress) {
+        if (!isApiRequested) {
+            isApiRequested = true;
+            getDoctorsApiViewModel.getDoctorsDetailList(page, searchName, isShowProgress);
+        }
+    }
+
 
     private void setSearchCount(int count) {
         searchCountTv.setText(count + " " + getString(R.string.result));
     }
 
     private void createManually() {
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(Constants.IS_CREATE_MANUALLY, true);
+        Bundle bundle = getArguments();
 
-        if (getArguments() != null) {
-            bundle.putString(Constants.SEARCH_KEY, getArguments().getString(Constants.SEARCH_KEY));
+        if (bundle == null) {
+            bundle = new Bundle();
         }
+
+        bundle.putBoolean(Constants.IS_CREATE_MANUALLY, true);
 
         clearUserRequest();
 
@@ -102,35 +189,13 @@ public class DoctorListFragment extends BaseFragment implements DoCurrentTransac
 
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        onViewChangeInterface = (OnViewChangeInterface) getActivity();
-    }
-
-    private void initView(View view) {
-
-        onViewChangeInterface.hideOrShowNext(false);
-
-        searchCountTv = (TextView) view.findViewById(R.id.search_count_tv);
-        resultListRv = (RecyclerView) view.findViewById(R.id.result_list_rv);
-        registerManuallyTv = (TextView) view.findViewById(R.id.register_manually_tv);
-
-        resultListRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        resultListRv.setAdapter(new DoctorResultListAdapter(getActivity()));
-
-
-        registerManuallyTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createManually();
-            }
-        });
+    public void doCurrentTransaction() {
 
     }
 
     @Override
-    public void doCurrentTransaction() {
-
+    public void onResume() {
+        super.onResume();
+        Log.e("aswin", "onResume: ");
     }
 }
