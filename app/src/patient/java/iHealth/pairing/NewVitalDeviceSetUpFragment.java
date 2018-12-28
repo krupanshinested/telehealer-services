@@ -20,6 +20,7 @@ import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -59,12 +60,19 @@ public class NewVitalDeviceSetUpFragment extends BaseFragment {
         }
         deviceSources = new ArrayList<>();
 
-        if (measurementType != null) {
+        if (measurementType != null && !measurementType.isEmpty()) {
             for(int i=0;i<VitalDeviceType.types.size();i++) {
                 String type = VitalDeviceType.types.get(i);
-                if (VitalDeviceType.shared.getMeasurementType(type).equals(measurementType)) {
+
+                String deviceType = VitalDeviceType.shared.getMeasurementType(type);
+                if (measurementType.equals(SupportedMeasurementType.heartRate)) {
+                    if (deviceType.equals(SupportedMeasurementType.bp) || deviceType.equals(SupportedMeasurementType.pulseOximeter)) {
+                        deviceSources.add(type);
+                    }
+                } else if (deviceType.equals(measurementType)) {
                     deviceSources.add(type);
                 }
+
             }
         } else {
             deviceSources = VitalDeviceType.types;
