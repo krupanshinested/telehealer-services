@@ -128,11 +128,11 @@ public class Utils {
             return inputDate.compareTo(currentDate) >= 0;
 
         } catch (ParseException e) {
-            return isDateExpired(date,"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            return isDateExpired(date, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         }
     }
 
-    public static boolean isDateExpired(String date,String format) {
+    public static boolean isDateExpired(String date, String format) {
         try {
             DateFormat dateFormat = new SimpleDateFormat(format, Locale.ENGLISH);
             Date inputDate = dateFormat.parse(date);
@@ -145,6 +145,7 @@ public class Utils {
             return false;
         }
     }
+
     public static boolean isDateTimeExpired(String date) {
         try {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
@@ -239,7 +240,7 @@ public class Utils {
         }
     }
 
-    public static Date getDateFromString(String dateString,String format){
+    public static Date getDateFromString(String dateString, String format) {
         DateFormat dateFormat = new SimpleDateFormat(format);
         try {
             return dateFormat.parse(dateString);
@@ -263,7 +264,7 @@ public class Utils {
         }
     }
 
-    public static String getStringFromDate(Date date,String format) {
+    public static String getStringFromDate(Date date, String format) {
         DateFormat returnFormat = new SimpleDateFormat(format, Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         return returnFormat.format(date);
@@ -296,6 +297,7 @@ public class Utils {
         }
         return "";
     }
+
     public static String getDayMonthTime(String date) {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -312,6 +314,12 @@ public class Utils {
 
     public static String getDoctorDisplayName(String first_name, String last_name, String title) {
         return "Dr. " + first_name + " " + last_name + " " + title;
+    }
+
+    public static String getPatientDisplayName(String first_name, String last_name) {
+        first_name = first_name.replace(first_name.charAt(0), String.valueOf(first_name.charAt(0)).toUpperCase().charAt(0));
+        last_name = last_name.replace(last_name.charAt(0), String.valueOf(last_name.charAt(0)).toUpperCase().charAt(0));
+        return first_name + " " + last_name;
     }
 
     public static AlertDialog.Builder showAlertDialog(Context context, String title, String message) {
@@ -394,17 +402,17 @@ public class Utils {
         if (view == null) {
             view = new View(activity);
         }
-        hideKeyboardFrom(activity,view);
+        hideKeyboardFrom(activity, view);
     }
 
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
 
         if (imm != null)
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public static String getUTCfromGMT(String timeStamp){
+    public static String getUTCfromGMT(String timeStamp) {
         DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         inputFormat.setTimeZone(TimeZone.getDefault());
         DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -417,7 +425,7 @@ public class Utils {
         return "";
     }
 
-    public static String getSlotDate(String timeStamp){
+    public static String getSlotDate(String timeStamp) {
         DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         inputFormat.setTimeZone(TimeZone.getDefault());
         DateFormat outputFormat = new SimpleDateFormat("EE, dd MMM, yyyy");
@@ -430,7 +438,8 @@ public class Utils {
         }
         return "";
     }
-    public static String getSlotTime(String timeStamp){
+
+    public static String getSlotTime(String timeStamp) {
         DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         DateFormat outputFormat = new SimpleDateFormat("hh:mm aa");
         try {
@@ -440,7 +449,8 @@ public class Utils {
         }
         return "";
     }
-    public static String getSlotTimeDate(String timeStamp){
+
+    public static String getSlotTimeDate(String timeStamp) {
         DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         DateFormat outputFormat = new SimpleDateFormat("hh:mm aa EE dd MMM, yyyy");
@@ -478,6 +488,7 @@ public class Utils {
         }
         return "";
     }
+
     public static String getSelectedSlotTime(String timeSlot) {
         DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         DateFormat outputFormat = new SimpleDateFormat("hh:mm aa");

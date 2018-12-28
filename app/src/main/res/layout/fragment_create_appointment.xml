@@ -35,11 +35,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:arrow_visible="true"
-                app:title_text="@string/Click_here_to_select_doctor"
-                app:sub_title_visible="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/info_tv"
+                app:sub_title_visible="false"
+                app:title_text="@string/Click_here_to_select_doctor"
                 app:view_label="@string/choose_doctor" />
 
             <com.thealer.telehealer.views.home.orders.OrdersCustomView
@@ -48,11 +48,11 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 app:arrow_visible="true"
-                app:title_text="@string/Click_here_to_select_patient"
-                app:sub_title_visible="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/doctor_ocv"
+                app:sub_title_visible="false"
+                app:title_text="@string/Click_here_to_select_patient"
                 app:view_label="@string/choose_patient" />
 
             <TextView
@@ -66,6 +66,7 @@
                 android:id="@+id/slots_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/card_view_background"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -104,9 +105,9 @@
                     android:id="@+id/reason_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/reason_for_visit"
                     android:inputType="text"
-                    android:maxLines="1"
-                    android:hint="@string/reason_for_visit" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <com.thealer.telehealer.views.home.orders.OrdersCustomView
