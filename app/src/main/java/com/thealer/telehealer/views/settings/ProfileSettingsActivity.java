@@ -228,8 +228,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         toolbarTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         userProfileIv = (ImageView) findViewById(R.id.user_profile_iv);
         genderIv = (ImageView) findViewById(R.id.gender_iv);
-        TextView userNameTv = (TextView) findViewById(R.id.user_name_tv);
-        TextView userDobTv = (TextView) findViewById(R.id.user_dob_tv);
         collapseBackgroundRl = (RelativeLayout) findViewById(R.id.collapse_background_rl);
         backIv = findViewById(R.id.back_iv);
         collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorWhite));
@@ -239,22 +237,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         toolbar.setTitle(getResources().getString(R.string.settings));
         setSupportActionBar(toolbar);
 
-        toolbarTitle.setText(appPreference.getString(PreferenceConstants.USER_NAME));
-        userNameTv.setText(UserDetailPreferenceManager.getUserDisplayName());
-
         updateProfile();
-
-        switch (UserType.getUserType()) {
-            case Constants.TYPE_DOCTOR:
-                userDobTv.setText(UserDetailPreferenceManager.getSpeciality());
-                break;
-            case Constants.TYPE_PATIENT:
-                userDobTv.setText(UserDetailPreferenceManager.getDob());
-                break;
-            case Constants.TYPE_MEDICAL_ASSISTANT:
-                userDobTv.setText(UserDetailPreferenceManager.getTitle());
-                break;
-        }
 
         //For appointment slot update
         AppointmentSlotUpdate appointmentSlotUpdate = ViewModelProviders.of(this).get(AppointmentSlotUpdate.class);
@@ -298,7 +281,29 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         } else {
             genderIv.setVisibility(View.GONE);
         }
+        updateUserDetails();
         Utils.setImageWithGlide(ProfileSettingsActivity.this, userProfileIv, UserDetailPreferenceManager.getUser_avatar(), ProfileSettingsActivity.this.getDrawable(R.drawable.profile_placeholder), true);
+    }
+
+    public void updateUserDetails() {
+        TextView userNameTv = (TextView) findViewById(R.id.user_name_tv);
+        TextView userDobTv = (TextView) findViewById(R.id.user_dob_tv);
+
+        toolbarTitle.setText(appPreference.getString(PreferenceConstants.USER_NAME));
+        userNameTv.setText(UserDetailPreferenceManager.getUserDisplayName());
+
+        switch (UserType.getUserType()) {
+            case Constants.TYPE_DOCTOR:
+                userDobTv.setText(UserDetailPreferenceManager.getSpeciality());
+                break;
+            case Constants.TYPE_PATIENT:
+                userDobTv.setText(UserDetailPreferenceManager.getDob());
+                break;
+            case Constants.TYPE_MEDICAL_ASSISTANT:
+                userDobTv.setText(UserDetailPreferenceManager.getTitle());
+                break;
+        }
+
     }
 
     private BroadcastReceiver profileListener = new BroadcastReceiver() {

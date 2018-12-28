@@ -54,6 +54,7 @@ public class iHealthVitalManager extends VitalsManager {
     private final GulcoControl gulcoControl;
 
     private HashMap<String,Integer> deviceConnectionMap = new HashMap<String, Integer>();
+    private CreateVitalApiRequestModel vitalApiRequestModel;
 
     public iHealthVitalManager(@NonNull Application application) {
         super(application);
@@ -402,6 +403,7 @@ public class iHealthVitalManager extends VitalsManager {
         vitalApiRequestModel.setValue(value);
 
         vitalsApiViewModel.createVital(vitalApiRequestModel);
+        this.vitalApiRequestModel = vitalApiRequestModel;
     }
 
     private void addFilter(String deviceType) {

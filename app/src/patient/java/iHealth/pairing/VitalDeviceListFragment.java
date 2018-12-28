@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,9 @@ public class VitalDeviceListFragment extends BaseFragment {
     public void onCreate(Bundle saveInstance) {
         super.onCreate(saveInstance);
 
+        String measurementType = getArguments().getString(ArgumentKeys.MEASUREMENT_TYPE);
+        this.measurementType = measurementType;
+
         generateDataSource();
 
         if (getActivity() != null) {
@@ -72,9 +76,6 @@ public class VitalDeviceListFragment extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_vital_devices, container, false);
-
-        String measurementType = getArguments().getString(ArgumentKeys.MEASUREMENT_TYPE);
-        this.measurementType = measurementType;
 
         initView(view);
 
@@ -191,15 +192,36 @@ public class VitalDeviceListFragment extends BaseFragment {
         VitalPairedDevices vitalPairedDevices = VitalPairedDevices.getAllPairedDevices(appPreference);
 
         for (VitalDevice device : vitalPairedDevices.getDevices()) {
-            if (measurementType != null && VitalDeviceType.shared.getMeasurementType(device.getType()).equals(measurementType)) {
-                if (vitalManagerInstance.getInstance().isConnected(device.getType(),device.getDeviceId())) {
-                    device.setConnected(true);
-                    connectedDevice.add(device);
-                } else {
-                    device.setConnected(false);
-                    unconnectedDevice.add(device);
+
+            String deviceType = VitalDeviceType.shared.getMeasurementType(device.getType());
+
+            if (!TextUtils.isEmpty(measurementType)) {
+
+                if (measurementType.equals(SupportedMeasurementType.heartRate)) {
+                    if (deviceType.equals(SupportedMeasurementType.bp) || deviceType.equals(SupportedMeasurementType.pulseOximeter) ) {
+
+                        if (vitalManagerInstance.getInstance().isConnected(device.getType(), device.getDeviceId())) {
+                            device.setConnected(true);
+                            connectedDevice.add(device);
+                        } else {
+                            device.setConnected(false);
+                            unconnectedDevice.add(device);
+                        }
+
+                    }
+                } else if (deviceType.equals(measurementType)) {
+
+                    if (vitalManagerInstance.getInstance().isConnected(device.getType(),device.getDeviceId())) {
+                        device.setConnected(true);
+                        connectedDevice.add(device);
+                    } else {
+                        device.setConnected(false);
+                        unconnectedDevice.add(device);
+                    }
+
                 }
-            } else if (measurementType == null) {
+
+            } else if (TextUtils.isEmpty(measurementType)) {
                 if (vitalManagerInstance.getInstance().isConnected(device.getType(), device.getDeviceId())) {
                     device.setConnected(true);
                     connectedDevice.add(device);

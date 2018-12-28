@@ -123,4 +123,65 @@ public class APNSPayload implements Serializable {
     public String getUuid() {
         return uuid;
     }
+
+
+    public void setAps(HashMap<String, String> aps) {
+        this.aps = aps;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public void setPn_ttl(int pn_ttl) {
+        this.pn_ttl = pn_ttl;
+    }
+
+    public void setCall_rejection(@Nullable String call_rejection) {
+        this.call_rejection = call_rejection;
+    }
+
+    public void setAt(@Nullable String at) {
+        this.at = at;
+    }
+
+    public void setPn_bundle_ids(@Nullable String[] pn_bundle_ids) {
+        this.pn_bundle_ids = pn_bundle_ids;
+    }
+
+    public void setSessionId(@Nullable String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public void setTimestamp(@Nullable Double timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setFrom_name(@Nullable String from_name) {
+        this.from_name = from_name;
+    }
+
+    public void setIs_conference(@Nullable Boolean is_conference) {
+        this.is_conference = is_conference;
+    }
+
+    public void setDoctor_guid(@Nullable String doctor_guid) {
+        this.doctor_guid = doctor_guid;
+    }
+
+    public void setUuid(@Nullable String uuid) {
+        this.uuid = uuid;
+    }
 }
