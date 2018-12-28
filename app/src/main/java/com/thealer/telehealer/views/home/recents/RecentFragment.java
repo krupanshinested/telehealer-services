@@ -54,7 +54,7 @@ public class RecentFragment extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser)
-            makeApiCall();
+            makeApiCall(true);
     }
 
     @Override
@@ -111,7 +111,13 @@ public class RecentFragment extends BaseFragment {
 
         recentsElv = recentsCelv.getExpandableView();
 
-        recentListAdapter = new RecentListAdapter(getActivity(), listHeader, listChild);
+        boolean isShowInfoAction = false;
+        if (getArguments() != null &&
+                getArguments().getBoolean(Constants.IS_FROM_HOME)) {
+            makeApiCall(true);
+            isShowInfoAction = true;
+        }
+        recentListAdapter = new RecentListAdapter(getActivity(), listHeader, listChild, isShowInfoAction);
 
         recentsElv.setAdapter(recentListAdapter);
 
@@ -119,7 +125,7 @@ public class RecentFragment extends BaseFragment {
             @Override
             public void onPaginate() {
                 ++page;
-                makeApiCall();
+                makeApiCall(false);
                 isApiRequested = true;
                 recentsCelv.setScrollable(false);
             }
@@ -132,14 +138,15 @@ public class RecentFragment extends BaseFragment {
             }
         });
 
-        if (getArguments() != null &&
-                getArguments().getBoolean(Constants.IS_FROM_HOME)) {
-            makeApiCall();
-        }
     }
 
     private void updateList() {
+        if (page == 1) {
+            listHeader.clear();
+            listChild.clear();
+        }
         if (recentsApiResponseModel != null && recentsApiResponseModel.getResult().size() > 0) {
+
 
             chatList.clear();
             chatListHeader.clear();
@@ -163,12 +170,27 @@ public class RecentFragment extends BaseFragment {
             }
 
             if (videoList.size() > 0) {
-                listChild.putAll(videoList);
-                listHeader.addAll(videoListHeader);
+
+                for (int i = 0; i < videoListHeader.size(); i++) {
+                    List<RecentsApiResponseModel.ResultBean> listHashMap = new ArrayList<>();
+
+                    if (!listHeader.contains(videoListHeader.get(i))) {
+                        listHeader.add(videoListHeader.get(i));
+                        listHashMap = videoList.get(videoListHeader.get(i));
+                    } else {
+                        listHashMap = listChild.get(videoListHeader.get(i));
+                        if (listHashMap == null) {
+                            listHashMap = new ArrayList<>();
+                        }
+
+                        listHashMap.addAll(videoList.get(videoListHeader.get(i)));
+                    }
+                    listChild.put(videoListHeader.get(i), listHashMap);
+                }
             }
 
             if (recentListAdapter != null) {
-                recentListAdapter.setData(listHeader, listChild);
+                recentListAdapter.setData(listHeader, listChild, page);
                 expandListView();
             }
         }
@@ -205,35 +227,44 @@ public class RecentFragment extends BaseFragment {
         String date = Utils.getDayMonthYear(resultBean.getUpdated_at());
         List<RecentsApiResponseModel.ResultBean> beanList = new ArrayList<>();
 
-        if (!videoList.containsKey(date)) {
-
-            beanList.add(resultBean);
-            videoList.put(date, beanList);
+        if (!videoListHeader.contains(date)) {
             videoListHeader.add(date);
-
-        } else {
-            beanList.addAll(videoList.get(date));
             beanList.add(resultBean);
-
-            videoList.put(date, beanList);
+        } else {
+            beanList = videoList.get(date);
         }
 
+        if (beanList == null) {
+            beanList = new ArrayList<>();
+        }
+
+        beanList.add(resultBean);
+        videoList.put(date, beanList);
     }
 
-    private void makeApiCall() {
+    private void makeApiCall(boolean isShowProgress) {
         if (!isApiRequested) {
             if (recentsApiViewModel != null) {
                 if (getArguments() != null) {
                     if (getArguments().getBoolean(Constants.IS_FROM_HOME)) {
+                        isApiRequested = true;
                         recentsApiViewModel.getMyCorrespondentList(page);
                     } else {
                         CommonUserApiResponseModel userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                         if (userDetail != null) {
-                            recentsApiViewModel.getUserCorrespondentList(userDetail.getUser_guid(), page, false);
+                            recentsApiViewModel.getUserCorrespondentList(userDetail.getUser_guid(), page, false, isShowProgress);
                         }
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getUserVisibleHint()) {
+            setUserVisibleHint(true);
         }
     }
 }

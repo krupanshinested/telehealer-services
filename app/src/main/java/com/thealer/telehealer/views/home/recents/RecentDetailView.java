@@ -3,12 +3,11 @@ package com.thealer.telehealer.views.home.recents;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -22,27 +21,18 @@ import android.widget.TextView;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.analytics.AnalyticsListener;
-import com.google.android.exoplayer2.metadata.Metadata;
-import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoFrameMetadataListener;
-import com.google.android.exoplayer2.video.spherical.CameraMotionListener;
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -93,6 +83,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
     private ShowSubFragmentInterface showSubFragmentInterface;
     private int position = -1;
     private TranscriptionListAdapter transcriptionListAdapter;
+    private ConstraintLayout parent;
 
     @Override
     public void onAttach(Context context) {
@@ -111,17 +102,33 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                             if (baseApiResponseModel instanceof TranscriptionApiResponseModel) {
                                 transcriptionApiResponseModel = (TranscriptionApiResponseModel) baseApiResponseModel;
 
-                                String username = null;
-                                if (UserType.isUserPatient()) {
-                                    username = "Dr. " + transcriptionApiResponseModel.getDoctor().getFirst_name() + " " + transcriptionApiResponseModel.getDoctor().getLast_name();
-                                } else {
-                                    username = transcriptionApiResponseModel.getPatient().getFirst_name() + " " + transcriptionApiResponseModel.getPatient().getLast_name();
-                                }
-                                toolbarTitle.setTextColor(Color.WHITE);
-                                toolbarTitle.setText(username + "\n" + Utils.getDayMonthYear(transcriptionApiResponseModel.getOrder_start_time()));
+                                if (!transcriptionApiResponseModel.getStatus().equals(transcriptionApiResponseModel.STATUS_READY)) {
+                                    String username = null;
+                                    if (UserType.isUserPatient()) {
+                                        username = "Dr. " + transcriptionApiResponseModel.getDoctor().getFirst_name() + " " + transcriptionApiResponseModel.getDoctor().getLast_name();
+                                    } else {
+                                        username = transcriptionApiResponseModel.getPatient().getFirst_name() + " " + transcriptionApiResponseModel.getPatient().getLast_name();
+                                    }
+                                    toolbarTitle.setTextColor(Color.WHITE);
+                                    toolbarTitle.setText(username + "\n" + Utils.getDayMonthYear(transcriptionApiResponseModel.getOrder_start_time()));
 
-                                recentsApiViewModel.downloadTranscriptDetail(transcriptionApiResponseModel.getTranscript(), true);
-                                createVideoPlayer();
+                                    recentsApiViewModel.downloadTranscriptDetail(transcriptionApiResponseModel.getTranscript(), true);
+                                    createVideoPlayer();
+                                } else {
+                                    showAlertDialog(getActivity(),
+                                            getString(R.string.alert),
+                                            "Your transcription in not ready yet, Please try again after sometimes",
+                                            getString(R.string.ok),
+                                            null,
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                    onCloseActionInterface.onClose(false);
+                                                }
+                                            },
+                                            null);
+                                }
 
                             } else if (baseApiResponseModel instanceof DownloadTranscriptResponseModel) {
                                 downloadTranscriptResponseModel = (DownloadTranscriptResponseModel) baseApiResponseModel;
@@ -175,6 +182,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
             }
         }
         timerTv = (TextView) view.findViewById(R.id.timer_tv);
+        parent = (ConstraintLayout) view.findViewById(R.id.parent);
     }
 
     private void updateTranscript() {
@@ -307,7 +315,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.print_iv:
                 if (transcriptionApiResponseModel != null && downloadTranscriptResponseModel != null) {
-                    String transcriptPdf = new TranscriptionPdfGenerator().getTranscriptPdf(transcriptionApiResponseModel, downloadTranscriptResponseModel);
+                    String transcriptPdf = new TranscriptionPdfGenerator(getActivity()).getTranscriptPdf(transcriptionApiResponseModel, downloadTranscriptResponseModel, getString(R.string.fine_transcript_message));
 
                     PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
                     bundle.putString(ArgumentKeys.HTML_FILE, transcriptPdf);
@@ -333,8 +341,10 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        simpleExoPlayer.release();
+    public void onPause() {
+        super.onPause();
+        if (simpleExoPlayer != null) {
+            simpleExoPlayer.release();
+        }
     }
 }
