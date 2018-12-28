@@ -12,6 +12,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.getDoctorsModel.TypeAHeadResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByDemographicRequestModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
@@ -159,6 +160,9 @@ public interface ApiInterface {
 
     @GET("doctors")
     Observable<GetDoctorsApiResponseModel> getDoctors(@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(NAME) String name, @Query(FIELDS) String fields);
+
+    @GET("doctors")
+    Observable<TypeAHeadResponseModel> getTypeAHeadResult(@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(PAGINATE) boolean paginate, @Query(NAME) String name, @Query("typeahead") boolean isTypeAHead);
 
     @POST("login")
     Observable<SigninApiResponseModel> signinUser(@Body HashMap<String, Object> params);
