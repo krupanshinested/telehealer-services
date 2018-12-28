@@ -7,6 +7,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -101,13 +102,15 @@
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/app_gradient_start"
                     android:padding="0dp" />
+
                 <TextView
+                    android:id="@+id/specialist_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     android:padding="4dp"
                     android:textColor="@color/colorBlack"
-                    android:id="@+id/specialist_tv"/>
+                    android:visibility="gone" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -175,12 +178,12 @@
                     app:layout_constraintWidth_max="@dimen/max_width" />
 
                 <TextView
+                    android:id="@+id/gender_value"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     android:padding="4dp"
                     android:textColor="@color/colorBlack"
-                    android:id="@+id/gender_value"/>
+                    android:visibility="gone" />
 
                 <View
                     android:id="@+id/gender_view"
@@ -267,6 +270,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:background="@color/card_view_background"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/practice_til"
@@ -296,6 +300,7 @@
                     android:id="@+id/license_rv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/card_view_background"
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -369,14 +374,14 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/driver_license"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/driver_license"
                 android:visibility="gone"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/liability_insurance_til"
                 app:layout_constraintBottom_toTopOf="@+id/certificate"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/liability_insurance_til"
                 app:layout_constraintWidth_max="@dimen/max_width">
 
                 <TextView
@@ -384,51 +389,49 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:visibility="visible"
                     android:text="@string/driver_license"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toTopOf="@+id/license_card"
-                    />
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <android.support.v7.widget.CardView
+                    android:id="@+id/license_card"
                     android:layout_width="0dp"
                     android:layout_height="200dp"
-                    android:id="@+id/license_card"
+                    app:cardBackgroundColor="@android:color/transparent"
                     app:cardCornerRadius="10dp"
                     app:cardElevation="0dp"
-                    app:cardUseCompatPadding="true"
                     app:cardPreventCornerOverlap="false"
-                    app:cardBackgroundColor="@android:color/transparent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toLeftOf="@+id/driver_license_tv"
-                    app:layout_constraintTop_toBottomOf="@+id/driver_license_tv"
+                    app:cardUseCompatPadding="true"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintWidth_max="@dimen/max_width"
-                    >
-                <ImageView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:id="@+id/driver_license_iv"
-                    android:scaleType="centerCrop"
-                    android:visibility="visible"
-                    android:src="@drawable/placeholder_certificate"
-                    />
+                    app:layout_constraintLeft_toLeftOf="@+id/driver_license_tv"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/driver_license_tv"
+                    app:layout_constraintWidth_max="@dimen/max_width">
+
+                    <ImageView
+                        android:id="@+id/driver_license_iv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/placeholder_certificate"
+                        android:visibility="visible" />
                 </android.support.v7.widget.CardView>
 
 
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/certificate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/certificate"
                 android:visibility="visible"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/driver_license"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/driver_license"
                 app:layout_constraintWidth_max="@dimen/max_width">
 
                 <TextView
@@ -436,40 +439,37 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:visibility="visible"
                     android:text="@string/medical_school_certificate"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toTopOf="@+id/certificate_card"
-                    />
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <android.support.v7.widget.CardView
+                    android:id="@+id/certificate_card"
                     android:layout_width="0dp"
                     android:layout_height="200dp"
-                    android:id="@+id/certificate_card"
+                    app:cardBackgroundColor="@android:color/transparent"
                     app:cardCornerRadius="10dp"
                     app:cardElevation="0dp"
-                    app:cardUseCompatPadding="true"
                     app:cardPreventCornerOverlap="false"
-                    app:cardBackgroundColor="@android:color/transparent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toLeftOf="@+id/certificate_tv"
-                    app:layout_constraintTop_toBottomOf="@+id/certificate_tv"
+                    app:cardUseCompatPadding="true"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintWidth_max="@dimen/max_width"
-                    >
+                    app:layout_constraintLeft_toLeftOf="@+id/certificate_tv"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/certificate_tv"
+                    app:layout_constraintWidth_max="@dimen/max_width">
+
                     <ImageView
+                        android:id="@+id/certificate_iv"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:id="@+id/certificate_iv"
-                        android:scaleType="centerCrop"
-                        android:visibility="visible"
-                        android:src="@drawable/placeholder_certificate"
                         android:background="@android:color/transparent"
-                        />
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/placeholder_certificate"
+                        android:visibility="visible" />
                 </android.support.v7.widget.CardView>
-
 
 
             </android.support.constraint.ConstraintLayout>

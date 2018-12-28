@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite">
+    android:background="@color/colorWhite"
+    android:clickable="true">
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/colorBlack"
         app:layout_constraintBottom_toTopOf="@+id/transcript_controller_cl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:resize_mode="fit"
-        android:background="@color/colorBlack"/>
+        app:resize_mode="fit" />
 
     <include
         layout="@layout/appbar_back_with_title"
@@ -27,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/grey_border_drawable"
-        app:layout_constraintBottom_toTopOf="@+id/transcript_rv"
+        app:layout_constraintBottom_toTopOf="@+id/transcript_nsv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -79,17 +81,38 @@
             android:layout_height="0dp"
             android:gravity="center"
             android:padding="8dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
-    <com.thealer.telehealer.common.CustomRecyclerView
-        android:id="@+id/transcript_rv"
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/transcript_nsv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorGrey_light"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/fine_transcript_message" />
+
+            <com.thealer.telehealer.common.CustomRecyclerView
+                android:id="@+id/transcript_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </android.support.constraint.ConstraintLayout>

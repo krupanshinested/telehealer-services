@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
     android:padding="8dp">
 
     <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardUseCompatPadding="true"
-        android:id="@+id/item_cv">
+        android:id="@+id/item_cv"
+        style="@style/card_style">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -20,7 +18,9 @@
                 android:id="@+id/user_avatar_civ"
                 android:layout_width="@dimen/card_circular_image_size"
                 android:layout_height="@dimen/card_circular_image_size"
-                android:layout_margin="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:src="@drawable/profile_placeholder"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -30,8 +30,10 @@
                 android:id="@+id/user_name_tv"
                 style="@style/text_title_dark"
                 android:layout_width="0dp"
+                android:layout_marginStart="8dp"
                 android:gravity="left|center"
-                android:textSize="16sp"
+                android:text="@string/dummy_text"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@id/label_iv"
                 app:layout_constraintStart_toEndOf="@+id/user_avatar_civ"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -45,11 +47,11 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/label_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:rotation="45"
-                android:id="@+id/label_tv"
                 android:text="RPM"
                 android:textColor="@color/colorWhite"
                 android:textSize="12sp"
@@ -59,39 +61,43 @@
             <TextView
                 android:id="@+id/time_tv"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:drawableLeft="@drawable/ic_videocam_black_24dp"
                 android:drawablePadding="10dp"
                 android:gravity="left|center"
-                android:padding="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/duration_tv"
                 app:layout_constraintStart_toEndOf="@+id/user_avatar_civ"
-                app:layout_constraintTop_toBottomOf="@+id/user_name_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/user_name_tv"
+                tools:text="12:34pm" />
 
             <TextView
                 android:id="@+id/duration_tv"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:drawableLeft="@drawable/ic_access_time_24dp"
                 android:drawablePadding="10dp"
+                android:ellipsize="end"
+                android:ems="3"
                 android:gravity="left|center"
-                android:padding="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:maxLines="1"
+                android:textColor="@color/colorBlack"
                 app:layout_constraintEnd_toStartOf="@id/info_iv"
                 app:layout_constraintStart_toEndOf="@+id/time_tv"
-                app:layout_constraintTop_toBottomOf="@+id/user_name_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/user_name_tv"
+                tools:text="2 min 10 sec" />
 
             <ImageView
                 android:id="@+id/info_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:padding="8dp"
-                android:src="@drawable/ic_info_32dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/info"
                 android:tint="@color/app_gradient_start"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/duration_tv"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/user_name_tv" />
+                app:layout_constraintTop_toTopOf="@+id/duration_tv" />
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
