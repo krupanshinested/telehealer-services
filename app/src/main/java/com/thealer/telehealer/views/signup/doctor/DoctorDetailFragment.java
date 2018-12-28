@@ -37,6 +37,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
+import com.thealer.telehealer.apilayer.models.createuser.SpecialtiesBean;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
@@ -945,6 +946,13 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
         createUserRequestModel.getUser_detail().getData().setTitle(titleEt.getText().toString());
         createUserRequestModel.getUser_detail().getData().setNpi(npiEt.getText().toString());
         createUserRequestModel.getUser_detail().getData().setLiability(liabilityEt.getText().toString());
+
+        List<SpecialtiesBean> specialtiesBeans = createUserRequestModel.getUser_detail().getData().getSpecialties();
+        if (specialtiesBeans.size() > 0) {
+            specialtiesBeans.get(0).setName(specialitySp.getSelectedItem().toString());
+            createUserRequestModel.getUser_detail().getData().setSpecialties(specialtiesBeans);
+        }
+
 
         createUserRequestModel.getUser_detail().getData().setWebsite(websiteEt.getText().toString());
 

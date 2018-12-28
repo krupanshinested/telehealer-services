@@ -10,17 +10,23 @@ import java.util.HashMap;
 public class GCMPayload implements Serializable {
     private GCMData data;
 
-
     public GCMData getData() {
         return data;
     }
 
+    public GCMPayload(APNSPayload body) {
+        this.data = new GCMData(body);
+    }
 
     public class GCMData implements Serializable {
         private APNSPayload body;
 
         public APNSPayload getBody() {
             return body;
+        }
+
+        public GCMData(APNSPayload body) {
+            this.body = body;
         }
     }
 }

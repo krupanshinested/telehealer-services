@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TeleHealer</string>
+    <string name="app_name">Telehealer</string>
     <string name="sign_up">Register</string>
     <string name="sign_in">Login</string>
     <string name="dummy_text">Text comes here</string>
