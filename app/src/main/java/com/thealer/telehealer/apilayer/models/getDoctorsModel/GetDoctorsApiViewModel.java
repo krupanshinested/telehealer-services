@@ -25,22 +25,25 @@ public class GetDoctorsApiViewModel extends BaseApiViewModel {
     public void getDoctorsDetailList(int page, String name, boolean isShowProgress) {
 
         String fields = "npi,licenses,specialties,practices,educations,hospital_affiliations,profile,uid";
+        getPublicApiService()
+                .getDoctors(page, Constants.PAGINATION_SIZE, name, fields)
+                .compose(applySchedulers())
+                .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                    @Override
+                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                        getBaseApiResponseModelMutableLiveData().setValue(baseApiResponseModel);
+                    }
+                });
+    }
 
-        fetchToken(new BaseViewInterface() {
-            @Override
-            public void onStatus(boolean status) {
-                if (status) {
-                    getPublicApiService()
-                            .getDoctors(page, Constants.PAGINATION_SIZE, name, fields)
-                            .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
-                                @Override
-                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-                                    getBaseApiResponseModelMutableLiveData().setValue(baseApiResponseModel);
-                                }
-                            });
-                }
-            }
-        });
+    public void getTypeAHeadResult(int page, String name, boolean isShowProgress) {
+        getAuthApiService().getTypeAHeadResult(page, Constants.PAGINATION_SIZE, true, name, true)
+                .compose(applySchedulers())
+                .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                    @Override
+                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                        baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                    }
+                });
     }
 }
