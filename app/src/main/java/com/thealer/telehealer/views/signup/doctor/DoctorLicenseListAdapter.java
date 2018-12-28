@@ -6,12 +6,14 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
@@ -32,7 +34,7 @@ class DoctorLicenseListAdapter extends RecyclerView.Adapter<DoctorLicenseListAda
     private CurrentModeInterface currentModeInterface;
     private List<LicensesBean> licensesBeanList = new ArrayList<>();
 
-    public DoctorLicenseListAdapter(FragmentActivity activity,CurrentModeInterface currentModeInterface) {
+    public DoctorLicenseListAdapter(FragmentActivity activity, CurrentModeInterface currentModeInterface) {
         fragmentActivity = activity;
         this.currentModeInterface = currentModeInterface;
     }
@@ -121,8 +123,10 @@ class DoctorLicenseListAdapter extends RecyclerView.Adapter<DoctorLicenseListAda
             textView.setTextColor(fragmentActivity.getColor(android.R.color.holo_red_light));
             viewHolder.view.setBackgroundColor(fragmentActivity.getColor(android.R.color.holo_red_light));
             viewHolder.errorTv.setVisibility(View.VISIBLE);
+            Log.e("aswin", "showError: " + position);
+            Log.e("aswin", "showError: " + new Gson().toJson(createUserRequestModel));
             if (createUserRequestModel.getHasValidLicensesList().size() != 0 &&
-                    createUserRequestModel.getHasValidLicensesList().size() >= position) {
+                    createUserRequestModel.getHasValidLicensesList().size() > position) {
                 createUserRequestModel.getHasValidLicensesList().set(position, false);
             } else {
                 createUserRequestModel.getHasValidLicensesList().add(false);

@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signup.doctor;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -201,7 +202,7 @@ public class DoctorLicenseBottomSheetFragment extends BaseBottomSheetDialogFragm
     }
 
     private void notifyParent() {
-        getTargetFragment().onActivityResult(getTargetRequestCode(), RequestID.REQ_LICENSE, null);
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
     }
 
     private void updateLicense() {
