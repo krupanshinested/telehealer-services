@@ -7,6 +7,8 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
  */
 public class TranscriptionApiResponseModel extends BaseApiResponseModel {
 
+    public final String STATUS_READY = "READY";
+
     private int transcription_id;
     private String status;
     private String order_id;

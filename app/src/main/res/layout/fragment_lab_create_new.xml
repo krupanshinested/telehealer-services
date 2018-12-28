@@ -39,6 +39,7 @@
                 android:id="@+id/lab_description_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/card_view_background"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/lab_label" />

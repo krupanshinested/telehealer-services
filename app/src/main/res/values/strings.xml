@@ -608,4 +608,12 @@
     <string name="calling_from_outside">Calling from outside licensed state…</string>
     <string name="payment_dues">By accepting this call, you consent to receiving care remotely via a tele medicine visit and to pay any remaining dues of this visit after insurance payments</string>
 
+    <string name="missed">missed</string>
+    <string name="audio">audio</string>
+    <string name="chat">chat</string>
+    <string name="fine_transcript_message">Transcript is auto-generated and may have inaccuracies owing to ambient noise, user-accent, and other technical limitations. Please always refer to the recorded audio/video as a more accurate archive of the encounter.</string>
+    <string name="duration">Duration</string>
+    <string name="type">Type</string>
+    <string name="doctor_name">Doctor Name</string>
+    <string name="chat_transcript">Chat Transcript</string>
 </resources>
