@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
@@ -140,6 +141,8 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
         super.onAttach(context);
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
+        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        getDoctorsApiViewModel = ViewModelProviders.of(getActivity()).get(GetDoctorsApiViewModel.class);
     }
 
     @Override
@@ -176,6 +179,8 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
         onViewChangeInterface.hideOrShowNext(true);
         onViewChangeInterface.enableNext(false);
 
+        initView(view);
+
         if (getArguments() != null) {
 
             isCreateManually = getArguments().getBoolean(Constants.IS_CREATE_MANUALLY);
@@ -196,12 +201,6 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
 
             }
         }
-
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
-
-        initView(view);
-
-        getDoctorsApiViewModel = ViewModelProviders.of(getActivity()).get(GetDoctorsApiViewModel.class);
 
         if (savedInstanceState == null) {
             if (currentDisplayType == Constants.CREATE_MODE) {
@@ -750,6 +749,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
                 }
                 break;
             case RequestID.REQ_LICENSE:
+                Log.e("aswin", "onActivityResult: "+ new Gson().toJson(createUserRequestModel.getUser_detail().getData().getLicenses()));
                 setLicenseList();
                 if (createUserRequestModel.getUser_detail().getData().getLicenses().size() == 0) {
                     addLicenseTil.setError(getString(R.string.license_empty_error));
