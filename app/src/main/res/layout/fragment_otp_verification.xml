@@ -15,84 +15,72 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
-        android:id="@+id/background_fl"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_tv">
+
+        <ImageView
+            android:id="@+id/circle_iv1"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_unselected_indicator" />
+
+        <ImageView
+            android:id="@+id/circle_iv2"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_unselected_indicator" />
+
+        <ImageView
+            android:id="@+id/circle_iv3"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_unselected_indicator" />
+
+        <ImageView
+            android:id="@+id/circle_iv4"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_unselected_indicator" />
+
+        <ImageView
+            android:id="@+id/circle_iv5"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_unselected_indicator" />
+
+        <ImageView
+            android:id="@+id/circle_iv6"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_unselected_indicator" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/otp_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:background="@null"
+        android:cursorVisible="false"
+        android:drawableBottom="@null"
+        android:inputType="number"
+        android:maxLength="6"
+        android:textColor="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_tv">
-
-        <EditText
-            android:id="@+id/otp_et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:cursorVisible="false"
-            android:drawableBottom="@null"
-            android:inputType="number"
-            android:maxLength="6"
-            android:textColor="@color/colorWhite" />
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/foreground_fl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_tv">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/circle_iv1"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/circular_unselected_indicator" />
-
-            <ImageView
-                android:id="@+id/circle_iv2"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/circular_unselected_indicator" />
-
-            <ImageView
-                android:id="@+id/circle_iv3"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/circular_unselected_indicator" />
-
-            <ImageView
-                android:id="@+id/circle_iv4"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/circular_unselected_indicator" />
-
-            <ImageView
-                android:id="@+id/circle_iv5"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/circular_unselected_indicator" />
-
-            <ImageView
-                android:id="@+id/circle_iv6"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/circular_unselected_indicator" />
-        </LinearLayout>
-    </FrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/title_tv" />
 
     <TextView
         android:id="@+id/page_hint_tv"
@@ -105,7 +93,7 @@
         android:text="@string/otp_info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/foreground_fl" />
+        app:layout_constraintTop_toBottomOf="@+id/otp_et" />
 
     <TextView
         android:id="@+id/resend_tv"
@@ -123,9 +111,9 @@
     <TextView
         android:id="@+id/timer_tv"
         style="@style/text_app_color"
-        android:text="30"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="30"
         app:layout_constraintBottom_toBottomOf="@+id/timer_pb"
         app:layout_constraintEnd_toEndOf="@+id/timer_pb"
         app:layout_constraintStart_toStartOf="@+id/timer_pb"
@@ -136,11 +124,11 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:indeterminate="false"
         android:max="30"
         android:progress="30"
         android:progressDrawable="@drawable/timer_circle"
-        android:layout_marginTop="10dp"
-        android:indeterminate="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/page_hint_tv" />

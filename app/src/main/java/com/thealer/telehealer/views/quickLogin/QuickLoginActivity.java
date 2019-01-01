@@ -5,6 +5,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
@@ -47,9 +48,9 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
                     bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success_title_touchid));
 
-                    if (quickLoginType == Constants.QUICK_LOGIN_TYPE_TOUCH){
+                    if (quickLoginType == Constants.QUICK_LOGIN_TYPE_TOUCH) {
                         bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.success_message_touchid));
-                    }else if (quickLoginType == Constants.QUICK_LOGIN_TYPE_PIN){
+                    } else if (quickLoginType == Constants.QUICK_LOGIN_TYPE_PIN) {
                         bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.success_message_pin));
                     }
 
@@ -154,7 +155,6 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 break;
             case Constants.BIOMETRIC_SUCCESS:
                 authStatus = ArgumentKeys.AUTH_SUCCESS;
-//                goToMainActivity();
                 break;
         }
         bundle.putInt(ArgumentKeys.QUICK_LOGIN_STATUS, authStatus);
