@@ -23,7 +23,7 @@
         android:src="@drawable/profile_placeholder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/close_iv"/>
+        app:layout_constraintTop_toBottomOf="@+id/close_iv" />
 
     <TextView
         android:id="@+id/doctor_name_tv"
@@ -46,67 +46,61 @@
         app:layout_constraintTop_toBottomOf="@+id/doctor_name_tv" />
 
 
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enter_pin_tv">
+
+        <ImageView
+            android:id="@+id/circle_iv1"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_unselected_indicator" />
+
+        <ImageView
+            android:id="@+id/circle_iv2"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_unselected_indicator" />
+
+        <ImageView
+            android:id="@+id/circle_iv3"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_unselected_indicator" />
+
+        <ImageView
+            android:id="@+id/circle_iv4"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/circular_unselected_indicator" />
+
+    </LinearLayout>
+
     <EditText
         android:id="@+id/pin_et"
         android:layout_width="0dp"
         android:layout_height="35dp"
         android:background="@null"
         android:cursorVisible="false"
+        android:digits="@string/digitsNumeric"
         android:drawableBottom="@null"
         android:inputType="number"
-        android:focusedByDefault="true"
-        android:digits="@string/digitsNumeric"
         android:maxLength="4"
         android:textColor="@color/colorWhite"
-        app:layout_constraintBottom_toBottomOf="@+id/foreground_fl"
-        app:layout_constraintEnd_toEndOf="@+id/foreground_fl"
-        app:layout_constraintStart_toStartOf="@+id/foreground_fl"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout"
         app:layout_constraintTop_toBottomOf="@+id/enter_pin_tv" />
-
-    <FrameLayout
-        android:id="@+id/foreground_fl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enter_pin_tv">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/circle_iv1"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/circular_unselected_indicator" />
-
-            <ImageView
-                android:id="@+id/circle_iv2"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/circular_unselected_indicator" />
-
-            <ImageView
-                android:id="@+id/circle_iv3"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/circular_unselected_indicator" />
-
-            <ImageView
-                android:id="@+id/circle_iv4"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/circular_unselected_indicator" />
-
-        </LinearLayout>
-    </FrameLayout>
 
     <TextView
         android:id="@+id/forget_password_tv"
@@ -114,6 +108,6 @@
         android:layout_marginTop="16dp"
         android:text="@string/forget_passcode"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/foreground_fl" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 </android.support.constraint.ConstraintLayout>
