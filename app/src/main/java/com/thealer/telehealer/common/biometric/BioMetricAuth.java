@@ -38,26 +38,26 @@ public class BioMetricAuth {
                     BiometricPrompt.AuthenticationCallback authenticationCallback = new BiometricPrompt.AuthenticationCallback() {
                         @Override
                         public void onAuthenticationError(int errorCode, CharSequence errString) {
-                                super.onAuthenticationError(errorCode, errString);
-//                            biometricInterface.onBioMetricActionComplete(errString.toString(), Constants.BIOMETRIC_ERROR);
+                            super.onAuthenticationError(errorCode, errString);
+                            biometricInterface.onBioMetricActionComplete(errString.toString(), Constants.BIOMETRIC_ERROR);
                         }
 
                         @Override
                         public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
                             super.onAuthenticationHelp(helpCode, helpString);
-//                            biometricInterface.onBioMetricActionComplete(helpString.toString(), helpCode);
+                            biometricInterface.onBioMetricActionComplete(helpString.toString(), helpCode);
                         }
 
                         @Override
                         public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
                             super.onAuthenticationSucceeded(result);
-//                            biometricInterface.onBioMetricActionComplete(context.getString(R.string.BIOMETRIC_SUCCESS), Constants.BIOMETRIC_SUCCESS);
+                            biometricInterface.onBioMetricActionComplete(context.getString(R.string.BIOMETRIC_SUCCESS), Constants.BIOMETRIC_SUCCESS);
                         }
 
                         @Override
                         public void onAuthenticationFailed() {
                             super.onAuthenticationFailed();
-//                            biometricInterface.onBioMetricActionComplete(context.getString(R.string.BIOMETRIC_FAILED), Constants.BIOMETRIC_FAILED);
+                            biometricInterface.onBioMetricActionComplete(context.getString(R.string.BIOMETRIC_FAILED), Constants.BIOMETRIC_FAILED);
                         }
                     };
 
