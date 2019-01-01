@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signup;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -242,7 +243,6 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
         if (otpType == signup) {
             CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
-            Log.e("aswin", "initView: " + createUserRequestModel.getUser_data().getPhone());
             titleTv.setText(getString(R.string.enter_the_authorization_code_sent_to) + " " + createUserRequestModel.getUser_data().getPhone());
         }
 
@@ -262,34 +262,36 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
         }
 
         otpEt.requestFocus();
+        showOrHideSoftInputWindow(true);
 
     }
 
     private void requestOtpValidation() {
 
+        otpEt.clearFocus();
+        showOrHideSoftInputWindow(false);
+
         if (isRequestWithEmail) {
 
             resetPasswordRequestModel.setOtp(otpEt.getText().toString());
-            otpEt.setText(null);
 
             if (this.otpType == OtpVerificationFragment.forgot_password) {
                 onActionCompleteInterface.onCompletionResult(RequestID.REQ_FORGOT_PASSWORD, true, null);
             } else {
                 onActionCompleteInterface.onCompletionResult(RequestID.REQ_RESET_PASSWORD, true, null);
             }
-            otpEt.clearFocus();
 
 
         } else {
             successViewDialogFragment = new SuccessViewDialogFragment();
 
+            successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
             successViewDialogFragment.show(getActivity().getSupportFragmentManager(), SuccessViewDialogFragment.class.getSimpleName());
 
             requestOtpApiViewModel.validateOtpUsingGuid(otpEt.getText().toString());
 
-            otpEt.setText(null);
-            otpEt.clearFocus();
         }
+        otpEt.setText(null);
     }
 
     private void requestOtp() {
@@ -342,7 +344,6 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
     @Override
     public void onResume() {
         super.onResume();
-        otpEt.requestFocus();
 
         onViewChangeInterface.hideOrShowNext(false);
         onViewChangeInterface.hideOrShowClose(true);
@@ -355,6 +356,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
     @Override
     public void onPause() {
         super.onPause();
+        showOrHideSoftInputWindow(false);
     }
 
     @Override
@@ -373,5 +375,14 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
     @Override
     public void doCurrentTransaction() {
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW && resultCode != Activity.RESULT_OK) {
+            otpEt.requestFocus();
+            showOrHideSoftInputWindow(true);
+        }
     }
 }

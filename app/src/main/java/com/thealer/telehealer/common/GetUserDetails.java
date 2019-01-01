@@ -13,6 +13,7 @@ import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -54,8 +55,22 @@ public class GetUserDetails {
     }
 
     public GetUserDetails getDetails(Set<String> guidList) {
-        if (getUsersApiViewModel != null && guidList.size() > 0)
-            getUsersApiViewModel.getUserByGuid(guidList);
+        if (getUsersApiViewModel != null && guidList.size() > 0) {
+            Set<String> guids = new HashSet<>();
+            if (getHashMapMutableLiveData().getValue() != null) {
+                for (String guid : guidList) {
+                    if (!getHashMapMutableLiveData().getValue().containsKey(guid)) {
+                        guids.add(guid);
+                    }
+                }
+            } else {
+                guids.addAll(guidList);
+            }
+            
+            if (guids.size() > 0) {
+                getUsersApiViewModel.getUserByGuid(guids);
+            }
+        }
         return getUserDetails;
     }
 
