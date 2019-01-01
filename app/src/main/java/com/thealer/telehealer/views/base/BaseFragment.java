@@ -85,6 +85,7 @@ public class BaseFragment extends Fragment {
 
     public void showOrHideSoftInputWindow(boolean showOrHide){
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
         if (showOrHide){
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         } else {

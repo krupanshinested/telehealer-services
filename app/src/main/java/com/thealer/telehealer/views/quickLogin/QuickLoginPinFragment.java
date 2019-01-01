@@ -37,7 +37,6 @@ public class QuickLoginPinFragment extends BaseFragment {
     private CircleImageView doctorCiv;
     private TextView doctorNameTv;
     private EditText pinEt;
-    private FrameLayout foregroundFl;
     private ImageView circleIv1;
     private ImageView circleIv2;
     private ImageView circleIv3;
@@ -82,7 +81,6 @@ public class QuickLoginPinFragment extends BaseFragment {
         doctorCiv = (CircleImageView) view.findViewById(R.id.doctor_civ);
         doctorNameTv = (TextView) view.findViewById(R.id.doctor_name_tv);
         pinEt = (EditText) view.findViewById(R.id.pin_et);
-        foregroundFl = (FrameLayout) view.findViewById(R.id.foreground_fl);
         circleIv1 = (ImageView) view.findViewById(R.id.circle_iv1);
         circleIv2 = (ImageView) view.findViewById(R.id.circle_iv2);
         circleIv3 = (ImageView) view.findViewById(R.id.circle_iv3);
@@ -168,6 +166,9 @@ public class QuickLoginPinFragment extends BaseFragment {
         } else {
             showValidatePin();
         }
+
+        pinEt.requestFocus();
+        showOrHideSoftInputWindow(true);
     }
 
     private void validatePin() {
@@ -193,6 +194,9 @@ public class QuickLoginPinFragment extends BaseFragment {
     }
 
     private void sendQuickLoginBroadCast(int Authorized) {
+        pinEt.clearFocus();
+        showOrHideSoftInputWindow(false);
+
         Intent intent = new Intent(getString(R.string.quick_login_broadcast_receiver));
         Bundle bundle = new Bundle();
         bundle.putInt(ArgumentKeys.QUICK_LOGIN_STATUS, Authorized);
@@ -242,5 +246,12 @@ public class QuickLoginPinFragment extends BaseFragment {
         for (int i = 0; i < length; i++) {
             imageViews[i].setBackground(getResources().getDrawable(R.drawable.circular_selected_indicator));
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        pinEt.clearFocus();
+        showOrHideSoftInputWindow(false);
     }
 }
