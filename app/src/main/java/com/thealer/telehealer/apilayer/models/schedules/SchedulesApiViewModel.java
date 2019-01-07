@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
@@ -55,7 +57,7 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createSchedule(String doctorGuid, SchedulesCreateRequestModel createRequestModel, boolean isShowBoolean){
+    public void createSchedule(String doctorGuid, String toGuid, SchedulesCreateRequestModel createRequestModel, boolean isShowBoolean){
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -65,6 +67,7 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowBoolean)) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getNewSchedulePayload(toGuid), null);
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
@@ -73,7 +76,7 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void deleteSchedule(int scheduleId, boolean isShowProgress) {
+    public void deleteSchedule(int scheduleId, String time, String user_guid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -83,6 +86,7 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getScheduleCancelPayload(user_guid, time), null);
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });

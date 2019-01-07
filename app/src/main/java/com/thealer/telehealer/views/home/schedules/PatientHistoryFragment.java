@@ -117,7 +117,7 @@ public class PatientHistoryFragment extends BaseFragment {
         showSuccessView(null, RequestID.REQ_SHOW_SUCCESS_VIEW);
         sendSuccessViewBroadCast(getActivity(), true, getString(R.string.please_wait), getString(R.string.posting_your_appointment));
         checkForHistoryUpdate();
-        schedulesApiViewModel.createSchedule(null, createScheduleViewModel.getSchedulesCreateRequestModel(), false);
+        schedulesApiViewModel.createSchedule(null, createScheduleViewModel.getDoctorCommonModel().getUser_guid(), createScheduleViewModel.getSchedulesCreateRequestModel(), false);
     }
 
     private void checkForHistoryUpdate() {
@@ -129,6 +129,10 @@ public class PatientHistoryFragment extends BaseFragment {
                 appointmentSlotUpdate.updateUserHistory(createScheduleViewModel.getPatientHistory(), false);
 
                 createScheduleViewModel.getSchedulesCreateRequestModel().getDetail().setChange_medical_info(true);
+
+                WhoAmIApiResponseModel whoAmIApiResponseModel = new WhoAmIApiResponseModel();
+                whoAmIApiResponseModel.setHistory(createScheduleViewModel.getPatientHistory());
+                appointmentSlotUpdate.updateUserDetail(whoAmIApiResponseModel, false);
 
                 break;
             }

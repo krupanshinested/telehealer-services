@@ -47,6 +47,9 @@ import com.thealer.telehealer.views.home.recents.RecentFragment;
 import com.thealer.telehealer.views.home.schedules.ScheduleCalendarFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
+import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
+import com.thealer.telehealer.views.notification.NotificationActivity;
+import com.thealer.telehealer.views.notification.NotificationListFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
@@ -222,8 +225,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_help:
                 showHelpContent();
                 break;
+            case R.id.menu_notification:
+                showNotificationFragment();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showNotificationFragment() {
+        startActivity(new Intent(this, NotificationActivity.class));
+        finish();
     }
 
     private void showHelpContent() {

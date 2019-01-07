@@ -13,6 +13,8 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteUserApiViewModel;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -41,6 +43,14 @@ public class InviteUserBaseFragment extends BaseFragment {
                         InviteByEmailPhoneApiResponseModel inviteByEmailPhoneApiResponseModel = (InviteByEmailPhoneApiResponseModel) baseApiResponseModel;
                         if (inviteByEmailPhoneApiResponseModel.isSuccess()) {
                             sendSuccessMessage();
+                            if (inviteByEmailPhoneApiResponseModel.getResultData() != null) {
+                                for (int i = 0; i < inviteByEmailPhoneApiResponseModel.getResultData().size(); i++) {
+                                    if (inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid() != null ||
+                                            !inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid().isEmpty()) {
+                                        PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionPayload(inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid()), null);
+                                    }
+                                }
+                            }
                         }
                     } else if (baseApiResponseModel.isSuccess()) {
                         sendSuccessMessage();

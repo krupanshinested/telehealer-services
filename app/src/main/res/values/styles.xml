@@ -53,8 +53,8 @@
     </style>
 
     <style name="text_title_dark">
-        <item name="android:fontFamily">@font/open_sans_semibold</item>
         <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/open_sans_semibold</item>
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
@@ -62,6 +62,15 @@
         <item name="android:padding">8dp</item>
     </style>
 
+    <style name="card_title_text">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+    </style>
     <style name="text_app_color">
         <item name="android:textColor">@color/app_gradient_start</item>
         <item name="android:gravity">center</item>
