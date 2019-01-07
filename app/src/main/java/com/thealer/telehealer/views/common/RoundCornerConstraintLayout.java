@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.GradientDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 
 import com.thealer.telehealer.R;
 
@@ -42,13 +43,14 @@ public class RoundCornerConstraintLayout extends ConstraintLayout {
         bottomLeft = a.getDimensionPixelSize(R.styleable.RoundCornerConstraintLayout_lay_bottom_left_corner, 0);
         cornerRadius = a.getDimensionPixelSize(R.styleable.RoundCornerConstraintLayout_lay_corner_radius, -1);
 
+        a.recycle();
+
         initView();
     }
 
     private void initView() {
 
         //roundCorner.setColor(Color.parseColor("#de545f"));
-
         setCorners();
         //roundCorner.setColor(getResources().getColor(R.color.white));
         this.setBackground(roundCorner);
@@ -149,5 +151,8 @@ public class RoundCornerConstraintLayout extends ConstraintLayout {
         return super.performClick();
     }
 
+    public void setStrokeColor(int color) {
+        roundCorner.setStroke(2, color);
+    }
 }
 
