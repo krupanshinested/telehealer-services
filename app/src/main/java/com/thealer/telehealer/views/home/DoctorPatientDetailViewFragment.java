@@ -291,11 +291,13 @@ public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
                     actionBtn.setEnabled(true);
                 }
 
-                actionBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Constants.ADD_CONNECTION_ID, String.valueOf(resultBean.getUser_id()));
+                        actionBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Utils.vibrate(getActivity());
+                                Bundle bundle = new Bundle();
+                                bundle.putString(Constants.ADD_CONNECTION_ID, String.valueOf(resultBean.getUser_id()));
+                                bundle.putSerializable(Constants.USER_DETAIL, resultBean);
 
                         onActionCompleteInterface.onCompletionResult(null, true, bundle);
                     }

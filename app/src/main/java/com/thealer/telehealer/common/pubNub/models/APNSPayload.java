@@ -15,6 +15,7 @@ public class APNSPayload implements Serializable {
     public static final String video = "video";
     public static final String audio = "audio";
     public static final String text = "text";
+    public static final String vitals = "vitals";
     public static final String response = "response";
     public static final String schedule = "schedule";
     public static final String endCall = "end_call";

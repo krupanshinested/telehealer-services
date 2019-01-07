@@ -83,6 +83,10 @@ public class CustomButton extends AppCompatButton {
         gradientDrawable.setStroke(strokeWidth, strokeColor);
     }
 
+    public void setStrokeColor(int color){
+        gradientDrawable.setStroke(strokeWidth, color);
+    }
+
     private void setCustomBackground() {
         GradientDrawable drawable = (GradientDrawable) this.getBackground();
         drawable.setColor(backgroundColor);
