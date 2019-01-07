@@ -1,6 +1,8 @@
 package com.thealer.telehealer;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
@@ -33,6 +35,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
     public static AppPreference appPreference;
     public static TeleHealerApplication application;
+    public static final String notificationChannelId = "thealer";
     public FirebaseAnalytics firebaseAnalytics;
 
     @Override
@@ -56,6 +59,25 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+
+        createNotificationChannel();
+    }
+
+    private void createNotificationChannel() {
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
+            NotificationChannel notificationChannel = new NotificationChannel(notificationChannelId,
+                    "General",
+                    NotificationManager.IMPORTANCE_HIGH);
+
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            Log.e("aswin", "createNotificationChannel: " );
+        }
+
     }
 
 

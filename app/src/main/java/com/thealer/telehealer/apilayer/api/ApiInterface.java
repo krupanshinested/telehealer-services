@@ -19,6 +19,8 @@ import com.thealer.telehealer.apilayer.models.getDoctorsModel.TypeAHeadResponseM
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByDemographicRequestModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
+import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
+import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
@@ -343,6 +345,15 @@ public interface ApiInterface {
 
     @GET("api/sources/{id}")
     Observable<BaseApiResponseModel> getExperimentalFeature(@Path(ID) String id);
+
+    @GET("api/requests")
+    Observable<NotificationApiResponseModel> getNotifications(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+
+    @PUT("api/requests")
+    Observable<BaseApiResponseModel> setNotificationsRead(@Body Map<String, String> body);
+
+    @PATCH("api/requests/{id}")
+    Observable<NotificationRequestUpdateResponseModel> updateNotification(@Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Body Map<String, Object> body);
 
     @GET("api/token")
     Observable<TokenFetchModel> getOpenTokToken(@Query(SESSION_ID) String sessionId);

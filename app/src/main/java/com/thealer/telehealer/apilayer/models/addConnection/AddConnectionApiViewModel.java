@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
@@ -17,7 +19,7 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void connectUser(String userId) {
+    public void connectUser(String toGuid, String userId) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -32,6 +34,7 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionPayload(toGuid), null);
 
                                     EventRecorder.recordNotification("CONNECTION_REQUEST");
                                     EventRecorder.recordConnection("CONNECTION_REQUESTED");

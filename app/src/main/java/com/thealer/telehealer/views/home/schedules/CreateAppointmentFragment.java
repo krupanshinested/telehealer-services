@@ -466,13 +466,16 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                 break;
             case R.id.action_btn:
                 SchedulesCreateRequestModel schedulesCreateRequestModel = new SchedulesCreateRequestModel();
+                String to_guid = null;
 
                 if (UserType.isUserPatient()) {
                     schedulesCreateRequestModel.setRequestee_id(String.valueOf(createScheduleViewModel.getDoctorCommonModel().getUser_id()));
                     requestee_name = createScheduleViewModel.getDoctorCommonModel().getFirst_name();
+                    to_guid = createScheduleViewModel.getPatientCommonModel().getUser_guid();
                 } else {
                     schedulesCreateRequestModel.setRequestee_id(String.valueOf(createScheduleViewModel.getPatientCommonModel().getUser_id()));
                     requestee_name = createScheduleViewModel.getPatientCommonModel().getFirst_name();
+                    to_guid = createScheduleViewModel.getDoctorCommonModel().getUser_guid();
                 }
 
                 schedulesCreateRequestModel.setMessage(reasonEt.getText().toString());
@@ -505,7 +508,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                         doctorGuid = createScheduleViewModel.getDoctorCommonModel().getUser_guid();
                     }
                     showSuccessView(null, RequestID.REQ_SHOW_SUCCESS_VIEW);
-                    schedulesApiViewModel.createSchedule(doctorGuid, createScheduleViewModel.getSchedulesCreateRequestModel(), false);
+                    schedulesApiViewModel.createSchedule(doctorGuid, to_guid, createScheduleViewModel.getSchedulesCreateRequestModel(), false);
                 }
                 break;
         }
