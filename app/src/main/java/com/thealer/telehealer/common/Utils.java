@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -48,6 +49,11 @@ import java.util.regex.Pattern;
  * Created by Aswin on 12,October,2018
  */
 public class Utils {
+
+    public static void vibrate(Context context) {
+        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(50);
+    }
 
     public static Dialog showDatePickerDialog(FragmentActivity activity, int type) {
         Calendar calendar = Calendar.getInstance();
@@ -541,11 +547,47 @@ public class Utils {
     public static String serialize(Object object) throws IOException {
         Gson gson = new Gson();
         String json = gson.toJson(object);
-        return Base64.encodeToString(json.getBytes("utf-8"),Base64.DEFAULT);
+        return Base64.encodeToString(json.getBytes("utf-8"), Base64.DEFAULT);
     }
 
     public static <T> T deserialize(String string, Type type) throws IOException {
-        byte[] valueDecoded = Base64.decode(string.getBytes("utf-8"),Base64.DEFAULT);
+        byte[] valueDecoded = Base64.decode(string.getBytes("utf-8"), Base64.DEFAULT);
         return new Gson().fromJson(new String(valueDecoded), type);
+    }
+
+    public static String[] getNotificationSlotTime(String timeSlot) {
+
+        String[] notificationSlotTimes = new String[2];
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        DateFormat timeFormat = new SimpleDateFormat("hh:mm aa, EE");
+        timeFormat.setTimeZone(TimeZone.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
+        dateFormat.setTimeZone(TimeZone.getDefault());
+
+        try {
+            notificationSlotTimes[0] = timeFormat.format(inputFormat.parse(timeSlot));
+            notificationSlotTimes[1] = dateFormat.format(inputFormat.parse(timeSlot));
+
+            return notificationSlotTimes;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new String[]{"", ""};
+    }
+
+    public static String getPushNotificationTimeFormat(String timeSlot) {
+
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat outputFormat = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        outputFormat.setTimeZone(TimeZone.getDefault());
+        try {
+            return outputFormat.format(inputFormat.parse(timeSlot));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

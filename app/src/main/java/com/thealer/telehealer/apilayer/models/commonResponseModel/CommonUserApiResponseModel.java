@@ -85,19 +85,19 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
     }
 
     public String getUserDisplay_name() {
-        if (getRole().equals(Constants.ROLE_PATIENT)) {
-            if (getFirst_name() != null && !getFirst_name().isEmpty()) {
-
-                char c = getFirst_name().charAt(0);
-                return getFirst_name().replace(c, String.valueOf(c).toUpperCase().charAt(0)) + " " + getLast_name();
-            }
-        } else if (getRole().equals(Constants.ROLE_DOCTOR)) {
+        if (getRole().equals(Constants.ROLE_DOCTOR)) {
             String title = null;
             if (getUser_detail() != null && getUser_detail().getData() != null
                     && getUser_detail().getData().getTitle() != null && !getUser_detail().getData().getTitle().isEmpty()) {
                 title = ", " + getUser_detail().getData().getTitle();
             }
             return Utils.getDoctorDisplayName(getFirst_name(), getLast_name(), title);
+        } else {
+            if (getFirst_name() != null && !getFirst_name().isEmpty()) {
+
+                char c = getFirst_name().charAt(0);
+                return getFirst_name().replace(c, String.valueOf(c).toUpperCase().charAt(0)) + " " + getLast_name();
+            }
         }
         return "";
     }
@@ -254,17 +254,17 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
     }
 
     public String getGender() {
-        if (gender != null && !gender.isEmpty()){
+        if (gender != null && !gender.isEmpty()) {
             return gender.replace(String.valueOf(gender.charAt(0)), String.valueOf(gender.charAt(0)).toUpperCase());
-        }else {
+        } else {
             return gender;
         }
     }
 
     public String getGenderKey() {
-        if (gender != null && !gender.isEmpty()){
+        if (gender != null && !gender.isEmpty()) {
             return gender.replace(String.valueOf(gender.charAt(0)), String.valueOf(gender.charAt(0)).toUpperCase());
-        }else {
+        } else {
             return gender;
         }
     }
@@ -341,6 +341,14 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
         return website;
     }
 
+    public String getAssistantTitle() {
+        if (getUser_detail() != null &&
+                getUser_detail().getData() != null &&
+                getUser_detail().getData().getTitle() != null) {
+            return getUser_detail().getData().getTitle();
+        }
+        return "";
+    }
     public void setWebsite(String website) {
         this.website = website;
     }

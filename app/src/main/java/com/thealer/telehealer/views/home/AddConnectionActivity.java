@@ -24,6 +24,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListApiViewModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
@@ -128,7 +129,9 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     @Override
     public void onCompletionResult(String requestId, Boolean success, Bundle bundle) {
         if (success) {
-            addConnectionApiViewModel.connectUser(String.valueOf(bundle.getString(Constants.ADD_CONNECTION_ID)));
+            CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
+
+            addConnectionApiViewModel.connectUser(commonUserApiResponseModel.getUser_guid(), String.valueOf(bundle.getString(Constants.ADD_CONNECTION_ID)));
 
             SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
             bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
