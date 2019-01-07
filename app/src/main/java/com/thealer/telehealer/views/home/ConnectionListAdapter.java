@@ -102,10 +102,12 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         viewHolder.actionIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utils.vibrate(fragmentActivity);
                 if (apiResponseModelList.get(i).getConnection_status() == null) {
                     selected_position = i;
                     Bundle bundle = new Bundle();
                     bundle.putString(Constants.ADD_CONNECTION_ID, String.valueOf(apiResponseModelList.get(i).getUser_id()));
+                    bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
 
                     onActionCompleteInterface.onCompletionResult(null, true, bundle);
                 }

@@ -578,6 +578,8 @@
     <string name="select_patient_to_add_slot">Select a patient to add slots</string>
     <string name="select_doctor_to_add_slot">Select a doctor to add slots</string>
     <string name="posting_your_appointment">Posting your appointment...</string>
+    <string name="request_slots">Requested slots</string>
+    <string name="reject">reject</string>
     <string name="VITALS">VITALS</string>
     <string name="ended">Ended</string>
 
@@ -608,6 +610,7 @@
     <string name="video_call">Video Call</string>
     <string name="calling_from_outside">Calling from outside licensed state…</string>
     <string name="payment_dues">By accepting this call, you consent to receiving care remotely via a tele medicine visit and to pay any remaining dues of this visit after insurance payments</string>
+    <string name="notifications">Notifications</string>
     <string name="email_validation">Email Validation</string>
     <string name="confirmed_your_mail">Confirmed your mail?</string>
     <string name="email_validation_message">You have not validated the mail we sent to %s. Go to your email and please validate.</string>

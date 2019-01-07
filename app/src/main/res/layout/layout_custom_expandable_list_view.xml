@@ -22,6 +22,7 @@
         android:nestedScrollingEnabled="true"
         android:scrollbars="none"
         android:visibility="visible"
+        android:listSelector="@drawable/flag_transparent"
         app:layout_constraintBottom_toTopOf="@+id/recycler_loader"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
