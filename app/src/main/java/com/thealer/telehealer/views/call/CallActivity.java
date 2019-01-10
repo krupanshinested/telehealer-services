@@ -1,9 +1,17 @@
 package com.thealer.telehealer.views.call;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.gesture.Gesture;
+import android.media.AudioAttributes;
+import android.media.AudioDeviceInfo;
+import android.media.AudioFocusRequest;
+import android.media.AudioManager;
+import android.media.session.MediaSession;
+import android.media.session.PlaybackState;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -20,6 +28,7 @@ import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +44,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.opentok.android.AudioDeviceManager;
 import com.skyfishjy.library.RippleBackground;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
@@ -46,6 +56,7 @@ import com.thealer.telehealer.common.Animation.MoveViewTouchListener;
 import com.thealer.telehealer.common.Animation.OnSwipeTouchListener;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OpenTok.CustomAudioDevice;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.TokBoxUIInterface;
@@ -57,16 +68,31 @@ import com.thealer.telehealer.common.Util.TimerInterface;
 import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.GulcoQRCapture;
+import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
+import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.base.CallPlacingFragment;
+import com.thealer.telehealer.views.common.ContentActivity;
+import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.QRCodeReaderActivity;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
+import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.vitals.BluetoothEnableActivity;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.media.AudioManager.AUDIOFOCUS_GAIN;
+import static android.media.AudioManager.GET_DEVICES_ALL;
+import static android.media.AudioManager.STREAM_VOICE_CALL;
 import static com.thealer.telehealer.common.pubNub.models.APNSPayload.text;
 
 /**
@@ -76,8 +102,8 @@ import static com.thealer.telehealer.common.pubNub.models.APNSPayload.text;
 public class CallActivity extends BaseActivity implements TokBoxUIInterface,View.OnClickListener {
 
     private LinearLayout remoteView;
-    private LinearLayout localView;
-    private LinearLayout top_option,recording_view,vitalsView;
+    private FrameLayout localView;
+    private LinearLayout top_option,recording_view,vitalsView,vitalHeaderView;
     private ImageView minimize,speaker_type,audio_mute,video_mute,video_switch,flip_camera,hang_iv,answer_iv,arrow_iv;
     private TextView name_tv,user_info_tv,status_tv,call_quality_tv;
     private Chronometer recording_tv;
@@ -95,10 +121,16 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
     private Boolean isCameraFlipped = false;
 
     @Nullable
+    private MediaSession audioSession;
+
+    @Nullable
     private TimerRunnable uiToggleTimer;
 
     private String currentCallQuality = OpenTokConstants.none;
     private Boolean isDisclaimerDismissed = false;
+
+    @Nullable
+    PowerManager.WakeLock wakeLock;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,9 +140,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         if (pm != null) {
-            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Telehealer");
-            if (wl != null)
-                wl.acquire();
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Telehealer");
+            if (wakeLock != null && !wakeLock.isHeld())
+                wakeLock.acquire(Constants.callCapTime);
         }
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN |
@@ -137,8 +169,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
         initView();
 
         if (savedInstanceState != null) {
-            Long prevTimer = savedInstanceState.getLong(ArgumentKeys.CALL_TIMER_VALUE);
-            recording_tv.setBase(prevTimer);
             currentCallQuality = savedInstanceState.getString(ArgumentKeys.CALL_QUALITY);
             isDisclaimerDismissed = savedInstanceState.getBoolean(ArgumentKeys.IS_DISCLAIMER_DISMISSED);
         }
@@ -155,6 +185,49 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
 
         TokBox.shared.setup(remoteView,localView);
         updateCallQuality(currentCallQuality);
+
+        if (TokBox.shared.getTempToken() != null) {
+            minimize.setVisibility(View.GONE);
+        } else {
+            minimize.setVisibility(View.VISIBLE);
+        }
+
+        audioSession = new MediaSession(getApplicationContext(), "TAG11");
+
+        MediaSession.Callback MsCallback = new MediaSession.Callback() {
+
+            @Override
+            public boolean onMediaButtonEvent(final Intent mediaButtonIntent) {
+                String intentAction = mediaButtonIntent.getAction();
+                Log.i("onMediaButtonEvent",  "receieved");
+                if (Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
+                    KeyEvent event = mediaButtonIntent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+
+                    if (event != null && event.getAction() == KeyEvent.ACTION_DOWN) {
+
+                        if (TokBox.shared.getCallState() == OpenTokConstants.waitingForUserAction) {
+                            onClick(answer_iv);
+                        } else {
+                            onClick(hang_iv);
+                        }
+
+                    }
+                }
+                return super.onMediaButtonEvent(mediaButtonIntent);
+            }
+
+
+        };
+        audioSession.setCallback(MsCallback);
+
+        PlaybackState state = new PlaybackState.Builder()
+                .setActions(PlaybackState.ACTION_PLAY_PAUSE)
+                .setState(PlaybackState.STATE_PLAYING, 0, 0, 0)
+                .build();
+        audioSession.setPlaybackState(state);
+        audioSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        audioSession.setActive(true);
     }
 
     @Override
@@ -163,14 +236,28 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
 
         TokBox.shared.setUIListener(this);
         localView.setOnTouchListener(new MoveViewTouchListener(localView));
+        didChangedAudioInput(TokBox.shared.getCurrentAudioState());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
+        deinit();
+    }
+
+    private void deinit() {
         TokBox.shared.setUIListener(null);
         TokBox.shared.removeRemoteandLocalView();
+
+        if (wakeLock != null) {
+            wakeLock.release();
+            wakeLock = null;
+        }
+
+        if (audioSession != null) {
+            audioSession.release();
+        }
     }
 
     @Override
@@ -182,7 +269,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
     protected void onSaveInstanceState(Bundle saveInstance) {
         super.onSaveInstanceState(saveInstance);
 
-        saveInstance.putLong(ArgumentKeys.CALL_TIMER_VALUE,recording_tv.getBase());
         saveInstance.putString(ArgumentKeys.CALL_QUALITY,currentCallQuality);
         saveInstance.putBoolean(ArgumentKeys.IS_DISCLAIMER_DISMISSED,isDisclaimerDismissed);
     }
@@ -224,6 +310,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
         call_quality_tv = findViewById(R.id.call_quality_tv);
         call_quality_lay = findViewById(R.id.call_quality_lay);
         patient_disclaimer = findViewById(R.id.patient_disclaimer);
+
+        vitalHeaderView = findViewById(R.id.vitalHeaderView);
 
         hang_iv.setOnClickListener(this);
         answer_iv.setOnClickListener(this);
@@ -286,7 +374,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
             top_option.setVisibility(View.GONE);
             user_info_lay.setVisibility(View.GONE);
             hang_iv.setVisibility(View.GONE);
-            vitalsView.setVisibility(View.GONE);
+            vitalHeaderView.setVisibility(View.GONE);
 
             if (uiToggleTimer != null) {
                 uiToggleTimer.setStopped(true);
@@ -298,9 +386,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
             top_option.setVisibility(View.VISIBLE);
             user_info_lay.setVisibility(View.VISIBLE);
             hang_iv.setVisibility(View.VISIBLE);
-
-            if (TokBox.shared.isVideoCall())
-                vitalsView.setVisibility(View.VISIBLE);
+            vitalHeaderView.setVisibility(View.VISIBLE);
 
             setToggleTimer();
         }
@@ -374,7 +460,12 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
 
                 top_option.setVisibility(View.VISIBLE);
                 recording_view.setVisibility(View.VISIBLE);
-                vitalsView.setVisibility(View.VISIBLE);
+
+                if (TokBox.shared.isVideoCall()) {
+                    vitalsView.setVisibility(View.VISIBLE);
+                } else {
+                    vitalsView.setVisibility(View.GONE);
+                }
 
                 remoteView.setVisibility(View.VISIBLE);
                 localView.setVisibility(View.VISIBLE);
@@ -390,7 +481,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                 animation();
                 break;
         }
-
 
         if (TokBox.shared.getCallState() != OpenTokConstants.waitingForUserAction) {
             if (UserType.isUserPatient() && !isDisclaimerDismissed) {
@@ -418,14 +508,18 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                 TransitionManager.beginDelayedTransition(mainLay, transition);
                 moveHangButtonToCenter();
 
-                AnimationUtil.animateToVisible(top_option);
-
+                top_option.setVisibility(View.VISIBLE);
                 user_info_lay.setVisibility(View.VISIBLE);
                 recording_view.setVisibility(View.VISIBLE);
                 remoteView.setVisibility(View.VISIBLE);
                 localView.setVisibility(View.VISIBLE);
                 incoming_view.setVisibility(View.GONE);
 
+                if (TokBox.shared.isVideoCall()) {
+                    vitalsView.setVisibility(View.VISIBLE);
+                } else {
+                    vitalsView.setVisibility(View.GONE);
+                }
                 break;
         }
     }
@@ -481,11 +575,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
             video_mute.setVisibility(View.VISIBLE);
             flip_camera.setVisibility(View.VISIBLE);
 
-            AnimationUtil.animateToVisible(vitalsView);
+            vitalsView.setVisibility(View.VISIBLE);
         } else {
 
             if (!UserType.isUserPatient()) {
-                if (PermissionChecker.with(getApplicationContext()).isGranted(PermissionConstants.PERMISSION_CAM_MIC)) {
+                if (PermissionChecker.with(this).isGranted(PermissionConstants.PERMISSION_CAM_MIC)) {
                     video_switch.setAlpha(1f);
                     video_switch.setEnabled(true);
                 } else {
@@ -499,8 +593,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
 
             video_mute.setVisibility(View.GONE);
             flip_camera.setVisibility(View.GONE);
-
-            vitalsView.setVisibility(View.GONE);
         }
     }
 
@@ -523,6 +615,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.hang_iv:
+                hang_iv.setClickable(false);
                 if (!TokBox.shared.getCalling() && TokBox.shared.getConnectedDate() == null) {
                     TokBox.shared.endCall(OpenTokConstants.notPickedUp);
                 } else  {
@@ -531,13 +624,111 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                 break;
             case R.id.answer_iv:
                 if (TokBox.shared.getCallState() == OpenTokConstants.waitingForUserAction) {
-                    TokBox.shared.connectToSession();
-                    updateState(OpenTokConstants.incomingCallGoingOn);
+
+                    int requiredPermission;
+                    if (TokBox.shared.isVideoCall()) {
+                        requiredPermission = PermissionConstants.PERMISSION_CAM_MIC;
+                    } else {
+                        requiredPermission = PermissionConstants.PERMISSION_MICROPHONE;
+                    }
+
+                    if (PermissionChecker.with(this).isGranted(requiredPermission)) {
+                        TokBox.shared.connectToSession();
+                        updateState(OpenTokConstants.incomingCallGoingOn);
+                    } else {
+                        TokBox.shared.endCall(OpenTokConstants.other);
+                        //TODO : add local tray notification)
+                        PermissionChecker.with(this).checkPermission(requiredPermission);
+                    }
                 }
                 break;
             case R.id.minimize:
                 break;
             case R.id.speaker_type:
+                ArrayList<AudioDeviceInfo> deviceInfos =  TokBox.shared.getConnectedAudioDevices();
+
+                ArrayList<String> audioTypes = new ArrayList<>();
+                final ArrayList<AudioDeviceInfo> selectedTypes = new ArrayList<>();
+                int selectedPosition = 0;
+                for (int i = 0;i<deviceInfos.size();i++) {
+
+                    AudioDeviceInfo audioDeviceInfo = deviceInfos.get(i);
+
+                    switch (audioDeviceInfo.getType()) {
+                        case AudioDeviceInfo.TYPE_BUILTIN_SPEAKER:
+                            audioTypes.add(getString(R.string.speaker));
+                            selectedTypes.add(audioDeviceInfo);
+
+                            if (TokBox.shared.getCurrentAudioState() == OpenTokConstants.speaker) {
+                                selectedPosition = i;
+                            }
+
+                            break;
+                        case AudioDeviceInfo.TYPE_BUILTIN_EARPIECE:
+                            audioTypes.add(getString(R.string.earPiece));
+                            selectedTypes.add(audioDeviceInfo);
+
+                            if (TokBox.shared.getCurrentAudioState() == OpenTokConstants.inEarSpeaker) {
+                                selectedPosition = i;
+                            }
+
+                            break;
+                        case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:
+                        case AudioDeviceInfo.TYPE_WIRED_HEADSET:
+                            audioTypes.add(getString(R.string.headphones));
+                            selectedTypes.add(audioDeviceInfo);
+
+                            if (TokBox.shared.getCurrentAudioState() == OpenTokConstants.headPhones) {
+                                selectedPosition = i;
+                            }
+
+                            break;
+                        case AudioDeviceInfo.TYPE_BLUETOOTH_A2DP:
+                        case AudioDeviceInfo.TYPE_BLUETOOTH_SCO:
+                            audioTypes.add(getString(R.string.bluetooth));
+                            selectedTypes.add(audioDeviceInfo);
+
+                            if (TokBox.shared.getCurrentAudioState() == OpenTokConstants.bluetooth) {
+                                selectedPosition = i;
+                            }
+
+                            break;
+                    }
+                }
+
+                Set<AudioDeviceInfo> foo = new HashSet<AudioDeviceInfo>(selectedTypes);
+                selectedTypes.clear();
+                selectedTypes.addAll(foo);
+
+                ItemPickerDialog itemPickerDialog = new ItemPickerDialog(this, getString(R.string.choose_audio_input),audioTypes, new PickerListener() {
+                    @Override
+                    public void didSelectedItem(int position) {
+                        switch (selectedTypes.get(position).getType()) {
+                            case AudioDeviceInfo.TYPE_BUILTIN_SPEAKER:
+                                TokBox.shared.setAudioInput(OpenTokConstants.speaker);
+                                break;
+                            case AudioDeviceInfo.TYPE_BUILTIN_EARPIECE:
+                                TokBox.shared.setAudioInput(OpenTokConstants.inEarSpeaker);
+                                break;
+                            case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:
+                            case AudioDeviceInfo.TYPE_WIRED_HEADSET:
+                                TokBox.shared.setAudioInput(OpenTokConstants.headPhones);
+                                break;
+                            case AudioDeviceInfo.TYPE_BLUETOOTH_A2DP:
+                            case AudioDeviceInfo.TYPE_BLUETOOTH_SCO:
+                                TokBox.shared.setAudioInput(OpenTokConstants.bluetooth);
+                                break;
+                        }
+                    }
+                    @Override
+                    public void didCancelled() {
+
+                    }
+                },selectedPosition);
+                itemPickerDialog.setCancelable(false);
+                itemPickerDialog.show();
+
+
                 break;
             case R.id.audio_mute:
                 TokBox.shared.toggleAudio();
@@ -553,7 +744,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        if (PermissionChecker.with(getApplication()).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+                        if (PermissionChecker.with(CallActivity.this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
                             TokBox.shared.requestForVideoSwap();
                         }
 
@@ -579,7 +770,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                 TokBox.shared.flipVideo();
                 break;
             case R.id.vitalsView:
-
                 if (viewPager.getVisibility() == View.GONE) {
                     arrow_iv.setImageDrawable(getDrawable(R.drawable.ic_keyboard_arrow_down_24dp));
                     viewPager.setVisibility(View.VISIBLE);
@@ -628,6 +818,80 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
 
     @Override
     public void didEndCall(String callRejectionReason) {
+        try {
+            ActivityManager mngr = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+           if (mngr != null) {
+               if  (mngr.getAppTasks().get(0).getTaskInfo().numActivities > 1) {
+                   openFeedBackIfNeeded(callRejectionReason);
+               } else {
+                   openHomeAndFinish(callRejectionReason);
+               }
+           }
+        } catch (Exception e) {
+            e.printStackTrace();
+            openHomeAndFinish(callRejectionReason);
+        }
+    }
+
+    private void openHomeAndFinish(String callRejectionReason) {
+        Intent intent = new Intent(CallActivity.this,HomeActivity.class);
+        startActivity(intent);
+
+        openFeedBackIfNeeded(callRejectionReason);
+    }
+
+    private void openFeedBackIfNeeded(String callRejectionReason) {
+        String sessionId = TokBox.shared.getSessionId();
+        String to_guid = "";
+        String to_name = "";
+        if (otherPersonDetail != null) {
+            to_guid = otherPersonDetail.getUser_guid();
+            to_name = otherPersonDetail.getDisplayName();
+        }
+        Date startedTime = TokBox.shared.getConnectedDate();
+
+        switch (callRejectionReason) {
+            case OpenTokConstants.endCallPressed:
+            case OpenTokConstants.other:
+            case OpenTokConstants.badNetwork:
+            case OpenTokConstants.timedOut:
+                Date endedTime = new Date();
+                if (startedTime != null && !TextUtils.isEmpty(sessionId) && endedTime.getTime() - startedTime.getTime() > 5) {
+                    Intent feedBackIntent = new Intent(CallActivity.this,CallFeedBackActivity.class);
+                    feedBackIntent.putExtra(ArgumentKeys.ORDER_ID,sessionId);
+                    feedBackIntent.putExtra(ArgumentKeys.TO_USER_GUID,to_guid);
+                    feedBackIntent.putExtra(ArgumentKeys.STARTED_DATE,startedTime);
+                    feedBackIntent.putExtra(ArgumentKeys.ENDED_DATE,endedTime);
+
+                    startActivity(feedBackIntent);
+                }
+                break;
+            case OpenTokConstants.notPickedUp:
+            case OpenTokConstants.busyInAnotherLine:
+                if (!UserType.isUserPatient()) {
+                    Intent intent = new Intent(CallActivity.this, ContentActivity.class);
+                    intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
+                    intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
+                    intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_missed_call);
+                    intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+
+                    intent.putExtra(ArgumentKeys.TITLE, "");
+
+                    if (callRejectionReason.equals(OpenTokConstants.notPickedUp)) {
+                        intent.putExtra(ArgumentKeys.DESCRIPTION, to_name+" "+getString(R.string.not_available));
+                    } else {
+                        intent.putExtra(ArgumentKeys.DESCRIPTION, to_name+" "+getString(R.string.busy_another_call));
+                    }
+
+                    intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
+                    intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+
+                    startActivity(intent);
+                }
+                break;
+        }
+
+        deinit();
         finish();
     }
 
@@ -680,7 +944,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
     public void receivedRequestForVideoSwap() {
         String name = otherPersonDetail != null ? otherPersonDetail.getDisplayName() : getString(R.string.other_person);
 
-        if (PermissionChecker.with(getApplicationContext()).isGranted(PermissionConstants.PERMISSION_CAM_MIC)) {
+        if (PermissionChecker.with(CallActivity.this).isGranted(PermissionConstants.PERMISSION_CAM_MIC)) {
             String message = getString(R.string.requested_video_call,name);
 
             showAlertDialog(getString(R.string.video_call_request), message, getString(R.string.yes), getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -816,6 +1080,24 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
     @Override
     public void didReceiveVitalData(String data, String type) {
 
+    }
+
+    @Override
+    public void didChangedAudioInput(int state) {
+        switch (state) {
+            case OpenTokConstants.bluetooth:
+                speaker_type.setImageResource(R.drawable.bluetooth);
+                break;
+            case OpenTokConstants.headPhones:
+                speaker_type.setImageResource(R.drawable.headphone);
+                break;
+            case OpenTokConstants.speaker:
+                speaker_type.setImageResource(R.drawable.speaker);
+                break;
+            case OpenTokConstants.inEarSpeaker:
+                speaker_type.setImageResource(R.drawable.speaker);
+                break;
+        }
     }
 
     @Override

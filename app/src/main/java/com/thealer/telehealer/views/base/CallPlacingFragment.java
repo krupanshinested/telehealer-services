@@ -17,6 +17,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.ContentActivity;
@@ -24,6 +25,7 @@ import com.thealer.telehealer.views.common.ContentActivity;
 import java.util.logging.Logger;
 
 import static android.app.Activity.RESULT_OK;
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
 import static com.thealer.telehealer.common.ArgumentKeys.CALL_INITIATE_MODEL;
 
@@ -34,6 +36,7 @@ import static com.thealer.telehealer.common.ArgumentKeys.CALL_INITIATE_MODEL;
 public class CallPlacingFragment extends BaseFragment {
 
     public static final int RequestID = 230;
+    public static final int VideoFeedRequestID = 235;
 
     @Nullable
     private CallInitiateModel callInitiateModel;
@@ -61,10 +64,25 @@ public class CallPlacingFragment extends BaseFragment {
                     TokenFetchModel tokenFetchModel = (TokenFetchModel) baseApiResponseModel;
                     callInitiateModel.update(tokenFetchModel);
 
-                    if (callInitiateModel.isForVideoCall()) {
-                        openVideoCall();
+                    if (!appPreference.getBoolean(PreferenceConstants.PATIENT_VIDEO_FEED) && callInitiateModel.isForVideoCall()) {
+                        Intent intent = new Intent(getActivity(), ContentActivity.class);
+                        intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
+                        intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
+                        intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.call_kit_education);
+                        intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+                        intent.putExtra(ArgumentKeys.TITLE, getString(R.string.enable_patient_video_feed));
+                        intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.patient_video_feed_description));
+                        intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, true);
+                        intent.putExtra(ArgumentKeys.CHECK_BOX_TITLE, getString(R.string.do_not_show_again));
+                        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, false);
+
+                        startActivityForResult(intent, CallPlacingFragment.VideoFeedRequestID);
                     } else {
-                        openAudioCall();
+                        if (callInitiateModel.isForVideoCall()) {
+                            openVideoCall();
+                        } else {
+                            openAudioCall();
+                        }
                     }
 
                 } else {
@@ -81,9 +99,7 @@ public class CallPlacingFragment extends BaseFragment {
             public void onChanged(@Nullable ErrorModel errorModel) {
 
                 if (errorModel != null && errorModel.getStatusCode() == 400) {
-
                     openTrialContentScreen(UserType.isUserDoctor(),callInitiateModel.getDoctorName());
-
                 } else {
                     String errorMessage = errorModel != null ? errorModel.getMessage() : getString(R.string.something_went_wrong_try_again);
                     showAlertDialog(getContext(),getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
@@ -99,12 +115,13 @@ public class CallPlacingFragment extends BaseFragment {
     }
 
     private void openAudioCall() {
-        if (PermissionChecker.with(getActivity().getApplication()).checkPermission(PermissionConstants.PERMISSION_MICROPHONE)) {
+        if (PermissionChecker.with(getActivity()).checkPermissionForFragment(PermissionConstants.PERMISSION_MICROPHONE,this)) {
             if (TokBox.shared.isActivityPresent() || TokBox.shared.isActiveCallPreset()) {
                 return;
             }
 
             Intent intent = new Intent(application, CallActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(CALL_INITIATE_MODEL,callInitiateModel);
             application.startActivity(intent);
 
@@ -114,12 +131,13 @@ public class CallPlacingFragment extends BaseFragment {
     }
 
     private void openVideoCall() {
-        if (PermissionChecker.with(getActivity().getApplication()).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+        if (PermissionChecker.with(getActivity()).checkPermissionForFragment(PermissionConstants.PERMISSION_CAM_MIC,this)) {
             if (TokBox.shared.isActivityPresent() || TokBox.shared.isActiveCallPreset()) {
                 return;
             }
 
             Intent intent = new Intent(application, CallActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(CALL_INITIATE_MODEL,callInitiateModel);
             application.startActivity(intent);
 
@@ -138,7 +156,7 @@ public class CallPlacingFragment extends BaseFragment {
             intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION,true);
 
             String description = getString(R.string.trial_period_expired_doc_sec_1);
-            description += "<a>https://telehealer.com/product/doctors/#pricing</a>";
+            description += " <a href=\"https://telehealer.com/product/doctors/#pricing\">https://telehealer.com/product/doctors/#pricing</a> ";
             description += getString(R.string.trial_period_expired_doc_sec_2);
 
             intent.putExtra(ArgumentKeys.DESCRIPTION,description);
@@ -154,15 +172,16 @@ public class CallPlacingFragment extends BaseFragment {
             intent.putExtra(ArgumentKeys.DESCRIPTION,description);
         }
 
-        intent.putExtra(ArgumentKeys.RESOURCE_ICON,R.drawable.app_icon);
+        intent.putExtra(ArgumentKeys.RESOURCE_ICON,R.drawable.call_kit_education);
         intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED,false);
         intent.putExtra(ArgumentKeys.TITLE,getString(R.string.payment_information_required));
+        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED,true);
+        intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED,false);
+
         this.callInitiateModel = null;
 
         startActivityForResult(intent, CallPlacingFragment.RequestID);
     }
-
-
 
     void didOpenCallKit() {
 
@@ -195,6 +214,19 @@ public class CallPlacingFragment extends BaseFragment {
 
 
                 }
+                break;
+            case CallPlacingFragment.VideoFeedRequestID:
+
+                appPreference.setBoolean(PreferenceConstants.PATIENT_VIDEO_FEED,data.getBooleanExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED,false));
+
+                if (callInitiateModel != null) {
+                    if (callInitiateModel.isForVideoCall()) {
+                        openVideoCall();
+                    } else {
+                        openAudioCall();
+                    }
+                }
+
                 break;
         }
     }

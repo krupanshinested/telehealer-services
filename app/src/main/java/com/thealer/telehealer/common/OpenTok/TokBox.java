@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.opengl.GLSurfaceView;
@@ -17,6 +18,7 @@ import android.telecom.Call;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.google.gson.reflect.TypeToken;
@@ -40,8 +42,10 @@ import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.common.Animation.ConstrainSetUtil;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.LocationTracker;
 import com.thealer.telehealer.common.LocationTrackerInterface;
+import com.thealer.telehealer.common.OpenTok.openTokInterfaces.AudioInterface;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.TokBoxUIInterface;
 import com.thealer.telehealer.common.PermissionChecker;
@@ -49,6 +53,8 @@ import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.ResultFetcher;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubNubResult;
@@ -64,13 +70,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
+import static android.media.AudioManager.GET_DEVICES_ALL;
+import static android.media.AudioManager.GET_DEVICES_OUTPUTS;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
+import static java.util.Arrays.asList;
 
 /**
  * Created by rsekar on 12/25/18.
@@ -87,7 +100,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         PublisherKit.AudioStatsListener,
         SubscriberKit.VideoStatsListener,
         SubscriberKit.AudioStatsListener,
-        SubscriberKit.VideoListener {
+        SubscriberKit.VideoListener,
+        AudioInterface{
 
     public static TokBox shared = new TokBox();
 
@@ -106,7 +120,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     @Nullable
     private LinearLayout remoteView;
     @Nullable
-    private LinearLayout localView;
+    private FrameLayout localView;
     private String token = "", sessionId = "", apiKey = "";
     private String callType;
     private Boolean isCalling;
@@ -154,9 +168,14 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     @Nullable
     private LocationTracker patientLocationTracker;
 
+    @Nullable
+    private TimerRunnable outGoingCallTimer,callCapTimer;
+
     private final OpenTokViewModel openTokViewModel = new OpenTokViewModel(application);
 
     public void didRecieveIncoming(APNSPayload apnsPayload) {
+        this.sessionId = apnsPayload.getSessionId();
+
         openTokViewModel.getTokenForSession(apnsPayload.getSessionId(), new OpenTokTokenFetcher() {
             @Override
             public void didFetched(TokenFetchModel tokenFetchModel) {
@@ -188,6 +207,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                         }
 
                         Intent intent = new Intent(application, CallActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
@@ -235,16 +255,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         if (!isCustomAudioAdded) {
             isCustomAudioAdded = true;
-            CustomAudioDevice customAudioDevice = new CustomAudioDevice(application);
+            CustomAudioDevice customAudioDevice = new CustomAudioDevice(application,this);
             AudioDeviceManager.setAudioDevice(customAudioDevice);
         }
-
-        if (callInitiateModel.isForVideoCall()) {
-            AudioDeviceManager.getAudioDevice().setOutputMode(CustomAudioDevice.OutputMode.SpeakerPhone);
-        } else {
-            AudioDeviceManager.getAudioDevice().setOutputMode(CustomAudioDevice.OutputMode.Handset);
-        }
-
 
         if (isCalling) {
             this.callState = OpenTokConstants.outGoingCallGoingOn;
@@ -252,22 +265,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
             if (mSession == null) {
                 connectToSession();
-            }
-
-            try {
-                AssetFileDescriptor afd = application.getAssets().openFd("DialerTone.mp3");
-                MediaPlayer player = new MediaPlayer();
-
-                player.setAudioStreamType(AudioManager.STREAM_RING);
-                player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                player.prepare();
-                player.setLooping(true);
-                player.start();
-
-                outgoingPlayer = player;
-            } catch (Exception e) {
-                Log.d("TokBox","error in outgoing player "+e.getLocalizedMessage());
-                e.printStackTrace();
             }
 
             GetUsersApiViewModel getUsersApiViewModel = new GetUsersApiViewModel(application);
@@ -307,7 +304,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         patientLocationTracker = null;
     }
 
-    public void setup(LinearLayout remoteView, LinearLayout localView) {
+    public void setup(LinearLayout remoteView, FrameLayout localView) {
         this.localView = localView;
         this.remoteView = remoteView;
 
@@ -321,6 +318,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         if (mPublisher != null && mPublisher.getView().getParent() != null)
             ((ViewGroup) mPublisher.getView().getParent()).removeView(mPublisher.getView());
 
+        localView = null;
+        remoteView = null;
     }
 
     public void connectToSession() {
@@ -352,12 +351,83 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     private void setupLocalFeedView() {
+        Log.d("TokBox", "setupLocalFeedView");
         if (mPublisher != null && mPublisher.getView() != null && localView != null) {
             if (mPublisher.getView().getParent() != null) {
-                ((ViewGroup) mPublisher.getView().getParent()).removeView(mPublisher.getView());
+                if (mPublisher.getView().getParent() == localView) {
+                    return;
+                } else {
+                    ((ViewGroup) mPublisher.getView().getParent()).removeView(mPublisher.getView());
+                }
+            }
+            Log.d("TokBox", "localView added");
+            localView.addView(mPublisher.getView());
+
+            if (mPublisher.getView() instanceof GLSurfaceView) {
+                ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(true);
             }
 
-            localView.addView(mPublisher.getView());
+        } else {
+            Log.d("TokBox", "localView not added");
+        }
+    }
+
+    public void setAudioInput(int type) {
+        if (AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
+            CustomAudioDevice customAudioDevice = (CustomAudioDevice) AudioDeviceManager.getAudioDevice();
+
+            switch (type) {
+                case OpenTokConstants.bluetooth:
+                    customAudioDevice.connectBluetooth();
+                    break;
+                case OpenTokConstants.headPhones:
+                    customAudioDevice.connectHeadPhone();
+                    break;
+                case OpenTokConstants.speaker:
+                    customAudioDevice.connectSpeaker();
+                    break;
+                case OpenTokConstants.inEarSpeaker:
+                    customAudioDevice.connectEarpiece();
+                    break;
+            }
+        }
+    }
+
+    public int getCurrentAudioState() {
+        if (AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
+            CustomAudioDevice customAudioDevice = (CustomAudioDevice) AudioDeviceManager.getAudioDevice();
+            return customAudioDevice.getCurrentConnectedDeviceType();
+        } else {
+            return OpenTokConstants.speaker;
+        }
+    }
+
+    public ArrayList<AudioDeviceInfo> getConnectedAudioDevices() {
+        if (AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
+            AudioDeviceInfo[] deviceInfos = ((CustomAudioDevice) AudioDeviceManager.getAudioDevice()).getAudioManager().getDevices(GET_DEVICES_OUTPUTS);
+
+            ArrayList<AudioDeviceInfo> arrayList = new ArrayList<AudioDeviceInfo>(Arrays.asList(deviceInfos));
+
+            Boolean isExternalInputAvailable = false;
+            int inEarPieceIndex = -1;
+            for (int i = 0;i<deviceInfos.length;i++) {
+                AudioDeviceInfo deviceInfo = deviceInfos[i];
+                if (deviceInfo.getType() == AudioDeviceInfo.TYPE_BUILTIN_EARPIECE) {
+                    inEarPieceIndex = i;
+                } else if (deviceInfo.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES || deviceInfo.getType() == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
+                        deviceInfo.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP || deviceInfo.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_SCO) {
+                    isExternalInputAvailable = true;
+                }
+
+            }
+
+            if (isExternalInputAvailable && inEarPieceIndex != -1) {
+                arrayList.remove(inEarPieceIndex);
+            }
+
+            return arrayList;
+        } else {
+            return new ArrayList<>();
         }
     }
 
@@ -391,7 +461,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public Boolean isActiveCallPreset() {
-        return callState != OpenTokConstants.idle;
+        return callState != OpenTokConstants.idle && !TextUtils.isEmpty(sessionId);
     }
 
     public String getCallType() {
@@ -471,9 +541,28 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         mPublisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
                 BaseVideoRenderer.STYLE_VIDEO_FILL);
 
+        setupLocalFeedView();
+
         if (mSession != null)
             mSession.publish(mPublisher);
+    }
 
+    private void startOutgoingTone() {
+        try {
+            AssetFileDescriptor afd = application.getAssets().openFd("DialerTone.mp3");
+            MediaPlayer player = new MediaPlayer();
+
+            player.setAudioStreamType(AudioManager.STREAM_RING);
+            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            player.prepare();
+            player.setLooping(true);
+            player.start();
+
+            outgoingPlayer = player;
+        } catch (Exception e) {
+            Log.d("TokBox", "error in outgoing player " + e.getLocalizedMessage());
+            e.printStackTrace();
+        }
     }
 
     private void doSubscribe(Stream stream) {
@@ -505,8 +594,13 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
 
         Log.d("openTok", "endCall");
-
         callState = OpenTokConstants.idle;
+
+        stopIncomingRingtone();
+        stopOutgoingRingtone();
+
+        localView = null;
+        remoteView = null;
 
         if (tokBoxUIInterface != null)
             tokBoxUIInterface.didEndCall(callRejectionReason);
@@ -528,9 +622,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
        /* self.vitalStreamManager?.stopAllMeasures()
         self.vitalStreamManager?.reset()
         self.vitalStreamManager = nil
-
-        self.outgoingRingTimer?.invalidate()
-        self.endCallCapTimer?.invalidate()
 
         */
 
@@ -576,8 +667,14 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         patientLocationTracker = null;
 
-        stopIncomingRingtone();
-        stopOutgoingRingtone();
+        if (outGoingCallTimer != null)
+            outGoingCallTimer.setStopped(true);
+        outGoingCallTimer = null;
+
+        if (callCapTimer != null)
+            callCapTimer.setStopped(true);
+
+        callCapTimer = null;
     }
 
     private void stopIncomingRingtone() {
@@ -589,6 +686,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         if (vibrator != null) {
             vibrator.cancel();
+            vibrator = null;
         }
     }
 
@@ -661,6 +759,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 if (tokBoxUIInterface != null) {
                     Log.d("TokBox","ringing");
                     tokBoxUIInterface.updateCallInfo(application.getString(R.string.ringing));
+                }
+
+                if (isCalling) {
+                    startOutgoingTone();
                 }
             }
         };
@@ -907,8 +1009,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     @Override
     public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
         Log.d("TokBox", "onStreamCreated");
-
-        setupLocalFeedView();
     }
 
     @Override
@@ -938,9 +1038,26 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         Log.d("TokBox", "onConnected");
 
         if (this.isCalling) {
-            //TODO timer for out going
-            //outgoingRingTimer = Timer.scheduledTimer(timeInterval: 30, target: self, selector: #selector(self.endOutgoingCallRing(_:)), userInfo: ["uuid": callkitUUID], repeats: false)
+            final int interval = 30000; // 30 Second
+            Handler handler = new Handler();
+            TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                @Override
+                public void run() {
+                    if (connectingDate == null && connectedDate == null) {
+                        endCall(OpenTokConstants.notPickedUp);
+                    }
+
+                    if (outGoingCallTimer != null)
+                        outGoingCallTimer.setStopped(true);
+                    outGoingCallTimer = null;
+
+                }
+            });
+
+            outGoingCallTimer = runnable;
+            handler.postDelayed(runnable, interval);
         }
+
         doPublish();
     }
 
@@ -998,8 +1115,25 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         startArchive(sessionId);
         setupRemoteFeedView();
-        setupLocalFeedView();
         updatePatientLocation();
+
+        Handler handler = new Handler();
+        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+            @Override
+            public void run() {
+                if (isActiveCallPreset()) {
+                    endCall(OpenTokConstants.timedOut);
+                }
+
+                if (callCapTimer != null)
+                    callCapTimer.setStopped(true);
+
+                callCapTimer = null;
+            }
+        });
+
+        callCapTimer = runnable;
+        handler.postDelayed(runnable, Constants.callCapTime);
     }
 
     @Override
@@ -1350,5 +1484,13 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     @Override
     public void onVideoDisableWarningLifted(SubscriberKit subscriberKit) {
         Log.d("TokBox", "onVideoDisableWarningLifted ");
+    }
+
+    //Audio Interface
+    @Override
+    public void didChangeState(int state) {
+        if (tokBoxUIInterface != null) {
+            tokBoxUIInterface.didChangedAudioInput(state);
+        }
     }
 }
