@@ -18,16 +18,22 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.base.CallPlacingFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 13,November,2018
@@ -134,6 +140,30 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         getAssociationsList();
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        if (UserType.isUserPatient()) {
+            Boolean isCallPermitted = PermissionChecker.with(getActivity()).isGranted(PermissionConstants.PERMISSION_CAM_MIC);
+            if (!appPreference.getBoolean(PreferenceConstants.PATIENT_VIDEO_FEED) && isCallPermitted) {
+                appPreference.setBoolean(PreferenceConstants.PATIENT_VIDEO_FEED, true);
+
+                Intent intent = new Intent(getActivity(), ContentActivity.class);
+                intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
+                intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
+                intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.call_kit_education);
+                intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+                intent.putExtra(ArgumentKeys.TITLE, getString(R.string.enable_video_feed));
+                intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.video_feed_description));
+                intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
+                intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, false);
+
+                startActivityForResult(intent, CallPlacingFragment.VideoFeedRequestID);
+            }
+        }
     }
 
     private void getAssociationsList() {

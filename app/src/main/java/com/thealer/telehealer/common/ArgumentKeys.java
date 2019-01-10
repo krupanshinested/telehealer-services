@@ -84,12 +84,23 @@ public class ArgumentKeys {
     public static final String IS_ATTRIBUTED_DESCRIPTION = "IS_ATTRIBUTED_DESCRIPTION";
     public static final String RESOURCE_ICON = "RESOURCE_ICON";
     public static final String IS_SKIP_NEEDED = "IS_SKIP_NEEDED";
+    public static final String IS_CLOSE_NEEDED = "IS_CLOSE_NEEDED";
     public static final String OK_BUTTON_TITLE = "OK_BUTTON_TITLE";
 
     public static final String IS_SKIPPED = "IS_SKIPPED";
     public static final String CALL_INITIATE_MODEL = "CALL_INITIATE_MODEL";
     public static final String CALL_QUALITY = "CALL_QUALITY";
     public static final String IS_DISCLAIMER_DISMISSED = "IS_DISCLAIMER_DISMISSED";
+    public static final String IS_CHECK_BOX_NEEDED = "IS_CHECK_BOX_NEEDED";
+    public static final String CHECK_BOX_TITLE = "CHECK_BOX_TITLE";
+    public static final String IS_CHECK_BOX_CLICKED = "IS_CHECK_BOX_CLICKED";
+    public static final String FEEDBACK_RATTING = "FEEDBACK_RATTING";
+    public static final String FEEDBACK_STRING = "FEEDBACK_STRING";
+    public static final String STARTED_DATE = "STARTED_DATE";
+    public static final String ENDED_DATE = "ENDED_DATE";
+
+    public static final String TO_USER_GUID = "TO_USER_GUID";
+
 
 
 }

@@ -30,6 +30,7 @@ public class ItemPickerDialog extends AlertDialog implements View.OnClickListene
     private ArrayList<String> items;
     private ItemPickerAdapter itemPickerAdapter;
     private String title;
+    private int defaultSelectedPosition = 0;
 
     public ItemPickerDialog(@NonNull Context context,String title,ArrayList<String> items,PickerListener pickerListener) {
         super(context);
@@ -37,6 +38,12 @@ public class ItemPickerDialog extends AlertDialog implements View.OnClickListene
         this.items = items;
         this.pickerListener = pickerListener;
         this.title = title;
+    }
+
+    public ItemPickerDialog(@NonNull Context context,String title,ArrayList<String> items,PickerListener pickerListener,int defaultSelectedPosition) {
+        this(context,title,items,pickerListener);
+
+        this.defaultSelectedPosition = defaultSelectedPosition;
     }
 
     @Override
@@ -60,6 +67,7 @@ public class ItemPickerDialog extends AlertDialog implements View.OnClickListene
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ItemPickerAdapter itemPickerAdapter = new ItemPickerAdapter(getContext(), items);
         this.itemPickerAdapter = itemPickerAdapter;
+        this.itemPickerAdapter.selectedPosition = defaultSelectedPosition;
         recyclerView.setAdapter(itemPickerAdapter);
     }
 
