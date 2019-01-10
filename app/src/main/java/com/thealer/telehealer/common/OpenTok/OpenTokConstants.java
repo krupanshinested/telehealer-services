@@ -45,4 +45,16 @@ public class OpenTokConstants {
     public static final int incomingCallGoingOn = 2;
     public static final int outGoingCallGoingOn = 3;
     public static final int idle = 4;
+
+    //Audio State
+    public static final int headPhones = 1;
+    public static final int inEarSpeaker = 2;
+    public static final int bluetooth = 3;
+    public static final int speaker = 4;
+
+    //Call Feedback
+    public static final String ccm = "CCM";
+    public static final String rpm = "RPM";
+    public static final String bhi = "BHI";
+
 }

@@ -101,6 +101,25 @@ public class OpenTokViewModel extends BaseApiViewModel {
         });
     }
 
+    public void postCallReview(HashMap<String, Object> params) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().postReview(params)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    getBaseApiResponseModelMutableLiveData().setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+
     public void startArchieve(String sessionId) {
         fetchToken(new BaseViewInterface() {
             @Override

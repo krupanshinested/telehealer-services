@@ -10,8 +10,8 @@ import android.view.View;
  */
 
 public class MoveViewTouchListener
-        implements View.OnTouchListener
-{
+        implements View.OnTouchListener {
+
     private GestureDetector mGestureDetector;
     private View mView;
 
@@ -31,8 +31,7 @@ public class MoveViewTouchListener
     }
 
 
-    private GestureDetector.OnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener()
-    {
+    private GestureDetector.OnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
         private float mMotionDownX, mMotionDownY;
 
         @Override
@@ -58,28 +57,16 @@ public class MoveViewTouchListener
             float maxX = parent.getX() + parent.getWidth();
             float maxY = parent.getY() + parent.getHeight();
 
-            Log.d("MoveViewTouchListener","transformX : "+transformX);
-            Log.d("MoveViewTouchListener","transformY : "+transformY);
+            float actualX = mView.getX() - mView.getTranslationX();
+            float actualY = mView.getY() - mView.getTranslationY();
 
-            Log.d("MoveViewTouchListener","minX : "+minX);
-            Log.d("MoveViewTouchListener","maxX : "+maxX);
-            Log.d("MoveViewTouchListener","maxY : "+maxY);
-            Log.d("MoveViewTouchListener","minY : "+minY);
-            Log.d("MoveViewTouchListener","mView.getWidth() : "+mView.getWidth());
-            Log.d("MoveViewTouchListener","mView.getHeight() : "+mView.getHeight());
-            Log.d("MoveViewTouchListener","mView.getX() : "+mView.getX());
-            Log.d("MoveViewTouchListener","mView.getY() : "+mView.getY());
-
-           /* if (transformX + mView.getX() > minX && transformX + mView.getX() < (maxX - mView.getWidth())) {
+            if (actualX + transformX  >= minX && actualX + transformX <= (maxX - mView.getWidth())) {
                 mView.setTranslationX(transformX);
             }
 
-            if (transformY + mView.getY() > minY && transformY + mView.getY() < (maxY - mView.getHeight())) {
+            if (actualY + transformY >= minY && actualY + transformY  <= (maxY - mView.getHeight())) {
                 mView.setTranslationY(transformY);
-            }*/
-
-            mView.setTranslationX(transformX);
-            mView.setTranslationY(transformY);
+            }
 
             return true;
         }

@@ -13,6 +13,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.PermissionChecker;
+import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
@@ -46,16 +48,21 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
 
     @Override
     public void onNewToken(String token) {
-        Log.d("MessagingService","new token "+token);
+        Log.d("MessagingService", "new token " + token);
         assignToken(token);
     }
 
     public static void assignToken(String currentToken) {
-        TelehealerFirebaseMessagingService.currentToken = currentToken;
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                TelehealerFirebaseMessagingService.currentToken = currentToken;
 
-        if (UserDetailPreferenceManager.getUser_guid() != null && !UserDetailPreferenceManager.getUser_guid().isEmpty()) {
-            PubnubUtil.shared.grantPubNub(currentToken,UserDetailPreferenceManager.getUser_guid());
-        }
+                if (UserDetailPreferenceManager.getUser_guid() != null && !UserDetailPreferenceManager.getUser_guid().isEmpty()) {
+                    PubnubUtil.shared.grantPubNub(currentToken, UserDetailPreferenceManager.getUser_guid());
+                }
+            }
+        });
     }
 
     public static void refresh() {
@@ -75,7 +82,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 });
                 break;
             case APNSPayload.endCall:
-                TokBox.shared.endCall(data.getCall_rejection());
+                dismissCall(data);
                 break;
             case APNSPayload.busyInAnotherCall:
                 TokBox.shared.endCall(OpenTokConstants.busyInAnotherLine);
@@ -104,8 +111,11 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
     // Display the incoming call to the user
     private void dismissCall(APNSPayload data) {
         String currentUUID = TokBox.shared.getCurrentUUID();
+        String endCallUUID = data.getUuid() != null ? data.getUuid() : data.getIdentifier();
 
-        if (currentUUID != null && !currentUUID.equals(data.getUuid())) {
+        if (currentUUID != null && !currentUUID.equals(endCallUUID)) {
+            Log.d("MessagingService", "currentUUID "+currentUUID);
+            Log.d("MessagingService", "endCallUUID "+endCallUUID);
             return;
         }
 
@@ -135,6 +145,9 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
         }
     }
 
+    public static String getCurrentToken() {
+        return currentToken;
+    }
 }
 
 

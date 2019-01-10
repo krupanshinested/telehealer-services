@@ -34,6 +34,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -155,6 +156,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                         bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, baseApiResponseModel.getMessage());
                         bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
 
+                        TelehealerFirebaseMessagingService.refresh();
 
                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver)).putExtras(bundle));
 

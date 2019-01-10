@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioFocusRequest;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -16,9 +17,11 @@ import android.media.MediaRecorder.AudioSource;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.NoiseSuppressor;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.opentok.android.BaseAudioDevice;
+import com.thealer.telehealer.common.OpenTok.openTokInterfaces.AudioInterface;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -94,6 +97,9 @@ public class CustomAudioDevice extends BaseAudioDevice {
     private BluetoothProfile bluetoothProfile;
     private Object bluetoothLock = new Object();
 
+    @Nullable
+    private AudioInterface audioInterface;
+
     private enum BluetoothState {
         DISCONNECTED, CONNECTED
     }
@@ -103,6 +109,8 @@ public class CustomAudioDevice extends BaseAudioDevice {
         HEADPHONES,
         BLUETOOTH
     }
+
+    private int currentConnectedDeviceType = OpenTokConstants.speaker;
 
     private final BroadcastReceiver btStatusReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -114,13 +122,10 @@ public class CustomAudioDevice extends BaseAudioDevice {
                         Log.d(LOG_TAG, "BroadcastReceiver: STATE_CONNECTED");
                         synchronized (bluetoothLock) {
                             if (BluetoothState.DISCONNECTED == bluetoothState) {
-                                Log.d(LOG_TAG, "Bluetooth Headset: Connecting SCO");
                                 bluetoothState = BluetoothState.CONNECTED;
-                                setOutputType(OutputType.BLUETOOTH);
-                                audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-                                audioManager.setBluetoothScoOn(true);
-                                startBluetoothSco();
-                                audioManager.setSpeakerphoneOn(false);
+
+                                Log.d(LOG_TAG, "Bluetooth Headset: Connecting SCO");
+                                connectBluetooth();
                             }
                         }
                         break;
@@ -128,18 +133,17 @@ public class CustomAudioDevice extends BaseAudioDevice {
                         Log.d(LOG_TAG, "BroadcastReceiver: STATE_DISCONNECTED");
                         synchronized (bluetoothLock) {
                             if (BluetoothState.CONNECTED == bluetoothState) {
-                                Log.d(LOG_TAG, "Bluetooth Headset: Disconnecting SCO");
                                 bluetoothState = BluetoothState.DISCONNECTED;
-                                audioManager.setBluetoothScoOn(false);
-                                stopBluetoothSco();
+
+                                Log.d(LOG_TAG, "Bluetooth Headset: Disconnecting SCO");
                                 if (audioManager.isWiredHeadsetOn()) {
-                                    setOutputType(OutputType.HEADPHONES);
-                                    audioManager.setSpeakerphoneOn(false);
+                                    connectHeadPhone();
                                 } else {
-                                    setOutputType(OutputType.PHONE_SPEAKERS);
-                                    audioManager.setSpeakerphoneOn(
-                                            getOutputMode() == OutputMode.SpeakerPhone
-                                    );
+                                    if (getOutputMode() == OutputMode.SpeakerPhone) {
+                                        connectSpeaker();
+                                    } else {
+                                        connectEarpiece();
+                                    }
                                 }
                             }
                         }
@@ -150,6 +154,67 @@ public class CustomAudioDevice extends BaseAudioDevice {
             }
         }
     };
+
+    public void connectEarpiece() {
+        currentConnectedDeviceType = OpenTokConstants.inEarSpeaker;
+        setOutputType(OutputType.PHONE_SPEAKERS);
+
+        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+        audioManager.setBluetoothScoOn(false);
+        audioManager.setSpeakerphoneOn(false);
+
+        stopBluetoothSco();
+
+        if (audioInterface != null) {
+            audioInterface.didChangeState(OpenTokConstants.inEarSpeaker);
+        }
+    }
+
+    public void connectSpeaker() {
+        currentConnectedDeviceType = OpenTokConstants.speaker;
+        audioManager.setMode(AudioManager.MODE_NORMAL);
+        audioManager.setSpeakerphoneOn(true);
+        audioManager.setBluetoothScoOn(false);
+
+        stopBluetoothSco();
+
+        if (audioInterface != null) {
+            audioInterface.didChangeState(OpenTokConstants.speaker);
+        }
+    }
+
+    public void connectBluetooth() {
+        currentConnectedDeviceType = OpenTokConstants.bluetooth;
+        setOutputType(OutputType.BLUETOOTH);
+        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+        audioManager.setBluetoothScoOn(true);
+        audioManager.setSpeakerphoneOn(false);
+
+        startBluetoothSco();
+
+        if (audioInterface != null) {
+            audioInterface.didChangeState(OpenTokConstants.bluetooth);
+        }
+    }
+
+    public void connectHeadPhone() {
+        currentConnectedDeviceType = OpenTokConstants.headPhones;
+        stopBluetoothSco();
+
+        setOutputType(OutputType.HEADPHONES);
+        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+        audioManager.stopBluetoothSco();
+        audioManager.setBluetoothScoOn(false);
+        audioManager.setSpeakerphoneOn(false);
+
+        if (audioInterface != null) {
+            audioInterface.didChangeState(OpenTokConstants.headPhones);
+        }
+    }
+
+    public int getCurrentConnectedDeviceType() {
+        return currentConnectedDeviceType;
+    }
 
     private final BluetoothProfile.ServiceListener bluetoothProfileListener =
             new BluetoothProfile.ServiceListener() {
@@ -199,8 +264,9 @@ public class CustomAudioDevice extends BaseAudioDevice {
         }
     }
 
-    public CustomAudioDevice(Context context) {
+    public CustomAudioDevice(Context context,@Nullable AudioInterface audioInterface) {
         this.context = context;
+        this.audioInterface = audioInterface;
 
         try {
             recBuffer = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE);
@@ -662,17 +728,19 @@ public class CustomAudioDevice extends BaseAudioDevice {
             if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
                 if (intent.getIntExtra(HEADSET_PLUG_STATE_KEY, 0) == 1) {
                     Log.d(LOG_TAG, "Headphones connected");
-                    setOutputType(OutputType.HEADPHONES);
-                    audioManager.setSpeakerphoneOn(false);
-                    audioManager.setBluetoothScoOn(false);
+                    connectHeadPhone();
                 } else {
                     Log.d(LOG_TAG, "Headphones disconnected");
                     if (BluetoothState.CONNECTED == bluetoothState) {
-                        audioManager.setBluetoothScoOn(true);
-                        setOutputType(OutputType.BLUETOOTH);
+                        connectBluetooth();
+
                     } else {
-                        audioManager.setSpeakerphoneOn(getOutputMode() == OutputMode.SpeakerPhone);
-                        setOutputType(OutputType.PHONE_SPEAKERS);
+
+                        if (getOutputMode() == OutputMode.SpeakerPhone) {
+                            connectSpeaker();
+                        } else {
+                            connectEarpiece();
+                        }
                     }
                 }
             }
@@ -743,6 +811,10 @@ public class CustomAudioDevice extends BaseAudioDevice {
                 }
             }
         }
+    }
+
+    public AudioManager getAudioManager() {
+        return audioManager;
     }
 
     private void enableBluetoothEvents() {

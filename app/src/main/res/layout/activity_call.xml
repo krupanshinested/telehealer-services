@@ -22,7 +22,7 @@
     <LinearLayout
         android:id="@+id/top_option"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:background="#7d2b2a2a"
         android:orientation="horizontal"
         android:visibility="visible"
@@ -43,8 +43,8 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:padding="12dp"
-            android:src="@drawable/ic_headset_activate" />
+            android:padding="10dp"
+            android:src="@drawable/speaker" />
 
         <ImageView
             android:id="@+id/audio_mute"
@@ -148,9 +148,9 @@
         <com.thealer.telehealer.views.common.RoundCornerConstraintLayout
             android:layout_width="15dp"
             android:layout_height="15dp"
+            android:layout_gravity="center_vertical"
             app:lay_background_color="@android:color/transparent"
             app:lay_corner_radius="20dp"
-            android:layout_gravity="center_vertical"
             app:lay_stroke_color="@color/colorWhite">
 
             <com.thealer.telehealer.views.common.RoundCornerConstraintLayout
@@ -180,32 +180,32 @@
     </LinearLayout>
 
     <com.thealer.telehealer.views.common.RoundCornerConstraintLayout
+        android:id="@+id/call_quality_lay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:visibility="gone"
-        android:id="@+id/call_quality_lay"
-        app:layout_constraintTop_toTopOf="@+id/recording_view"
+        app:lay_background_color="#74494848"
+        app:lay_corner_radius="5dp"
         app:layout_constraintBottom_toBottomOf="@+id/recording_view"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:lay_corner_radius="5dp"
-        app:lay_background_color="#74494848">
+        app:layout_constraintTop_toTopOf="@+id/recording_view">
+
         <TextView
+            android:id="@+id/call_quality_tv"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/call_quality_tv"
-            tools:text="jfjfjfj"
-            android:textSize="10sp"
-            android:paddingTop="4dp"
             android:paddingBottom="4dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
+            android:paddingTop="4dp"
             android:textColor="@color/colorWhite"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
+            tools:text="jfjfjfj" />
     </com.thealer.telehealer.views.common.RoundCornerConstraintLayout>
 
     <com.skyfishjy.library.RippleBackground
@@ -227,9 +227,9 @@
             android:id="@+id/profile_iv"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:src="@drawable/profile_placeholder"
             android:layout_centerInParent="true"
-            android:layout_margin="20dp" />
+            android:layout_margin="20dp"
+            android:src="@drawable/profile_placeholder" />
     </com.skyfishjy.library.RippleBackground>
 
     <com.thealer.telehealer.views.common.RoundCornerConstraintLayout
@@ -315,15 +315,13 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="4dp"
+            android:text="@string/payment_dues"
             android:textAlignment="center"
             android:textColor="@color/colorWhite"
-            android:text="@string/payment_dues"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
+            app:layout_constraintTop_toTopOf="parent" />
 
     </com.thealer.telehealer.views.common.RoundCornerConstraintLayout>
 
@@ -338,33 +336,43 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
-        <ImageView
-            android:id="@+id/arrow_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_arrow_up" />
-
-        <TextView
+        <LinearLayout
+            android:id="@+id/vitalHeaderView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
-            android:text="@string/VITALS"
-            android:textAlignment="center"
-            android:textColor="@color/colorWhite" />
+            android:visibility="gone"
+            android:background="@drawable/grey_gradient_background"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/arrow_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_arrow_up" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/VITALS"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite" />
+        </LinearLayout>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="fill_parent"
             android:layout_height="200dp"
+            android:visibility="gone"
             android:background="@android:color/transparent"
-            android:visibility="gone" />
+            />
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/localView"
         android:layout_width="@dimen/publisher_width"
         android:layout_height="@dimen/publisher_height"
@@ -399,9 +407,9 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/incoming_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/incoming_view"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -426,12 +434,13 @@
             android:layout_height="16dp"
             android:src="@drawable/app_icon"
             app:layout_constraintLeft_toLeftOf="@+id/display_name"
-            app:layout_constraintTop_toBottomOf="@+id/display_name"/>
+            app:layout_constraintTop_toBottomOf="@+id/display_name" />
+
         <TextView
+            android:id="@+id/call_type_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:id="@+id/call_type_tv"
             android:gravity="center_vertical"
             android:textColor="@color/colorWhite"
             app:layout_constraintBottom_toBottomOf="@id/logo"
