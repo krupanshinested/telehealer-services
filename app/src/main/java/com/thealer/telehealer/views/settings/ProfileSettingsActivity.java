@@ -36,6 +36,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -189,6 +190,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 break;
             case R.id.signOut:
                 appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
+                PubnubUtil.shared.unsubscribe();
                 startActivity(new Intent(this, SigninActivity.class));
                 finish();
                 break;

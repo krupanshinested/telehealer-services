@@ -152,6 +152,12 @@ public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
         bottomView = (LinearLayout) view.findViewById(R.id.bottom_view);
         userDetailBnv = (BottomNavigationView) view.findViewById(R.id.user_detail_bnv);
 
+        if (UserType.isUserPatient()) {
+            userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
+        } else {
+            userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.VISIBLE);
+        }
+
         userDetailBnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {

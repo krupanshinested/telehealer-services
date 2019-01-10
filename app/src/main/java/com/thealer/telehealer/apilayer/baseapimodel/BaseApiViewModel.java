@@ -22,6 +22,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
@@ -219,9 +220,14 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     }
 
     public static Boolean isAuthExpired() {
-        JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
-        Date date = new Date();
-        return date.compareTo(jwt.getExpiresAt()) >= 0;
+        try {
+            JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+            Date date = new Date();
+            return date.compareTo(jwt.getExpiresAt()) >= 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
     }
 
     private void makeRefreshTokenApiCall() {
@@ -380,10 +386,10 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     }
 
     private void goToSigninActivity() {
-
         String email = UserDetailPreferenceManager.getEmail();
         appPreference.deletePreference();
         UserDetailPreferenceManager.setEmail(email);
+        PubnubUtil.shared.unsubscribe();
 
         getApplication().startActivity(new Intent(getApplication(), SigninActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));

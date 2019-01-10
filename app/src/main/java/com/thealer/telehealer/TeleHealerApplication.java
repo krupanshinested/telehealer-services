@@ -6,6 +6,8 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 
@@ -53,17 +55,19 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public void onMoveToForeground() {
         // app moved to foreground
 
-        if (TokBox.shared.isActiveCallPreset()) {
-            if (!TokBox.shared.isActivityPresent()) {
-                Intent intent = new Intent(this, CallActivity.class);
-                startActivity(intent);
-                Log.d("TeleHealerApplication","Active call present no activity present");
-            } else {
-                Log.d("TeleHealerApplication","Active and activity present");
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (TokBox.shared.isActiveCallPreset() && !TokBox.shared.isActivityPresent()) {
+                    Log.d("TeleHealerApplication", "open call activity from Application");
+                    Intent intent = new Intent(application, CallActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } else {
+                    Log.d("TeleHealerApplication", "no active call present");
+                }
             }
-        } else {
-            Log.d("TeleHealerApplication","no active call present");
-        }
+        });
 
     }
 

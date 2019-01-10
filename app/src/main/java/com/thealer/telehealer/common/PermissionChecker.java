@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import com.thealer.telehealer.R;
@@ -33,6 +34,15 @@ public class PermissionChecker {
             return  true;
         } else {
             showProposer(permissionFor);
+            return false;
+        }
+    }
+
+    public boolean checkPermissionForFragment(int permissionFor, Fragment fragment) {
+        if (isGranted(permissionFor)) {
+            return  true;
+        } else {
+            showProposerForFragment(permissionFor,fragment);
             return false;
         }
     }
@@ -65,10 +75,12 @@ public class PermissionChecker {
                 if (isLocationPermissionGranted() && isWriteStoragePermissionGranted())  {
                     return true;
                 }
+                break;
             case PermissionConstants.PERMISSION_MICROPHONE:
                 if (isMicPermissionGranted()) {
                     return  true;
                 }
+                break;
         }
 
         return false;
@@ -97,6 +109,11 @@ public class PermissionChecker {
     private void showProposer(int permissionFor) {
         Bundle bundle = getBundle(permissionFor);
         ((FragmentActivity) context).startActivityForResult(new Intent(context, ProposerActivity.class).putExtras(bundle), permissionFor, null);
+    }
+
+    private void showProposerForFragment(int permissionFor,Fragment fragment) {
+        Bundle bundle = getBundle(permissionFor);
+        fragment.startActivityForResult(new Intent(context, ProposerActivity.class).putExtras(bundle), permissionFor, null);
     }
 
     private Bundle getBundle(int permissionFor) {
@@ -291,6 +308,8 @@ public class PermissionChecker {
                 return new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
             case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
                 return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            case PermissionConstants.PERMISSION_MICROPHONE:
+                return new String[]{Manifest.permission.RECORD_AUDIO};
         }
         return new String[0];
     }
