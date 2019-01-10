@@ -21,5 +21,6 @@ public interface TokBoxUIInterface {
     void didSubscribeVideoEnabled();
     void didSubscribeAudioEnabled();
     void didReceiveVitalData(String data,String type);
+    void didChangedAudioInput(int type);
     String getCurrentCallQuality();
 }

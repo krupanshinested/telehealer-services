@@ -14,11 +14,15 @@ import com.pubnub.api.models.consumer.PNStatus;
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 import com.pubnub.api.models.consumer.push.PNPushAddChannelResult;
+import com.pubnub.api.models.consumer.push.PNPushRemoveAllChannelsResult;
+import com.pubnub.api.models.consumer.push.PNPushRemoveChannelResult;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.Pubnub.PubNubViewModel;
 import com.thealer.telehealer.common.Config;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
+import com.thealer.telehealer.views.common.SuccessViewInterface;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -82,39 +86,49 @@ public class PubnubUtil {
     }
 
     public void enablePushOnChannel(String token,String channelName) {
-        Log.d("PubnubUtil","enablePushOnChannel " +channelName);
-        pubnub.addPushNotificationsOnChannels()
-                .pushType(PNPushType.GCM)
-                .channels(Collections.singletonList(channelName))
-                .deviceId(token)
-                .async(new PNCallback<PNPushAddChannelResult>() {
-                    @Override
-                    public void onResponse(PNPushAddChannelResult result, PNStatus status) {
-                        if (status.isError()) {
-                            Log.d("PubnubUtil","Error on push notification" + status.getErrorData());
-                        } else {
-                            Log.d("PubnubUtil","Push notification added ");
-                        }
-                    }
-                });
+        unsubscribePush(new SuccessViewInterface() {
+            @Override
+            public void onSuccessViewCompletion(boolean success) {
+                Log.d("PubnubUtil","enablePushOnChannel " +channelName);
+                pubnub.addPushNotificationsOnChannels()
+                        .pushType(PNPushType.GCM)
+                        .channels(Collections.singletonList(channelName))
+                        .deviceId(token)
+                        .async(new PNCallback<PNPushAddChannelResult>() {
+                            @Override
+                            public void onResponse(PNPushAddChannelResult result, PNStatus status) {
+                                if (status.isError()) {
+                                    Log.d("PubnubUtil","Error on push notification" + status.getErrorData());
+                                } else {
+                                    Log.d("PubnubUtil","Push notification added ");
+                                }
+                            }
+                        });
+            }
+        });
     }
 
     public void enableVoipOnChannel(String token,String channelName) {
-        Log.d("PubnubUtil","enableVoipOnChannel " +channelName);
-        voipPubnub.addPushNotificationsOnChannels()
-                .pushType(PNPushType.GCM)
-                .channels(Collections.singletonList(channelName))
-                .deviceId(token)
-                .async(new PNCallback<PNPushAddChannelResult>() {
-                    @Override
-                    public void onResponse(PNPushAddChannelResult result, PNStatus status) {
-                        if (status.isError()) {
-                            Log.d("PubnubUtil","Error on voip notification" + status.getErrorData());
-                        } else {
-                            Log.d("PubnubUtil","voip notification added ");
-                        }
-                    }
-                });
+        unsubscribeVoip(new SuccessViewInterface() {
+            @Override
+            public void onSuccessViewCompletion(boolean success) {
+                Log.d("PubnubUtil","enableVoipOnChannel " +channelName);
+                voipPubnub.addPushNotificationsOnChannels()
+                        .pushType(PNPushType.GCM)
+                        .channels(Collections.singletonList(channelName))
+                        .deviceId(token)
+                        .async(new PNCallback<PNPushAddChannelResult>() {
+                            @Override
+                            public void onResponse(PNPushAddChannelResult result, PNStatus status) {
+                                if (status.isError()) {
+                                    Log.d("PubnubUtil","Error on voip notification" + status.getErrorData());
+                                } else {
+                                    Log.d("PubnubUtil","voip notification added ");
+                                }
+                            }
+                        });
+            }
+        });
     }
 
     public void publishPushMessage(PushPayLoad pushPayLoad,@Nullable PubNubResult resultPNCallback) {
@@ -156,6 +170,48 @@ public class PubnubUtil {
                         }
                     }
                 });
+    }
+
+    public void unsubscribe() {
+        unsubscribeVoip(null);
+        unsubscribePush(null);
+    }
+
+    private void unsubscribeVoip(@Nullable SuccessViewInterface successViewInterface) {
+        Log.d("PubnubUtil","unsubscribeVoip");
+
+        voipPubnub.removeAllPushNotificationsFromDeviceWithPushToken()
+                .deviceId(TelehealerFirebaseMessagingService.getCurrentToken())
+                .pushType(PNPushType.GCM).async(new PNCallback<PNPushRemoveAllChannelsResult>() {
+            @Override
+            public void onResponse(PNPushRemoveAllChannelsResult result, PNStatus status) {
+                if(!status.isError()) {
+                    System.out.println("Voip Successfully unscubscribed");
+                }
+                if (successViewInterface != null)
+                    successViewInterface.onSuccessViewCompletion(true);
+            }
+        });
+
+    }
+
+    private void unsubscribePush(@Nullable SuccessViewInterface successViewInterface) {
+        Log.d("PubnubUtil","unsubscribePush");
+
+        pubnub.removeAllPushNotificationsFromDeviceWithPushToken()
+                .deviceId(TelehealerFirebaseMessagingService.getCurrentToken())
+                .pushType(PNPushType.GCM).async(new PNCallback<PNPushRemoveAllChannelsResult>() {
+            @Override
+            public void onResponse(PNPushRemoveAllChannelsResult result, PNStatus status) {
+                if(!status.isError()) {
+                    System.out.println("push Successfully unscubscribed");
+                }
+
+                if (successViewInterface != null)
+                    successViewInterface.onSuccessViewCompletion(true);
+            }
+        });
+
     }
 
 

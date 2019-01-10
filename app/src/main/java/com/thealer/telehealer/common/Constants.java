@@ -4,6 +4,9 @@ package com.thealer.telehealer.common;
  * Created by Aswin on 09,October,2018
  */
 public class Constants {
+
+    public static final long callCapTime = 1800000; //30 minutes
+
     public static final String PREFERENCE_NAME = "thealer";
     public static final String HEADER_AUTH_TOKEN = "X-Access-Token";
 
