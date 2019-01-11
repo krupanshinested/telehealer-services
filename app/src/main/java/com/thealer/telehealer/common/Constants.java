@@ -1,5 +1,9 @@
 package com.thealer.telehealer.common;
 
+import android.os.Bundle;
+
+import java.util.List;
+
 /**
  * Created by Aswin on 09,October,2018
  */
@@ -123,4 +127,7 @@ public class Constants {
     //Screen Type
     public static final int forRegistration = 1;
     public static final int forProfileUpdate = 2;
+
+    //share intent bundle
+    public static List<String> sharedPath;
 }

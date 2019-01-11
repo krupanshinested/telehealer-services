@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.home.orders.document;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -106,7 +108,7 @@ class DocumentListAdapter extends BaseExpandableListAdapter {
         documentCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (documentsApiResponseModel != null){
+                if (documentsApiResponseModel != null) {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(Constants.USER_DETAIL, documentsApiResponseModel);
                     bundle.putBoolean(Constants.IS_FROM_HOME, isFromHome);
@@ -126,10 +128,12 @@ class DocumentListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void setData(List<String> headerList, HashMap<String, List<DocumentsApiResponseModel.ResultBean>> childList, DocumentsApiResponseModel documentsApiResponseModel) {
-        this.headerList = headerList;
-        this.childList = childList;
+    public void setData(List<String> newHeaderList, HashMap<String, List<DocumentsApiResponseModel.ResultBean>> newChildList, DocumentsApiResponseModel documentsApiResponseModel, int page) {
+        Log.e("aswin", "size " + page);
+        this.headerList = newHeaderList;
+        this.childList = newChildList;
         this.documentsApiResponseModel = documentsApiResponseModel;
         notifyDataSetChanged();
     }
+
 }
