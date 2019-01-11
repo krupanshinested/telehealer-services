@@ -107,7 +107,7 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
     }
 
     private void setData() {
-        doneBtn.setText(status ? "done" : "Retry");
+        doneBtn.setText(status ? getString(R.string.done) : getString(R.string.retry));
         isDataReceived = true;
     }
 
