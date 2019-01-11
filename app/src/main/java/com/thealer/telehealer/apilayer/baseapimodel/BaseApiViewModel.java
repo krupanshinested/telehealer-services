@@ -410,7 +410,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         EventRecorder.updateUserId(null);
 
         getApplication().startActivity(new Intent(getApplication(), SigninActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
 
     public MultipartBody.Part getMultipartFile(String name, String image_path) {

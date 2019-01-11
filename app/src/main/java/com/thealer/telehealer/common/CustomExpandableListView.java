@@ -2,11 +2,11 @@ package com.thealer.telehealer.common;
 
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -56,26 +56,35 @@ public class CustomExpandableListView extends ConstraintLayout {
         emptyActionBtn = (CustomButton) view.findViewById(R.id.empty_action_btn);
         recyclerLoader = (ProgressBar) view.findViewById(R.id.recycler_loader);
 
-        expandableListView.setOnScrollChangeListener(new OnScrollChangeListener() {
+        expandableListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                    case SCROLL_STATE_IDLE:
+                        updateView();
+                        break;
+                }
+            }
 
-                if (isScrollable){
-                    if (expandableListView.getCount() < totalCount){
-                        if (expandableListView.getLastVisiblePosition() == expandableListView.getCount() - 1){
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (isScrollable) {
+                    if (firstVisibleItem < totalItemCount -1){
+                        if ((firstVisibleItem + visibleItemCount == totalItemCount)) {
+                            isScrollable = false;
                             onPaginateInterface.onPaginate();
                             showProgressBar();
-                        }else {
+                        } else {
                             hideProgressBar();
                         }
                     }else {
                         hideProgressBar();
+                        isScrollable = false;
                     }
-                }else {
+                } else {
                     hideProgressBar();
                 }
-
-                updateView();
+                Log.e("aswin", "onScroll: " + firstVisibleItem + " " + visibleItemCount + " " + totalItemCount);
             }
         });
     }
@@ -125,20 +134,22 @@ public class CustomExpandableListView extends ConstraintLayout {
     }
 
     public void showEmptyState(String emptyState) {
-        String title = EmptyStateUtil.getTitle(emptyState);
-        String message = EmptyStateUtil.getMessage(emptyState);
-        int image = EmptyStateUtil.getImage(emptyState);
+        if (emptyState != null) {
+            String title = EmptyStateUtil.getTitle(emptyState);
+            String message = EmptyStateUtil.getMessage(emptyState);
+            int image = EmptyStateUtil.getImage(emptyState);
 
-        emptyTitleTv.setText(title);
-        emptyMessageTv.setText(message);
-        emptyIv.setImageDrawable(context.getDrawable(image));
+            emptyTitleTv.setText(title);
+            emptyMessageTv.setText(message);
+            emptyIv.setImageDrawable(context.getDrawable(image));
+        }
     }
 
     public void showProgressBar() {
         recyclerLoader.setVisibility(VISIBLE);
     }
 
-    public void hideProgressBar(){
+    public void hideProgressBar() {
         recyclerLoader.setVisibility(GONE);
     }
 }
