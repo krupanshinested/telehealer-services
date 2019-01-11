@@ -141,6 +141,7 @@ public class BaseFragment extends Fragment {
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
         TextView textView = snackbarLayout.findViewById(android.support.design.R.id.snackbar_text);
         textView.setMaxLines(10);
+        snackbar.setDuration(Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 

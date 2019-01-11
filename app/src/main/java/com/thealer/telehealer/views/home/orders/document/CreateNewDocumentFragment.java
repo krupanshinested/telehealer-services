@@ -1,20 +1,23 @@
 package com.thealer.telehealer.views.home.orders.document;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,13 +37,20 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.PermissionChecker;
+import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.base.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
-import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
+import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.onboarding.OnBoardingViewPagerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * Created by Aswin on 29,November,2018
@@ -63,6 +73,15 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     private LinearLayout appbarLl;
     private ImageView backIv;
     private TextView toolbarTitle;
+    private ConstraintLayout viewPagerCl;
+    private ViewPager viewPager;
+    private LinearLayout pagerIndicator;
+    private OnBoardingViewPagerAdapter onBoardingViewPagerAdapter;
+    private ImageView[] indicators;
+    private boolean isShareIntent = false;
+    private List<String> imagePathList = new ArrayList<>();
+    private int next = 1;
+    private ConstraintLayout parent;
 
 
     @Override
@@ -72,6 +91,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
 
         ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
+
         ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
 
         attachObserverInterface.attachObserver(ordersApiViewModel);
@@ -80,17 +100,19 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, baseApiResponseModel.isSuccess());
+                    if (isShareIntent) {
+                        next = next + 1;
+                        imagePathList.remove(0);
 
-                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.successfully_uploaded));
-
-                    LocalBroadcastManager
-                            .getInstance(getActivity())
-                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                    .putExtras(bundle));
-
+                        if (imagePathList.size() == 0) {
+                            Constants.sharedPath = null;
+                            sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.successfully_uploaded));
+                        } else {
+                            uploadMultipleDocument();
+                        }
+                    } else {
+                        sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.successfully_uploaded));
+                    }
                 }
             }
         });
@@ -132,12 +154,13 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_document_create_new, container, false);
-        setTitle("New Document");
+        setTitle(getString(R.string.new_document));
         initView(view);
         return view;
     }
 
     private void initView(View view) {
+        parent = (ConstraintLayout) view.findViewById(R.id.parent);
         documentNameTil = (TextInputLayout) view.findViewById(R.id.document_name_til);
         documentNameEt = (EditText) view.findViewById(R.id.document_name_et);
         documentTv = (TextView) view.findViewById(R.id.document_tv);
@@ -146,6 +169,9 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
         appbarLl = (LinearLayout) view.findViewById(R.id.appbar_ll);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        viewPagerCl = (ConstraintLayout) view.findViewById(R.id.viewPager_cl);
+        viewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        pagerIndicator = (LinearLayout) view.findViewById(R.id.pager_indicator);
 
         addBtn.setOnClickListener(this);
         documentIv.setOnClickListener(this);
@@ -194,12 +220,103 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
 
                 addBtn.setText(getString(R.string.update));
             }
+
+            isShareIntent = getArguments().getBoolean(ArgumentKeys.IS_SHARED_INTENT);
+
+            if (isShareIntent) {
+
+                showShareData();
+            }
         }
 
         isDataObtained();
+    }
 
+    private void showShareData() {
+        if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_STORAGE)) {
+
+            List<Bitmap> bitmapList = new ArrayList<>();
+            documentIv.setVisibility(View.GONE);
+            viewPagerCl.setVisibility(View.VISIBLE);
+
+            imagePathList = Constants.sharedPath;
+
+            int size = Constants.sharedPath.size();
+
+            if (size > 10) {
+                showAlertDialog(getActivity(), getString(R.string.alert), "Maximum of 10 images can be uploaded at a time.",
+                        getString(R.string.ok), null,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, null);
+                size = 10;
+            }
+
+            for (int i = 0; i < size; i++) {
+                bitmapList.add(BitmapFactory.decodeFile(imagePathList.get(i)));
+            }
+
+            if (bitmapList.size() > 0) {
+                pagerIndicator.setVisibility(View.VISIBLE);
+            } else {
+                pagerIndicator.setVisibility(View.GONE);
+            }
+
+            setUpViewPager(bitmapList);
+        }
+    }
+
+    private void setUpViewPager(List<Bitmap> imagePathList) {
+        onBoardingViewPagerAdapter = new OnBoardingViewPagerAdapter(getActivity(), imagePathList);
+        viewPager.setAdapter(onBoardingViewPagerAdapter);
+        viewPager.setCurrentItem(0, true);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                for (int j = 0; j < onBoardingViewPagerAdapter.getCount(); j++) {
+                    indicators[j].setImageDrawable(getResources().getDrawable(R.drawable.circular_unselected_indicator));
+                }
+                indicators[i].setImageDrawable(getResources().getDrawable(R.drawable.circular_selected_indicator));
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+
+        if (imagePathList.size() > 0)
+            createIndicator();
 
     }
+
+    private void createIndicator() {
+        int count = onBoardingViewPagerAdapter.getCount();
+        indicators = new ImageView[count];
+
+        for (int i = 0; i < count; i++) {
+            indicators[i] = new ImageView(getActivity());
+            indicators[i].setImageDrawable(getResources().getDrawable(R.drawable.circular_unselected_indicator));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(4, 0, 4, 0);
+
+            pagerIndicator.addView(indicators[i], params);
+        }
+
+        indicators[0].setImageDrawable(getResources().getDrawable(R.drawable.circular_selected_indicator));
+
+    }
+
 
     private void enableOrDisableAdd(boolean enable) {
         addBtn.setEnabled(enable);
@@ -209,10 +326,14 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_btn:
-                if (!isEditMode) {
-                    uploadDocument();
+                if (!isShareIntent) {
+                    if (!isEditMode) {
+                        uploadDocument();
+                    } else {
+                        updateDocument();
+                    }
                 } else {
-                    updateDocument();
+                    uploadMultipleDocument();
                 }
                 break;
             case R.id.document_iv:
@@ -226,6 +347,11 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
         }
     }
 
+    private void uploadMultipleDocument() {
+        ordersCreateApiViewModel.uploadDocument(documentNameEt.getText().toString().concat("_" + next), imagePathList.get(0), false);
+        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+    }
+
     private void updateDocument() {
         ordersApiViewModel.updateDocument(documentId, documentNameEt.getText().toString(), true);
     }
@@ -233,19 +359,35 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     private void uploadDocument() {
 
         ordersCreateApiViewModel.uploadDocument(documentNameEt.getText().toString(), image_path, false);
-
-        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-        successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
-        successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
-
+        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PermissionConstants.PERMISSION_STORAGE) {
+            if (resultCode == Activity.RESULT_OK) {
+                showShareData();
+            } else {
+                onCloseActionInterface.onClose(true);
+            }
+        }
+
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW) {
-                getActivity().finish();
+
+                try {
+                    ActivityManager mngr = (ActivityManager) getActivity().getSystemService(ACTIVITY_SERVICE);
+                    if (mngr != null) {
+                        if (mngr.getAppTasks().get(0).getTaskInfo().numActivities <= 1) {
+                            startActivity(new Intent(getActivity(), HomeActivity.class));
+                        }
+                        getActivity().finish();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -258,7 +400,10 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     }
 
     private void isDataObtained() {
-        if (!documentNameEt.getText().toString().isEmpty() && image_path != null && !image_path.isEmpty()) {
+        if (!documentNameEt.getText().toString().isEmpty() &&
+                ((image_path != null && !image_path.isEmpty()) ||
+                        (imagePathList != null && imagePathList.size() > 0) ||
+                        (Constants.sharedPath != null && Constants.sharedPath.size() > 0))) {
             enableOrDisableAdd(true);
         } else {
             enableOrDisableAdd(false);

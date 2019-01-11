@@ -1,19 +1,23 @@
 package com.thealer.telehealer.views.home.orders;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -26,6 +30,11 @@ import com.thealer.telehealer.views.home.orders.labs.CreateNewLabFragment;
 import com.thealer.telehealer.views.home.orders.prescription.CreateNewPrescriptionFragment;
 import com.thealer.telehealer.views.home.orders.radiology.CreateNewRadiologyFragment;
 import com.thealer.telehealer.views.home.orders.specialist.CreateNewSpecialistFragment;
+import com.thealer.telehealer.views.signin.SigninActivity;
+
+import java.util.ArrayList;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 28,November,2018
@@ -54,12 +63,50 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
         backIv.setOnClickListener(this);
 
         if (getIntent() != null) {
+
             Bundle bundle = getIntent().getExtras();
-            if (bundle != null) {
+
+            if (bundle == null)
+                bundle = new Bundle();
+
+            if (getIntent().getAction() != null) {
+
+                orderType = OrderConstant.ORDER_DOCUMENTS;
+                bundle.putBoolean(ArgumentKeys.IS_SHARED_INTENT, true);
+
+                ArrayList<Uri> uriArrayList = new ArrayList<>();
+
+                if (getIntent().getAction().equals(Intent.ACTION_SEND_MULTIPLE)) {
+                    uriArrayList.addAll(getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM));
+                } else if (getIntent().getAction().equals(Intent.ACTION_SEND)) {
+                    uriArrayList.add(getIntent().getParcelableExtra(Intent.EXTRA_STREAM));
+                }
+
+                Constants.sharedPath = new ArrayList<>();
+
+                for (int i = 0; i < uriArrayList.size(); i++) {
+                    if (CameraUtil.with(this).isTypeImage(uriArrayList.get(i))) {
+                        String path = CameraUtil.with(this).getRealPathFromUri(uriArrayList.get(i));
+                        Log.e("aswin", "showShareData: " + path);
+                        if (path != null && !path.isEmpty()) {
+                            Constants.sharedPath.add(path);
+                        }
+                    }
+                }
+
+                if (!appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
+                    startActivity(new Intent(this, SigninActivity.class));
+                    finish();
+                }
+
+            } else {
                 orderType = bundle.getString(Constants.SELECTED_ITEM);
+            }
+
+            if (orderType != null) {
                 Fragment fragment = getFragment(orderType);
                 if (fragment != null) {
-                    fragment.setArguments(getIntent().getExtras());
+                    fragment.setArguments(bundle);
                     setFragment(fragment);
                 }
             }
@@ -117,6 +164,7 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
     public void onShowFragment(Fragment fragment) {
         setFragment(fragment);
     }
+
     @Override
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
@@ -130,6 +178,7 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.e("aswin", "onActivityResult: activity " + requestCode + " " + resultCode);
         if (resultCode == RESULT_OK) {
             if (requestCode == PermissionConstants.PERMISSION_CAM_PHOTOS) {
                 CameraUtil.with(this).showImageSelectionAlert();
@@ -144,6 +193,8 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
                 CameraInterface cameraInterface = (CameraInterface) getSupportFragmentManager().getFragments().get(0);
                 cameraInterface.onImageReceived(imagePath);
 
+            } else if (requestCode == PermissionConstants.PERMISSION_STORAGE) {
+                getSupportFragmentManager().getFragments().get(0).onActivityResult(requestCode, resultCode, data);
             }
         }
     }
