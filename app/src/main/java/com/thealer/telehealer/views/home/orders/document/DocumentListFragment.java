@@ -16,7 +16,6 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -58,6 +57,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
 
     private int page = 1;
     private boolean isFromHome = true;
+    private boolean isApiRequested = false;
 
     @Override
     public void onAttach(Context context) {
@@ -73,6 +73,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     documentsApiResponseModel = (DocumentsApiResponseModel) baseApiResponseModel;
+                    documentsCelv.setTotalCount(documentsApiResponseModel.getCount());
                     updateList();
                 }
             }
@@ -80,39 +81,51 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void updateList() {
-        headerList.clear();
-        childList.clear();
-
-        for (int i = 0; i < documentsApiResponseModel.getResult().size(); i++) {
-
-            DocumentsApiResponseModel.ResultBean resultBean = documentsApiResponseModel.getResult().get(i);
-
-            String date = Utils.getDayMonthYear(resultBean.getCreated_at());
-
-            if (!headerList.contains(date)) {
-                headerList.add(date);
-            }
-
-            List<DocumentsApiResponseModel.ResultBean> resultBeanList = new ArrayList<>();
-
-            if (childList.containsKey(date)) {
-                resultBeanList.addAll(childList.get(date));
-            }
-
-            resultBeanList.add(resultBean);
-
-            childList.put(date, resultBeanList);
-
+        if (page == 1) {
+            headerList.clear();
+            childList.clear();
         }
 
-        documentListAdapter.setData(headerList, childList, documentsApiResponseModel);
+        if (documentsApiResponseModel.getResult().size() > 0) {
+            for (int i = 0; i < documentsApiResponseModel.getResult().size(); i++) {
+
+                DocumentsApiResponseModel.ResultBean resultBean = documentsApiResponseModel.getResult().get(i);
+
+                String date = Utils.getDayMonthYear(resultBean.getCreated_at());
+
+                if (!headerList.contains(date)) {
+                    headerList.add(date);
+                }
+
+                List<DocumentsApiResponseModel.ResultBean> resultBeanList = new ArrayList<>();
+
+                if (childList.containsKey(date)) {
+                    resultBeanList.addAll(childList.get(date));
+                }
+
+                resultBeanList.add(resultBean);
+
+                childList.put(date, resultBeanList);
+
+            }
+
+            documentListAdapter.setData(headerList, childList, documentsApiResponseModel, page);
 
 
-        if (headerList.size() > 0) {
-            documentsCelv.hideEmptyState();
-            expandListView();
+            if (documentsCelv.getExpandableView().getCount() > 0) {
+                documentsCelv.hideEmptyState();
+                expandListView();
+            } else {
+                documentsCelv.showEmptyState();
+            }
+            Log.e("aswin", "updateList: " + documentsCelv.getExpandableView().getCount());
+
+            isApiRequested = false;
         } else {
-            documentsCelv.showEmptyState();
+            documentsCelv.setScrollable(false);
+            if (page == 1) {
+                documentsCelv.showEmptyState();
+            }
         }
     }
 
@@ -120,6 +133,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         for (int i = 0; i < headerList.size(); i++) {
             documentsCelv.getExpandableView().expandGroup(i);
         }
+        documentsCelv.setScrollable(true);
     }
 
     @Nullable
@@ -147,19 +161,31 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             if (!isFromHome) {
                 addFab.hide();
                 documentsCelv.setEmptyState(EmptyViewConstants.EMPTY_DOCUMENTS);
-            }else {
+            } else {
                 documentsCelv.setEmptyState(EmptyViewConstants.EMPTY_DOCUMENTS_WITH_BTN);
             }
         }
+
+        documentsCelv.hideEmptyState();
 
         documentListAdapter = new DocumentListAdapter(getActivity(), headerList, childList, isFromHome);
 
         documentsCelv.getExpandableView().setAdapter(documentListAdapter);
 
+        documentsCelv.setScrollable(true);
+
         documentsCelv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
             public void onPaginate() {
-                //handle pagination here
+                if (!isApiRequested) {
+                    documentsCelv.setScrollable(false);
+                    Log.e("aswin", "onPaginate: ");
+                    page = page + 1;
+                    getDocuments(false);
+                } else {
+                    Log.e("aswin", "onPaginate: false");
+                }
+
             }
         });
 
@@ -170,13 +196,19 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             }
         });
 
+        getDocuments(true);
+
     }
 
     private void getDocuments(boolean isShowProgress) {
-        if (isFromHome){
-            ordersApiViewModel.getDocuments(page, isShowProgress);
-        }else {
-            ordersApiViewModel.getUserDocuments(page, commonUserApiResponseModel.getUser_guid(), isShowProgress);
+        if (!isApiRequested) {
+            isApiRequested = true;
+
+            if (isFromHome) {
+                ordersApiViewModel.getDocuments(page, isShowProgress);
+            } else {
+                ordersApiViewModel.getUserDocuments(page, commonUserApiResponseModel.getUser_guid(), isShowProgress);
+            }
         }
     }
 
@@ -197,6 +229,5 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
         addFab.setClickable(true);
-        getDocuments(true);
     }
 }

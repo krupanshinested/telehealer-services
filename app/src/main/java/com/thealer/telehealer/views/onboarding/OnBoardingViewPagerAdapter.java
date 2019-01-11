@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.onboarding;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewDialogFragment;
@@ -26,6 +28,7 @@ public class OnBoardingViewPagerAdapter extends PagerAdapter {
     private ImageView pagerItemIv;
     private boolean isPreviewAvailable;
     private FragmentActivity activity;
+    private List<Bitmap> imageBitmapList;
 
     public OnBoardingViewPagerAdapter(Context context, int count) {
         this.context = context;
@@ -38,6 +41,12 @@ public class OnBoardingViewPagerAdapter extends PagerAdapter {
         this.count = insuranceImageList.size();
         this.insuranceImageList = insuranceImageList;
         this.isPreviewAvailable = isPreviewAvailable;
+    }
+
+    public OnBoardingViewPagerAdapter(FragmentActivity activity, List<Bitmap> imageBitmapList) {
+        this.context = activity;
+        this.count = imageBitmapList.size();
+        this.imageBitmapList = imageBitmapList;
     }
 
     @Override
@@ -53,6 +62,9 @@ public class OnBoardingViewPagerAdapter extends PagerAdapter {
 
         pagerItemIv = (ImageView) view.findViewById(R.id.pager_item_iv);
 
+        if (imageBitmapList != null) {
+            Glide.with(view).load(imageBitmapList.get(position)).into(pagerItemIv);
+        }
         if (insuranceImageList != null) {
             Utils.setImageWithGlide(context, pagerItemIv, insuranceImageList.get(position), context.getDrawable(R.drawable.placeholder_license), true);
             if (isPreviewAvailable) {

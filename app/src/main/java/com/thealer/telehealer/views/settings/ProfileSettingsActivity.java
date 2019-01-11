@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -83,7 +82,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private AppBarLayout appbarLayout;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private TextView toolbarTitle;
-    private ImageView backIv,other_option_iv;
+    private ImageView backIv, other_option_iv;
     private RelativeLayout collapseBackgroundRl;
     private TextView nextTv;
     private ImageView userProfileIv, genderIv;
@@ -202,14 +201,15 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 EventRecorder.recordUserSession("logout");
                 appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
                 PubnubUtil.shared.unsubscribe();
-                startActivity(new Intent(this, SigninActivity.class));
+                startActivity(new Intent(this, SigninActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 finish();
                 break;
             case R.id.payments_billings:
                 updateDetailTitle(getString(R.string.call_charges));
                 PaymentsListingFragment paymentsListingFragment = new PaymentsListingFragment();
                 hideOrShowNext(false);
-                setFragment(paymentsListingFragment,false,true,true);
+                setFragment(paymentsListingFragment, false, true, true);
                 break;
         }
     }
@@ -507,7 +507,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 updateDetailTitle(getString(R.string.card_information));
                 CardInformationFragment cardInformationFragment = new CardInformationFragment();
                 hideOrShowNext(false);
-                setFragment(cardInformationFragment,false,true,false);
+                setFragment(cardInformationFragment, false, true, false);
 
                 break;
 
@@ -516,7 +516,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 PaymentDetailFragment paymentDetailFragment = new PaymentDetailFragment();
                 paymentDetailFragment.setArguments(bundle);
                 hideOrShowNext(false);
-                setFragment(paymentDetailFragment,false,true,false);
+                setFragment(paymentDetailFragment, false, true, false);
 
                 break;
         }
@@ -539,21 +539,21 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     @Override
     public void onClick(View view) {
-     switch (view.getId()) {
-         case R.id.back_iv:
-             onBackPressed();
-             break;
-         case R.id.next_tv:
-             if (getCurrentFragment() instanceof DoCurrentTransactionInterface) {
-                 ((DoCurrentTransactionInterface) getCurrentFragment()).doCurrentTransaction();
-             }
-             break;
-         case R.id.other_option_iv:
-             if (getCurrentFragment() instanceof DoCurrentTransactionInterface) {
-                 ((DoCurrentTransactionInterface) getCurrentFragment()).doCurrentTransaction();
-             }
-             break;
-     }
+        switch (view.getId()) {
+            case R.id.back_iv:
+                onBackPressed();
+                break;
+            case R.id.next_tv:
+                if (getCurrentFragment() instanceof DoCurrentTransactionInterface) {
+                    ((DoCurrentTransactionInterface) getCurrentFragment()).doCurrentTransaction();
+                }
+                break;
+            case R.id.other_option_iv:
+                if (getCurrentFragment() instanceof DoCurrentTransactionInterface) {
+                    ((DoCurrentTransactionInterface) getCurrentFragment()).doCurrentTransaction();
+                }
+                break;
+        }
     }
 
     @Override

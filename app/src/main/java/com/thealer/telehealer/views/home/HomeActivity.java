@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -41,6 +42,8 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
+import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
 import com.thealer.telehealer.views.home.recents.RecentDetailView;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
@@ -187,6 +190,31 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_schedules:
                 showSchedulesFragment(scheduleTypeCalendar);
                 break;
+        }
+
+        checkForDocumentUpload();
+    }
+
+    private void checkForDocumentUpload() {
+        if (Constants.sharedPath != null) {
+            showAlertDialog("Found Documents", "Do you really want to upload the documents which you shared?", getString(R.string.upload), getString(R.string.cancel),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(ArgumentKeys.IS_SHARED_INTENT, true);
+                            bundle.putString(Constants.SELECTED_ITEM, OrderConstant.ORDER_DOCUMENTS);
+
+                            startActivity(new Intent(HomeActivity.this, CreateOrderActivity.class).putExtras(bundle));
+                            dialog.dismiss();
+                        }
+                    }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Constants.sharedPath = null;
+                            dialog.dismiss();
+                        }
+                    });
         }
     }
 

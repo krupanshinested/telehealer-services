@@ -140,9 +140,9 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                         EventRecorder.recordUserStatus(whoAmIApiResponseModel.getUser_activated());
 
                         if (quickLoginType == -1) {
-                            startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                            startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class));
                         } else {
-                            startActivity(new Intent(SigninActivity.this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                            startActivity(new Intent(SigninActivity.this, HomeActivity.class));
                         }
 
                         finish();
