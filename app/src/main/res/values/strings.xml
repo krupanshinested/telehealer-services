@@ -611,6 +611,7 @@
     <string name="calling_from_outside">Calling from outside licensed state…</string>
     <string name="payment_dues">By accepting this call, you consent to receiving care remotely via a tele medicine visit and to pay any remaining dues of this visit after insurance payments</string>
     <string name="notifications">Notifications</string>
+    <string name="new_document">New Document</string>
     <string name="email_validation">Email Validation</string>
     <string name="confirmed_your_mail">Confirmed your mail?</string>
     <string name="email_validation_message">You have not validated the mail we sent to %s. Go to your email and please validate.</string>
@@ -663,6 +664,7 @@
     <string name="resend_mail">Resend Mail</string>
     <string name="coming_soon">(Coming Soon)</string>
     <string name="ma_flow_not_available_currently">Medical Assistant flow is not available in andorid currently.</string>
+    <string name="upload">Upload</string>
 
     <string name="app_update">App Update</string>
     <string name="app_update_description">The version of this application is outdated and not currently supported. Let\'s get you upgraded to get the latest bug fixes and features</string>
