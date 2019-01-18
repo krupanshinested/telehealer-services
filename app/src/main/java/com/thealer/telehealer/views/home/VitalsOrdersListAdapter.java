@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -24,6 +26,7 @@ import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrdersDetailListFragment;
 import com.thealer.telehealer.views.home.orders.document.DocumentListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsDetailListFragment;
+import com.thealer.telehealer.views.settings.SignatureActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,10 +98,15 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
                     if (titleList.get(i).equals(OrderConstant.ORDER_FORM) &&
                             !UserType.isUserPatient()) {
 
-                        fragmentActivity.startActivity(new Intent(fragmentActivity, CreateOrderActivity.class)
-                                .putExtras(bundle));
+                        if (UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature() != null) {
+                            fragmentActivity.startActivity(new Intent(fragmentActivity, CreateOrderActivity.class)
+                                    .putExtras(bundle));
+                        } else {
+                            bundle.putBoolean(ArgumentKeys.SHOW_SIGNATURE_PROPOSER, true);
+                            fragmentActivity.startActivity(new Intent(fragmentActivity, SignatureActivity.class).putExtras(bundle));
+                        }
 
-                    }else if (titleList.get(i).equals(OrderConstant.ORDER_DOCUMENTS)){
+                    } else if (titleList.get(i).equals(OrderConstant.ORDER_DOCUMENTS)) {
                         fragment = new DocumentListFragment();
                     } else {
                         fragment = new OrdersDetailListFragment();
