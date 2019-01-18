@@ -5,7 +5,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
@@ -187,7 +186,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
     private void goToMainActivity() {
         appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
-        startActivity(new Intent(this, HomeActivity.class));
+        startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
     }
 
