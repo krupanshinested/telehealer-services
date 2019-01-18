@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/frame_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.2">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/cancel_tv"
+                style="@style/text_app_color"
+                android:text="@string/Cancel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/erase_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="Erase All"
+                android:textColor="@color/colorBlack"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.github.gcacace.signaturepad.views.SignaturePad
+                android:id="@+id/signaturepad"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/info_tv"
+                app:layout_constraintTop_toBottomOf="@+id/cancel_tv" />
+
+            <TextView
+                android:id="@+id/info_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/e_signature_is_required_to_create_orders"
+                app:layout_constraintBottom_toTopOf="@+id/save_btn" />
+
+            <Button
+                android:id="@+id/save_btn"
+                style="@style/button_app_background_white_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/frame_front"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBlack_50">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/signature_info_cl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/signature_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Signature Capture"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/signature_info_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/signature_info_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/we_will_need_to_capture_your_e_signature_for_purpose_of_issuing_orders"
+                android:textColor="@color/colorWhite"
+                app:layout_constraintBottom_toTopOf="@+id/proceed_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.thealer.telehealer.common.CustomButton
+                android:id="@+id/proceed_btn"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="32dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/proceed"
+                app:app_gradient="true"
+                app:corner_radius="25dp"
+                app:layout_constraintBottom_toTopOf="@+id/cancel2_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.3"
+                app:text_color="@color/colorWhite" />
+
+            <TextView
+                android:id="@+id/cancel2_tv"
+                style="@style/text_app_color"
+                android:layout_marginBottom="8dp"
+                android:text="@string/cancel"
+                android:textAllCaps="true"
+                app:layout_constraintBottom_toTopOf="@+id/cancel_info_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/cancel_info_tv"
+                style="@style/text_light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:text="@string/signature_cancel_info"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>

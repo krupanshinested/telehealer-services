@@ -16,6 +16,7 @@ public class RequestID {
     public static final int REQ_SELECT_ASSOCIATION_PATIENT = 5004;
     public static final int REQ_SELECT_ASSOCIATION_DOCTOR = 5005;
     public static final int REQ_SELECT_ICD_CODE = 5006;
+    public static final int REQ_SIGNATURE = 5007;
 
     public static final String REQ_PASSWORD_RESET_OTP = "REQ_RESET_OTP";
     public static final String REQ_RESET_PASSWORD = "REQ_RESET_PASSWORD";

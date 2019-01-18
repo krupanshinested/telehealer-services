@@ -134,6 +134,9 @@ dependencies {
     //Ripple effect
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
 
+    //signature pad
+    implementation 'com.github.gcacace:signature-pad:1.2.1'
+
     //Brain Tree
     implementation 'com.braintreepayments.api:drop-in:3.7.1'
 
