@@ -27,6 +27,7 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
     private String user_avatar;
     private String website;
     private String role;
+    private boolean email_verified;
     private String phone;
     private String gender;
     private String dob;
@@ -340,4 +341,15 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
         return website;
     }
 
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public boolean isEmail_verified() {
+        return email_verified;
+    }
+
+    public void setEmail_verified(boolean email_verified) {
+        this.email_verified = email_verified;
+    }
 }
