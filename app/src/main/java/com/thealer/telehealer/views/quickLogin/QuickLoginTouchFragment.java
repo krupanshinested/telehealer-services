@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -52,9 +54,11 @@ public class QuickLoginTouchFragment extends BaseFragment implements View.OnClic
 
         switch (v.getId()) {
             case R.id.close_iv:
+                EventRecorder.recordRegistration("QuickLogin_skipped", UserDetailPreferenceManager.getUser_guid());
                 appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_NONE);
                 break;
             case R.id.enable_tv:
+                EventRecorder.recordRegistration("TouchID_enabled", UserDetailPreferenceManager.getUser_guid());
                 appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_TOUCH);
                 break;
             case R.id.touch_id_agreement_tv:

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -98,6 +99,8 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
+
+                        EventRecorder.recordUserSession("account_deletion_initiated");
 
                         Intent intent = new Intent(getActivity(),DeleteAccountActivity.class);
                         getActivity().startActivity(intent);

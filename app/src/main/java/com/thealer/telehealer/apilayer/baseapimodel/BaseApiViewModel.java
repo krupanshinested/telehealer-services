@@ -20,6 +20,7 @@ import com.thealer.telehealer.apilayer.manager.RetrofitManager;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
@@ -68,7 +69,10 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                     isRefreshToken = false;
                     isQuickLoginReceiverEnabled = false;
+
+                    EventRecorder.recordUserSession("Quick_Login_Failed");
                 } else {
+                    EventRecorder.recordUserSession("Quick_Login_Success");
                     makeRefreshTokenApiCall();
                 }
             }
@@ -390,6 +394,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         appPreference.deletePreference();
         UserDetailPreferenceManager.setEmail(email);
         PubnubUtil.shared.unsubscribe();
+
+        EventRecorder.updateUserId(null);
 
         getApplication().startActivity(new Intent(getApplication(), SigninActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));

@@ -30,6 +30,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
@@ -189,6 +190,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 setFragment(privacyFragment,false,true,true);
                 break;
             case R.id.signOut:
+                EventRecorder.recordUserSession("logout");
                 appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
                 PubnubUtil.shared.unsubscribe();
                 startActivity(new Intent(this, SigninActivity.class));
@@ -472,7 +474,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PermissionConstants.GALLERY_REQUEST_CODE || requestCode == PermissionConstants.CAMERA_REQUEST_CODE) {

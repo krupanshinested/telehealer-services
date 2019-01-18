@@ -358,4 +358,10 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> postReview(@Body Map<String, Object> param);
 
 
+    @POST("api/log/user-details")
+    Observable<BaseApiResponseModel> postCapabilityLog(@Body Map<String, Object> param);
+
+    @POST("api/log/external-api")
+    Observable<BaseApiResponseModel> postExternalApiLog(@Body Map<String, Object> param);
+
 }
