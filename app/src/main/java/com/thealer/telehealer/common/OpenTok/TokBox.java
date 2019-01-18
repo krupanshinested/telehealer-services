@@ -43,6 +43,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.common.Animation.ConstrainSetUtil;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.LocationTracker;
 import com.thealer.telehealer.common.LocationTrackerInterface;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.AudioInterface;
@@ -55,6 +56,8 @@ import com.thealer.telehealer.common.ResultFetcher;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.TimerInterface;
 import com.thealer.telehealer.common.Util.TimerRunnable;
+import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
+import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubNubResult;
@@ -245,6 +248,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     //Setup methods
 
     public void initialSetUp(CallInitiateModel callInitiateModel,Boolean isCalling,String uuidString) {
+
+        EventRecorder.recordLastUpdate("last_call_date");
+
         this.token = callInitiateModel.getToken();
         this.sessionId = callInitiateModel.getSessionId();
         this.apiKey = callInitiateModel.getTokBoxApiKey();
@@ -631,6 +637,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                    HashMap<String ,String > map = new HashMap<>();
                    map.put("no_answer","true");
                    updateCallStatus(sessionId,map);
+                   EventRecorder.recordCallUpdates("no_answer", null);
                } else {
                    HashMap<String ,String > map = new HashMap<>();
                    map.put("end","true");
@@ -703,6 +710,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             Log.d("openTok", "endCall");
             PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForEndCall(UserDetailPreferenceManager.getUser_guid(), otherPersonDetail.getUser_guid(), currentUUIDString, callRejectionReason);
             PubnubUtil.shared.publishVoipMessage(pushPayLoad,null);
+            EventRecorder.recordNotification("DECLINE_CALL");
         }
     }
 
@@ -846,6 +854,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void receiveRequestForVideoSwap() {
+        EventRecorder.recordCallUpdates("audio_to_video_request", null);
+
         if (tokBoxUIInterface != null)
             tokBoxUIInterface.receivedRequestForVideoSwap();
     }
@@ -883,6 +893,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     /*APi call to update call status*/
     private void updateAudioToVideoCall() {
+        EventRecorder.recordCallUpdates("audio_to_video_call", null);
+
         HashMap<String ,String> params = new HashMap<>();
         params.put("type",OpenTokConstants.video);
         openTokViewModel.updateCallStatus(sessionId,params);
@@ -1031,6 +1043,24 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     @Override
     public void onError(PublisherKit publisherKit, OpentokError opentokError) {
         Log.d("TokBox", "onError " + opentokError.getMessage());
+
+        HashMap<String,String> detail = new HashMap<>();
+        detail.put("status","fail");
+        detail.put("reason",opentokError.getErrorCode().getErrorCode()+"-"+opentokError.getMessage());
+
+        switch (opentokError.getErrorDomain()) {
+            case SessionErrorDomain:
+                detail.put("event","SessionErrorDomain");
+                break;
+            case SubscriberErrorDomain:
+                detail.put("event","SubscriberErrorDomain");
+                break;
+            case PublisherErrorDomain:
+                detail.put("event","PublisherErrorDomain");
+                break;
+        }
+
+        TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
     }
 
     @Override
@@ -1064,6 +1094,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     @Override
     public void onDisconnected(Session session) {
         Log.d("TokBox", "onDisconnected");
+
+        HashMap<String,String> detail = new HashMap<>();
+        detail.put("status","success");
+        detail.put("event","disconnect");
+
+        TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
     }
 
     //PublisherListener methods
@@ -1087,17 +1123,43 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             mSubscriber = null;
             remoteView.removeAllViews();
         }
+
+        EventRecorder.recordCallUpdates("disconnected", null);
     }
 
     @Override
     public void onError(Session session, OpentokError opentokError) {
         Log.d("TokBox", "onError" + opentokError.getMessage());
+
+        HashMap<String,String> detail = new HashMap<>();
+        detail.put("status","fail");
+        detail.put("reason",opentokError.getErrorCode().getErrorCode()+"-"+opentokError.getMessage());
+
+        switch (opentokError.getErrorDomain()) {
+            case SessionErrorDomain:
+                detail.put("event","SessionErrorDomain");
+                break;
+            case SubscriberErrorDomain:
+                detail.put("event","SubscriberErrorDomain");
+                break;
+            case PublisherErrorDomain:
+                detail.put("event","PublisherErrorDomain");
+                break;
+        }
+
+        TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
     }
 
     //SubscriberListener methods
     @Override
     public void onConnected(SubscriberKit subscriberKit) {
         Log.d("TokBox", "onConnected subscriber");
+
+        HashMap<String,String> detail = new HashMap<>();
+        detail.put("status","success");
+        detail.put("event","onConnected");
+
+        TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
 
         connectedDate = new Date();
 
@@ -1139,11 +1201,35 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     @Override
     public void onDisconnected(SubscriberKit subscriberKit) {
         Log.d("TokBox", "onDisconnected subscriber");
+
+        HashMap<String,String> detail = new HashMap<>();
+        detail.put("status","success");
+        detail.put("event","disconnect-subscriber");
+
+        TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
     }
 
     @Override
     public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
         Log.d("TokBox", "onError subscriber " + opentokError.getMessage());
+
+        HashMap<String,String> detail = new HashMap<>();
+        detail.put("status","fail");
+        detail.put("reason",opentokError.getErrorCode().getErrorCode()+"-"+opentokError.getMessage());
+
+        switch (opentokError.getErrorDomain()) {
+            case SessionErrorDomain:
+                detail.put("event","SessionErrorDomain");
+                break;
+            case SubscriberErrorDomain:
+                detail.put("event","SubscriberErrorDomain");
+                break;
+            case PublisherErrorDomain:
+                detail.put("event","PublisherErrorDomain");
+                break;
+        }
+
+        TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
     }
 
     //AudioLevelListener methods
@@ -1409,6 +1495,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 Log.d("TokBox", "subscribe video disabled because of quality changed ");
                 didVideoDisabledOrEnabledForSubscriberDueToQuality(false);
             }
+
+            EventRecorder.recordCallUpdates("subscriber_video_disabled", "quality_changed");
+
             break;
         case SubscriberKit.VIDEO_REASON_PUBLISH_VIDEO:
 
@@ -1419,6 +1508,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                     tokBoxUIInterface.didSubscribeVideoDisabled();
                 }
             }
+
+            EventRecorder.recordCallUpdates("subscriber_video_disabled", "publisher_property_changed");
 
             Log.d("TokBox", "subscribe video disabled because of publisher property");
             break;
@@ -1431,6 +1522,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                     tokBoxUIInterface.didSubscribeVideoDisabled();
                 }
             }
+
+            EventRecorder.recordCallUpdates("subscriber_video_disabled", "subscriber_property_changed");
 
             Log.d("TokBox", "subscribe video disabled because of subscriber property");
             break;
@@ -1448,6 +1541,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
             didVideoDisabledOrEnabledForSubscriberDueToQuality(true);
 
+            EventRecorder.recordCallUpdates("subscriber_video_enabled", "quality_changed");
+
             break;
         case SubscriberKit.VIDEO_REASON_PUBLISH_VIDEO:
             if (isSubscriberVideoMuted) {
@@ -1457,6 +1552,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                     tokBoxUIInterface.didSubscribeVideoEnabled();
                 }
             }
+
+            EventRecorder.recordCallUpdates("subscriber_video_enabled", "publisher_property_changed");
 
             Log.d("TokBox", "subscribe video enabled because of publisher property");
 
@@ -1469,6 +1566,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                     tokBoxUIInterface.didSubscribeVideoEnabled();
                 }
             }
+
+            EventRecorder.recordCallUpdates("subscriber_video_enabled", "subscriber_property_changed");
 
             Log.d("TokBox", "subscribe video enabled because of subscriber property");
 

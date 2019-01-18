@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.PermissionChecker;
@@ -74,6 +75,8 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
         switch (data.getType()) {
             case APNSPayload.audio:
             case APNSPayload.video:
+                EventRecorder.recordNotification("call_received");
+
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -138,6 +141,8 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
         } else {
             PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForBusyInAnotherCall(UserDetailPreferenceManager.getUser_guid(),data.getFrom(),data.getUuid());
             PubnubUtil.shared.publishVoipMessage(pushPayLoad,null);
+
+            EventRecorder.recordNotification("BUSY_CALL");
 
             //TODO local notification
             /*let notification = prepareUserInfoForMissedCall(userInfo: userinfo,isVideo: hasVideo)

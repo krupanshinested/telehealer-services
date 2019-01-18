@@ -25,6 +25,7 @@ import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PasswordValidator;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
@@ -84,6 +85,13 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
                     bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
 
                     showSuccessView(bundle);
+
+
+                    if (errorModel.getMessage() != null) {
+                        EventRecorder.recordRegistration("SIGNUP_ERROR_"+errorModel.getMessage(),null);
+                    } else {
+                        EventRecorder.recordRegistration("SIGNUP_ERROR_UNKNOWN",null);
+                    }
                 }
             }
         });
@@ -107,6 +115,22 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
                             createUserApiViewModel.baseApiResponseModelMutableLiveData.setValue(null);
 
                             onActionCompleteInterface.onCompletionResult(null, true, null);
+
+                            if (getActivity() != null) {
+                                CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+
+                                switch (createUserRequestModel.getUser_data().getRole()) {
+                                    case Constants.ROLE_PATIENT:
+                                        EventRecorder.recordRegistration("SIGNUP_PATIENT_NOT_VERIFIED", createUserApiResponseModel.getData().getUser_guid());
+                                        break;
+                                    case Constants.ROLE_DOCTOR:
+                                        EventRecorder.recordRegistration("SIGNUP_DOCTOR_NOT_VERIFIED", createUserApiResponseModel.getData().getUser_guid());
+                                        break;
+                                    default:
+                                        EventRecorder.recordRegistration("SIGNUP_MA_NOT_VERIFIED", createUserApiResponseModel.getData().getUser_guid());
+                                        break;
+                                }
+                            }
                         }
                     } else {
                         Bundle bundle = new Bundle();
