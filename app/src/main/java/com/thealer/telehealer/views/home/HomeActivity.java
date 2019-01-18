@@ -43,16 +43,14 @@ import com.thealer.telehealer.views.home.recents.RecentDetailView;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
-import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
-import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 public class HomeActivity extends BaseActivity implements AttachObserverInterface,
         OnActionCompleteInterface, NavigationView.OnNavigationItemSelectedListener, OnOrientationChangeInterface,
-        OnCloseActionInterface, ShowSubFragmentInterface, SuccessViewInterface, ChangeTitleInterface,ToolBarInterface,OnViewChangeInterface {
+        OnCloseActionInterface, ShowSubFragmentInterface, SuccessViewInterface, ChangeTitleInterface, ToolBarInterface, OnViewChangeInterface {
     private Toolbar toolbar;
     private LinearLayout fragmentHolder, subFragmentHolder;
     private DrawerLayout drawerLayout;
@@ -73,7 +71,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             selecteMenuItem = savedInstanceState.getInt(SELECTED_MENU_ITEM);
         }
 
-        if (checkIsUserActivated()){
+        if (checkIsUserActivated()) {
             initView();
         }
 
@@ -81,18 +79,25 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private boolean checkIsUserActivated() {
-        if (UserType.isUserDoctor()){
-            if (!appPreference.getBoolean(PreferenceConstants.IS_USER_ACTIVATED)){
+        if (UserType.isUserDoctor()) {
+            if (!appPreference.getBoolean(PreferenceConstants.IS_USER_ACTIVATED)) {
                 startActivity(new Intent(this, DoctorOnBoardingActivity.class));
                 finish();
                 return false;
             }
         }
+
+        if (UserDetailPreferenceManager.getWhoAmIResponse() == null ||
+                !UserDetailPreferenceManager.getWhoAmIResponse().isEmail_verified()) {
+            startActivity(new Intent(this, EmailVerificationActivity.class));
+            finish();
+            return false;
+        }
         return true;
     }
 
     @Override
-    public  void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(profileListener);
@@ -146,7 +151,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         } else if (UserType.isUserDoctor()) {
             navigationView.getMenu().removeItem(R.id.menu_doctor);
             navigationView.getMenu().removeItem(R.id.menu_vitals);
-        }else if (UserType.isUserAssistant()){
+        } else if (UserType.isUserAssistant()) {
             navigationView.getMenu().removeItem(R.id.menu_patient);
             navigationView.getMenu().removeItem(R.id.menu_vitals);
             navigationView.getMenu().removeItem(R.id.menu_orders);
