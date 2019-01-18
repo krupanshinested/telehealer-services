@@ -35,4 +35,11 @@ public class PreferenceConstants {
     public static final String WHO_AM_I_RESPONSE = "whoAmIResponse";
     public static final String PATIENT_VIDEO_FEED = "PATIENT_VIDEO_FEED";
 
+    public static final String DEVICE_ID = "DEVICE_ID";
+
+    public static final String CAMERA_CAPABILITY = "CAMERA_CAPABILITY";
+    public static final String MIC_CAPABILITY = "MIC_CAPABILITY";
+    public static final String LOCATION_CAPABILITY = "LOCATION_CAPABILITY";
+    public static final String PHOTO_CAPABILITY = "PHOTO_CAPABILITY";
+
 }

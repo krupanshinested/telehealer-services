@@ -7,7 +7,9 @@ import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.HashMap;
@@ -25,10 +27,14 @@ public class RequestOtpApiViewModel extends BaseApiViewModel {
     }
 
     public void requestOtpUsingGuid() {
+        EventRecorder.recordRegistration("SEND_OTP", guid);
+
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
+
+                    EventRecorder.recordRegistration("OTP_SENT", guid);
 
                     params = new HashMap<>();
                     params.put(PreferenceConstants.USER_GUID, guid);
@@ -46,12 +52,16 @@ public class RequestOtpApiViewModel extends BaseApiViewModel {
     }
 
     public void requestOtpUsingEmail(String email) {
+        EventRecorder.recordRegistration("SEND_OTP", UserDetailPreferenceManager.getUser_guid());
+
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     params = new HashMap<>();
                     params.put("email", email);
+
+                    EventRecorder.recordRegistration("OTP_SENT", UserDetailPreferenceManager.getUser_guid());
 
                     getPublicApiService().requestOtp(params).compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {

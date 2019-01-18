@@ -23,6 +23,7 @@ import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResp
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -180,6 +181,7 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
     private void deleteAccount() {
         if (!isDeleteCalled)   {
             isDeleteCalled = true;
+            EventRecorder.recordUserSession("account_deleted");
             deleteAccountViewModel.deleteAccount();
         }
     }

@@ -31,6 +31,7 @@ import com.thealer.telehealer.apilayer.models.requestotp.RequestOtpApiViewModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -135,6 +136,9 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel instanceof OtpVerificationResponseModel) {
+
+                        EventRecorder.recordRegistration("OTP_VERIFIED", UserDetailPreferenceManager.getUser_guid());
+
                         OtpVerificationResponseModel otpVerificationResponseModel = (OtpVerificationResponseModel) baseApiResponseModel;
 
                         String email = appPreference.getString(PreferenceConstants.USER_EMAIL);
@@ -157,6 +161,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                         bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
 
                         TelehealerFirebaseMessagingService.refresh();
+                        EventRecorder.updateUserId(otpVerificationResponseModel.getData().getUser_guid());
 
                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver)).putExtras(bundle));
 
@@ -371,6 +376,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
     @Override
     public void onClick(View v) {
+        EventRecorder.recordRegistration("RESEND_OTP", UserDetailPreferenceManager.getUser_guid());
         requestOtp();
     }
 

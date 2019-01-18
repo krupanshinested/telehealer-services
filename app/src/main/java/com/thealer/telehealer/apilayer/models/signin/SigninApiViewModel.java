@@ -7,6 +7,7 @@ import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
@@ -31,6 +32,8 @@ public class SigninApiViewModel extends BaseApiViewModel {
                 .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                     @Override
                     public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                        EventRecorder.recordUserSession("login_username");
+
                         baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                     }
                 });
