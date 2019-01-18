@@ -25,6 +25,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
@@ -202,6 +203,8 @@ public class VitalCreationActivity extends BaseActivity implements
                 setFragment(deviceSetUpFragment,true);
                 break;
             case RequestID.OPEN_CONNECTED_DEVICE:
+                EventRecorder.recordLastUpdate("last_vitals_measured_date");
+
                 String type = bundle.getString(ArgumentKeys.DEVICE_TYPE);
                 String measurementType = VitalDeviceType.shared.getMeasurementType(type);
 

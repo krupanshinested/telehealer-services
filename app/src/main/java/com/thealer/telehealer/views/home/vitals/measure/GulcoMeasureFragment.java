@@ -17,12 +17,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
@@ -348,6 +351,11 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
 
     @Override
     public void didFinishGulcoMesureWithFailure(String error) {
+
+        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+            EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
+        }
+
         setCurrentState(MeasureState.failed);
         lastError = error;
         showAlertDialog(getActivity(), getString(R.string.error), error, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
