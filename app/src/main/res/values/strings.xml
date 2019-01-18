@@ -610,6 +610,11 @@
     <string name="email_validation">Email Validation</string>
     <string name="confirmed_your_mail">Confirmed your mail?</string>
     <string name="email_validation_message">You have not validated the mail we sent to %s. Go to your email and please validate.</string>
+    <string name="e_signature_is_required_to_create_orders">e-Signature is required to create orders</string>
+    <string name="we_will_need_to_capture_your_e_signature_for_purpose_of_issuing_orders">We will need to capture your e-signature for purpose of issuing orders</string>
+    <string name="preview">Preview</string>
+    <string name="Cancel">Cancel</string>
+    <string name="signature_cancel_info">By canceling signature capture, you won\'t be able to issue %s</string>
     <string name="speaker">Speaker</string>
     <string name="earPiece">Ear Piece</string>
     <string name="headphones">Head Phones</string>

@@ -12,29 +12,29 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+        android:name=".TeleHealerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:largeHeap="true"
-        android:name=".TeleHealerApplication"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
         <activity android:name=".views.common.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,23 +50,28 @@
         <activity android:name=".views.quickLogin.QuickLoginActivity" />
         <activity android:name=".views.signin.SigninActivity" />
         <activity android:name=".views.signin.ForgotPassword" />
-        <activity android:name=".views.common.QRCodeReaderActivity"/>
-        <activity android:name=".views.proposer.ProposerActivity"/>
-        <activity android:name=".views.home.AddConnectionActivity"/>
-        <activity android:name=".views.settings.ProfileSettingsActivity"/>
-        <activity android:name=".views.settings.DeleteAccountActivity"/>
-        <activity android:name=".views.home.orders.CreateOrderActivity"/>
-        <activity android:name=".views.home.DoctorOnBoardingActivity"/>
-        <activity android:name="iHealth.pairing.VitalCreationActivity"/>
-        <activity android:name=".views.home.vitals.BluetoothEnableActivity"/>
-        <activity android:name=".views.home.schedules.CreateNewScheduleActivity"/>
-        <activity android:name=".views.inviteUser.InviteUserActivity"/>
-        <activity android:name=".views.common.ContentActivity"/>
-        <activity android:name=".views.call.CallFeedBackActivity"/>
-        <activity android:name=".views.call.CallActivity" android:launchMode="singleTop"/>
-        <activity android:name=".views.home.EmailVerificationActivity"/>
-        <activity android:name=".views.common.ContentActivity"/>
+        <activity android:name=".views.common.QRCodeReaderActivity" />
+        <activity android:name=".views.proposer.ProposerActivity" />
+        <activity android:name=".views.home.AddConnectionActivity" />
+        <activity android:name=".views.settings.ProfileSettingsActivity" />
+        <activity android:name=".views.settings.DeleteAccountActivity" />
+        <activity android:name=".views.home.orders.CreateOrderActivity" />
+        <activity android:name=".views.home.DoctorOnBoardingActivity" />
+        <activity android:name="iHealth.pairing.VitalCreationActivity" />
+        <activity android:name=".views.home.vitals.BluetoothEnableActivity" />
+        <activity android:name=".views.home.schedules.CreateNewScheduleActivity" />
+        <activity android:name=".views.inviteUser.InviteUserActivity" />
+        <activity
+            android:name=".views.call.CallActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".views.settings.SignatureActivity"
+            android:screenOrientation="userLandscape" />
+            <activity android:name=".views.common.ContentActivity"/>
+            <activity android:name=".views.call.CallFeedBackActivity"/>
 
+        <activity android:name=".views.common.ContentActivity" />
+        <activity android:name=".views.call.CallFeedBackActivity" />
         <activity
             android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
             android:launchMode="singleTask">
@@ -80,24 +85,24 @@
             </intent-filter>
         </activity>
 
+
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
             android:enabled="true">
             <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED"/>
+                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
             </intent-filter>
         </receiver>
 
-       <service android:name=".common.pubNub.TelehealerFirebaseMessagingService">
-        <intent-filter>
-            <action android:name="com.google.firebase.MESSAGING_EVENT" />
-        </intent-filter>
+        <service android:name=".common.pubNub.TelehealerFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
         </service>
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="066e8b8d88db9729e4c796eabdd396f1edc0d7d8"
-            />
+            android:value="066e8b8d88db9729e4c796eabdd396f1edc0d7d8" />
     </application>
 
 </manifest>
