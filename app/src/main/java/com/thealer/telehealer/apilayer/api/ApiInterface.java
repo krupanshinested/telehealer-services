@@ -12,7 +12,6 @@ import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListRespon
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.DataBean;
-import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
@@ -42,11 +41,12 @@ import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseMo
 import com.thealer.telehealer.apilayer.models.requestotp.OtpVerificationResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestModel;
+import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,16 +132,16 @@ public interface ApiInterface {
     @Multipart
     @PUT("api/users/profile")
     Observable<CommonUserApiResponseModel> updateMedicalAssistant(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
-                                                        @Part(USER_DETAIL) DataBean user_detail,
-                                                        @Part MultipartBody.Part user_avatar,
-                                                        @Part MultipartBody.Part certification);
+                                                                  @Part(USER_DETAIL) DataBean user_detail,
+                                                                  @Part MultipartBody.Part user_avatar,
+                                                                  @Part MultipartBody.Part certification);
 
     @Multipart
     @PUT("api/users/profile")
     Observable<CommonUserApiResponseModel> updateDoctor(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
-                                                                  @Part(USER_DETAIL) DataBean user_detail,
-                                                                  @Part MultipartBody.Part user_avatar,
-                                                                  @Part MultipartBody.Part certification,
+                                                        @Part(USER_DETAIL) DataBean user_detail,
+                                                        @Part MultipartBody.Part user_avatar,
+                                                        @Part MultipartBody.Part certification,
                                                         @Part MultipartBody.Part license);
 
     @Multipart
@@ -316,7 +316,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> createSchedules(@Query(DOCTOR_GUID) String doctorGuidList, @Body SchedulesCreateRequestModel createRequestModel);
 
     @GET("api/schedule")
-    Observable<ArrayList<SchedulesApiResponseModel.ResultBean>> getUserUpcomingSchedules(@Query(USER_GUID) String user_guid, @Query("upcoming") boolean upcoming,  @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<ArrayList<SchedulesApiResponseModel.ResultBean>> getUserUpcomingSchedules(@Query(USER_GUID) String user_guid, @Query("upcoming") boolean upcoming, @Query(DOCTOR_GUID) String doctorGuid);
 
     @DELETE("api/schedule")
     Observable<BaseApiResponseModel> deleteSchedule(@Query("schedule_id") int schedule_id);
@@ -353,13 +353,19 @@ public interface ApiInterface {
     Observable<CommonUserApiResponseModel> startArchive(@Query(SESSION_ID) String sessionId);
 
     @GET("api/session")
-    Observable<TokenFetchModel> getSessionId(@Query(CALL_QUALITY) String call_quality,@Query(DOCTOR_GUID) String doctor_guid);
+    Observable<TokenFetchModel> getSessionId(@Query(CALL_QUALITY) String call_quality, @Query(DOCTOR_GUID) String doctor_guid);
 
     @POST("api/call")
     Observable<BaseApiResponseModel> postaVOIPCall(@Query(DOCTOR_GUID) String doctor_guid, @Body Map<String, String> param);
 
     @POST("api/setup/verification-link")
     Observable<BaseApiResponseModel> requestVerificationMain();
+    @Multipart
+    @POST("api/users/signature")
+    Observable<SignatureApiResponseModel> uploadSignature(@Part MultipartBody.Part file);
+
+    @DELETE("api/users/signature")
+    Observable<BaseApiResponseModel> deleteSignature();
 
     @POST("api/review")
     Observable<BaseApiResponseModel> postReview(@Body Map<String, Object> param);
