@@ -358,6 +358,8 @@ public interface ApiInterface {
     @POST("api/call")
     Observable<BaseApiResponseModel> postaVOIPCall(@Query(DOCTOR_GUID) String doctor_guid, @Body Map<String, String> param);
 
+    @POST("api/setup/verification-link")
+    Observable<BaseApiResponseModel> requestVerificationMain();
 
     @POST("api/review")
     Observable<BaseApiResponseModel> postReview(@Body Map<String, Object> param);

@@ -64,6 +64,7 @@
         <activity android:name=".views.common.ContentActivity"/>
         <activity android:name=".views.call.CallFeedBackActivity"/>
         <activity android:name=".views.call.CallActivity" android:launchMode="singleTop"/>
+        <activity android:name=".views.home.EmailVerificationActivity"/>
         <activity android:name=".views.common.ContentActivity"/>
 
         <activity
