@@ -18,6 +18,7 @@ import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
@@ -126,6 +127,7 @@ public class NewVitalDeviceSetUpFragment extends BaseFragment {
         vitalDeviceListAdapter.clickListener = new ClickListener() {
             @Override
             public void onClick(View view, int position) {
+                EventRecorder.recordVitals("SELECT_PAIR_DEVICE", deviceSources.get(position));
                 Bundle bundle = new Bundle();
                 bundle.putString(ArgumentKeys.DEVICE_TYPE,deviceSources.get(position));
                 onActionCompleteInterface.onCompletionResult(RequestID.OPEN_VITAL_SETUP,true,bundle);

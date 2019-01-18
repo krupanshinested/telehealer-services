@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 /**
@@ -31,6 +32,10 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+
+                                    EventRecorder.recordNotification("CONNECTION_REQUEST");
+                                    EventRecorder.recordConnection("CONNECTION_REQUESTED");
+
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });

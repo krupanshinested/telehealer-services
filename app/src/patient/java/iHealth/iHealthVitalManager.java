@@ -15,7 +15,10 @@ import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
+import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
+import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.VitalCommon.*;
 
 import java.io.IOException;
@@ -87,7 +90,26 @@ public class iHealthVitalManager extends VitalsManager {
             is.close();
             boolean isPass = iHealthDevicesManager.getInstance().sdkAuthWithLicense(buffer);
             Log.i("info", "isPass:    " + isPass);
+
+            if (isPass) {
+                HashMap<String,String> detail = new HashMap<>();
+                detail.put("status","success");
+                detail.put("event","registerDevice");
+                TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
+            } else {
+                HashMap<String,String> detail = new HashMap<>();
+                detail.put("status","fail");
+                detail.put("event","registerDevice");
+                TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
+            }
+
         } catch (IOException e) {
+
+            HashMap<String,String> detail = new HashMap<>();
+            detail.put("status","fail");
+            detail.put("reason",e.getLocalizedMessage());
+            detail.put("event","registerDevice");
+            TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
 
             Log.i("info", "health failed "+e.getMessage());
             Log.i("info", "health failed "+e.getLocalizedMessage());
@@ -110,6 +132,9 @@ public class iHealthVitalManager extends VitalsManager {
         @Override
         public void onScanDevice(String mac, String deviceType, int rssi) {
             Log.v("vitalmanager","onScanDevice d"+mac);
+
+            EventRecorder.recordVitals("DEVICE_DISCOVER_SUCCESS", deviceType);
+
             if (vitalPairInterface != null) {
                 vitalPairInterface.didDiscoverDevice(deviceType, mac);
             }
@@ -143,9 +168,14 @@ public class iHealthVitalManager extends VitalsManager {
             deviceConnectionMap.put(deviceType+"_"+mac,status);
 
             if (status == iHealthDevicesManager.DEVICE_STATE_CONNECTED) {
+                EventRecorder.recordVitals("DEVICE_CONNECT_SUCCESS", deviceType);
+
                 if (vitalPairInterface != null)
                     vitalPairInterface.didConnected(deviceType,mac);
             } else if (status == iHealthDevicesManager.DEVICE_STATE_DISCONNECTED) {
+
+                EventRecorder.recordVitals("DEVICE_CONNECT_FAIL", deviceType);
+
                 if (vitalPairInterface != null)
                     vitalPairInterface.didDisConnected(deviceType,mac);
             }

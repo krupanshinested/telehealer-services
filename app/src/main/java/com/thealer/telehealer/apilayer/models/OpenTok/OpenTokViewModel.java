@@ -9,6 +9,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -160,6 +161,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
 
+                                    EventRecorder.recordNotification("REQUEST_CALL");
 
                                     PushPayLoad pushPayLoad = PubNubNotificationPayload.getCallInvitePayload(
                                             UserDetailPreferenceManager.getUserDisplayName()

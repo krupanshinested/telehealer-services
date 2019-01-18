@@ -86,11 +86,13 @@ public class RetrofitManager extends ContextWrapper {
             }
         });
 
+        RetrofitLogger logging = new RetrofitLogger();
         if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-            httpClient.addInterceptor(logging);
+        } else {
+            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
         }
+        httpClient.addInterceptor(logging);
 
         OkHttpClient client = httpClient.build();
         defaultRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.api_base_url))
@@ -119,13 +121,15 @@ public class RetrofitManager extends ContextWrapper {
 
             return chain.proceed(request);
         });
+
+        RetrofitLogger logging = new RetrofitLogger();
         if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
-            logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-            httpClient.addInterceptor(logging);
+        } else {
+            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
         }
+        httpClient.addInterceptor(logging);
+
 
         OkHttpClient client = httpClient.build();
         authRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.api_base_url))

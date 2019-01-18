@@ -12,6 +12,8 @@ import android.support.v4.app.FragmentActivity;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.common.Util.InternalLogging.TeleLogCapability;
+import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.views.proposer.ProposerActivity;
 
 /**
@@ -87,23 +89,33 @@ public class PermissionChecker {
     }
 
     private boolean isMicPermissionGranted() {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        TeleLogger.shared.log(TeleLogCapability.mic,isGranted);
+        return isGranted;
     }
 
     private boolean isGalleryPermissionGranted() {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        TeleLogger.shared.log(TeleLogCapability.photo,isGranted);
+        return isGranted;
     }
 
     private boolean isCamerPermissionGranted() {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        TeleLogger.shared.log(TeleLogCapability.camera,isGranted);
+        return isGranted;
     }
 
     private boolean isLocationPermissionGranted() {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        TeleLogger.shared.log(TeleLogCapability.location,isGranted);
+        return isGranted;
     }
 
     private boolean isWriteStoragePermissionGranted() {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE   ) == PackageManager.PERMISSION_GRANTED;
+        Boolean isGranted =  ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE   ) == PackageManager.PERMISSION_GRANTED;
+        TeleLogger.shared.log(TeleLogCapability.photo,isGranted);
+        return isGranted;
     }
 
     private void showProposer(int permissionFor) {

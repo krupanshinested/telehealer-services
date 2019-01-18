@@ -33,6 +33,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
