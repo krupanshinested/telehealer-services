@@ -53,6 +53,7 @@ public class ArgumentKeys {
     public static final String SCHEDULE_DETAIL = "schedule_detail";
     public static final String DOCTOR_GUID = "doctor_guid";
     public static final String SELECTED_TIME_SLOT = "selected_time_slot";
+    public static final String SHOW_SIGNATURE_PROPOSER = "show_signature_proposer";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;

@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -39,8 +40,12 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.common.WebViewFragment;
 import com.thealer.telehealer.views.quickLogin.QuickLoginPinFragment;
@@ -67,7 +72,11 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         OnActionCompleteInterface,
         SuccessViewInterface,
         View.OnClickListener,
-        DatePickerDialog.OnDateSetListener{
+        DatePickerDialog.OnDateSetListener,
+        ShowSubFragmentInterface,
+        ChangeTitleInterface,
+        OnCloseActionInterface,
+        AttachObserverInterface {
 
     private FrameLayout mainContainer;
     private Toolbar toolbar;
@@ -77,7 +86,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private ImageView backIv,other_option_iv;
     private RelativeLayout collapseBackgroundRl;
     private TextView nextTv;
-    private ImageView userProfileIv,genderIv;
+    private ImageView userProfileIv, genderIv;
 
     private String detailTitle = "";
 
@@ -107,22 +116,22 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     }
 
     @Override
-    public  void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(profileListener);
     }
 
     /*
-    *
-    * Listener from Settings Fragment
-    * */
+     *
+     * Listener from Settings Fragment
+     * */
     @Override
     public void didSelecteItem(int id) {
         switch (id) {
             case R.id.profile:
                 Bundle profile = new Bundle();
-                profile.putInt(ArgumentKeys.VIEW_TYPE,Constants.VIEW_MODE);
+                profile.putInt(ArgumentKeys.VIEW_TYPE, Constants.VIEW_MODE);
                 switch (appPreference.getInt(Constants.USER_TYPE)) {
                     case Constants.TYPE_MEDICAL_ASSISTANT:
                         MedicalAssistantDetailFragment medicalAssistantDetailFragment = new MedicalAssistantDetailFragment();
@@ -161,7 +170,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
                 updateDetailTitle(getString(R.string.change_password));
                 ResetPasswordFragment resetPasswordFragment = new ResetPasswordFragment();
-                setFragment(resetPasswordFragment,false,true,true);
+                setFragment(resetPasswordFragment, false, true, true);
                 break;
             case R.id.appointment_slots:
                 break;
@@ -171,7 +180,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 feedBackFragment.urlToLoad = getString(R.string.feedback_url);
                 feedBackFragment.title = getString(R.string.feedback);
                 hideOrShowNext(false);
-                setFragment(feedBackFragment,false,true,true);
+                setFragment(feedBackFragment, false, true, true);
                 break;
             case R.id.terms_and_condition:
                 updateDetailTitle(getString(R.string.terms_and_conditions));
@@ -179,7 +188,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 termsFragment.urlToLoad = getString(R.string.terms_and_conditions_url);
                 termsFragment.title = getString(R.string.terms_and_conditions);
                 hideOrShowNext(false);
-                setFragment(termsFragment,false,true,true);
+                setFragment(termsFragment, false, true, true);
                 break;
             case R.id.privacy_policy:
                 updateDetailTitle(getString(R.string.privacy_policy));
@@ -187,7 +196,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 privacyFragment.urlToLoad = getString(R.string.privacy_url);
                 privacyFragment.title = getString(R.string.privacy_policy);
                 hideOrShowNext(false);
-                setFragment(privacyFragment,false,true,true);
+                setFragment(privacyFragment, false, true, true);
                 break;
             case R.id.signOut:
                 EventRecorder.recordUserSession("logout");
@@ -226,10 +235,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
 
     /*
-    *
-    * Initializing the views
-    * */
-    private  void initView() {
+     *
+     * Initializing the views
+     * */
+    private void initView() {
         mainContainer = findViewById(R.id.main_container);
 
         appbarLayout = (AppBarLayout) findViewById(R.id.appbar);
@@ -280,7 +289,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         nextTv.setOnClickListener(this);
         other_option_iv.setOnClickListener(this);
 
-        setFragment(new ProfileSettingFragment(),true,false,false);
+        setFragment(new ProfileSettingFragment(), true, false, false);
 
         WhoAmIApiViewModel whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
         attachObserver(whoAmIApiViewModel);
@@ -325,17 +334,17 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         }
     };
 
-    private void updateDetailTitle(String detailTitle){
+    private void updateDetailTitle(String detailTitle) {
         this.detailTitle = detailTitle;
         toolbarTitle.setText(detailTitle);
     }
 
     private Fragment getCurrentFragment() {
-         return getSupportFragmentManager()
+        return getSupportFragmentManager()
                 .findFragmentById(R.id.main_container);
     }
 
-    private void setFragment(Fragment fragment,Boolean toBase,Boolean needToAddBackTrace,Boolean needToClearBackTrace) {
+    private void setFragment(Fragment fragment, Boolean toBase, Boolean needToAddBackTrace, Boolean needToClearBackTrace) {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (needToClearBackTrace) {
@@ -398,9 +407,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (otpBundle == null) {
                     otpBundle = new Bundle();
                 }
-                otpBundle.putInt(ArgumentKeys.OTP_TYPE,OtpVerificationFragment.reset_password);
+                otpBundle.putInt(ArgumentKeys.OTP_TYPE, OtpVerificationFragment.reset_password);
                 otpVerificationFragment.setArguments(otpBundle);
-                setFragment(otpVerificationFragment,false,true,false);
+                setFragment(otpVerificationFragment, false, true, false);
                 break;
             case RequestID.REQ_RESET_PASSWORD:
                 updateDetailTitle(getString(R.string.password));
@@ -411,9 +420,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (passwordBundle == null) {
                     passwordBundle = new Bundle();
                 }
-                passwordBundle.putInt(ArgumentKeys.PASSWORD_TYPE,CreatePasswordFragment.reset_password);
+                passwordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
                 createPasswordFragment.setArguments(passwordBundle);
-                setFragment(createPasswordFragment,false,true,false);
+                setFragment(createPasswordFragment, false, true, false);
 
                 break;
             case RequestID.RESET_PASSWORD_OTP_VALIDATED:
@@ -425,14 +434,14 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (repasswordBundle == null) {
                     repasswordBundle = new Bundle();
                 }
-                repasswordBundle.putInt(ArgumentKeys.PASSWORD_TYPE,CreatePasswordFragment.reset_password);
+                repasswordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
                 reEnterPassword.setArguments(repasswordBundle);
-                setFragment(reEnterPassword,false,true,false);
+                setFragment(reEnterPassword, false, true, false);
 
                 break;
             case RequestID.REQ_QUICK_LOGIN_PIN:
                 QuickLoginPinFragment quickLoginPinFragment = new QuickLoginPinFragment();
-                setFragment(quickLoginPinFragment,false,true,false);
+                setFragment(quickLoginPinFragment, false, true, false);
                 break;
             case RequestID.QUICK_LOGIN_PIN_CREATED:
                 didSelecteItem(R.id.settings);
@@ -442,9 +451,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (bundle == null) {
                     bundle = new Bundle();
                 }
-                bundle.putInt(ArgumentKeys.SCREEN_TYPE,Constants.forProfileUpdate);
+                bundle.putInt(ArgumentKeys.SCREEN_TYPE, Constants.forProfileUpdate);
                 patientChoosePaymentFragment.setArguments(bundle);
-                setFragment(patientChoosePaymentFragment,false,true,false);
+                setFragment(patientChoosePaymentFragment, false, true, false);
 
                 break;
             case RequestID.INSURANCE_REQUEST_IMAGE:
@@ -454,9 +463,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (bundle == null) {
                     bundle = new Bundle();
                 }
-                bundle.putInt(ArgumentKeys.SCREEN_TYPE,Constants.forProfileUpdate);
+                bundle.putInt(ArgumentKeys.SCREEN_TYPE, Constants.forProfileUpdate);
                 patientUploadInsuranceFragment.setArguments(bundle);
-                setFragment(patientUploadInsuranceFragment,false,true,false);
+                setFragment(patientUploadInsuranceFragment, false, true, false);
 
                 break;
             case RequestID.INSURANCE_CHANGE_RESULT:
@@ -467,7 +476,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                     public void onBackStackChanged() {
 
                         if (getCurrentFragment() instanceof BundleReceiver) {
-                            ((BundleReceiver) getCurrentFragment()).didReceiveIntent(finalBundle,RequestID.INSURANCE_CHANGE_RESULT);
+                            ((BundleReceiver) getCurrentFragment()).didReceiveIntent(finalBundle, RequestID.INSURANCE_CHANGE_RESULT);
                             getSupportFragmentManager().removeOnBackStackChangedListener(this);
                         }
 
@@ -501,6 +510,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        getCurrentFragment().onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == PermissionConstants.GALLERY_REQUEST_CODE || requestCode == PermissionConstants.CAMERA_REQUEST_CODE) {
             String imagePath = CameraUtil.with(this).getImagePath(requestCode, resultCode, data);
             CameraInterface cameraInterface = (CameraInterface) getCurrentFragment();
@@ -533,8 +544,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         super.onSaveInstanceState(outState);
         outState.putString(ArgumentKeys.CURRENT_TITLE, this.detailTitle);
 
-        outState.putBoolean(ArgumentKeys.SHOW_BACK,backIv.getVisibility() == View.VISIBLE);
-        outState.putBoolean(ArgumentKeys.SHOW_NEXT,nextTv.getVisibility() == View.VISIBLE);
+        outState.putBoolean(ArgumentKeys.SHOW_BACK, backIv.getVisibility() == View.VISIBLE);
+        outState.putBoolean(ArgumentKeys.SHOW_NEXT, nextTv.getVisibility() == View.VISIBLE);
     }
 
     @Override
@@ -577,7 +588,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     }
 
     @Override
-    public void updateNextTitle(String nextTitle){
+    public void updateNextTitle(String nextTitle) {
         nextTv.setText(nextTitle);
     }
 
@@ -598,7 +609,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     @Override
     public void onSuccessViewCompletion(boolean success) {
         updateDetailTitle(getString(R.string.settings));
-        setFragment(new ProfileSettingFragment(),true,false,true);
+        setFragment(new ProfileSettingFragment(), true, false, true);
     }
 
     @Override
@@ -611,5 +622,20 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         intent.putExtras(bundle);
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    @Override
+    public void onTitleChange(String title) {
+        toolbarTitle.setText(title);
+    }
+
+    @Override
+    public void onShowFragment(Fragment fragment) {
+        setFragment(fragment, false, true, false);
+    }
+
+    @Override
+    public void onClose(boolean isRefreshRequired) {
+        onBackPressed();
     }
 }

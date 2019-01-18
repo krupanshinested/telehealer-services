@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.settings;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,25 +11,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.PermissionChecker;
+import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
-import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.quickLogin.QuickLoginUtil;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
 import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-import static com.thealer.telehealer.common.Constants.QUICK_LOGIN_TYPE_NONE;
 
 /**
  * Created by rsekar on 11/20/18.
@@ -36,12 +35,21 @@ import static com.thealer.telehealer.common.Constants.QUICK_LOGIN_TYPE_NONE;
 
 public class GeneralSettingsFragment extends BaseFragment implements View.OnClickListener {
 
-    private SettingsCellView checkCallQuality,presence,quickLogin;
+    private SettingsCellView checkCallQuality, presence, quickLogin;
     private ProfileCellView signature;
     private LinearLayout deleteView;
 
     private OnActionCompleteInterface actionCompleteInterface;
     private OnViewChangeInterface onViewChangeInterface;
+    private ShowSubFragmentInterface showSubFragmentInterface;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        actionCompleteInterface = (OnActionCompleteInterface) getActivity();
+        onViewChangeInterface = (OnViewChangeInterface) getActivity();
+        showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
+    }
 
     @Nullable
     @Override
@@ -49,13 +57,6 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         View view = inflater.inflate(R.layout.fragment_general_settings, container, false);
         initView(view);
         return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        actionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        onViewChangeInterface = (OnViewChangeInterface) getActivity();
     }
 
     @Override
@@ -75,20 +76,23 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 presence.toggleSwitch();
                 break;
             case R.id.quick_login:
-               if (quickLogin.getSwitchStatus()) {
-                   appPreference.setInt(Constants.QUICK_LOGIN_TYPE,Constants.QUICK_LOGIN_TYPE_NONE);
-                   quickLogin.toggleSwitch();
-               } else {
-                   if (QuickLoginUtil.getAvailableQuickLoginType(getActivity()) != Constants.QUICK_LOGIN_TYPE_PIN) {
-                       quickLogin.toggleSwitch();
-                       appPreference.setInt(Constants.QUICK_LOGIN_TYPE,Constants.QUICK_LOGIN_TYPE_PIN);
-                   } else {
-                       appPreference.setString(Constants.QUICK_LOGIN_PIN,"");
-                       actionCompleteInterface.onCompletionResult(RequestID.REQ_QUICK_LOGIN_PIN,true,null);
-                   }
-               }
+                if (quickLogin.getSwitchStatus()) {
+                    appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_NONE);
+                    quickLogin.toggleSwitch();
+                } else {
+                    if (QuickLoginUtil.getAvailableQuickLoginType(getActivity()) != Constants.QUICK_LOGIN_TYPE_PIN) {
+                        quickLogin.toggleSwitch();
+                        appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_PIN);
+                    } else {
+                        appPreference.setString(Constants.QUICK_LOGIN_PIN, "");
+                        actionCompleteInterface.onCompletionResult(RequestID.REQ_QUICK_LOGIN_PIN, true, null);
+                    }
+                }
                 break;
             case R.id.signature:
+                if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_STORAGE)) {
+                    showSignatureView();
+                }
                 break;
             case R.id.delete_view:
 
@@ -96,9 +100,9 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                         getString(R.string.delete_account_description),
                         getString(R.string.delete),
                         getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
 
                         EventRecorder.recordUserSession("account_deletion_initiated");
 
@@ -114,6 +118,11 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
 
                 break;
         }
+    }
+
+    private void showSignatureView() {
+        SignatureViewFragment signatureViewFragment = new SignatureViewFragment();
+        showSubFragmentInterface.onShowFragment(signatureViewFragment);
     }
 
     private void initView(View view) {
@@ -143,4 +152,11 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PermissionConstants.PERMISSION_STORAGE && resultCode == Activity.RESULT_OK) {
+            showSignatureView();
+        }
+    }
 }
