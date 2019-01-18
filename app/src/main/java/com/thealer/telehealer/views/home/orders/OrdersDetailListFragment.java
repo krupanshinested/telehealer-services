@@ -19,21 +19,24 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
-import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomExpandableListView;
 import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.settings.SignatureActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -266,7 +269,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 }
 
             }
-        }else if (baseApiResponseModel instanceof GetRadiologyResponseModel){
+        } else if (baseApiResponseModel instanceof GetRadiologyResponseModel) {
             GetRadiologyResponseModel getRadiologyResponseModel = (GetRadiologyResponseModel) baseApiResponseModel;
 
             for (int i = 0; i < getRadiologyResponseModel.getResultBeanList().size(); i++) {
@@ -285,7 +288,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 ordersDetailListAdapterModel.setSubTitle(title.toString());
                 ordersDetailListAdapterModel.setCommonResultResponseModel(getRadiologyResponseModel.getResultBeanList().get(i));
 
-                if (!headerList.contains(date)){
+                if (!headerList.contains(date)) {
                     headerList.add(date);
                 }
 
@@ -550,8 +553,17 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 break;
             case R.id.add_fab:
                 addFab.setClickable(false);
-                if (getArguments() != null) {
-                    startActivity(new Intent(getActivity(), CreateOrderActivity.class).putExtras(getArguments()));
+                if (UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature() != null) {
+                    if (getArguments() != null) {
+                        startActivity(new Intent(getActivity(), CreateOrderActivity.class).putExtras(getArguments()));
+                    }
+                } else {
+                    Bundle bundle = getArguments();
+                    if (bundle == null) {
+                        bundle = new Bundle();
+                    }
+                    bundle.putBoolean(ArgumentKeys.SHOW_SIGNATURE_PROPOSER, true);
+                    startActivity(new Intent(getActivity(), SignatureActivity.class).putExtras(bundle));
                 }
                 break;
         }

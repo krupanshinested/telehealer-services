@@ -2,6 +2,7 @@
 <resources>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorBlack_50">#70000000</color>
     <color name="colorGrey">#808080</color>
     <color name="colorGrey_light">#D6D6D6</color>
     <color name="color_grey_light_background">#EEEEEE</color>
