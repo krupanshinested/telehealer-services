@@ -14,6 +14,7 @@ import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
@@ -120,6 +121,8 @@ public class CallPlacingFragment extends BaseFragment {
                 return;
             }
 
+            EventRecorder.recordCallUpdates("TRYING_AUDIO", null);
+
             Intent intent = new Intent(application, CallActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(CALL_INITIATE_MODEL,callInitiateModel);
@@ -135,6 +138,8 @@ public class CallPlacingFragment extends BaseFragment {
             if (TokBox.shared.isActivityPresent() || TokBox.shared.isActiveCallPreset()) {
                 return;
             }
+
+            EventRecorder.recordCallUpdates("TRYING_VIDEO", null);
 
             Intent intent = new Intent(application, CallActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

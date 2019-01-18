@@ -28,12 +28,15 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IFillFormatter;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
@@ -415,6 +418,11 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
 
     @Override
     public void didPulseFinishMesureWithFailure(String error) {
+
+        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+            EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
+        }
+
         message_tv.setText(error);
         setCurrentState(MeasureState.failed);
     }

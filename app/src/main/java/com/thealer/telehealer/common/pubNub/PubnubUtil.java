@@ -19,11 +19,14 @@ import com.pubnub.api.models.consumer.push.PNPushRemoveChannelResult;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.Pubnub.PubNubViewModel;
 import com.thealer.telehealer.common.Config;
+import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
+import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Created by rsekar on 12/25/18.
@@ -99,8 +102,22 @@ public class PubnubUtil {
                             public void onResponse(PNPushAddChannelResult result, PNStatus status) {
                                 if (status.isError()) {
                                     Log.d("PubnubUtil","Error on push notification" + status.getErrorData());
+                                    
+                                    HashMap<String, String> detail = new HashMap<>();
+                                    detail.put("status", "fail");
+                                    detail.put("reason", status.getErrorData().getInformation());
+                                    detail.put("event", "registerForPushOn");
+                                    
+                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
+                                    
                                 } else {
                                     Log.d("PubnubUtil","Push notification added ");
+                                    
+                                    HashMap<String, String> detail = new HashMap<>();
+                                    detail.put("status", "success");
+                                    detail.put("event", "registerForPushOn");
+                                    
+                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
                                 }
                             }
                         });
@@ -122,8 +139,22 @@ public class PubnubUtil {
                             public void onResponse(PNPushAddChannelResult result, PNStatus status) {
                                 if (status.isError()) {
                                     Log.d("PubnubUtil","Error on voip notification" + status.getErrorData());
+                                    
+                                    HashMap<String, String> detail = new HashMap<>();
+                                    detail.put("status", "fail");
+                                    detail.put("reason", status.getErrorData().getInformation());
+                                    detail.put("event", "registerForVoip");
+                                    
+                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
+                                    
                                 } else {
                                     Log.d("PubnubUtil","voip notification added ");
+                                    
+                                    HashMap<String, String> detail = new HashMap<>();
+                                    detail.put("status", "success");
+                                    detail.put("event", "registerForVoip");
+                                    
+                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
                                 }
                             }
                         });
@@ -138,10 +169,17 @@ public class PubnubUtil {
                 .async(new PNCallback<PNPublishResult>() {
                     @Override
                     public void onResponse(PNPublishResult result, PNStatus status) {
+
                         if(!status.isError()) {
                             System.out.println("pub timetoken: " + result.getTimetoken());
+                        } else {
+                            HashMap<String, String> detail = new HashMap<>();
+                            detail.put("status", "fail");
+                            detail.put("reason", status.getErrorData().getInformation());
+                            detail.put("event", "publishPushMessage");
+
+                            TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
                         }
-                        System.out.println("pub status code: " + status.getStatusCode());
 
                         if (resultPNCallback != null) {
                             resultPNCallback.didSend(!status.isError());
@@ -160,10 +198,17 @@ public class PubnubUtil {
                 .async(new PNCallback<PNPublishResult>() {
                     @Override
                     public void onResponse(PNPublishResult result, PNStatus status) {
+
                         if(!status.isError()) {
                             System.out.println("pub timetoken: " + result.getTimetoken());
+                        } else {
+                            HashMap<String, String> detail = new HashMap<>();
+                            detail.put("status", "fail");
+                            detail.put("reason", status.getErrorData().getInformation());
+                            detail.put("event", "publishVoipMessage");
+
+                            TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
                         }
-                        System.out.println("pub status code: " + status.getStatusCode());
 
                         if (resultPNCallback != null) {
                             resultPNCallback.didSend(!status.isError());

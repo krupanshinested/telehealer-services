@@ -9,6 +9,7 @@ import android.util.Log;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.home.HomeActivity;
@@ -51,6 +52,9 @@ public class SplashActivity extends BaseActivity {
                     if (!appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
                         startActivity(new Intent(SplashActivity.this, OnBoardingActivity.class));
                     } else {
+
+                        TeleLogger.shared.initialLog();
+
                         if (appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == -1) {
                             startActivity(new Intent(SplashActivity.this, QuickLoginActivity.class));
                         } else {

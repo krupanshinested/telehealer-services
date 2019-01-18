@@ -11,14 +11,19 @@ import android.os.Looper;
 import android.util.Log;
 
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.thealer.telehealer.common.AppPreference;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.views.call.CallActivity;
+
+import io.fabric.sdk.android.Fabric;
 
 
 /**
@@ -28,6 +33,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
     public static AppPreference appPreference;
     public static TeleHealerApplication application;
+    public FirebaseAnalytics firebaseAnalytics;
 
     @Override
     public void onCreate() {
@@ -35,6 +41,8 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
         application = this;
         appPreference = AppPreference.getInstance(this);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        Fabric.with(this, new Crashlytics());
 
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
@@ -55,6 +63,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public void onMoveToForeground() {
         // app moved to foreground
 
+        EventRecorder.recordLastUpdate("last_open_date");
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {

@@ -15,12 +15,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
@@ -328,6 +331,11 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
 
     @Override
     public void didThermoFinishMesureWithFailure(String error) {
+
+        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+            EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
+        }
+
         message_tv.setText(error);
 
         currentState = MeasureState.failed;

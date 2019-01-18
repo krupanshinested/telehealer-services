@@ -25,8 +25,11 @@ import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 
+import static android.app.Activity.RESULT_OK;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
@@ -142,6 +145,55 @@ public class BaseFragment extends Fragment {
         TextView textView = snackbarLayout.findViewById(android.support.design.R.id.snackbar_text);
         textView.setMaxLines(10);
         snackbar.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode,int resultCode,Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != RESULT_OK) {
+            switch (requestCode) {
+                case PermissionConstants.PERMISSION_CAM_MIC:
+                    EventRecorder.recordPermissionDenined("cam_mic_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_MICROPHONE:
+                    EventRecorder.recordPermissionDenined("mic_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
+                    EventRecorder.recordPermissionDenined("cam_mic_notification_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_CAM_PHOTOS:
+                    EventRecorder.recordPermissionDenined("cam_photos_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_CAMERA:
+                    EventRecorder.recordPermissionDenined("cam_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_GALLERY:
+                    EventRecorder.recordPermissionDenined("photos_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_LOCATION:
+                    EventRecorder.recordPermissionDenined("location_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
+                    EventRecorder.recordPermissionDenined("location_photos_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_LOCATION_VITALS:
+                    EventRecorder.recordPermissionDenined("location_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_MIC_NITIFICATION:
+                    EventRecorder.recordPermissionDenined("mic_notification_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_NOTIFICATION:
+                    EventRecorder.recordPermissionDenined("notification_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_STORAGE:
+                    EventRecorder.recordPermissionDenined("photos_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
+                    EventRecorder.recordPermissionDenined("photos_disabled");
+                    break;
+            }
+        }
     }
 
 }

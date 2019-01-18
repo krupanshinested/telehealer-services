@@ -31,6 +31,7 @@ import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
@@ -117,6 +118,10 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                         appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, authToken);
                         appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, refreshToken);
                         appPreference.setInt(PreferenceConstants.USER_TYPE, Utils.getUserTypeFromRole(whoAmIApiResponseModel.getRole()));
+
+                        EventRecorder.recordUserRole(whoAmIApiResponseModel.getRole());
+                        EventRecorder.updateUserId(whoAmIApiResponseModel.getUser_guid());
+                        EventRecorder.recordUserStatus(whoAmIApiResponseModel.getUser_activated());
 
                         if (quickLoginType == -1) {
                             startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));

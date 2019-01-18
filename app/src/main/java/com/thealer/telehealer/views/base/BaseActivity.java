@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.base;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,7 +27,10 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
+import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -229,6 +233,73 @@ public class BaseActivity extends AppCompatActivity {
         }
         alertDialog.create();
         alertDialog.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode,int resultCode,Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != RESULT_OK) {
+            switch (requestCode) {
+                case PermissionConstants.PERMISSION_CAM_MIC:
+                    EventRecorder.recordPermissionDenined("cam_mic_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_MICROPHONE:
+                    EventRecorder.recordPermissionDenined("mic_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
+                    EventRecorder.recordPermissionDenined("cam_mic_notification_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_CAM_PHOTOS:
+                    EventRecorder.recordPermissionDenined("cam_photos_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_CAMERA:
+                    EventRecorder.recordPermissionDenined("cam_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_GALLERY:
+                    EventRecorder.recordPermissionDenined("photos_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_LOCATION:
+                    EventRecorder.recordPermissionDenined("location_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
+                    EventRecorder.recordPermissionDenined("location_photos_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_LOCATION_VITALS:
+                    EventRecorder.recordPermissionDenined("location_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_MIC_NITIFICATION:
+                    EventRecorder.recordPermissionDenined("mic_notification_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_NOTIFICATION:
+                    EventRecorder.recordPermissionDenined("notification_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_STORAGE:
+                    EventRecorder.recordPermissionDenined("photos_disabled");
+                    break;
+                case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
+                    EventRecorder.recordPermissionDenined("photos_disabled");
+                    break;
+            }
+        }
+
+        switch (requestCode) {
+            case PermissionConstants.PERMISSION_CAM_MIC:
+            case PermissionConstants.PERMISSION_MICROPHONE:
+            case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
+            case PermissionConstants.PERMISSION_CAM_PHOTOS:
+            case PermissionConstants.PERMISSION_CAMERA:
+            case PermissionConstants.PERMISSION_GALLERY:
+            case PermissionConstants.PERMISSION_LOCATION:
+            case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
+            case PermissionConstants.PERMISSION_LOCATION_VITALS:
+            case PermissionConstants.PERMISSION_MIC_NITIFICATION:
+            case PermissionConstants.PERMISSION_NOTIFICATION:
+            case PermissionConstants.PERMISSION_STORAGE:
+            case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
+                TeleLogger.shared.initialLog();
+        }
+
     }
 
 }

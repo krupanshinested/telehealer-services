@@ -24,6 +24,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiViewModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.TypeAHeadResponseModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -74,6 +75,8 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
                     }
                     doctorsNameList.addAll(typeAHeadResponseModel.getData());
                     setSearchList();
+
+                    EventRecorder.recordRegistration("doctor_lookup_success",null);
                 }
             }
         });

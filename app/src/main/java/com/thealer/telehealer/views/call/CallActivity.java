@@ -57,6 +57,7 @@ import com.thealer.telehealer.common.Animation.OnSwipeTouchListener;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.CustomAudioDevice;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.TokBoxUIInterface;
@@ -618,13 +619,22 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                 hang_iv.setClickable(false);
                 if (!TokBox.shared.getCalling() && TokBox.shared.getConnectedDate() == null) {
                     TokBox.shared.endCall(OpenTokConstants.notPickedUp);
+                    EventRecorder.recordCallUpdates("declined_call", null);
                 } else  {
+                    EventRecorder.recordCallUpdates("end_call_pressed",null);
                     TokBox.shared.endCall(OpenTokConstants.endCallPressed);
                 }
+
                 break;
             case R.id.answer_iv:
                 if (TokBox.shared.getCallState() == OpenTokConstants.waitingForUserAction) {
 
+                    if (TokBox.shared.isVideoCall()) {
+                        EventRecorder.recordCallUpdates("opening_video_call", null);
+                    } else {
+                        EventRecorder.recordCallUpdates("opening_audio_call", null);
+                    }
+                    
                     int requiredPermission;
                     if (TokBox.shared.isVideoCall()) {
                         requiredPermission = PermissionConstants.PERMISSION_CAM_MIC;
@@ -643,6 +653,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                 }
                 break;
             case R.id.minimize:
+                EventRecorder.recordCallUpdates("callview_minimized",null);
                 break;
             case R.id.speaker_type:
                 ArrayList<AudioDeviceInfo> deviceInfos =  TokBox.shared.getConnectedAudioDevices();
@@ -732,10 +743,18 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                 break;
             case R.id.audio_mute:
                 TokBox.shared.toggleAudio();
+                if (!TokBox.shared.isPublisherAudioOn()) {
+                    EventRecorder.recordCallUpdates("audio_muted", null);
+                }
                 updateAudioMuteUI();
                 break;
             case R.id.video_mute:
                 TokBox.shared.toggleVideo();
+
+                if (!TokBox.shared.isPublisherVideoOn()) {
+                    EventRecorder.recordCallUpdates("video_muted", null);
+                }
+
                 updateVidioMuteUI();
                 break;
             case R.id.video_switch:
@@ -767,6 +786,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                     flip_camera.setImageDrawable(getDrawable(R.drawable.switch_camera));
                 }
 
+                EventRecorder.recordCallUpdates("toggle_camera", null);
                 TokBox.shared.flipVideo();
                 break;
             case R.id.vitalsView:
@@ -950,23 +970,27 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
             showAlertDialog(getString(R.string.video_call_request), message, getString(R.string.yes), getString(R.string.no), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    EventRecorder.recordCallUpdates("audio_to_video_accepted", null);
                     TokBox.shared.updateVideoSwapRequest(true);
                     switchToVideo();
                 }
             }, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    EventRecorder.recordCallUpdates("audio_to_video_rejected", null);
                     TokBox.shared.updateVideoSwapRequest(false);
                 }
             });
         } else {
+
+            EventRecorder.recordCallUpdates("audio_to_video_rejected", null);
 
             String message = getString(R.string.requested_video_no_camera,name);
 
             showAlertDialog(getString(R.string.request_rejected), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
+                    dialog.dismiss();
                 }
             }, null);
 
