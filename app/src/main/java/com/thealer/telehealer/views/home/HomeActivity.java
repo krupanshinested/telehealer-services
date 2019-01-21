@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,10 +26,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
@@ -171,6 +174,47 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         }
 
         attachView();
+
+        checkForMedicalHistory();
+    }
+
+    private void checkForMedicalHistory() {
+        if (UserType.isUserPatient() && !appPreference.getBoolean(PreferenceConstants.IS_HISTORY_UPDATE_SHOWN)) {
+
+            WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+
+            if (whoAmIApiResponseModel.getQuestionnaire() == null || !whoAmIApiResponseModel.getQuestionnaire().isQuestionariesEmpty()) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_health_heart);
+                bundle.putString(ArgumentKeys.TITLE, getString(R.string.health_profile));
+                bundle.putString(ArgumentKeys.DESCRIPTION, getString(R.string.add_health_info_content));
+                bundle.putBoolean(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
+                bundle.putBoolean(ArgumentKeys.IS_SKIP_NEEDED, true);
+                bundle.putBoolean(ArgumentKeys.IS_BUTTON_NEEDED, true);
+                bundle.putString(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
+                bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
+
+                appPreference.setBoolean(PreferenceConstants.IS_HISTORY_UPDATE_SHOWN, true);
+
+                startActivityForResult(new Intent(HomeActivity.this, ContentActivity.class).putExtras(bundle), RequestID.REQ_CONTENT_VIEW);
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RequestID.REQ_CONTENT_VIEW && resultCode == Activity.RESULT_OK) {
+            showMedicalHistory();
+        }
+    }
+
+    private void showMedicalHistory() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ArgumentKeys.VIEW_TYPE, ArgumentKeys.HISTORY_UPDATE);
+
+        startActivity(new Intent(this, ProfileSettingsActivity.class).putExtras(bundle));
     }
 
     private void attachView() {

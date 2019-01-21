@@ -14,11 +14,19 @@ import com.thealer.telehealer.common.Utils;
 public class DateBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent != null){
+        if (intent != null) {
             Bundle bundle = intent.getExtras();
-            onDateReceived(Utils.getFormatedDate(bundle.getInt(Constants.YEAR), bundle.getInt(Constants.MONTH), bundle.getInt(Constants.DAY)));
+            if (bundle != null && !bundle.getBoolean(Constants.DATE_PICKER_CANCELLED)) {
+                onDateReceived(Utils.getFormatedDate(bundle.getInt(Constants.YEAR), bundle.getInt(Constants.MONTH), bundle.getInt(Constants.DAY)));
+            } else {
+                onCancelled();
+            }
         }
     }
 
-    public void onDateReceived(String formatedDate){}
+    public void onDateReceived(String formatedDate) {
+    }
+
+    public void onCancelled() {
+    }
 }

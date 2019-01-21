@@ -16,6 +16,7 @@ public class RequestID {
     public static final int REQ_SELECT_ASSOCIATION_PATIENT = 5004;
     public static final int REQ_SELECT_ASSOCIATION_DOCTOR = 5005;
     public static final int REQ_SELECT_ICD_CODE = 5006;
+    public static final int REQ_HISTORY_UPDATE = 6000;
     public static final int REQ_PROFILE_UPDATE = 5007;
     public static final int REQ_SLOT_SELECTION = 5008;
     public static final int REQ_CONTENT_VIEW = 7000;
