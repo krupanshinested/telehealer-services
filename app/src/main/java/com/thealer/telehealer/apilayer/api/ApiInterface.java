@@ -21,6 +21,7 @@ import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiRe
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
+import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
@@ -257,8 +258,15 @@ public interface ApiInterface {
     @PUT("api/users/profile")
     Observable<BaseApiResponseModel> updateUserHistory(@Part("history") RequestBody history);
 
+    @Multipart
+    @PUT("api/users/profile")
+    Observable<BaseApiResponseModel> updateUserQuestionnaire(@Part("questionnaire") RequestBody body);
+
     @PUT("api/users/profile")
     Observable<BaseApiResponseModel> updateUserDetail(@Body WhoAmIApiResponseModel whoAmIApiResponseModel);
+
+    @PATCH("api/users/questionnaire/{id}")
+    Observable<BaseApiResponseModel> updateUserQuestionnaire(@Path(ID) String userGuid, @Body UpdateQuestionaryBodyModel updateQuestionaryBodyModel);
 
     @POST("api/vitals")
     Observable<BaseApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel);

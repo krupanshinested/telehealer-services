@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -100,19 +102,56 @@ public class BaseFragment extends Fragment {
                                 @Nullable String negativeTitle,
                                 @Nullable DialogInterface.OnClickListener positiveListener,
                                 @Nullable DialogInterface.OnClickListener negativeListener) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
-        alertDialog.setTitle(title);
-        alertDialog.setMessage(message);
-        alertDialog.setCancelable(false);
+//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+
+//        View view = LayoutInflater.from(context).inflate(R.layout.view_alert, null);
+//        alertDialog.setCancelable(false);
+
+        Dialog dialog;
+        dialog = new Dialog(context);
+        dialog.setContentView(R.layout.view_alert);
+//        dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        TextView titleTv, messageTv, cancelTv, doneTv;
+
+        titleTv = (TextView) dialog.findViewById(R.id.title_tv);
+        messageTv = (TextView) dialog.findViewById(R.id.message_tv);
+        cancelTv = (TextView) dialog.findViewById(R.id.cancel_tv);
+        doneTv = (TextView) dialog.findViewById(R.id.done_tv);
+
+        titleTv.setText(title);
+        messageTv.setText(message);
+
         if (positiveTitle != null) {
-            alertDialog.setPositiveButton(positiveTitle, positiveListener);
+            doneTv.setVisibility(View.VISIBLE);
+            doneTv.setText(positiveTitle);
+            if (positiveListener != null) {
+                doneTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        positiveListener.onClick(dialog, AlertDialog.BUTTON_POSITIVE);
+                    }
+                });
+            }
         }
 
         if (negativeTitle != null) {
-            alertDialog.setNegativeButton(negativeTitle, negativeListener);
+            cancelTv.setVisibility(View.VISIBLE);
+            cancelTv.setText(negativeTitle);
+            if (negativeListener != null) {
+                cancelTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        negativeListener.onClick(dialog, AlertDialog.BUTTON_NEGATIVE);
+                    }
+                });
+            }
         }
-        dialog = alertDialog.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
 

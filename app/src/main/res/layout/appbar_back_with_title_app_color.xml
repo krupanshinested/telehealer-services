@@ -10,8 +10,9 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        app:contentInsetStart="0dp"
-        app:contentInsetEnd="34dp">
+        android:theme="@style/toolbar_menu_light"
+        app:contentInsetEnd="34dp"
+        app:contentInsetStart="0dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -32,12 +33,12 @@
                 android:id="@+id/toolbar_title"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:maxLines="1"
                 android:ellipsize="end"
                 android:ems="3"
-                android:textStyle="bold"
+                android:gravity="center"
+                android:maxLines="1"
                 android:textColor="@color/colorWhite"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/back_iv"
