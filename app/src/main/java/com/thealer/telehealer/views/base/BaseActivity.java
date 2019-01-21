@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.base;
 
+import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -31,8 +32,6 @@ import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 08,October,2018
@@ -194,13 +193,13 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-//    public void showOrHideSoftInputWindow(FragmentActivity activity, boolean showOrHide){
-//        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-//        if (showOrHide)
-//            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-//        else
-//            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-//    }
+    public void showOrHideSoftInputWindow(FragmentActivity activity, boolean showOrHide) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (showOrHide)
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        else
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+    }
 
     public boolean isDeviceXLarge() {
         return getResources().getBoolean(R.bool.isXlarge);
@@ -214,11 +213,11 @@ public class BaseActivity extends AppCompatActivity {
         return isDeviceXLarge() && isModeLandscape();
     }
 
-    public AlertDialog showAlertDialog(String title,String message,
-                                @Nullable String positiveTitle,
-                                @Nullable String negativeTitle,
-                                @Nullable DialogInterface.OnClickListener positiveListener,
-                                @Nullable DialogInterface.OnClickListener negativeListener) {
+    public Dialog showAlertDialog(String title, String message,
+                                  @Nullable String positiveTitle,
+                                  @Nullable String negativeTitle,
+                                  @Nullable DialogInterface.OnClickListener positiveListener,
+                                  @Nullable DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(BaseActivity.this);
 
         alertDialog.setTitle(title);
@@ -231,9 +230,9 @@ public class BaseActivity extends AppCompatActivity {
         if (negativeTitle != null) {
             alertDialog.setNegativeButton(negativeTitle, negativeListener);
         }
-        alertDialog.create();
+        Dialog dialog = alertDialog.create();
         alertDialog.show();
-        return alertDialog.show();
+        return dialog;
     }
 
     @Override
