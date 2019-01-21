@@ -611,6 +611,39 @@
     <string name="video_call">Video Call</string>
     <string name="calling_from_outside">Calling from outside licensed state…</string>
     <string name="payment_dues">By accepting this call, you consent to receiving care remotely via a tele medicine visit and to pay any remaining dues of this visit after insurance payments</string>
+    <string name="health_profile">Health Profile</string>
+    <string name="drug_name">DRUG NAME</string>
+    <string name="add_medication_caps">ADD MEDICATION</string>
+    <string name="drug_name_error_msg">Drug name can\'t be empty</string>
+    <string name="separate_with_comma">Separate with comma(,)</string>
+    <string name="other_medical_conditions">Other Medical Conditions</string>
+    <string name="other_medical_history">Other Medical History</string>
+    <string name="specify">specify</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Done">Done</string>
+    <string name="any_other_surgeries">Any Other Surgeries</string>
+    <string name="de_select">De-Select</string>
+    <string name="add_new_immunization">Add New Immunization</string>
+    <string name="sexually_active_with">Sexually active with</string>
+    <string name="actively_with">Actively with</string>
+    <string name="periods_stopped_at">Periods stopped at</string>
+    <string name="is_periods_regular">Is Periods regular?</string>
+    <string name="no_of_abortions_times">No of Abortions Times</string>
+    <string name="no_of_pregnant_times">No of Pregnant Times</string>
+    <string name="no_of_childrens_living">No of Childrens living</string>
+    <string name="no_of_miscarriage_times">No of Miscarriage Times</string>
+    <string name="new_family_history">New Family History</string>
+    <string name="name_of_the_disease">Name of the Disease</string>
+    <string name="new_immunization">New Immunization</string>
+    <string name="period">Period</string>
+    <string name="alcohol_quantity">Alcohol Quantity</string>
+    <string name="ever_felt_to_cut_down_drinking">Ever felt to cut down drinking?</string>
+    <string name="cigarettes_per_day">Cigarettes Per Day</string>
+    <string name="For">For</string>
+    <string name="other_tobacco_forms">Other Tobacco forms</string>
+    <string name="still_using">Still using</string>
+    <string name="both">Both</string>
+    <string name="medical_questionaries_updated">Medical Questionaries updated</string>
     <string name="notifications">Notifications</string>
     <string name="new_document">New Document</string>
     <string name="email_validation">Email Validation</string>
@@ -619,7 +652,6 @@
     <string name="e_signature_is_required_to_create_orders">e-Signature is required to create orders</string>
     <string name="we_will_need_to_capture_your_e_signature_for_purpose_of_issuing_orders">We will need to capture your e-signature for purpose of issuing orders</string>
     <string name="preview">Preview</string>
-    <string name="Cancel">Cancel</string>
     <string name="signature_cancel_info">By canceling signature capture, you won\'t be able to issue %s</string>
     <string name="speaker">Speaker</string>
     <string name="earPiece">Ear Piece</string>
@@ -695,5 +727,6 @@
     <string name="last_month">Last month</string>
     <string name="last_two_week">Last two week</string>
     <string name="last_week">Last week</string>
+    <string name="add_health_info_content">Take a moment to update your health profile. This will help you and your care team get a clearer picture of your overall health.</string>
 
 </resources>

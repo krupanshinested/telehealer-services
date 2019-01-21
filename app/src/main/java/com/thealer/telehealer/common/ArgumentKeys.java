@@ -53,11 +53,15 @@ public class ArgumentKeys {
     public static final String SCHEDULE_DETAIL = "schedule_detail";
     public static final String DOCTOR_GUID = "doctor_guid";
     public static final String SELECTED_TIME_SLOT = "selected_time_slot";
+    public static final String HISTORY_TYPE = "history_type";
+    public static final String LIST = "list";
     public static final String SHARED_IMAGE = "shared_image";
     public static final String SHARED_IMAGES = "shared_images";
     public static final String IS_SHARED_INTENT = "isShareIntent";
     public static final String SHOW_SIGNATURE_PROPOSER = "show_signature_proposer";
     public static final String USER_DETAIL = "user_detail";
+
+    public static final int HISTORY_UPDATE = 0;
     public static final String VIEW_ABNORMAL_VITAL = "abnormalVital";
     public static final String IS_MEDICAL_ASSISTANT = "isMedicalAssistant";
     public static int AUTH_NONE = 0;
