@@ -123,6 +123,16 @@ public class CustomRecyclerView extends ConstraintLayout {
         }
     }
 
+    public void showOrhideEmptyState(boolean show) {
+        if (show) {
+            recyclerView.setVisibility(GONE);
+            recyclerEmptyStateView.setVisibility(VISIBLE);
+        } else {
+            recyclerView.setVisibility(VISIBLE);
+            recyclerEmptyStateView.setVisibility(GONE);
+        }
+    }
+
     public void showEmptyState(String emptyState) {
         String title = EmptyStateUtil.getTitle(emptyState);
         String message = EmptyStateUtil.getMessage(emptyState);
