@@ -21,13 +21,13 @@ public class AssociationApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getAssociationList(int page, boolean showProgress) {
+    public void getAssociationList(String name, int page, boolean showProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
 
-                    getAuthApiService().getAssociations(true, page, Constants.PAGINATION_SIZE)
+                    getAuthApiService().getAssociations(true, page, Constants.PAGINATION_SIZE, name)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
                                 @Override

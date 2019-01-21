@@ -10,9 +10,13 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -49,6 +53,10 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private CustomRecyclerView doctorPatientListCrv;
     private boolean isApiRequested = false;
     private FloatingActionButton addFab;
+    private View topView;
+    private EditText searchEt;
+    private View bottomView;
+    private ImageView searchClearIv;
 
     @Override
     public void onAttach(Context context) {
@@ -77,6 +85,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
                         doctorPatientListCrv.setTotalCount(totalCount);
 
+                        if (associationApiResponseModel.getResult().size() > 0) {
+                            doctorPatientListCrv.showOrhideEmptyState(false);
+                        }
                         doctorPatientListAdapter.setData(associationApiResponseModel.getResult(), page);
 
                         if (associationApiResponseModel.getResult().size() > 0) {
@@ -112,6 +123,44 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         doctorPatientListCrv = (CustomRecyclerView) view.findViewById(R.id.doctor_patient_list_crv);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
 
+        topView = (View) view.findViewById(R.id.top_view);
+        searchEt = (EditText) view.findViewById(R.id.search_et);
+        bottomView = (View) view.findViewById(R.id.bottom_view);
+        searchClearIv = (ImageView) view.findViewById(R.id.search_clear_iv);
+
+        topView.setVisibility(View.GONE);
+        bottomView.setVisibility(View.GONE);
+
+        searchClearIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchEt.setText(null);
+            }
+        });
+        searchEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    searchClearIv.setVisibility(View.VISIBLE);
+                } else {
+                    searchClearIv.setVisibility(View.GONE);
+                }
+                page = 1;
+                getAssociationsList(s.toString(), false);
+                isApiRequested = true;
+                doctorPatientListCrv.setScrollable(false);
+            }
+        });
+
         addFab.setOnClickListener(this);
 
         if (UserType.isUserPatient() || UserType.isUserAssistant()) {
@@ -132,20 +181,19 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             @Override
             public void onPaginate() {
                 page = page + 1;
-                getAssociationsList();
+                getAssociationsList(null, false);
                 isApiRequested = true;
                 doctorPatientListCrv.setScrollable(false);
             }
         });
 
-        getAssociationsList();
+        getAssociationsList(null, true);
 
     }
-
     @Override
     public void onResume() {
         super.onResume();
-        
+
         if (UserType.isUserPatient()) {
             Boolean isCallPermitted = PermissionChecker.with(getActivity()).isGranted(PermissionConstants.PERMISSION_CAM_MIC);
             if (!appPreference.getBoolean(PreferenceConstants.PATIENT_VIDEO_FEED) && isCallPermitted) {
@@ -165,10 +213,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             }
         }
     }
-
-    private void getAssociationsList() {
+    private void getAssociationsList(String name, boolean isShowProgress) {
         if (!isApiRequested) {
-            associationApiViewModel.getAssociationList(page, true);
+            associationApiViewModel.getAssociationList(name, page, isShowProgress);
         }
     }
 
@@ -176,7 +223,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_fab:
-                if (!UserType.isUserDoctor()){
+                if (!UserType.isUserDoctor()) {
                     startActivity(new Intent(getActivity(), AddConnectionActivity.class));
                 }
                 break;
