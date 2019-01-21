@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Constants;
@@ -68,6 +69,28 @@ public class AppointmentSlotUpdate extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().updateUserDetail(whoAmIApiResponseModel)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void updateUserQuestionary(UpdateQuestionaryBodyModel questionaryBodyModel, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+
+                    RequestBody requestBody = FormBody.create(MediaType.parse("application/form-data"), new Gson().toJson(questionaryBodyModel.getQuestionnaire()));
+
+                    getAuthApiService()
+                            .updateUserQuestionnaire(requestBody)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

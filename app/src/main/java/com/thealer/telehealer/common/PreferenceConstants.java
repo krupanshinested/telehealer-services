@@ -43,6 +43,7 @@ public class PreferenceConstants {
     public static final String LOCATION_CAPABILITY = "LOCATION_CAPABILITY";
     public static final String PHOTO_CAPABILITY = "PHOTO_CAPABILITY";
 
+    public static final String IS_HISTORY_UPDATE_SHOWN = "update_history";
     public static final String IS_OVERLAY_ADD_ASSOCIATION = "association_add_overlay";
     public static final String IS_OVERLAY_ADD_SCHEDULE = "add_schedule_overlay";
     public static final String IS_OVERLAY_ADD_VITALS = "add_vital_overlay";

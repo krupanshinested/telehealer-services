@@ -11,13 +11,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.util.Base64;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -26,6 +32,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -34,6 +42,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.views.common.CustomDialogClickListener;
+import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -41,9 +51,11 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -107,6 +119,12 @@ public class Utils {
             }
         }, year, month, day);
 
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, activity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                setDateCancelBroadCast(activity);
+            }
+        });
 
         switch (type) {
             case Constants.TYPE_DOB:
@@ -130,6 +148,15 @@ public class Utils {
 
         datePickerDialog.show();
         return datePickerDialog;
+    }
+
+    private static void setDateCancelBroadCast(Context context) {
+        Intent intent = new Intent(Constants.DATE_PICKER_INTENT);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.DATE_PICKER_CANCELLED, true);
+        intent.putExtras(bundle);
+
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private static void sendDateBroadCast(Context context, int year, int month, int dayOfMonth) {
@@ -285,6 +312,7 @@ public class Utils {
             return null;
         }
     }
+
     public static Date getCurrentZoneDate(String dateString) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -614,6 +642,195 @@ public class Utils {
     public static <T> T deserialize(String string, Type type) throws IOException {
         byte[] valueDecoded = Base64.decode(string.getBytes("utf-8"), Base64.DEFAULT);
         return new Gson().fromJson(new String(valueDecoded), type);
+    }
+
+    public static void showUserInputDialog(@NonNull Context context, @Nullable String title, @Nullable String message, @Nullable String editTextHint, @Nullable String positiveText, @Nullable String negativeText,
+                                           @Nullable CustomDialogClickListener positiveClickListener, @Nullable CustomDialogClickListener negativeClickListener) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.view_user_input, null);
+        builder.setView(view);
+        Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(context.getDrawable(android.R.drawable.screen_background_dark_transparent));
+
+        EditText inputEt;
+        LinearLayout inputLl;
+        TextView titleTv, messageTv, cancelTv, doneTv;
+
+        titleTv = (TextView) view.findViewById(R.id.title_tv);
+        messageTv = (TextView) view.findViewById(R.id.message_tv);
+        inputEt = (EditText) view.findViewById(R.id.input_et);
+        cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
+        doneTv = (TextView) view.findViewById(R.id.done_tv);
+        inputLl = (LinearLayout) view.findViewById(R.id.input_ll);
+
+        inputEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    doneTv.setEnabled(true);
+                    doneTv.setTextColor(context.getColor(R.color.color_blue));
+                } else {
+                    doneTv.setEnabled(false);
+                    doneTv.setTextColor(context.getColor(R.color.colorGrey));
+                }
+            }
+        });
+
+        if (title != null) {
+            titleTv.setText(title);
+        }
+
+        if (message != null) {
+            messageTv.setText(message);
+        }
+        if (editTextHint != null) {
+            inputEt.setHint(editTextHint);
+        }
+
+        if (positiveText != null) {
+            doneTv.setText(positiveText);
+
+            if (positiveClickListener != null) {
+                doneTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        positiveClickListener.onClick(dialog, inputEt.getText().toString());
+                    }
+                });
+            }
+            doneTv.setVisibility(View.VISIBLE);
+        } else {
+            doneTv.setVisibility(View.GONE);
+        }
+
+        if (negativeText != null) {
+            cancelTv.setText(negativeText);
+            if (negativeClickListener != null) {
+                cancelTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        negativeClickListener.onClick(dialog, null);
+                    }
+                });
+            }
+            cancelTv.setVisibility(View.VISIBLE);
+        } else {
+            cancelTv.setVisibility(View.GONE);
+        }
+
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+
+    public static void showUserMultiInputDialog(@NonNull Context context, @Nullable String title, @Nullable String message, @Nullable List<String> editTextHintList, @Nullable String positiveText, @Nullable String negativeText,
+                                                @Nullable CustomDialogClickListener positiveClickListener, @Nullable CustomDialogClickListener negativeClickListener) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.view_user_input, null);
+        builder.setView(view);
+        Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(context.getDrawable(android.R.drawable.screen_background_dark_transparent));
+
+        LinearLayout inputLl;
+        TextView titleTv, messageTv, cancelTv, doneTv;
+
+        EditText inputEt = (EditText) view.findViewById(R.id.input_et);
+        titleTv = (TextView) view.findViewById(R.id.title_tv);
+        messageTv = (TextView) view.findViewById(R.id.message_tv);
+        cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
+        doneTv = (TextView) view.findViewById(R.id.done_tv);
+        inputLl = (LinearLayout) view.findViewById(R.id.input_ll);
+        doneTv.setTextColor(context.getColor(R.color.color_blue));
+
+        inputEt.setVisibility(View.GONE);
+
+        if (editTextHintList == null || editTextHintList.size() == 0) {
+            editTextHintList = new ArrayList<>();
+            editTextHintList.add(context.getString(R.string.please_provide_the_details));
+        }
+
+        List<EditText> editTextList = new ArrayList<>();
+
+        for (int i = 0; i < editTextHintList.size(); i++) {
+            View inputView = LayoutInflater.from(context).inflate(R.layout.layout_user_input_edittext, null);
+
+            EditText editText = inputView.findViewById(R.id.input_et);
+            editText.setHint(editTextHintList.get(i));
+
+            if (MedicalHistoryConstants.getInputTypeMap().containsKey(editTextHintList.get(i))) {
+                editText.setInputType(MedicalHistoryConstants.getInputTypeMap().get(editTextHintList.get(i)));
+            }
+
+            editTextList.add(editText);
+            inputLl.addView(inputView);
+        }
+
+        if (title != null) {
+            titleTv.setText(title);
+        }
+
+        if (message != null) {
+            messageTv.setText(message);
+        }
+
+        if (positiveText != null) {
+            doneTv.setText(positiveText);
+
+            if (positiveClickListener != null) {
+                doneTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String inputs = " ";
+                        for (int i = 0; i < editTextList.size(); i++) {
+                            if (editTextList.get(i).getText().toString().isEmpty()) {
+                                if (i != 0) {
+                                    inputs = inputs.concat(", ");
+                                }
+                                inputs = inputs.concat(" ");
+                            } else {
+                                if (i != 0) {
+                                    inputs = inputs.concat(",");
+                                }
+                                inputs = inputs.concat(editTextList.get(i).getText().toString());
+                            }
+                        }
+                        positiveClickListener.onClick(dialog, inputs);
+                    }
+                });
+            }
+            doneTv.setVisibility(View.VISIBLE);
+        } else {
+            doneTv.setVisibility(View.GONE);
+        }
+
+        if (negativeText != null) {
+            cancelTv.setText(negativeText);
+            if (negativeClickListener != null) {
+                cancelTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        negativeClickListener.onClick(dialog, null);
+                    }
+                });
+            }
+            cancelTv.setVisibility(View.VISIBLE);
+        } else {
+            cancelTv.setVisibility(View.GONE);
+        }
+
+        dialog.setCancelable(false);
+        dialog.show();
     }
 
     public static String[] getNotificationSlotTime(String timeSlot) {

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
@@ -22,12 +23,14 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.onboarding.OnBoardingViewPagerAdapter;
+import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
+import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +42,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
  */
 public class AboutFragment extends BaseFragment {
     private LinearLayout patientDetailView;
-    private CustomButton medicalHistoryBtn;
+    private CardView medicalHistoryBtn;
     private CardView insuranceCv;
     private TextView insuranceDetailTv;
     private ViewPager insuranceViewPager;
@@ -67,12 +70,14 @@ public class AboutFragment extends BaseFragment {
     private DisconnectAssociationApiViewModel disconnectAssociationApiViewModel;
     private OnCloseActionInterface onCloseActionInterface;
     private AttachObserverInterface attachObserverInterface;
+    private ShowSubFragmentInterface showSubFragmentInterface;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
+        showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
         disconnectAssociationApiViewModel = ViewModelProviders.of(this).get(DisconnectAssociationApiViewModel.class);
         attachObserverInterface.attachObserver(disconnectAssociationApiViewModel);
@@ -106,7 +111,7 @@ public class AboutFragment extends BaseFragment {
 
     private void initView(View view) {
         patientDetailView = (LinearLayout) view.findViewById(R.id.patient_detail_view);
-        medicalHistoryBtn = (CustomButton) view.findViewById(R.id.medical_history_btn);
+        medicalHistoryBtn = (CardView) view.findViewById(R.id.medical_history_btn);
         insuranceCv = (CardView) view.findViewById(R.id.insurance_cv);
         insuranceDetailTv = (TextView) view.findViewById(R.id.insurance_detail_tv);
         insuranceViewPager = (ViewPager) view.findViewById(R.id.insurance_viewPager);
@@ -130,6 +135,21 @@ public class AboutFragment extends BaseFragment {
 
         if (getArguments() != null) {
             userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+            medicalHistoryBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Fragment fragment;
+
+                    if (userDetail.getQuestionnaire() != null && userDetail.getQuestionnaire().isQuestionariesEmpty()) {
+                        fragment = new MedicalHistoryViewFragment();
+                    } else {
+                        fragment = new MedicalHistoryList();
+                    }
+                    fragment.setArguments(getArguments());
+                    showSubFragmentInterface.onShowFragment(fragment);
+                }
+            });
 
             userType = appPreference.getInt(Constants.USER_TYPE);
 

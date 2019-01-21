@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.settings;
 
 import android.app.DatePickerDialog;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,9 +23,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiViewModel;
 import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
@@ -52,6 +55,8 @@ import com.thealer.telehealer.views.quickLogin.QuickLoginPinFragment;
 import com.thealer.telehealer.views.settings.Interface.BundleReceiver;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
 import com.thealer.telehealer.views.settings.medicalAssistant.MedicalAssistantListFragment;
+import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
+import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -90,6 +95,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private ImageView userProfileIv, genderIv;
 
     private String detailTitle = "";
+
+    private WhoAmIApiViewModel whoAmIApiViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -152,6 +159,23 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 }
                 break;
             case R.id.medical_history:
+                if (whoAmIApiViewModel == null) {
+                    whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+                }
+                if (!whoAmIApiViewModel.baseApiResponseModelMutableLiveData.hasActiveObservers()) {
+                    whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+                        @Override
+                        public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                            if (baseApiResponseModel != null) {
+                                WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                                UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                                whoAmIApiViewModel.baseApiResponseModelMutableLiveData.removeObservers(ProfileSettingsActivity.this);
+                                showMedicalHistory();
+                            }
+                        }
+                    });
+                }
+                whoAmIApiViewModel.checkWhoAmI();
                 break;
             case R.id.settings:
                 GeneralSettingsFragment generalSettingsFragment = new GeneralSettingsFragment();
@@ -224,6 +248,20 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         MedicalAssistantListFragment medicalAssistantListFragment = new MedicalAssistantListFragment();
         setFragment(medicalAssistantListFragment, false, true, true);
         hideOrShowNext(false);
+    }
+
+    private void showMedicalHistory() {
+        Fragment fragment;
+
+        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+
+        if (whoAmIApiResponseModel.getQuestionnaire() != null && whoAmIApiResponseModel.getQuestionnaire().isQuestionariesEmpty()) {
+            fragment = new MedicalHistoryViewFragment();
+        } else {
+            fragment = new MedicalHistoryList();
+        }
+        setFragment(fragment, false, true, false);
+
     }
 
     @Override
@@ -321,6 +359,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 bundle.putInt(ArgumentKeys.VIEW_TYPE, Constants.SCHEDULE_CREATION_MODE);
                 patientRegistrationDetailFragment.setArguments(bundle);
                 setFragment(patientRegistrationDetailFragment, false, true, true);
+
+            } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.HISTORY_UPDATE) {
+                showMedicalHistory();
             }
         }
     }
@@ -407,7 +448,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     }
 
     private void setExpandEnabled(boolean enabled) {
-        appbarLayout.setExpanded(enabled, false);
+        appbarLayout.setExpanded(enabled, true);
         appbarLayout.setActivated(enabled);
 
         final AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
@@ -423,7 +464,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         }
         collapsingToolbarLayout.setLayoutParams(params);
     }
-
 
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
@@ -667,12 +707,13 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     }
 
     @Override
+    public void onClose(boolean isRefreshRequired) {
+        onBackPressed();
+    }
+
+    @Override
     public void onShowFragment(Fragment fragment) {
         setFragment(fragment, false, true, false);
     }
 
-    @Override
-    public void onClose(boolean isRefreshRequired) {
-        onBackPressed();
-    }
 }
