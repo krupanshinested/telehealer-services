@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -23,16 +22,38 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="@dimen/max_width">
 
-            <com.thealer.telehealer.common.CustomButton
+            <android.support.v7.widget.CardView
                 android:id="@+id/medical_history_btn"
-                android:layout_width="250dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:text="@string/medical_history"
-                app:app_gradient="true"
-                app:corner_radius="6dp"
-                app:text_color="@color/colorWhite" />
+                app:cardUseCompatPadding="true">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/text_app_color"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="left"
+                        android:text="@string/medical_history"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_medical_questionarie"
+                        android:tint="@color/app_gradient_start"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+            </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
                 android:id="@+id/insurance_cv"
@@ -46,14 +67,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_margin="8dp"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/insurance_detail_tv"
                         style="@style/text_app_color"
-                        android:textAllCaps="true"
-                        android:text="@string/insurance_details" />
+                        android:text="@string/insurance_details"
+                        android:textAllCaps="true" />
 
                     <TextView
                         android:id="@+id/insurance_cash_tv"
@@ -101,7 +122,7 @@
                     <TextView
                         style="@style/text_app_color"
                         android:text="@string/email_id"
-                        android:textAllCaps="true"/>
+                        android:textAllCaps="true" />
 
                     <TextView
                         android:id="@+id/patient_email_tv"
@@ -178,9 +199,9 @@
                     android:id="@+id/doctor_bio_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
                     android:ems="3"
                     android:maxLines="4"
-                    android:ellipsize="end"
                     android:padding="8dp"
                     android:textColor="@color/colorBlack"
                     app:layout_constraintTop_toBottomOf="@+id/license_tv" />
@@ -267,7 +288,7 @@
                 <TextView
                     style="@style/text_app_color"
                     android:text="@string/phone"
-                    android:textAllCaps="true"/>
+                    android:textAllCaps="true" />
 
                 <TextView
                     android:id="@+id/user_phone_tv"
