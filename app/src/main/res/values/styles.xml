@@ -111,6 +111,10 @@
         <item name="android:layout_marginBottom">16dp</item>
     </style>
 
+
+    <style name="toolbar_menu_light">
+        <item name="android:actionMenuTextColor">@color/colorWhite</item>
+    </style>
     <style name="calendar_text_appearance" parent="TextAppearance.MaterialCalendarWidget.Date">
         <item name="android:textColor">@color/calendar_date_selector</item>
     </style>

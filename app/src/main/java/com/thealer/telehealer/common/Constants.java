@@ -127,6 +127,7 @@ public class Constants {
     //Screen Type
     public static final int forRegistration = 1;
     public static final int forProfileUpdate = 2;
+    public static final String DATE_PICKER_CANCELLED = "datePickerCancelled";
     public static String male = "male";
     public static String female = "female";
 
