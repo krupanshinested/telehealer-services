@@ -24,4 +24,15 @@
         <attr name="lay_corner_radius" format="dimension" />
     </declare-styleable>
 
+
+    <declare-styleable name="RoundCornerButton">
+        <attr name="btn_stroke_color" format="color" />
+        <attr name="btn_background_color" format="color" />
+        <attr name="btn_top_left_corner" format="dimension" />
+        <attr name="btn_top_right_corner" format="dimension" />
+        <attr name="btn_bottom_left_corner" format="dimension" />
+        <attr name="btn_bottom_right_corner" format="dimension" />
+        <attr name="btn_corner_radius" format="dimension" />
+    </declare-styleable>
+
 </resources>

@@ -342,8 +342,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
     }
 
-    public void setUIListener(TokBoxUIInterface tokBoxUIInterface) {
+    public void setUIListener(@Nullable TokBoxUIInterface tokBoxUIInterface) {
         this.tokBoxUIInterface = tokBoxUIInterface;
+
+        if (this.tokBoxUIInterface != null) {
+            tokBoxUIInterface.assignTokBoxApiViewModel(openTokViewModel);
+        }
     }
 
     public void startPublishVideo() {
@@ -357,7 +361,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     private void setupLocalFeedView() {
-        Log.d("TokBox", "setupLocalFeedView");
         if (mPublisher != null && mPublisher.getView() != null && localView != null) {
             if (mPublisher.getView().getParent() != null) {
                 if (mPublisher.getView().getParent() == localView) {
@@ -366,7 +369,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                     ((ViewGroup) mPublisher.getView().getParent()).removeView(mPublisher.getView());
                 }
             }
-            Log.d("TokBox", "localView added");
             localView.addView(mPublisher.getView());
 
             if (mPublisher.getView() instanceof GLSurfaceView) {
@@ -523,6 +525,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     public Boolean getSubscriberVideoMuted() {
         return isSubscriberVideoMuted;
+    }
+
+    public OpenTokViewModel getOpenTokViewModel() {
+        return openTokViewModel;
     }
 
     //Open tok Actions
@@ -1235,7 +1241,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     //AudioLevelListener methods
     @Override
     public void onAudioLevelUpdated(SubscriberKit subscriberKit, float v) {
-        Log.d("TokBox", "onAudioLevelUpdated");
+
     }
 
     //ConnectionListener methods

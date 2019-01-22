@@ -435,6 +435,11 @@ public class VitalCreationActivity extends BaseActivity implements
     }
 
     @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+
+    }
+
+    @Override
     public ImageView getExtraOption() { return otherOption; }
 
     @Override

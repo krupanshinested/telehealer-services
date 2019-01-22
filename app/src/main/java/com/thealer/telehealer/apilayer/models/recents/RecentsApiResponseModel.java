@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.recents;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.common.Utils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -47,7 +48,7 @@ public class RecentsApiResponseModel extends BaseApiResponseModel implements Ser
         this.result = result;
     }
 
-    public static class ResultBean implements Serializable{
+    public static class ResultBean extends BaseApiResponseModel implements Serializable{
 
         private RecentsUserDetailModel patient;
         private RecentsUserDetailModel doctor;
@@ -192,6 +193,19 @@ public class RecentsApiResponseModel extends BaseApiResponseModel implements Ser
 
         public void setMedical_assistant(RecentsUserDetailModel medical_assistant) {
             this.medical_assistant = medical_assistant;
+        }
+
+        public String getFormattedDuration() {
+            int seconds = getDurationInSecs();
+            if (seconds < 60) {
+                return getDurationInSecs() + " secs";
+            } else {
+                return (seconds / 60) + " mins " + (seconds % 60) + " secs";
+            }
+        }
+
+        public String getStartMonthYear() {
+            return Utils.getFormatedDateTime(getStart_time(),"MMM yyyy");
         }
     }
 }
