@@ -83,6 +83,9 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             }
         });
 
+
+        attachObserver(openTokViewModel);
+
         setUp();
 
         if (savedInstanceState != null) {

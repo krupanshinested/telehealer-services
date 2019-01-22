@@ -98,7 +98,23 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
 
-                    if (isValidUser(whoAmIApiResponseModel.getRole())) {
+                    //TODO : need to remove when ma flow is done
+                    if (whoAmIApiResponseModel.getRole().equals(Constants.ROLE_ASSISTANT)) {
+
+                        Dialog dialog = new AlertDialog.Builder(SigninActivity.this)
+                                .setTitle(getString(R.string.error))
+                                .setMessage(getString(R.string.ma_flow_not_available_currently))
+                                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        appPreference.deletePreference();
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .create();
+                        dialog.show();
+
+                    } else if (isValidUser(whoAmIApiResponseModel.getRole())) {
 
                         if (!appPreference.getString(PreferenceConstants.USER_EMAIL).equals(emailEt.getText().toString())) {
                             appPreference.deletePreference();

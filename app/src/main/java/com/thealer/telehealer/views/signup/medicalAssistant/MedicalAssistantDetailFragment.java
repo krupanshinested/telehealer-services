@@ -41,6 +41,7 @@ import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -258,6 +259,11 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
                         }
                     }
                 });
+
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).attachObserver(updateProfileModel);
+            ((BaseActivity) getActivity()).attachObserver(whoAmIApiViewModel);
+        }
     }
 
     private void updateUI(WhoAmIApiResponseModel whoAmIApiResponseModel) {

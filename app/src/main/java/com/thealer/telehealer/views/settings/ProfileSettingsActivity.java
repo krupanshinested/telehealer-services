@@ -74,7 +74,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private AppBarLayout appbarLayout;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private TextView toolbarTitle;
-    private ImageView backIv;
+    private ImageView backIv,other_option_iv;
     private RelativeLayout collapseBackgroundRl;
     private TextView nextTv;
     private ImageView userProfileIv,genderIv;
@@ -196,6 +196,12 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 startActivity(new Intent(this, SigninActivity.class));
                 finish();
                 break;
+            case R.id.payments_billings:
+                updateDetailTitle(getString(R.string.call_charges));
+                PaymentsListingFragment paymentsListingFragment = new PaymentsListingFragment();
+                hideOrShowNext(false);
+                setFragment(paymentsListingFragment,false,true,true);
+                break;
         }
     }
 
@@ -234,6 +240,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         genderIv = (ImageView) findViewById(R.id.gender_iv);
         collapseBackgroundRl = (RelativeLayout) findViewById(R.id.collapse_background_rl);
         backIv = findViewById(R.id.back_iv);
+        other_option_iv = findViewById(R.id.other_option_iv);
         collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorWhite));
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.colorWhite));
 
@@ -271,6 +278,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
         backIv.setOnClickListener(this);
         nextTv.setOnClickListener(this);
+        other_option_iv.setOnClickListener(this);
 
         setFragment(new ProfileSettingFragment(),true,false,false);
 
@@ -469,6 +477,22 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 getSupportFragmentManager().popBackStack();
 
                 break;
+            case RequestID.CARD_INFORMATION_VIEW:
+                updateDetailTitle(getString(R.string.card_information));
+                CardInformationFragment cardInformationFragment = new CardInformationFragment();
+                hideOrShowNext(false);
+                setFragment(cardInformationFragment,false,true,false);
+
+                break;
+
+            case RequestID.TRANSACTION_DETAIL:
+                updateDetailTitle("");
+                PaymentDetailFragment paymentDetailFragment = new PaymentDetailFragment();
+                paymentDetailFragment.setArguments(bundle);
+                hideOrShowNext(false);
+                setFragment(paymentDetailFragment,false,true,false);
+
+                break;
         }
 
     }
@@ -492,6 +516,11 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
              onBackPressed();
              break;
          case R.id.next_tv:
+             if (getCurrentFragment() instanceof DoCurrentTransactionInterface) {
+                 ((DoCurrentTransactionInterface) getCurrentFragment()).doCurrentTransaction();
+             }
+             break;
+         case R.id.other_option_iv:
              if (getCurrentFragment() instanceof DoCurrentTransactionInterface) {
                  ((DoCurrentTransactionInterface) getCurrentFragment()).doCurrentTransaction();
              }
@@ -521,6 +550,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     @Override
     public void hideOrShowNext(boolean hideOrShow) {
         if (hideOrShow) {
+            other_option_iv.setVisibility(View.GONE);
             nextTv.setVisibility(View.VISIBLE);
         } else {
             nextTv.setVisibility(View.GONE);
@@ -554,6 +584,15 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     @Override
     public void updateTitle(String title) {
         updateDetailTitle(title);
+    }
+
+    @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+        if (hideOrShow) {
+            other_option_iv.setVisibility(View.VISIBLE);
+        } else {
+            other_option_iv.setVisibility(View.GONE);
+        }
     }
 
     @Override

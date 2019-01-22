@@ -39,6 +39,7 @@ import com.thealer.telehealer.common.DatePickerDialogFragment;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DateBroadcastReceiver;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
@@ -434,6 +435,11 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                         }
                     }
                 });
+
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).attachObserver(updateProfileModel);
+            ((BaseActivity) getActivity()).attachObserver(whoAmIApiViewModel);
+        }
     }
 
     @Override

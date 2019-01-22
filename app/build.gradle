@@ -10,7 +10,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -133,4 +133,8 @@ dependencies {
 
     //Ripple effect
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
+
+    //Brain Tree
+    implementation 'com.braintreepayments.api:drop-in:3.7.1'
+
 }

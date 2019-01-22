@@ -40,4 +40,7 @@ public class RequestID {
     public static final String REQUEST_INSURANCE_CHANGE = "REQUEST_INSURANCE_CHANGE";
     public static final String INSURANCE_CHANGE_RESULT = "INSURANCE_CHANGE_RESULT";
     public static final String INSURANCE_REQUEST_IMAGE = "INSURANCE_REQUEST_IMAGE";
+    public static final String CARD_INFORMATION_VIEW = "CARD_INFORMATION_VIEW";
+    public static final String TRANSACTION_DETAIL = "TRANSACTION_DETAIL";
+
 }

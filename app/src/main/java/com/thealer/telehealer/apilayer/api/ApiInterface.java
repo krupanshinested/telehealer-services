@@ -1,8 +1,12 @@
 package com.thealer.telehealer.apilayer.api;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
+import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
+import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
+import com.thealer.telehealer.apilayer.models.Payments.VitalVisitResponse;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionRequestModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
@@ -95,6 +99,7 @@ public interface ApiInterface {
     String CHANNEL = "channel";
     String SESSION_ID = "sessionId";
     String CALL_QUALITY = "call_quality";
+    String MONTH="month";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -363,5 +368,23 @@ public interface ApiInterface {
 
     @POST("api/log/external-api")
     Observable<BaseApiResponseModel> postExternalApiLog(@Body Map<String, Object> param);
+
+    @GET("api/braintree/customer")
+    Observable<BrainTreeCustomer> getBrainTreeCustomer();
+
+    @GET("api/braintree/client_token")
+    Observable<BrainTreeClientToken> getBrainTreeClientToken(@QueryMap Map<String, String> param);
+
+    @POST("api/braintree/checkout")
+    Observable<BaseApiResponseModel> checkOutBrainTree(@Body Map<String, Object> param);
+
+    @GET("/api/braintree/transactions")
+    Observable<TransactionResponse> getTransactions();
+
+    @GET("/api/log/vitals")
+    Observable<VitalVisitResponse> getVitalVisit(@Query(MONTH) String month);
+
+    @GET("api/correspondence-history")
+    Observable<ArrayList<RecentsApiResponseModel.ResultBean>> getCallLogs(@Query(CALLS) boolean calls);
 
 }
