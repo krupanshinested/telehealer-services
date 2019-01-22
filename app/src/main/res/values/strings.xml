@@ -631,6 +631,14 @@
     <string name="ccm_capture_title">For audit purposes, you can indicate if your call was made specifically for any one of the items below.</string>
     <string name="busy_another_call">is busy in another call.</string>
     <string name="not_available">is not available.</string>
+    <string name="payments_billings">Payments/Billings</string>
+    <string name="expiration_date">Expiration Date</string>
+    <string name="card_information">Card Information</string>
+    <string name="call_charges">Call Charges</string>
+    <string name="call_history">CALL HISTORY</string>
+    <string name="vital_history">VITAL HISTORY</string>
+    <string name="call_charges_for">Call Charges for</string>
+    <string name="bill_number">BILL NUMBER</string>
 
     <string name="missed">missed</string>
     <string name="audio">audio</string>
@@ -640,4 +648,6 @@
     <string name="type">Type</string>
     <string name="doctor_name">Doctor Name</string>
     <string name="chat_transcript">Chat Transcript</string>
+    <string name="coming_soon">(Coming Soon)</string>
+    <string name="ma_flow_not_available_currently">Medical Assistant flow is not available in andorid currently.</string>
 </resources>

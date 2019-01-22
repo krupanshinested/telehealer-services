@@ -399,6 +399,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+
+    }
+
+    @Override
     public ImageView getExtraOption() {
         return null;
     }

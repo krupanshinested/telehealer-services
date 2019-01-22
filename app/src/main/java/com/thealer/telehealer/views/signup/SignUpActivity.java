@@ -397,6 +397,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     }
 
+    @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+
+    }
+
 
     @Override
     public void handleErrorResponse(ErrorModel errorModel) {
