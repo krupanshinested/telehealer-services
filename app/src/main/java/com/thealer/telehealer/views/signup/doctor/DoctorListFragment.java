@@ -52,7 +52,7 @@ public class DoctorListFragment extends BaseFragment implements DoCurrentTransac
         super.onAttach(context);
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
-        getDoctorsApiViewModel = ViewModelProviders.of(this).get(GetDoctorsApiViewModel.class);
+        getDoctorsApiViewModel = ViewModelProviders.of(getActivity()).get(GetDoctorsApiViewModel.class);
         onViewChangeInterface.attachObserver(getDoctorsApiViewModel);
 
         getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -193,9 +193,4 @@ public class DoctorListFragment extends BaseFragment implements DoCurrentTransac
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.e("aswin", "onResume: ");
-    }
 }
