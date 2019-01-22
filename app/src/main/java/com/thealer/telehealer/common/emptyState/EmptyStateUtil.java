@@ -82,7 +82,10 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_DOCTOR:
             case EmptyViewConstants.EMPTY_DOCTOR_WITH_BTN:
                 return "No Doctors";
-
+            case EmptyViewConstants.EMPTY_CALL_LOGS:
+                return "No Calls";
+            case EmptyViewConstants.EMPTY_VITAL_LOGS:
+                return "No Vitals";
             default:
                 return null;
         }
@@ -180,6 +183,10 @@ public class EmptyStateUtil {
                 return "Card Information will eventually show up here";
             case EmptyViewConstants.EMPTY_PATIENT_SEARCH:
                 return "No Patient are available on searched name. Try to search with some other name";
+            case EmptyViewConstants.EMPTY_CALL_LOGS:
+                return "No calls were made on selected month";
+            case EmptyViewConstants.EMPTY_VITAL_LOGS:
+                return "No vitals were visited on selected month";
             default:
                 return null;
         }
@@ -258,6 +265,10 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_PATIENT:
             case EmptyViewConstants.EMPTY_PATIENT_WITH_BTN:
                 return R.drawable.emptystate_no_patient;
+            case EmptyViewConstants.EMPTY_CALL_LOGS:
+                return R.drawable.emptystate_no_calls;
+            case EmptyViewConstants.EMPTY_VITAL_LOGS:
+                return R.drawable.emptystate_no_vitals;
             default:
                 return 0;
         }

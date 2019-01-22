@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.baseapimodel;
 
+import androidx.annotation.Nullable;
+
 /**
  * Created by Aswin on 08,October,2018
  */
@@ -10,6 +12,9 @@ public class ErrorModel {
     private boolean success;
     private String message;
     private String data;
+
+    //for Brain Tree
+    private String name;
 
     public ErrorModel(int code, String message, String data) {
         this.code = code;
@@ -47,5 +52,10 @@ public class ErrorModel {
 
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
+    }
+
+    @Nullable
+    public String getName() {
+        return name;
     }
 }

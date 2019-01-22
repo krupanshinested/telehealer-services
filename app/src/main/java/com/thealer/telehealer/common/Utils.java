@@ -397,6 +397,19 @@ public class Utils {
         return "";
     }
 
+    public static String getFormatedDateTime(String created_at,String format) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat returnFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+        returnFormat.setTimeZone(TimeZone.getDefault());
+        try {
+            return returnFormat.format(dateFormat.parse(created_at));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     public static void hideKeyboard(Activity activity) {
         View view = activity.getCurrentFocus();
         if (view == null) {

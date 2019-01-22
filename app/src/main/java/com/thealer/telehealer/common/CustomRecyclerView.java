@@ -133,6 +133,14 @@ public class CustomRecyclerView extends ConstraintLayout {
         emptyIv.setImageDrawable(context.getDrawable(image));
     }
 
+    public void hideEmptyState() {
+        recyclerEmptyStateView.setVisibility(GONE);
+    }
+
+    public void showEmptyState() {
+        recyclerEmptyStateView.setVisibility(VISIBLE);
+    }
+
     public LinearLayoutManager getLayoutManager() {
         return linearLayoutManager;
     }

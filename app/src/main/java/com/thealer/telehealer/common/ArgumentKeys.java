@@ -102,5 +102,7 @@ public class ArgumentKeys {
     public static final String TO_USER_GUID = "TO_USER_GUID";
 
 
+    public static final String TRANSACTION = "TRANSACTION";
+
 
 }
