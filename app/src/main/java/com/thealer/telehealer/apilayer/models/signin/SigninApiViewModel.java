@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.signin;
 import android.app.Application;
 import android.support.annotation.NonNull;
 
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -26,6 +27,7 @@ public class SigninApiViewModel extends BaseApiViewModel {
         HashMap<String, Object> params = new HashMap<>();
         params.put("email", email);
         params.put("password", password);
+        params.put("version", BuildConfig.VERSION_NAME);
 
         getPublicApiService().signinUser(params)
                 .compose(applySchedulers())

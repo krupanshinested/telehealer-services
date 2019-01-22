@@ -22,4 +22,6 @@ public interface OnViewChangeInterface {
     void updateNextTitle(String nextTitle);
 
     void updateTitle(String title);
+
+    void hideOrShowOtherOption(boolean hideOrShow);
 }

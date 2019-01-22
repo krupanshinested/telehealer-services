@@ -214,7 +214,7 @@ public class BaseActivity extends AppCompatActivity {
         return isDeviceXLarge() && isModeLandscape();
     }
 
-    public void showAlertDialog(String title,String message,
+    public AlertDialog showAlertDialog(String title,String message,
                                 @Nullable String positiveTitle,
                                 @Nullable String negativeTitle,
                                 @Nullable DialogInterface.OnClickListener positiveListener,
@@ -233,6 +233,7 @@ public class BaseActivity extends AppCompatActivity {
         }
         alertDialog.create();
         alertDialog.show();
+        return alertDialog.show();
     }
 
     @Override

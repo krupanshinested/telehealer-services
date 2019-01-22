@@ -49,7 +49,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private ProfileCellView profile,medical_history,settings,email_id,
             phone_number,change_password,
-            feedback,terms_and_condition, privacy_policy,appointment_slots;
+            feedback,terms_and_condition, privacy_policy,appointment_slots,payments_billings;
     private View signOut;
 
     private AppointmentSlotUpdate appointmentSlotUpdate;
@@ -75,6 +75,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         super.onResume();
 
         onViewChangeInterface.hideOrShowNext(false);
+        onViewChangeInterface.hideOrShowOtherOption(false);
 
         if (getActivity() instanceof ProfileSettingsActivity) {
             ((ProfileSettingsActivity) getActivity()).updateProfile();
@@ -104,6 +105,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         terms_and_condition = baseView.findViewById(R.id.terms_and_condition);
         privacy_policy = baseView.findViewById(R.id.privacy_policy);
         signOut = baseView.findViewById(R.id.signOut);
+        payments_billings = baseView.findViewById(R.id.payments_billings);
 
         appointment_slots = baseView.findViewById(R.id.appointment_slots);
         String[] titleList = getActivity().getResources().getStringArray(R.array.doctor_appointment_slots);
@@ -155,6 +157,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         privacy_policy.setOnClickListener(this);
         signOut.setOnClickListener(this);
         appointment_slots.setOnClickListener(this);
+        payments_billings.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
         phone_number.updateValue(UserDetailPreferenceManager.getPhone());
@@ -163,14 +166,17 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             case Constants.TYPE_PATIENT:
                 appointment_slots.setVisibility(View.GONE);
                 change_password.hideSplitter(true);
+                payments_billings.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
                 appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length()+"");
                 medical_history.setVisibility(View.GONE);
+                payments_billings.setVisibility(View.VISIBLE);
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
                 medical_history.setVisibility(View.GONE);
                 appointment_slots.setVisibility(View.GONE);
+                payments_billings.setVisibility(View.GONE);
                 break;
         }
     }

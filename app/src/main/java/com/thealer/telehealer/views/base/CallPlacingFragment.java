@@ -1,28 +1,39 @@
 package com.thealer.telehealer.views.base;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.braintreepayments.api.dropin.DropInActivity;
+import com.braintreepayments.api.dropin.DropInRequest;
+import com.braintreepayments.api.dropin.DropInResult;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
+import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
+import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
+import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.ContentActivity;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import static android.app.Activity.RESULT_OK;
@@ -36,11 +47,15 @@ import static com.thealer.telehealer.common.ArgumentKeys.CALL_INITIATE_MODEL;
 
 public class CallPlacingFragment extends BaseFragment {
 
-    public static final int RequestID = 230;
+    public static final int DOCTOR_PAYMENT_REQUEST = 230;
+    public static final int MA_DOC_PAYMENT_REQUEST = 231;
+    public static final int BRAIN_TREE_REQUEST = 233;
     public static final int VideoFeedRequestID = 235;
 
     @Nullable
     private CallInitiateModel callInitiateModel;
+
+    private BrainTreeViewModel brainTreeViewModel = null;
 
     public void openCallIfPossible(CallInitiateModel callInitiateModel) {
         if (UserType.isUserDoctor()) {
@@ -55,6 +70,10 @@ public class CallPlacingFragment extends BaseFragment {
 
         CallInitiateViewModel callInitiateViewModel = new CallInitiateViewModel(getActivity().getApplication());
         callInitiateViewModel.getTokenForSession("false",callInitiateModel.getDoctorGuid());
+
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).attachObserver(callInitiateViewModel);
+        }
 
         callInitiateViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -151,10 +170,57 @@ public class CallPlacingFragment extends BaseFragment {
         }
     }
 
+    private void addBrainTreeObserver() {
+        if (getActivity() == null) {
+            return;
+        }
+
+        brainTreeViewModel = ViewModelProviders.of(getActivity()).get(BrainTreeViewModel.class);
+
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).attachObserver(brainTreeViewModel);
+        }
+
+        brainTreeViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel instanceof BrainTreeClientToken) {
+                        DropInRequest dropInRequest = new DropInRequest().clientToken(((BrainTreeClientToken)baseApiResponseModel).getClient_token());
+                        startActivityForResult(dropInRequest.getIntent(getContext()),CallPlacingFragment.BRAIN_TREE_REQUEST);
+                    } else if (baseApiResponseModel instanceof BrainTreeCustomer) {
+                        BrainTreeCustomer customer = (BrainTreeCustomer) baseApiResponseModel;
+
+                        HashMap<String ,String> param = new HashMap<>();
+                        if (customer.getPaymentMethods() != null) {
+                            param.put("customerId", UserDetailPreferenceManager.getUser_guid());
+                            param.put("verifyCard", "true");
+                        }
+
+                        brainTreeViewModel.getBrainTreeClientToken(param);
+                    }
+                }
+            }
+        });
+
+
+        brainTreeViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                    if (errorModel != null && errorModel.getName() != null) {
+                        if (errorModel.getName().equals("notFoundError")) {
+                            brainTreeViewModel.getBrainTreeClientToken(new HashMap<>());
+                        }
+                    }
+            }
+        });
+    }
+
     private void openTrialContentScreen(Boolean forDoctor,String doctorName) {
         didOpenTrialScreen();
 
         Intent intent = new Intent(getActivity(), ContentActivity.class);
+        int requestId;
 
         if  (forDoctor) {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE,getString(R.string.proceed));
@@ -165,6 +231,11 @@ public class CallPlacingFragment extends BaseFragment {
             description += getString(R.string.trial_period_expired_doc_sec_2);
 
             intent.putExtra(ArgumentKeys.DESCRIPTION,description);
+            requestId = CallPlacingFragment.DOCTOR_PAYMENT_REQUEST;
+
+            if (brainTreeViewModel == null) {
+                addBrainTreeObserver();
+            }
 
         } else {
 
@@ -175,9 +246,10 @@ public class CallPlacingFragment extends BaseFragment {
             String description = getString(R.string.trial_period_expired_ma_sec_1,name);
 
             intent.putExtra(ArgumentKeys.DESCRIPTION,description);
+            requestId = CallPlacingFragment.MA_DOC_PAYMENT_REQUEST;
         }
 
-        intent.putExtra(ArgumentKeys.RESOURCE_ICON,R.drawable.call_kit_education);
+        intent.putExtra(ArgumentKeys.RESOURCE_ICON,R.drawable.emptystate_credit_card);
         intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED,false);
         intent.putExtra(ArgumentKeys.TITLE,getString(R.string.payment_information_required));
         intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED,true);
@@ -185,7 +257,7 @@ public class CallPlacingFragment extends BaseFragment {
 
         this.callInitiateModel = null;
 
-        startActivityForResult(intent, CallPlacingFragment.RequestID);
+        startActivityForResult(intent, requestId);
     }
 
     void didOpenCallKit() {
@@ -199,7 +271,7 @@ public class CallPlacingFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
-
+        Log.d("CallPlacingFragment","onActivityResult "+requestCode+"_"+resultCode);
         switch (requestCode) {
             case PermissionConstants.PERMISSION_CAM_MIC:
             case PermissionConstants.PERMISSION_MICROPHONE:
@@ -211,14 +283,31 @@ public class CallPlacingFragment extends BaseFragment {
                    }
                 }
                 break;
-            case CallPlacingFragment.RequestID:
-                if (requestCode == RESULT_OK) {
-
-
-                } else  {
-
-
+            case CallPlacingFragment.DOCTOR_PAYMENT_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    brainTreeViewModel.getBrainTreeCustomer();
                 }
+                break;
+            case CallPlacingFragment.BRAIN_TREE_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    DropInResult result = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
+
+                    HashMap<String,Object> param = new HashMap<>();
+                    if (result.getPaymentMethodNonce() != null) {
+                        param.put("payment_method_nonce", result.getPaymentMethodNonce().getNonce());
+                    }
+                    param.put("amount","0");
+                    param.put("savePayment",true);
+
+                    brainTreeViewModel.checkOutBrainTree(param);
+
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    Log.d("CallPlacingFragment","Braintree Cancelled");
+                } else {
+                    Exception error = (Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
+                    Log.d("CallPlacingFragment",error.getLocalizedMessage());
+                }
+
                 break;
             case CallPlacingFragment.VideoFeedRequestID:
 

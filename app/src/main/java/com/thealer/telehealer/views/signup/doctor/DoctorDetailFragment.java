@@ -51,6 +51,7 @@ import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.CurrentModeInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
@@ -344,6 +345,11 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
                         }
                     }
                 });
+
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).attachObserver(updateProfileModel);
+            ((BaseActivity) getActivity()).attachObserver(whoAmIApiViewModel);
+        }
     }
 
     @SuppressLint("SetTextI18n")

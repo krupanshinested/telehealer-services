@@ -80,7 +80,8 @@ public class RoleSelectionFragment extends BaseFragment implements View.OnClickL
                 break;
             case R.id.medical_assistant_iv:
             case R.id.medical_assistant_tv:
-                selectAssistant();
+                //TODO : enable this whenever ma flow completes
+                //selectAssistant();
                 break;
         }
     }
