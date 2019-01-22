@@ -1,5 +1,6 @@
 package com.thealer.telehealer.common.OpenTok.openTokInterfaces;
 
+import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 
 /**
@@ -22,5 +23,7 @@ public interface TokBoxUIInterface {
     void didSubscribeAudioEnabled();
     void didReceiveVitalData(String data,String type);
     void didChangedAudioInput(int type);
+    void assignTokBoxApiViewModel(OpenTokViewModel openTokViewModel);
+
     String getCurrentCallQuality();
 }

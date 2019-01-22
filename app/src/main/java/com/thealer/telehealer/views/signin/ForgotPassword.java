@@ -235,4 +235,9 @@ public class ForgotPassword extends BaseActivity implements OnViewChangeInterfac
     public void updateTitle(String title) {
         toolbarTitle.setText(title);
     }
+
+    @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+
+    }
 }

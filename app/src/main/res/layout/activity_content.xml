@@ -52,6 +52,7 @@
                 android:layout_marginTop="5dp"
                 android:id="@+id/sub_title_tv"
                 android:textSize="@dimen/sub_title_size"
+                android:textColorLink="#1417d4"
                 tools:text="ffjfjfjfjjfjfjfjjf"
                 android:gravity="center"
                 app:layout_constraintLeft_toLeftOf="parent"
