@@ -112,8 +112,8 @@ public class BaseFragment extends Fragment {
         if (negativeTitle != null) {
             alertDialog.setNegativeButton(negativeTitle, negativeListener);
         }
-        alertDialog.create();
-        alertDialog.show();
+        dialog = alertDialog.create();
+        dialog.show();
     }
 
     public void showSuccessView(Fragment fragment, int requestId) {
@@ -196,6 +196,6 @@ public class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        showOrHideSoftInputWindow(false);
+        //showOrHideSoftInputWindow(false);
     }
 }

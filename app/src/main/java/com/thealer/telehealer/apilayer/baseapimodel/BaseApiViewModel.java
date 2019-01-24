@@ -348,6 +348,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             Log.e(TAG, "onError: " + response);
 
             errorModel.setStatusCode(httpException.code());
+            errorModel.setResponse(response);
 
             switch (httpException.code()) {
                 case 400:
