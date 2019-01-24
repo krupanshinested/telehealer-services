@@ -25,6 +25,14 @@ public class VitalDevice implements Serializable{
         this.uuid = uuid;
     }
 
+    public VitalDevice(String type) {
+        this.deviceId = "";
+        this.type = type;
+        this.connected = false;
+        this.uuid = "";
+    }
+
+
     public String getDeviceId() {
         return deviceId;
     }

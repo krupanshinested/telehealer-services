@@ -673,4 +673,9 @@
     <string name="help_content_recents">View the list of prior calls with your patients/doctors. Clicking each entry will display the recorded encounter along with the transcript of the call.</string>
     <string name="help_content_schedules">View all your upcoming appointments and their associated details. Click the “+” icon on the right top corner to initiate an appointment request. Only requests that are accepted will appear here on the schedules page. The application also provides an automatic reminder 10 minutes prior to a scheduled appointment.</string>
     <string name="associations">Associations</string>
+
+    <string name="error_on_measure_vital">Error on mesure, please try again</string>
+    <string name="vital_empty_pateint">No paired vitals device found.\nInorder to capture vital measurements during a live video call, please pair one or more supported devices from the Vitals page.</string>
+    <string name="vital_empty_non_pateint">No measurement is going on.</string>
+
 </resources>

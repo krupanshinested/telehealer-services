@@ -20,8 +20,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -74,7 +72,8 @@
             android:screenOrientation="userLandscape" />
         <activity android:name=".views.common.ContentActivity" />
         <activity android:name=".views.call.CallFeedBackActivity" />
-
+        <activity android:name=".views.common.CallPlacingActivity"
+            android:theme="@style/AppTheme.Transparent"/>
         <activity
             android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
             android:launchMode="singleTask">

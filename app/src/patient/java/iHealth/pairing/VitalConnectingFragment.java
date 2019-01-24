@@ -182,6 +182,11 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
     }
 
     @Override
+    public void startedToConnect(String type, String serailNumber) {
+
+    }
+
+    @Override
     public void didDiscoverDevice(String type, String serailNumber) {
         //nothing to do
     }
