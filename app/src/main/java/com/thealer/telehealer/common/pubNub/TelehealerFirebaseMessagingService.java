@@ -145,12 +145,16 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             //AppDelegate.showMissedCallNotifiation(userInfo: call.userinfo ?? [:],isVideo : TokBoxSession.shared.type == CallType.video)
         }
 
-        if (data.getCall_rejection() != null) {
-            TokBox.shared.endCall(data.getCall_rejection());
-        } else {
-            TokBox.shared.endCall(OpenTokConstants.other);
-        }
-
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (data.getCall_rejection() != null) {
+                    TokBox.shared.endCall(data.getCall_rejection());
+                } else {
+                    TokBox.shared.endCall(OpenTokConstants.other);
+                }
+            }
+        });
     }
 
     private void displayIncomingCall(APNSPayload data) {

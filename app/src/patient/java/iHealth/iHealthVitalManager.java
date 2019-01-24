@@ -4,19 +4,24 @@ import android.app.Application;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.ihealth.communication.control.UpgradeControl;
 import com.ihealth.communication.manager.iHealthDevicesCallback;
 import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.ihealth.communication.manager.iHealthDevicesUpgradeManager;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
+import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.VitalCommon.*;
@@ -285,6 +290,9 @@ public class iHealthVitalManager extends VitalsManager {
             if (!req) {
                 if (vitalPairInterface != null)
                     vitalPairInterface.didFailConnectDevice(deviceType,mac,getApplication().getString(R.string.vital_connection_error));
+            } else {
+                if (vitalPairInterface != null)
+                    vitalPairInterface.startedToConnect(deviceType,mac);
             }
         }
     }
@@ -352,6 +360,13 @@ public class iHealthVitalManager extends VitalsManager {
                 break;
             default:
                 break;
+        }
+
+        if (UserType.isUserPatient()) {
+            HashMap<String,Object> message = new HashMap<>();
+            message.put(VitalsConstant.VitalCallMapKeys.status,VitalsConstant.VitalCallMapKeys.cancelled);
+            message.put(VitalsConstant.VitalCallMapKeys.message,"");
+            publishMessage(deviceType,message);
         }
     }
 
@@ -475,7 +490,7 @@ public class iHealthVitalManager extends VitalsManager {
                 return iHealthDevicesManager.DISCOVERY_HS4S;
             case iHealthDevicesManager.TYPE_BG5:
                 return iHealthDevicesManager.DISCOVERY_BG5;
-            case VitalsConstant.TYPE_FDIR_V3:
+            case iHealthDevicesManager.TYPE_FDIR_V3:
                 return iHealthDevicesManager.DISCOVERY_FDIR_V3;
             case iHealthDevicesManager.TYPE_TS28B:
                 return iHealthDevicesManager.DISCOVERY_TS28B;
@@ -485,5 +500,261 @@ public class iHealthVitalManager extends VitalsManager {
                 return 124L;
         }
     }
+
+    private void publishThatDeviceStarted(String deviceType) {
+            HashMap<String,Object> message = new HashMap<>();
+            message.put(VitalsConstant.VitalCallMapKeys.status,VitalsConstant.VitalCallMapKeys.startedToMeasure);
+            message.put(VitalsConstant.VitalCallMapKeys.message,"");
+            publishMessage(deviceType,message);
+    }
+
+    private void publishMessage(String type,HashMap<String,Object> message) {
+        if (UserType.isUserPatient()) {
+            if (TokBox.shared.isActiveCallPreset()) {
+                String deviceType = VitalDeviceType.shared.getKeyValue(type);
+                TokBox.shared.sendMessage(deviceType.replaceAll(" ","_"), message);
+            }
+        }
+    }
+
+    //WeightMeasureInterface methods
+    @Override
+    public void updateWeightMessage(String deviceType,String message) {
+        super.updateWeightMessage(deviceType,message);
+
+    }
+
+    @Override
+    public void updateWeightValue(String deviceType,Float value) {
+        super.updateWeightValue(deviceType,value);
+
+        HashMap<String,Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.measuring);
+        message.put(VitalsConstant.VitalCallMapKeys.data, value);
+        publishMessage(deviceType,message);
+    }
+
+    @Override
+    public void didStartWeightMeasure(String deviceType) {
+        super.didStartWeightMeasure(deviceType);
+
+        publishThatDeviceStarted(deviceType);
+    }
+
+    @Override
+    public void didFinishWeightMeasure(String deviceType,Float weight, String id) {
+        super.didFinishWeightMeasure(deviceType,weight,id);
+
+        HashMap<String,Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.finishedMeasure);
+        message.put(VitalsConstant.VitalCallMapKeys.data, weight);
+        publishMessage(deviceType,message);
+    }
+
+    @Override
+    public void didFinishWeightMesureWithFailure(String deviceType,String error) {
+        super.didFinishWeightMesureWithFailure(deviceType,error);
+
+        HashMap<String,Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.errorInMeasure);
+        if (TextUtils.isEmpty(error)) {
+            message.put(VitalsConstant.VitalCallMapKeys.message, error);
+        } else {
+            message.put(VitalsConstant.VitalCallMapKeys.message, getApplication().getString(R.string.error_on_measure_vital));
+        }
+        publishMessage(deviceType,message);
+    }
+
+    //BPMeasureInterface methods
+    @Override
+    public void updateBPMessage(String deviceType,String message) {
+       super.updateBPMessage(deviceType,message);
+    }
+
+    @Override
+    public void didStartBPMesure(String deviceType) {
+       super.didStartBPMesure(deviceType);
+
+        publishThatDeviceStarted(deviceType);
+    }
+
+    @Override
+    public void didUpdateBPMesure(String deviceType,ArrayList<Double> value) {
+        super.didUpdateBPMesure(deviceType,value);
+
+        HashMap<String,Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.measuring);
+        message.put(VitalsConstant.VitalCallMapKeys.data, value);
+        publishMessage(deviceType,message);
+    }
+
+    @Override
+    public void didUpdateBPM(String deviceType,ArrayList<Double> value) {
+        super.didUpdateBPM(deviceType,value);
+    }
+
+    @Override
+    public void didFinishBPMesure(String deviceType,Double systolicValue, Double diastolicValue, Double heartRate) {
+        super.didFinishBPMesure(deviceType,systolicValue,diastolicValue,heartRate);
+
+        HashMap<String,Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.finishedMeasure);
+        message.put(VitalsConstant.VitalCallMapKeys.systolicValue, systolicValue);
+        message.put(VitalsConstant.VitalCallMapKeys.diastolicValue, diastolicValue);
+        message.put(VitalsConstant.VitalCallMapKeys.heartRate, heartRate);
+        publishMessage(deviceType,message);
+    }
+
+    @Override
+    public void didFailBPMesure(String deviceType,String error) {
+        super.didFailBPMesure(deviceType,error);
+
+        HashMap<String,Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.errorInMeasure);
+        if (TextUtils.isEmpty(error)) {
+            message.put(VitalsConstant.VitalCallMapKeys.message, error);
+        } else {
+            message.put(VitalsConstant.VitalCallMapKeys.message, getApplication().getString(R.string.error_on_measure_vital));
+        }
+
+        publishMessage(deviceType,message);
+    }
+
+    //ThermoMeasureInterface methods
+    @Override
+    public void updateThermoMessage(String deviceType,String message) {
+        super.updateThermoMessage(deviceType,message);
+    }
+
+    @Override
+    public void updateThermoValue(String deviceType,Double value) {
+        super.updateThermoValue(deviceType,value);
+
+        HashMap<String,Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.finishedMeasure);
+        message.put(VitalsConstant.VitalCallMapKeys.data, value);
+        publishMessage(deviceType,message);
+    }
+
+    @Override
+    public void didThermoStartMeasure(String deviceType) {
+        super.didThermoStartMeasure(deviceType);
+
+        publishThatDeviceStarted(deviceType);
+    }
+
+    @Override
+    public void didThermoFinishMesureWithFailure(String deviceType,String error) {
+        super.didThermoFinishMesureWithFailure(deviceType,error);
+
+        HashMap<String,Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.errorInMeasure);
+        if (TextUtils.isEmpty(error)) {
+            message.put(VitalsConstant.VitalCallMapKeys.message, error);
+        } else {
+            message.put(VitalsConstant.VitalCallMapKeys.message, getApplication().getString(R.string.error_on_measure_vital));
+        }
+
+        publishMessage(deviceType,message);
+    }
+
+    //PulseMeasureInterface  methods
+    @Override
+    public void updatePulseMessage(String deviceType,String message) {
+        super.updatePulseMessage(deviceType,message);
+    }
+
+    @Override
+    public void updatePulseValue(String deviceType,int spo2, int bpm, int wave, float pi) {
+        super.updatePulseValue(deviceType,spo2,bpm,wave,pi);
+
+        HashMap<String,Object> message = new HashMap<>();
+        HashMap<String,Object> result = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.measuring);
+
+        result.put(VitalsConstant.VitalCallMapKeys.spo2, spo2);
+        result.put(VitalsConstant.VitalCallMapKeys.bpm, bpm);
+        result.put(VitalsConstant.VitalCallMapKeys.pi, pi);
+
+        message.put(VitalsConstant.VitalCallMapKeys.data, result);
+        publishMessage(deviceType,message);
+    }
+
+    @Override
+    public void didFinishMeasure(String deviceType,int spo2, int bpm, int wave, float pi) {
+        super.didFinishMeasure(deviceType,spo2,bpm,wave,pi);
+
+        HashMap<String,Object> message = new HashMap<>();
+        HashMap<String,Object> result = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.finishedMeasure);
+
+        result.put(VitalsConstant.VitalCallMapKeys.spo2, spo2);
+        result.put(VitalsConstant.VitalCallMapKeys.bpm, bpm);
+        result.put(VitalsConstant.VitalCallMapKeys.pi, pi);
+
+        message.put(VitalsConstant.VitalCallMapKeys.data, result);
+        publishMessage(deviceType,message);
+    }
+
+    @Override
+    public void didPulseStartMeasure(String deviceType) {
+        super.didPulseStartMeasure(deviceType);
+
+        publishThatDeviceStarted(deviceType);
+    }
+
+    @Override
+    public void didPulseFinishMesureWithFailure(String deviceType,String error) {
+        super.didPulseFinishMesureWithFailure(deviceType,error);
+
+        HashMap<String,Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.errorInMeasure);
+        if (TextUtils.isEmpty(error)) {
+            message.put(VitalsConstant.VitalCallMapKeys.message, error);
+        } else {
+            message.put(VitalsConstant.VitalCallMapKeys.message, getApplication().getString(R.string.error_on_measure_vital));
+        }
+
+        publishMessage(deviceType,message);
+    }
+
+    //GulcoMeasureInterface methods
+    @Override
+    public void updateGulcoMessage(String deviceType,String message) {
+        super.updateGulcoMessage(deviceType,message);
+    }
+
+    @Override
+    public void updateGulcoValue(String deviceType,int value) {
+       super.updateGulcoValue(deviceType,value);
+    }
+
+    @Override
+    public void didGulcoStartMeasure(String deviceType) {
+        super.didGulcoStartMeasure(deviceType);
+
+        publishThatDeviceStarted(deviceType);
+    }
+
+    @Override
+    public void didFinishGulcoMesureWithFailure(String deviceType,String error) {
+        super.didFinishGulcoMesureWithFailure(deviceType,error);
+    }
+
+    @Override
+    public void didStripInserted(String deviceType) {
+        super.didStripInserted(deviceType);
+    }
+
+    @Override
+    public void didStripEjected(String deviceType) {
+       super.didStripEjected(deviceType);
+    }
+
+    @Override
+    public void didBloodDropped(String deviceType) {
+        super.didBloodDropped(deviceType);
+    }
+
 
 }

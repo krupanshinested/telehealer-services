@@ -3,9 +3,12 @@ package com.thealer.telehealer.views.call;
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.arch.lifecycle.Observer;
+import android.bluetooth.BluetoothHeadset;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.gesture.Gesture;
 import android.media.AudioAttributes;
 import android.media.AudioDeviceInfo;
@@ -22,6 +25,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
@@ -47,13 +51,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.opentok.android.AudioDeviceManager;
+import com.opentok.android.BaseAudioDevice;
 import com.skyfishjy.library.RippleBackground;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
+import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
+import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
 import com.thealer.telehealer.common.Animation.AnimationUtil;
 import com.thealer.telehealer.common.Animation.ConstrainSetUtil;
 import com.thealer.telehealer.common.Animation.MoveViewTouchListener;
@@ -72,19 +80,26 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.TimerInterface;
 import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.GulcoQRCapture;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
+import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
+import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.base.BaseActivity;
-import com.thealer.telehealer.views.base.CallPlacingFragment;
+import com.thealer.telehealer.views.call.Adapter.VitalCallAdapter;
+import com.thealer.telehealer.views.call.Interfaces.LiveVitalCallBack;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.QRCodeReaderActivity;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.home.ViewPagerAdapter;
 import com.thealer.telehealer.views.home.vitals.BluetoothEnableActivity;
+import com.thealer.telehealer.views.home.vitals.measure.BPMeasureFragment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,17 +110,22 @@ import java.util.Set;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import iHealth.iHealthVitalManager;
 
 import static android.media.AudioManager.AUDIOFOCUS_GAIN;
 import static android.media.AudioManager.GET_DEVICES_ALL;
 import static android.media.AudioManager.STREAM_VOICE_CALL;
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.common.pubNub.models.APNSPayload.text;
 
 /**
  * Created by rsekar on 12/25/18.
  */
 
-public class CallActivity extends BaseActivity implements TokBoxUIInterface,View.OnClickListener {
+public class CallActivity extends BaseActivity implements TokBoxUIInterface,
+        View.OnClickListener,
+        VitalManagerInstance,
+        LiveVitalCallBack{
 
     private LinearLayout remoteView;
     private FrameLayout localView;
@@ -120,6 +140,10 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
     private RippleBackground profile_background;
     private ImageView audio_disabled_iv,video_disabled_iv;
     private TextView quality_disclaimer_tv,display_name,call_type_tv;
+    private ImageView[] indicators = new ImageView[0];
+    private LinearLayout pager_indicator_container;
+    private ConstraintLayout pager_container;
+    private TextView vital_empty_tv;
 
     @Nullable
     public Dialog currentShowingDialog;
@@ -129,6 +153,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
 
     @Nullable
     private Observer<ErrorModel> errorModelObserver;
+
+    @Nullable
+    private VitalCallAdapter vitalCallAdapter;
 
     private Boolean isCameraFlipped = false;
 
@@ -178,12 +205,12 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
             }
         }
 
-        initView();
-
         if (savedInstanceState != null) {
             currentCallQuality = savedInstanceState.getString(ArgumentKeys.CALL_QUALITY);
             isDisclaimerDismissed = savedInstanceState.getBoolean(ArgumentKeys.IS_DISCLAIMER_DISMISSED);
         }
+
+        initView();
 
         if (TokBox.shared.getConnectedDate() != null) {
             long lastSuccess = TokBox.shared.getConnectedDate().getTime();
@@ -204,47 +231,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
             minimize.setVisibility(View.VISIBLE);
         }
 
-        /*audioSession = new MediaSession(getApplicationContext(), "TAG11");
-
-        MediaSession.Callback MsCallback = new MediaSession.Callback() {
-
-            @Override
-            public boolean onMediaButtonEvent(final Intent mediaButtonIntent) {
-                String intentAction = mediaButtonIntent.getAction();
-
-                Log.i("onMediaButtonEvent",  "receieved");
-
-                if (Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
-                    KeyEvent event = mediaButtonIntent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-
-                    if (event != null && event.getAction() == KeyEvent.ACTION_DOWN) {
-
-                        Log.i("onMediaButtonEvent",  "taking action");
-                        if (TokBox.shared.getCallState() == OpenTokConstants.waitingForUserAction) {
-                            onClick(answer_iv);
-                        } else {
-                            onClick(hang_iv);
-                        }
-
-                    } else if (event != null) {
-                        Log.i("onMediaButtonEvent",  "not taking action "+event.getAction());
-                    }
-                }
-                return super.onMediaButtonEvent(mediaButtonIntent);
-            }
-
-
-        };
-        audioSession.setCallback(MsCallback);
-
-        PlaybackState state = new PlaybackState.Builder()
-                .setActions(PlaybackState.ACTION_PLAY_PAUSE)
-                .setState(PlaybackState.STATE_PLAYING, 0, 0, 0)
-                .build();
-        audioSession.setPlaybackState(state);
-        audioSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
-        audioSession.setActive(true);*/
     }
 
     @Override
@@ -330,6 +316,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
         incoming_view = findViewById(R.id.incoming_view);
         display_name = findViewById(R.id.display_name);
         call_type_tv = findViewById(R.id.call_type_tv);
+        pager_indicator_container = findViewById(R.id.pager_indicator_container);
+        pager_container = findViewById(R.id.pager_container);
+        vital_empty_tv = findViewById(R.id.vital_empty_tv);
 
         quality_disclaimer = findViewById(R.id.quality_disclaimer);
         audio_disabled_iv = findViewById(R.id.audio_disabled_iv);
@@ -350,7 +339,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
         video_mute.setOnClickListener(this);
         video_switch.setOnClickListener(this);
         flip_camera.setOnClickListener(this);
-        vitalsView.setOnClickListener(this);
+        vitalHeaderView.setOnClickListener(this);
         mainLay.setOnClickListener(this);
 
         updateUI();
@@ -395,6 +384,66 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                 constraintSet.applyTo(mainLay);
             }
         });
+
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (indicators.length <= 1) {
+                    return;
+                }
+
+                for (int i = 0;i<indicators.length;i++){
+                    if (position == i) {
+                        indicators[i].setImageDrawable(getResources().getDrawable(R.drawable.circular_selected_indicator));
+                    } else {
+                        indicators[i].setImageDrawable(getResources().getDrawable(R.drawable.circular_unselected_indicator));
+                    }
+                }
+
+                if (vitalCallAdapter != null) {
+                    vitalCallAdapter.didScrolled(position);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+    }
+
+
+    private void createIndicator(int count) {
+        if (!UserType.isUserPatient() || count <= 1) {
+            pager_indicator_container.setVisibility(View.GONE);
+            return;
+        }
+
+        pager_indicator_container.removeAllViews();
+
+        indicators = new ImageView[count];
+
+        for (int i = 0; i < count; i++) {
+            indicators[i] = new ImageView(CallActivity.this);
+
+            if (i == viewPager.getCurrentItem()) {
+                indicators[i].setImageDrawable(getResources().getDrawable(R.drawable.circular_selected_indicator));
+            } else {
+                indicators[i].setImageDrawable(getResources().getDrawable(R.drawable.circular_unselected_indicator));
+            }
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(4, 0, 4, 0);
+
+            pager_indicator_container.addView(indicators[i], params);
+        }
+
     }
 
     private void toggleVisibility() {
@@ -415,7 +464,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
             top_option.setVisibility(View.VISIBLE);
             user_info_lay.setVisibility(View.VISIBLE);
             hang_iv.setVisibility(View.VISIBLE);
-            vitalHeaderView.setVisibility(View.VISIBLE);
+            showVitalHeader();
 
             setToggleTimer();
         }
@@ -561,7 +610,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
         ConstrainSetUtil.clearAllConstraint(constraintSet, hang_iv.getId());
 
         ConstrainSetUtil.assignLeftAndRightToMain(constraintSet, mainLay.getId(), hang_iv.getId(), 0);
-        constraintSet.connect(hang_iv.getId(), ConstraintSet.BOTTOM, vitalsView.getId(), ConstraintSet.TOP);
+        constraintSet.connect(hang_iv.getId(), ConstraintSet.BOTTOM, mainLay.getId(), ConstraintSet.BOTTOM);
 
         constraintSet.connect(answer_iv.getId(), ConstraintSet.LEFT, mainLay.getId(), ConstraintSet.RIGHT);
         constraintSet.connect(answer_iv.getId(), ConstraintSet.BOTTOM, vitalsView.getId(), ConstraintSet.TOP);
@@ -605,6 +654,27 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
             flip_camera.setVisibility(View.VISIBLE);
 
             vitalsView.setVisibility(View.VISIBLE);
+
+            if (viewPager.getAdapter() == null) {
+                if (vitalCallAdapter == null) {
+
+                    ArrayList<VitalDevice> devices = new ArrayList<>();
+                    if (UserType.isUserPatient()) {
+                        devices = VitalPairedDevices.getAllPairedDevices(appPreference).getDevices();
+                        /*devices.add(new VitalDevice("", VitalsConstant.TYPE_PO3,false,""));
+                        devices.add(new VitalDevice("",VitalsConstant.TYPE_BP3L,false,""));
+                        devices.add(new VitalDevice("",VitalsConstant.TYPE_PO3,false,""));
+                        devices.add(new VitalDevice("",VitalsConstant.TYPE_PO3,false,""));
+                        devices.add(new VitalDevice("",VitalsConstant.TYPE_TS28B,false,""));*/
+                    }
+
+                    vitalCallAdapter = new VitalCallAdapter(getSupportFragmentManager(),devices,this);
+                }
+
+                viewPager.setAdapter(vitalCallAdapter);
+                viewPager.setCurrentItem(0);
+            }
+
         } else {
 
             if (!UserType.isUserPatient()) {
@@ -840,13 +910,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                 EventRecorder.recordCallUpdates("toggle_camera", null);
                 TokBox.shared.flipVideo();
                 break;
-            case R.id.vitalsView:
-                if (viewPager.getVisibility() == View.GONE) {
-                    arrow_iv.setImageDrawable(getDrawable(R.drawable.ic_keyboard_arrow_down_24dp));
-                    viewPager.setVisibility(View.VISIBLE);
+            case R.id.vitalHeaderView:
+                if (pager_container.getVisibility() == View.GONE) {
+                    showVitalContainer();
                 } else {
-                    arrow_iv.setImageDrawable(getDrawable(R.drawable.ic_arrow_up));
-                    viewPager.setVisibility(View.GONE);
+                    hideVitalContainer();
                 }
                 break;
             case R.id.main_container:
@@ -856,11 +924,24 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
         }
     }
 
+    private void hideVitalContainer() {
+        arrow_iv.setImageDrawable(getDrawable(R.drawable.ic_arrow_up));
+        if (pager_container.getVisibility() != View.GONE)
+            pager_container.setVisibility(View.GONE);
+    }
+
+    private void showVitalContainer() {
+        arrow_iv.setImageDrawable(getDrawable(R.drawable.ic_keyboard_arrow_down_24dp));
+        if (pager_container.getVisibility() != View.VISIBLE)
+            pager_container.setVisibility(View.VISIBLE);
+    }
+
     private void callDidStarted() {
         recording_tv.start();
 
         if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
             profile_iv.setVisibility(View.GONE);
+            showVitalHeader();
         }
 
         updateStateView();
@@ -872,6 +953,15 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
         top_option.setAlpha(1.0f);
 
         setToggleTimer();
+
+        TokBox.shared.setZOrderTopForLocalView();
+    }
+
+    private void showVitalHeader() {
+        vitalHeaderView.setVisibility(View.VISIBLE);
+
+         int height =(vitalHeaderView.getHeight() < 70) ? 70 : vitalHeaderView.getHeight();
+        ((ConstraintLayout.LayoutParams) hang_iv.getLayoutParams()).bottomMargin = height + 10;
     }
 
     private void updateStateView() {
@@ -1108,6 +1198,15 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
         updateQualityView();
     }
 
+    @Override
+    public void bluetoothMediaAction(Boolean forEnd) {
+        if (forEnd) {
+            onClick(hang_iv);
+        } else {
+            onClick(answer_iv);
+        }
+    }
+
     private void updateQualityView() {
         if (!TokBox.shared.getSubscriberAudioMuted() && !TokBox.shared.getSubscriberVideoMuted()) {
             quality_disclaimer.setVisibility(View.GONE);
@@ -1156,7 +1255,10 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
 
     @Override
     public void didReceiveVitalData(String data, String type) {
+        Log.d("CallActivity","didReceiveVitalData "+type);
 
+        if (vitalCallAdapter != null)
+            vitalCallAdapter.didReceivedVitalData(type,data);
     }
 
     @Override
@@ -1187,19 +1289,17 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
         errorModelObserver = new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-                String message;
-                if (errorModel != null && TextUtils.isEmpty(errorModel.getMessage())) {
-                    message = errorModel.getMessage();
-                } else {
-                    message = getString(R.string.something_went_wrong_try_again);
-                }
 
-                currentShowingDialog = showAlertDialog(getString(R.string.error), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        TokBox.shared.endCall(OpenTokConstants.other);
-                    }
-                }, null);
+                if (errorModel != null && TextUtils.isEmpty(errorModel.getMessage())) {
+                    String message = errorModel.getMessage();
+
+                    currentShowingDialog = showAlertDialog(getString(R.string.error), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            TokBox.shared.endCall(OpenTokConstants.other);
+                        }
+                    }, null);
+                }
 
             }
         };
@@ -1223,5 +1323,57 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,View
                 }
                 break;
         }
+    }
+
+    @Override
+    public VitalsManager getInstance() {
+        if (VitalsManager.instance == null) {
+            if (BuildConfig.FLAVOR.equals(Constants.BUILD_DOCTOR)) {
+                VitalsManager.instance = new VitalsManager(getApplication());
+            } else{
+                VitalsManager.instance = new iHealthVitalManager(getApplication());
+            }
+        }
+
+        return VitalsManager.instance;
+    }
+
+    @Override
+    public void updateBatteryView(int visibility, int battery) {
+
+    }
+
+    @Override
+    public void closeVitalController() {
+        hideVitalContainer();
+    }
+
+    @Override
+    public void didInitiateMeasure(String type) {
+        showVitalContainer();
+    }
+
+    @Override
+    public void didChangedNumberOfScreens(int count) {
+
+        if (count != indicators.length) {
+            createIndicator(count);
+        }
+
+        Log.d("CallActivity","didChangedNumberOfScreens "+count);
+
+        if (count == 0) {
+            vital_empty_tv.setVisibility(View.VISIBLE);
+
+            if (UserType.isUserPatient()) {
+                vital_empty_tv.setText(getString(R.string.vital_empty_pateint));
+            } else {
+                vital_empty_tv.setText(getString(R.string.vital_empty_non_pateint));
+            }
+
+        } else {
+            vital_empty_tv.setVisibility(View.GONE);
+        }
+
     }
 }

@@ -32,7 +32,6 @@ import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.base.CallPlacingFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
@@ -209,7 +208,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
                 intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, false);
 
-                startActivityForResult(intent, CallPlacingFragment.VideoFeedRequestID);
+                startActivity(intent);
             }
         }
     }

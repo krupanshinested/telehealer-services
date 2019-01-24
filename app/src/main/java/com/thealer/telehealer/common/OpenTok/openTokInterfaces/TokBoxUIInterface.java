@@ -25,5 +25,7 @@ public interface TokBoxUIInterface {
     void didChangedAudioInput(int type);
     void assignTokBoxApiViewModel(OpenTokViewModel openTokViewModel);
 
+    void bluetoothMediaAction(Boolean forEnd);
+
     String getCurrentCallQuality();
 }

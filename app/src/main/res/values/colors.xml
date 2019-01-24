@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorWhiteWithLessAlpha">#b7ffffff</color>
     <color name="colorBlack">#000000</color>
     <color name="colorBlack_50">#70000000</color>
     <color name="colorGrey">#808080</color>
@@ -16,4 +17,5 @@
     <color name="color_blue">#03a9f4</color>
     <color name="card_background_grey">#F0F0F0</color>
 
+    <color name="call_vital_title">#64000000</color>
 </resources>

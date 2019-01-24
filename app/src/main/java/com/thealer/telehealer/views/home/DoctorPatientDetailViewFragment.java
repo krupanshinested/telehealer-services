@@ -37,8 +37,9 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.CallPlacingFragment;
+import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -57,7 +58,7 @@ import java.util.Set;
 /**
  * Created by Aswin on 14,November,2018
  */
-public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
+public class DoctorPatientDetailViewFragment extends BaseFragment {
 
     private AppBarLayout appbarLayout;
     private CollapsingToolbarLayout collapsingToolbar;
@@ -174,7 +175,10 @@ public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
                             public void didSelectedItem(int position) {
 
                                 CallInitiateModel callInitiateModel = new CallInitiateModel(commonUserApiResponseModel.getUser_guid(), commonUserApiResponseModel, null, null, null, position == 0 ? OpenTokConstants.audio : OpenTokConstants.video);
-                                openCallIfPossible(callInitiateModel);
+
+                                Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
+                                intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL,callInitiateModel);
+                                startActivity(intent);
 
                             }
 

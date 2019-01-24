@@ -179,6 +179,11 @@ public class VitalInfoFragment extends BaseFragment implements View.OnClickListe
     }
 
     @Override
+    public void startedToConnect(String type, String serailNumber) {
+        //nothing to do
+    }
+
+    @Override
     public void didDiscoverDevice(String type, String serailNumber) {
         //nothing to do
     }

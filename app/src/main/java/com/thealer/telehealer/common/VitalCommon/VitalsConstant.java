@@ -69,6 +69,21 @@ public class VitalsConstant {
     public static final String TYPE_ECG3 = "ECG3";
     public static final String TYPE_ECG3_USB = "ECGUSB";
 
+
+    public static final String clear_key = "iHealth Clear";
+    public static final String air_key = "iHealth Air";
+    public static final String track_key = "iHealth Track";
+    public static final String core_key = "iHealth Core";
+    public static final String sense_key = "iHealth Sense";
+    public static final String lite_key = "iHealth Lite";
+    public static final String ease_key = "iHealth Ease";
+    public static final String feel_key = "iHealth Feel";
+    public static final String smart_key = "iHealth Smart";
+    public static final String view_key = "iHealth View";
+    public static final String thv3_key = "iHealth Thermometer FDIR";
+    public static final String ts28_key = "iHealth Thermometer TS28";
+
+
     public static int getMaxRange(String inputType) {
         switch (inputType) {
             case INPUT_SYSTOLE:
@@ -106,5 +121,31 @@ public class VitalsConstant {
     public static CharSequence getInputError(String inputType) {
         String value = " value should be in range of ";
         return inputType + value + getMinRange(inputType) + "-" + getMaxRange(inputType);
+    }
+
+
+    static public class VitalCallMapKeys {
+        public static final String status = "status";
+        //status
+        public static final String measuring = "measuring";
+        public static final String startedToMeasure = "startedToMeasure";
+        public static final String finishedMeasure = "finishedMeasure";
+        public static final String errorInMeasure = "errorInMeasure";
+        public static final String stripInserted = "stripInserted";
+        public static final String bloodDropped = "bloodDropped";
+        public static final String cancelled = "cancelled";
+
+        public static final String message = "message";
+        public static final String data = "data";
+
+        //vitals value
+        public static final String spo2 = "spo2";
+        public static final String wave = "wave";
+        public static final String pi = "pi";
+        public static final String bpm = "bpm";
+        public static final String systolicValue = "systolicValue";
+        public static final String diastolicValue = "diastolicValue";
+        public static final String heartRate = "heartRate";
+
     }
 }

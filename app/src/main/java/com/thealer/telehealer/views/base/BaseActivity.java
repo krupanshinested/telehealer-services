@@ -231,7 +231,7 @@ public class BaseActivity extends AppCompatActivity {
             alertDialog.setNegativeButton(negativeTitle, negativeListener);
         }
         Dialog dialog = alertDialog.create();
-        alertDialog.show();
+        dialog.show();
         return dialog;
     }
 

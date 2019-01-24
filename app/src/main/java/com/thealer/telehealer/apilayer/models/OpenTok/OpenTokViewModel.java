@@ -139,12 +139,11 @@ public class OpenTokViewModel extends BaseApiViewModel {
         });
     }
 
-    public void postaVoipCall(@Nullable  String doctorGuid,String toGuid,String sessionId,
-                              @Nullable String scheduleId,String callType,String uuid,ResultFetcher resultFetcher) {
+    public void postaVoipCall(@Nullable  String doctorGuid,String toGuid,
+                              @Nullable String scheduleId,String callType) {
 
         HashMap<String,String> result = new HashMap<>();
         result.put("user_guid",toGuid);
-        result.put("order_id",sessionId);
         if (scheduleId != null) {
             result.put("schedule_id",scheduleId);
         }
@@ -157,27 +156,12 @@ public class OpenTokViewModel extends BaseApiViewModel {
                 if (status) {
                     getAuthApiService().postaVOIPCall(doctorGuid,result)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAObserver<TokenFetchModel>(Constants.SHOW_PROGRESS) {
                                 @Override
-                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                public void onSuccess(TokenFetchModel tokenFetchModel) {
 
                                     EventRecorder.recordNotification("REQUEST_CALL");
-
-                                    PushPayLoad pushPayLoad = PubNubNotificationPayload.getCallInvitePayload(
-                                            UserDetailPreferenceManager.getUserDisplayName()
-                                            ,UserDetailPreferenceManager.getUser_guid(), toGuid,
-                                            uuid,callType,sessionId,doctorGuid);
-                                    PubnubUtil.shared.publishVoipMessage(pushPayLoad, new PubNubResult() {
-                                        @Override
-                                        public void didSend(Boolean isSuccess) {
-
-                                            if (isSuccess) {
-                                                resultFetcher.didFetched(baseApiResponseModel);
-                                            }
-
-                                        }
-                                    });
-
+                                    baseApiResponseModelMutableLiveData.setValue(tokenFetchModel);
                                 }
                             });
                 }
