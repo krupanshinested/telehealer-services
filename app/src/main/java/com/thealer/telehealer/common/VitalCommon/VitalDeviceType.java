@@ -43,6 +43,44 @@ public class VitalDeviceType {
         }
     }
 
+    public String getKeyValue(String type) {
+        switch (type) {
+            case VitalsConstant.TYPE_PO3: return VitalsConstant.air_key;
+            case VitalsConstant.TYPE_BP3L: return VitalsConstant.ease_key;
+            case VitalsConstant.TYPE_BP5: return VitalsConstant.feel_key;
+            case VitalsConstant.TYPE_BP7: return VitalsConstant.sense_key;
+            case VitalsConstant.TYPE_HS4S: return VitalsConstant.lite_key;
+            case VitalsConstant.TYPE_BP7S: return VitalsConstant.view_key;
+            case VitalsConstant.TYPE_BG5: return VitalsConstant.smart_key;
+            case VitalsConstant.TYPE_BPM1: return VitalsConstant.clear_key;
+            case VitalsConstant.TYPE_550BT: return VitalsConstant.track_key;
+            case VitalsConstant.TYPE_HS6: return VitalsConstant.core_key;
+            case VitalsConstant.TYPE_TS28B: return VitalsConstant.ts28_key;
+            case VitalsConstant.TYPE_FDIR_V3: return VitalsConstant.thv3_key;
+            default:
+                return "";
+        }
+    }
+
+    public String getVitalType(String key) {
+        switch (key) {
+            case VitalsConstant.air_key: return VitalsConstant.TYPE_PO3;
+            case VitalsConstant.ease_key: return VitalsConstant.TYPE_BP3L;
+            case VitalsConstant.feel_key: return VitalsConstant.TYPE_BP5;
+            case VitalsConstant.sense_key: return VitalsConstant.TYPE_BP7;
+            case VitalsConstant.lite_key: return VitalsConstant.TYPE_HS4S;
+            case VitalsConstant.view_key: return VitalsConstant.TYPE_BP7S;
+            case VitalsConstant.smart_key: return VitalsConstant.TYPE_BG5;
+            case VitalsConstant.clear_key: return VitalsConstant.TYPE_BPM1;
+            case VitalsConstant.track_key: return VitalsConstant.TYPE_550BT;
+            case VitalsConstant.core_key: return VitalsConstant.TYPE_HS6;
+            case VitalsConstant.ts28_key: return VitalsConstant.TYPE_TS28B;
+            case VitalsConstant.thv3_key: return VitalsConstant.TYPE_FDIR_V3;
+            default:
+                return "";
+        }
+    }
+
     public int getDescription(String type) {
         switch (type) {
         case VitalsConstant.TYPE_PO3: return R.string.wireless_Pulse_Oximeter;
