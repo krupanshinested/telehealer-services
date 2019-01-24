@@ -371,7 +371,7 @@ public interface ApiInterface {
     Observable<TokenFetchModel> getSessionId(@Query(CALL_QUALITY) String call_quality, @Query(DOCTOR_GUID) String doctor_guid);
 
     @POST("api/call")
-    Observable<BaseApiResponseModel> postaVOIPCall(@Query(DOCTOR_GUID) String doctor_guid, @Body Map<String, String> param);
+    Observable<TokenFetchModel> postaVOIPCall(@Query(DOCTOR_GUID) String doctor_guid, @Body Map<String, String> param);
 
     @POST("api/setup/verification-link")
     Observable<BaseApiResponseModel> requestVerificationMain();

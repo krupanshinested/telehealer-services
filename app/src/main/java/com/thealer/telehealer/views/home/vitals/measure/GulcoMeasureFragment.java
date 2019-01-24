@@ -333,24 +333,24 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
 
     //GulcoMeasureInterface methods
     @Override
-    public void updateGulcoMessage(String message) {
+    public void updateGulcoMessage(String deviceType,String message) {
 
     }
 
     @Override
-    public void updateGulcoValue(int value) {
+    public void updateGulcoValue(String deviceType,int value) {
         gulco_value.setText(value + "");
         finalGulcoValue = value+"";
         setCurrentState(MeasureState.ended);
     }
 
     @Override
-    public void didGulcoStartMeasure() {
+    public void didGulcoStartMeasure(String deviceType) {
         setCurrentState(MeasureState.started);
     }
 
     @Override
-    public void didFinishGulcoMesureWithFailure(String error) {
+    public void didFinishGulcoMesureWithFailure(String deviceType,String error) {
 
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
             EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
@@ -367,17 +367,17 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
     }
 
     @Override
-    public void didStripInserted() {
+    public void didStripInserted(String deviceType) {
         setCurrentState(MeasureState.stripInserted);
     }
 
     @Override
-    public void didStripEjected() {
+    public void didStripEjected(String deviceType) {
 
     }
 
     @Override
-    public void didBloodDropped() {
+    public void didBloodDropped(String deviceType) {
         setCurrentState(MeasureState.bloodDropped);
     }
 
@@ -395,6 +395,11 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
     @Override
     public void didDiscoverDevice(String type, String serailNumber) {
         //nothing to do
+    }
+
+    @Override
+    public void startedToConnect(String type, String serailNumber) {
+
     }
 
     @Override

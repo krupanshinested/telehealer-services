@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
@@ -26,37 +27,57 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
+import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
+import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.call.CallActivity;
+import com.thealer.telehealer.views.call.Interfaces.Action;
+import com.thealer.telehealer.views.call.Interfaces.CallVitalEvents;
+import com.thealer.telehealer.views.call.Interfaces.CallVitalPagerInterFace;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.WeightMeasureInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Created by rsekar on 12/3/18.
  */
 
 public class WeightMeasureFragment extends BaseFragment implements VitalPairInterface,
-        View.OnClickListener, WeightMeasureInterface, VitalBatteryFetcher {
+        View.OnClickListener, WeightMeasureInterface, VitalBatteryFetcher,CallVitalEvents {
 
-    private OnActionCompleteInterface onActionCompleteInterface;
-    private VitalManagerInstance vitalManagerInstance;
-    private ToolBarInterface toolBarInterface;
-    private OnViewChangeInterface onViewChangeInterface;
     private ImageView otherOptionView;
+
+    @Nullable
+    private OnActionCompleteInterface onActionCompleteInterface;
+    @Nullable
+    private OnViewChangeInterface onViewChangeInterface;
+    @Nullable
+    private VitalManagerInstance vitalManagerInstance;
+    @Nullable
+    private ToolBarInterface toolBarInterface;
+
+    @Nullable
+    private Action action;
 
     private VitalDevice vitalDevice;
 
-    private TextView value_tv, unit_tv, message_tv;
+    private TextView value_tv, unit_tv, message_tv,title_tv;
     private CustomButton close_bt, save_bt;
     private Button remeasure_bt;
-    private ConstraintLayout result_lay;
+    private ConstraintLayout result_lay,main_container;
 
     private int currentState;
     private Boolean isNeedToTrigger = false;
@@ -64,9 +85,14 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
     private String finalWeightValue = "";
     private VitalsApiViewModel vitalsApiViewModel;
 
+    @Nullable
+    public CallVitalPagerInterFace callVitalPagerInterFace;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
 
         if (getArguments() != null) {
             vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
@@ -78,14 +104,16 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
         } else {
             currentState = MeasureState.notStarted;
         }
+
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).attachObserver(vitalsApiViewModel);
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_weight_measure, container, false);
-
-        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
 
         initView(view);
         return view;
@@ -102,18 +130,24 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
     public void onResume() {
         super.onResume();
 
-        vitalManagerInstance.getInstance().setListener(this);
-        vitalManagerInstance.getInstance().setWeightListener(this);
-        toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
+        assignVitalListener();
 
-        if (currentState == MeasureState.notStarted) {
+        if (toolBarInterface != null)
+            toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
+
+        if (currentState == MeasureState.notStarted && vitalManagerInstance != null) {
             vitalManagerInstance.getInstance().connectDevice(vitalDevice.getType(), vitalDevice.getDeviceId());
         }
 
-        onViewChangeInterface.hideOrShowClose(false);
-        onViewChangeInterface.hideOrShowBackIv(true);
+        if (onViewChangeInterface != null) {
+            onViewChangeInterface.hideOrShowClose(false);
+            onViewChangeInterface.hideOrShowBackIv(true);
+        }
 
-        otherOptionView = toolBarInterface.getExtraOption();
+        if (toolBarInterface != null) {
+            otherOptionView = toolBarInterface.getExtraOption();
+        }
+
         if (otherOptionView != null) {
             otherOptionView.setVisibility(View.VISIBLE);
             otherOptionView.setOnClickListener(this);
@@ -124,37 +158,55 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
 
         connectDeviceIfNeedeed();
 
-        vitalManagerInstance.updateBatteryView(View.GONE, 0);
-        vitalManagerInstance.getInstance().setBatteryFetcherListener(this);
+        if (vitalManagerInstance != null) {
+            vitalManagerInstance.updateBatteryView(View.GONE, 0);
+            vitalManagerInstance.getInstance().setBatteryFetcherListener(this);
+        }
         fetchBattery();
 
-        toolBarInterface.updateSubTitle("", View.GONE);
+        if (toolBarInterface != null)
+            toolBarInterface.updateSubTitle("", View.GONE);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        vitalManagerInstance.getInstance().reset(this);
+        if (vitalManagerInstance != null)
+            vitalManagerInstance.getInstance().reset(this);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        toolBarInterface = (ToolBarInterface) getActivity();
-        vitalManagerInstance = (VitalManagerInstance) getActivity();
-        onViewChangeInterface = (OnViewChangeInterface) getActivity();
+
+        if (getActivity() instanceof OnViewChangeInterface) {
+            onViewChangeInterface = (OnViewChangeInterface) getActivity();
+        }
+
+        if (getActivity() instanceof OnActionCompleteInterface) {
+            onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
+        }
+
+        if (getActivity() instanceof ToolBarInterface) {
+            toolBarInterface = (ToolBarInterface) getActivity();
+        }
+
+        if (getActivity() instanceof VitalManagerInstance) {
+            vitalManagerInstance = (VitalManagerInstance) getActivity();
+        }
     }
 
     private void initView(View baseView) {
         value_tv = baseView.findViewById(R.id.value_tv);
-        unit_tv = baseView.findViewById(R.id.title_tv);
+        unit_tv = baseView.findViewById(R.id.unit_tv);
         close_bt = baseView.findViewById(R.id.close_bt);
         save_bt = baseView.findViewById(R.id.save_bt);
         result_lay = baseView.findViewById(R.id.result_lay);
         message_tv = baseView.findViewById(R.id.message_tv);
         remeasure_bt = baseView.findViewById(R.id.remeasure_bt);
+        main_container = baseView.findViewById(R.id.main_container);
+        title_tv = baseView.findViewById(R.id.title_tv);
 
         save_bt.setOnClickListener(this);
         close_bt.setOnClickListener(this);
@@ -168,16 +220,32 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
 
         String measurementType = VitalDeviceType.shared.getMeasurementType(vitalDevice.getType());
         unit_tv.setText(SupportedMeasurementType.getVitalUnit(measurementType));
+
+        if (isPresentedInsideCallActivity()) {
+            title_tv.setVisibility(View.VISIBLE);
+            title_tv.setText(VitalDeviceType.shared.getTitle(vitalDevice.getType()));
+            main_container.setBackgroundColor(getResources().getColor(R.color.colorWhiteWithLessAlpha));
+        }
+
+        if (action != null) {
+            action.doItNow();
+            action = null;
+        }
     }
 
     private void connectDeviceIfNeedeed() {
-        if (!vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(), vitalDevice.getDeviceId())) {
+        if (vitalManagerInstance != null && !vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(), vitalDevice.getDeviceId())) {
             vitalManagerInstance.getInstance().connectDevice(vitalDevice.getType(), vitalDevice.getDeviceId());
         }
     }
 
+    private Boolean isPresentedInsideCallActivity() {
+        return getActivity() instanceof CallActivity;
+    }
+
     private void fetchBattery() {
-        vitalManagerInstance.getInstance().fetchBattery(vitalDevice.getType(), vitalDevice.getDeviceId());
+        if (vitalManagerInstance != null)
+            vitalManagerInstance.getInstance().fetchBattery(vitalDevice.getType(), vitalDevice.getDeviceId());
     }
 
     private void updateView(int state) {
@@ -203,10 +271,14 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
                 remeasure_bt.setVisibility(View.VISIBLE);
 
                 save_bt.setVisibility(View.VISIBLE);
-                close_bt.setVisibility(View.VISIBLE);
-                save_bt.setText(getString(R.string.SAVE_AND_CLOSE));
-                close_bt.setText(getString(R.string.CLOSE));
+                if (isPresentedInsideCallActivity()) {
+                    save_bt.setText(getString(R.string.done));
+                } else {
+                    save_bt.setText(getString(R.string.SAVE_AND_CLOSE));
+                    close_bt.setText(getString(R.string.CLOSE));
+                    close_bt.setVisibility(View.VISIBLE);
 
+                }
                 value_tv.setText(finalWeightValue);
                 break;
             case MeasureState.startedToReceieveValues:
@@ -220,11 +292,18 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
                 save_bt.setText(getString(R.string.RESTART));
                 break;
         }
+
+        if (!UserType.isUserPatient()) {
+            save_bt.setVisibility(View.GONE);
+            close_bt.setVisibility(View.GONE);
+            remeasure_bt.setVisibility(View.GONE);
+        }
     }
 
     private void startMeasure() {
         setCurrentState(MeasureState.started);
-        vitalManagerInstance.getInstance().startMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
+        if (vitalManagerInstance != null)
+            vitalManagerInstance.getInstance().startMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
     }
 
     private void setCurrentState(int state) {
@@ -237,7 +316,18 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.close_bt:
-                getActivity().finish();
+                if (isPresentedInsideCallActivity()) {
+                    if (vitalManagerInstance != null) {
+                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
+                        setCurrentState(MeasureState.notStarted);
+
+                        if (callVitalPagerInterFace != null) {
+                            callVitalPagerInterFace.closeVitalController();
+                        }
+                    }
+                } else {
+                    getActivity().finish();
+                }
                 break;
             case R.id.save_bt:
                 switch (currentState) {
@@ -247,12 +337,16 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
                         break;
                     case MeasureState.started:
                     case MeasureState.startedToReceieveValues:
-                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
+                        if (vitalManagerInstance != null)
+                            vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
                         setCurrentState(MeasureState.notStarted);
                         break;
                     case MeasureState.ended:
-                        vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.weight, finalWeightValue, vitalsApiViewModel);
-                        getActivity().finish();
+                        if (!isPresentedInsideCallActivity()) {
+                            if (vitalManagerInstance != null)
+                                vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.weight, finalWeightValue, vitalsApiViewModel);
+                        }
+                        onClick(close_bt);
                         break;
                 }
                 break;
@@ -260,7 +354,8 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
                 startMeasure();
                 break;
             case R.id.other_option:
-                onActionCompleteInterface.onCompletionResult(RequestID.OPEN_VITAL_INFO, true, getArguments());
+                if (onActionCompleteInterface != null)
+                    onActionCompleteInterface.onCompletionResult(RequestID.OPEN_VITAL_INFO, true, getArguments());
                 break;
         }
     }
@@ -274,6 +369,11 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
     @Override
     public void didScanFailed(String error) {
         //nothing to do over here
+    }
+
+    @Override
+    public void startedToConnect(String type, String serailNumber) {
+        message_tv.setText(getString(R.string.connecting));
     }
 
     @Override
@@ -327,12 +427,12 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
 
     //WeightMeasureInterface methods
     @Override
-    public void updateWeightMessage(String message) {
+    public void updateWeightMessage(String deviceType,String message) {
         message_tv.setText(message);
     }
 
     @Override
-    public void updateWeightValue(Float value) {
+    public void updateWeightValue(String deviceType,Float value) {
         if (currentState == MeasureState.ended) {
             return;
         }
@@ -347,21 +447,27 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
     }
 
     @Override
-    public void didStartWeightMeasure() {
+    public void didStartWeightMeasure(String deviceType) {
 
     }
 
     @Override
-    public void didFinishWeightMeasure(Float weight, String id) {
+    public void didFinishWeightMeasure(String deviceType,Float weight, String id) {
         message_tv.setText("");
 
         finalWeightValue = weight + "";
         setCurrentState(MeasureState.ended);
 
+        if (isPresentedInsideCallActivity()) {
+            if (UserType.isUserPatient() && vitalManagerInstance != null) {
+                vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.weight, finalWeightValue, vitalsApiViewModel);
+            }
+        }
+
     }
 
     @Override
-    public void didFinishWeightMesureWithFailure(String error) {
+    public void didFinishWeightMesureWithFailure(String deviceType,String error) {
         message_tv.setText(error);
 
         setCurrentState(MeasureState.failed);
@@ -369,15 +475,115 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
 
     @Override
     public void updateBatteryDetails(BatteryResult batteryResult) {
-        if (batteryResult.getBattery() != -1) {
-            vitalManagerInstance.updateBatteryView(View.VISIBLE, batteryResult.getBattery());
-        } else {
-            vitalManagerInstance.updateBatteryView(View.GONE, 0);
+        if (vitalManagerInstance != null) {
+            if (batteryResult.getBattery() != -1) {
+                vitalManagerInstance.updateBatteryView(View.VISIBLE, batteryResult.getBattery());
+            } else {
+                vitalManagerInstance.updateBatteryView(View.GONE, 0);
+            }
         }
     }
 
     @Override
     public void notConnected(String deviceType, String deviceMac) {
         connectDeviceIfNeedeed();
+    }
+
+    //Call Events methods
+    @Override
+    public void didReceiveData(String data) {
+        Log.d("WeightMeasureFragment","received data");
+        if (value_tv == null) {
+            action = new Action() {
+                @Override
+                public void doItNow() {
+                    processSignalMessagesForWeight(data);
+                }
+            };
+        } else {
+            processSignalMessagesForWeight(data);
+        }
+    }
+
+    @Override
+    public void assignVitalListener() {
+        if (vitalManagerInstance != null) {
+            vitalManagerInstance.getInstance().setListener(this);
+            vitalManagerInstance.getInstance().setWeightListener(this);
+        }
+    }
+
+    @Override
+    public String getVitalDeviceType() {
+        return vitalDevice.getType();
+    }
+
+    private void processSignalMessagesForWeight(String data) {
+        Type type = new TypeToken<HashMap<String, String>>() {}.getType();
+
+        try {
+            HashMap<String, Object> map = Utils.deserialize(data, type);
+
+            switch ((String) map.get(VitalsConstant.VitalCallMapKeys.status)) {
+                case VitalsConstant.VitalCallMapKeys.startedToMeasure:
+                    break;
+                case VitalsConstant.VitalCallMapKeys.measuring:
+
+                    float result = 0f;
+                    if (map.get(VitalsConstant.VitalCallMapKeys.data) instanceof Double) {
+                        Double value = (Double) map.get(VitalsConstant.VitalCallMapKeys.data);
+                        if (value != null) {
+                            result = value.floatValue();
+                        }
+                    } else {
+                        result = (Float) map.get(VitalsConstant.VitalCallMapKeys.data);
+                    }
+
+                    updateWeightValue(vitalDevice.getType(),result);
+
+                    break;
+                case VitalsConstant.VitalCallMapKeys.errorInMeasure:
+
+                    String errorMessage = (String) map.get(VitalsConstant.VitalCallMapKeys.message);
+                    didFinishWeightMesureWithFailure(vitalDevice.getType(),errorMessage);
+
+                    break;
+                case VitalsConstant.VitalCallMapKeys.finishedMeasure:
+
+                    float finalResult = 0f;
+                    if (map.get(VitalsConstant.VitalCallMapKeys.data) instanceof Double) {
+                        Double value = (Double) map.get(VitalsConstant.VitalCallMapKeys.data);
+                        if (value != null) {
+                            finalResult = value.floatValue();
+                        }
+                    } else {
+                        finalResult = (Float) map.get(VitalsConstant.VitalCallMapKeys.data);
+                    }
+
+                    didFinishWeightMeasure(vitalDevice.getType(),finalResult,"");
+
+                    break;
+            }
+
+            if (currentState == MeasureState.notStarted) {
+                openInDetail();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openInDetail() {
+        didStartWeightMeasure(vitalDevice.getType());
+
+        if (callVitalPagerInterFace != null)
+            callVitalPagerInterFace.didInitiateMeasure(vitalDevice.getType());
+
+    }
+
+    @Override
+    public void assignVitalDevice(VitalDevice vitalDevice) {
+        this.vitalDevice = vitalDevice;
     }
 }

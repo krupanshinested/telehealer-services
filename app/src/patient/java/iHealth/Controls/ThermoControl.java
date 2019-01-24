@@ -70,14 +70,14 @@ public class ThermoControl {
                                 modified = ((int)result + ".0");
                             }
 
-                            thermoMeasureInterface.updateThermoValue(Double.parseDouble(modified));
+                            thermoMeasureInterface.updateThermoValue(deviceType,Double.parseDouble(modified));
 
                         } catch (Exception e) {
-                            thermoMeasureInterface.updateThermoValue(0.0);
+                            thermoMeasureInterface.updateThermoValue(deviceType,0.0);
                         }
                         break;
                     case TS28BProfile.ACTION_COMMUNICATION_TIMEOUT:
-                        thermoMeasureInterface.didThermoFinishMesureWithFailure(context.getString(R.string.communication_timeout));
+                        thermoMeasureInterface.didThermoFinishMesureWithFailure(deviceType,context.getString(R.string.communication_timeout));
                         break;
                 }
                 break;
@@ -109,12 +109,12 @@ public class ThermoControl {
                                 modified = ((int)result + ".0");
                             }
 
-                            thermoMeasureInterface.updateThermoValue(Double.parseDouble(modified));
+                            thermoMeasureInterface.updateThermoValue(deviceType,Double.parseDouble(modified));
 
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            thermoMeasureInterface.didThermoFinishMesureWithFailure(context.getString(R.string.no_previous_value));
+                            thermoMeasureInterface.didThermoFinishMesureWithFailure(deviceType,context.getString(R.string.no_previous_value));
                         }
 
 
@@ -125,10 +125,10 @@ public class ThermoControl {
                         try {
                             JSONObject info = new JSONObject(message);
                             String descriptin = info.getString(BtmProfile.ERROR_DESCRIPTION_BTM);
-                            thermoMeasureInterface.didThermoFinishMesureWithFailure(descriptin);
+                            thermoMeasureInterface.didThermoFinishMesureWithFailure(deviceType,descriptin);
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            thermoMeasureInterface.didThermoFinishMesureWithFailure(e.getLocalizedMessage());
+                            thermoMeasureInterface.didThermoFinishMesureWithFailure(deviceType,e.getLocalizedMessage());
                         }
                         break;
 
@@ -203,10 +203,10 @@ public class ThermoControl {
         Object object = getInstance(deviceType,deviceMac);
         if (object != null) {
             ts28BControl = (TS28BControl) object;
-            thermoMeasureInterface.didThermoStartMeasure();
+            thermoMeasureInterface.didThermoStartMeasure(deviceType);
             ts28BControl.getMeasurement();
         } else {
-            thermoMeasureInterface.didThermoFinishMesureWithFailure(context.getString(R.string.unable_to_connect));
+            thermoMeasureInterface.didThermoFinishMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
         }
 
     }
@@ -215,10 +215,10 @@ public class ThermoControl {
         Object object = getInstance(deviceType,deviceMac);
         if (object != null) {
             fdirControl = (BtmControl) object;
-            thermoMeasureInterface.didThermoStartMeasure();
+            thermoMeasureInterface.didThermoStartMeasure(deviceType);
             fdirControl.getMemoryData();
         } else {
-            thermoMeasureInterface.didThermoFinishMesureWithFailure(context.getString(R.string.unable_to_connect));
+            thermoMeasureInterface.didThermoFinishMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
         }
 
     }

@@ -62,10 +62,10 @@ public class WeightControl {
                     float weight = ( (float) jsonObject.getDouble(HsProfile.LIVEDATA_HS) * 2.2f);
                     weight =  Float.parseFloat(String.format("%.1f", weight));
                     Log.d(TAG, "weight:" + weight);
-                    weightMeasureInterface.updateWeightValue(weight);
+                    weightMeasureInterface.updateWeightValue(deviceType,weight);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    weightMeasureInterface.didFinishWeightMesureWithFailure(e.getLocalizedMessage());
+                    weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType,e.getLocalizedMessage());
                 }
                 break;
             case HsProfile.ACTION_ONLINE_RESULT_HS:
@@ -75,14 +75,14 @@ public class WeightControl {
                     weight =  Float.parseFloat(String.format("%.1f", weight));
                     String dataId = jsonObject.getString(HsProfile.DATAID);
                     Log.d(TAG, "dataId:" + dataId + "---weight:" + weight);
-                    weightMeasureInterface.didFinishWeightMeasure(weight,dataId);
+                    weightMeasureInterface.didFinishWeightMeasure(deviceType,weight,dataId);
 
                     //stop the current measure
                     stopMeasure(deviceType,mac);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    weightMeasureInterface.didFinishWeightMesureWithFailure(e.getLocalizedMessage());
+                    weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType,e.getLocalizedMessage());
                 }
                 break;
             case HsProfile.ACTION_NO_HISTORICALDATA:
@@ -96,10 +96,10 @@ public class WeightControl {
                     Message error = new Message();
                     error.what = 1;
                     error.obj = "err:" + err;
-                    weightMeasureInterface.didFinishWeightMesureWithFailure(description);
+                    weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType,description);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    weightMeasureInterface.didFinishWeightMesureWithFailure(e.getLocalizedMessage());
+                    weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType,e.getLocalizedMessage());
                 }
                 break;
             default:
@@ -174,11 +174,11 @@ public class WeightControl {
         Object object = getInstance(deviceType,deviceMac);
         if (object != null) {
             hs4Device = (Hs4sControl) object;
-            weightMeasureInterface.didStartWeightMeasure();
+            weightMeasureInterface.didStartWeightMeasure(deviceType);
             hs4Device.measureOnline(2,123);
 
         } else {
-            weightMeasureInterface.didFinishWeightMesureWithFailure(context.getString(R.string.unable_to_connect));
+            weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
         }
     }
 

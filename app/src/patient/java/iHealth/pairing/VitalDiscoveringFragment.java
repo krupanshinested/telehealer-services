@@ -264,6 +264,11 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
     }
 
     @Override
+    public void startedToConnect(String type, String serailNumber) {
+
+    }
+
+    @Override
     public void didDiscoverDevice(String type, String serailNumber) {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
