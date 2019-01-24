@@ -115,41 +115,52 @@ public class CustomAudioDevice extends BaseAudioDevice {
     private final BroadcastReceiver btStatusReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (null != action && action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)) {
-                int state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, -1);
-                switch (state) {
-                    case BluetoothHeadset.STATE_CONNECTED:
-                        Log.d(LOG_TAG, "BroadcastReceiver: STATE_CONNECTED");
-                        synchronized (bluetoothLock) {
-                            if (BluetoothState.DISCONNECTED == bluetoothState) {
-                                bluetoothState = BluetoothState.CONNECTED;
+            if (null != action) {
+                if (action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)) {
+                    int state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, -1);
+                    switch (state) {
+                        case BluetoothHeadset.STATE_CONNECTED:
+                            Log.d(LOG_TAG, "BroadcastReceiver: STATE_CONNECTED");
+                            synchronized (bluetoothLock) {
+                                if (BluetoothState.DISCONNECTED == bluetoothState) {
+                                    bluetoothState = BluetoothState.CONNECTED;
 
-                                Log.d(LOG_TAG, "Bluetooth Headset: Connecting SCO");
-                                connectBluetooth();
+                                    Log.d(LOG_TAG, "Bluetooth Headset: Connecting SCO");
+                                    connectBluetooth();
+                                }
                             }
-                        }
-                        break;
-                    case BluetoothHeadset.STATE_DISCONNECTED:
-                        Log.d(LOG_TAG, "BroadcastReceiver: STATE_DISCONNECTED");
-                        synchronized (bluetoothLock) {
-                            if (BluetoothState.CONNECTED == bluetoothState) {
-                                bluetoothState = BluetoothState.DISCONNECTED;
+                            break;
+                        case BluetoothHeadset.STATE_DISCONNECTED:
+                            Log.d(LOG_TAG, "BroadcastReceiver: STATE_DISCONNECTED");
+                            synchronized (bluetoothLock) {
+                                if (BluetoothState.CONNECTED == bluetoothState) {
+                                    bluetoothState = BluetoothState.DISCONNECTED;
 
-                                Log.d(LOG_TAG, "Bluetooth Headset: Disconnecting SCO");
-                                if (audioManager.isWiredHeadsetOn()) {
-                                    connectHeadPhone();
-                                } else {
-                                    if (getOutputMode() == OutputMode.SpeakerPhone) {
-                                        connectSpeaker();
+                                    Log.d(LOG_TAG, "Bluetooth Headset: Disconnecting SCO");
+                                    if (audioManager.isWiredHeadsetOn()) {
+                                        connectHeadPhone();
                                     } else {
-                                        connectEarpiece();
+                                        if (getOutputMode() == OutputMode.SpeakerPhone) {
+                                            connectSpeaker();
+                                        } else {
+                                            connectEarpiece();
+                                        }
                                     }
                                 }
                             }
-                        }
-                        break;
-                    default:
-                        break;
+                            break;
+                        default:
+                            Log.d(LOG_TAG, "BroadcastReceiver: default " + state);
+                            break;
+                    }
+                } else if (action.equals(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED)) {
+                    int state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, BluetoothHeadset.STATE_DISCONNECTED);
+                    if (state == BluetoothHeadset.STATE_AUDIO_CONNECTED) {
+                        Log.d(LOG_TAG, "Connected");
+                    } else if (state == BluetoothHeadset.STATE_AUDIO_DISCONNECTED) {
+                        if (audioInterface != null)
+                            audioInterface.didPressedBluetoothButton();
+                    }
                 }
             }
         }
@@ -770,6 +781,11 @@ public class CustomAudioDevice extends BaseAudioDevice {
                     btStatusReceiver,
                     new IntentFilter(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
             );
+
+            IntentFilter f = new IntentFilter(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED);
+            f.setPriority(Integer.MAX_VALUE);
+            context.registerReceiver(btStatusReceiver, f);
+
             scoReceiverRegistered = true;
         }
     }

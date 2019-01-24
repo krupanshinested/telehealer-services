@@ -12,6 +12,7 @@ public class ErrorModel {
     private boolean success;
     private String message;
     private String data;
+    private String response;
 
     //for Brain Tree
     private String name;
@@ -57,5 +58,13 @@ public class ErrorModel {
     @Nullable
     public String getName() {
         return name;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 }

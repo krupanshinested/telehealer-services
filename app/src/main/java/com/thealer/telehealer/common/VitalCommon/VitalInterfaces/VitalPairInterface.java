@@ -7,6 +7,7 @@ package com.thealer.telehealer.common.VitalCommon.VitalInterfaces;
 public interface VitalPairInterface {
     void didScanFinish();
     void didScanFailed(String error);
+    void startedToConnect(String type,String serailNumber);
     void didDiscoverDevice(String type,String serailNumber);
     void didConnected(String type,String serailNumber);
     void didDisConnected(String type,String serailNumber);

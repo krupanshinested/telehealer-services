@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.home.vitals.measure;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -28,6 +29,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IFillFormatter;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.gson.reflect.TypeToken;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
@@ -38,40 +40,57 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
+import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
+import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.call.CallActivity;
+import com.thealer.telehealer.views.call.Interfaces.Action;
+import com.thealer.telehealer.views.call.Interfaces.CallVitalEvents;
+import com.thealer.telehealer.views.call.Interfaces.CallVitalPagerInterFace;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.PulseMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by rsekar on 12/3/18.
  */
 
 public class PulseMeasureFragment extends BaseFragment implements VitalPairInterface,
-        View.OnClickListener,PulseMeasureInterface,VitalBatteryFetcher {
+        View.OnClickListener,PulseMeasureInterface,VitalBatteryFetcher,CallVitalEvents {
 
+    @Nullable
     private OnActionCompleteInterface onActionCompleteInterface;
-    private VitalManagerInstance vitalManagerInstance;
-    private ToolBarInterface toolBarInterface;
+    @Nullable
     private OnViewChangeInterface onViewChangeInterface;
+    @Nullable
+    private VitalManagerInstance vitalManagerInstance;
+    @Nullable
+    private ToolBarInterface toolBarInterface;
+
+    @Nullable
+    private Action action;
 
     private VitalDevice vitalDevice;
 
     private ImageView otherOptionView;
     private LineChart graph;
-    private TextView pulse_value,pulse,spo2_value,spo2,message_tv;
+    private TextView pulse_value,pulse,spo2_value,spo2,message_tv,title_tv;
     private CustomButton save_bt,close_bt;
     private Button remeasure_bt;
-    private ConstraintLayout result_lay;
+    private ConstraintLayout result_lay,main_container;
 
     private int currentState;
     private Boolean isNeedToTrigger = false;
@@ -79,9 +98,14 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
     private String finalPulseValue = "",finalHeartRate = "";
     private VitalsApiViewModel vitalsApiViewModel;
 
+    @Nullable
+    public CallVitalPagerInterFace callVitalPagerInterFace;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
 
         if (getArguments() != null) {
             vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
@@ -93,14 +117,16 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
         } else {
             currentState = MeasureState.notStarted;
         }
+
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).attachObserver(vitalsApiViewModel);
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pulse_measurement, container, false);
-
-        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
 
         initView(view);
         return view;
@@ -117,14 +143,18 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
     public void onResume() {
         super.onResume();
 
-        vitalManagerInstance.getInstance().setListener(this);
-        vitalManagerInstance.getInstance().setPulseListener(this);
-        toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
+        assignVitalListener();
 
-        onViewChangeInterface.hideOrShowClose(false);
-        onViewChangeInterface.hideOrShowBackIv(true);
+        if (toolBarInterface != null)
+            toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
 
-        otherOptionView = toolBarInterface.getExtraOption();
+        if (onViewChangeInterface != null) {
+            onViewChangeInterface.hideOrShowClose(false);
+            onViewChangeInterface.hideOrShowBackIv(true);
+        }
+
+        if (toolBarInterface != null)
+            otherOptionView = toolBarInterface.getExtraOption();
         if (otherOptionView != null) {
             otherOptionView.setVisibility(View.VISIBLE);
             otherOptionView.setOnClickListener(this);
@@ -135,27 +165,43 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
 
         connectDeviceIfNeedeed();
 
-        vitalManagerInstance.updateBatteryView(View.GONE,0);
-        vitalManagerInstance.getInstance().setBatteryFetcherListener(this);
+        if (vitalManagerInstance != null) {
+            vitalManagerInstance.updateBatteryView(View.GONE, 0);
+            vitalManagerInstance.getInstance().setBatteryFetcherListener(this);
+        }
         fetchBattery();
 
-        toolBarInterface.updateSubTitle("",View.GONE);
+        if (toolBarInterface != null)
+            toolBarInterface.updateSubTitle("",View.GONE);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        toolBarInterface = (ToolBarInterface) getActivity();
-        vitalManagerInstance = (VitalManagerInstance) getActivity();
-        onViewChangeInterface = (OnViewChangeInterface) getActivity();
+
+        if (getActivity() instanceof OnViewChangeInterface) {
+            onViewChangeInterface = (OnViewChangeInterface) getActivity();
+        }
+
+        if (getActivity() instanceof OnActionCompleteInterface) {
+            onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
+        }
+
+        if (getActivity() instanceof ToolBarInterface) {
+            toolBarInterface = (ToolBarInterface) getActivity();
+        }
+
+        if (getActivity() instanceof VitalManagerInstance) {
+            vitalManagerInstance = (VitalManagerInstance) getActivity();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        vitalManagerInstance.getInstance().reset(this);
+        if (vitalManagerInstance != null)
+            vitalManagerInstance.getInstance().reset(this);
     }
 
     private void initView(View baseView) {
@@ -166,6 +212,8 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
         spo2 = baseView.findViewById(R.id.spo2);
         message_tv = baseView.findViewById(R.id.message_tv);
         result_lay = baseView.findViewById(R.id.result_lay);
+        main_container = baseView.findViewById(R.id.main_container);
+        title_tv = baseView.findViewById(R.id.title_tv);
 
         save_bt = baseView.findViewById(R.id.save_bt);
         close_bt = baseView.findViewById(R.id.close_bt);
@@ -196,21 +244,38 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
         String measurementType = VitalDeviceType.shared.getMeasurementType(vitalDevice.getType());
         spo2.setText(SupportedMeasurementType.getVitalUnit(measurementType));
         pulse.setText(SupportedMeasurementType.getVitalUnit(SupportedMeasurementType.heartRate));
+
+        if (isPresentedInsideCallActivity()) {
+            title_tv.setVisibility(View.VISIBLE);
+            title_tv.setText(VitalDeviceType.shared.getTitle(vitalDevice.getType()));
+            main_container.setBackgroundColor(getResources().getColor(R.color.colorWhiteWithLessAlpha));
+        }
+
+        if (action != null) {
+            action.doItNow();
+            action = null;
+        }
     }
 
     private void connectDeviceIfNeedeed() {
-        if (!vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(),vitalDevice.getDeviceId())) {
+        if (vitalManagerInstance != null && !vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(),vitalDevice.getDeviceId())) {
             vitalManagerInstance.getInstance().connectDevice(vitalDevice.getType(),vitalDevice.getDeviceId());
         }
     }
 
+    private Boolean isPresentedInsideCallActivity() {
+        return getActivity() instanceof CallActivity;
+    }
+
     private void fetchBattery() {
-        vitalManagerInstance.getInstance().fetchBattery(vitalDevice.getType(),vitalDevice.getDeviceId());
+        if (vitalManagerInstance != null)
+            vitalManagerInstance.getInstance().fetchBattery(vitalDevice.getType(),vitalDevice.getDeviceId());
     }
 
     private void startMeasure() {
         setCurrentState(MeasureState.started);
-        vitalManagerInstance.getInstance().startMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
+        if (vitalManagerInstance != null)
+            vitalManagerInstance.getInstance().startMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
     }
 
     private void updateView(int currentState) {
@@ -241,10 +306,14 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
                 remeasure_bt.setVisibility(View.VISIBLE);
 
                 save_bt.setVisibility(View.VISIBLE);
-                close_bt.setVisibility(View.VISIBLE);
-                save_bt.setText(getString(R.string.SAVE_AND_CLOSE));
-                close_bt.setText(getString(R.string.CLOSE));
+                if (isPresentedInsideCallActivity()) {
+                    save_bt.setText(getString(R.string.done));
+                } else {
+                    save_bt.setText(getString(R.string.SAVE_AND_CLOSE));
+                    close_bt.setText(getString(R.string.CLOSE));
+                    close_bt.setVisibility(View.VISIBLE);
 
+                }
                 spo2_value.setText(finalPulseValue + "%");
                 pulse_value.setText(finalHeartRate);
                 break;
@@ -258,6 +327,12 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
                 result_lay.setVisibility(View.GONE);
                 save_bt.setText(getString(R.string.RESTART));
                 break;
+        }
+
+        if (!UserType.isUserPatient()) {
+            save_bt.setVisibility(View.GONE);
+            close_bt.setVisibility(View.GONE);
+            remeasure_bt.setVisibility(View.GONE);
         }
     }
 
@@ -354,7 +429,8 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.other_option:
-                onActionCompleteInterface.onCompletionResult(RequestID.OPEN_VITAL_INFO,true,getArguments());
+                if (onActionCompleteInterface != null)
+                    onActionCompleteInterface.onCompletionResult(RequestID.OPEN_VITAL_INFO,true,getArguments());
                 break;
             case R.id.save_bt:
                 switch (currentState) {
@@ -364,19 +440,34 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
                         break;
                     case MeasureState.started:
                     case MeasureState.startedToReceieveValues:
-                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
+                        if (vitalManagerInstance != null)
+                            vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
                         setCurrentState(MeasureState.notStarted);
                         break;
                     case MeasureState.ended:
-                        vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.pulseOximeter,finalPulseValue, vitalsApiViewModel);
-                        vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.heartRate,finalHeartRate, vitalsApiViewModel);
-
-                        getActivity().finish();
+                        if (!isPresentedInsideCallActivity()) {
+                            if (vitalManagerInstance != null) {
+                                vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.pulseOximeter, finalPulseValue, vitalsApiViewModel);
+                                vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.heartRate, finalHeartRate, vitalsApiViewModel);
+                            }
+                        }
+                        onClick(close_bt);
                         break;
                 }
                 break;
             case R.id.close_bt:
-                getActivity().finish();
+                if (isPresentedInsideCallActivity()) {
+                    if (vitalManagerInstance != null) {
+                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
+                        setCurrentState(MeasureState.notStarted);
+
+                        if (callVitalPagerInterFace != null) {
+                            callVitalPagerInterFace.closeVitalController();
+                        }
+                    }
+                } else {
+                    getActivity().finish();
+                }
                 break;
             case R.id.remeasure_bt:
                 startMeasure();
@@ -387,12 +478,12 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
 
     //PulseMeasureInterface methods
     @Override
-    public void updatePulseMessage(String message) {
+    public void updatePulseMessage(String deviceType,String message) {
         message_tv.setText(message);
     }
 
     @Override
-    public void updatePulseValue(int spo2, int bpm, int wave, float pi) {
+    public void updatePulseValue(String deviceType,int spo2, int bpm, int wave, float pi) {
         spo2_value.setText(spo2 + "%");
         pulse_value.setText(bpm + "");
 
@@ -404,20 +495,27 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
     }
 
     @Override
-    public void didFinishMeasure(int spo2, int bpm, int wave, float pi) {
+    public void didFinishMeasure(String deviceType,int spo2, int bpm, int wave, float pi) {
 
         finalPulseValue = spo2 + "";
         finalHeartRate = bpm + "";
         setCurrentState(MeasureState.ended);
+
+        if (isPresentedInsideCallActivity()) {
+            if (UserType.isUserPatient() && vitalManagerInstance != null) {
+                vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.pulseOximeter, finalPulseValue, vitalsApiViewModel);
+                vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.heartRate, finalHeartRate, vitalsApiViewModel);
+            }
+        }
     }
 
     @Override
-    public void didPulseStartMeasure() {
+    public void didPulseStartMeasure(String deviceType) {
 
     }
 
     @Override
-    public void didPulseFinishMesureWithFailure(String error) {
+    public void didPulseFinishMesureWithFailure(String deviceType,String error) {
 
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
             EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
@@ -441,6 +539,11 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
     @Override
     public void didDiscoverDevice(String type, String serailNumber) {
         //nothing to do
+    }
+
+    @Override
+    public void startedToConnect(String type, String serailNumber) {
+        message_tv.setText(getString(R.string.connecting));
     }
 
     @Override
@@ -484,15 +587,134 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
     //VitalBatteryFetcher methods
     @Override
     public void updateBatteryDetails(BatteryResult batteryResult) {
-        if (batteryResult.getBattery() != -1) {
-            vitalManagerInstance.updateBatteryView(View.VISIBLE,batteryResult.getBattery());
-        } else {
-            vitalManagerInstance.updateBatteryView(View.GONE,0);
+        if (vitalManagerInstance != null) {
+            if (batteryResult.getBattery() != -1) {
+                vitalManagerInstance.updateBatteryView(View.VISIBLE, batteryResult.getBattery());
+            } else {
+                vitalManagerInstance.updateBatteryView(View.GONE, 0);
+            }
         }
     }
 
     @Override
     public void notConnected(String deviceType, String deviceMac) {
         connectDeviceIfNeedeed();
+    }
+
+
+    //Call Events methods
+    @Override
+    public void didReceiveData(String data) {
+        Log.d("PulseMeasureFragment","received data");
+        if (pulse_value == null) {
+            action = new Action() {
+                @Override
+                public void doItNow() {
+                    processSignalMessagesForPulse(data);
+                }
+            };
+        } else {
+            processSignalMessagesForPulse(data);
+        }
+    }
+    @Override
+    public void assignVitalListener() {
+        if (vitalManagerInstance != null) {
+            vitalManagerInstance.getInstance().setListener(this);
+            vitalManagerInstance.getInstance().setPulseListener(this);
+        }
+    }
+
+    @Override
+    public void assignVitalDevice(VitalDevice vitalDevice) {
+        this.vitalDevice = vitalDevice;
+    }
+
+    @Override
+    public String getVitalDeviceType() {
+        return vitalDevice.getType();
+    }
+
+    private void processSignalMessagesForPulse(String data) {
+        Log.d("PulseMeasureFragment","processSignalMessagesForPulse");
+
+        Type type = new TypeToken<HashMap<String, String>>() {}.getType();
+
+        try {
+            HashMap<String, Object> map = Utils.deserialize(data, type);
+
+            switch ((String) map.get(VitalsConstant.VitalCallMapKeys.status)) {
+                case VitalsConstant.VitalCallMapKeys.startedToMeasure:
+                    break;
+                case VitalsConstant.VitalCallMapKeys.measuring:
+
+                    HashMap<String,Double> value = (HashMap<String,Double>) map.get(VitalsConstant.VitalCallMapKeys.data);
+
+                    HashMap<String,Integer> intValue = new HashMap<>();
+                    if (value == null) {
+                        intValue = (HashMap<String,Integer>) map.get(VitalsConstant.VitalCallMapKeys.data);
+                    } else {
+                        for (String key : value.keySet()) {
+                            intValue.put(key,value.get(key).intValue());
+                        }
+                    }
+
+                    Integer spo2 = intValue.get(VitalsConstant.VitalCallMapKeys.spo2);
+                    Integer bpm = intValue.get(VitalsConstant.VitalCallMapKeys.bpm);
+                    Integer wave = intValue.get(VitalsConstant.VitalCallMapKeys.wave);
+                    Integer pi = intValue.get(VitalsConstant.VitalCallMapKeys.pi);
+
+                    if (spo2 != null && bpm != null && wave != null && pi != null) {
+                        updatePulseValue(vitalDevice.getType(),spo2,bpm,wave,pi);
+                    }
+
+
+                    break;
+                case VitalsConstant.VitalCallMapKeys.errorInMeasure:
+
+                    String errorMessage = (String) map.get(VitalsConstant.VitalCallMapKeys.message);
+                    didPulseFinishMesureWithFailure(vitalDevice.getType(),errorMessage);
+
+                    break;
+                case VitalsConstant.VitalCallMapKeys.finishedMeasure:
+
+                    HashMap<String,Double> resultValue = (HashMap<String,Double>) map.get(VitalsConstant.VitalCallMapKeys.data);
+
+                    HashMap<String,Integer> resultIntValue = new HashMap<>();
+                    if (resultValue == null) {
+                        resultIntValue = (HashMap<String,Integer>) map.get(VitalsConstant.VitalCallMapKeys.data);
+                    } else {
+                        for (String key : resultValue.keySet()) {
+                            resultIntValue.put(key,resultValue.get(key).intValue());
+                        }
+                    }
+
+                    Integer result_spo2 = resultIntValue.get(VitalsConstant.VitalCallMapKeys.spo2);
+                    Integer result_bpm = resultIntValue.get(VitalsConstant.VitalCallMapKeys.bpm);
+                    Integer result_wave = resultIntValue.get(VitalsConstant.VitalCallMapKeys.wave);
+                    Integer result_pi = resultIntValue.get(VitalsConstant.VitalCallMapKeys.pi);
+
+                    if (result_spo2 != null && result_bpm != null && result_wave != null && result_pi != null) {
+                        updatePulseValue(vitalDevice.getType(),result_spo2,result_bpm,result_wave,result_pi);
+                    }
+
+                    break;
+            }
+
+            if (currentState == MeasureState.notStarted) {
+                openInDetail();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openInDetail() {
+        didPulseStartMeasure(vitalDevice.getType());
+
+        if (callVitalPagerInterFace != null)
+            callVitalPagerInterFace.didInitiateMeasure(vitalDevice.getType());
+
     }
 }

@@ -71,10 +71,10 @@ public class BPControl {
                     JSONObject info = new JSONObject(message);
                     String num = info.getString(BpProfile.ERROR_NUM_BP);
                     String description = info.getString(BpProfile.ERROR_DESCRIPTION_BP);
-                    bpMeasureInterface.didFailBPMesure(description);
+                    bpMeasureInterface.didFailBPMesure(deviceType,description);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    bpMeasureInterface.didFailBPMesure(e.getLocalizedMessage());
+                    bpMeasureInterface.didFailBPMesure(deviceType,e.getLocalizedMessage());
                 }
                 break;
             case BpProfile.ACTION_HISTORICAL_DATA_BP:
@@ -101,7 +101,7 @@ public class BPControl {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    bpMeasureInterface.didFailBPMesure(e.getLocalizedMessage());
+                    bpMeasureInterface.didFailBPMesure(deviceType,e.getLocalizedMessage());
                 }
 
                 break;
@@ -111,7 +111,7 @@ public class BPControl {
                     String num = info.getString(BpProfile.HISTORICAL_NUM_BP);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    bpMeasureInterface.didFailBPMesure(e.getLocalizedMessage());
+                    bpMeasureInterface.didFailBPMesure(deviceType,e.getLocalizedMessage());
                 }
                 break;
             case BpProfile.ACTION_IS_ENABLE_OFFLINE:
@@ -120,7 +120,7 @@ public class BPControl {
                     String isEnableoffline = info.getString(BpProfile.IS_ENABLE_OFFLINE);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    bpMeasureInterface.didFailBPMesure(e.getLocalizedMessage());
+                    bpMeasureInterface.didFailBPMesure(deviceType,e.getLocalizedMessage());
                 }
                 break;
             case BpProfile.ACTION_ONLINE_PRESSURE_BP:
@@ -139,7 +139,7 @@ public class BPControl {
                     String heartbeat = info.getString(BpProfile.FLAG_HEARTBEAT_BP);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    bpMeasureInterface.didFailBPMesure(e.getLocalizedMessage());
+                    bpMeasureInterface.didFailBPMesure(deviceType,e.getLocalizedMessage());
                 }
                 break;
             case BpProfile.ACTION_ONLINE_RESULT_BP:
@@ -151,7 +151,7 @@ public class BPControl {
                     String pulse = info.getString(BpProfile.PULSE_BP);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    bpMeasureInterface.didFailBPMesure(e.getLocalizedMessage());
+                    bpMeasureInterface.didFailBPMesure(deviceType,e.getLocalizedMessage());
                 }
 
                 break;
@@ -285,7 +285,7 @@ public class BPControl {
             bp3lControl = (Bp3lControl) object;
             bp3lControl.startMeasure();
         } else {
-            bpMeasureInterface.didFailBPMesure(context.getString(R.string.unable_to_connect));
+            bpMeasureInterface.didFailBPMesure(deviceType,context.getString(R.string.unable_to_connect));
         }
     }
 
@@ -295,7 +295,7 @@ public class BPControl {
             bp550BTControl = (Bp550BTControl) object;
             //TODO
         } else {
-            bpMeasureInterface.didFailBPMesure(context.getString(R.string.unable_to_connect));
+            bpMeasureInterface.didFailBPMesure(deviceType,context.getString(R.string.unable_to_connect));
         }
     }
 
@@ -305,7 +305,7 @@ public class BPControl {
             bp5Control = (Bp5Control) object;
             bp5Control.startMeasure();
         } else {
-            bpMeasureInterface.didFailBPMesure(context.getString(R.string.unable_to_connect));
+            bpMeasureInterface.didFailBPMesure(deviceType,context.getString(R.string.unable_to_connect));
         }
     }
 
@@ -315,7 +315,7 @@ public class BPControl {
             bp7Control = (Bp7Control) object;
             bp7Control.startMeasure();
         } else {
-            bpMeasureInterface.didFailBPMesure(context.getString(R.string.unable_to_connect));
+            bpMeasureInterface.didFailBPMesure(deviceType,context.getString(R.string.unable_to_connect));
         }
     }
 

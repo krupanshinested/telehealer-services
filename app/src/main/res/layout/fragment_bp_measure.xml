@@ -1,16 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/main_container">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/title_tv"
+        tools:text="fkkfkfkfkf"
+        android:gravity="center"
+        android:padding="5dp"
+        android:visibility="gone"
+        android:textColor="@color/colorWhite"
+        android:background="@color/call_vital_title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView"/>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:id="@+id/scrollView"
+        android:background="@android:color/transparent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_tv"
         app:layout_constraintBottom_toTopOf="@+id/bootom_lay"
         >
 
@@ -18,12 +37,14 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/result_lay"
+            android:background="@android:color/transparent"
             android:layout_gravity="center_vertical">
 
             <com.github.mikephil.charting.charts.LineChart
                 android:layout_width="fill_parent"
                 android:layout_height="200dp"
                 android:id="@+id/graph"
+                android:background="@android:color/transparent"
                 android:layout_marginTop="20dp"/>
 
             <android.support.constraint.ConstraintLayout
@@ -31,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:background="@android:color/transparent"
                 app:layout_constraintTop_toBottomOf="@+id/graph"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -41,6 +63,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:id="@+id/value_lay"
+                    android:background="@android:color/transparent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -50,6 +73,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
+                        android:background="@android:color/transparent"
                         android:layout_weight="1">
                         <TextView
                             android:layout_width="fill_parent"
@@ -73,6 +97,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
+                        android:background="@android:color/transparent"
                         android:layout_weight="1">
                         <TextView
                             android:layout_width="fill_parent"
@@ -121,12 +146,12 @@
         app:layout_constraintTop_toTopOf="@+id/scrollView"
         app:layout_constraintBottom_toBottomOf="@+id/scrollView"/>
 
-
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:id="@+id/bootom_lay"
+        android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">

@@ -55,10 +55,10 @@ public class PulseControl {
                     }
                     Log.i(TAG, "oxygen:" + oxygen + "--pulseRate:" + pulseRate + "--Pi:" + PI + "-wave1:" + wave[0]
                             + "-wave2:" + wave[1] + "--wave3:" + wave[2]);
-                   pulseMeasureInterface.updatePulseValue(oxygen,pulseRate,wave[0],PI);
+                   pulseMeasureInterface.updatePulseValue(deviceType,oxygen,pulseRate,wave[0],PI);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    pulseMeasureInterface.didPulseFinishMesureWithFailure(e.getLocalizedMessage());
+                    pulseMeasureInterface.didPulseFinishMesureWithFailure(deviceType,e.getLocalizedMessage());
                 }
                 break;
             case PoProfile.ACTION_RESULTDATA_PO:
@@ -75,10 +75,10 @@ public class PulseControl {
                     }
                     Log.i(TAG, "dataId:" + dataId + "--oxygen:" + oxygen + "--pulseRate:" + pulseRate + "--Pi:" + PI + "-wave1:" + wave[0]
                             + "-wave2:" + wave[1] + "--wave3:" + wave[2]);
-                    pulseMeasureInterface.didFinishMeasure(oxygen,pulseRate,wave[0],PI);
+                    pulseMeasureInterface.didFinishMeasure(deviceType,oxygen,pulseRate,wave[0],PI);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    pulseMeasureInterface.didPulseFinishMesureWithFailure(e.getLocalizedMessage());
+                    pulseMeasureInterface.didPulseFinishMesureWithFailure(deviceType,e.getLocalizedMessage());
                 }
                 break;
             case PoProfile.ACTION_NO_OFFLINEDATA_PO:
@@ -168,10 +168,10 @@ public class PulseControl {
         Object object = getInstance(deviceType,deviceMac);
         if (object != null) {
             po3Control = (Po3Control) object;
-            pulseMeasureInterface.didPulseStartMeasure();
+            pulseMeasureInterface.didPulseStartMeasure(deviceType);
             po3Control.startMeasure();
         } else {
-            pulseMeasureInterface.didPulseFinishMesureWithFailure(context.getString(R.string.unable_to_connect));
+            pulseMeasureInterface.didPulseFinishMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
         }
     }
 }

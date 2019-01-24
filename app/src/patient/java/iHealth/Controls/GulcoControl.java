@@ -61,10 +61,10 @@ public class GulcoControl {
                 try {
                     JSONObject info = new JSONObject(message);
                     String descriptin = info.getString(Bg5Profile.ERROR_DESCRIPTION_BG);
-                    gulcoMeasureInterface.didFinishGulcoMesureWithFailure(descriptin);
+                    gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType,descriptin);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    gulcoMeasureInterface.didFinishGulcoMesureWithFailure(e.getLocalizedMessage());
+                    gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType,e.getLocalizedMessage());
                 }
 
                 break;
@@ -88,21 +88,21 @@ public class GulcoControl {
                 try {
                     JSONObject jsonObject = new JSONObject(message);
                     int result = (int) jsonObject.get("result");
-                    gulcoMeasureInterface.updateGulcoValue(result);
+                    gulcoMeasureInterface.updateGulcoValue(deviceType,result);
                 } catch (Exception e) {
-                    gulcoMeasureInterface.didFinishGulcoMesureWithFailure(e.getLocalizedMessage());
+                    gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType,e.getLocalizedMessage());
                 }
                 break;
             case Bg5Profile.ACTION_KEEP_LINK:
                 break;
             case Bg5Profile.ACTION_STRIP_IN:
-                gulcoMeasureInterface.didStripInserted();
+                gulcoMeasureInterface.didStripInserted(deviceType);
                 break;
             case Bg5Profile.ACTION_GET_BLOOD:
-                gulcoMeasureInterface.didBloodDropped();
+                gulcoMeasureInterface.didBloodDropped(deviceType);
                 break;
             case Bg5Profile.ACTION_STRIP_OUT:
-                gulcoMeasureInterface.didStripEjected();
+                gulcoMeasureInterface.didStripEjected(deviceType);
                 break;
             case Bg5Profile.ACTION_GET_BOTTLEID:
                 break;
@@ -153,7 +153,7 @@ public class GulcoControl {
             String today = formatter.format(new Date());
             bg5Control.setBottleMessageWithInfo(1,1,result,20,today);
         } else {
-            gulcoMeasureInterface.didFinishGulcoMesureWithFailure(context.getString(R.string.unable_to_connect));
+            gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
         }
     }
 
@@ -191,10 +191,10 @@ public class GulcoControl {
         Object object = getInstance(deviceType,deviceMac);
         if (object != null) {
             bg5Control = (Bg5Control) object;
-            gulcoMeasureInterface.didGulcoStartMeasure();
+            gulcoMeasureInterface.didGulcoStartMeasure(deviceType);
             bg5Control.startMeasure(1);
         } else {
-            gulcoMeasureInterface.didFinishGulcoMesureWithFailure(context.getString(R.string.unable_to_connect));
+            gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
         }
     }
 }

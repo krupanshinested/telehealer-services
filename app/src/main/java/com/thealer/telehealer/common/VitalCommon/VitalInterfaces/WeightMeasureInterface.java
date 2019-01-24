@@ -5,9 +5,9 @@ package com.thealer.telehealer.common.VitalCommon.VitalInterfaces;
  */
 
 public interface WeightMeasureInterface {
-    public void  updateWeightMessage(String message);
-    public void  updateWeightValue(Float value);
-    public void  didStartWeightMeasure();
-    public void  didFinishWeightMeasure(Float weight,String id);
-    public void  didFinishWeightMesureWithFailure(String error);
+    public void  updateWeightMessage(String deviceType,String message);
+    public void  updateWeightValue(String deviceType,Float value);
+    public void  didStartWeightMeasure(String deviceType);
+    public void  didFinishWeightMeasure(String deviceType,Float weight,String id);
+    public void  didFinishWeightMesureWithFailure(String deviceType,String error);
 }

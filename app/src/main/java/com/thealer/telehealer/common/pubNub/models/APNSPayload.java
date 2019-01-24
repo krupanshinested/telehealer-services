@@ -54,6 +54,8 @@ public class APNSPayload implements Serializable {
     private String doctor_guid;
     @Nullable
     private String uuid;
+    @Nullable
+    private String media_url;
 
 
     public HashMap<String, String> getAps() {
@@ -184,5 +186,14 @@ public class APNSPayload implements Serializable {
 
     public void setUuid(@Nullable String uuid) {
         this.uuid = uuid;
+    }
+
+    @Nullable
+    public String getMedia_url() {
+        return media_url;
+    }
+
+    public void setMedia_url(@Nullable String media_url) {
+        this.media_url = media_url;
     }
 }
