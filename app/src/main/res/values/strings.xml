@@ -659,4 +659,10 @@
     <string name="resend_mail">Resend Mail</string>
     <string name="coming_soon">(Coming Soon)</string>
     <string name="ma_flow_not_available_currently">Medical Assistant flow is not available in andorid currently.</string>
+    <string name="help_content_doctor_patient">View your list of connected patients/doctors here. You can add to this list by requesting a new connection with one or more of your established patients/doctors. Click the “+” icon on the right top corner to send a request to patients/doctors you already know. Once a connection request has been accepted, the patient/doctor will automatically show up on this list.</string>
+    <string name="help_content_orders">Create and optionally fax any new orders. Click the “+” icon on the right top corner to get started. Orders can vary from prescriptions, labs, radiology, referrals, and/or medical questionnaires. Once an order has been created, you can vIew and/or print these orders.</string>
+    <string name="help_content_vitals">Pair with a list of supported devices and initiate a measurement. Click the “+” icon on the right top corner to get started. Measurements can be captured directly from the device or manually recorded by either the doctor or patient. All captured vitals can be viewed and/or printed. Vital measurements can vary from blood pressure, weight, glucose, temperature, pulse ox, and heart rate.</string>
+    <string name="help_content_recents">View the list of prior calls with your patients/doctors. Clicking each entry will display the recorded encounter along with the transcript of the call.</string>
+    <string name="help_content_schedules">View all your upcoming appointments and their associated details. Click the “+” icon on the right top corner to initiate an appointment request. Only requests that are accepted will appear here on the schedules page. The application also provides an automatic reminder 10 minutes prior to a scheduled appointment.</string>
+    <string name="associations">Associations</string>
 </resources>

@@ -87,6 +87,7 @@ public class ArgumentKeys {
     public static final String IS_SKIP_NEEDED = "IS_SKIP_NEEDED";
     public static final String IS_CLOSE_NEEDED = "IS_CLOSE_NEEDED";
     public static final String OK_BUTTON_TITLE = "OK_BUTTON_TITLE";
+    public static final String IS_BUTTON_NEEDED = "is_button_needed";
 
     public static final String IS_SKIPPED = "IS_SKIPPED";
     public static final String CALL_INITIATE_MODEL = "CALL_INITIATE_MODEL";
