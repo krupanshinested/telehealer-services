@@ -37,12 +37,10 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.views.base.CallPlacingFragment;
+import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
-import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
@@ -161,7 +159,7 @@ public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
         userDetailBnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
+                switch (menuItem.getItemId()) {
                     case R.id.menu_schedules:
                         startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
                         break;
@@ -171,11 +169,11 @@ public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
                         ArrayList<String> callTypes = new ArrayList<>();
                         callTypes.add(getString(R.string.audio_call));
                         callTypes.add(getString(R.string.video_call));
-                        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type),callTypes, new PickerListener() {
+                        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
                             @Override
                             public void didSelectedItem(int position) {
 
-                                CallInitiateModel callInitiateModel = new CallInitiateModel(commonUserApiResponseModel.getUser_guid(),commonUserApiResponseModel,null,null,null,position == 0 ? OpenTokConstants.audio : OpenTokConstants.video);
+                                CallInitiateModel callInitiateModel = new CallInitiateModel(commonUserApiResponseModel.getUser_guid(), commonUserApiResponseModel, null, null, null, position == 0 ? OpenTokConstants.audio : OpenTokConstants.video);
                                 openCallIfPossible(callInitiateModel);
 
                             }
@@ -204,7 +202,7 @@ public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
             });
 
             userDetailBnv.setVisibility(View.GONE);
-        }else {
+        } else {
             userDetailBnv.setVisibility(View.VISIBLE);
         }
 
@@ -239,7 +237,7 @@ public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
 
             } else {
                 String userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
-                Set<String > set = new HashSet<>();
+                Set<String> set = new HashSet<>();
                 set.add(userGuid);
                 getUsersApiViewModel.getUserByGuid(set);
             }
@@ -283,7 +281,7 @@ public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
 
                 userDetailTab.setVisibility(View.GONE);
                 actionBtn.setVisibility(View.VISIBLE);
-                        userDetailBnv.setVisibility(View.GONE);
+                userDetailBnv.setVisibility(View.GONE);
 
                 if (resultBean.getConnection_status() != null) {
                     actionBtn.setText(getString(R.string.add_connection_pending));
@@ -346,6 +344,7 @@ public class DoctorPatientDetailViewFragment extends CallPlacingFragment {
     @Override
     public void onResume() {
         super.onResume();
+        showOrHideSoftInputWindow(false);
     }
 
     private void addFragment(String title, Fragment fragment) {
