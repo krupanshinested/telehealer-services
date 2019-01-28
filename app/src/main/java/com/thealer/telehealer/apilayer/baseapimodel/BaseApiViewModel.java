@@ -25,6 +25,7 @@ import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
+import com.thealer.telehealer.views.common.AppUpdateActivity;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
@@ -370,6 +371,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 case 301:
                     //if client is using the old version that time server will return this error code,need to present the App update
                     // controller screen.
+                    getApplication().startActivity(new Intent(getApplication(), AppUpdateActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                     break;
                 default:
                     errorModelLiveData.setValue(errorModel);
