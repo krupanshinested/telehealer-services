@@ -25,8 +25,8 @@ import com.thealer.telehealer.views.base.BaseActivity;
 
 public class ContentActivity extends BaseActivity implements View.OnClickListener {
 
-    private ImageView icon,close_iv;
-    private TextView title_tv,sub_title_tv;
+    private ImageView icon, close_iv;
+    private TextView title_tv, sub_title_tv;
     private CustomButton action_btn;
     private Button skip_btn;
     private CheckBox check_box;
@@ -41,15 +41,15 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
         setContentView(R.layout.activity_content);
         initView();
 
-        int resource = getIntent().getIntExtra(ArgumentKeys.RESOURCE_ICON,R.drawable.app_icon);
+        int resource = getIntent().getIntExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.app_icon);
         icon.setImageDrawable(getDrawable(resource));
 
         title_tv.setText(getIntent().getStringExtra(ArgumentKeys.TITLE));
 
-        if (getIntent().getBooleanExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION,false)) {
+        if (getIntent().getBooleanExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false)) {
             sub_title_tv.setText(Utils.fromHtml(getIntent().getStringExtra(ArgumentKeys.DESCRIPTION)));
             sub_title_tv.setClickable(true);
-            sub_title_tv.setMovementMethod (LinkMovementMethod.getInstance());
+            sub_title_tv.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             sub_title_tv.setText(getIntent().getStringExtra(ArgumentKeys.DESCRIPTION));
         }
@@ -61,19 +61,25 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
             action_btn.setText(actionTitle);
         }
 
-        if (getIntent().getBooleanExtra(ArgumentKeys.IS_SKIP_NEEDED,false)) {
+        if (getIntent().getBooleanExtra(ArgumentKeys.IS_SKIP_NEEDED, false)) {
             skip_btn.setVisibility(View.VISIBLE);
         } else {
             skip_btn.setVisibility(View.GONE);
         }
 
-        if (getIntent().getBooleanExtra(ArgumentKeys.IS_CLOSE_NEEDED,false)) {
+        if (getIntent().getBooleanExtra(ArgumentKeys.IS_CLOSE_NEEDED, false)) {
             close_iv.setVisibility(View.VISIBLE);
         } else {
             close_iv.setVisibility(View.GONE);
         }
 
-        if (getIntent().getBooleanExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED,false)) {
+        if (getIntent().getBooleanExtra(ArgumentKeys.IS_BUTTON_NEEDED, true)) {
+            action_btn.setVisibility(View.VISIBLE);
+        } else {
+            action_btn.setVisibility(View.GONE);
+        }
+
+        if (getIntent().getBooleanExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false)) {
             check_box_view.setVisibility(View.VISIBLE);
             check_box_tv.setText(getIntent().getStringExtra(ArgumentKeys.CHECK_BOX_TITLE));
         } else {
@@ -103,18 +109,18 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
         Intent intent = new Intent();
         switch (v.getId()) {
             case R.id.close_iv:
-                intent.putExtra(ArgumentKeys.IS_SKIPPED,false);
-                setResult(Activity.RESULT_CANCELED,intent);
+                intent.putExtra(ArgumentKeys.IS_SKIPPED, false);
+                setResult(Activity.RESULT_CANCELED, intent);
                 finish();
                 break;
             case R.id.action_btn:
-                intent.putExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED,check_box.isChecked());
-                setResult(Activity.RESULT_OK,intent);
+                intent.putExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED, check_box.isChecked());
+                setResult(Activity.RESULT_OK, intent);
                 finish();
                 break;
             case R.id.skip_btn:
-                intent.putExtra(ArgumentKeys.IS_SKIPPED,true);
-                setResult(Activity.RESULT_CANCELED,intent);
+                intent.putExtra(ArgumentKeys.IS_SKIPPED, true);
+                setResult(Activity.RESULT_CANCELED, intent);
                 finish();
                 break;
         }

@@ -61,17 +61,16 @@
         <activity android:name=".views.home.vitals.BluetoothEnableActivity" />
         <activity android:name=".views.home.schedules.CreateNewScheduleActivity" />
         <activity android:name=".views.inviteUser.InviteUserActivity" />
+        <activity android:name=".views.home.EmailVerificationActivity" />
         <activity
             android:name=".views.call.CallActivity"
             android:launchMode="singleTop" />
         <activity
             android:name=".views.settings.SignatureActivity"
             android:screenOrientation="userLandscape" />
-            <activity android:name=".views.common.ContentActivity"/>
-            <activity android:name=".views.call.CallFeedBackActivity"/>
-
         <activity android:name=".views.common.ContentActivity" />
         <activity android:name=".views.call.CallFeedBackActivity" />
+
         <activity
             android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
             android:launchMode="singleTask">
