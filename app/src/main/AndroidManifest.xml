@@ -63,6 +63,9 @@
         <activity android:name=".views.inviteUser.InviteUserActivity" />
         <activity android:name=".views.home.EmailVerificationActivity" />
         <activity
+            android:name=".views.common.AppUpdateActivity"
+            android:launchMode="singleTop" />
+        <activity
             android:name=".views.call.CallActivity"
             android:launchMode="singleTop" />
         <activity
