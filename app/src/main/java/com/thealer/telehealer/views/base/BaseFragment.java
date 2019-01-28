@@ -28,7 +28,6 @@ import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 
 import static android.app.Activity.RESULT_OK;
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 10,October,2018
@@ -90,9 +89,9 @@ public class BaseFragment extends Fragment {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (showOrHide) {
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.RESULT_SHOWN);
         } else {
-            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, InputMethodManager.RESULT_HIDDEN);
         }
     }
 
@@ -146,7 +145,7 @@ public class BaseFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode,int resultCode,Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != RESULT_OK) {
@@ -197,6 +196,6 @@ public class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        showOrHideSoftInputWindow(false);
+//        showOrHideSoftInputWindow(false);
     }
 }
