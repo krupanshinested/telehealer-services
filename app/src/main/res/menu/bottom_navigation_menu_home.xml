@@ -31,9 +31,10 @@
             android:id="@+id/menu_orders"
             android:icon="@drawable/ic_orders_documents"
             android:title="@string/orders" />
-        <item
-            android:id="@+id/menu_profile_settings"
-            android:icon="@drawable/recent_drawable_selector"
-            android:title="@string/profile_settings" />
     </group>
+    <item
+        android:id="@+id/menu_profile_settings"
+        android:checkable="false"
+        android:icon="@drawable/recent_drawable_selector"
+        android:title="@string/profile_settings" />
 </menu>

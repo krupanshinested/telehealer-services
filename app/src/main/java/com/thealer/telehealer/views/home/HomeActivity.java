@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -33,6 +34,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
+import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
@@ -61,6 +63,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private int selecteMenuItem = 0;
     private final String IS_CHILD_VISIBLE = "isChildVisible";
     private final String SELECTED_MENU_ITEM = "selecteMenuItem";
+    private int helpContent = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -204,8 +207,22 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case android.R.id.home:
                 toggleDrawer();
                 break;
+            case R.id.menu_help:
+                showHelpContent();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showHelpContent() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.banner_help);
+        bundle.putString(ArgumentKeys.TITLE, new HelpContent(this).getTitle(helpContent));
+        bundle.putString(ArgumentKeys.DESCRIPTION, new HelpContent(this).getContent(helpContent));
+        bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
+        bundle.putBoolean(ArgumentKeys.IS_BUTTON_NEEDED, false);
+
+        startActivity(new Intent(this, ContentActivity.class).putExtras(bundle));
     }
 
     private void toggleDrawer() {
@@ -217,6 +234,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showDoctorPatientList() {
+        helpContent = HelpContent.HELP_DOC_PATIENT;
         setDoctorPatientTitle();
         DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
         setFragment(doctorPatientListingFragment);
@@ -321,12 +339,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showSchedulesFragment() {
+        helpContent = HelpContent.HELP_SCHEDULES;
         setToolbarTitle(getString(R.string.schedules));
         SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
         setFragment(schedulesListFragment);
     }
 
     private void showOrdersView() {
+        helpContent = HelpContent.HELP_ORDERS;
         setToolbarTitle(getString(R.string.orders));
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.IS_FROM_HOME, true);
@@ -337,6 +357,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showVitalsView() {
+        helpContent = HelpContent.HELP_VITALS;
         setToolbarTitle(getString(R.string.vitals));
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.IS_FROM_HOME, true);
@@ -348,6 +369,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showRecentView() {
+        helpContent = HelpContent.HELP_RECENTS;
         setToolbarTitle(getString(R.string.recents));
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.IS_FROM_HOME, true);
