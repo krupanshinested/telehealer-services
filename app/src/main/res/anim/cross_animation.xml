@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/accelerate_interpolator"
+    android:ordering="sequentially"
+    android:shareInterpolator="false">
+    <!-- First animation, the first stroke from top left to bottom right \ -->
+    <objectAnimator
+        android:duration="@android:integer/config_shortAnimTime"
+        android:propertyName="pathData"
+        android:valueFrom="M8,8 l0,0 M16,8 l-0,0"
+        android:valueTo="M8,8 l8,8 M16,8 l-0,0"
+        android:valueType="pathType" />
+
+    <!-- Second animation, the second strok from top right to bottom left / -->
+    <objectAnimator
+        android:duration="@android:integer/config_shortAnimTime"
+        android:propertyName="pathData"
+        android:valueFrom="M8,8 l8,8 M16,8 l-0,0"
+        android:valueTo="M8,8 l8,8 M16,8 l-8,8"
+        android:valueType="pathType" />
+</set>

@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
@@ -122,6 +123,13 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
                         }
                     }
                 }
+            }
+        });
+
+        ordersCreateApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), getString(R.string.create_form_failure));
             }
         });
     }

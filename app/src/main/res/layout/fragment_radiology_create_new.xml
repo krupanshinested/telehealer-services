@@ -62,7 +62,6 @@
                     android:id="@+id/radiology_list_rv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@color/card_view_background"
                     app:layout_constraintBottom_toTopOf="@+id/radiology_list_bottom_view"
                     app:layout_constraintEnd_toStartOf="@id/radiology_list_iv"
                     app:layout_constraintStart_toStartOf="parent"
@@ -114,7 +113,6 @@
                     android:id="@+id/icd_list_rv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@color/card_view_background"
                     app:layout_constraintEnd_toEndOf="@id/icd_list_iv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

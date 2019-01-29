@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="app_gradient_start">#FF8A14</color> // orange start
+    <color name="app_gradient_start_60">#60FF8A14</color> // orange start
+    <color name="app_gradient_start_10">#10FF8A14</color> // orange start
     <color name="app_gradient_end">#FFA938</color>  // orange end
     <color name="calendar_event_color">#EED1B0</color>
     <color name="app_status_bar_color1">#c55b00</color>
