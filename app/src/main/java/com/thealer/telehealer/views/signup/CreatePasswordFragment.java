@@ -159,6 +159,7 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
         super.onAttach(context);
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
+        resetPasswordRequestModel = ViewModelProviders.of(getActivity()).get(ResetPasswordRequestModel.class);
     }
 
 
@@ -216,7 +217,6 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
                     onViewChangeInterface.hideOrShowClose(false);
                     onViewChangeInterface.hideOrShowBackIv(true);
                     onViewChangeInterface.updateNextTitle(getString(R.string.next));
-                    resetPasswordRequestModel = ViewModelProviders.of(getActivity()).get(ResetPasswordRequestModel.class);
                     break;
             }
         }

@@ -102,7 +102,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, errorModel.isSuccess());
                     bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
+                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.upload_document_failure));
 
                     LocalBroadcastManager
                             .getInstance(getActivity())

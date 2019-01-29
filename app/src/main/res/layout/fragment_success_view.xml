@@ -6,30 +6,54 @@
     android:layout_height="match_parent"
     android:background="@color/colorWhite">
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintWidth_max="@dimen/max_width"
         app:layout_constraintBottom_toTopOf="@+id/done_btn"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.7"
+        android:animateLayoutChanges="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:src="@drawable/ic_cross_inside_a_circle"
+            android:id="@+id/preloader_iv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:visibility="visible"
+            android:src="@drawable/pre_loader_drawable"
+            app:layout_constraintBottom_toBottomOf="@+id/loader_iv"
+            app:layout_constraintEnd_toEndOf="@+id/loader_iv"
+            app:layout_constraintStart_toStartOf="@+id/loader_iv"
+            app:layout_constraintTop_toTopOf="@+id/loader_iv" />
+
+        <ImageView
             android:id="@+id/loader_iv"
             android:layout_width="150dp"
-            android:layout_height="100dp" />
+            android:layout_height="0dp"
+            android:visibility="invisible"
+            android:src="@drawable/circle_animation_drawable"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_max="150dp"
+            app:layout_constraintHeight_percent="0.3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.20" />
 
         <TextView
             android:id="@+id/title_tv"
             style="@style/text_title_dark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             android:textSize="24sp"
-            android:layout_margin="5dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/loader_iv"
             tools:text="@string/dummy_text" />
 
         <TextView
@@ -37,21 +61,35 @@
             style="@style/text_title_dark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="0dp"
             android:textSize="18sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv"
             tools:text="@string/dummy_text" />
-    </LinearLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
 
     <com.thealer.telehealer.common.CustomButton
         android:id="@+id/done_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
         android:text="@string/done"
+        android:visibility="gone"
         app:app_gradient="true"
         app:corner_radius="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_max="@dimen/max_width"
         app:text_color="@color/colorWhite" />
+
+
 </android.support.constraint.ConstraintLayout>
