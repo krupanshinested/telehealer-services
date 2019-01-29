@@ -23,8 +23,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/radiology_list_rv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/card_view_background" />
+                android:layout_height="wrap_content" />
 
             <View
                 android:layout_width="match_parent"
@@ -70,8 +69,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/selected_radiology_list_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/card_view_background" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <Button

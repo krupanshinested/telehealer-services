@@ -77,7 +77,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
                         bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "Your referral for " + patientModel.getUserDisplay_name() + " has been posted successfully.");
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.referral_success), patientModel.getUserDisplay_name()));
                         LocalBroadcastManager
                                 .getInstance(getActivity())
                                 .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
@@ -95,7 +95,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
                     bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "Oops Something went wrong");
+                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.referral_failure), patientModel.getUserDisplay_name()));
                     LocalBroadcastManager
                             .getInstance(getActivity())
                             .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
