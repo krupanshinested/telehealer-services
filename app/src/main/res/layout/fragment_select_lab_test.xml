@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <include
+        android:id="@+id/search_layout"
         layout="@layout/layout_search_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -14,9 +15,8 @@
         android:id="@+id/test_list_rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/card_view_background"
         app:layout_constraintBottom_toTopOf="@+id/next_btn"
-        app:layout_constraintTop_toBottomOf="@+id/bottom_view" />
+        app:layout_constraintTop_toBottomOf="@+id/search_layout" />
 
     <Button
         android:id="@+id/next_btn"

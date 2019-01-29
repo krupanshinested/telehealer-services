@@ -11,12 +11,14 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.auth0.android.jwt.JWT;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.api.ApiInterface;
 import com.thealer.telehealer.apilayer.manager.RetrofitManager;
+import com.thealer.telehealer.apilayer.manager.helper.NoConnectivityException;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -337,57 +339,63 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     public void handleError(Throwable e) {
         Log.e(TAG, "onError: " + e.getMessage());
-        try {
-            HttpException httpException = (HttpException) e;
+        if (e instanceof NoConnectivityException) {
+            Toast.makeText(getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            isLoadingLiveData.setValue(false);
+            errorModelLiveData.setValue(new ErrorModel(-1, e.getMessage(), e.getMessage()));
 
-            ResponseBody errorResponse = ((HttpException) e).response().errorBody();
-            String response = new JSONObject(errorResponse.string()).toString();
-            ErrorModel errorModel = new Gson().fromJson(response, ErrorModel.class);
+        } else if (e instanceof HttpException) {
+            try {
+                HttpException httpException = (HttpException) e;
 
-            Log.e(TAG, "onError: " + new Gson().toJson(httpException));
-            Log.e(TAG, "onError: " + response);
+                ResponseBody errorResponse = ((HttpException) e).response().errorBody();
+                String response = new JSONObject(errorResponse.string()).toString();
+                ErrorModel errorModel = new Gson().fromJson(response, ErrorModel.class);
+
+                Log.e(TAG, "onError: " + new Gson().toJson(httpException));
+                Log.e(TAG, "onError: " + response);
 
             errorModel.setStatusCode(httpException.code());
             errorModel.setResponse(response);
 
-            switch (httpException.code()) {
-                case 400:
-                    errorModelLiveData.setValue(errorModel);
-                    break;
-                case 401:
-                    //If server returns 401 then it means, the auth token whatever used for the api call is invalid,
-                    // so we need to loggout the user and put to login screen
-                    errorModelLiveData.setValue(errorModel);
-                    goToSigninActivity();
-                    break;
-                case 403:
-                    errorModelLiveData.setValue(errorModel);
-                    break;
-                case 500:
-                    //If server is down, then will get this error code,here we are checking wheteher there is an active
-                    // internet connection if internet connection is good, then it post a notification to update the server status
-                    // which store in appdelegate (which used for empty state.)
-                    errorModelLiveData.setValue(errorModel);
-                    break;
-                case 301:
-                    //if client is using the old version that time server will return this error code,need to present the App update
-                    // controller screen.
-                    getApplication().startActivity(new Intent(getApplication(), AppUpdateActivity.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-                    break;
-                default:
-                    errorModelLiveData.setValue(errorModel);
-                    break;
+                switch (httpException.code()) {
+                    case 400:
+                        errorModelLiveData.setValue(errorModel);
+                        break;
+                    case 401:
+                        //If server returns 401 then it means, the auth token whatever used for the api call is invalid,
+                        // so we need to loggout the user and put to login screen
+                        errorModelLiveData.setValue(errorModel);
+                        goToSigninActivity();
+                        break;
+                    case 403:
+                        errorModelLiveData.setValue(errorModel);
+                        break;
+                    case 500:
+                        //If server is down, then will get this error code,here we are checking wheteher there is an active
+                        // internet connection if internet connection is good, then it post a notification to update the server status
+                        // which store in appdelegate (which used for empty state.)
+                        errorModelLiveData.setValue(errorModel);
+                        break;
+                    case 301:
+                        //if client is using the old version that time server will return this error code,need to present the App update
+                        // controller screen.
+                        getApplication().startActivity(new Intent(getApplication(), AppUpdateActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                        break;
+                    default:
+                        errorModelLiveData.setValue(errorModel);
+                        break;
+                }
+
+                isLoadingLiveData.setValue(false);
+
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                isLoadingLiveData.setValue(false);
+                errorModelLiveData.setValue(new ErrorModel(-1, e1.getMessage(), e1.getMessage()));
             }
-
-            isLoadingLiveData.setValue(false);
-
-        } catch (Exception e1) {
-            e1.printStackTrace();
-            isLoadingLiveData.setValue(false);
-            errorModelLiveData.setValue(new ErrorModel(-1, "Oops something went wrong", e1.getMessage()));
         }
-
         isRefreshToken = false;
         isQuickLoginReceiverEnabled = false;
 

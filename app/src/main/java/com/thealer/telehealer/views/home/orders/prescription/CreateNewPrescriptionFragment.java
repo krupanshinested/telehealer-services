@@ -88,7 +88,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel.isSuccess()) {
-                        sendSuccessBroadCast(baseApiResponseModel.isSuccess(), getString(R.string.success), String.format("Your prescription order for %s has been posted successfully.", commonUserApiResponseModel.getUserDisplay_name()));
+                        sendSuccessBroadCast(baseApiResponseModel.isSuccess(), getString(R.string.success), String.format(getString(R.string.create_prescription_success), commonUserApiResponseModel.getUserDisplay_name()));
                     }
                 }
             }
@@ -98,7 +98,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    sendSuccessBroadCast(errorModel.isSuccess(), getString(R.string.failure), String.format("Your prescription order for %s has not been posted successfully.", commonUserApiResponseModel.getUserDisplay_name()));
+                    sendSuccessBroadCast(errorModel.isSuccess(), getString(R.string.failure), String.format(getString(R.string.create_prescription_failure), commonUserApiResponseModel.getUserDisplay_name()));
                 }
             }
         });
