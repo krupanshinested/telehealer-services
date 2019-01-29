@@ -45,7 +45,7 @@ public class InviteUserBaseFragment extends BaseFragment {
                             sendSuccessMessage();
                             if (inviteByEmailPhoneApiResponseModel.getResultData() != null) {
                                 for (int i = 0; i < inviteByEmailPhoneApiResponseModel.getResultData().size(); i++) {
-                                    if (inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid() != null ||
+                                    if (inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid() != null &&
                                             !inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid().isEmpty()) {
                                         PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionPayload(inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid()), null);
                                     }

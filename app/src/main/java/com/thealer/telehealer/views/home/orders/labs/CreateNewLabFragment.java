@@ -88,7 +88,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel.isSuccess()) {
                         sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(), getString(R.string.success),
-                                String.format("Your Lab order for %s is posted successfully.", commonUserApiResponseModel.getUserDisplay_name()));
+                                String.format(getString(R.string.create_lab_success), commonUserApiResponseModel.getUserDisplay_name()));
                     }
                 }
             }
@@ -99,7 +99,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
                     sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure),
-                            String.format("Your Lab order for %s is not posted successfully.", commonUserApiResponseModel.getUserDisplay_name()));
+                            String.format(getString(R.string.create_lab_failure), commonUserApiResponseModel.getUserDisplay_name()));
                 }
             }
         });

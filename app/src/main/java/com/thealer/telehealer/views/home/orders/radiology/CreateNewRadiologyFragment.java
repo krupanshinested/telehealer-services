@@ -278,7 +278,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel.isSuccess()) {
                         sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(), getString(R.string.success),
-                                String.format("Your X-Ray order for %s has been posted successfully", userModel.getUserDisplay_name()));
+                                String.format(getString(R.string.create_radiology_success), userModel.getUserDisplay_name()));
                     }
                 }
             }
@@ -289,7 +289,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
                     sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure),
-                            String.format("Your X-Ray order for %s is not posted successfully, please try again,", userModel.getUserDisplay_name()));
+                            String.format(getString(R.string.create_radiology_failure), userModel.getUserDisplay_name()));
                 }
             }
         });
