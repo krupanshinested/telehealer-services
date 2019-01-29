@@ -29,12 +29,14 @@ import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
+import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -224,6 +226,8 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             case R.id.add_fab:
                 if (!UserType.isUserDoctor()) {
                     startActivity(new Intent(getActivity(), AddConnectionActivity.class));
+                }else {
+                    startActivity(new Intent(getActivity(), InviteUserActivity.class));
                 }
                 break;
         }

@@ -673,6 +673,16 @@
     <string name="help_content_recents">View the list of prior calls with your patients/doctors. Clicking each entry will display the recorded encounter along with the transcript of the call.</string>
     <string name="help_content_schedules">View all your upcoming appointments and their associated details. Click the “+” icon on the right top corner to initiate an appointment request. Only requests that are accepted will appear here on the schedules page. The application also provides an automatic reminder 10 minutes prior to a scheduled appointment.</string>
     <string name="associations">Associations</string>
+    <string name="referral_success">Your referral for %s has been posted successfully.</string>
+    <string name="referral_failure">Your referral for %s has not been posted successfully.</string>
+    <string name="create_radiology_success">Your X-Ray order for %s has been posted successfully</string>
+    <string name="create_radiology_failure">Your X-Ray order for %s is not posted successfully, please try again,</string>
+    <string name="create_lab_success">Your Lab order for %s is posted successfully.</string>
+    <string name="create_lab_failure">Your Lab order for %s is not posted successfully.</string>
+    <string name="upload_document_failure">Your document upload has been failed please try again</string>
+    <string name="create_prescription_success">Your prescription order for %s has been posted successfully.</string>
+    <string name="create_prescription_failure">Your prescription order for %s has not been posted successfully.</string>
+    <string name="create_form_failure">Form submission failed. Please try again.</string>
 
     <string name="error_on_measure_vital">Error on mesure, please try again</string>
     <string name="vital_empty_pateint">No paired vitals device found.\nInorder to capture vital measurements during a live video call, please pair one or more supported devices from the Vitals page.</string>
