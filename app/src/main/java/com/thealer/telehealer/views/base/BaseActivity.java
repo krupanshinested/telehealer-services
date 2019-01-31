@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.base;
 
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
@@ -32,6 +33,7 @@ import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
+import com.thealer.telehealer.views.home.HomeActivity;
 
 /**
  * Created by Aswin on 08,October,2018
@@ -236,7 +238,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode,int resultCode,Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != RESULT_OK) {
@@ -302,5 +304,21 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+    public boolean isPreviousActivityAvailable() {
+        try {
+            ActivityManager mngr = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+            if (mngr != null) {
+                return mngr.getAppTasks().get(0).getTaskInfo().numActivities > 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void goToHomeActivity() {
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
+    }
 }
 

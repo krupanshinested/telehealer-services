@@ -1,16 +1,24 @@
 package com.thealer.telehealer.views.home.schedules;
 
 import android.animation.Animator;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +39,7 @@ import com.alamkanak.weekview.ScrollListener;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewDisplayable;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.google.gson.Gson;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -58,6 +67,7 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,6 +76,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+
+import static android.content.Context.ALARM_SERVICE;
+import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
 
 /**
  * Created by Aswin on 02,January,2019
@@ -121,7 +134,15 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         weekViewEventList.clear();
+
+        createScheduledNotification();
+
         for (int i = 0; i < responseModelArrayList.size(); i++) {
+
+            if (!Utils.isDateTimeExpired(responseModelArrayList.get(i).getStart())) {
+                addLocalNotification(responseModelArrayList.get(i));
+            }
+
             CalendarDay calendarDay = CalendarDay.from(LocalDate.parse(responseModelArrayList.get(i).getStart(), dateTimeFormatter));
             calendarDayHashSet.add(calendarDay);
 
@@ -160,6 +181,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
             weekViewEventList.add(weekViewEvent);
 
         }
+
         weekView.notifyDataSetChanged();
 
         calendarview.setCurrentDate(CalendarDay.today());
@@ -176,6 +198,42 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
                 dayViewFacade.addSpan(new DotSpan(5f));
             }
         });
+
+    }
+
+    private void createScheduledNotification() {
+        String action = getString(R.string.notification_intent_action);
+
+        IntentFilter intentFilter = new IntentFilter(action);
+        intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+
+        LocalNotificationReceiver localNotificationReceiver = new LocalNotificationReceiver();
+
+        getActivity().registerReceiver(localNotificationReceiver, intentFilter);
+
+    }
+
+    private void addLocalNotification(SchedulesApiResponseModel.ResultBean resultBean) {
+
+        String action = getString(R.string.notification_intent_action);
+
+        Intent notificationIntent = new Intent(getActivity(), LocalNotificationReceiver.class);
+        notificationIntent.setAction(action);
+        notificationIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        notificationIntent.putExtra(ArgumentKeys.SCHEDULE_DETAIL, new Gson().toJson(resultBean));
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), resultBean.getSchedule_id(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Date date = Utils.getDateFromString(resultBean.getStart());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MINUTE, -10);
+
+        Log.e("aswin", "addLocalNotification: " + calendar.getTime());
+
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
     }
 
     @Nullable

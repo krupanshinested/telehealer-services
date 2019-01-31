@@ -471,11 +471,11 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                 if (UserType.isUserPatient()) {
                     schedulesCreateRequestModel.setRequestee_id(String.valueOf(createScheduleViewModel.getDoctorCommonModel().getUser_id()));
                     requestee_name = createScheduleViewModel.getDoctorCommonModel().getFirst_name();
-                    to_guid = createScheduleViewModel.getPatientCommonModel().getUser_guid();
+                    to_guid = createScheduleViewModel.getDoctorCommonModel().getUser_guid();
                 } else {
                     schedulesCreateRequestModel.setRequestee_id(String.valueOf(createScheduleViewModel.getPatientCommonModel().getUser_id()));
                     requestee_name = createScheduleViewModel.getPatientCommonModel().getFirst_name();
-                    to_guid = createScheduleViewModel.getDoctorCommonModel().getUser_guid();
+                    to_guid = createScheduleViewModel.getPatientCommonModel().getUser_guid();
                 }
 
                 schedulesCreateRequestModel.setMessage(reasonEt.getText().toString());

@@ -20,6 +20,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SET_ALARM" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -94,6 +97,8 @@
             android:name=".views.notification.NotificationActivity"
             android:parentActivityName=".views.home.HomeActivity" />
 
+        <activity android:name=".views.notification.NotificationDetailActivity" />
+
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
             android:enabled="true">
@@ -111,6 +116,18 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="066e8b8d88db9729e4c796eabdd396f1edc0d7d8" />
+
+        <receiver
+            android:name=".views.home.schedules.LocalNotificationReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.media.action.DISPLAY_NOTIFICATION" />
+                <action android:name="android.intent.action.NOTIFY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".views.notification.NotificationCancelAppointmentReceiver" />
     </application>
 
 </manifest>
