@@ -17,6 +17,7 @@ import java.util.UUID;
 public class PubNubNotificationPayload {
     public static final String TITLE = "title";
     public static final String ALERT = "alert";
+    public static final String MEDIA_URL = "media_url";
     public static final String MUTABLE_CONTENT = "mutable-content";
     public static final String SOUND = "sound";
     public static final String DEFAULT = "default";
@@ -38,6 +39,7 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_CONNECTION_REQUEST));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_CONNECTION_REQUEST, null));
+        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -68,6 +70,7 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_ACCEPT_CONNECTION));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_ACCEPT_CONNECTION, null));
+        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -98,6 +101,7 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_REJECT_CONNECTION));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_REJECT_CONNECTION, null));
+        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -129,6 +133,7 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_SCHEDULE_REQUEST));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_SCHEDULE_REQUEST, null));
+        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -160,6 +165,7 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_ACCEPT_SCHEDULE));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_ACCEPT_SCHEDULE, time));
+        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -192,6 +198,7 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_REJECT_SCHEDULE));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_REJECT_SCHEDULE, time));
+        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -224,6 +231,7 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_CANCEL_SCHEDULE));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_CANCEL_SCHEDULE, time));
+        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -255,6 +263,7 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_CHAT));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_CHAT, null));
+        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
