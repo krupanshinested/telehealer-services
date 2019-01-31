@@ -3,6 +3,8 @@ package com.thealer.telehealer.apilayer.models.schedules;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.PaginationCommonResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 
 import java.io.Serializable;
 import java.util.List;
@@ -186,5 +188,29 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
             }
         }
 
+        public CommonUserApiResponseModel getScheduledToUser(){
+
+            CommonUserApiResponseModel patientModel = null;
+            CommonUserApiResponseModel doctorModel = null;
+
+            if (getScheduled_by_user().getRole().equals(Constants.ROLE_PATIENT)){
+                patientModel = getScheduled_by_user();
+            }else {
+                doctorModel = getScheduled_by_user();
+            }
+
+            if (getScheduled_with_user().getRole().equals(Constants.ROLE_PATIENT)){
+                patientModel = getScheduled_with_user();
+            }else {
+                doctorModel = getScheduled_with_user();
+            }
+
+            if (UserType.isUserDoctor()){
+                return patientModel;
+            }else {
+                return doctorModel;
+            }
+
+        }
     }
 }

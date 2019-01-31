@@ -108,6 +108,7 @@ public class ArgumentKeys {
 
 
     public static final String TRANSACTION = "TRANSACTION";
-
+    public static String NOTIFICATION_ID = "notification-id";
+    public static String NOTIFICATION = "notification";
 
 }

@@ -2,6 +2,8 @@ package com.thealer.telehealer.common.pubNub;
 
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
@@ -9,17 +11,19 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.request.FutureTarget;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
-import com.thealer.telehealer.common.PermissionChecker;
-import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.home.HomeActivity;
@@ -120,11 +124,11 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             case APNSPayload.connection:
             case APNSPayload.schedule:
                 intent = new Intent(this, NotificationActivity.class);
-                createNotification(data.getAps().get(PubNubNotificationPayload.TITLE), data.getAps().get(PubNubNotificationPayload.ALERT), intent);
+                createNotification(data, intent);
                 break;
             case APNSPayload.vitals:
                 intent = new Intent(this, HomeActivity.class);
-                createNotification(data.getAps().get(PubNubNotificationPayload.TITLE), data.getAps().get(PubNubNotificationPayload.ALERT), intent);
+                createNotification(data, intent);
                 break;
         }
     }
@@ -135,8 +139,8 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
         String endCallUUID = data.getUuid() != null ? data.getUuid() : data.getIdentifier();
 
         if (currentUUID != null && !currentUUID.equals(endCallUUID)) {
-            Log.d("MessagingService", "currentUUID "+currentUUID);
-            Log.d("MessagingService", "endCallUUID "+endCallUUID);
+            Log.d("MessagingService", "currentUUID " + currentUUID);
+            Log.d("MessagingService", "endCallUUID " + endCallUUID);
             return;
         }
 
@@ -172,13 +176,51 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
         }
     }
 
-    private void createNotification(String title, String message, Intent intent) {
+    private void createNotification(APNSPayload data, Intent intent) {
+
+        String title = data.getAps().get(PubNubNotificationPayload.TITLE);
+        String message = data.getAps().get(PubNubNotificationPayload.ALERT);
+        String imageUrl = data.getAps().get(PubNubNotificationPayload.MEDIA_URL);
+
+
+        if (imageUrl != null) {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+
+                        GlideUrl glideUrl = Utils.getGlideUrlWithAuth(getApplicationContext(), imageUrl);
+
+                        FutureTarget<Bitmap> futureTarget = Glide.with(getApplicationContext()).asBitmap().load(glideUrl).submit();
+
+                        Bitmap imageBitmap = futureTarget.get();
+
+                        displyNotification(title, message, imageBitmap, intent);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+
+        } else {
+            Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.profile_placeholder);
+            displyNotification(title, message, imageBitmap, intent);
+        }
+
+
+    }
+
+    private void displyNotification(String title, String message, Bitmap imageBitmap, Intent intent) {
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), notificationChannelId)
                 .setSmallIcon(R.drawable.app_icon)
                 .setBadgeIconType(R.drawable.app_icon)
                 .setContentTitle(title)
                 .setContentText(message)
+                .setLargeIcon(imageBitmap)
                 .setAutoCancel(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -200,8 +242,8 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
         notificationManagerCompat.notify(random.nextInt(1000), notification.build());
-
     }
+
     public static String getCurrentToken() {
         return currentToken;
     }
