@@ -179,15 +179,7 @@ public class Utils {
         if (path != null && !path.isEmpty()) {
             GlideUrl glideUrl;
             if (isUrlAuthNeeded) {
-                path = context.getString(R.string.api_base_url) + context.getString(R.string.get_image_url) + path;
-                glideUrl = new GlideUrl(path, new Headers() {
-                    @Override
-                    public Map<String, String> getHeaders() {
-                        HashMap<String, String> hashMap = new HashMap<>();
-                        hashMap.put(Constants.HEADER_AUTH_TOKEN, TeleHealerApplication.appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
-                        return hashMap;
-                    }
-                });
+                glideUrl = getGlideUrlWithAuth(context, path);
             } else {
                 glideUrl = new GlideUrl(path);
             }
@@ -199,6 +191,19 @@ public class Utils {
         } else {
             imageView.setImageDrawable(context.getDrawable(R.drawable.profile_placeholder));
         }
+    }
+
+    public static GlideUrl getGlideUrlWithAuth(Context context, String path) {
+        path = context.getString(R.string.api_base_url) + context.getString(R.string.get_image_url) + path;
+
+        return new GlideUrl(path, new Headers() {
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put(Constants.HEADER_AUTH_TOKEN, TeleHealerApplication.appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+                return hashMap;
+            }
+        });
     }
 
     public static void setGenderImage(Context context, ImageView genderIv, String gender) {
@@ -236,6 +241,19 @@ public class Utils {
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
             return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static Date getCurrentZoneDate(String dateString) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        outFormat.setTimeZone(TimeZone.getDefault());
+        try {
+            dateString = outFormat.format(dateFormat.parse(dateString));
+            return outFormat.parse(dateString);
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
@@ -413,7 +431,7 @@ public class Utils {
         return "";
     }
 
-    public static String getFormatedDateTime(String created_at,String format) {
+    public static String getFormatedDateTime(String created_at, String format) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         DateFormat returnFormat = new SimpleDateFormat(format, Locale.ENGLISH);
