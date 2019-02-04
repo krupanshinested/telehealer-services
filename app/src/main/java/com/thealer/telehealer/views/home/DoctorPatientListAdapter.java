@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
@@ -63,6 +62,7 @@ class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatientListAda
         viewHolder.patientTemplateCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utils.hideKeyboard(fragmentActivity);
                 proceed(associationApiResponseModelResult.get(i));
             }
         });

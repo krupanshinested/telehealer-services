@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
 
 /**
  * Created by Aswin on 26,December,2018
@@ -18,12 +19,14 @@ import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponse
 class TranscriptionListAdapter extends RecyclerView.Adapter<TranscriptionListAdapter.ViewHolder> {
     private FragmentActivity activity;
     private DownloadTranscriptResponseModel transcriptResponseModel;
+    private TranscriptionApiResponseModel transcriptionApiResponseModel;
 
     private int position = -1;
 
-    public TranscriptionListAdapter(FragmentActivity activity, DownloadTranscriptResponseModel downloadTranscriptResponseModel) {
+    public TranscriptionListAdapter(FragmentActivity activity, DownloadTranscriptResponseModel downloadTranscriptResponseModel, TranscriptionApiResponseModel transcriptionApiResponseModel) {
         this.activity = activity;
         this.transcriptResponseModel = downloadTranscriptResponseModel;
+        this.transcriptionApiResponseModel = transcriptionApiResponseModel;
     }
 
     @NonNull
@@ -35,9 +38,7 @@ class TranscriptionListAdapter extends RecyclerView.Adapter<TranscriptionListAda
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        String speaker = transcriptResponseModel.getSpeakerLabels().get(i).getSpeaker_label().replace("spk_", "");
-        int person = Integer.parseInt(speaker) + 1;
-        viewHolder.speakerTv.setText("Speaker " + person + ":");
+        viewHolder.speakerTv.setText(transcriptResponseModel.getSpeakerLabels().get(i).getSpeakerName(transcriptionApiResponseModel));
         viewHolder.transcriptTv.setText(transcriptResponseModel.getSpeakerLabels().get(i).getTranscript());
 
         if (i == position) {

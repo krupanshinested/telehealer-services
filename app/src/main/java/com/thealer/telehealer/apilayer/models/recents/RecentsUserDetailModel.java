@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.models.recents;
 
+import com.thealer.telehealer.common.Constants;
+
 import java.io.Serializable;
 
 /**
@@ -68,5 +70,13 @@ public class RecentsUserDetailModel implements Serializable {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getDisplayName(){
+        if (getRole().equals(Constants.ROLE_DOCTOR)){
+            return "Dr. " + getFirst_name() + " " + getLast_name();
+        }else {
+            return getFirst_name() + " " + getLast_name();
+        }
     }
 }
