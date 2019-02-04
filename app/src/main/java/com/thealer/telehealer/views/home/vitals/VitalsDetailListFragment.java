@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -42,6 +43,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomExpandableListView;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
@@ -572,8 +574,13 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.add_fab:
-                addFab.setClickable(false);
 
+                if (TokBox.shared.isActiveCallPreset()) {
+                    Toast.makeText(getActivity(),getString(R.string.live_call_going_error),Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                addFab.setClickable(false);
                 if (UserType.isUserPatient()) {
                     Intent intent = new Intent(getActivity(), VitalCreationActivity.class);
                     intent.putExtra(ArgumentKeys.MEASUREMENT_TYPE, selectedItem);

@@ -609,6 +609,7 @@
     <string name="choose_call_type">Choose Call type</string>
     <string name="audio_call">Audio Call</string>
     <string name="video_call">Video Call</string>
+    <string name="one_way_call">One Way Call</string>
     <string name="calling_from_outside">Calling from outside licensed state…</string>
     <string name="payment_dues">By accepting this call, you consent to receiving care remotely via a tele medicine visit and to pay any remaining dues of this visit after insurance payments</string>
     <string name="health_profile">Health Profile</string>
@@ -620,6 +621,7 @@
     <string name="other_medical_history">Other Medical History</string>
     <string name="specify">specify</string>
     <string name="Cancel">Cancel</string>
+    <string name="CANCEL">CANCEL</string>
     <string name="Done">Done</string>
     <string name="any_other_surgeries">Any Other Surgeries</string>
     <string name="de_select">De-Select</string>
@@ -741,5 +743,42 @@
     <string name="cam_mic_call_quality_permission">Please enable your camera and microphone inorder to check your call quality.</string>
     <string name="cam_call_quality_permission">Please enable your camera inorder to check your call quality.</string>
     <string name="mic_quality_permission">Please enable your microphone inorder to check your call quality.</string>
+
+    <string-array name="speech_errors">
+        <!--ERROR_NETWORK_TIMEOUT = 1-->
+        <!--ERROR_NETWORK = 2-->
+        <!--ERROR_AUDIO = 3-->
+        <!--ERROR_SERVER = 4-->
+        <!--ERROR_CLIENT = 5-->
+        <!--ERROR_SPEECH_TIMEOUT = 6-->
+        <!--ERROR_NO_MATCH = 7-->
+        <!--ERROR_RECOGNIZER_BUSY = 8-->
+        <!--ERROR_INSUFFICIENT_PERMISSIONS = 9-->
+        <item>Network Timeout</item>
+        <item>Network Error</item>
+        <item>Audio Error</item>
+        <item>Server Error</item>
+        <item>Client Error</item>
+        <item>Speech Timeout</item>
+        <item>No match</item>
+        <item>Speech Recognizer busy</item>
+        <item>Insufficient permissions</item>
+    </string-array>
+
+    <string name="speech_unknown_error">Unknown error</string>
+    <string name="internet_not_enabled">Internet is not enabled</string>
+    <string name="missed_video_call">Missed video call</string>
+    <string name="missed_audio_call">Missed voice call</string>
+
+    <string name="call_cancelled">Call Cancelled</string>
+    <string name="microphone_permission">Please give access to Microphone inorder to receive a call.</string>
+    <string name="camera_permission">Please give access to Camera inorder to receive a call.</string>
+    <string name="microphone_camera_permission">Please give access to Microphone and Camera inorder to receive a call.</string>
+
+    <string name="one_way_call_description">You can use one-way calls to record an encounter when your patient is visiting you at your clinic.\n\nRemember to mount your device on a stable and flat surface and point the camera in the direction of the patient prior to starting the call.</string>
+    <string name="live_call_going_error">You cannot perform this action when there is an active call.</string>
+    <string name="enable_overflow">Enable overflow</string>
+    <string name="enable_overflow_description">Please enable display over other apps property inorder to minimize this call.</string>
+    <string name="start_your_measurement_from_device">Start your measurement from Device.</string>
 
 </resources>

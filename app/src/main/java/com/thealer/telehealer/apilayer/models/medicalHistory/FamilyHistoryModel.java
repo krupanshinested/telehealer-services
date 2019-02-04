@@ -1,11 +1,12 @@
 package com.thealer.telehealer.apilayer.models.medicalHistory;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Aswin on 23,January,2019
  */
-public class FamilyHistoryModel extends MedicalHistoryCommonModel {
+public class FamilyHistoryModel extends MedicalHistoryCommonModel implements Serializable {
 
     private List<String> selectedRelations;
 

@@ -20,6 +20,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.thealer.telehealer.common.AppPreference;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
@@ -72,8 +73,12 @@ public class TeleHealerApplication extends Application implements LifecycleObser
             NotificationChannel notificationChannel = new NotificationChannel(notificationChannelId,
                     "General",
                     NotificationManager.IMPORTANCE_HIGH);
-
             notificationManager.createNotificationChannel(notificationChannel);
+
+            NotificationChannel callNotification = new NotificationChannel("thealer-call",
+                    "Call",
+                    NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(callNotification);
 
             Log.e("aswin", "createNotificationChannel: " );
         }
@@ -89,7 +94,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                if (TokBox.shared.isActiveCallPreset() && !TokBox.shared.isActivityPresent()) {
+                if (TokBox.shared.isActiveCallPreset() && !TokBox.shared.isActivityPresent() && !CallMinimizeService.isCallMinimizeActive) {
                     Log.d("TeleHealerApplication", "open call activity from Application");
                     Intent intent = new Intent(application, CallActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

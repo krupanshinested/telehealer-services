@@ -2,10 +2,12 @@ package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
 import com.thealer.telehealer.apilayer.models.medicalHistory.MedicalHistoryCommonModel;
 
+import java.io.Serializable;
+
 /**
  * Created by Aswin on 24,January,2019
  */
-public class PersonalHistoryModel extends MedicalHistoryCommonModel {
+public class PersonalHistoryModel extends MedicalHistoryCommonModel implements Serializable {
 
     private String selectedOption;
 

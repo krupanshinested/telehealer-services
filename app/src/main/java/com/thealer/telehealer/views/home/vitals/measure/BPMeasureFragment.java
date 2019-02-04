@@ -331,6 +331,14 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
             close_bt.setVisibility(View.GONE);
             remeasure_bt.setVisibility(View.GONE);
         }
+
+        if (callVitalPagerInterFace != null && getUserVisibleHint()) {
+            if (currentState == MeasureState.failed || currentState == MeasureState.ended || currentState == MeasureState.notStarted) {
+                callVitalPagerInterFace.updateState(Constants.idle);
+            } else {
+                callVitalPagerInterFace.updateState(Constants.measuring);
+            }
+        }
     }
 
     private void setCurrentState(int state) {
@@ -493,6 +501,7 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
     @Override
     public void updateBPMessage(String deviceType,String message) {
         message_tv.setText(message);
+        result_lay.setVisibility(View.GONE);
     }
 
     @Override
@@ -547,6 +556,7 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
     @Override
     public void startedToConnect(String type, String serailNumber) {
         message_tv.setText(getString(R.string.connecting));
+        result_lay.setVisibility(View.GONE);
     }
 
     //VitalPairInterface methods
@@ -565,21 +575,25 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
     @Override
     public void didDisConnected(String type, String serailNumber) {
         if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
-            if (currentState == MeasureState.failed) {
-                showAlertDialog(getActivity(), getString(R.string.error), message_tv.getText().toString(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (getActivity() != null) {
-                            getActivity().onBackPressed();
+            if (!isPresentedInsideCallActivity()) {
+                if (currentState == MeasureState.failed) {
+                    showAlertDialog(getActivity(), getString(R.string.error), message_tv.getText().toString(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (getActivity() != null) {
+                                getActivity().onBackPressed();
+                            }
                         }
+                    }, null);
+
+
+                } else {
+                    if (getActivity() != null) {
+                        getActivity().onBackPressed();
                     }
-                }, null);
-
-
-            } else {
-                if (getActivity() != null) {
-                    getActivity().onBackPressed();
                 }
+            } else {
+                setCurrentState(MeasureState.notStarted);
             }
         }
     }
