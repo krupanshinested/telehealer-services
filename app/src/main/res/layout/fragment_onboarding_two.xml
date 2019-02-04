@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/background_iv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@drawable/onboarding_page_3_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/doctor_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/onboarding_page_3_doctor"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/background_iv"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/doctor_wave_iv"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/onboarding_wifi_wave_animation"
+        android:rotation="-125"
+        android:translationX="8dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/doctor_iv"
+        app:layout_constraintTop_toTopOf="@id/doctor_iv" />
+
+    <ImageView
+        android:id="@+id/patient_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/onboarding_page_3_patient"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/background_iv"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/patient_wave_iv"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/onboarding_wifi_wave_animation"
+        android:rotation="-45"
+        android:translationX="-4dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/patient_iv"
+        app:layout_constraintTop_toTopOf="@+id/patient_iv" />
+
+    <ImageView
+        android:id="@+id/thermometer_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/onboarding_page_3_thermometer"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/background_iv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/temperature_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center|top"
+        android:textColor="@color/red"
+        android:textSize="28sp"
+        android:paddingTop="35dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/thermometer_iv"
+        app:layout_constraintEnd_toEndOf="@id/thermometer_iv"
+        app:layout_constraintStart_toStartOf="@id/thermometer_iv"
+        app:layout_constraintTop_toTopOf="@id/thermometer_iv"
+        tools:text="102 F" />
+</android.support.constraint.ConstraintLayout>
