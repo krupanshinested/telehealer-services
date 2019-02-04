@@ -52,6 +52,7 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
@@ -60,6 +61,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+
+import iHealth.pairing.VitalCreationActivity;
+import me.toptas.fancyshowcase.listener.DismissListener;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import iHealth.pairing.VitalCreationActivity;
@@ -114,6 +120,50 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 if (baseApiResponseModels != null) {
 
                     vitalsApiResponseModelArrayList = (ArrayList<VitalsApiResponseModel>) (Object) baseApiResponseModels;
+
+                    if (UserType.isUserPatient() && vitalsApiResponseModelArrayList.size() == 0) {
+                        if (!appPreference.getBoolean(selectedItem)) {
+                            boolean isShow = true;
+                            String message = "";
+                            switch (selectedItem) {
+                                case SupportedMeasurementType.bp:
+                                    message = OverlayViewConstants.OVERLAY_NO_BP;
+                                    break;
+                                case SupportedMeasurementType.gulcose:
+                                    message = OverlayViewConstants.OVERLAY_NO_GLUCOSE;
+                                    break;
+                                case SupportedMeasurementType.heartRate:
+                                    message = OverlayViewConstants.OVERLAY_NO_HEAR_RATE;
+                                    break;
+                                case SupportedMeasurementType.pulseOximeter:
+                                    message = OverlayViewConstants.OVERLAY_NO_PULSE;
+                                    break;
+                                case SupportedMeasurementType.temperature:
+                                    message = OverlayViewConstants.OVERLAY_NO_TEMPERATURE;
+                                    break;
+                                case SupportedMeasurementType.weight:
+                                    message = OverlayViewConstants.OVERLAY_NO_WEIGHT;
+                                    break;
+                                default:
+                                    isShow = false;
+                            }
+                            if (isShow) {
+                                appPreference.setBoolean(selectedItem, true);
+                                Utils.showOverlay(getActivity(), addFab, message, new DismissListener() {
+                                    @Override
+                                    public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
+
+                                    }
+                                });
+                            }
+
+                        }
+                    }
 
                     updateList(vitalsApiResponseModelArrayList);
 
@@ -299,7 +349,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        setRetainInstance(true);
     }
 
     @Nullable
@@ -630,4 +679,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             super.refreshContent(e, highlight);
         }
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utils.hideOverlay();
+    }
+
 }

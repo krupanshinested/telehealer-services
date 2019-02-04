@@ -31,12 +31,16 @@ import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
+import com.thealer.telehealer.views.common.OverlayViewConstants;
+
+import me.toptas.fancyshowcase.listener.DismissListener;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -80,6 +84,29 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
                     if (associationApiResponseModel.getResult().size() > 0) {
                         showProposer();
+                    } else {
+                        if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION)) {
+
+                            appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION, true);
+
+                            DismissListener dismissListener = new DismissListener() {
+                                @Override
+                                public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
+
+                                }
+
+                                @Override
+                                public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
+
+                                }
+                            };
+
+                            if (UserType.isUserDoctor()) {
+                                Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_PATIENT, dismissListener);
+                            } else {
+                                Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_DOCTOR, dismissListener);
+                            }
+                        }
                     }
                     if (doctorPatientListAdapter != null) {
                         totalCount = associationApiResponseModel.getCount();
@@ -191,6 +218,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         getAssociationsList(null, true);
 
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -214,10 +242,17 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             }
         }
     }
+
     private void getAssociationsList(String name, boolean isShowProgress) {
         if (!isApiRequested) {
             associationApiViewModel.getAssociationList(name, page, isShowProgress);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utils.hideOverlay();
     }
 
     @Override
