@@ -3,9 +3,9 @@ package com.thealer.telehealer.views.home.orders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +27,8 @@ public class OrdersListFragment extends BaseFragment {
     private RecyclerView listRv;
     private List<String> titleList = new ArrayList<>();
     private List<Integer> imageList = new ArrayList<>();
+    private RecyclerView vitalsOrdersListRv;
+    private FloatingActionButton addFab;
 
     @Nullable
     @Override
@@ -37,6 +39,8 @@ public class OrdersListFragment extends BaseFragment {
     }
 
     private void initView(View view) {
+        addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
+        addFab.hide();
         listRv = (RecyclerView) view.findViewById(R.id.vitals_orders_list_rv);
         listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 

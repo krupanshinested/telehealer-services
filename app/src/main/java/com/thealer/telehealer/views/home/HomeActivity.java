@@ -319,7 +319,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
-        showOrHideSoftInputWindow(this, false);
         showDetailView(bundle);
     }
 

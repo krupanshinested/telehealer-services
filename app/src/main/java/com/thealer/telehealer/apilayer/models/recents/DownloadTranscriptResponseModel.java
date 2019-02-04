@@ -29,7 +29,7 @@ public class DownloadTranscriptResponseModel extends BaseApiResponseModel {
         this.speakerLabels = speakerLabels;
     }
 
-    public static class SpeakerLabelsBean implements Serializable{
+    public static class SpeakerLabelsBean implements Serializable {
 
         private String start_time;
         private String speaker_label;
@@ -75,6 +75,23 @@ public class DownloadTranscriptResponseModel extends BaseApiResponseModel {
 
         public void setItems(List<ItemsBean> items) {
             this.items = items;
+        }
+
+        public String getSpeakerName(TranscriptionApiResponseModel transcriptionApiResponseModel) {
+            String name = getSpeaker_label();
+
+            if (getSpeaker_label().equals("spk_0") ||
+                    getSpeaker_label().equals("spk_1")) {
+                int speaker = Integer.parseInt(getSpeaker_label().replace("spk_", "")) + 1;
+                name = "Speaker " + speaker + " : ";
+            } else if (getSpeaker_label().equals("caller") &&
+                    transcriptionApiResponseModel.getCaller() != null) {
+                name = transcriptionApiResponseModel.getCaller().getDisplayName();
+            } else if (getSpeaker_label().equals("callee") &&
+                    transcriptionApiResponseModel.getCallee() != null) {
+                name = transcriptionApiResponseModel.getCallee().getDisplayName();
+            }
+            return name;
         }
 
         public static class ItemsBean implements Serializable {
