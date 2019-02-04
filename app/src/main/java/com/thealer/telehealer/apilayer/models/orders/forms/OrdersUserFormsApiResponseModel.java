@@ -1,19 +1,33 @@
 package com.thealer.telehealer.apilayer.models.orders.forms;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersCommonResultResponseModel;
 
 /**
  * Created by Aswin on 28,November,2018
  */
 public class OrdersUserFormsApiResponseModel extends BaseApiResponseModel {
 
-    private AssignedByUserBean assigned_by_user;
-    private AssignedToUserBean assigned_to_user;
+    private int user_form_id;
     private int form_id;
     private String name;
     private String url;
+    private int assigned_to;
+    private int assigned_by;
+    private Object doctor_id;
     private String created_at;
     private String updated_at;
+    private OrdersCommonResultResponseModel.PatientBean patient;
+    private OrdersCommonResultResponseModel.DoctorBean doctor;
+    private OrdersCommonResultResponseModel.MedicalAssistantBean medical_assistant;
+
+    public int getUser_form_id() {
+        return user_form_id;
+    }
+
+    public void setUser_form_id(int user_form_id) {
+        this.user_form_id = user_form_id;
+    }
 
     public int getForm_id() {
         return form_id;
@@ -39,6 +53,30 @@ public class OrdersUserFormsApiResponseModel extends BaseApiResponseModel {
         this.url = url;
     }
 
+    public int getAssigned_to() {
+        return assigned_to;
+    }
+
+    public void setAssigned_to(int assigned_to) {
+        this.assigned_to = assigned_to;
+    }
+
+    public int getAssigned_by() {
+        return assigned_by;
+    }
+
+    public void setAssigned_by(int assigned_by) {
+        this.assigned_by = assigned_by;
+    }
+
+    public Object getDoctor_id() {
+        return doctor_id;
+    }
+
+    public void setDoctor_id(Object doctor_id) {
+        this.doctor_id = doctor_id;
+    }
+
     public String getCreated_at() {
         return created_at;
     }
@@ -55,45 +93,28 @@ public class OrdersUserFormsApiResponseModel extends BaseApiResponseModel {
         this.updated_at = updated_at;
     }
 
-    public AssignedByUserBean getAssigned_by_user() {
-        return assigned_by_user;
+    public OrdersCommonResultResponseModel.PatientBean getPatient() {
+        return patient;
     }
 
-    public void setAssigned_by_user(AssignedByUserBean assigned_by_user) {
-        this.assigned_by_user = assigned_by_user;
+    public void setPatient(OrdersCommonResultResponseModel.PatientBean patient) {
+        this.patient = patient;
     }
 
-    public AssignedToUserBean getAssigned_to_user() {
-        return assigned_to_user;
+    public OrdersCommonResultResponseModel.DoctorBean getDoctor() {
+        return doctor;
     }
 
-    public void setAssigned_to_user(AssignedToUserBean assigned_to_user) {
-        this.assigned_to_user = assigned_to_user;
+    public void setDoctor(OrdersCommonResultResponseModel.DoctorBean doctor) {
+        this.doctor = doctor;
     }
 
-    public static class AssignedByUserBean {
-
-        private String user_guid;
-
-        public String getUser_guid() {
-            return user_guid;
-        }
-
-        public void setUser_guid(String user_guid) {
-            this.user_guid = user_guid;
-        }
+    public OrdersCommonResultResponseModel.MedicalAssistantBean getMedical_assistant() {
+        return medical_assistant;
     }
 
-    public static class AssignedToUserBean {
-
-        private String user_guid;
-
-        public String getUser_guid() {
-            return user_guid;
-        }
-
-        public void setUser_guid(String user_guid) {
-            this.user_guid = user_guid;
-        }
+    public void setMedical_assistant(OrdersCommonResultResponseModel.MedicalAssistantBean medical_assistant) {
+        this.medical_assistant = medical_assistant;
     }
+
 }

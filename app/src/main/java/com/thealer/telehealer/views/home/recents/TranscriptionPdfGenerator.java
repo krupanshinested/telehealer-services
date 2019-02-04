@@ -167,25 +167,21 @@ public class TranscriptionPdfGenerator {
                                    DownloadTranscriptResponseModel downloadTranscriptResponseModel, String transcript_info) {
 
         String chatDetail = getChatDetails(transcriptionApiResponseModel);
-        String transcriptDetail = getTranscriptDetails(downloadTranscriptResponseModel);
+        String transcriptDetail = getTranscriptDetails(transcriptionApiResponseModel, downloadTranscriptResponseModel);
 
         return chatDetail.replace(MESSAGE_INFO, transcriptDetail).replace(TRANSCRIPTION_NOTE, "*" + transcript_info);
     }
 
-    private String getTranscriptDetails(DownloadTranscriptResponseModel downloadTranscriptResponseModel) {
+    private String getTranscriptDetails(TranscriptionApiResponseModel transcriptionApiResponseModel, DownloadTranscriptResponseModel downloadTranscriptResponseModel) {
         StringBuilder transcriptDetail = new StringBuilder();
 
         for (int i = 0; i < downloadTranscriptResponseModel.getSpeakerLabels().size(); i++) {
 
             String transcriptList = transcriptionBody;
 
-            String speaker = downloadTranscriptResponseModel.getSpeakerLabels().get(i).getSpeaker_label().replace("spk_", "");
-            int person = Integer.parseInt(speaker) + 1;
-
-            String sender = "Speaker " + person + " :";
             String message = downloadTranscriptResponseModel.getSpeakerLabels().get(i).getTranscript();
 
-            transcriptList = transcriptList.replace(SENDER, sender)
+            transcriptList = transcriptList.replace(SENDER, downloadTranscriptResponseModel.getSpeakerLabels().get(i).getSpeakerName(transcriptionApiResponseModel))
                     .replace(MESSAGE, message);
 
             transcriptDetail = transcriptDetail.append(transcriptList);

@@ -56,12 +56,14 @@ import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseMode
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
 import org.threeten.bp.LocalDate;
@@ -79,6 +81,10 @@ import java.util.Locale;
 
 import static android.content.Context.ALARM_SERVICE;
 import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
+
+import me.toptas.fancyshowcase.listener.DismissListener;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 02,January,2019
@@ -123,6 +129,22 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
                 if (baseApiResponseModels != null) {
                     responseModelArrayList = (ArrayList<SchedulesApiResponseModel.ResultBean>) (Object) baseApiResponseModels;
                     updateCalendar();
+                    if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_SCHEDULE)) {
+                        appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_SCHEDULE, true);
+                        emptyMessageTv.setVisibility(View.GONE);
+                        Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_APPOINTMENT, new DismissListener() {
+                            @Override
+                            public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
+                                emptyMessageTv.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
+
+                            }
+                        });
+
+                    }
                 }
             }
         });
@@ -527,6 +549,11 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         if (getUserVisibleHint()) {
             setUserVisibleHint(true);
         }
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utils.hideOverlay();
     }
 
     @Override

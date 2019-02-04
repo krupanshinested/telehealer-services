@@ -24,17 +24,24 @@ import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiRespo
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomExpandableListView;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import me.toptas.fancyshowcase.listener.DismissListener;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 29,November,2018
@@ -74,6 +81,25 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
                 if (baseApiResponseModel != null) {
                     documentsApiResponseModel = (DocumentsApiResponseModel) baseApiResponseModel;
                     documentsCelv.setTotalCount(documentsApiResponseModel.getCount());
+                    if (UserType.isUserPatient() && page == 1 && documentsApiResponseModel.getResult().size() == 0) {
+                        if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_DOCUMENT)) {
+                            appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_DOCUMENT, true);
+
+                            documentsCelv.showOrHideMessage(false);
+
+                            Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_DOCUMENT, new DismissListener() {
+                                @Override
+                                public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
+                                    documentsCelv.showOrHideMessage(true);
+                                }
+
+                                @Override
+                                public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
+
+                                }
+                            });
+                        }
+                    }
                     updateList();
                 }
             }
@@ -230,4 +256,10 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         super.onResume();
         addFab.setClickable(true);
     }
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utils.hideOverlay();
+    }
+
 }
