@@ -1,7 +1,7 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.apilayer.models.createuser.VisitAddressBean;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
@@ -349,6 +349,7 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
         }
         return "";
     }
+
     public void setWebsite(String website) {
         this.website = website;
     }
@@ -359,5 +360,14 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
 
     public void setEmail_verified(boolean email_verified) {
         this.email_verified = email_verified;
+    }
+
+    public int getSexDrawable() {
+        if (getGender().toLowerCase().equals(Constants.male))
+            return R.drawable.gender_male;
+        else if (getGender().toLowerCase().equals(Constants.female))
+            return R.drawable.gender_female;
+        else
+            return R.drawable.gender_others;
     }
 }

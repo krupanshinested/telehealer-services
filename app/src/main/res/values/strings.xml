@@ -306,6 +306,7 @@
     <string name="cancel_prescription_order">Do you really want to cancel this prescription order?</string>
 
     <string name="patient">PATIENT</string>
+    <string name="patients">Patients</string>
     <string name="pharmacy">PHARMACY</string>
     <string name="order_status">ORDER STATUS</string>
     <string name="prescription">PRESCRIPTION</string>
@@ -671,11 +672,12 @@
     <string name="app_update">App Update</string>
     <string name="app_update_description">The version of this application is outdated and not currently supported. Let\'s get you upgraded to get the latest bug fixes and features</string>
     <string name="UPDATE">UPDATE</string>
-    <string name="help_content_doctor_patient">View your list of connected patients/doctors here. You can add to this list by requesting a new connection with one or more of your established patients/doctors. Click the “+” icon on the right top corner to send a request to patients/doctors you already know. Once a connection request has been accepted, the patient/doctor will automatically show up on this list.</string>
-    <string name="help_content_orders">Create and optionally fax any new orders. Click the “+” icon on the right top corner to get started. Orders can vary from prescriptions, labs, radiology, referrals, and/or medical questionnaires. Once an order has been created, you can vIew and/or print these orders.</string>
-    <string name="help_content_vitals">Pair with a list of supported devices and initiate a measurement. Click the “+” icon on the right top corner to get started. Measurements can be captured directly from the device or manually recorded by either the doctor or patient. All captured vitals can be viewed and/or printed. Vital measurements can vary from blood pressure, weight, glucose, temperature, pulse ox, and heart rate.</string>
-    <string name="help_content_recents">View the list of prior calls with your patients/doctors. Clicking each entry will display the recorded encounter along with the transcript of the call.</string>
-    <string name="help_content_schedules">View all your upcoming appointments and their associated details. Click the “+” icon on the right top corner to initiate an appointment request. Only requests that are accepted will appear here on the schedules page. The application also provides an automatic reminder 10 minutes prior to a scheduled appointment.</string>
+    <string name="help_content_doctor_patient">View your list of connected %s here. You can add to this list by requesting a new connection with one or more of your established %s.\n\nClick the “+” icon on the right top corner to send a request to %s you already know. Once a connection request has been accepted, the %s will automatically show up on this list.</string>
+    <string name="help_content_orders">Create and optionally fax any new orders.\n\nClick the “+” icon on the right top corner to get started. Orders can vary from prescriptions, labs, radiology, referrals, and/or medical questionnaires. Once an order has been created, you can vIew and/or print these orders.</string>
+    <string name="help_content_vitals">Pair with a list of supported devices and initiate a measurement.\n\nClick the “+” icon on the right top corner to get started. Measurements can be captured directly from the device or manually recorded by either the doctor or patient. All captured vitals can be viewed and/or printed. Vital measurements can vary from blood pressure, weight, glucose, temperature, pulse ox, and heart rate.</string>
+    <string name="help_content_vital_report">Perform remote monitoring by reviewing your patient\'s captured vitals. The list shows all patients who have captured their vitals during a selected monitoring period. Vital measurements captured by the patient can vary from blood pressure, weight, glucose, temperature, pulse ox, and heart rate.</string>
+    <string name="help_content_recents">View the list of prior calls with your %s. Clicking each entry will display the recorded encounter along with the transcript of the call.</string>
+    <string name="help_content_schedules">View all your upcoming appointments and their associated details.\n\nClick the “+” icon on the right top corner to initiate an appointment request. Only requests that are accepted will appear here on the schedules page. The application also provides an automatic reminder 10 minutes prior to a scheduled appointment.</string>
     <string name="associations">Associations</string>
     <string name="referral_success">Your referral for %s has been posted successfully.</string>
     <string name="referral_failure">Your referral for %s has not been posted successfully.</string>
@@ -691,5 +693,9 @@
     <string name="error_on_measure_vital">Error on mesure, please try again</string>
     <string name="vital_empty_pateint">No paired vitals device found.\nInorder to capture vital measurements during a live video call, please pair one or more supported devices from the Vitals page.</string>
     <string name="vital_empty_non_pateint">No measurement is going on.</string>
+    <string name="all">All</string>
+    <string name="last_month">Last month</string>
+    <string name="last_two_week">Last two week</string>
+    <string name="last_week">Last week</string>
 
 </resources>
