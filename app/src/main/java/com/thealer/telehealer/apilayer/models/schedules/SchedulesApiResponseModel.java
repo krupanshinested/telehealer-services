@@ -117,6 +117,14 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
             this.scheduled_by_user = scheduled_by_user;
         }
 
+        public CommonUserApiResponseModel getPatient() {
+            if (scheduled_by_user.getRole().equals(Constants.ROLE_PATIENT)) {
+                return scheduled_by_user;
+            } else {
+                return scheduled_with_user;
+            }
+         }
+
         public static class DetailBean implements Serializable{
 
             private boolean change_demographic;

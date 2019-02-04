@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -20,6 +21,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
@@ -127,7 +131,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             case APNSPayload.connection:
             case APNSPayload.schedule:
                 intent = new Intent(this, NotificationActivity.class);
-                createNotification(data, intent);
+                Utils.createNotification(data, intent);
                 break;
             case APNSPayload.vitals:
                 intent = new Intent(this, NotificationDetailActivity.class);
@@ -138,25 +142,35 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 bundle.putString(ArgumentKeys.USER_GUID, data.getFrom());
                 intent.putExtras(bundle);
 
-                createNotification(data, intent);
+                Utils.createNotification(data, intent);
                 break;
         }
     }
 
     // Display the incoming call to the user
     private void dismissCall(APNSPayload data) {
+
+        if (TokBox.shared == null || TokBox.shared.getCurrentUUID() == null) {
+            Log.d("MessagingService", "currentUUID null");
+            return;
+        }
+
         String currentUUID = TokBox.shared.getCurrentUUID();
+
         String endCallUUID = data.getUuid() != null ? data.getUuid() : data.getIdentifier();
 
-        if (currentUUID != null && !currentUUID.equals(endCallUUID)) {
-            Log.d("MessagingService", "currentUUID " + currentUUID);
-            Log.d("MessagingService", "endCallUUID " + endCallUUID);
+        Log.d("MessagingService", "currentUUID "+currentUUID);
+        Log.d("MessagingService", "endCallUUID "+endCallUUID);
+        if (!currentUUID.equals(endCallUUID)) {
             return;
         }
 
         if (TokBox.shared.getConnectingDate() == null && TokBox.shared.getConnectedDate() == null) {
-            //TODO : need to add local tray missed call notification
-            //AppDelegate.showMissedCallNotifiation(userInfo: call.userinfo ?? [:],isVideo : TokBoxSession.shared.type == CallType.video)
+            if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
+                Utils.createNotification(data,getRecentIntent());
+            } else {
+                Utils.createNotification(data, getRecentIntent());
+            }
         }
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -180,82 +194,23 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
 
             EventRecorder.recordNotification("BUSY_CALL");
 
-            //TODO local notification
-            /*let notification = prepareUserInfoForMissedCall(userInfo: userinfo,isVideo: hasVideo)
-            self.displayLoaclNotification(notification: notification)*/
+            if (data.getType().equals(OpenTokConstants.video)) {
+                Utils.createNotification(data, getRecentIntent());
+            } else {
+                Utils.createNotification(data, getRecentIntent());
+            }
         }
-    }
-
-    private void createNotification(APNSPayload data, Intent intent) {
-
-        String title = data.getAps().get(PubNubNotificationPayload.TITLE);
-        String message = data.getAps().get(PubNubNotificationPayload.ALERT);
-        String imageUrl = data.getAps().get(PubNubNotificationPayload.MEDIA_URL);
-
-
-        if (imageUrl != null) {
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-
-                        GlideUrl glideUrl = Utils.getGlideUrlWithAuth(getApplicationContext(), imageUrl);
-
-                        FutureTarget<Bitmap> futureTarget = Glide.with(getApplicationContext()).asBitmap().load(glideUrl).submit();
-
-                        Bitmap imageBitmap = futureTarget.get();
-
-                        displyNotification(title, message, imageBitmap, intent);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }).start();
-
-        } else {
-            Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.profile_placeholder);
-            displyNotification(title, message, imageBitmap, intent);
-        }
-
-
-    }
-
-    private void displyNotification(String title, String message, Bitmap imageBitmap, Intent intent) {
-
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), notificationChannelId)
-                .setSmallIcon(R.drawable.app_icon)
-                .setBadgeIconType(R.drawable.app_icon)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setLargeIcon(imageBitmap)
-                .setAutoCancel(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(message));
-
-        if (intent != null) {
-
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
-            taskStackBuilder.addNextIntentWithParentStack(intent);
-
-            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            notification.setContentIntent(pendingIntent);
-        }
-
-        Random random = new Random();
-
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-        notificationManagerCompat.notify(random.nextInt(1000), notification.build());
     }
 
     public static String getCurrentToken() {
         return currentToken;
+    }
+
+    @Nullable
+    private Intent getRecentIntent() {
+        Intent intent = new Intent(this,HomeActivity.class);
+        intent.putExtra(ArgumentKeys.SELECTED_MENU_ITEM,R.id.menu_recent);
+        return intent;
     }
 }
 

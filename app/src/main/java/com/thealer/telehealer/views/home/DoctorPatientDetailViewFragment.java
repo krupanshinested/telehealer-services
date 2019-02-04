@@ -3,8 +3,10 @@ package com.thealer.telehealer.views.home;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +16,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -35,6 +38,7 @@ import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
+import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -119,8 +123,16 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
                 if (baseApiResponseModels != null) {
                     ArrayList<CommonUserApiResponseModel> commonUserApiResponseModels = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
-                    resultBean = commonUserApiResponseModels.get(0);
-                    updateView(resultBean);
+
+                    if (commonUserApiResponseModels.size() > 0) {
+                        if (resultBean == null) {
+                            resultBean = commonUserApiResponseModels.get(0);
+                            updateView(resultBean);
+                        }
+
+                        updateUserStatus(commonUserApiResponseModels.get(0));
+                    }
+
                 }
             }
         });
@@ -132,6 +144,26 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_doctor_patient_detail, container, false);
         initView(view);
         return view;
+    }
+
+    @Override
+    public void onCreate(Bundle saveInstance) {
+        super.onCreate(saveInstance);
+
+        if (getActivity() != null) {
+            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(callStartReceiver, new IntentFilter(Constants.CALL_STARTED_BROADCAST));
+            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(callEndReceiver, new IntentFilter(Constants.CALL_ENDED_BROADCAST));
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (getActivity() != null) {
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(callEndReceiver);
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(callStartReceiver);
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -154,10 +186,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         bottomView = (LinearLayout) view.findViewById(R.id.bottom_view);
         userDetailBnv = (BottomNavigationView) view.findViewById(R.id.user_detail_bnv);
 
-        if (UserType.isUserPatient()) {
-            userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
+        userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
+
+        if (TokBox.shared.isActiveCallPreset()) {
+            enableOrDisableCall(false);
         } else {
-            userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.VISIBLE);
+            enableOrDisableCall(true);
         }
 
         userDetailBnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -168,16 +202,40 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                         startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
                         break;
                     case R.id.menu_call:
+                        if (TokBox.shared.isActiveCallPreset()) {
+                            return false;
+                        }
+
                         CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+                        if (commonUserApiResponseModel == null) {
+                            commonUserApiResponseModel = resultBean;
+                        }
+
 
                         ArrayList<String> callTypes = new ArrayList<>();
                         callTypes.add(getString(R.string.audio_call));
                         callTypes.add(getString(R.string.video_call));
+                        callTypes.add(getString(R.string.one_way_call));
+                        CommonUserApiResponseModel finalCommonUserApiResponseModel = commonUserApiResponseModel;
                         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
                             @Override
                             public void didSelectedItem(int position) {
 
-                                CallInitiateModel callInitiateModel = new CallInitiateModel(commonUserApiResponseModel.getUser_guid(), commonUserApiResponseModel, null, null, null, position == 0 ? OpenTokConstants.audio : OpenTokConstants.video);
+                                String callType;
+                                switch (position) {
+                                    case 0:
+                                        callType = OpenTokConstants.audio;
+                                        break;
+                                    case 1:
+                                        callType = OpenTokConstants.video;
+                                        break;
+                                    default:
+                                        callType = OpenTokConstants.oneWay;
+                                        break;
+                                }
+
+                                CallInitiateModel callInitiateModel = new CallInitiateModel(finalCommonUserApiResponseModel.getUser_guid(), finalCommonUserApiResponseModel, null, null, null, callType);
 
                                 Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
                                 intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
@@ -195,7 +253,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
                         break;
                 }
-                return true;
+                return false;
             }
         });
 
@@ -242,6 +300,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 resultBean = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 updateView(resultBean);
 
+                if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
+                    Set<String> set = new HashSet<>();
+                    set.add(resultBean.getUser_guid());
+                    getUsersApiViewModel.getUserByGuid(set);
+                } else {
+                    updateUserStatus(resultBean);
+                }
+
             } else {
                 String userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
                 Set<String> set = new HashSet<>();
@@ -258,6 +324,41 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 onCloseActionInterface.onClose(false);
             }
         });
+    }
+
+    private BroadcastReceiver callStartReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            enableOrDisableCall(false);
+        }
+    };
+
+    private BroadcastReceiver callEndReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            enableOrDisableCall(true);
+        }
+    };
+
+    private void enableOrDisableCall(Boolean isEnabled) {
+        if (isEnabled) {
+            userDetailBnv.findViewById(R.id.menu_call).setEnabled(true);
+            userDetailBnv.findViewById(R.id.menu_call).setAlpha(1);
+        } else {
+            userDetailBnv.findViewById(R.id.menu_call).setEnabled(false);
+            userDetailBnv.findViewById(R.id.menu_call).setAlpha(0.5f);
+        }
+
+    }
+
+    private void updateUserStatus(CommonUserApiResponseModel userApiResponseModel) {
+        if (userApiResponseModel.isAvailable() && userApiResponseModel.getRole().equals(Constants.ROLE_PATIENT)) {
+            userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.VISIBLE);
+        } else {
+            userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
+        }
+
+        userDobTv.setCompoundDrawablesWithIntrinsicBounds(userApiResponseModel.getStatusColorCode(), 0, 0, 0);
     }
 
     private void updateView(CommonUserApiResponseModel resultBean) {

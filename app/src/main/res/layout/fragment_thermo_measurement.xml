@@ -40,6 +40,7 @@
                 android:id="@+id/value_tv"
                 android:textColor="@color/colorBlack"
                 android:textSize="60sp"
+                android:text="0"
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:layout_marginLeft="20dp"

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -37,6 +38,15 @@ public class PermissionChecker {
         } else {
             showProposer(permissionFor);
             return false;
+        }
+    }
+
+    @Nullable
+    public Intent checkAndReturn(int permissionFor) {
+        if (isGranted(permissionFor)) {
+            return  null;
+        } else {
+            return getIntent(permissionFor);
         }
     }
 
@@ -119,13 +129,18 @@ public class PermissionChecker {
     }
 
     private void showProposer(int permissionFor) {
+        ((FragmentActivity) context).startActivityForResult(getIntent(permissionFor), permissionFor, null);
+    }
+
+    private Intent getIntent(int permissionFor) {
         Bundle bundle = getBundle(permissionFor);
-        ((FragmentActivity) context).startActivityForResult(new Intent(context, ProposerActivity.class).putExtras(bundle), permissionFor, null);
+        Intent intent = new Intent(context, ProposerActivity.class);
+        intent.putExtras(bundle);
+        return intent;
     }
 
     private void showProposerForFragment(int permissionFor,Fragment fragment) {
-        Bundle bundle = getBundle(permissionFor);
-        fragment.startActivityForResult(new Intent(context, ProposerActivity.class).putExtras(bundle), permissionFor, null);
+        fragment.startActivityForResult(getIntent(permissionFor), permissionFor, null);
     }
 
     private Bundle getBundle(int permissionFor) {

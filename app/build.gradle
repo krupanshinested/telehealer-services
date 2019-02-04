@@ -119,7 +119,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
 
     //firebase
-    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
 
     //pubnub
@@ -135,7 +135,7 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.9.3'
 
     //Open Tok
-    implementation 'com.opentok.android:opentok-android-sdk:2.15.2'
+    implementation 'com.opentok.android:opentok-android-sdk:2.15.3'
 
     //Ripple effect
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
@@ -157,4 +157,7 @@ dependencies {
 
     //CircularProgressIndicator
     implementation 'com.github.castorflex.smoothprogressbar:library-circular:1.3.0'
+    //Floating menu for Call Minimize
+    implementation 'com.github.recruit-lifestyle:FloatingView:2.4.0'
+
 }

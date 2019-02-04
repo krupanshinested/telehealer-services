@@ -108,8 +108,4 @@ public class CallInitiateModel implements Serializable {
     public void setCallType(String callType) {
         this.callType = callType;
     }
-
-    public Boolean isForVideoCall() {
-        return callType.equals(OpenTokConstants.video);
-    }
 }

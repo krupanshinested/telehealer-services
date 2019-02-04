@@ -26,6 +26,7 @@ import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
@@ -51,6 +52,7 @@ public class CallPlacingActivity extends BaseActivity {
     public static final int MA_DOC_PAYMENT_REQUEST = 231;
     public static final int BRAIN_TREE_REQUEST = 233;
     public static final int VideoFeedRequestID = 235;
+    public static final int OneWayCallRequestID = 237;
 
     @Nullable
     private CallInitiateModel callInitiateModel;
@@ -91,25 +93,38 @@ public class CallPlacingActivity extends BaseActivity {
                     TokenFetchModel tokenFetchModel = (TokenFetchModel) baseApiResponseModel;
                     callInitiateModel.update(tokenFetchModel);
 
-                    if (!appPreference.getBoolean(PreferenceConstants.PATIENT_VIDEO_FEED) && callInitiateModel.isForVideoCall()) {
+                    if ( (!appPreference.getBoolean(PreferenceConstants.PATIENT_VIDEO_FEED) && callInitiateModel.getCallType().equals(OpenTokConstants.video)) || (!appPreference.getBoolean(PreferenceConstants.ONE_WAY_CALL_INFO) && callInitiateModel.getCallType().equals(OpenTokConstants.oneWay))) {
                         Intent intent = new Intent(CallPlacingActivity.this, ContentActivity.class);
                         intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
                         intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
-                        intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.call_kit_education);
-                        intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
-                        intent.putExtra(ArgumentKeys.TITLE, getString(R.string.enable_patient_video_feed));
-                        intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.patient_video_feed_description));
+
+
+                        int requestId = 0;
+                        if (callInitiateModel.getCallType().equals(OpenTokConstants.video)) {
+                            intent.putExtra(ArgumentKeys.TITLE, getString(R.string.enable_patient_video_feed));
+                            intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.patient_video_feed_description));
+                            intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.call_kit_education);
+                            intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+
+                            requestId = CallPlacingActivity.VideoFeedRequestID;
+
+                        } else if (callInitiateModel.getCallType().equals(OpenTokConstants.oneWay)) {
+                            intent.putExtra(ArgumentKeys.TITLE, getString(R.string.one_way_call));
+                            intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.one_way_call_description));
+                            intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.one_way_call);
+                            intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
+                            intent.putExtra(ArgumentKeys.SKIP_TITLE,getString(R.string.CANCEL));
+
+                            requestId = CallPlacingActivity.OneWayCallRequestID;
+                        }
+
                         intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, true);
                         intent.putExtra(ArgumentKeys.CHECK_BOX_TITLE, getString(R.string.do_not_show_again));
                         intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, false);
 
-                        startActivityForResult(intent, CallPlacingActivity.VideoFeedRequestID);
+                        startActivityForResult(intent, requestId);
                     } else {
-                        if (callInitiateModel.isForVideoCall()) {
-                            openVideoCall();
-                        } else {
-                            openAudioCall();
-                        }
+                        openCall();
                     }
 
                 } else {
@@ -158,7 +173,13 @@ public class CallPlacingActivity extends BaseActivity {
         });
 
 
-        openTokViewModel.postaVoipCall(callInitiateModel.getDoctorGuid(),callInitiateModel.getToUserGuid(),callInitiateModel.getScheduleId(),callInitiateModel.getCallType());
+        String callType = callInitiateModel.getCallType();
+
+        if (callType.equals(OpenTokConstants.oneWay)) {
+            callType = OpenTokConstants.video;
+        }
+
+        openTokViewModel.postaVoipCall(callInitiateModel.getDoctorGuid(),callInitiateModel.getToUserGuid(),callInitiateModel.getScheduleId(),callType);
 
     }
 
@@ -197,6 +218,43 @@ public class CallPlacingActivity extends BaseActivity {
             didOpenCallKit();
             this.callInitiateModel = null;
             finish();
+        }
+    }
+
+    private void openWayCall() {
+        if (PermissionChecker.with(CallPlacingActivity.this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+            if (TokBox.shared.isActivityPresent() || TokBox.shared.isActiveCallPreset()) {
+                return;
+            }
+
+            EventRecorder.recordCallUpdates("TRYING_ONE_WAY", null);
+
+            Intent intent = new Intent(application, CallActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(CALL_INITIATE_MODEL,callInitiateModel);
+            application.startActivity(intent);
+
+            didOpenCallKit();
+            this.callInitiateModel = null;
+            finish();
+        }
+    }
+
+    private void openCall() {
+        if (callInitiateModel == null) {
+            return;
+        }
+
+        switch (callInitiateModel.getCallType()) {
+            case OpenTokConstants.audio:
+                openAudioCall();
+                break;
+            case OpenTokConstants.video:
+                openVideoCall();
+                break;
+            case OpenTokConstants.oneWay:
+                openWayCall();
+                break;
         }
     }
 
@@ -300,11 +358,7 @@ public class CallPlacingActivity extends BaseActivity {
             case PermissionConstants.PERMISSION_CAM_MIC:
             case PermissionConstants.PERMISSION_MICROPHONE:
                 if (resultCode == RESULT_OK && callInitiateModel != null) {
-                    if (callInitiateModel.isForVideoCall()) {
-                        openVideoCall();
-                    } else {
-                        openAudioCall();
-                    }
+                    openCall();
                 } else {
                     finish();
                 }
@@ -344,15 +398,22 @@ public class CallPlacingActivity extends BaseActivity {
                 appPreference.setBoolean(PreferenceConstants.PATIENT_VIDEO_FEED,data.getBooleanExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED,false));
 
                 if (callInitiateModel != null) {
-                    if (callInitiateModel.isForVideoCall()) {
-                        openVideoCall();
+                    openCall();
+                } else {
+                    finish();
+                }
+                break;
+            case CallPlacingActivity.OneWayCallRequestID:
+                if (resultCode == RESULT_OK) {
+                    appPreference.setBoolean(PreferenceConstants.ONE_WAY_CALL_INFO, data.getBooleanExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED, false));
+                    if (callInitiateModel != null) {
+                        openCall();
                     } else {
-                        openAudioCall();
+                        finish();
                     }
                 } else {
                     finish();
                 }
-
                 break;
         }
     }

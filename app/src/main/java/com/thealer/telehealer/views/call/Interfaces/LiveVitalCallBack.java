@@ -8,4 +8,5 @@ public interface LiveVitalCallBack {
     void closeVitalController();
     void didInitiateMeasure(String type);
     void didChangedNumberOfScreens(int count);
+    void didChangeStreamingState(int state);
 }

@@ -2,12 +2,16 @@ package com.thealer.telehealer.views.home.schedules;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,16 +24,22 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
+import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.CallPlacingActivity;
+import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
@@ -101,6 +111,26 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         return view;
     }
 
+    @Override
+    public void onCreate(Bundle saveInstance) {
+        super.onCreate(saveInstance);
+
+        if (getActivity() != null) {
+            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(callStartReceiver, new IntentFilter(Constants.CALL_STARTED_BROADCAST));
+            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(callEndReceiver, new IntentFilter(Constants.CALL_ENDED_BROADCAST));
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (getActivity() != null) {
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(callEndReceiver);
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(callStartReceiver);
+        }
+    }
+
     private void initView(View view) {
         appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
@@ -130,13 +160,16 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         patientCallIv.setOnClickListener(this);
         patientChatIv.setOnClickListener(this);
 
-        if (UserType.isUserDoctor() || UserType.isUserAssistant()) {
-            patientChatIv.setVisibility(View.VISIBLE);
-            patientCallIv.setVisibility(View.VISIBLE);
-        }
+        //TODO : Need to change this to visible when chat is integrated
+        patientChatIv.setVisibility(View.GONE);
+        doctorChatIv.setVisibility(View.GONE);
 
-        if (UserType.isUserPatient()) {
-            doctorChatIv.setVisibility(View.VISIBLE);
+        patientCallIv.setVisibility(View.GONE);
+
+        if (TokBox.shared.isActiveCallPreset()) {
+            patientCallIv.setEnabled(false);
+        } else {
+            patientCallIv.setEnabled(true);
         }
 
         if (getArguments() != null) {
@@ -210,11 +243,30 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                     doctorChatIv.setVisibility(View.GONE);
                     patientCallIv.setVisibility(View.GONE);
                     patientChatIv.setVisibility(View.GONE);
+                } else if (!UserType.isUserPatient()) {
+                    if (resultBean.getPatient().isAvailable()) {
+                        patientCallIv.setVisibility(View.VISIBLE);
+                    }
                 }
+
             }
         }
 
     }
+
+    private BroadcastReceiver callStartReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            patientCallIv.setEnabled(false);
+        }
+    };
+
+    private BroadcastReceiver callEndReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            patientCallIv.setEnabled(true);
+        }
+    };
 
     @Override
     public void onClick(View v) {
@@ -241,6 +293,44 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
             case R.id.doctor_chat_iv:
                 break;
             case R.id.patient_call_iv:
+
+                ArrayList<String> callTypes = new ArrayList<>();
+                callTypes.add(getString(R.string.audio_call));
+                callTypes.add(getString(R.string.video_call));
+                callTypes.add(getString(R.string.one_way_call));
+                ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
+                    @Override
+                    public void didSelectedItem(int position) {
+
+                        String callType;
+                        switch (position) {
+                            case 0:
+                                callType = OpenTokConstants.audio;
+                                break;
+                            case 1:
+                                callType = OpenTokConstants.video;
+                                break;
+                            default:
+                                callType = OpenTokConstants.oneWay;
+                                break;
+                        }
+
+                        CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(), resultBean.getPatient(), null, null, null, callType);
+
+                        Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
+                        intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL,callInitiateModel);
+                        startActivity(intent);
+
+                    }
+
+                    @Override
+                    public void didCancelled() {
+
+                    }
+                });
+                itemPickerDialog.setCancelable(false);
+                itemPickerDialog.show();
+
                 break;
             case R.id.patient_chat_iv:
                 break;

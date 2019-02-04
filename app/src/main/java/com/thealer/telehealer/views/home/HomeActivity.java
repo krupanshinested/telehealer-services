@@ -81,9 +81,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         if (savedInstanceState != null) {
             isChildVisible = savedInstanceState.getBoolean(IS_CHILD_VISIBLE);
             selecteMenuItem = savedInstanceState.getInt(SELECTED_MENU_ITEM);
+        } else {
+            selecteMenuItem = getIntent().getIntExtra(ArgumentKeys.SELECTED_MENU_ITEM,0);
         }
 
         if (checkIsUserActivated()) {
@@ -499,7 +502,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     }
 
-    private void showRecentView() {
+    public void showRecentView() {
         helpContent = HelpContent.HELP_RECENTS;
         setToolbarTitle(getString(R.string.recents));
         Bundle bundle = new Bundle();

@@ -134,7 +134,7 @@ public class QuestionnaireBean implements Serializable {
         }
     }
 
-    public static class PastMedicalHistoryBean extends CommonItemBean {
+    public static class PastMedicalHistoryBean extends CommonItemBean implements Serializable {
         private String otherInformation;
 
         public PastMedicalHistoryBean(String otherInformation, List<MedicalHistoryCommonModel> items) {

@@ -117,5 +117,11 @@ public class ArgumentKeys {
     public static final String TRANSACTION = "TRANSACTION";
     public static String NOTIFICATION_ID = "notification-id";
     public static String NOTIFICATION = "notification";
+    public static final String SELECTED_MENU_ITEM = "SELECTED_MENU_ITEM";
+    public static final String CALL_REQUEST_ACTION = "CALL_REQUEST_ACTION";
+    public static final String CALL_REQUEST_DATA = "CALL_REQUEST_DATA";
+    public static final String CALL_REQUEST_DATA_1 = "CALL_REQUEST_DATA_1";
+    public static final String SKIP_TITLE = "SKIP_TITLE";
+
 
 }
