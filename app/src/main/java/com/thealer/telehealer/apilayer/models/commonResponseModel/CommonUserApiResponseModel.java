@@ -204,6 +204,23 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
         return status;
     }
 
+    public Boolean isAvailable() {
+        return status.equals(Constants.AVAILABLE);
+    }
+
+    public int getStatusColorCode() {
+        switch (status) {
+            case Constants.AVAILABLE:
+                return R.drawable.ic_status_12dp;
+            case Constants.BUSY:
+                return R.drawable.ic_busy_status;
+            case Constants.OFFLINE:
+                return R.drawable.ic_offline_status;
+            default:
+                return R.drawable.ic_offline_status;
+        }
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }

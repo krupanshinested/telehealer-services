@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
@@ -85,15 +86,21 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                                     switch (type){
                                         case NotificationListAdapter.REQUEST_TYPE_APPOINTMENT:
                                             if (isAccept){
+                                                EventRecorder.recordNotification("APPOINTMENT_ACCEPTED");
                                                 PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getScheduleAcceptPayload(toGuid, startDate), null);
                                             }else {
+                                                EventRecorder.recordNotification("APPOINTMENT_REJECTED");
                                                 PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getScheduleRejectPayload(toGuid, startDate), null);
                                             }
                                             break;
                                         case NotificationListAdapter.REQUEST_TYPE_CONNECTION:
                                             if (isAccept){
+                                                EventRecorder.recordNotification("CONNECTION_ACCEPTED");
+                                                EventRecorder.recordConnection("CONNECTION_ACCEPTED");
                                                 PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionAcceptPayload(toGuid), null);
                                             }else {
+                                                EventRecorder.recordNotification("CONNECTION_REJECTED");
+                                                EventRecorder.recordConnection("CONNECTION_REJECTED");
                                                 PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionRejectPayload(toGuid), null);
                                             }
                                             break;
