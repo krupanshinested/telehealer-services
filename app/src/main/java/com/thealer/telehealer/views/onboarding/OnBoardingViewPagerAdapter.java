@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
@@ -29,11 +30,6 @@ public class OnBoardingViewPagerAdapter extends PagerAdapter {
     private boolean isPreviewAvailable;
     private FragmentActivity activity;
     private List<Bitmap> imageBitmapList;
-
-    public OnBoardingViewPagerAdapter(Context context, int count) {
-        this.context = context;
-        this.count = count;
-    }
 
     public OnBoardingViewPagerAdapter(FragmentActivity context, List<String> insuranceImageList, boolean isPreviewAvailable) {
         this.context = context;
