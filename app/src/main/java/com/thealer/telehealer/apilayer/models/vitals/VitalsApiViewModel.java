@@ -41,6 +41,28 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
+    public void getUserFilteredVitals(String type, String user_guid) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getUserFilteredVitals(type, user_guid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAListObserver<VitalsApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(ArrayList<VitalsApiResponseModel> o) {
+
+                                    ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(o);
+
+                                    baseApiArrayListMutableLiveData.setValue(apiResponseModels);
+
+                                }
+                            });
+                }
+            }
+        });
+    }
+
     public void getVitals(String type) {
         fetchToken(new BaseViewInterface() {
             @Override

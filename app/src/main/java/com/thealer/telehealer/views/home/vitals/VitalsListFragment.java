@@ -50,7 +50,7 @@ public class VitalsListFragment extends BaseFragment {
                 }
             });
         } else {
-            fab.setVisibility(View.GONE);
+            fab.hide();
         }
 
         listRv = (RecyclerView) view.findViewById(R.id.vitals_orders_list_rv);
