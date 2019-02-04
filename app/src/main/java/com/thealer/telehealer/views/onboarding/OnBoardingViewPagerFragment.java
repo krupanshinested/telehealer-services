@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.onboarding;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,16 +13,25 @@ import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentFive;
+import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentFour;
+import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentOne;
+import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentPagerAdapter;
+import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentThree;
+import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentTwo;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Aswin on 10,October,2018
  */
-public class OnBoardingViewPagerFragment extends BaseFragment implements ViewPager.OnPageChangeListener{
+public class OnBoardingViewPagerFragment extends BaseFragment implements ViewPager.OnPageChangeListener {
     private ViewPager viewPager;
     private LinearLayout pagerIndicator;
-    private OnBoardingViewPagerAdapter onBoardingViewPagerAdapter;
     private ImageView[] indicators;
     private OnViewPageChangeListener onViewPageChangeListener;
+    private OnboardingFragmentPagerAdapter onboardingFragmentPagerAdapter;
 
     @Nullable
     @Override
@@ -34,15 +44,15 @@ public class OnBoardingViewPagerFragment extends BaseFragment implements ViewPag
     private void initView(View view) {
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         pagerIndicator = (LinearLayout) view.findViewById(R.id.pager_indicator);
-        onBoardingViewPagerAdapter = new OnBoardingViewPagerAdapter(getContext(), 5);
-        viewPager.setAdapter(onBoardingViewPagerAdapter);
-        viewPager.setCurrentItem(0, true);
+        onboardingFragmentPagerAdapter = new OnboardingFragmentPagerAdapter(getActivity().getSupportFragmentManager());
+        viewPager.setAdapter(onboardingFragmentPagerAdapter);
+        viewPager.setCurrentItem(0, false);
         viewPager.addOnPageChangeListener(this);
         createIndicator();
     }
 
     private void createIndicator() {
-        int count = onBoardingViewPagerAdapter.getCount();
+        int count = onboardingFragmentPagerAdapter.getCount();
         indicators = new ImageView[count];
 
         for (int i = 0; i < count; i++) {
@@ -50,7 +60,7 @@ public class OnBoardingViewPagerFragment extends BaseFragment implements ViewPag
             indicators[i].setImageDrawable(getResources().getDrawable(R.drawable.circular_unselected_indicator));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(4, 0, 4,0);
+            params.setMargins(4, 0, 4, 0);
 
             pagerIndicator.addView(indicators[i], params);
         }
@@ -68,7 +78,7 @@ public class OnBoardingViewPagerFragment extends BaseFragment implements ViewPag
 
     @Override
     public void onPageSelected(int i) {
-        for (int j = 0; j < onBoardingViewPagerAdapter.getCount(); j++) {
+        for (int j = 0; j < onboardingFragmentPagerAdapter.getCount(); j++) {
             indicators[j].setImageDrawable(getResources().getDrawable(R.drawable.circular_unselected_indicator));
         }
         indicators[i].setImageDrawable(getResources().getDrawable(R.drawable.circular_selected_indicator));

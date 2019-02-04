@@ -146,6 +146,8 @@ dependencies {
     //Brain Tree
     implementation 'com.braintreepayments.api:drop-in:3.7.1'
 
+    //wave animation
+    implementation 'com.github.Jay-Goo:WaveLineView:v1.0.3'
     //Overlay
     implementation 'me.toptas.fancyshowcase:fancyshowcaseview:1.1.5'
 
