@@ -8,6 +8,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
@@ -69,6 +70,9 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowBoolean)) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+
+                                    EventRecorder.recordNotification("NEW_APPOINTMENT");
+
                                     PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getNewSchedulePayload(toGuid), null);
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }

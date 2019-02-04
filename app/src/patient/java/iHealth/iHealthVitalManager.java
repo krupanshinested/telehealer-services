@@ -502,15 +502,20 @@ public class iHealthVitalManager extends VitalsManager {
     }
 
     private void publishThatDeviceStarted(String deviceType) {
-            HashMap<String,Object> message = new HashMap<>();
-            message.put(VitalsConstant.VitalCallMapKeys.status,VitalsConstant.VitalCallMapKeys.startedToMeasure);
-            message.put(VitalsConstant.VitalCallMapKeys.message,"");
-            publishMessage(deviceType,message);
+        EventRecorder.recordVitals("measurement_started", deviceType);
+
+        HashMap<String, Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.startedToMeasure);
+        message.put(VitalsConstant.VitalCallMapKeys.message, "");
+        publishMessage(deviceType, message);
     }
 
     private void publishMessage(String type,HashMap<String,Object> message) {
         if (UserType.isUserPatient()) {
             if (TokBox.shared.isActiveCallPreset()) {
+
+                EventRecorder.recordVitals("publish_vital_result",type);
+
                 String deviceType = VitalDeviceType.shared.getKeyValue(type);
                 TokBox.shared.sendMessage(deviceType.replaceAll(" ","_"), message);
             }

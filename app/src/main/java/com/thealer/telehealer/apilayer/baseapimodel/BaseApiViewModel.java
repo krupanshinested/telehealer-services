@@ -446,6 +446,22 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             return null;
     }
 
+    public MultipartBody.Part getTxtMultipartFile(String name, String file_path) {
+        if (file_path != null) {
+            try {
+                File file = new File(file_path);
+                return MultipartBody.Part.createFormData(name, file.getName(),
+                        RequestBody.create(MediaType.parse("text/plain"), file));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     public int getProgress(boolean isProgressVisibile) {
         int progress = Constants.SHOW_NOTHING;
         if (isProgressVisibile) {

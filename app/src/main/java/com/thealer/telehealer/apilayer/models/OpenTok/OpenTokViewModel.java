@@ -1,8 +1,11 @@
 package com.thealer.telehealer.apilayer.models.OpenTok;
 
 import android.app.Application;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -21,7 +24,15 @@ import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
@@ -120,7 +131,6 @@ public class OpenTokViewModel extends BaseApiViewModel {
         });
     }
 
-
     public void startArchieve(String sessionId) {
         fetchToken(new BaseViewInterface() {
             @Override
@@ -162,6 +172,32 @@ public class OpenTokViewModel extends BaseApiViewModel {
 
                                     EventRecorder.recordNotification("REQUEST_CALL");
                                     baseApiResponseModelMutableLiveData.setValue(tokenFetchModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void postTranscript(String orderId,String transcript,Boolean isCaller) {
+        String fileName = isCaller ? "caller_speech" : "callee_speech";
+
+        if (TextUtils.isEmpty(transcript)) {
+            transcript = " ";
+        }
+
+        String finalTranscript = transcript;
+        
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().postTranscript(orderId, MultipartBody.Part.createFormData(fileName, finalTranscript))
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+
                                 }
                             });
                 }

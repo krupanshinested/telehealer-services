@@ -2,6 +2,7 @@ package com.thealer.telehealer.common.OpenTok;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,15 +18,23 @@ import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintSet;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
 import android.telecom.Call;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -56,6 +65,7 @@ import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.LocationTracker;
 import com.thealer.telehealer.common.LocationTrackerInterface;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.AudioInterface;
+import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OnDSListener;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.TokBoxUIInterface;
 import com.thealer.telehealer.common.PermissionChecker;
@@ -80,6 +90,7 @@ import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.webrtc.VideoRenderer;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -115,7 +126,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         SubscriberKit.VideoStatsListener,
         SubscriberKit.AudioStatsListener,
         SubscriberKit.VideoListener,
-        AudioInterface,AudioManager.OnAudioFocusChangeListener {
+        AudioInterface,AudioManager.OnAudioFocusChangeListener,
+        OnDSListener {
 
     public static TokBox shared = new TokBox();
 
@@ -132,13 +144,14 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private String currentUUIDString;
 
     @Nullable
-    private LinearLayout remoteView;
+    private ViewGroup remoteView;
     @Nullable
-    private FrameLayout localView;
+    private ViewGroup localView;
     private String token = "", sessionId = "", apiKey = "";
     private String callType;
     private Boolean isCalling;
     private Boolean isBadConnection = false;
+    private Boolean isPatientDisclaimerDismissed = false;
 
     @Nullable
     private String doctor_guid,scheduleId;
@@ -185,6 +198,14 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     private final OpenTokViewModel openTokViewModel = new OpenTokViewModel(application);
 
+    private Boolean isTranscriptSent = false;
+    private String currentTranscript = "";
+    private GoogleSpeechRecognizer googleSpeechRecognizer;
+    private TimerRunnable speechRunnable;
+
+    @NonNull
+    private CustomAudioDevice customAudioDevice;
+
     public void didRecieveIncoming(APNSPayload apnsPayload) {
         this.sessionId = apnsPayload.getSessionId();
 
@@ -224,7 +245,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                             @Override
                             public void run() {
 
-                                application.startActivity(intent);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        application.startActivity(intent);
+                                    }
+                                },100);
 
                                 try {
                                     Log.d("TokBox", "startIncomingTone");
@@ -288,11 +314,22 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     public TokBox() {
         CustomAudioDevice customAudioDevice = new CustomAudioDevice(application,this);
         AudioDeviceManager.setAudioDevice(customAudioDevice);
+        this.customAudioDevice = customAudioDevice;
+
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                     @Override
+                                                     public void run() {
+                                                         googleSpeechRecognizer = new GoogleSpeechRecognizer(application);
+                                                         googleSpeechRecognizer.setOnDroidSpeechListener(TokBox.this);
+                                                     }
+                                                 });
     }
 
     public void initialSetUp(CallInitiateModel callInitiateModel,Boolean isCalling,String uuidString) {
 
         EventRecorder.recordLastUpdate("last_call_date");
+        currentTranscript = "";
+        isTranscriptSent = false;
 
         this.token = callInitiateModel.getToken();
         this.sessionId = callInitiateModel.getSessionId();
@@ -301,6 +338,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         this.isCalling = isCalling;
         this.currentUUIDString = uuidString;
         this.scheduleId = callInitiateModel.getScheduleId();
+        this.isPatientDisclaimerDismissed = true;
 
         if (AudioDeviceManager.getAudioDevice() != null && AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -352,24 +390,55 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         publisherAudioQualityScore = -1.0;
 
         patientLocationTracker = null;
+
+        LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.CALL_STARTED_BROADCAST));
     }
 
-    public void setup(LinearLayout remoteView, FrameLayout localView) {
-        this.localView = localView;
-        this.remoteView = remoteView;
+    public void setup(ViewGroup remoteView, ViewGroup localView) {
+
+        if (callType.equals(OpenTokConstants.oneWay)) {
+            this.localView = remoteView;
+            this.remoteView = localView;
+        } else {
+            this.localView = localView;
+            this.remoteView = remoteView;
+        }
 
         setupFeedViews();
     }
 
-    public void removeRemoteandLocalView() {
-        if (mSubscriber != null && mSubscriber.getView().getParent() != null)
-            ((ViewGroup) mSubscriber.getView().getParent()).removeView(mSubscriber.getView());
+    public void setRemoteView(ViewGroup remoteView) {
+        if (callType.equals(OpenTokConstants.oneWay)) {
+            this.localView = remoteView;
+            setupLocalFeedView();
+        } else {
+            this.remoteView = remoteView;
+            setupRemoteFeedView();
+        }
+    }
 
-        if (mPublisher != null && mPublisher.getView().getParent() != null)
-            ((ViewGroup) mPublisher.getView().getParent()).removeView(mPublisher.getView());
+    public void removeRemoteandLocalView(ViewGroup remoteView, ViewGroup localView) {
+        removeRemoteView(remoteView);
+        removeLocalView(localView);
+    }
 
-        localView = null;
-        remoteView = null;
+    public void removeRemoteView(ViewGroup remoteView) {
+        if (remoteView == this.remoteView) {
+            if (mSubscriber != null && mSubscriber.getView().getParent() != null)
+                ((ViewGroup) mSubscriber.getView().getParent()).removeView(mSubscriber.getView());
+
+            this.remoteView = null;
+        }
+
+    }
+
+    public void removeLocalView(ViewGroup localView) {
+        if (localView == this.localView) {
+            if (mPublisher != null && mPublisher.getView().getParent() != null)
+                ((ViewGroup) mPublisher.getView().getParent()).removeView(mPublisher.getView());
+
+            this.localView = null;
+        }
     }
 
     public void connectToSession() {
@@ -385,12 +454,20 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     }
 
-    public void setUIListener(@Nullable TokBoxUIInterface tokBoxUIInterface) {
+    public void setUIListener(TokBoxUIInterface tokBoxUIInterface) {
         this.tokBoxUIInterface = tokBoxUIInterface;
+        this.tokBoxUIInterface.assignTokBoxApiViewModel(openTokViewModel);
+    }
 
-        if (this.tokBoxUIInterface != null) {
-            tokBoxUIInterface.assignTokBoxApiViewModel(openTokViewModel);
+    public void resetUIListener(TokBoxUIInterface tokBoxUIInterface) {
+        if (this.tokBoxUIInterface == tokBoxUIInterface) {
+            this.tokBoxUIInterface = null;
         }
+    }
+
+    @Nullable
+    public TokBoxUIInterface getTokBoxUIInterface() {
+        return tokBoxUIInterface;
     }
 
     public void startPublishVideo() {
@@ -414,6 +491,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             }
             localView.addView(mPublisher.getView());
 
+            if (connectedDate != null) {
+                mPublisher.getView().setVisibility(View.VISIBLE);
+            } else {
+                mPublisher.getView().setVisibility(View.GONE);
+            }
+
             setZOrderTopForLocalView();
 
         } else {
@@ -422,6 +505,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void setZOrderTopForLocalView() {
+        if (callType.equals(OpenTokConstants.oneWay)) {
+            return;
+        }
+
         if (mPublisher != null && mPublisher.getView() instanceof GLSurfaceView) {
             ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(true);
         }
@@ -493,6 +580,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 ((ViewGroup) mSubscriber.getView().getParent()).removeView(mSubscriber.getView());
 
             remoteView.addView(mSubscriber.getView());
+            mSubscriber.getView().setClipToOutline(true);
+
         }
     }
 
@@ -578,6 +667,14 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         return openTokViewModel;
     }
 
+    public Boolean getPatientDisclaimerDismissed() {
+        return isPatientDisclaimerDismissed;
+    }
+
+    public void setPatientDisclaimerDismissed(Boolean patientDisclaimerDismissed) {
+        isPatientDisclaimerDismissed = patientDisclaimerDismissed;
+    }
+
     //Open tok Actions
 
     private void doPublish() {
@@ -592,6 +689,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 mPublisher.setPublishAudio(true);
                 break;
             case OpenTokConstants.video:
+                mPublisher.setPublishVideo(true);
+                mPublisher.setPublishAudio(true);
+                break;
+            case OpenTokConstants.oneWay:
                 mPublisher.setPublishVideo(true);
                 mPublisher.setPublishAudio(true);
                 break;
@@ -687,8 +788,11 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         localView = null;
         remoteView = null;
 
-        if (tokBoxUIInterface != null)
+        if (tokBoxUIInterface != null) {
             tokBoxUIInterface.didEndCall(callRejectionReason);
+        } else {
+            CallActivity.openFeedBackIfNeeded(callRejectionReason, application);
+        }
 
         if (TextUtils.isEmpty(sessionId)) {
             return;
@@ -703,12 +807,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         sendEndCallNotification(callRejectionReason);
 
-        //Todo
-       /* self.vitalStreamManager?.stopAllMeasures()
-        self.vitalStreamManager?.reset()
-        self.vitalStreamManager = nil
-
-        */
+        sendTranscript();
 
        if (!TextUtils.isEmpty(sessionId)) {
            if (isCalling) {
@@ -728,6 +827,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
        if (tempToken != null) {
            appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN,tempToken);
        }
+
+        final Class<? extends Service> service = CallMinimizeService.class;
+        final Intent intent = new Intent(application, service);
+        application.stopService(intent);
 
         sessionId = "";
         currentUUIDString = null;
@@ -761,6 +864,24 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             callCapTimer.setStopped(true);
 
         callCapTimer = null;
+
+        currentTranscript = "";
+        LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.CALL_ENDED_BROADCAST));
+    }
+
+    private void sendTranscript() {
+
+        if (speechRunnable != null)
+            speechRunnable.setStopped(true);
+
+        if (isTranscriptSent) {
+            return;
+        }
+
+        Log.d("TokBox","Google search sendTranscript : "+currentTranscript);
+        googleSpeechRecognizer.closeDroidSpeechOperations();
+        openTokViewModel.postTranscript(sessionId,currentTranscript,isCalling);
+        isTranscriptSent = true;
     }
 
     private void stopIncomingRingtone() {
@@ -785,6 +906,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void sendEndCallNotification(String callRejectionReason) {
+        if (callType.equals(OpenTokConstants.oneWay)) {
+            return;
+        }
+
         if (otherPersonDetail != null) {
             Log.d("openTok", "endCall");
             PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForEndCall(UserDetailPreferenceManager.getUser_guid(), otherPersonDetail.getUser_guid(), currentUUIDString, callRejectionReason);
@@ -842,12 +967,31 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     //Other methods
 
     private void assignCallCapTimer() {
+        Handler handler = new Handler();
+        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+            @Override
+            public void run() {
+                if (isActiveCallPreset()) {
+                    endCall(OpenTokConstants.timedOut);
+                }
 
+                if (callCapTimer != null)
+                    callCapTimer.setStopped(true);
+
+                callCapTimer = null;
+            }
+        });
+
+        callCapTimer = runnable;
+        handler.postDelayed(runnable, Constants.callCapTime);
     }
 
     //Api methods
 
     private void sendNotification(String sessionId,String toGuid) {
+        if (callType.equals(OpenTokConstants.oneWay)) {
+            return;
+        }
 
         PushPayLoad pushPayLoad = PubNubNotificationPayload.getCallInvitePayload(
                 UserDetailPreferenceManager.getUserDisplayName()
@@ -1157,6 +1301,11 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     public void onConnected(Session session) {
         Log.d("TokBox", "onConnected session");
 
+        HashMap<String,String> detail = new HashMap<>();
+        detail.put("status","success");
+        detail.put("event","onConnected");
+        TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
+
         if (this.isCalling) {
             final int interval = 30000; // 30 Second
             Handler handler = new Handler();
@@ -1181,6 +1330,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
 
         doPublish();
+
+        if (callType.equals(OpenTokConstants.oneWay)) {
+            callStarted();
+        }
     }
 
     @Override
@@ -1242,23 +1395,19 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
     }
 
-    //SubscriberListener methods
-    @Override
-    public void onConnected(SubscriberKit subscriberKit) {
-        Log.d("TokBox", "onConnected subscriber");
 
-        HashMap<String,String> detail = new HashMap<>();
-        detail.put("status","success");
-        detail.put("event","onConnected");
-
-        TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
-
+    private void callStarted() {
         connectedDate = new Date();
+
+        if (mPublisher != null)
+            mPublisher.getView().setVisibility(View.VISIBLE);
 
         if (tokBoxUIInterface != null) {
             tokBoxUIInterface.updateCallInfo(application.getString(R.string.connected));
             tokBoxUIInterface.startedCall();
         }
+
+        startArchive(sessionId);
 
         if (isCalling) {
             assignCallCapTimer();
@@ -1267,27 +1416,27 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             updateCallStatus(sessionId, params);
         }
 
-        startArchive(sessionId);
+    }
+
+    //SubscriberListener methods
+    @Override
+    public void onConnected(SubscriberKit subscriberKit) {
+        Log.d("TokBox", "onConnected subscriber");
+        callStarted();
+
         setupRemoteFeedView();
         updatePatientLocation();
 
-        Handler handler = new Handler();
-        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+        googleSpeechRecognizer.startDroidSpeechRecognition();
+
+        speechRunnable = new TimerRunnable(new TimerInterface() {
             @Override
             public void run() {
-                if (isActiveCallPreset()) {
-                    endCall(OpenTokConstants.timedOut);
-                }
-
-                if (callCapTimer != null)
-                    callCapTimer.setStopped(true);
-
-                callCapTimer = null;
+                Log.d("TokBox","Google search sendTranscript trigger from timer");
+                sendTranscript();
             }
         });
-
-        callCapTimer = runnable;
-        handler.postDelayed(runnable, Constants.callCapTime);
+        new Handler().postDelayed(speechRunnable,60000);
     }
 
     @Override
@@ -1742,5 +1891,140 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 break;
 
         }
+    }
+
+    /*
+    //RecognitionListener methods
+    @Override
+    public void onReadyForSpeech(Bundle params) {
+        Log.d("TokBox","Google search onReadyForSpeech");
+    }
+
+    @Override
+    public void onBeginningOfSpeech() {
+        Log.d("TokBox","Google search onBeginningOfSpeech");
+    }
+
+    @Override
+    public void onRmsChanged(float rmsdB) {
+        //Log.d("TokBox","onRmsChanged");
+    }
+
+    @Override
+    public void onBufferReceived(byte[] buffer) {
+        Log.d("TokBox","Google search onBufferReceived");
+    }
+
+    @Override
+    public void onEndOfSpeech() {
+        Log.d("TokBox","Google search onEndOfSpeech");
+    }
+
+    @Override
+    public void onError(int error) {
+        String message;
+        switch (error) {
+            case SpeechRecognizer.ERROR_AUDIO:
+                message = "Audio recording error";
+                break;
+            case SpeechRecognizer.ERROR_CLIENT:
+                message = "Client side error";
+                break;
+            case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+                message = "Insufficient permissions";
+                break;
+            case SpeechRecognizer.ERROR_NETWORK:
+                message = "Network error";
+                break;
+            case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+                message = "Network timeout";
+                break;
+            case SpeechRecognizer.ERROR_NO_MATCH:
+                message = "No match";
+                break;
+            case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
+                message = "RecognitionService busy";
+                break;
+            case SpeechRecognizer.ERROR_SERVER:
+                message = "error from server";
+                break;
+            case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+                message = "No speech input";
+                break;
+            default:
+                message = "Didn't understand, please try again.";
+                break;
+        }
+        Log.e("TokBox","Google search Error in Google Speach "+message);
+    }
+
+    @Override
+    public void onResults(Bundle results) {
+        ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+
+        if (matches.size() > 0) {
+            currentTranscript += matches.get(0) + "\n";
+        }
+        //speech.cancel();
+        //speech.startListening(recognizerIntent);
+        Log.d("TokBox","Google search onResults : "+currentTranscript);
+    }
+
+    @Override
+    public void onPartialResults(Bundle partialResults) {
+        ArrayList<String> data = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        ArrayList<String> unstableData = partialResults.getStringArrayList("android.speech.extra.UNSTABLE_TEXT");
+
+        String mResult = "";
+        if (data != null && data.size() > 0 && unstableData != null && unstableData.size() > 0) {
+             mResult = data.get(0) + unstableData.get(0);
+        } else if (data != null && data.size() > 0) {
+            mResult = data.get(0);
+        } else if (unstableData != null && unstableData.size() > 0) {
+            mResult = unstableData.get(0);
+        }
+
+        currentTranscript += mResult + "\n";
+
+        //speech.cancel();
+        //speech.startListening(recognizerIntent);
+        Log.d("TokBox","Google search onPartialResults : "+currentTranscript);
+    }
+
+    @Override
+    public void onEvent(int eventType, Bundle params) {
+        Log.d("TokBox","Google search onEvent event : "+eventType+" params :"+params.toString());
+    }*/
+
+    //OnDSListener methods
+    @Override
+    public void onDroidSpeechSupportedLanguages(String currentSpeechLanguage, List<String> supportedSpeechLanguages) {
+
+    }
+
+    @Override
+    public void onDroidSpeechRmsChanged(float rmsChangedValue) {
+
+    }
+
+    @Override
+    public void onDroidSpeechLiveResult(String liveSpeechResult) {
+        Log.d("TokBox","Google search onDroidSpeechLiveResult : "+liveSpeechResult);
+    }
+
+    @Override
+    public void onDroidSpeechFinalResult(String finalSpeechResult) {
+        currentTranscript += finalSpeechResult + "\n";
+        Log.d("TokBox","Google search onDroidSpeechFinalResult : "+finalSpeechResult);
+    }
+
+    @Override
+    public void onDroidSpeechClosedByUser() {
+        Log.d("TokBox","Google search onDroidSpeechClosedByUser");
+    }
+
+    @Override
+    public void onDroidSpeechError(String errorMsg) {
+        Log.d("TokBox","Google search onDroidSpeechError : "+errorMsg);
     }
 }

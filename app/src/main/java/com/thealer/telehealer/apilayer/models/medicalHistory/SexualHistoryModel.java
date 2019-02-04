@@ -5,10 +5,12 @@ import android.support.v4.app.FragmentActivity;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 
+import java.io.Serializable;
+
 /**
  * Created by Aswin on 24,January,2019
  */
-public class SexualHistoryModel extends MedicalHistoryCommonModel {
+public class SexualHistoryModel extends MedicalHistoryCommonModel implements Serializable {
 
     private DetailBean detail;
 
@@ -20,7 +22,7 @@ public class SexualHistoryModel extends MedicalHistoryCommonModel {
         this.detail = detail;
     }
 
-    public static class DetailBean {
+    public static class DetailBean implements Serializable {
 
         private String actively_With;
         private String periodsRegular;

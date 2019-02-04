@@ -3,10 +3,15 @@ package com.thealer.telehealer.common;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +19,9 @@ import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -38,6 +46,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.Headers;
+import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
@@ -58,12 +67,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import me.toptas.fancyshowcase.FancyShowCaseView;
 import me.toptas.fancyshowcase.FocusShape;
 import me.toptas.fancyshowcase.listener.DismissListener;
+
+import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
+import static org.webrtc.ContextUtils.getApplicationContext;
+
+import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 
 /**
  * Created by Aswin on 12,October,2018
@@ -868,4 +885,84 @@ public class Utils {
         }
         return "";
     }
+
+    public static boolean isInternetEnabled(Context context) {
+        // Initializing the connectivity Manager
+        ConnectivityManager activeConnection = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (activeConnection != null) {
+            NetworkInfo networkInfo = activeConnection.getActiveNetworkInfo();
+            return networkInfo != null && (networkInfo.getType() == ConnectivityManager.TYPE_WIFI || networkInfo.getType() == ConnectivityManager.TYPE_MOBILE);
+        } else {
+            return false;
+        }
+    }
+
+    public static void createNotification(APNSPayload data, Intent intent) {
+
+        String title = data.getAps().get(PubNubNotificationPayload.TITLE);
+        String message = data.getAps().get(PubNubNotificationPayload.ALERT);
+        String imageUrl = data.getAps().get(PubNubNotificationPayload.MEDIA_URL);
+
+
+        if (imageUrl != null) {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+
+                        GlideUrl glideUrl = Utils.getGlideUrlWithAuth(getApplicationContext(), imageUrl);
+
+                        FutureTarget<Bitmap> futureTarget = Glide.with(getApplicationContext()).asBitmap().load(glideUrl).submit();
+
+                        Bitmap imageBitmap = futureTarget.get();
+
+                        displyNotification(title, message, imageBitmap, intent);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+
+        } else {
+            Bitmap imageBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.profile_placeholder);
+            displyNotification(title, message, imageBitmap, intent);
+        }
+
+    }
+
+    public static void displyNotification(String title, String message, Bitmap imageBitmap, Intent intent) {
+
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), notificationChannelId)
+                .setSmallIcon(R.drawable.app_icon)
+                .setBadgeIconType(R.drawable.app_icon)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setLargeIcon(imageBitmap)
+                .setAutoCancel(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+
+        if (intent != null) {
+
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
+            taskStackBuilder.addNextIntentWithParentStack(intent);
+
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            notification.setContentIntent(pendingIntent);
+        }
+
+        Random random = new Random();
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+        notificationManagerCompat.notify(random.nextInt(1000), notification.build());
+    }
+
 }

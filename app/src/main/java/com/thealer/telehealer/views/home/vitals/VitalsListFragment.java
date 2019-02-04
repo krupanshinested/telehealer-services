@@ -10,10 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
@@ -55,6 +57,12 @@ public class VitalsListFragment extends BaseFragment {
                 @Override
                 public void onClick(View view) {
                     if (UserType.isUserPatient()) {
+
+                        if (TokBox.shared.isActiveCallPreset()) {
+                            Toast.makeText(getActivity(),getString(R.string.live_call_going_error),Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
                         Intent intent = new Intent(getActivity(), VitalCreationActivity.class);
                         getActivity().startActivity(intent);
                     }

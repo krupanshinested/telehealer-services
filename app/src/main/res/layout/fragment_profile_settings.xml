@@ -86,9 +86,9 @@
                     android:id="@+id/appointment_slots"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:hideSpiltter="true"
-                    app:icon="@drawable/ic_schedule"
                     app:isSpinnerType="true"
+                    app:hideSpiltter="true"
+                    app:icon="@drawable/ic_schedule_settings"
                     app:title="@string/appointment_slots" />
 
                 <View

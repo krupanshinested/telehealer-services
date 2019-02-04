@@ -429,4 +429,10 @@ public interface ApiInterface {
     @GET("api/vitals")
     Observable<ArrayList<VitalsApiResponseModel>> getUserFilteredVitals(@Query(FILTER) String type, @Query(USER_GUID) String user_guid);
 
+
+    @Multipart
+    @POST("api/call/{id}")
+    Observable<BaseApiResponseModel> postTranscript(@Path(ID) String sessionId,@Part MultipartBody.Part file);
+
+
 }
