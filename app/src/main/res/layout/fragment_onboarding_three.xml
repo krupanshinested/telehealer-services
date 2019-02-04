@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <jaygoo.widget.wlv.WaveLineView
+        android:id="@+id/waveline"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:wlvBackgroundColor="@android:color/transparent"
+        app:wlvFineLineWidth="1dp"
+        app:wlvLineColor="@color/color_blue"
+        app:wlvMoveSpeed="500"
+        app:wlvThickLineWidth="2dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/speech_rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/waveline" />
+
+    <ImageView
+        android:id="@+id/doctor_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/onboarding_page_4_doctor"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/speech_rv" />
+
+    <ImageView
+        android:id="@+id/doctor_wave_iv"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/onboarding_wifi_wave_animation"
+        android:rotation="180"
+        android:translationX="4dp"
+        android:translationY="-30dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/doctor_iv"
+        app:layout_constraintEnd_toStartOf="@id/doctor_iv"
+        app:layout_constraintTop_toTopOf="@id/doctor_iv" />
+
+    <ImageView
+        android:id="@+id/patient_wave_iv"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/onboarding_wifi_wave_animation"
+        android:translationX="-4dp"
+        android:translationY="-30dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/patient_iv"
+        app:layout_constraintStart_toEndOf="@id/patient_iv"
+        app:layout_constraintTop_toTopOf="@+id/patient_iv" />
+
+    <ImageView
+        android:id="@+id/patient_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/onboarding_page_4_patient"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/speech_rv" />
+
+</android.support.constraint.ConstraintLayout>
