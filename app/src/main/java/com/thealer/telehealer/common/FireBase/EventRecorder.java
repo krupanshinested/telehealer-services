@@ -54,7 +54,7 @@ public class EventRecorder {
 
     public static void recordLastUpdate(String eventType) {
         Bundle bundle = new Bundle();
-        bundle.putString(eventType, Utils.getStringFromDate(new Date(),"YYYY-MM-dd"));
+        bundle.putString(eventType, Utils.getStringFromDate(new Date(),"yyyy-MM-dd"));
 
         analytics.logEvent(eventType,bundle);
     }
