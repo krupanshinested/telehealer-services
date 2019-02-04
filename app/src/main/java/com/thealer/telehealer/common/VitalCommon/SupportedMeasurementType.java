@@ -49,7 +49,7 @@ public class SupportedMeasurementType {
             case SupportedMeasurementType.heartRate:
                 return R.drawable.ic_vitals_heart;
             default:
-                return R.string.blood_pressure;
+                return 0;
         }
     }
 

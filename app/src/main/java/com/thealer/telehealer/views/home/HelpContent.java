@@ -15,6 +15,7 @@ class HelpContent {
     public static final int HELP_VITALS = 2;
     public static final int HELP_RECENTS = 3;
     public static final int HELP_SCHEDULES = 4;
+    public static final int HELP_VITAL_REPORT = 5;
 
     private Context context;
 
@@ -29,6 +30,7 @@ class HelpContent {
             case HELP_ORDERS:
                 return context.getString(R.string.orders);
             case HELP_VITALS:
+            case HELP_VITAL_REPORT:
                 return context.getString(R.string.vitals);
             case HELP_RECENTS:
                 return context.getString(R.string.recents);
@@ -39,15 +41,24 @@ class HelpContent {
     }
 
     String getContent(int type) {
+        String user;
+        if (UserType.isUserDoctor()) {
+            user = context.getString(R.string.patients).toLowerCase();
+        } else {
+            user = context.getString(R.string.Doctors).toLowerCase();
+        }
+
         switch (type) {
             case HELP_DOC_PATIENT:
-                return context.getString(R.string.help_content_doctor_patient);
+                return String.format(context.getString(R.string.help_content_doctor_patient), user, user, user, user);
             case HELP_ORDERS:
                 return context.getString(R.string.help_content_orders);
+            case HELP_VITAL_REPORT:
+                return context.getString(R.string.help_content_vital_report);
             case HELP_VITALS:
                 return context.getString(R.string.help_content_vitals);
             case HELP_RECENTS:
-                return context.getString(R.string.help_content_recents);
+                return String.format(context.getString(R.string.help_content_recents), user);
             case HELP_SCHEDULES:
                 return context.getString(R.string.help_content_schedules);
         }

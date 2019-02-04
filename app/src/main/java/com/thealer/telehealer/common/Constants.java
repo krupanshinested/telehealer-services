@@ -127,6 +127,8 @@ public class Constants {
     //Screen Type
     public static final int forRegistration = 1;
     public static final int forProfileUpdate = 2;
+    public static String male = "male";
+    public static String female = "female";
 
     //share intent bundle
     public static List<String> sharedPath;
