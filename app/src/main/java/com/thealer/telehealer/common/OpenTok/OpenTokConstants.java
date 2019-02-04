@@ -9,6 +9,7 @@ public class OpenTokConstants {
     //Call Types
     public static final String audio = "audio";
     public static final String video = "video";
+    public static final String oneWay = "oneWay";
 
     //Call Rejection Reason
     public static final String busyInAnotherLine = "busyInAnotherLine";
@@ -56,5 +57,11 @@ public class OpenTokConstants {
     public static final String ccm = "CCM";
     public static final String rpm = "RPM";
     public static final String bhi = "BHI";
+
+    //Call Actions
+    public static final int receivedRequestForVideoSwap = 1;
+    public static final int receivedResponseForVideoSwap = 2;
+    public static final int didReceiveVitalData = 3;
+
 
 }

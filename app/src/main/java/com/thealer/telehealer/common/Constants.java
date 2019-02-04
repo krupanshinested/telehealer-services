@@ -11,6 +11,13 @@ public class Constants {
 
     public static final long callCapTime = 1800000; //30 minutes
 
+    public final static int MAX_VOICE_RESULTS = 5;
+    public final static int MAX_PAUSE_TIME = 500;
+    public final static int PARTIAL_DELAY_TIME = 500;
+    public final static int ERROR_TIMEOUT = 5000;
+    public final static int AUDIO_BEEP_DISABLED_TIMEOUT = 30000;
+
+
     public static final String PREFERENCE_NAME = "thealer";
     public static final String HEADER_AUTH_TOKEN = "X-Access-Token";
 
@@ -32,6 +39,7 @@ public class Constants {
     public static final String OFFLINE = "OFFLINE";
     public static final String AVAILABLE = "AVAILABLE";
     public static final String ACTIVATED = "ACTIVATED";
+    public static final String BUSY = "BUSY";
 
     //Gender
     public static final String GENDER_MALE = "male";
@@ -137,4 +145,12 @@ public class Constants {
     public static final String CONNECTION_STATUS_OPEN = "open";
     public static final String CONNECTION_STATUS_PENDING = "pending";
     public static final String CONNECTION_STATUS_ACCEPTED = "accepted";
+
+    public static final String CALL_STARTED_BROADCAST = "CALL_STARTED_BROADCAST";
+    public static final String CALL_ENDED_BROADCAST = "CALL_ENDED_BROADCAST";
+
+    //Vital States
+    public static final int idle = 1;
+    public static final int measuring = 2;
+
 }

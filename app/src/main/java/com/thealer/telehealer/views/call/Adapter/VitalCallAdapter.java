@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
@@ -61,13 +62,22 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
 
     @Override
     public Fragment getItem(int i) {
-
+        Log.d("VitalCallAdapter","getItem "+i);
         if (deviceScreens.get(i) != null) {
             return (Fragment) deviceScreens.get(i);
         } else {
             return new Fragment();
         }
 
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        Log.d("VitalCallAdapter","getItemPosition");
+        // Causes adapter to reload all Fragments when
+        // notifyDataSetChanged is called
+        return POSITION_NONE;
+        //return object.equals(this.removeFragment) ? FragmentStatePagerAdapter.POSITION_NONE : this.fragments.indexOf(object);
     }
 
     @Override
@@ -85,6 +95,11 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
     @Override
     public void closeVitalController() {
         liveVitalCallBack.closeVitalController();
+    }
+
+    @Override
+    public void updateState(int state) {
+        liveVitalCallBack.didChangeStreamingState(state);
     }
 
     public void didReceivedVitalData(@NonNull String type,@NonNull String message) {

@@ -2,6 +2,7 @@ package com.thealer.telehealer.common.FireBase;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -93,7 +94,7 @@ public class EventRecorder {
     }
 
     public static void recordAPIEvent(String path,String method,int code){
-
+        Log.d("EventRecorder","recordAPIEvent");
         String[] components = path.split("/");
         Boolean shouldContinue = true;
         String pathElement = null;
@@ -110,16 +111,17 @@ public class EventRecorder {
             }
         }
 
+
         if (pathElement != null) {
             String attr1 = pathElement + "_" + method;
 
             Bundle bundle = new Bundle();
             bundle.putString("PATH_METHOD", attr1);
-
             bundle.putString("PATH_METHOD_STATUSCODE", attr1+"_"+code+"");
             bundle.putString("STATUSCODE", code+"");
 
             analytics.logEvent("api_event",bundle);
+            Log.d("EventRecorder","STATUSCODE : "+code);
         }
     }
 

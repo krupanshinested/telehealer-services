@@ -16,9 +16,13 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.FutureTarget;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.notification.NotificationCancelAppointmentReceiver;
 import com.thealer.telehealer.views.notification.NotificationDetailActivity;
 
@@ -99,7 +103,15 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, resultBean.getSchedule_id(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //TODO Call click intent
+        // Call click intent
+        Intent callIntent = new Intent(context, CallPlacingActivity.class);
+        CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(),resultBean.getPatient(),null,null,resultBean.getSchedule_id()+"", OpenTokConstants.video);
+        callIntent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
+
+        TaskStackBuilder builder = TaskStackBuilder.create(context);
+        builder.addNextIntentWithParentStack(callIntent);
+
+        PendingIntent callPendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         String title = "%s Appointment", message = "You have an appointment with %s at %s";
 
@@ -116,11 +128,13 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                .addAction(R.drawable.ic_clear_black_24dp, context.getString(R.string.cancel_appointment), pendingIntent)
-                .addAction(R.drawable.ic_call_black_24dp, context.getString(R.string.call), null);
+                .addAction(R.drawable.ic_clear_black_24dp, context.getString(R.string.cancel_appointment), pendingIntent);
+
+        if (UserType.isUserDoctor()) {
+            notification.addAction(R.drawable.ic_call_black_24dp, context.getString(R.string.call), callPendingIntent);
+        }
 
         notification.setContentIntent(contentPendingIntent);
-
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(resultBean.getSchedule_id(), notification.build());
