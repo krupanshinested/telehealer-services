@@ -102,15 +102,37 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                             if (baseApiResponseModel instanceof TranscriptionApiResponseModel) {
                                 transcriptionApiResponseModel = (TranscriptionApiResponseModel) baseApiResponseModel;
 
-                                if (!transcriptionApiResponseModel.getStatus().equals(transcriptionApiResponseModel.STATUS_READY)) {
+                                if (transcriptionApiResponseModel.getStatus().equals(transcriptionApiResponseModel.STATUS_READY)) {
                                     String username = null;
                                     if (UserType.isUserPatient()) {
-                                        username = "Dr. " + transcriptionApiResponseModel.getDoctor().getFirst_name() + " " + transcriptionApiResponseModel.getDoctor().getLast_name();
+                                        username = transcriptionApiResponseModel.getDoctor().getDisplayName();
                                     } else {
-                                        username = transcriptionApiResponseModel.getPatient().getFirst_name() + " " + transcriptionApiResponseModel.getPatient().getLast_name();
+                                        username = transcriptionApiResponseModel.getPatient().getDisplayName();
                                     }
                                     toolbarTitle.setTextColor(Color.WHITE);
                                     toolbarTitle.setText(username + "\n" + Utils.getDayMonthYear(transcriptionApiResponseModel.getOrder_start_time()));
+
+                                    if (transcriptionApiResponseModel.getDoctor() != null){
+                                        if (transcriptionApiResponseModel.getDoctor().getUser_id() == transcriptionApiResponseModel.getCaller_id()){
+                                            transcriptionApiResponseModel.setCaller(transcriptionApiResponseModel.getDoctor());
+                                        }else if (transcriptionApiResponseModel.getDoctor().getUser_id() == transcriptionApiResponseModel.getCallee_id()){
+                                            transcriptionApiResponseModel.setCallee(transcriptionApiResponseModel.getDoctor());
+                                        }
+                                    }
+                                    if (transcriptionApiResponseModel.getPatient() != null){
+                                        if (transcriptionApiResponseModel.getPatient().getUser_id() == transcriptionApiResponseModel.getCaller_id()){
+                                            transcriptionApiResponseModel.setCaller(transcriptionApiResponseModel.getPatient());
+                                        }else if (transcriptionApiResponseModel.getPatient().getUser_id() == transcriptionApiResponseModel.getCallee_id()){
+                                            transcriptionApiResponseModel.setCallee(transcriptionApiResponseModel.getPatient());
+                                        }
+                                    }
+                                    if (transcriptionApiResponseModel.getMedical_assistant() != null){
+                                        if (transcriptionApiResponseModel.getMedical_assistant().getUser_id() == transcriptionApiResponseModel.getCaller_id()){
+                                            transcriptionApiResponseModel.setCaller(transcriptionApiResponseModel.getMedical_assistant());
+                                        }else if (transcriptionApiResponseModel.getMedical_assistant().getUser_id() == transcriptionApiResponseModel.getCallee_id()){
+                                            transcriptionApiResponseModel.setCallee(transcriptionApiResponseModel.getMedical_assistant());
+                                        }
+                                    }
 
                                     recentsApiViewModel.downloadTranscriptDetail(transcriptionApiResponseModel.getTranscript(), true);
                                     createVideoPlayer();
@@ -190,7 +212,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
         if (downloadTranscriptResponseModel != null && downloadTranscriptResponseModel.getSpeakerLabels().size() > 0) {
             enableOrDisableView(printIv, true);
             enableOrDisableView(featuresIv, true);
-            transcriptionListAdapter = new TranscriptionListAdapter(getActivity(), downloadTranscriptResponseModel);
+            transcriptionListAdapter = new TranscriptionListAdapter(getActivity(), downloadTranscriptResponseModel, transcriptionApiResponseModel);
             transcriptRv.getRecyclerView().setAdapter(transcriptionListAdapter);
         } else {
             enableOrDisableView(printIv, false);

@@ -80,6 +80,7 @@
         <item name="android:paddingLeft">8dp</item>
         <item name="android:paddingTop">8dp</item>
     </style>
+
     <style name="text_app_color">
         <item name="android:textColor">@color/app_gradient_start</item>
         <item name="android:gravity">center</item>
@@ -98,6 +99,15 @@
         <item name="android:padding">8dp</item>
         <item name="android:alpha">0.5</item>
         <item name="android:enabled">false</item>
+    </style>
+
+    <style name="text_overlay_style" parent="FancyShowCaseDefaultTitleStyle">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingBottom">24dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
     </style>
 
     <style name="calendar_text_appearance" parent="TextAppearance.MaterialCalendarWidget.Date">

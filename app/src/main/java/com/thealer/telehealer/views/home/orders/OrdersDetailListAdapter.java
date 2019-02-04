@@ -191,7 +191,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                 statusIv.setImageDrawable(context.getDrawable(statusImage));
 
         } else {
-            String key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getAssigned_by_user().getUser_guid();
+            String key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getDoctor().getUser_guid();
             if (userDetailHashMap.containsKey(key)) {
                 itemTitleTv.setText(userDetailHashMap.get(key).getDoctorDisplayName());
                 Utils.setImageWithGlide(context, itemCiv, userDetailHashMap.get(key).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
