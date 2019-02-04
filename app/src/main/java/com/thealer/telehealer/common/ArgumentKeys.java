@@ -57,6 +57,7 @@ public class ArgumentKeys {
     public static final String SHARED_IMAGES = "shared_images";
     public static final String IS_SHARED_INTENT = "isShareIntent";
     public static final String SHOW_SIGNATURE_PROPOSER = "show_signature_proposer";
+    public static final String USER_DETAIL = "user_detail";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
