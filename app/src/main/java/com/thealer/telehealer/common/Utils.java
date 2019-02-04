@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,6 +18,9 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.method.KeyListener;
 import android.util.Base64;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
@@ -45,10 +49,45 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
+import me.toptas.fancyshowcase.FancyShowCaseView;
+import me.toptas.fancyshowcase.FocusShape;
+import me.toptas.fancyshowcase.listener.DismissListener;
+
 /**
  * Created by Aswin on 12,October,2018
  */
 public class Utils {
+
+    private static FancyShowCaseView fancyShowCaseView;
+
+    public static void showOverlay(FragmentActivity fragmentActivity, View view, String message, DismissListener dismissListener) {
+        fancyShowCaseView = new FancyShowCaseView.Builder(fragmentActivity)
+                .focusOn(view)
+                .title(message)
+                .closeOnTouch(true)
+                .enableAutoTextPosition()
+                .titleSize(16, TypedValue.COMPLEX_UNIT_SP)
+                .titleStyle(R.style.text_overlay_style, Gravity.BOTTOM)
+                .focusCircleRadiusFactor(0.7)
+                .focusShape(FocusShape.CIRCLE)
+                .clickableOn(view)
+                .build();
+
+        fancyShowCaseView.setDismissListener(dismissListener);
+        fancyShowCaseView.show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hideOverlay();
+            }
+        }, 8000);
+    }
+
+    public static void hideOverlay() {
+        if (fancyShowCaseView != null && fancyShowCaseView.isShown())
+            fancyShowCaseView.hide();
+    }
 
     public static void vibrate(Context context) {
         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -449,14 +488,18 @@ public class Utils {
         if (view == null) {
             view = new View(activity);
         }
-        hideKeyboardFrom(activity, view);
+        if (view.hasFocus()) {
+            view.clearFocus();
+            hideKeyboardFrom(activity, view);
+        }
     }
 
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
 
-        if (imm != null)
+        if (imm != null && imm.isActive(view)) {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     public static String getUTCfromGMT(String timeStamp) {

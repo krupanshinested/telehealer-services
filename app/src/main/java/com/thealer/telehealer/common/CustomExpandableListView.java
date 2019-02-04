@@ -151,4 +151,12 @@ public class CustomExpandableListView extends ConstraintLayout {
     public void hideProgressBar() {
         recyclerLoader.setVisibility(GONE);
     }
+
+    public void showOrHideMessage(boolean show) {
+        if (show) {
+            emptyMessageTv.setVisibility(VISIBLE);
+        } else {
+            emptyMessageTv.setVisibility(GONE);
+        }
+    }
 }

@@ -13,11 +13,17 @@ import android.view.ViewGroup;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.home.VitalsOrdersListAdapter;
+
 import iHealth.pairing.VitalCreationActivity;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 21,November,2018
@@ -40,6 +46,11 @@ public class VitalsListFragment extends BaseFragment {
         fab = view.findViewById(R.id.add_fab);
 
         if (UserType.isUserPatient()) {
+            if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_VITALS)) {
+                appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_VITALS, true);
+                Utils.showOverlay(getActivity(), fab, OverlayViewConstants.OVERLAY_NO_VITALS, null);
+            }
+
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -62,4 +73,11 @@ public class VitalsListFragment extends BaseFragment {
             listRv.setAdapter(vitalsOrdersListAdapter);
         }
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utils.hideOverlay();
+    }
+
 }

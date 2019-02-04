@@ -49,7 +49,7 @@ public class ExperimentalFeatureFragment extends BaseFragment {
                 new Observer<BaseApiResponseModel>() {
                     @Override
                     public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                        if (baseApiResponseModel != null){
+                        if (baseApiResponseModel != null) {
 
                         }
                     }
@@ -81,7 +81,7 @@ public class ExperimentalFeatureFragment extends BaseFragment {
             }
         });
 
-        if (getArguments() != null){
+        if (getArguments() != null) {
             String orderId = getArguments().getString(ArgumentKeys.ORDER_ID);
             DownloadTranscriptResponseModel downloadTranscriptResponseModel = (DownloadTranscriptResponseModel) getArguments().getSerializable(ArgumentKeys.TRANSCRIPTION_DETAIL);
             String speaker1Text = "";
@@ -89,9 +89,10 @@ public class ExperimentalFeatureFragment extends BaseFragment {
 
             if (downloadTranscriptResponseModel != null) {
                 for (int i = 0; i < downloadTranscriptResponseModel.getSpeakerLabels().size(); i++) {
-                    if (downloadTranscriptResponseModel.getSpeakerLabels().get(i).getSpeaker_label().equals("spk_0")){
+                    if (downloadTranscriptResponseModel.getSpeakerLabels().get(i).getSpeaker_label().equals("spk_0") ||
+                            downloadTranscriptResponseModel.getSpeakerLabels().get(i).getSpeaker_label().equals("caller")) {
                         speaker1Text = speaker1Text.concat(downloadTranscriptResponseModel.getSpeakerLabels().get(i).getTranscript()).concat("\n");
-                    }else {
+                    } else {
                         speaker2Text = speaker2Text.concat(downloadTranscriptResponseModel.getSpeakerLabels().get(i).getTranscript()).concat("\n");
                     }
                 }

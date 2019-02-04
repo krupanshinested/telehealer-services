@@ -29,6 +29,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomExpandableListView;
 import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
@@ -36,6 +37,7 @@ import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.settings.SignatureActivity;
 
 import java.util.ArrayList;
@@ -43,6 +45,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import me.toptas.fancyshowcase.listener.DismissListener;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 21,November,2018
@@ -130,11 +136,11 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
             childList.put(date, childListData);
 
-            if (formsApiResponseModel.getAssigned_by_user() != null && formsApiResponseModel.getAssigned_by_user().getUser_guid() != null) {
-                userGuid.add(formsApiResponseModel.getAssigned_by_user().getUser_guid());
+            if (formsApiResponseModel.getDoctor() != null && formsApiResponseModel.getDoctor().getUser_guid() != null) {
+                userGuid.add(formsApiResponseModel.getDoctor().getUser_guid());
             }
-            if (formsApiResponseModel.getAssigned_to_user() != null && formsApiResponseModel.getAssigned_to_user().getUser_guid() != null) {
-                userGuid.add(formsApiResponseModel.getAssigned_to_user().getUser_guid());
+            if (formsApiResponseModel.getPatient() != null && formsApiResponseModel.getPatient().getUser_guid() != null) {
+                userGuid.add(formsApiResponseModel.getPatient().getUser_guid());
             }
         }
         ordersDetailListAdapter.setData(headerList, childList);
@@ -156,9 +162,29 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
         childList.clear();
         userGuid.clear();
 
+        DismissListener dismissListener = new DismissListener() {
+            @Override
+            public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
+                orderDetailCelv.showOrHideMessage(true);
+            }
+
+            @Override
+            public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
+
+            }
+        };
+
         if (baseApiResponseModel instanceof OrdersLabApiResponseModel) {
 
             OrdersLabApiResponseModel labApiResponseModel = (OrdersLabApiResponseModel) baseApiResponseModel;
+
+            if (!UserType.isUserPatient() && page == 1 && labApiResponseModel.getLabsResponseBeanList().size() == 0) {
+                if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_LAB)) {
+                    appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_LAB, true);
+                    orderDetailCelv.showOrHideMessage(false);
+                    Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_LAB_RECORD, dismissListener);
+                }
+            }
 
             for (int i = 0; i < labApiResponseModel.getLabsResponseBeanList().size(); i++) {
 
@@ -198,6 +224,14 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
             OrdersPrescriptionApiResponseModel prescriptionApiResponseModel = (OrdersPrescriptionApiResponseModel) baseApiResponseModel;
 
+            if (!UserType.isUserPatient() && page == 1 && prescriptionApiResponseModel.getOrdersResultBeanList().size() == 0) {
+                if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_PRESCRIPTION)) {
+                    appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_PRESCRIPTION, true);
+                    orderDetailCelv.showOrHideMessage(false);
+                    Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_PRESCRIPTION, dismissListener);
+                }
+            }
+
             for (int i = 0; i < prescriptionApiResponseModel.getOrdersResultBeanList().size(); i++) {
 
                 String date = Utils.getDayMonthYear(prescriptionApiResponseModel.getOrdersResultBeanList().get(i).getCreated_at());
@@ -236,6 +270,14 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
             OrdersSpecialistApiResponseModel ordersSpecialistApiResponseModel = (OrdersSpecialistApiResponseModel) baseApiResponseModel;
 
+            if (!UserType.isUserPatient() && page == 1 && ordersSpecialistApiResponseModel.getResult().size() == 0) {
+                if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_SPECIALIST)) {
+                    appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_SPECIALIST, true);
+                    orderDetailCelv.showOrHideMessage(false);
+                    Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_SPECIALIST, dismissListener);
+                }
+            }
+
             for (int i = 0; i < ordersSpecialistApiResponseModel.getResult().size(); i++) {
 
                 String date = Utils.getDayMonthYear(ordersSpecialistApiResponseModel.getResult().get(i).getCreated_at());
@@ -272,6 +314,13 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
         } else if (baseApiResponseModel instanceof GetRadiologyResponseModel) {
             GetRadiologyResponseModel getRadiologyResponseModel = (GetRadiologyResponseModel) baseApiResponseModel;
 
+            if (!UserType.isUserPatient() && page == 1 && getRadiologyResponseModel.getResultBeanList().size() == 0) {
+                if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_RADIOLOGY)) {
+                    appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_RADIOLOGY, true);
+                    orderDetailCelv.showOrHideMessage(false);
+                    Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_RADIOLOGY, dismissListener);
+                }
+            }
             for (int i = 0; i < getRadiologyResponseModel.getResultBeanList().size(); i++) {
                 String date = Utils.getDayMonthYear(getRadiologyResponseModel.getResultBeanList().get(i).getCreated_at());
 
@@ -568,4 +617,11 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 break;
         }
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utils.hideOverlay();
+    }
+
 }
