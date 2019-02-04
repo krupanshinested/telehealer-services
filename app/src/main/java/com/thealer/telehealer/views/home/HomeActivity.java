@@ -17,7 +17,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,9 +49,8 @@ import com.thealer.telehealer.views.home.recents.RecentFragment;
 import com.thealer.telehealer.views.home.schedules.ScheduleCalendarFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
-import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
+import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
-import com.thealer.telehealer.views.notification.NotificationListFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
@@ -164,11 +162,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             navigationView.getMenu().removeItem(R.id.menu_patient);
         } else if (UserType.isUserDoctor()) {
             navigationView.getMenu().removeItem(R.id.menu_doctor);
-            navigationView.getMenu().removeItem(R.id.menu_vitals);
         } else if (UserType.isUserAssistant()) {
             navigationView.getMenu().removeItem(R.id.menu_patient);
-            navigationView.getMenu().removeItem(R.id.menu_vitals);
             navigationView.getMenu().removeItem(R.id.menu_orders);
+            navigationView.getMenu().removeItem(R.id.menu_vitals);
             navigationView.getMenu().findItem(R.id.menu_schedules).setChecked(true);
             selecteMenuItem = R.id.menu_schedules;
         }
@@ -381,7 +378,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 this.startActivity(intent);
                 break;
             case R.id.menu_vitals:
-                showVitalsView();
+                if (UserType.isUserPatient()) {
+                    showVitalsView();
+                } else {
+                    showVitalReportView();
+                }
                 break;
             case R.id.menu_orders:
                 showOrdersView();
@@ -389,6 +390,13 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         }
         toggleDrawer();
         return true;
+    }
+
+    private void showVitalReportView() {
+        helpContent = HelpContent.HELP_VITAL_REPORT;
+        setToolbarTitle(getString(R.string.vitals));
+        VitalReportFragment vitalReportFragment = new VitalReportFragment();
+        setFragment(vitalReportFragment);
     }
 
     private void showScheduleToolbarOptions(boolean visible, int scheduleType) {

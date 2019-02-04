@@ -46,6 +46,7 @@ import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestMo
 import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
+import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
@@ -101,7 +102,8 @@ public interface ApiInterface {
     String CHANNEL = "channel";
     String SESSION_ID = "sessionId";
     String CALL_QUALITY = "call_quality";
-    String MONTH="month";
+    String MONTH = "month";
+    String FILTER = "filter";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -375,6 +377,7 @@ public interface ApiInterface {
 
     @POST("api/setup/verification-link")
     Observable<BaseApiResponseModel> requestVerificationMain();
+
     @Multipart
     @POST("api/users/signature")
     Observable<SignatureApiResponseModel> uploadSignature(@Part MultipartBody.Part file);
@@ -409,5 +412,12 @@ public interface ApiInterface {
 
     @GET("api/correspondence-history")
     Observable<ArrayList<RecentsApiResponseModel.ResultBean>> getCallLogs(@Query(CALLS) boolean calls);
+
+    @GET("api/vitals/users")
+    Observable<VitalReportApiReponseModel> getVitalUsers(@Query(FILTER) String filter);
+
+
+    @GET("api/vitals")
+    Observable<ArrayList<VitalsApiResponseModel>> getUserFilteredVitals(@Query(FILTER) String type, @Query(USER_GUID) String user_guid);
 
 }
