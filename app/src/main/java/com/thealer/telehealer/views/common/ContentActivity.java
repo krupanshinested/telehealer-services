@@ -67,6 +67,13 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
             skip_btn.setVisibility(View.GONE);
         }
 
+        String skipTitle = getIntent().getStringExtra(ArgumentKeys.SKIP_TITLE);
+        if (TextUtils.isEmpty(skipTitle)) {
+            skip_btn.setText(getString(R.string.skip));
+        } else {
+            skip_btn.setText(skipTitle);
+        }
+
         if (getIntent().getBooleanExtra(ArgumentKeys.IS_CLOSE_NEEDED, false)) {
             close_iv.setVisibility(View.VISIBLE);
         } else {

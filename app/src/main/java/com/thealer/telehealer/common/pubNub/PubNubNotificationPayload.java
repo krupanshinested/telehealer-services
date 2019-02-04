@@ -358,4 +358,21 @@ public class PubNubNotificationPayload {
         return pushPayLoad;
     }
 
+    public static PushPayLoad getCallDismissedPermissionLocalPayload(String otherPersonAvatar,String title,String description) {
+
+        PushPayLoad pushPayLoad = new PushPayLoad();
+        APNSPayload apnsPayload = new APNSPayload();
+
+        HashMap<String, String> aps = new HashMap<>();
+        aps.put(TITLE, title);
+        aps.put(ALERT, description);
+        aps.put(MEDIA_URL, otherPersonAvatar);
+
+        apnsPayload.setAps(aps);
+        pushPayLoad.setPn_apns(apnsPayload);
+        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+
+        return pushPayLoad;
+    }
+
 }

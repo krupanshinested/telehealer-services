@@ -12,11 +12,18 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
@@ -75,6 +82,10 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     @Override
     public void onClick(View view) {
+        if (view.getId() == R.id.signOut && TokBox.shared.isActiveCallPreset()) {
+            Toast.makeText(getActivity(),getString(R.string.live_call_going_error),Toast.LENGTH_LONG).show();
+            return;
+        }
 
         if (view.getId() == R.id.appointment_slots) {
             appointment_slots.openSpinner();
