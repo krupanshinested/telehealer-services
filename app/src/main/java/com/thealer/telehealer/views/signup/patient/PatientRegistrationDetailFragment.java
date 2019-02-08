@@ -451,7 +451,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
         switch (v.getId()) {
             case R.id.profile_civ:
-                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(getActivity());
                 break;
             case R.id.cash_tv:
             case R.id.insurance_back_iv:

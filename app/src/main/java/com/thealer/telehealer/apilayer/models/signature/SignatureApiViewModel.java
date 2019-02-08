@@ -22,7 +22,7 @@ public class SignatureApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    String path = CameraUtil.with(getApplication()).getBitmapFilePath(signature);
+                    String path = CameraUtil.getBitmapFilePath(getApplication(), signature);
                     getAuthApiService().uploadSignature(getMultipartFile("signature", path))
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
