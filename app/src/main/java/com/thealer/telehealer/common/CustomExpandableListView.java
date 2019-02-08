@@ -84,7 +84,6 @@ public class CustomExpandableListView extends ConstraintLayout {
                 } else {
                     hideProgressBar();
                 }
-                Log.e("aswin", "onScroll: " + firstVisibleItem + " " + visibleItemCount + " " + totalItemCount);
             }
         });
     }
