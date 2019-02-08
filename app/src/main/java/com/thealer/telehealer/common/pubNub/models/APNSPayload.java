@@ -57,6 +57,8 @@ public class APNSPayload implements Serializable {
     @Nullable
     private String media_url;
 
+    private String vital_type;
+
 
     public HashMap<String, String> getAps() {
         return aps;
@@ -195,5 +197,13 @@ public class APNSPayload implements Serializable {
 
     public void setMedia_url(@Nullable String media_url) {
         this.media_url = media_url;
+    }
+
+    public String getVital_type() {
+        return vital_type;
+    }
+
+    public void setVital_type(String vital_type) {
+        this.vital_type = vital_type;
     }
 }
