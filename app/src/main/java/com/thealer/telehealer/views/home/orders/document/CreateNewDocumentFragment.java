@@ -338,7 +338,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
                 break;
             case R.id.document_iv:
                 if (!isEditMode) {
-                    CameraUtil.with(getActivity()).showImageSelectionAlert();
+                    CameraUtil.showImageSelectionAlert(getActivity());
                 }
                 break;
             case R.id.back_iv:

@@ -72,7 +72,7 @@ public class DoctorCertificateFragment extends BaseFragment implements DoCurrent
         certificateIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(getActivity());
             }
         });
 
