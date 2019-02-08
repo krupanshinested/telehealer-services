@@ -19,7 +19,6 @@ import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -49,7 +48,7 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements View
         View view = inflater.inflate(R.layout.fragment_patient_upload_insurance, container, false);
 
         if (getArguments() != null) {
-            currentScreenType = getArguments().getInt(ArgumentKeys.SCREEN_TYPE,Constants.forRegistration);
+            currentScreenType = getArguments().getInt(ArgumentKeys.SCREEN_TYPE, Constants.forRegistration);
         }
 
         initView(view);
@@ -74,7 +73,7 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements View
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             frontImgBitmapPath = savedInstanceState.getString(getString(R.string.front_image_path));
             backImgBitmapPath = savedInstanceState.getString(getString(R.string.back_image_path));
         }
@@ -84,11 +83,11 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements View
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (frontImgBitmapPath != null){
+        if (frontImgBitmapPath != null) {
             outState.putString(getString(R.string.front_image_path), frontImgBitmapPath);
         }
 
-        if (backImgBitmapPath != null){
+        if (backImgBitmapPath != null) {
             outState.putString(getString(R.string.back_image_path), backImgBitmapPath);
         }
     }
@@ -118,9 +117,9 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements View
     }
 
     private void setBackImage() {
-        if (backImgBitmapPath != null && !backImgBitmapPath.isEmpty()){
+        if (backImgBitmapPath != null && !backImgBitmapPath.isEmpty()) {
             Bitmap backImgBitmap = getBitmpaFromPath(backImgBitmapPath);
-            if (backImgBitmap != null){
+            if (backImgBitmap != null) {
                 insuranceBackIv.setImageBitmap(backImgBitmap);
             }
         }
@@ -128,9 +127,9 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements View
     }
 
     private void setFrontImage() {
-        if (frontImgBitmapPath != null && !frontImgBitmapPath.isEmpty()){
+        if (frontImgBitmapPath != null && !frontImgBitmapPath.isEmpty()) {
             Bitmap frontImgBitmap = getBitmpaFromPath(frontImgBitmapPath);
-            if (frontImgBitmap != null){
+            if (frontImgBitmap != null) {
                 insuranceFrontIv.setImageBitmap(frontImgBitmap);
             }
         }
@@ -139,20 +138,20 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements View
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.insurance_front_iv:
-                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(getActivity());
                 isFrontImage = true;
                 break;
             case R.id.insurance_back_iv:
                 isFrontImage = false;
-                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(getActivity());
                 break;
         }
     }
 
     private void checkImagesAdded() {
-        if (frontImgBitmapPath != null && backImgBitmapPath != null){
+        if (frontImgBitmapPath != null && backImgBitmapPath != null) {
             onViewChangeInterface.enableNext(true);
         } else {
             onViewChangeInterface.enableNext(false);
@@ -171,9 +170,9 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements View
                 break;
             case Constants.forProfileUpdate:
                 Bundle bundle = new Bundle();
-                bundle.putBoolean(ArgumentKeys.CASH_SELECTED,false);
-                bundle.putString(ArgumentKeys.INSURANCE_FRONT,frontImgBitmapPath);
-                bundle.putString(ArgumentKeys.INSURANCE_BACK,backImgBitmapPath);
+                bundle.putBoolean(ArgumentKeys.CASH_SELECTED, false);
+                bundle.putString(ArgumentKeys.INSURANCE_FRONT, frontImgBitmapPath);
+                bundle.putString(ArgumentKeys.INSURANCE_BACK, backImgBitmapPath);
                 onActionCompleteInterface.onCompletionResult(RequestID.INSURANCE_CHANGE_RESULT, true, bundle);
                 break;
         }
@@ -185,7 +184,7 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements View
         if (isFrontImage) {
             frontImgBitmapPath = imagePath;
             setFrontImage();
-        }else {
+        } else {
             backImgBitmapPath = imagePath;
             setBackImage();
         }

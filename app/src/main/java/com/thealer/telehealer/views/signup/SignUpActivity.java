@@ -440,14 +440,14 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
         if (resultCode == RESULT_OK) {
             if (requestCode == PermissionConstants.PERMISSION_CAM_PHOTOS) {
-                CameraUtil.with(this).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(this);
             } else if (requestCode == PermissionConstants.PERMISSION_CAMERA) {
-                CameraUtil.with(this).openCamera();
+                CameraUtil.openCamera(this);
             } else if (requestCode == PermissionConstants.PERMISSION_GALLERY) {
-                CameraUtil.with(this).openGallery();
+                CameraUtil.openGallery(this);
             } else if (requestCode == PermissionConstants.GALLERY_REQUEST_CODE || requestCode == PermissionConstants.CAMERA_REQUEST_CODE) {
 
-                String imagePath = CameraUtil.with(this).getImagePath(requestCode, resultCode, data);
+                String imagePath = CameraUtil.getImagePath(this, requestCode, resultCode, data);
 
                 if (getSupportFragmentManager().getFragments().get(0) instanceof CameraInterface) {
                     ((CameraInterface) getSupportFragmentManager().getFragments().get(0)).onImageReceived(imagePath);
