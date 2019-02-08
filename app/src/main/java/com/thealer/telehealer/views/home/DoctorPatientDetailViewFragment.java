@@ -347,12 +347,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        showOrHideSoftInputWindow(false);
-    }
-
     private void addFragment(String title, Fragment fragment) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.USER_DETAIL, resultBean);
