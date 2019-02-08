@@ -81,7 +81,7 @@ public class DoctorDriverLicenseFragment extends BaseFragment implements DoCurre
         licenseIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(getActivity());
             }
         });
 

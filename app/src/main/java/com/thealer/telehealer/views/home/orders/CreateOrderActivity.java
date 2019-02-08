@@ -85,8 +85,8 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
                 Constants.sharedPath = new ArrayList<>();
 
                 for (int i = 0; i < uriArrayList.size(); i++) {
-                    if (CameraUtil.with(this).isTypeImage(uriArrayList.get(i))) {
-                        String path = CameraUtil.with(this).getRealPathFromUri(uriArrayList.get(i));
+                    if (CameraUtil.isTypeImage(this, uriArrayList.get(i))) {
+                        String path = CameraUtil.getRealPathFromUri(this, uriArrayList.get(i));
                         Log.e("aswin", "showShareData: " + path);
                         if (path != null && !path.isEmpty()) {
                             Constants.sharedPath.add(path);
@@ -181,14 +181,14 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
         Log.e("aswin", "onActivityResult: activity " + requestCode + " " + resultCode);
         if (resultCode == RESULT_OK) {
             if (requestCode == PermissionConstants.PERMISSION_CAM_PHOTOS) {
-                CameraUtil.with(this).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(this);
             } else if (requestCode == PermissionConstants.PERMISSION_CAMERA) {
-                CameraUtil.with(this).openCamera();
+                CameraUtil.openCamera(this);
             } else if (requestCode == PermissionConstants.PERMISSION_GALLERY) {
-                CameraUtil.with(this).openGallery();
+                CameraUtil.openGallery(this);
             } else if (requestCode == PermissionConstants.GALLERY_REQUEST_CODE || requestCode == PermissionConstants.CAMERA_REQUEST_CODE) {
 
-                String imagePath = CameraUtil.with(this).getImagePath(requestCode, resultCode, data);
+                String imagePath = CameraUtil.getImagePath(this, requestCode, resultCode, data);
 
                 CameraInterface cameraInterface = (CameraInterface) getSupportFragmentManager().getFragments().get(0);
                 cameraInterface.onImageReceived(imagePath);

@@ -695,7 +695,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
         switch (v.getId()) {
             case R.id.profile_civ:
                 currentGalleryCallingId = v.getId();
-                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(getActivity());
                 break;
             case R.id.bio_et:
                 DoctorBioBottomSheetFragment doctorBioBottomSheetFragment = new DoctorBioBottomSheetFragment();
@@ -730,11 +730,11 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
                 break;
             case R.id.driver_license_iv:
                 currentGalleryCallingId = v.getId();
-                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(getActivity());
                 break;
             case R.id.certificate_iv:
                 currentGalleryCallingId = v.getId();
-                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(getActivity());
                 break;
         }
     }

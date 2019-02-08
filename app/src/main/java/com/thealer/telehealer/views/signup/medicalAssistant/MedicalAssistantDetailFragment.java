@@ -413,11 +413,11 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         switch (v.getId()) {
             case R.id.profile_civ:
                 imagePickedFor = v.getId();
-                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(getActivity());
                 break;
             case R.id.certificate_iv:
                 imagePickedFor = v.getId();
-                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                CameraUtil.showImageSelectionAlert(getActivity());
                 break;
         }
     }
