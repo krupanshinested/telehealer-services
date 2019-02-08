@@ -18,11 +18,6 @@
             android:title="@string/schedules" />
 
         <item
-            android:id="@+id/menu_recent"
-            android:icon="@drawable/recent_drawable_selector"
-            android:title="@string/recents" />
-
-        <item
             android:id="@+id/menu_vitals"
             android:icon="@drawable/ic_vitals"
             android:title="@string/vitals" />
@@ -31,6 +26,12 @@
             android:id="@+id/menu_orders"
             android:icon="@drawable/ic_orders_documents"
             android:title="@string/orders" />
+
+        <item
+            android:id="@+id/menu_recent"
+            android:icon="@drawable/recent_drawable_selector"
+            android:title="@string/recents" />
+
     </group>
     <item
         android:id="@+id/menu_profile_settings"

@@ -6,7 +6,6 @@ import com.thealer.telehealer.common.pubNub.models.GCMPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.notification.PushNotificationConstants;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -39,7 +38,6 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_CONNECTION_REQUEST));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_CONNECTION_REQUEST, null));
-        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -48,6 +46,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setType(APNSPayload.connection);
         apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         apnsPayload.setTo(to_guid);
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
 
         pushPayLoad.setPn_apns(apnsPayload);
         pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
@@ -70,7 +69,6 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_ACCEPT_CONNECTION));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_ACCEPT_CONNECTION, null));
-        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -79,6 +77,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setType(APNSPayload.connection);
         apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         apnsPayload.setTo(to_guid);
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
 
         pushPayLoad.setPn_apns(apnsPayload);
         pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
@@ -101,7 +100,6 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_REJECT_CONNECTION));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_REJECT_CONNECTION, null));
-        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -110,6 +108,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setType(APNSPayload.connection);
         apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         apnsPayload.setTo(to_guid);
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
 
         pushPayLoad.setPn_apns(apnsPayload);
         pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
@@ -133,12 +132,12 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_SCHEDULE_REQUEST));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_SCHEDULE_REQUEST, null));
-        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
         apnsPayload.setAps(aps);
         apnsPayload.setUuid(UUID.randomUUID().toString());
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
         apnsPayload.setType(APNSPayload.schedule);
         apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         apnsPayload.setTo(to_guid);
@@ -165,7 +164,6 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_ACCEPT_SCHEDULE));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_ACCEPT_SCHEDULE, time));
-        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -174,6 +172,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setType(APNSPayload.schedule);
         apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         apnsPayload.setTo(to_guid);
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
 
         pushPayLoad.setPn_apns(apnsPayload);
         pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
@@ -198,7 +197,6 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_REJECT_SCHEDULE));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_REJECT_SCHEDULE, time));
-        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -207,6 +205,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setType(APNSPayload.schedule);
         apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         apnsPayload.setTo(to_guid);
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
 
         pushPayLoad.setPn_apns(apnsPayload);
         pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
@@ -231,7 +230,6 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_CANCEL_SCHEDULE));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_CANCEL_SCHEDULE, time));
-        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -240,6 +238,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setType(APNSPayload.schedule);
         apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         apnsPayload.setTo(to_guid);
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
 
         pushPayLoad.setPn_apns(apnsPayload);
         pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
@@ -249,6 +248,7 @@ public class PubNubNotificationPayload {
 
     /**
      * create chat push payload
+     *
      * @param to_guid
      * @param createdAt
      * @return
@@ -263,7 +263,6 @@ public class PubNubNotificationPayload {
 
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_CHAT));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_CHAT, null));
-        aps.put(MEDIA_URL, UserDetailPreferenceManager.getUser_avatar());
         aps.put(MUTABLE_CONTENT, "1");
         aps.put(SOUND, DEFAULT);
 
@@ -273,6 +272,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         apnsPayload.setTo(to_guid);
         apnsPayload.setAt(createdAt);
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
         apnsPayload.setPn_bundle_ids(new String[]{"com.thealer", "com.thealer.pro"});
 
         pushPayLoad.setPn_apns(apnsPayload);
@@ -295,6 +295,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setUuid(uuid);
         apnsPayload.setIdentifier(uuid);
         apnsPayload.setPn_ttl(20);
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
         apnsPayload.setType(APNSPayload.busyInAnotherCall);
 
         pushPayLoad.setPn_apns(apnsPayload);
@@ -317,6 +318,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setUuid(uuid);
         apnsPayload.setIdentifier(uuid);
         apnsPayload.setPn_ttl(20);
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
         apnsPayload.setType(APNSPayload.endCall);
         apnsPayload.setCall_rejection(callRejectionReason);
 
@@ -349,6 +351,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setSessionId(sessionId);
         apnsPayload.setFrom_name(displayName);
         apnsPayload.setDoctor_guid(doctor_guid);
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
         pushPayLoad.setPn_apns(apnsPayload);
         pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
 

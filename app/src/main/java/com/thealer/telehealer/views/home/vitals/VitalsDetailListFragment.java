@@ -9,9 +9,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +35,7 @@ import com.github.mikephil.charting.utils.MPPointF;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -43,9 +44,9 @@ import com.thealer.telehealer.common.CustomExpandableListView;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
-import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
@@ -53,12 +54,15 @@ import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import iHealth.pairing.VitalCreationActivity;
+import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import iHealth.pairing.VitalCreationActivity;
 
 /**
  * Created by Aswin on 21,November,2018
@@ -86,6 +90,15 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private ArrayList<Entry> line2Entry;
     private Toolbar toolbar;
     private ArrayList<VitalsApiResponseModel> vitalsApiResponseModelArrayList;
+    private GetUsersApiViewModel getUsersApiViewModel;
+    private boolean isAbnormalVitalView = false;
+    private String userGuid;
+    private ConstraintLayout userDetailCl;
+    private CircleImageView itemCiv;
+    private TextView itemTitleTv;
+    private TextView itemSubTitleTv;
+    private ImageView infoIv;
+
 
     @Override
     public void onAttach(Context context) {
@@ -105,9 +118,33 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                     updateList(vitalsApiResponseModelArrayList);
 
                     updateChart(vitalsApiResponseModelArrayList);
+
+                    if (isAbnormalVitalView) {
+                        setUserDetailView();
+                    }
                 }
             }
         });
+
+        getUsersApiViewModel = ViewModelProviders.of(this).get(GetUsersApiViewModel.class);
+        attachObserverInterface.attachObserver(getUsersApiViewModel);
+        getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    commonUserApiResponseModel = (CommonUserApiResponseModel) baseApiResponseModel;
+                    makeApiCall();
+                }
+            }
+        });
+    }
+
+    private void setUserDetailView() {
+        itemTitleTv.setText(commonUserApiResponseModel.getUserDisplay_name());
+        itemSubTitleTv.setText(commonUserApiResponseModel.getDisplayInfo());
+        Utils.setImageWithGlide(getActivity(), itemCiv, commonUserApiResponseModel.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
+        infoIv.setOnClickListener(this);
+        userDetailCl.setVisibility(View.VISIBLE);
     }
 
     private void updateChart(ArrayList<VitalsApiResponseModel> vitalsApiResponseModelArrayList) {
@@ -262,6 +299,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        setRetainInstance(true);
     }
 
     @Nullable
@@ -279,6 +317,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
         linechart = (LineChart) view.findViewById(R.id.linechart);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        userDetailCl = (ConstraintLayout) view.findViewById(R.id.user_detail_cl);
+        itemCiv = (CircleImageView) view.findViewById(R.id.item_civ);
+        itemTitleTv = (TextView) view.findViewById(R.id.item_title_tv);
+        itemSubTitleTv = (TextView) view.findViewById(R.id.item_sub_title_tv);
+        infoIv = (ImageView) view.findViewById(R.id.info_iv);
 
         toolbar.inflateMenu(R.menu.orders_detail_menu);
         toolbar.getMenu().removeItem(R.id.send_fax_menu);
@@ -309,13 +352,17 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         backIv.setOnClickListener(this);
         addFab.setOnClickListener(this);
 
-        String emptyStateType = "";
-
         if (getArguments() != null) {
 
             selectedItem = getArguments().getString(ArgumentKeys.MEASUREMENT_TYPE);
 
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
+
+            isAbnormalVitalView = getArguments().getBoolean(ArgumentKeys.VIEW_ABNORMAL_VITAL);
+
+            if (isAbnormalVitalView) {
+                userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
+            }
 
             if (!isFromHome) {
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
@@ -416,6 +463,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         } else {
             vitalDetailCelv.showEmptyState();
         }
+
+        vitalDetailCelv.setVisibility(View.VISIBLE);
     }
 
     private void expandListView() {
@@ -486,21 +535,44 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                     if (bundle == null) {
                         bundle = new Bundle();
                     }
+                    if (isAbnormalVitalView) {
+                        bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModel);
+                    }
                     bundle.putString(ArgumentKeys.MEASUREMENT_TYPE, selectedItem);
                     bundle.putBoolean(ArgumentKeys.USE_OWN_TOOLBAR, true);
                     vitalCreateNewFragment.setArguments(bundle);
                     showSubFragmentInterface.onShowFragment(vitalCreateNewFragment);
                 }
                 break;
+            case R.id.info_iv:
+                showUserDetailView();
+                break;
         }
+    }
+
+    private void showUserDetailView() {
+        DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModel);
+        bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
+
+        doctorPatientDetailViewFragment.setArguments(bundle);
+        showSubFragmentInterface.onShowFragment(doctorPatientDetailViewFragment);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         addFab.setClickable(true);
-        makeApiCall();
+        if (isAbnormalVitalView && commonUserApiResponseModel == null) {
+            getUserDetail();
+        } else {
+            makeApiCall();
+        }
+    }
+
+    private void getUserDetail() {
+        getUsersApiViewModel.getUserDetail(userGuid, null);
     }
 
     private class MyMarkerView extends MarkerView {
