@@ -530,7 +530,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         getCurrentFragment().onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PermissionConstants.GALLERY_REQUEST_CODE || requestCode == PermissionConstants.CAMERA_REQUEST_CODE) {
-            String imagePath = CameraUtil.with(this).getImagePath(requestCode, resultCode, data);
+            String imagePath = CameraUtil.getImagePath(this, requestCode, resultCode, data);
             CameraInterface cameraInterface = (CameraInterface) getCurrentFragment();
             cameraInterface.onImageReceived(imagePath);
         }

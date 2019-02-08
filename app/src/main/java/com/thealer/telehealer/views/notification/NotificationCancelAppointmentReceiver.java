@@ -8,9 +8,11 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.manager.RetrofitManager;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
+import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
@@ -36,38 +38,8 @@ public class NotificationCancelAppointmentReceiver extends BroadcastReceiver {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(notificationId);
 
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                RetrofitManager
-                        .getInstance(context)
-                        .getAuthApiService()
-                        .deleteSchedule(notificationId)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<BaseApiResponseModel>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
+        SchedulesApiViewModel schedulesApiViewModel = new SchedulesApiViewModel(TeleHealerApplication.application);
+        schedulesApiViewModel.deleteSchedule(notificationId, resultBean.getStart(), resultBean.getScheduledToUser().getUser_guid(), false);
 
-                            }
-
-                            @Override
-                            public void onNext(BaseApiResponseModel baseApiResponseModel) {
-                                PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getScheduleCancelPayload(resultBean.getScheduledToUser().getUser_guid(), resultBean.getStart()), null);
-                                Log.e("aswin", "onNext: ");
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e("aswin", "onError: " + e.getMessage());
-                            }
-
-                            @Override
-                            public void onComplete() {
-
-                            }
-                        });
-            }
-        });
     }
 }

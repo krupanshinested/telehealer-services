@@ -66,31 +66,133 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
         public void onQuickLogin(int status) {
+            Log.e(TAG, "onQuickLogin: ");
             if (isQuickLoginReceiverEnabled) {
-                Log.e(TAG, "onQuickLogin: ");
+                Log.e(TAG, "onQuickLogin: enabled");
                 if (status == ArgumentKeys.AUTH_FAILED) {
                     getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                     isRefreshToken = false;
                     isQuickLoginReceiverEnabled = false;
 
                     EventRecorder.recordUserSession("Quick_Login_Failed");
+                    Log.e(TAG, "onQuickLogin: failed");
                 } else {
                     EventRecorder.recordUserSession("Quick_Login_Success");
-                    makeRefreshTokenApiCall();
+                    Log.e(TAG, "onQuickLogin: success");
+                    if (!isRefreshToken)
+                        makeRefreshTokenApiCall();
                 }
+            } else {
+                Log.e(TAG, "onQuickLogin: not enabled");
             }
         }
     };
 
     private void updateListnerStatus() {
+        Log.e(TAG, "updateListnerStatus: list size " + baseViewInterfaceList.size());
         for (int i = 0; i < baseViewInterfaceList.size(); i++) {
             baseViewInterfaceList.get(i).onStatus(true);
+            Log.e(TAG, "updateListnerStatus: list " + i);
             if (i == baseViewInterfaceList.size()) {
-                isRefreshToken = false;
-                isQuickLoginReceiverEnabled = false;
                 baseViewInterfaceList.clear();
+                Log.e(TAG, "updateListnerStatus: cleared");
             }
         }
+        isRefreshToken = false;
+        isQuickLoginReceiverEnabled = false;
+    }
+
+
+    /**
+     * This method will trigger an asyn task to check the auth validation in back and return the response through interface
+     *
+     * @param baseViewInterface
+     */
+
+    public void fetchToken(BaseViewInterface baseViewInterface) {
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+                    Log.e(TAG, "run: auth empty");
+                    baseViewInterface.onStatus(true);
+                } else {
+                    Log.e(TAG, "run: auth not empty");
+                    JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+
+                    /**
+                     * if auth token expired
+                     *      show quick login screen
+                     *      if quick login success
+                     *          proceed api call
+                     *      else
+                     *          go to login screen
+                     * else
+                     *      if  auth is > 30 min
+                     *          refresh token api call
+                     *              on success
+                     *                  proceed api call
+                     *      else
+                     *          proceed api call
+                     */
+
+                    if (isAuthExpired()) {
+                        Log.e(TAG, "run: auth expired");
+                        baseViewInterfaceList.add(baseViewInterface);
+                        if (!isRefreshToken) {
+                            Log.e(TAG, "run: show quick login");
+                            isQuickLoginReceiverEnabled = true;
+                            getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), QuickLoginActivity.class)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        }
+                    } else {
+                        if (jwt.isExpired(30 * 60)) {
+                            Log.e(TAG, "run: 30 min");
+                            baseViewInterfaceList.add(baseViewInterface);
+                            isQuickLoginReceiverEnabled = true;
+                            makeRefreshTokenApiCall();
+                        } else {
+                            Log.e(TAG, "run: not 30 min");
+                            baseViewInterface.onStatus(true);
+                        }
+                    }
+                }
+            }
+        };
+
+        new Handler().post(runnable);
+
+    }
+
+    public static Boolean isAuthExpired() {
+        try {
+            JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+            Date date = new Date();
+            return date.compareTo(jwt.getExpiresAt()) >= 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    private void makeRefreshTokenApiCall() {
+        Log.e(TAG, "makeRefreshTokenApiCall: api called");
+        isRefreshToken = true;
+        getAuthApiService()
+                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN))
+                .compose(applySchedulers())
+                .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                    @Override
+                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                        Log.e(TAG, "onSuccess: refreshed token");
+                        SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
+                        if (signinApiResponseModel.isSuccess()) {
+                            appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
+                            updateListnerStatus();
+                        }
+                    }
+                });
     }
 
     final ObservableTransformer schedulersTransformer =
@@ -167,92 +269,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     @Override
     public Lifecycle getLifecycle() {
         return null;
-    }
-
-    /**
-     * TODO: This method will trigger an asyn task to check the auth validation in back and return the response through interface
-     *
-     * @param baseViewInterface
-     */
-
-    public void fetchToken(BaseViewInterface baseViewInterface) {
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
-                    baseViewInterface.onStatus(true);
-                } else {
-                    JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
-
-                    /**
-                     * if auth token expired
-                     *      show quick login screen
-                     *      if quick login success
-                     *          proceed api call
-                     *      else
-                     *          go to login screen
-                     * else
-                     *      if  auth is > 30 min
-                     *          refresh token api call
-                     *              on success
-                     *                  proceed api call
-                     *      else
-                     *          proceed api call
-                     */
-
-                    if (isAuthExpired()) {
-                        baseViewInterfaceList.add(baseViewInterface);
-                        if (!isRefreshToken) {
-                            isRefreshToken = true;
-                            isQuickLoginReceiverEnabled = true;
-                            getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), QuickLoginActivity.class)
-                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                        }
-                    } else {
-                        if (jwt.isExpired(30 * 60)) {
-                            baseViewInterfaceList.add(baseViewInterface);
-                            isQuickLoginReceiverEnabled = true;
-                            makeRefreshTokenApiCall();
-                        } else {
-                            baseViewInterface.onStatus(true);
-                        }
-                    }
-                }
-            }
-        };
-
-        new Handler().post(runnable);
-
-    }
-
-    public static Boolean isAuthExpired() {
-        try {
-            JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
-            Date date = new Date();
-            return date.compareTo(jwt.getExpiresAt()) >= 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return true;
-        }
-    }
-
-    private void makeRefreshTokenApiCall() {
-        isRefreshToken = true;
-        getAuthApiService()
-                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN))
-                .compose(applySchedulers())
-                .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
-                    @Override
-                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-                        isRefreshToken = false;
-                        SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
-                        if (signinApiResponseModel.isSuccess()) {
-                            appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
-                            updateListnerStatus();
-                        }
-                    }
-                });
     }
 
     /**
@@ -355,8 +371,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 Log.e(TAG, "onError: " + new Gson().toJson(httpException));
                 Log.e(TAG, "onError: " + response);
 
-            errorModel.setStatusCode(httpException.code());
-            errorModel.setResponse(response);
+                errorModel.setStatusCode(httpException.code());
+                errorModel.setResponse(response);
 
                 switch (httpException.code()) {
                     case 400:
