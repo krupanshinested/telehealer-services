@@ -55,10 +55,10 @@ public class MedicalAssistantCertificateUploadFragment extends BaseFragment impl
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.take_photo_btn:
-                CameraUtil.with(getActivity()).openCamera();
+                CameraUtil.openCamera(getActivity());
                 break;
             case R.id.add_document_btn:
-                CameraUtil.with(getActivity()).openGallery();
+                CameraUtil.openGallery(getActivity());
                 break;
         }
     }

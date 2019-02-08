@@ -40,18 +40,7 @@ import static com.thealer.telehealer.common.PermissionConstants.GALLERY_REQUEST_
  */
 public class CameraUtil {
 
-    private static CameraUtil cameraUtil;
-    private static Context context;
-
-    public static CameraUtil with(Context con) {
-        if (cameraUtil == null) {
-            cameraUtil = new CameraUtil();
-        }
-        context = con;
-        return cameraUtil;
-    }
-
-    public CameraUtil showImageSelectionAlert() {
+    public static void showImageSelectionAlert(Context context) {
         if (PermissionChecker.with(context).checkPermission(PermissionConstants.PERMISSION_CAM_PHOTOS)) {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
             LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -69,7 +58,7 @@ public class CameraUtil {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    openCamera();
+                    openCamera(context);
                 }
             });
 
@@ -77,16 +66,14 @@ public class CameraUtil {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    openGallery();
+                    openGallery(context);
                 }
             });
         }
-
-        return cameraUtil;
     }
 
 
-    public void openGallery() {
+    public static void openGallery(Context context) {
         if (PermissionChecker.with(context).checkPermission(PermissionConstants.PERMISSION_GALLERY)) {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             if (intent.resolveActivity(context.getPackageManager()) != null) {
@@ -97,7 +84,7 @@ public class CameraUtil {
         }
     }
 
-    public void openCamera() {
+    public static void openCamera(Context context) {
         if (PermissionChecker.with(context).checkPermission(PermissionConstants.PERMISSION_CAMERA)) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (intent.resolveActivity(context.getPackageManager()) != null)
@@ -107,14 +94,14 @@ public class CameraUtil {
         }
     }
 
-    public String getImagePath(int requestCode, int resultCode, Intent data) {
+    public static String getImagePath(Context context, int requestCode, int resultCode, Intent data) {
 
         if (resultCode == RESULT_OK) {
             if (requestCode == CAMERA_REQUEST_CODE) {
                 if (data != null) {
                     Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 
-                    return getBitmapFilePath(bitmap);
+                    return getBitmapFilePath(context, bitmap);
                 }
             } else if (requestCode == GALLERY_REQUEST_CODE) {
                 Uri selectedImage = data.getData();
@@ -134,14 +121,14 @@ public class CameraUtil {
         return null;
     }
 
-    public String getBitmapFilePath(Bitmap bitmap) {
+    public static String getBitmapFilePath(Context context, Bitmap bitmap) {
 
-        Uri uri = getImageUri(bitmap);
-        File finalFile = new File(getRealPathFromUri(uri));
+        Uri uri = getImageUri(context, bitmap);
+        File finalFile = new File(getRealPathFromUri(context, uri));
         return finalFile.getAbsolutePath();
     }
 
-    private Uri getImageUri(Bitmap bitmap) {
+    private static Uri getImageUri(Context context, Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
 
@@ -149,7 +136,7 @@ public class CameraUtil {
         return Uri.parse(path);
     }
 
-    public String getRealPathFromURI(Uri uri) {
+    public String getRealPathFromURI(Context context, Uri uri) {
         String path = "";
         try {
 
@@ -169,7 +156,7 @@ public class CameraUtil {
         return path;
     }
 
-    public String getRealPathFromUri(final Uri uri) {
+    public static String getRealPathFromUri(Context context, final Uri uri) {
         // DocumentProvider
         if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
@@ -224,7 +211,7 @@ public class CameraUtil {
             if (isGooglePhotosUri(uri)) {
 //                String pathUri = uri.getPath();
 //                String[] newUri = pathUri.split(":");
-                return getImagePathFromInputStreamUri(uri);
+                return getImagePathFromInputStreamUri(context, uri);
             }
 
             return getDataColumn(context, uri, null, null);
@@ -237,8 +224,8 @@ public class CameraUtil {
         return null;
     }
 
-    private String getDataColumn(Context context, Uri uri, String selection,
-                                 String[] selectionArgs) {
+    private static String getDataColumn(Context context, Uri uri, String selection,
+                                        String[] selectionArgs) {
 
         Cursor cursor = null;
         final String column = MediaStore.Images.Media.DATA;
@@ -260,19 +247,19 @@ public class CameraUtil {
         return null;
     }
 
-    private boolean isExternalStorageDocument(Uri uri) {
+    private static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
-    private boolean isDownloadsDocument(Uri uri) {
+    private static boolean isDownloadsDocument(Uri uri) {
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
-    private boolean isMediaDocument(Uri uri) {
+    private static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-    private boolean isGooglePhotosUri(Uri uri) {
+    private static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.contentprovider".equals(uri.getAuthority());
     }
 
@@ -283,7 +270,8 @@ public class CameraUtil {
         Log.e("aswin", "isTypeImage: " + type);
         return type != null && type.contains("image/");
     }
-    public boolean isTypeImage(Uri uri) {
+
+    public static boolean isTypeImage(Context context, Uri uri) {
 
         String mimeType = context.getContentResolver().getType(uri);
 //        String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(mimeType);
@@ -292,14 +280,14 @@ public class CameraUtil {
     }
 
 
-    public String getImagePathFromInputStreamUri(Uri uri) {
+    public static String getImagePathFromInputStreamUri(Context context, Uri uri) {
         InputStream inputStream = null;
         String filePath = null;
 
         if (uri.getAuthority() != null) {
             try {
                 inputStream = context.getContentResolver().openInputStream(uri); // context needed
-                File photoFile = createTemporalFileFrom(inputStream, uri.getLastPathSegment());
+                File photoFile = createTemporalFileFrom(context, inputStream, uri.getLastPathSegment());
 
                 if (photoFile.exists())
                     filePath = photoFile.getPath();
@@ -322,14 +310,14 @@ public class CameraUtil {
         return filePath;
     }
 
-    private File createTemporalFileFrom(InputStream inputStream, String lastPathSegment) throws IOException {
+    private static File createTemporalFileFrom(Context context, InputStream inputStream, String lastPathSegment) throws IOException {
         File targetFile = null;
 
         if (inputStream != null) {
             int read;
             byte[] buffer = new byte[8 * 1024];
 
-            targetFile = createTemporalFile(lastPathSegment);
+            targetFile = createTemporalFile(context, lastPathSegment);
             OutputStream outputStream = new FileOutputStream(targetFile);
 
             while ((read = inputStream.read(buffer)) != -1) {
@@ -347,7 +335,7 @@ public class CameraUtil {
         return targetFile;
     }
 
-    private File createTemporalFile(String lastPathSegment) {
+    private static File createTemporalFile(Context context, String lastPathSegment) {
         return new File(context.getExternalCacheDir(), lastPathSegment + ".jpg"); // context needed
     }
 }
