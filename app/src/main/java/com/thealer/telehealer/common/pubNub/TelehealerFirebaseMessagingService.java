@@ -1,9 +1,11 @@
 package com.thealer.telehealer.common.pubNub;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
@@ -19,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
@@ -28,6 +31,7 @@ import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.notification.NotificationActivity;
+import com.thealer.telehealer.views.notification.NotificationDetailActivity;
 
 import java.io.IOException;
 import java.util.Map;
@@ -54,8 +58,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            APNSPayload data = mapper.readValue(message.get("body"), new TypeReference<APNSPayload>() {
-            });
+            APNSPayload data = mapper.readValue(message.get("body"), new TypeReference<APNSPayload>() {});
             Log.e(TAG, "message " + data.getTo());
             extractMessage(data);
         } catch (IOException e) {
@@ -127,7 +130,14 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 createNotification(data, intent);
                 break;
             case APNSPayload.vitals:
-                intent = new Intent(this, HomeActivity.class);
+                intent = new Intent(this, NotificationDetailActivity.class);
+
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(ArgumentKeys.VIEW_ABNORMAL_VITAL, true);
+                bundle.putString(ArgumentKeys.MEASUREMENT_TYPE, data.getVital_type());
+                bundle.putString(ArgumentKeys.USER_GUID, data.getFrom());
+                intent.putExtras(bundle);
+
                 createNotification(data, intent);
                 break;
         }
