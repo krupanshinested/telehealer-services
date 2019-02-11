@@ -136,6 +136,7 @@ public class Constants {
     public static final int forRegistration = 1;
     public static final int forProfileUpdate = 2;
     public static final String DATE_PICKER_CANCELLED = "datePickerCancelled";
+    public static final String NOTIFICATION_COUNT_RECEIVER = "notification_count_receiver";
     public static String male = "male";
     public static String female = "female";
 
