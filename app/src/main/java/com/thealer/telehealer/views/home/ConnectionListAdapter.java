@@ -18,8 +18,8 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -57,9 +57,9 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(fragmentActivity, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null){
-                    if (baseApiResponseModel.isSuccess()){
-                        apiResponseModelList.get(selected_position).setConnection_status(context.getString(R.string.connection_status_open));
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel.isSuccess()) {
+                        apiResponseModelList.get(selected_position).setConnection_status(Constants.CONNECTION_STATUS_OPEN);
                         notifyDataSetChanged();
                     }
                 }
@@ -80,15 +80,15 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         if (apiResponseModelList.get(i).getConnection_status() == null) {
             viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_connect_user));
             viewHolder.actionIv.setImageTintList(null);
-        } else if (apiResponseModelList.get(i).getConnection_status().equals(context.getString(R.string.connection_status_open))) {
+        } else if (apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_OPEN)) {
             viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_access_time_24dp));
             viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.color_green_light)));
         }
 
         Utils.setImageWithGlide(context, viewHolder.avatarCiv, apiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
 
-        viewHolder.titleTv.setText(apiResponseModelList.get(i).getDoctorDisplayName());
-        viewHolder.subTitleTv.setText(apiResponseModelList.get(i).getDoctorSpecialist());
+        viewHolder.titleTv.setText(apiResponseModelList.get(i).getDisplayName());
+        viewHolder.subTitleTv.setText(apiResponseModelList.get(i).getDisplayInfo());
 
         viewHolder.itemCv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +106,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
                 if (apiResponseModelList.get(i).getConnection_status() == null) {
                     selected_position = i;
                     Bundle bundle = new Bundle();
-                    bundle.putString(Constants.ADD_CONNECTION_ID, String.valueOf(apiResponseModelList.get(i).getUser_id()));
+                    bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.get(i).getUser_id());
                     bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
 
                     onActionCompleteInterface.onCompletionResult(null, true, bundle);
@@ -121,7 +121,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
     }
 
     public void setData(List<CommonUserApiResponseModel> commonUserApiResponseModelList) {
-        apiResponseModelList.addAll(commonUserApiResponseModelList);
+        apiResponseModelList = commonUserApiResponseModelList;
         notifyDataSetChanged();
     }
 
