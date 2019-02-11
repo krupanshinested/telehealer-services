@@ -379,7 +379,7 @@ public interface ApiInterface {
     Observable<CommonUserApiResponseModel> startArchive(@Query(SESSION_ID) String sessionId);
 
     @GET("api/session")
-    Observable<TokenFetchModel> getSessionId(@Query(CALL_QUALITY) String call_quality, @Query(DOCTOR_GUID) String doctor_guid);
+    Observable<TokenFetchModel> getSessionId(@Query(CALL_QUALITY) String call_quality);
 
     @POST("api/call")
     Observable<TokenFetchModel> postaVOIPCall(@Query(DOCTOR_GUID) String doctor_guid, @Body Map<String, String> param);
