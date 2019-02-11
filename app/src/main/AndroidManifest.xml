@@ -98,7 +98,7 @@
             android:parentActivityName=".views.home.HomeActivity" />
 
         <activity android:name=".views.notification.NotificationDetailActivity" />
-
+        <activity android:name=".views.call.CallNetworkTestActivity"/>
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
             android:enabled="true">

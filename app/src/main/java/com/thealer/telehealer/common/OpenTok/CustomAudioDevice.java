@@ -84,6 +84,8 @@ public class CustomAudioDevice extends BaseAudioDevice {
     private AudioManager audioManager;
     private AudioManagerMode audioManagerMode = new AudioManagerMode();
 
+    private boolean isRendererMuted = false;
+
     private int outputSamplingRate = DEFAULT_SAMPLE_RATE;
     private int captureSamplingRate = DEFAULT_SAMPLE_RATE;
     private int samplesPerBuffer = DEFAULT_SAMPLES_PER_BUFFER;
@@ -661,43 +663,45 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
                         rendererLock.lock();
 
-                        // After acquiring the lock again
-                        // we must check if we are still playing
-                        if (audioTrack == null || !CustomAudioDevice.this.isRendering) {
-                            continue;
-                        }
-
-                        int bytesRead = (samplesRead << 1) * NUM_CHANNELS_RENDERING;
-                        playBuffer.get(tempBufPlay, 0, bytesRead);
-
-                        int bytesWritten = audioTrack.write(tempBufPlay, 0, bytesRead);
-                        if (bytesWritten > 0) {
-                            // increase by number of written samples
-                            bufferedPlaySamples += (bytesWritten >> 1) / NUM_CHANNELS_RENDERING;
-
-                            // decrease by number of played samples
-                            int pos = audioTrack.getPlaybackHeadPosition();
-                            if (pos < playPosition) {
-                                // wrap or reset by driver
-                                playPosition = 0;
+                        if( !isRendererMuted ) {
+                            // After acquiring the lock again
+                            // we must check if we are still playing
+                            if (audioTrack == null || !CustomAudioDevice.this.isRendering) {
+                                continue;
                             }
-                            bufferedPlaySamples -= (pos - playPosition);
-                            playPosition = pos;
 
-                            // we calculate the estimated delay based on the buffered samples
-                            estimatedRenderDelay = bufferedPlaySamples * 1000 / outputSamplingRate;
-                        } else {
-                            switch (bytesWritten) {
-                                case AudioTrack.ERROR_BAD_VALUE:
-                                    throw new RuntimeException(
-                                            "Audio Renderer Error: Bad Value (-2)");
-                                case AudioTrack.ERROR_INVALID_OPERATION:
-                                    throw new RuntimeException(
-                                            "Audio Renderer Error: Invalid Operation (-3)");
-                                case AudioTrack.ERROR:
-                                default:
-                                    throw new RuntimeException(
-                                            "Audio Renderer Error(-1)");
+                            int bytesRead = (samplesRead << 1) * NUM_CHANNELS_RENDERING;
+                            playBuffer.get(tempBufPlay, 0, bytesRead);
+
+                            int bytesWritten = audioTrack.write(tempBufPlay, 0, bytesRead);
+                            if (bytesWritten > 0) {
+                                // increase by number of written samples
+                                bufferedPlaySamples += (bytesWritten >> 1) / NUM_CHANNELS_RENDERING;
+
+                                // decrease by number of played samples
+                                int pos = audioTrack.getPlaybackHeadPosition();
+                                if (pos < playPosition) {
+                                    // wrap or reset by driver
+                                    playPosition = 0;
+                                }
+                                bufferedPlaySamples -= (pos - playPosition);
+                                playPosition = pos;
+
+                                // we calculate the estimated delay based on the buffered samples
+                                estimatedRenderDelay = bufferedPlaySamples * 1000 / outputSamplingRate;
+                            } else {
+                                switch (bytesWritten) {
+                                    case AudioTrack.ERROR_BAD_VALUE:
+                                        throw new RuntimeException(
+                                                "Audio Renderer Error: Bad Value (-2)");
+                                    case AudioTrack.ERROR_INVALID_OPERATION:
+                                        throw new RuntimeException(
+                                                "Audio Renderer Error: Invalid Operation (-3)");
+                                    case AudioTrack.ERROR:
+                                    default:
+                                        throw new RuntimeException(
+                                                "Audio Renderer Error(-1)");
+                                }
                             }
                         }
                     }
@@ -881,5 +885,9 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
     private void setOutputType(OutputType type) {
         audioOutput = type;
+    }
+
+    public void setRendererMute (boolean isRendererMuted) {
+        this.isRendererMuted = isRendererMuted;
     }
 }
