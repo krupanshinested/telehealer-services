@@ -82,6 +82,8 @@ public class BaseActivity extends AppCompatActivity {
                         else
                             dismissScreen();
                         break;
+                    default:
+                        dismissProgressDialog();
                 }
 
             }
