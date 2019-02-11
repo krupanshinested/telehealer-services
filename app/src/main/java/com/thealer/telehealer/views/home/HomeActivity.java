@@ -1,6 +1,9 @@
 package com.thealer.telehealer.views.home;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,8 +27,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
+import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
@@ -67,15 +74,30 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private boolean isChildVisible = false;
+    private TextView notificationCountTv;
+    private ImageView notificationIv;
+    private Menu optionsMenu;
+
     private FragmentManager fragmentManager;
+
+    private boolean isChildVisible = false;
     private int selecteMenuItem = 0;
     private final String IS_CHILD_VISIBLE = "isChildVisible";
     private final String SELECTED_MENU_ITEM = "selecteMenuItem";
-    private Menu optionsMenu;
     private final int scheduleTypeCalendar = 0;
     private final int scheduleTypeList = 1;
     private int helpContent = 0;
+    private int notificationCount = 0;
+
+    private NotificationApiViewModel notificationApiViewModel;
+
+    private BroadcastReceiver NotificationCountReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            notificationCount = notificationCount + 1;
+            showOrHideNotificationCount(true, notificationCount);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -94,6 +116,38 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(profileListener, new IntentFilter(getString(R.string.profile_picture_updated)));
+        LocalBroadcastManager.getInstance(this).registerReceiver(NotificationCountReceiver, new IntentFilter(Constants.NOTIFICATION_COUNT_RECEIVER));
+    }
+
+    private void checkNotification() {
+        notificationApiViewModel = ViewModelProviders.of(this).get(NotificationApiViewModel.class);
+        attachObserver(notificationApiViewModel);
+        notificationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    NotificationApiResponseModel notificationApiResponseModel = (NotificationApiResponseModel) baseApiResponseModel;
+                    if (notificationApiResponseModel.getResult().getUnread_count() > 0) {
+                        showOrHideNotificationCount(true, notificationApiResponseModel.getResult().getUnread_count());
+                    } else {
+                        showOrHideNotificationCount(false, 0);
+                    }
+                } else {
+                    showOrHideNotificationCount(false, 0);
+                }
+            }
+        });
+
+        notificationApiViewModel.getNotifications(1, false);
+    }
+
+    private void showOrHideNotificationCount(boolean isShow, int unread_count) {
+        notificationCountTv.setText(String.valueOf(unread_count));
+        if (isShow) {
+            notificationCountTv.setVisibility(View.VISIBLE);
+        } else {
+            notificationCountTv.setVisibility(View.GONE);
+        }
     }
 
     private boolean checkIsUserActivated() {
@@ -119,6 +173,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         super.onDestroy();
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(profileListener);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(NotificationCountReceiver);
     }
 
     @Override
@@ -279,6 +334,17 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     public boolean onCreateOptionsMenu(Menu menu) {
         optionsMenu = menu;
         getMenuInflater().inflate(R.menu.appbar_home_menu, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.menu_notification);
+        View notificationView = menuItem.getActionView();
+        notificationCountTv = notificationView.findViewById(R.id.notification_count_tv);
+        notificationIv = notificationView.findViewById(R.id.notification_icon);
+        notificationIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOptionsItemSelected(menuItem);
+            }
+        });
         return true;
     }
 
@@ -299,9 +365,17 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 break;
             case R.id.menu_notification:
                 showNotificationFragment();
+                showOrHideNotificationCount(false, 0);
+                removeAllNotification();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void removeAllNotification() {
+        notificationCount = 0;
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     private void showNotificationFragment() {
@@ -537,6 +611,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (isRefreshRequired) {
             attachView();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkNotification();
     }
 
     @Override

@@ -13,8 +13,8 @@
         android:icon="@drawable/ic_calendar"
         android:iconTint="@color/colorWhite"
         android:title="events"
-        app:showAsAction="always"
-        android:visible="false"/>
+        android:visible="false"
+        app:showAsAction="always" />
     <item
         android:id="@+id/menu_schedules"
         android:icon="@drawable/ic_schedule_list"
@@ -24,8 +24,8 @@
 
     <item
         android:id="@+id/menu_notification"
-        android:icon="@drawable/ic_notifications_24dp"
         android:title="notification"
+        app:actionLayout="@layout/view_home_notification_icon"
         app:showAsAction="always" />
 
 </menu>
