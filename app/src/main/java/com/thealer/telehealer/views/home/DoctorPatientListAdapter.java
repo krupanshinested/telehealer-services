@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -26,7 +27,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Aswin on 13,November,2018
  */
-class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatientListAdapter.ViewHolder> {
+public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatientListAdapter.ViewHolder> {
     private FragmentActivity fragmentActivity;
     private List<CommonUserApiResponseModel> associationApiResponseModelResult;
     private OnActionCompleteInterface onActionCompleteInterface;
@@ -52,12 +53,11 @@ class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatientListAda
 
         if (UserType.isUserDoctor()) {
             viewHolder.actionIv.setVisibility(View.VISIBLE);
-            viewHolder.subTitleTv.setText(associationApiResponseModelResult.get(i).getDob());
             Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, associationApiResponseModelResult.get(i).getGender());
         } else if (UserType.isUserPatient() || UserType.isUserAssistant()) {
-            viewHolder.subTitleTv.setText(associationApiResponseModelResult.get(i).getDoctorSpecialist());
             viewHolder.actionIv.setVisibility(View.GONE);
         }
+        viewHolder.subTitleTv.setText(associationApiResponseModelResult.get(i).getDisplayInfo());
 
         viewHolder.patientTemplateCv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +72,7 @@ class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatientListAda
     private void proceed(CommonUserApiResponseModel resultBean) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.USER_DETAIL, resultBean);
-        onActionCompleteInterface.onCompletionResult(null, true, bundle);
+        onActionCompleteInterface.onCompletionResult(RequestID.REQ_SHOW_DETAIL_VIEW, true, bundle);
     }
 
     private void loadAvatar(ImageView imageView, String user_avatar) {

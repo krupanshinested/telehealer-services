@@ -3,7 +3,6 @@ package com.thealer.telehealer.apilayer.models.addConnection;
 import android.app.Application;
 import android.support.annotation.NonNull;
 
-import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
@@ -20,7 +19,7 @@ public class ConnectionListApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getUnconnectedList(int page, boolean showProgress) {
+    public void getUnconnectedList(String name, int page, boolean showProgress, boolean isMedicalAssistant) {
 
         fetchToken(new BaseViewInterface() {
             @Override
@@ -28,11 +27,12 @@ public class ConnectionListApiViewModel extends BaseApiViewModel {
                 if (status) {
 
                     int progress = Constants.SHOW_NOTHING;
-                    if (showProgress){
+                    if (showProgress) {
                         progress = Constants.SHOW_PROGRESS;
                     }
 
-                    getAuthApiService().getUnConnectedUsers(paginate, page, page_size).compose(applySchedulers())
+                    getAuthApiService().getUnConnectedUsers(paginate, page, page_size, name, isMedicalAssistant)
+                            .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(progress) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {

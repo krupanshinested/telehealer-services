@@ -132,4 +132,8 @@ public class Constants {
 
     //share intent bundle
     public static List<String> sharedPath;
+
+    public static final String CONNECTION_STATUS_OPEN = "open";
+    public static final String CONNECTION_STATUS_PENDING = "pending";
+    public static final String CONNECTION_STATUS_ACCEPTED = "accepted";
 }
