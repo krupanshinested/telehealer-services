@@ -52,7 +52,7 @@
     <string name="resend">Resend</string>
     <string name="select_your_role">Select your role</string>
     <string name="doctor">DOCTOR</string>
-    <string name="medical_assistant">MEDICAL ASSISTANT</string>
+    <string name="medical_assistant">Medical Assistant</string>
     <string name="title">Title</string>
     <string name="degree">Degree</string>
     <string name="image_of_certification">Image of certification</string>
@@ -325,7 +325,6 @@
     <string name="reason">reason</string>
 
 
-
     //settings page
     <string name="profile">Profile</string>
     <string name="signOut">Sign Out</string>
@@ -404,7 +403,6 @@
     <string name="association_deleted">Association Deleted</string>
     <string name="delete_connection">Delete Connection</string>
     <string name="disassoctiate_this_connection">Are you sure to disassociate this connection?</string>
-    <string name="connection_status_open">open</string>
     <string name="Doctors">Doctors</string>
     <string name="Patients">Patients</string>
     <string name="times">times</string>

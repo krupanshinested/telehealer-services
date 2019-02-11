@@ -47,4 +47,5 @@ public class RequestID {
     public static final String CARD_INFORMATION_VIEW = "CARD_INFORMATION_VIEW";
     public static final String TRANSACTION_DETAIL = "TRANSACTION_DETAIL";
 
+    public static final String REQ_SHOW_DETAIL_VIEW = "REQ_SHOW_DETAIL_VIEW";
 }

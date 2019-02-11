@@ -411,6 +411,9 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 isLoadingLiveData.setValue(false);
                 errorModelLiveData.setValue(new ErrorModel(-1, e1.getMessage(), e1.getMessage()));
             }
+        }else {
+            isLoadingLiveData.setValue(false);
+            errorModelLiveData.setValue(new ErrorModel(-1, e.getMessage(), e.getMessage()));
         }
         isRefreshToken = false;
         isQuickLoginReceiverEnabled = false;
