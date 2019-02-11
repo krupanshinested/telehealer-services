@@ -305,6 +305,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         if (AudioDeviceManager.getAudioDevice() != null && AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 CustomAudioDevice customAudioDevice = (CustomAudioDevice) AudioDeviceManager.getAudioDevice();
+                customAudioDevice.setRendererMute(false);
                 AudioFocusRequest audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(this, new Handler()).build();
                 customAudioDevice.getAudioManager().requestAudioFocus(audioFocusRequest);
             }

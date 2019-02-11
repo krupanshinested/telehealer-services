@@ -728,5 +728,18 @@
     <string name="last_two_week">Last two week</string>
     <string name="last_week">Last week</string>
     <string name="add_health_info_content">Take a moment to update your health profile. This will help you and your care team get a clearer picture of your overall health.</string>
+    <string name="checking_network">Checking network...</string>
+    <string name="calculating_video_audio_score">Please wait, we are calculating your video and audio quality.</string>
+
+    <string name="networkTestFailed">Network test failed</string>
+    <string name="error_on_contacting_server">Error on contacting with server</string>
+    <string name="audio_video_good">Both Audio and Video are Good.</string>
+    <string name="audio_good_video_bad">Audio is Good but Video is bad.</string>
+    <string name="poor_connection">Poor Connection.</string>
+    <string name="network_test_succeeded">Network test succeeded.</string>
+    <string name="permission_denied">Permission Denied</string>
+    <string name="cam_mic_call_quality_permission">Please enable your camera and microphone inorder to check your call quality.</string>
+    <string name="cam_call_quality_permission">Please enable your camera inorder to check your call quality.</string>
+    <string name="mic_quality_permission">Please enable your microphone inorder to check your call quality.</string>
 
 </resources>

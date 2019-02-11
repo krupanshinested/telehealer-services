@@ -24,11 +24,11 @@ public class CallInitiateViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getTokenForSession(String call_quality,String doctor_guid) {
+    public void getTokenForTestSession() {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
-                getAuthApiService().getSessionId(call_quality,doctor_guid)
+                getAuthApiService().getSessionId("true")
                         .compose(applySchedulers())
                         .subscribe(new RAObserver<TokenFetchModel>() {
                             @Override
