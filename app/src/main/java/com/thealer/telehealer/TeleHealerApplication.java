@@ -73,6 +73,8 @@ public class TeleHealerApplication extends Application implements LifecycleObser
             NotificationChannel notificationChannel = new NotificationChannel(notificationChannelId,
                     "General",
                     NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setShowBadge(true);
+
             notificationManager.createNotificationChannel(notificationChannel);
 
             NotificationChannel callNotification = new NotificationChannel("thealer-call",

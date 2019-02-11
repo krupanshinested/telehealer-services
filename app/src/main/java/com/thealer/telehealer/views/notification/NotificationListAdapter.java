@@ -21,7 +21,6 @@ import com.thealer.telehealer.apilayer.models.notification.NotificationApiRespon
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
-import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
@@ -43,6 +42,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
     private final String APPOINTMENT_REQUEST = "APPOINTMENT REQUEST";
     private final String CONNECTION_REQUEST = "CONNECTION REQUEST";
     private final String NOT_ANSWERED = "NOT ANSWERED";
+    private final String MISSED_CALL = "Missed call";
 
     public static final String REQUEST_TYPE_CONNECTION = "connection";
     public static final String REQUEST_TYPE_APPOINTMENT = "appointment";
@@ -121,7 +121,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
     CommonUserApiResponseModel doctorModel = null, patientModel = null;
     String doctorGuid = null;
 
-    public static class ChildViewHolder{
+    public static class ChildViewHolder {
         ConstraintLayout userDetailCl, slotCl, actionCl, doctorDetailCl;
         CircleImageView avatarCiv;
         TextView titleTv, nameTv, userDetailTv, descriptionTv, slotLabel, doctorNameTv,
@@ -133,16 +133,17 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
         View bottomView;
 
     }
+
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         CardView notificationCv;
         ChildViewHolder childViewHolder;
 
-        if (convertView == null){
+        if (convertView == null) {
             convertView = LayoutInflater.from(activity).inflate(R.layout.adapter_notification_list, parent, false);
             childViewHolder = new ChildViewHolder();
             convertView.setTag(childViewHolder);
-        }else {
+        } else {
             childViewHolder = (ChildViewHolder) convertView.getTag();
         }
 
@@ -245,7 +246,11 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                 }
                 break;
             case REQUEST_TYPE_MISSED_CALL:
-                title = NOT_ANSWERED;
+                if (UserType.isUserPatient()) {
+                    title = MISSED_CALL;
+                } else {
+                    title = NOT_ANSWERED;
+                }
                 childViewHolder.titleTv.setTextColor(activity.getColor(R.color.red));
                 childViewHolder.bottomView.setVisibility(View.GONE);
                 isMissedCall = true;
@@ -284,7 +289,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
 
         if (UserType.isUserDoctor()) {
             Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, patientModel.getUser_avatar(), null, true);
-           childViewHolder. nameTv.setText(patientModel.getUserDisplay_name());
+            childViewHolder.nameTv.setText(patientModel.getUserDisplay_name());
             if (patientModel.getRole().equals(Constants.ROLE_PATIENT)) {
                 childViewHolder.userDetailTv.setText(patientModel.getDob());
             } else {
