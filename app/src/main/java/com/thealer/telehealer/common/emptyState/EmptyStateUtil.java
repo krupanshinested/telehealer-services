@@ -86,6 +86,9 @@ public class EmptyStateUtil {
                 return "No Calls";
             case EmptyViewConstants.EMPTY_VITAL_LOGS:
                 return "No Vitals";
+            case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT:
+            case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
+                return "No Medical Assistant";
             default:
                 return null;
         }
@@ -158,6 +161,10 @@ public class EmptyStateUtil {
                 return "Doctor referrals will eventually show up here";
             case EmptyViewConstants.EMPTY_DOCTOR_WITH_BTN:
                 return "Add a Doctor by tapping the '+' button";
+            case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT:
+                return "Medical Assistant referrals will eventually show up here";
+            case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
+                return "Add a Medical Assistant by tapping the '+' button";
             case EmptyViewConstants.EMPTY_SEARCH:
                 return "No search result found";
             case EmptyViewConstants.EMPTY_XRAY:
@@ -269,6 +276,9 @@ public class EmptyStateUtil {
                 return R.drawable.emptystate_no_calls;
             case EmptyViewConstants.EMPTY_VITAL_LOGS:
                 return R.drawable.emptystate_no_vitals;
+            case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT:
+            case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
+                return R.drawable.emptystate_no_medical_assistant;
             default:
                 return 0;
         }

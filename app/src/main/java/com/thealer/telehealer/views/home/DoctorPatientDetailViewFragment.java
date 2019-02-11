@@ -99,6 +99,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         getUsersApiViewModel = ViewModelProviders.of(this).get(GetUsersApiViewModel.class);
         attachObserverInterface.attachObserver(getUsersApiViewModel);
         addConnectionApiViewModel = ViewModelProviders.of(getActivity()).get(AddConnectionApiViewModel.class);
+
         addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -107,6 +108,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                         actionBtn.setText(getString(R.string.add_connection_pending));
                         actionBtn.setEnabled(false);
                     }
+
+                    addConnectionApiViewModel.baseApiResponseModelMutableLiveData.setValue(null);
                 }
             }
         });
@@ -177,7 +180,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                                 CallInitiateModel callInitiateModel = new CallInitiateModel(commonUserApiResponseModel.getUser_guid(), commonUserApiResponseModel, null, null, null, position == 0 ? OpenTokConstants.audio : OpenTokConstants.video);
 
                                 Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
-                                intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL,callInitiateModel);
+                                intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
                                 startActivity(intent);
 
                             }
@@ -262,20 +265,18 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         userNameTv.setText(resultBean.getUserDisplay_name());
 
         if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-            userDobTv.setText(resultBean.getDoctorSpecialist());
             genderIv.setVisibility(View.GONE);
-        } else {
-            userDobTv.setText(resultBean.getDob());
         }
+        userDobTv.setText(resultBean.getDisplayInfo());
 
         Utils.setGenderImage(getActivity(), genderIv, resultBean.getGender());
         Utils.setImageWithGlide(getActivity().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
-
 
         fragmentList = new ArrayList<>();
         titleList = new ArrayList<String>();
 
         AboutFragment aboutFragment = new AboutFragment();
+        aboutFragment.setArguments(getArguments());
         addFragment(getString(R.string.about), aboutFragment);
 
 
@@ -287,21 +288,25 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 actionBtn.setVisibility(View.VISIBLE);
                 userDetailBnv.setVisibility(View.GONE);
 
-                if (resultBean.getConnection_status() != null) {
-                    actionBtn.setText(getString(R.string.add_connection_pending));
-                    actionBtn.setEnabled(false);
-                } else {
+                if (resultBean.getConnection_status() == null) {
                     actionBtn.setText(getString(R.string.add_connection_connect));
                     actionBtn.setEnabled(true);
+                } else {
+                    if (resultBean.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
+                        actionBtn.setVisibility(View.GONE);
+                    } else {
+                        actionBtn.setText(getString(R.string.add_connection_pending));
+                        actionBtn.setEnabled(false);
+                    }
                 }
 
-                        actionBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Utils.vibrate(getActivity());
-                                Bundle bundle = new Bundle();
-                                bundle.putString(Constants.ADD_CONNECTION_ID, String.valueOf(resultBean.getUser_id()));
-                                bundle.putSerializable(Constants.USER_DETAIL, resultBean);
+                actionBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Utils.vibrate(getActivity());
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(Constants.ADD_CONNECTION_ID, resultBean.getUser_id());
+                        bundle.putSerializable(Constants.USER_DETAIL, resultBean);
 
                         onActionCompleteInterface.onCompletionResult(null, true, bundle);
                     }

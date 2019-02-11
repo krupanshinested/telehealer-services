@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite">
+
     <android.support.v4.widget.NestedScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -14,10 +15,10 @@
             android:id="@+id/container_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/card_view_background"
-            android:orientation="vertical"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
+            android:background="@color/card_view_background"
+            android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -30,8 +31,7 @@
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
-                    android:background="@color/colorGrey_light"
-                   />
+                    android:background="@color/colorGrey_light" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/profile"
@@ -86,17 +86,44 @@
                     android:id="@+id/appointment_slots"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:isSpinnerType="true"
                     app:hideSpiltter="true"
                     app:icon="@drawable/ic_schedule"
+                    app:isSpinnerType="true"
                     app:title="@string/appointment_slots" />
 
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
-                    android:background="@color/colorGrey_light"
-                    />
+                    android:background="@color/colorGrey_light" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/medical_assistant_ll"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:visibility="gone"
+                android:background="@android:color/transparent"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/medical_assistant"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/medical_assistant_icon"
+                    app:hideSpiltter="true"
+                    app:title="@string/medical_assistant" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
             </LinearLayout>
 
             <LinearLayout
@@ -110,8 +137,7 @@
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
-                    android:background="@color/colorGrey_light"
-                    />
+                    android:background="@color/colorGrey_light" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/feedback"
@@ -129,14 +155,13 @@
                     android:id="@+id/privacy_policy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:title="@string/privacy_policy"
-                    app:hideSpiltter="true"/>
+                    app:hideSpiltter="true"
+                    app:title="@string/privacy_policy" />
 
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
-                    android:background="@color/colorGrey_light"
-                    />
+                    android:background="@color/colorGrey_light" />
             </LinearLayout>
 
             <LinearLayout

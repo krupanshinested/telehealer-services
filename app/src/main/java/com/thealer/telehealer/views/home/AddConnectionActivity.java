@@ -5,17 +5,14 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -25,6 +22,7 @@ import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiView
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListApiViewModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
@@ -35,6 +33,8 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
+
+import java.util.List;
 
 /**
  * Created by Aswin on 19,November,2018
@@ -47,14 +47,18 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     private EditText searchEt;
     private RecyclerView connectionListRv;
     private CustomRecyclerView connectionListCrv;
-    private ConnectionListApiViewModel connectionListApiViewModel;
-    private int page = 1, totalCount = 0;
     private FrameLayout fragmentHolder;
+    private ImageView searchClearIv;
+
+    private ConnectionListApiViewModel connectionListApiViewModel;
     private AddConnectionApiViewModel addConnectionApiViewModel;
-    private int selectedPosition;
     private ConnectionListResponseModel connectionListResponseModel;
-    private boolean isApiRequested = false;
     private ConnectionListAdapter connectionListAdapter;
+    private int page = 1, totalCount = 0;
+    private int selectedPosition, selectedId;
+    private boolean isApiRequested = false;
+    private boolean isMedicalAssistant = false;
+    private List<CommonUserApiResponseModel> commonUserApiResponseModelList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +81,13 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
                         intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_success_prefix) + " " + connectionListResponseModel.getResult().get(selectedPosition).getFirst_name() + " " + getString(R.string.add_connection_success_suffix));
 
+                        for (int i = 0; i < commonUserApiResponseModelList.size(); i++) {
+                            if (commonUserApiResponseModelList.get(i).getUser_id() == selectedId) {
+                                commonUserApiResponseModelList.get(i).setConnection_status(Constants.CONNECTION_STATUS_OPEN);
+                                break;
+                            }
+                        }
+                        connectionListAdapter.setData(commonUserApiResponseModelList);
                     } else {
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                         intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_failure_prefix) + " " + connectionListResponseModel.getResult().get(selectedPosition).getFirst_name() + " " + getString(R.string.add_connection_failure_suffix));
@@ -110,10 +121,14 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
                         totalCount = connectionListResponseModel.getCount();
 
-                        connectionListAdapter.setData(connectionListResponseModel.getResult());
+                        if (page == 1) {
+                            commonUserApiResponseModelList = connectionListResponseModel.getResult();
+                        } else {
+                            commonUserApiResponseModelList.addAll(connectionListResponseModel.getResult());
+                        }
+                        connectionListAdapter.setData(commonUserApiResponseModelList);
 
                         connectionListCrv.setTotalCount(totalCount);
-
 
                     }
                 }
@@ -131,7 +146,9 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
         if (success) {
             CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
 
-            addConnectionApiViewModel.connectUser(commonUserApiResponseModel.getUser_guid(), String.valueOf(bundle.getString(Constants.ADD_CONNECTION_ID)));
+            selectedId = bundle.getInt(Constants.ADD_CONNECTION_ID);
+
+            addConnectionApiViewModel.connectUser(commonUserApiResponseModel.getUser_guid(), String.valueOf(selectedId));
 
             SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
             bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
@@ -157,8 +174,12 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
         toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         searchEt = (EditText) findViewById(R.id.search_et);
         fragmentHolder = (FrameLayout) findViewById(R.id.fragment_holder);
-
         connectionListCrv = (CustomRecyclerView) findViewById(R.id.connection_list_crv);
+        searchClearIv = (ImageView) findViewById(R.id.search_clear_iv);
+
+        if (getIntent() != null) {
+            isMedicalAssistant = getIntent().getBooleanExtra(ArgumentKeys.IS_MEDICAL_ASSISTANT, false);
+        }
 
         toolbarTitle.setText(getString(R.string.Add_connections));
 
@@ -182,10 +203,22 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
             @Override
             public void afterTextChanged(Editable s) {
-                //TODO add search here
+                if (!s.toString().isEmpty()) {
+                    searchClearIv.setVisibility(View.VISIBLE);
+                } else {
+                    searchClearIv.setVisibility(View.GONE);
+                }
+                page = 1;
+                getApiData(false);
             }
         });
 
+        searchClearIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchEt.setText("");
+            }
+        });
 
         connectionListRv = connectionListCrv.getRecyclerView();
 
@@ -208,7 +241,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
     private void getApiData(boolean showProgress) {
         if (!isApiRequested) {
-            connectionListApiViewModel.getUnconnectedList(page, showProgress);
+            connectionListApiViewModel.getUnconnectedList(searchEt.getText().toString(), page, showProgress, isMedicalAssistant);
         }
     }
 

@@ -47,9 +47,11 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.common.WebViewFragment;
+import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 import com.thealer.telehealer.views.quickLogin.QuickLoginPinFragment;
 import com.thealer.telehealer.views.settings.Interface.BundleReceiver;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
+import com.thealer.telehealer.views.settings.medicalAssistant.MedicalAssistantListFragment;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -115,22 +117,22 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     }
 
     @Override
-    public  void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(profileListener);
     }
 
     /*
-    *
-    * Listener from Settings Fragment
-    * */
+     *
+     * Listener from Settings Fragment
+     * */
     @Override
     public void didSelecteItem(int id) {
         switch (id) {
             case R.id.profile:
                 Bundle profile = new Bundle();
-                profile.putInt(ArgumentKeys.VIEW_TYPE,Constants.VIEW_MODE);
+                profile.putInt(ArgumentKeys.VIEW_TYPE, Constants.VIEW_MODE);
                 switch (appPreference.getInt(Constants.USER_TYPE)) {
                     case Constants.TYPE_MEDICAL_ASSISTANT:
                         MedicalAssistantDetailFragment medicalAssistantDetailFragment = new MedicalAssistantDetailFragment();
@@ -169,7 +171,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
                 updateDetailTitle(getString(R.string.change_password));
                 ResetPasswordFragment resetPasswordFragment = new ResetPasswordFragment();
-                setFragment(resetPasswordFragment,false,true,true);
+                setFragment(resetPasswordFragment, false, true, true);
                 break;
             case R.id.appointment_slots:
                 break;
@@ -179,7 +181,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 feedBackFragment.urlToLoad = getString(R.string.feedback_url);
                 feedBackFragment.title = getString(R.string.feedback);
                 hideOrShowNext(false);
-                setFragment(feedBackFragment,false,true,true);
+                setFragment(feedBackFragment, false, true, true);
                 break;
             case R.id.terms_and_condition:
                 updateDetailTitle(getString(R.string.terms_and_conditions));
@@ -187,7 +189,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 termsFragment.urlToLoad = getString(R.string.terms_and_conditions_url);
                 termsFragment.title = getString(R.string.terms_and_conditions);
                 hideOrShowNext(false);
-                setFragment(termsFragment,false,true,true);
+                setFragment(termsFragment, false, true, true);
                 break;
             case R.id.privacy_policy:
                 updateDetailTitle(getString(R.string.privacy_policy));
@@ -195,7 +197,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 privacyFragment.urlToLoad = getString(R.string.privacy_url);
                 privacyFragment.title = getString(R.string.privacy_policy);
                 hideOrShowNext(false);
-                setFragment(privacyFragment,false,true,true);
+                setFragment(privacyFragment, false, true, true);
                 break;
             case R.id.signOut:
                 EventRecorder.recordUserSession("logout");
@@ -211,12 +213,23 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 hideOrShowNext(false);
                 setFragment(paymentsListingFragment, false, true, true);
                 break;
+            case R.id.medical_assistant_ll:
+                updateDetailTitle(getString(R.string.medical_assistant));
+                showMedicalAssistantList();
+                break;
         }
+    }
+
+    private void showMedicalAssistantList() {
+        MedicalAssistantListFragment medicalAssistantListFragment = new MedicalAssistantListFragment();
+        setFragment(medicalAssistantListFragment, false, true, true);
+        hideOrShowNext(false);
     }
 
     @Override
     public void onBackPressed() {
 
+        hideOrShowToolbarTile(false);
         if (getIntent() != null && getIntent().getExtras() != null &&
                 getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == Constants.SCHEDULE_CREATION_MODE) {
             finish();
@@ -242,10 +255,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
 
     /*
-    *
-    * Initializing the views
-    * */
-    private  void initView() {
+     *
+     * Initializing the views
+     * */
+    private void initView() {
         mainContainer = findViewById(R.id.main_container);
 
         appbarLayout = (AppBarLayout) findViewById(R.id.appbar);
@@ -424,9 +437,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (otpBundle == null) {
                     otpBundle = new Bundle();
                 }
-                otpBundle.putInt(ArgumentKeys.OTP_TYPE,OtpVerificationFragment.reset_password);
+                otpBundle.putInt(ArgumentKeys.OTP_TYPE, OtpVerificationFragment.reset_password);
                 otpVerificationFragment.setArguments(otpBundle);
-                setFragment(otpVerificationFragment,false,true,false);
+                setFragment(otpVerificationFragment, false, true, false);
                 break;
             case RequestID.REQ_RESET_PASSWORD:
                 updateDetailTitle(getString(R.string.password));
@@ -437,9 +450,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (passwordBundle == null) {
                     passwordBundle = new Bundle();
                 }
-                passwordBundle.putInt(ArgumentKeys.PASSWORD_TYPE,CreatePasswordFragment.reset_password);
+                passwordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
                 createPasswordFragment.setArguments(passwordBundle);
-                setFragment(createPasswordFragment,false,true,false);
+                setFragment(createPasswordFragment, false, true, false);
 
                 break;
             case RequestID.RESET_PASSWORD_OTP_VALIDATED:
@@ -451,14 +464,14 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (repasswordBundle == null) {
                     repasswordBundle = new Bundle();
                 }
-                repasswordBundle.putInt(ArgumentKeys.PASSWORD_TYPE,CreatePasswordFragment.reset_password);
+                repasswordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
                 reEnterPassword.setArguments(repasswordBundle);
-                setFragment(reEnterPassword,false,true,false);
+                setFragment(reEnterPassword, false, true, false);
 
                 break;
             case RequestID.REQ_QUICK_LOGIN_PIN:
                 QuickLoginPinFragment quickLoginPinFragment = new QuickLoginPinFragment();
-                setFragment(quickLoginPinFragment,false,true,false);
+                setFragment(quickLoginPinFragment, false, true, false);
                 break;
             case RequestID.QUICK_LOGIN_PIN_CREATED:
                 didSelecteItem(R.id.settings);
@@ -468,9 +481,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (bundle == null) {
                     bundle = new Bundle();
                 }
-                bundle.putInt(ArgumentKeys.SCREEN_TYPE,Constants.forProfileUpdate);
+                bundle.putInt(ArgumentKeys.SCREEN_TYPE, Constants.forProfileUpdate);
                 patientChoosePaymentFragment.setArguments(bundle);
-                setFragment(patientChoosePaymentFragment,false,true,false);
+                setFragment(patientChoosePaymentFragment, false, true, false);
 
                 break;
             case RequestID.INSURANCE_REQUEST_IMAGE:
@@ -480,9 +493,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (bundle == null) {
                     bundle = new Bundle();
                 }
-                bundle.putInt(ArgumentKeys.SCREEN_TYPE,Constants.forProfileUpdate);
+                bundle.putInt(ArgumentKeys.SCREEN_TYPE, Constants.forProfileUpdate);
                 patientUploadInsuranceFragment.setArguments(bundle);
-                setFragment(patientUploadInsuranceFragment,false,true,false);
+                setFragment(patientUploadInsuranceFragment, false, true, false);
 
                 break;
             case RequestID.INSURANCE_CHANGE_RESULT:
@@ -493,7 +506,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                     public void onBackStackChanged() {
 
                         if (getCurrentFragment() instanceof BundleReceiver) {
-                            ((BundleReceiver) getCurrentFragment()).didReceiveIntent(finalBundle,RequestID.INSURANCE_CHANGE_RESULT);
+                            ((BundleReceiver) getCurrentFragment()).didReceiveIntent(finalBundle, RequestID.INSURANCE_CHANGE_RESULT);
                             getSupportFragmentManager().removeOnBackStackChangedListener(this);
                         }
 
@@ -518,6 +531,13 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 hideOrShowNext(false);
                 setFragment(paymentDetailFragment, false, true, false);
 
+                break;
+            case RequestID.REQ_SHOW_DETAIL_VIEW:
+                bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_CONNECTION);
+                DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
+                doctorPatientDetailViewFragment.setArguments(bundle);
+                onShowFragment(doctorPatientDetailViewFragment);
+                hideOrShowToolbarTile(true);
                 break;
         }
 
@@ -592,7 +612,11 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     @Override
     public void hideOrShowToolbarTile(boolean hideOrShow) {
-
+        if (hideOrShow) {
+            collapsingToolbarLayout.setVisibility(View.GONE);
+        } else {
+            collapsingToolbarLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
