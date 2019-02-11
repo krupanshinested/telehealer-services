@@ -19,16 +19,14 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
-import com.thealer.telehealer.views.common.imagePreview.ImagePreviewDialogFragment;
-import com.thealer.telehealer.views.common.imagePreview.ImagePreviewViewModel;
 import com.thealer.telehealer.views.onboarding.OnBoardingViewPagerAdapter;
 
 import java.util.ArrayList;
@@ -190,14 +188,7 @@ public class AboutFragment extends BaseFragment {
                 });
 
                 String view_type = getArguments().getString(Constants.VIEW_TYPE);
-                if (view_type != null) {
-                    if (view_type.equals(Constants.VIEW_CONNECTION)) {
-                        disconnectTv.setVisibility(View.GONE);
-                    } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
-                        disconnectTv.setVisibility(View.VISIBLE);
-
-                    }
-                }
+                setDisconnectTv(view_type);
 
             } else if (userType == Constants.TYPE_DOCTOR) {
                 patientDetailView.setVisibility(View.VISIBLE);
@@ -210,8 +201,13 @@ public class AboutFragment extends BaseFragment {
                 if (userDetail.getUser_detail() != null &&
                         userDetail.getUser_detail().getData() != null) {
 
-                    insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_front());
-                    insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_back());
+
+                    if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                        insuranceImageList.add(userDetail.getUser_detail().getData().getCertification());
+                    } else {
+                        insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_front());
+                        insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_back());
+                    }
 
                     OnBoardingViewPagerAdapter onBoardingViewPagerAdapter = new OnBoardingViewPagerAdapter(getActivity(), insuranceImageList, true);
 
@@ -225,7 +221,7 @@ public class AboutFragment extends BaseFragment {
 
                         @Override
                         public void onPageSelected(int i) {
-                            for (int j = 0; j < onBoardingViewPagerAdapter.getCount(); j++) {
+                            for (int j = 0; j < insuranceImageList.size(); j++) {
                                 indicators[j].setImageDrawable(getActivity().getDrawable(R.drawable.circular_unselected_indicator));
                             }
                             indicators[i].setImageDrawable(getActivity().getDrawable(R.drawable.circular_selected_indicator));
@@ -237,7 +233,7 @@ public class AboutFragment extends BaseFragment {
                         }
                     });
 
-                    createIndicator();
+                    createIndicator(insuranceImageList.size());
 
                     insuranceImageLl.setVisibility(View.VISIBLE);
                     insuranceCashTv.setVisibility(View.GONE);
@@ -245,6 +241,15 @@ public class AboutFragment extends BaseFragment {
                 } else {
                     insuranceImageLl.setVisibility(View.GONE);
                     insuranceCashTv.setVisibility(View.VISIBLE);
+                }
+
+                if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                    medicalHistoryBtn.setVisibility(View.GONE);
+                    if (userDetail.getConnection_status() == null || !userDetail.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
+                        disconnectTv.setVisibility(View.GONE);
+                    } else {
+                        disconnectTv.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -265,16 +270,24 @@ public class AboutFragment extends BaseFragment {
                 }
             });
 
-
             userPhoneTv.setText(userDetail.getPhone());
         }
     }
 
-    private void createIndicator() {
-        int count = 2;
-        indicators = new ImageView[count];
+    private void setDisconnectTv(String view_type) {
+        if (view_type != null) {
+            if (view_type.equals(Constants.VIEW_CONNECTION)) {
+                disconnectTv.setVisibility(View.GONE);
+            } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
+                disconnectTv.setVisibility(View.VISIBLE);
+            }
+        }
+    }
 
-        for (int i = 0; i < count; i++) {
+    private void createIndicator(int size) {
+        indicators = new ImageView[size];
+
+        for (int i = 0; i < size; i++) {
             indicators[i] = new ImageView(getActivity());
             indicators[i].setImageDrawable(getActivity().getDrawable(R.drawable.circular_unselected_indicator));
 

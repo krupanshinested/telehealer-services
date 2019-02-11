@@ -158,7 +158,10 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
             case Constants.ROLE_PATIENT:
                 return getDob();
             case Constants.ROLE_ASSISTANT:
-                return getUser_detail().getData().getTitle().toUpperCase();
+                if (getUser_detail() != null && getUser_detail().getData() != null && getUser_detail().getData().getTitle() != null)
+                    return getUser_detail().getData().getTitle().toUpperCase();
+                else
+                    return "";
             default:
                 return "";
         }

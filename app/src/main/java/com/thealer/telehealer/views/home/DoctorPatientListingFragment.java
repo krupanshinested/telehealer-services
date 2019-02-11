@@ -245,7 +245,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
     private void getAssociationsList(String name, boolean isShowProgress) {
         if (!isApiRequested) {
-            associationApiViewModel.getAssociationList(name, page, isShowProgress);
+            associationApiViewModel.getAssociationList(name, page, isShowProgress, false);
         }
     }
 

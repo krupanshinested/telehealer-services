@@ -3,37 +3,24 @@ package com.thealer.telehealer.views.settings;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.models.DeleteAccount.DeleteAccountViewModel;
 import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
-import com.thealer.telehealer.common.AppPreference;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
-import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -47,13 +34,15 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     private SettingClickListener settingClickListener;
     private OnViewChangeInterface onViewChangeInterface;
 
-    private ProfileCellView profile,medical_history,settings,email_id,
-            phone_number,change_password,
-            feedback,terms_and_condition, privacy_policy,appointment_slots,payments_billings;
+    private ProfileCellView profile, medical_history, settings, email_id,
+            phone_number, change_password,
+            feedback, terms_and_condition, privacy_policy, appointment_slots, payments_billings;
     private View signOut;
 
     private AppointmentSlotUpdate appointmentSlotUpdate;
     private Boolean isSlotLoaded = false;
+    private LinearLayout medicalAssistantLl;
+    private ProfileCellView medicalAssistant;
 
     @Nullable
     @Override
@@ -106,6 +95,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         privacy_policy = baseView.findViewById(R.id.privacy_policy);
         signOut = baseView.findViewById(R.id.signOut);
         payments_billings = baseView.findViewById(R.id.payments_billings);
+        medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
+        medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
 
         appointment_slots = baseView.findViewById(R.id.appointment_slots);
         String[] titleList = getActivity().getResources().getStringArray(R.array.doctor_appointment_slots);
@@ -127,8 +118,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         });
 
         isSlotLoaded = false;
-        appointment_slots.updateAdapter(titleAdapter,new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)  {
+        appointment_slots.updateAdapter(titleAdapter, new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (!isSlotLoaded) {
                     isSlotLoaded = true;
                 } else {
@@ -158,6 +149,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         signOut.setOnClickListener(this);
         appointment_slots.setOnClickListener(this);
         payments_billings.setOnClickListener(this);
+        medicalAssistantLl.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
         phone_number.updateValue(UserDetailPreferenceManager.getPhone());
@@ -169,9 +161,10 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 payments_billings.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
-                appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length()+"");
+                appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length() + "");
                 medical_history.setVisibility(View.GONE);
                 payments_billings.setVisibility(View.VISIBLE);
+                medicalAssistantLl.setVisibility(View.VISIBLE);
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
                 medical_history.setVisibility(View.GONE);
