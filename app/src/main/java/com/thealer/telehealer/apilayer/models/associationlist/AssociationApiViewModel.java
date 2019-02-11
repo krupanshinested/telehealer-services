@@ -3,7 +3,6 @@ package com.thealer.telehealer.apilayer.models.associationlist;
 import android.app.Application;
 import android.support.annotation.NonNull;
 
-import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -21,13 +20,13 @@ public class AssociationApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getAssociationList(String name, int page, boolean showProgress) {
+    public void getAssociationList(String name, int page, boolean showProgress, boolean isMedicalAssistant) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
 
-                    getAuthApiService().getAssociations(true, page, Constants.PAGINATION_SIZE, name)
+                    getAuthApiService().getAssociations(true, page, Constants.PAGINATION_SIZE, name, isMedicalAssistant)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
                                 @Override
@@ -39,6 +38,7 @@ public class AssociationApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
     public void getAssociationList(boolean showProgress, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override

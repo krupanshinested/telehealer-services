@@ -104,6 +104,7 @@ public interface ApiInterface {
     String CALL_QUALITY = "call_quality";
     String MONTH = "month";
     String FILTER = "filter";
+    String MEDICAL_ASSISTANT = "medical_assistant";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -180,7 +181,7 @@ public interface ApiInterface {
     Observable<WhoAmIApiResponseModel> whoAmI();
 
     @GET("api/associations")
-    Observable<AssociationApiResponseModel> getAssociations(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name);
+    Observable<AssociationApiResponseModel> getAssociations(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant);
 
     @GET("api/associations")
     Observable<ArrayList<CommonUserApiResponseModel>> getAssociations(@Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String doctorGuid);
@@ -192,7 +193,7 @@ public interface ApiInterface {
     Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(CALLS) boolean calls, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/unconnected-users")
-    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant);
 
     @POST("api/requests")
     Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel);
