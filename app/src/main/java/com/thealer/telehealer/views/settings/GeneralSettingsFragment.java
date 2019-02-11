@@ -20,6 +20,7 @@ import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.call.CallNetworkTestActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.quickLogin.QuickLoginUtil;
@@ -71,6 +72,8 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.check_call_quality:
+                Intent intent = new Intent(getActivity(), CallNetworkTestActivity.class);
+                startActivity(intent);
                 break;
             case R.id.presence:
                 presence.toggleSwitch();
