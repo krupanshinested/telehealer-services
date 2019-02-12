@@ -106,6 +106,7 @@ public interface ApiInterface {
     String MONTH = "month";
     String FILTER = "filter";
     String MEDICAL_ASSISTANT = "medical_assistant";
+    String STATUS = "status";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -425,10 +426,11 @@ public interface ApiInterface {
     @GET("api/vitals/users")
     Observable<VitalReportApiReponseModel> getVitalUsers(@Query(FILTER) String filter);
 
-
     @GET("api/vitals")
     Observable<ArrayList<VitalsApiResponseModel>> getUserFilteredVitals(@Query(FILTER) String type, @Query(USER_GUID) String user_guid);
 
+    @PUT("api/available")
+    Observable<BaseApiResponseModel> updateUserStatus(@Query(STATUS) boolean status);
 
     @Multipart
     @POST("api/call/{id}")

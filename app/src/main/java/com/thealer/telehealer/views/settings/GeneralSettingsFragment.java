@@ -1,25 +1,34 @@
 package com.thealer.telehealer.views.settings;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.userStatus.UpdateStatusApiViewModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
-import com.thealer.telehealer.common.CustomButton;
-import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.call.CallNetworkTestActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -43,6 +52,10 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     private OnActionCompleteInterface actionCompleteInterface;
     private OnViewChangeInterface onViewChangeInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
+    private AttachObserverInterface attachObserverInterface;
+
+    private SettingsCellView notification;
+    private WhoAmIApiResponseModel whoAmIApiResponseModel;
 
     @Override
     public void onAttach(Context context) {
@@ -50,6 +63,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         actionCompleteInterface = (OnActionCompleteInterface) getActivity();
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
+        attachObserverInterface = (AttachObserverInterface) getActivity();
     }
 
     @Nullable
@@ -66,6 +80,8 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         onViewChangeInterface.hideOrShowNext(false);
 
         onViewChangeInterface.updateTitle(getString(R.string.settings));
+
+        notification.updateSwitch(isNotificationEnabled());
     }
 
     @Override
@@ -75,8 +91,53 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 Intent intent = new Intent(getActivity(), CallNetworkTestActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.notification:
+                showAlertDialog(getActivity(), getString(R.string.settings), getString(R.string.notification_setting_alert_message),
+                        getString(R.string.yes), getString(R.string.no),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = null;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                    intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getActivity().getPackageName());
+                                } else {
+                                    intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                    intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                                }
+                                startActivity(intent);
+                                dialog.dismiss();
+                            }
+                        },
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                break;
             case R.id.presence:
-                presence.toggleSwitch();
+                UpdateStatusApiViewModel updateStatusApiViewModel = ViewModelProviders.of(this).get(UpdateStatusApiViewModel.class);
+                attachObserverInterface.attachObserver(updateStatusApiViewModel);
+
+                updateStatusApiViewModel.updateStatus(!presence.getSwitchStatus(), true);
+
+                updateStatusApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+                    @Override
+                    public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                        if (baseApiResponseModel != null) {
+                            presence.toggleSwitch();
+                            if (presence.getSwitchStatus()) {
+                                whoAmIApiResponseModel.setStatus(Constants.AVAILABLE);
+                            } else {
+                                whoAmIApiResponseModel.setStatus(Constants.OFFLINE);
+                            }
+                            UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                            updateStatusApiViewModel.baseApiResponseModelMutableLiveData.removeObservers(GeneralSettingsFragment.this);
+                        }
+                    }
+                });
+
                 break;
             case R.id.quick_login:
                 if (quickLogin.getSwitchStatus()) {
@@ -107,17 +168,17 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
 
-                        EventRecorder.recordUserSession("account_deletion_initiated");
+                                EventRecorder.recordUserSession("account_deletion_initiated");
 
-                        Intent intent = new Intent(getActivity(),DeleteAccountActivity.class);
-                        getActivity().startActivity(intent);
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
+                                Intent intent = new Intent(getActivity(), DeleteAccountActivity.class);
+                                getActivity().startActivity(intent);
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
 
                 break;
         }
@@ -134,8 +195,10 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         quickLogin = view.findViewById(R.id.quick_login);
         signature = view.findViewById(R.id.signature);
         deleteView = view.findViewById(R.id.delete_view);
+        notification = (SettingsCellView) view.findViewById(R.id.notification);
 
         checkCallQuality.setOnClickListener(this);
+        notification.setOnClickListener(this);
         presence.setOnClickListener(this);
         quickLogin.setOnClickListener(this);
         signature.setOnClickListener(this);
@@ -153,6 +216,13 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 signature.setVisibility(View.GONE);
                 break;
         }
+
+        whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+
+        if (whoAmIApiResponseModel.getStatus().equals(Constants.AVAILABLE))
+            presence.updateSwitch(true);
+        else
+            presence.updateSwitch(false);
     }
 
     @Override
@@ -161,5 +231,9 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         if (requestCode == PermissionConstants.PERMISSION_STORAGE && resultCode == Activity.RESULT_OK) {
             showSignatureView();
         }
+    }
+
+    private boolean isNotificationEnabled() {
+        return NotificationManagerCompat.from(getActivity()).areNotificationsEnabled();
     }
 }
