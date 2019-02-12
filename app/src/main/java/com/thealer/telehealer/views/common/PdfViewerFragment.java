@@ -38,6 +38,7 @@ public class PdfViewerFragment extends BaseFragment implements View.OnClickListe
     private Button printBt;
 
     private PdfReceiverApiViewModel pdfReceiverApiViewModel;
+    private AttachObserverInterface attachObserverInterface;
     private PDFView pdfView;
     private OnCloseActionInterface onCloseActionInterface;
     private ChangeTitleInterface changeTitleInterface;
@@ -52,7 +53,9 @@ public class PdfViewerFragment extends BaseFragment implements View.OnClickListe
     public void onAttach(Context context) {
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
+        attachObserverInterface = (AttachObserverInterface) getActivity();
         pdfReceiverApiViewModel = ViewModelProviders.of(this).get(PdfReceiverApiViewModel.class);
+        attachObserverInterface.attachObserver(pdfReceiverApiViewModel);
     }
 
     @Nullable
