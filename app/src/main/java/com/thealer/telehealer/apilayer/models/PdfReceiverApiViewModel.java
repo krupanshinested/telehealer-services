@@ -46,6 +46,7 @@ public class PdfReceiverApiViewModel extends BaseApiViewModel {
                 public void onStatus(boolean status) {
 
                     if (status) {
+                        isLoadingLiveData.setValue(true);
                         getAuthApiService().getPdfFile(fileUrl, isPdfDecrypt)
                                 .compose(applySchedulers())
                                 .subscribe(new Observer<Response<ResponseBody>>() {
@@ -76,6 +77,7 @@ public class PdfReceiverApiViewModel extends BaseApiViewModel {
                                     @Override
                                     public void onComplete() {
                                         fileSavedInterface.onFileSaved(file);
+                                        isLoadingLiveData.setValue(false);
                                     }
                                 });
                     }
