@@ -15,8 +15,8 @@
             android:id="@+id/container_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:background="@color/card_view_background"
             android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -34,6 +34,13 @@
                     android:layout_height="wrap_content"
                     app:isSwitchNeed="false"
                     app:settings_title="@string/check_call_quality" />
+
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/notification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isSwitchNeed="true"
+                    app:settings_title="@string/notifications" />
 
                 <com.thealer.telehealer.views.settings.cellView.SettingsCellView
                     android:id="@+id/presence"
@@ -59,10 +66,10 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/delete_view"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:id="@+id/delete_view"
                 android:background="@color/colorWhite"
                 android:orientation="vertical">
 
