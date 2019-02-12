@@ -730,6 +730,7 @@
     <string name="last_two_week">Last two week</string>
     <string name="last_week">Last week</string>
     <string name="add_health_info_content">Take a moment to update your health profile. This will help you and your care team get a clearer picture of your overall health.</string>
+    <string name="notification_setting_alert_message">Do you want to open Android settings to enable/disable notification?</string>
     <string name="checking_network">Checking network...</string>
     <string name="calculating_video_audio_score">Please wait, we are calculating your video and audio quality.</string>
 
