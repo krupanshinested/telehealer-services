@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.icu.util.UniversalTimeScale;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,7 +33,6 @@ import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
-import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
@@ -47,12 +45,11 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CurrentModeInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -65,12 +62,10 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-
 /**
  * Created by Aswin on 23,October,2018
  */
-public class DoctorDetailFragment extends BaseFragment implements DoCurrentTransactionInterface, View.OnClickListener, CameraInterface,CurrentModeInterface {
+public class DoctorDetailFragment extends BaseFragment implements DoCurrentTransactionInterface, View.OnClickListener, CameraInterface, CurrentModeInterface {
 
     private OnActionCompleteInterface onActionCompleteInterface;
     private OnViewChangeInterface onViewChangeInterface;
@@ -109,10 +104,10 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
     private EditText liabilityEt;
 
     //not for registration
-    private ConstraintLayout driver_license,certificate;
-    private TextView driver_license_tv,certificate_tv;
-    private ImageView driver_license_iv,certificate_iv;
-    private TextView gender_value,specialist_tv;
+    private ConstraintLayout driver_license, certificate;
+    private TextView driver_license_tv, certificate_tv;
+    private ImageView driver_license_iv, certificate_iv;
+    private TextView gender_value, specialist_tv;
 
     private boolean isCreateManually;
     private java.lang.String[] specialityArray;
@@ -132,6 +127,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private GetDoctorsApiViewModel getDoctorsApiViewModel;
     private GetDoctorsApiResponseModel getDoctorsApiResponseModel;
+    private AttachObserverInterface attachObserverInterface;
 
     private WhoAmIApiResponseModel whoAmi;
     private int currentGalleryCallingId;
@@ -142,8 +138,15 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
         super.onAttach(context);
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
+        attachObserverInterface = (AttachObserverInterface) getActivity();
         createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
         getDoctorsApiViewModel = ViewModelProviders.of(getActivity()).get(GetDoctorsApiViewModel.class);
+        updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
+        whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+
+        attachObserverInterface.attachObserver(getDoctorsApiViewModel);
+        attachObserverInterface.attachObserver(updateProfileModel);
+        attachObserverInterface.attachObserver(whoAmIApiViewModel);
     }
 
     @Override
@@ -157,7 +160,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
         if (savedInstanceState == null && getArguments() != null) {
             currentDisplayType = getArguments().getInt(ArgumentKeys.VIEW_TYPE, Constants.CREATE_MODE);
         } else if (savedInstanceState != null) {
-            currentDisplayType = savedInstanceState.getInt(ArgumentKeys.VIEW_TYPE,Constants.CREATE_MODE);
+            currentDisplayType = savedInstanceState.getInt(ArgumentKeys.VIEW_TYPE, Constants.CREATE_MODE);
         } else {
             currentDisplayType = Constants.CREATE_MODE;
         }
@@ -169,7 +172,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(Constants.PICTURE_PATH, doctorImagePath);
-        outState.putInt(ArgumentKeys.VIEW_TYPE,currentDisplayType);
+        outState.putInt(ArgumentKeys.VIEW_TYPE, currentDisplayType);
     }
 
     @Nullable
@@ -252,7 +255,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
     public void onResume() {
         super.onResume();
 
-        if (!isCreateManually && currentDisplayType == Constants.CREATE_MODE){
+        if (!isCreateManually && currentDisplayType == Constants.CREATE_MODE) {
             checkFields();
         }
 
@@ -299,7 +302,6 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
     }
 
     private void addObservers() {
-        updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
 
         updateProfileModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -319,7 +321,6 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
             }
         });
 
-        whoAmIApiViewModel = ViewModelProviders.of(getActivity()).get(WhoAmIApiViewModel.class);
 
         whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
                 new Observer<BaseApiResponseModel>() {
@@ -337,7 +338,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
 
                             onViewChangeInterface.updateTitle(UserDetailPreferenceManager.getUserDisplayName());
 
-                            if (whoAmIApiResponseModel.getStatus().equals(Constants.ONBOARDING_PENDING)){
+                            if (whoAmIApiResponseModel.getStatus().equals(Constants.ONBOARDING_PENDING)) {
                                 startActivity(new Intent(getActivity(), DoctorOnBoardingActivity.class));
                             }
 
@@ -346,10 +347,6 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
                     }
                 });
 
-        if (getActivity() instanceof BaseActivity) {
-            ((BaseActivity) getActivity()).attachObserver(updateProfileModel);
-            ((BaseActivity) getActivity()).attachObserver(whoAmIApiViewModel);
-        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -435,8 +432,8 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
         certificate_tv = view.findViewById(R.id.certificate_tv);
         driver_license_iv = view.findViewById(R.id.driver_license_iv);
         certificate_iv = view.findViewById(R.id.certificate_iv);
-        gender_value  = view.findViewById(R.id.gender_value);
-        specialist_tv  = view.findViewById(R.id.specialist_tv);
+        gender_value = view.findViewById(R.id.gender_value);
+        specialist_tv = view.findViewById(R.id.specialist_tv);
 
         specialityArray = getActivity().getResources().getStringArray(R.array.doctor_speciality_list);
         genderArray = getActivity().getResources().getStringArray(R.array.gender_list);
@@ -543,7 +540,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
     }
 
     private void reloadUI() {
-        switch (currentDisplayType){
+        switch (currentDisplayType) {
             case Constants.EDIT_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.update));
@@ -555,7 +552,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
             case Constants.VIEW_MODE:
                 updateAllViews(false);
                 onViewChangeInterface.updateNextTitle(getString(R.string.edit));
-                Utils.hideKeyboardFrom(getActivity(),this.getView());
+                Utils.hideKeyboardFrom(getActivity(), this.getView());
                 break;
         }
         validateDetails();
@@ -579,21 +576,21 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
         Utils.setEditable(liabilityEt, enabled);
         Utils.setEditable(websiteEt, enabled);
 
-       if (enabled) {
-           gender_value.setVisibility(View.GONE);
-           genderSp.setVisibility(View.VISIBLE);
+        if (enabled) {
+            gender_value.setVisibility(View.GONE);
+            genderSp.setVisibility(View.VISIBLE);
 
-           specialist_tv.setVisibility(View.GONE);
-           specialitySp.setVisibility(View.VISIBLE);
+            specialist_tv.setVisibility(View.GONE);
+            specialitySp.setVisibility(View.VISIBLE);
 
-           liabilityEt.setInputType(InputType.TYPE_CLASS_TEXT);
-       } else {
-           gender_value.setVisibility(View.VISIBLE);
-           genderSp.setVisibility(View.GONE);
+            liabilityEt.setInputType(InputType.TYPE_CLASS_TEXT);
+        } else {
+            gender_value.setVisibility(View.VISIBLE);
+            genderSp.setVisibility(View.GONE);
 
-           specialist_tv.setVisibility(View.VISIBLE);
-           specialitySp.setVisibility(View.GONE);
-       }
+            specialist_tv.setVisibility(View.VISIBLE);
+            specialitySp.setVisibility(View.GONE);
+        }
     }
 
     private void addTextWatcher(EditText editText, TextInputLayout textInputLayout) {
@@ -658,7 +655,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
 
     private void setPhoneList() {
         officePhoneRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        officePhoneListAdapter = new OfficePhoneListAdapter(getActivity(), practiceId, isNewPractice,this);
+        officePhoneListAdapter = new OfficePhoneListAdapter(getActivity(), practiceId, isNewPractice, this);
         officePhoneRv.setAdapter(officePhoneListAdapter);
     }
 
@@ -755,7 +752,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
                 }
                 break;
             case RequestID.REQ_LICENSE:
-                Log.e("aswin", "onActivityResult: "+ new Gson().toJson(createUserRequestModel.getUser_detail().getData().getLicenses()));
+                Log.e("aswin", "onActivityResult: " + new Gson().toJson(createUserRequestModel.getUser_detail().getData().getLicenses()));
                 setLicenseList();
                 if (createUserRequestModel.getUser_detail().getData().getLicenses().size() == 0) {
                     addLicenseTil.setError(getString(R.string.license_empty_error));
@@ -776,7 +773,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
         }
 
         licenseRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        doctorLicenseListAdapter = new DoctorLicenseListAdapter(getActivity(),this);
+        doctorLicenseListAdapter = new DoctorLicenseListAdapter(getActivity(), this);
         licenseRv.setAdapter(doctorLicenseListAdapter);
     }
 
@@ -820,12 +817,12 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
     private void setProfileImage() {
         if (doctorImagePath != null && !doctorImagePath.isEmpty()) {
             profileCiv.setImageBitmap(getBitmpaFromPath(doctorImagePath));
-        } else if (createUserRequestModel != null && createUserRequestModel.getUser_data().getUser_avatar() != null&& !createUserRequestModel.getUser_data().getUser_avatar().isEmpty()) {
+        } else if (createUserRequestModel != null && createUserRequestModel.getUser_data().getUser_avatar() != null && !createUserRequestModel.getUser_data().getUser_avatar().isEmpty()) {
             Utils.setImageWithGlide(getContext(), profileCiv, createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true);
         } else if (createUserRequestModel != null &&
                 createUserRequestModel.getUser_detail() != null &&
                 createUserRequestModel.getUser_detail().getData().getImage_url() != null &&
-                !createUserRequestModel.getUser_detail().getData().getImage_url().isEmpty()){
+                !createUserRequestModel.getUser_detail().getData().getImage_url().isEmpty()) {
             Glide.with(getContext())
                     .load(createUserRequestModel.getUser_detail().getData().getImage_url())
                     .apply(new RequestOptions()
@@ -836,17 +833,17 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
     }
 
     private void setLicense() {
-        if (createUserRequestModel != null && createUserRequestModel.getDoctor_driving_license_path() != null&& !createUserRequestModel.getDoctor_driving_license_path().isEmpty()) {
+        if (createUserRequestModel != null && createUserRequestModel.getDoctor_driving_license_path() != null && !createUserRequestModel.getDoctor_driving_license_path().isEmpty()) {
             driver_license_iv.setImageBitmap(getBitmpaFromPath(createUserRequestModel.getDoctor_driving_license_path()));
-        } else if (createUserRequestModel != null && createUserRequestModel.getUser_detail().getData().getDriver_license() != null){
+        } else if (createUserRequestModel != null && createUserRequestModel.getUser_detail().getData().getDriver_license() != null) {
             Utils.setImageWithGlide(getContext(), driver_license_iv, createUserRequestModel.getUser_detail().getData().getDriver_license(), getContext().getDrawable(R.drawable.placeholder_certificate), true);
         }
     }
 
     private void setCertificate() {
-        if (createUserRequestModel != null && createUserRequestModel.getDoctor_certificate_path() != null&& !createUserRequestModel.getDoctor_certificate_path().isEmpty()) {
+        if (createUserRequestModel != null && createUserRequestModel.getDoctor_certificate_path() != null && !createUserRequestModel.getDoctor_certificate_path().isEmpty()) {
             certificate_iv.setImageBitmap(getBitmpaFromPath(createUserRequestModel.getDoctor_certificate_path()));
-        } else if (createUserRequestModel != null && createUserRequestModel.getUser_detail().getData().getDiploma_certificate() != null){
+        } else if (createUserRequestModel != null && createUserRequestModel.getUser_detail().getData().getDiploma_certificate() != null) {
             Utils.setImageWithGlide(getContext(), certificate_iv, createUserRequestModel.getUser_detail().getData().getDiploma_certificate(), getContext().getDrawable(R.drawable.placeholder_certificate), true);
         }
     }
@@ -864,7 +861,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
                 !npiEt.getText().toString().isEmpty() &&
                 !liabilityEt.getText().toString().isEmpty()) {
 
-                onViewChangeInterface.enableNext(true);
+            onViewChangeInterface.enableNext(true);
         } else {
             onViewChangeInterface.enableNext(false);
         }
@@ -902,7 +899,7 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
         if (liabilityEt.getText().toString().isEmpty()) {
             setError(liabilityEt);
         }
-        if (createUserRequestModel.getUser_detail().getData().getPractices().size() == 0 ) {
+        if (createUserRequestModel.getUser_detail().getData().getPractices().size() == 0) {
             setError(addAddressEt);
         }
 
@@ -910,8 +907,8 @@ public class DoctorDetailFragment extends BaseFragment implements DoCurrentTrans
             setError(addLicenseEt);
         }
 
-        if (!isCreateManually && isNewPractice){
-            if (createUserRequestModel.getUser_detail().getData().getPractices().get(0).getVisit_address() == null){
+        if (!isCreateManually && isNewPractice) {
+            if (createUserRequestModel.getUser_detail().getData().getPractices().get(0).getVisit_address() == null) {
                 setError(addAddressEt);
             }
         }

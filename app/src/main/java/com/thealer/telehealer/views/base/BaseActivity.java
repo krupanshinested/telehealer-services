@@ -8,10 +8,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +21,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.DrawableImageViewTarget;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -71,10 +72,13 @@ public class BaseActivity extends AppCompatActivity {
 
                 switch (showScreenType) {
                     case Constants.SHOW_PROGRESS:
-                        if (isLoad)
-                            showProgressDialog();
-                        else
+                        if (isLoad) {
+                            if (relativeLayout == null || relativeLayout.getVisibility() != View.VISIBLE) {
+                                showProgressDialog();
+                            }
+                        } else
                             dismissProgressDialog();
+
                         break;
                     case Constants.SHOW_SCREEN:
                         if (isLoad)
@@ -93,6 +97,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public void handleErrorResponse(ErrorModel errorModel) {
         Logs.D(TAG, "inside handle error response");
+        dismissProgressDialog();
         if (errorModel != null && errorModel.getMessage() != null) {
 //            do something
         } else {
@@ -104,38 +109,51 @@ public class BaseActivity extends AppCompatActivity {
         Logs.D(TAG, "inside showProgressDialog");
         dismissProgressDialog();
 
-        if (relativeLayout == null) {
-            ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleSmall);
-            progressBar.animate();
-            progressBar.setIndeterminate(true);
-            progressBar.setVisibility(View.VISIBLE);
+        relativeLayout = new RelativeLayout(this);
 
-            relativeLayout = new RelativeLayout(this);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        relativeLayout.setLayoutParams(layoutParams);
+        relativeLayout.setGravity(Gravity.CENTER);
+        relativeLayout.setClickable(true);
 
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            relativeLayout.setLayoutParams(layoutParams);
-            relativeLayout.setGravity(Gravity.CENTER);
-            relativeLayout.setClickable(true);
+        CardView cardView = new CardView(this);
+        cardView.setCardBackgroundColor(getColor(R.color.colorWhite));
+        cardView.setAlpha(0.9f);
+        cardView.setRadius(12.0f);
 
-            relativeLayout.addView(progressBar);
 
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 100);
-            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        ImageView imageView = new ImageView(this);
+        DrawableImageViewTarget drawableImageViewTarget = new DrawableImageViewTarget(imageView);
 
-            progressBar.setLayoutParams(params);
-            progressBar.setClickable(true);
 
-            this.addContentView(relativeLayout, layoutParams);
-        } else
-            relativeLayout.setVisibility(View.VISIBLE);
+        Glide.with(this)
+                .load(R.raw.throbber)
+                .into(drawableImageViewTarget);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(160, 160);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        imageView.setLayoutParams(params);
+        cardView.setLayoutParams(params);
+
+        relativeLayout.addView(cardView);
+        cardView.addView(imageView);
+
+        this.addContentView(relativeLayout, layoutParams);
+        relativeLayout.setVisibility(View.VISIBLE);
 
     }
 
     public void dismissProgressDialog() {
-        Logs.D(TAG, "inside dismissProgressDialog");
-        if (relativeLayout != null && relativeLayout.getVisibility() == View.VISIBLE)
-            relativeLayout.setVisibility(View.GONE);
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Logs.D(TAG, "inside dismissProgressDialog");
+                if (relativeLayout != null && relativeLayout.getVisibility() == View.VISIBLE) {
+                    relativeLayout.setVisibility(View.GONE);
+                }
+            }
+        }, 2000);
     }
 
     public void showToast(String msg) {
