@@ -468,6 +468,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
     }
 
     private void makeApiCall() {
+        orderDetailCelv.hideEmptyState();
         if (selectedItem.equals(OrderConstant.ORDER_DOCUMENTS)) {
 
         } else if (selectedItem.equals(OrderConstant.ORDER_FORM)) {
