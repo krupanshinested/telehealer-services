@@ -7,6 +7,7 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -35,10 +36,13 @@ import com.thealer.telehealer.views.signin.SigninActivity;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import id.zelory.compressor.Compressor;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -411,7 +415,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 isLoadingLiveData.setValue(false);
                 errorModelLiveData.setValue(new ErrorModel(-1, e1.getMessage(), e1.getMessage()));
             }
-        }else {
+        } else {
             isLoadingLiveData.setValue(false);
             errorModelLiveData.setValue(new ErrorModel(-1, e.getMessage(), e.getMessage()));
         }
@@ -436,6 +440,14 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         if (image_path != null) {
             try {
                 File file = new File(image_path);
+
+                Log.e(TAG, "getMultipartFile: selected size " + getReadableFileSize(file.length()));
+
+                if (file.length() / 1024 > 750) {
+                    file = getCompressedFile(file);
+                    Log.e(TAG, "getMultipartFile: compressed file size " + getReadableFileSize(file.length()));
+                }
+
                 return MultipartBody.Part.createFormData(name, file.getName(),
                         RequestBody.create(MediaType.parse("image/*"), file));
 
@@ -444,6 +456,32 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             }
         } else
             return null;
+    }
+
+    public String getReadableFileSize(long size) {
+        if (size <= 0) {
+            return "0";
+        }
+        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    public File getCompressedFile(File actualFile) {
+
+        try {
+            return new Compressor(getApplication())
+                    .setCompressFormat(Bitmap.CompressFormat.PNG)
+                    .setQuality(100)
+                    .setMaxWidth(300)
+                    .setMaxHeight(300)
+                    .compressToFile(actualFile);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public MultipartBody.Part getTxtMultipartFile(String name, String file_path) {
