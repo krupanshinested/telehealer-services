@@ -1,9 +1,10 @@
 package com.thealer.telehealer.views.home.orders.document;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +12,20 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
-import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,7 +64,7 @@ class DocumentListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public Object getChild(int groupPosition, int childPosition) {
+    public DocumentsApiResponseModel.ResultBean getChild(int groupPosition, int childPosition) {
         return childList.get(headerList.get(groupPosition)).get(childPosition);
     }
 
@@ -103,6 +111,28 @@ class DocumentListAdapter extends BaseExpandableListAdapter {
         sizeTv = (TextView) convertView.findViewById(R.id.size_tv);
 
         Utils.setImageWithGlide(activity, documentIv, childList.get(headerList.get(groupPosition)).get(childPosition).getPath(), activity.getDrawable(R.drawable.ic_orders_documents), true);
+
+//        Glide.with(activity)
+//                .asBitmap()
+//                .apply(new RequestOptions()
+//                        .override(300, Target.SIZE_ORIGINAL)
+//                        .format(DecodeFormat.DEFAULT)
+//                )
+//                .load(Utils.getGlideUrlWithAuth(activity, getChild(groupPosition, childPosition).getPath()))
+//                .addListener(new RequestListener<Bitmap>() {
+//                    @Override
+//                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+//                        return false;
+//                    }
+//
+//                    @Override
+//                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+//                        resource.compress(Bitmap.CompressFormat.PNG, 0, new ByteArrayOutputStream());
+//                        sizeTv.setText(resource.getByteCount() / 1024 + " KB");
+//                        return false;
+//                    }
+//                }).submit();
+
         titleTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getName());
 
         documentCv.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +150,7 @@ class DocumentListAdapter extends BaseExpandableListAdapter {
                 }
             }
         });
+
         return convertView;
     }
 
@@ -129,7 +160,6 @@ class DocumentListAdapter extends BaseExpandableListAdapter {
     }
 
     public void setData(List<String> newHeaderList, HashMap<String, List<DocumentsApiResponseModel.ResultBean>> newChildList, DocumentsApiResponseModel documentsApiResponseModel, int page) {
-        Log.e("aswin", "size " + page);
         this.headerList = newHeaderList;
         this.childList = newChildList;
         this.documentsApiResponseModel = documentsApiResponseModel;
