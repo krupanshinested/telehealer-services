@@ -40,7 +40,7 @@ public class RecentsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getMyCorrespondentList(int page) {
+    public void getMyCorrespondentList(int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -48,7 +48,7 @@ public class RecentsApiViewModel extends BaseApiViewModel {
                     getAuthApiService()
                             .getMyCorrespondentHistory(true, paginate, page, page_size)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);

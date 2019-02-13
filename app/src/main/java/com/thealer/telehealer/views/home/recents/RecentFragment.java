@@ -17,6 +17,7 @@ import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomExpandableListView;
+import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -72,6 +73,7 @@ public class RecentFragment extends BaseFragment {
         recentsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                recentsCelv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModel != null) {
 
                     recentsApiResponseModel = (RecentsApiResponseModel) baseApiResponseModel;
@@ -134,6 +136,14 @@ public class RecentFragment extends BaseFragment {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 return true;
+            }
+        });
+
+        recentsCelv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                page = 1;
+                makeApiCall(false);
             }
         });
 
@@ -249,7 +259,7 @@ public class RecentFragment extends BaseFragment {
                 if (getArguments() != null) {
                     if (getArguments().getBoolean(Constants.IS_FROM_HOME)) {
                         isApiRequested = true;
-                        recentsApiViewModel.getMyCorrespondentList(page);
+                        recentsApiViewModel.getMyCorrespondentList(page, isShowProgress);
                     } else {
                         CommonUserApiResponseModel userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                         if (userDetail != null) {

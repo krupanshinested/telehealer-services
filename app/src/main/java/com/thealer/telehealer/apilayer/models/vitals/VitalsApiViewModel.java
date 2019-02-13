@@ -19,14 +19,14 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getUserVitals(String type, String user_guid) {
+    public void getUserVitals(String type, String user_guid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().getUserVitals(type, user_guid)
                             .compose(applySchedulers())
-                            .subscribe(new RAListObserver<VitalsApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAListObserver<VitalsApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
                                 public void onSuccess(ArrayList<VitalsApiResponseModel> o) {
 
@@ -63,14 +63,14 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getVitals(String type) {
+    public void getVitals(String type, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().getVitals(type)
                             .compose(applySchedulers())
-                            .subscribe(new RAListObserver<VitalsApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAListObserver<VitalsApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
                                 public void onSuccess(ArrayList<VitalsApiResponseModel> o) {
 
