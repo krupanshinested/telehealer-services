@@ -27,6 +27,7 @@ import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyRespo
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomExpandableListView;
+import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -92,6 +93,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
         ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                orderDetailCelv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModel != null) {
                     updateList(baseApiResponseModel);
                 }
@@ -101,6 +103,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
         ordersApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                orderDetailCelv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModels != null && baseApiResponseModels.size() > 0) {
                     updateArrayList(baseApiResponseModels);
                 }
@@ -458,55 +461,62 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             }
         }
 
+        orderDetailCelv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                page = 1;
+                makeApiCall(false);
+            }
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
         addFab.setClickable(true);
-        makeApiCall();
+        makeApiCall(true);
     }
 
-    private void makeApiCall() {
+    private void makeApiCall(boolean isShowProgress) {
         orderDetailCelv.hideEmptyState();
         if (selectedItem.equals(OrderConstant.ORDER_DOCUMENTS)) {
 
         } else if (selectedItem.equals(OrderConstant.ORDER_FORM)) {
             if (isFromHome) {
-                ordersApiViewModel.getForms(true);
+                ordersApiViewModel.getForms(isShowProgress);
             } else {
-                ordersApiViewModel.getUserForms(commonUserApiResponseModel.getUser_guid(), true);
+                ordersApiViewModel.getUserForms(commonUserApiResponseModel.getUser_guid(), isShowProgress);
             }
         } else if (selectedItem.equals(OrderConstant.ORDER_LABS)) {
 
             if (isFromHome) {
-                ordersApiViewModel.getLabOrders(page, true);
+                ordersApiViewModel.getLabOrders(page, isShowProgress);
             } else {
-                ordersApiViewModel.getUserLabOrders(commonUserApiResponseModel.getUser_guid(), page, true);
+                ordersApiViewModel.getUserLabOrders(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_PRESCRIPTIONS)) {
 
             if (isFromHome) {
-                ordersApiViewModel.getPrescriptionOrders(page, true);
+                ordersApiViewModel.getPrescriptionOrders(page, isShowProgress);
             } else {
-                ordersApiViewModel.getUserPrescriptionOrders(commonUserApiResponseModel.getUser_guid(), page, true);
+                ordersApiViewModel.getUserPrescriptionOrders(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_RADIOLOGY)) {
 
             if (isFromHome) {
-                ordersApiViewModel.getRadiologyList(page, true);
+                ordersApiViewModel.getRadiologyList(page, isShowProgress);
             } else {
-                ordersApiViewModel.getUserRadiologyList(commonUserApiResponseModel.getUser_guid(), page, true);
+                ordersApiViewModel.getUserRadiologyList(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_REFERRALS)) {
 
             if (isFromHome) {
-                ordersApiViewModel.getSpecialist(page, true);
+                ordersApiViewModel.getSpecialist(page, isShowProgress);
             } else {
-                ordersApiViewModel.getUserSpecialist(commonUserApiResponseModel.getUser_guid(), page, true);
+                ordersApiViewModel.getUserSpecialist(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
             }
 
         }

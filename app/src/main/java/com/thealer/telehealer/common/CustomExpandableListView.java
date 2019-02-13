@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -32,6 +33,8 @@ public class CustomExpandableListView extends ConstraintLayout {
     private boolean isScrollable = false;
     private int totalCount = 0;
     private OnPaginateInterface onPaginateInterface;
+    private CustomSwipeRefreshLayout swipeLayout;
+    private LinearLayout emptyLl;
 
 
     public CustomExpandableListView(Context context) {
@@ -55,6 +58,8 @@ public class CustomExpandableListView extends ConstraintLayout {
         emptyMessageTv = (TextView) view.findViewById(R.id.empty_message_tv);
         emptyActionBtn = (CustomButton) view.findViewById(R.id.empty_action_btn);
         recyclerLoader = (ProgressBar) view.findViewById(R.id.recycler_loader);
+        swipeLayout = (CustomSwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
+        emptyLl = (LinearLayout) view.findViewById(R.id.empty_ll);
 
         expandableListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -126,11 +131,14 @@ public class CustomExpandableListView extends ConstraintLayout {
         expandableListView.setVisibility(GONE);
         recyclerEmptyStateView.setVisibility(VISIBLE);
         showEmptyState(emptyState);
+        emptyLl.setClickable(true);
     }
 
     public void hideEmptyState() {
         expandableListView.setVisibility(VISIBLE);
         recyclerEmptyStateView.setVisibility(GONE);
+        emptyLl.setClickable(false);
+
     }
 
     public void showEmptyState(String emptyState) {
@@ -159,5 +167,9 @@ public class CustomExpandableListView extends ConstraintLayout {
         } else {
             emptyMessageTv.setVisibility(GONE);
         }
+    }
+
+    public CustomSwipeRefreshLayout getSwipeLayout() {
+        return swipeLayout;
     }
 }
