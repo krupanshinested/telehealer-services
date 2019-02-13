@@ -13,107 +13,121 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/linechart"
+    <com.thealer.telehealer.common.CustomSwipeRefreshLayout
+        android:id="@+id/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/app_gradient_start"
-        android:visibility="gone"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.4"
-        app:layout_constraintTop_toBottomOf="@+id/appbar" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/user_detail_cl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorWhite"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linechart">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/item_civ"
-            android:layout_width="@dimen/card_circular_image_size"
-            android:layout_height="@dimen/card_circular_image_size"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/profile_placeholder" />
-
-        <TextView
-            android:id="@+id/item_title_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:gravity="center|left"
-            android:textColor="@color/colorBlack"
-            android:textSize="@dimen/list_title_size"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/info_iv"
-            app:layout_constraintStart_toEndOf="@+id/item_civ"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/dummy_text" />
-
-        <TextView
-            android:id="@+id/item_sub_title_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:ellipsize="end"
-            android:ems="3"
-            android:gravity="center|left"
-            android:maxLines="1"
-            app:layout_constraintEnd_toStartOf="@id/info_iv"
-            app:layout_constraintStart_toEndOf="@+id/item_civ"
-            app:layout_constraintTop_toBottomOf="@+id/item_title_tv"
-            tools:text="@string/dummy_text" />
-
-
-        <ImageView
-            android:id="@+id/info_iv"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/info"
-            android:tint="@color/app_gradient_start"
-            app:layout_constraintBottom_toBottomOf="@+id/item_title_tv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/item_title_tv" />
-
-        <View
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorGrey_light"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+            android:layout_height="match_parent">
 
-    <com.thealer.telehealer.common.CustomExpandableListView
-        android:id="@+id/vital_detail_celv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_detail_cl" />
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/linechart"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@color/app_gradient_start"
+                android:visibility="gone"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.4"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
-        android:src="@drawable/ic_add_white_24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/user_detail_cl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linechart">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/item_civ"
+                    android:layout_width="@dimen/card_circular_image_size"
+                    android:layout_height="@dimen/card_circular_image_size"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/profile_placeholder" />
+
+                <TextView
+                    android:id="@+id/item_title_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center|left"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/list_title_size"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/info_iv"
+                    app:layout_constraintStart_toEndOf="@+id/item_civ"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/dummy_text" />
+
+                <TextView
+                    android:id="@+id/item_sub_title_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:ellipsize="end"
+                    android:ems="3"
+                    android:gravity="center|left"
+                    android:maxLines="1"
+                    app:layout_constraintEnd_toStartOf="@id/info_iv"
+                    app:layout_constraintStart_toEndOf="@+id/item_civ"
+                    app:layout_constraintTop_toBottomOf="@+id/item_title_tv"
+                    tools:text="@string/dummy_text" />
+
+
+                <ImageView
+                    android:id="@+id/info_iv"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/info"
+                    android:tint="@color/app_gradient_start"
+                    app:layout_constraintBottom_toBottomOf="@+id/item_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/item_title_tv" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <com.thealer.telehealer.common.CustomExpandableListView
+                android:id="@+id/vital_detail_celv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/user_detail_cl" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/add_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="32dp"
+                android:src="@drawable/ic_add_white_24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+    </com.thealer.telehealer.common.CustomSwipeRefreshLayout>
+
 </android.support.constraint.ConstraintLayout>

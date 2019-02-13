@@ -42,6 +42,7 @@ import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomExpandableListView;
+import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.UserType;
@@ -64,13 +65,11 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import iHealth.pairing.VitalCreationActivity;
 import me.toptas.fancyshowcase.listener.DismissListener;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-
-import de.hdodenhof.circleimageview.CircleImageView;
-import iHealth.pairing.VitalCreationActivity;
 
 /**
  * Created by Aswin on 21,November,2018
@@ -106,6 +105,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private TextView itemTitleTv;
     private TextView itemSubTitleTv;
     private ImageView infoIv;
+    private CustomSwipeRefreshLayout swipeLayout;
 
 
     @Override
@@ -119,6 +119,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         vitalsApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                swipeLayout.setRefreshing(false);
                 if (baseApiResponseModels != null) {
 
                     vitalsApiResponseModelArrayList = (ArrayList<VitalsApiResponseModel>) (Object) baseApiResponseModels;
@@ -185,7 +186,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     commonUserApiResponseModel = (CommonUserApiResponseModel) baseApiResponseModel;
-                    makeApiCall();
+                    makeApiCall(true);
                 }
             }
         });
@@ -373,6 +374,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         itemTitleTv = (TextView) view.findViewById(R.id.item_title_tv);
         itemSubTitleTv = (TextView) view.findViewById(R.id.item_sub_title_tv);
         infoIv = (ImageView) view.findViewById(R.id.info_iv);
+        swipeLayout = (CustomSwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
 
         toolbar.inflateMenu(R.menu.orders_detail_menu);
         toolbar.getMenu().removeItem(R.id.send_fax_menu);
@@ -402,6 +404,15 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         backIv.setOnClickListener(this);
         addFab.setOnClickListener(this);
+
+        vitalDetailCelv.getSwipeLayout().setEnabled(false);
+
+        swipeLayout.setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                makeApiCall(false);
+            }
+        });
 
         if (getArguments() != null) {
 
@@ -524,13 +535,13 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         }
     }
 
-    private void makeApiCall() {
+    private void makeApiCall(boolean isShowProgress) {
 
         if (selectedItem != null) {
             if (!isFromHome) {
-                vitalsApiViewModel.getUserVitals(selectedItem, commonUserApiResponseModel.getUser_guid());
+                vitalsApiViewModel.getUserVitals(selectedItem, commonUserApiResponseModel.getUser_guid(), isShowProgress);
             } else {
-                vitalsApiViewModel.getVitals(selectedItem);
+                vitalsApiViewModel.getVitals(selectedItem, isShowProgress);
             }
         }
 
@@ -623,7 +634,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         if (isAbnormalVitalView && commonUserApiResponseModel == null) {
             getUserDetail();
         } else {
-            makeApiCall();
+            makeApiCall(true);
         }
     }
 

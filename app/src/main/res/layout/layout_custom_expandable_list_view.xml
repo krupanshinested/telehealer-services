@@ -5,32 +5,53 @@
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
     android:clickable="true"
+    android:focusable="true"
+    android:nestedScrollingEnabled="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <ExpandableListView
-        android:id="@+id/expandable_lv"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:childIndicator="@null"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:fitsSystemWindows="true"
-        android:footerDividersEnabled="false"
-        android:groupIndicator="@null"
-        android:headerDividersEnabled="false"
-        android:indicatorStart="@null"
-        android:nestedScrollingEnabled="true"
-        android:scrollbars="none"
-        android:visibility="visible"
-        android:listSelector="@drawable/flag_transparent"
         app:layout_constraintBottom_toTopOf="@+id/recycler_loader"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.thealer.telehealer.common.CustomSwipeRefreshLayout
+            android:id="@+id/swipe_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ExpandableListView
+                android:id="@+id/expandable_lv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:childIndicator="@null"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:fitsSystemWindows="true"
+                android:footerDividersEnabled="false"
+                android:groupIndicator="@null"
+                android:headerDividersEnabled="false"
+                android:indicatorStart="@null"
+                android:listSelector="@drawable/flag_transparent"
+                android:nestedScrollingEnabled="true"
+                android:scrollbars="none"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </com.thealer.telehealer.common.CustomSwipeRefreshLayout>
+    </android.support.constraint.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:id="@+id/empty_ll"
+        android:nestedScrollingEnabled="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,5 +73,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
 </android.support.constraint.ConstraintLayout>
