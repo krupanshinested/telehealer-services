@@ -23,6 +23,7 @@ import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomExpandableListView;
+import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserType;
@@ -78,6 +79,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                documentsCelv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModel != null) {
                     documentsApiResponseModel = (DocumentsApiResponseModel) baseApiResponseModel;
                     if (UserType.isUserPatient() && page == 1 && documentsApiResponseModel.getResult().size() == 0) {
@@ -223,6 +225,12 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             }
         });
 
+        documentsCelv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getDocuments(false);
+            }
+        });
         getDocuments(true);
 
     }
