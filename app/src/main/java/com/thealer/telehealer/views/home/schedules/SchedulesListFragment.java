@@ -21,6 +21,7 @@ import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseMode
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesListAdapter;
 import com.thealer.telehealer.common.CustomExpandableListView;
+import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
@@ -64,6 +65,7 @@ public class SchedulesListFragment extends BaseFragment {
         schedulesApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                schedulesElv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModel != null) {
                     isApiRequested = false;
                     schedulesElv.hideProgressBar();
@@ -86,7 +88,7 @@ public class SchedulesListFragment extends BaseFragment {
                             doctorGuidList = doctorGuidList.append(",").append(commonUserApiResponseModels.get(i).getUser_guid());
                         }
                     }
-                    getSchedulesList(page);
+                    getSchedulesList(page, true);
                 }
             }
         });
@@ -146,7 +148,7 @@ public class SchedulesListFragment extends BaseFragment {
             @Override
             public void onPaginate() {
                 page = page + 1;
-                getSchedulesList(page);
+                getSchedulesList(page, true);
                 schedulesElv.showProgressBar();
             }
         });
@@ -161,12 +163,20 @@ public class SchedulesListFragment extends BaseFragment {
 
         schedulesListAdapter = new SchedulesListAdapter(getActivity(), headerList, childList);
         schedulesElv.getExpandableView().setAdapter(schedulesListAdapter);
+
+        schedulesElv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                page = 1;
+                getSchedulesList(page, false);
+            }
+        });
     }
 
-    private void getSchedulesList(int page) {
+    private void getSchedulesList(int page, boolean isShowProgress) {
         if (!isApiRequested) {
             isApiRequested = true;
-            schedulesApiViewModel.getSchedule(page, true, doctorGuidList.toString());
+            schedulesApiViewModel.getSchedule(page, isShowProgress, doctorGuidList.toString());
         }
     }
 
@@ -183,7 +193,7 @@ public class SchedulesListFragment extends BaseFragment {
         if (UserType.isUserAssistant()) {
             getDoctorsList();
         } else {
-            getSchedulesList(page);
+            getSchedulesList(page, true);
         }
     }
 

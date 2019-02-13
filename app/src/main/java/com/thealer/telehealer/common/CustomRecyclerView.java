@@ -33,6 +33,7 @@ public class CustomRecyclerView extends ConstraintLayout {
     private boolean isScrollable = false;
     private int totalCount = 0;
     private OnPaginateInterface onPaginateInterface;
+    private CustomSwipeRefreshLayout swipeLayout;
 
     public CustomRecyclerView(Context context) {
         super(context);
@@ -54,6 +55,7 @@ public class CustomRecyclerView extends ConstraintLayout {
         emptyMessageTv = (TextView) view.findViewById(R.id.empty_message_tv);
         emptyActionBtn = (CustomButton) view.findViewById(R.id.empty_action_btn);
         recyclerLoader = (ProgressBar) view.findViewById(R.id.recycler_loader);
+        swipeLayout = (CustomSwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
 
         linearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -89,6 +91,10 @@ public class CustomRecyclerView extends ConstraintLayout {
                 updateView();
             }
         });
+    }
+
+    public CustomSwipeRefreshLayout getSwipeLayout(){
+        return swipeLayout;
     }
 
     public void setEmptyState(String emptyState) {

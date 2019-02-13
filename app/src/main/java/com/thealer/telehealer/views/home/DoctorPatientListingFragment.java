@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +26,11 @@ import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiView
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -37,8 +38,8 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
-import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
+import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 
 import me.toptas.fancyshowcase.listener.DismissListener;
 
@@ -79,6 +80,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         associationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                doctorPatientListCrv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModel != null) {
                     AssociationApiResponseModel associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
 
@@ -217,6 +219,14 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         getAssociationsList(null, true);
 
+        doctorPatientListCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.e("aswin", "onRefresh: " );
+                getAssociationsList(null, false);
+            }
+        });
+
     }
 
     @Override
@@ -261,7 +271,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             case R.id.add_fab:
                 if (!UserType.isUserDoctor()) {
                     startActivity(new Intent(getActivity(), AddConnectionActivity.class));
-                }else {
+                } else {
                     startActivity(new Intent(getActivity(), InviteUserActivity.class));
                 }
                 break;
