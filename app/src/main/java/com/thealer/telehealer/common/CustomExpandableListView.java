@@ -68,8 +68,9 @@ public class CustomExpandableListView extends ConstraintLayout {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (isScrollable) {
-                    if (firstVisibleItem < totalItemCount -1){
+                Log.e("aswin", "onScroll: " + totalCount + " " + totalItemCount);
+                if (totalItemCount < totalCount && isScrollable) {
+                    if (firstVisibleItem < totalItemCount - 1) {
                         if ((firstVisibleItem + visibleItemCount == totalItemCount)) {
                             isScrollable = false;
                             onPaginateInterface.onPaginate();
@@ -77,7 +78,7 @@ public class CustomExpandableListView extends ConstraintLayout {
                         } else {
                             hideProgressBar();
                         }
-                    }else {
+                    } else {
                         hideProgressBar();
                         isScrollable = false;
                     }

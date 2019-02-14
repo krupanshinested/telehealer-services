@@ -62,7 +62,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="scalingPercent" value="51" />
+                                                <entry key="scalingPercent" value="80" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -73,8 +73,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="ffffff" />
-                                      <entry key="foregroundImage" value="$PROJECT_DIR$/../assets/AppIcon.appiconset/Icon-App-60x60@3x.png" />
+                                      <entry key="backgroundColor" value="3b9eff" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/telehealer-app-icon-transparent.png" />
                                       <entry key="showSafeZone" value="false" />
                                     </map>
                                   </option>

@@ -8,16 +8,12 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,7 +65,6 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -79,11 +74,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import static android.content.Context.ALARM_SERVICE;
-import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
-
 import me.toptas.fancyshowcase.listener.DismissListener;
 
+import static android.content.Context.ALARM_SERVICE;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
@@ -129,7 +122,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
                 if (baseApiResponseModels != null) {
                     responseModelArrayList = (ArrayList<SchedulesApiResponseModel.ResultBean>) (Object) baseApiResponseModels;
                     updateCalendar();
-                    if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_SCHEDULE)) {
+                    if (responseModelArrayList.size() == 0 && !appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_SCHEDULE)) {
                         appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_SCHEDULE, true);
                         emptyMessageTv.setVisibility(View.GONE);
                         Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_APPOINTMENT, new DismissListener() {
@@ -550,6 +543,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
             setUserVisibleHint(true);
         }
     }
+
     @Override
     public void onStop() {
         super.onStop();

@@ -80,7 +80,6 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     documentsApiResponseModel = (DocumentsApiResponseModel) baseApiResponseModel;
-                    documentsCelv.setTotalCount(documentsApiResponseModel.getCount());
                     if (UserType.isUserPatient() && page == 1 && documentsApiResponseModel.getResult().size() == 0) {
                         if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_DOCUMENT)) {
                             appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_DOCUMENT, true);
@@ -136,6 +135,8 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             }
 
             documentListAdapter.setData(headerList, childList, documentsApiResponseModel, page);
+
+            documentsCelv.setTotalCount(documentsApiResponseModel.getCount() + headerList.size());
 
 
             if (documentsCelv.getExpandableView().getCount() > 0) {
@@ -256,6 +257,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         super.onResume();
         addFab.setClickable(true);
     }
+
     @Override
     public void onStop() {
         super.onStop();
