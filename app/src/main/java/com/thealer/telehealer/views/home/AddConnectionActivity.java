@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -31,6 +32,7 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 
@@ -40,7 +42,7 @@ import java.util.List;
  * Created by Aswin on 19,November,2018
  */
 public class AddConnectionActivity extends BaseActivity implements OnCloseActionInterface,
-        OnActionCompleteInterface, SuccessViewInterface, OnListItemSelectInterface, AttachObserverInterface {
+        OnActionCompleteInterface, SuccessViewInterface, OnListItemSelectInterface, AttachObserverInterface , ShowSubFragmentInterface {
 
     private ImageView backIv;
     private TextView toolbarTitle;
@@ -280,5 +282,10 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     @Override
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
+    }
+
+    @Override
+    public void onShowFragment(Fragment fragment) {
+
     }
 }

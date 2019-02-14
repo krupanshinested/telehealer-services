@@ -57,4 +57,8 @@ public class EmptyViewConstants {
 
     public static final String EMPTY_CALL_LOGS = "empty_call_logs";
     public static final String EMPTY_VITAL_LOGS = "empty_vital_logs";
+    public static final String EMPTY_DOCTOR_VITAL_SEARCH = "empty_doctor_vital_search";
+    public static final String EMPTY_DOCTOR_VITAL_LAST_WEEK = "empty_doctor_vital_last_week";
+    public static final String EMPTY_DOCTOR_VITAL_TWO_WEEK = "empty_doctor_vital_two_week";
+    public static final String EMPTY_DOCTOR_VITAL_MONTH = "empty_doctor_vital_month";
 }

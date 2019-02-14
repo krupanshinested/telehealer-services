@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -103,23 +101,28 @@ public class BaseFragment extends Fragment {
                                 @Nullable DialogInterface.OnClickListener positiveListener,
                                 @Nullable DialogInterface.OnClickListener negativeListener) {
 
-//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        View view = LayoutInflater.from(context).inflate(R.layout.view_alert, null);
+        alertDialog.setCancelable(false);
 
-//        View view = LayoutInflater.from(context).inflate(R.layout.view_alert, null);
-//        alertDialog.setCancelable(false);
-
-        Dialog dialog;
-        dialog = new Dialog(context);
-        dialog.setContentView(R.layout.view_alert);
-//        dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
+//        Dialog dialog = alertDialog.create();
+//        dialog = new Dialog(context);
+//        dialog.setContentView(R.layout.view_alert);
+//
         TextView titleTv, messageTv, cancelTv, doneTv;
 
-        titleTv = (TextView) dialog.findViewById(R.id.title_tv);
-        messageTv = (TextView) dialog.findViewById(R.id.message_tv);
-        cancelTv = (TextView) dialog.findViewById(R.id.cancel_tv);
-        doneTv = (TextView) dialog.findViewById(R.id.done_tv);
+        titleTv = (TextView) view.findViewById(R.id.title_tv);
+        messageTv = (TextView) view.findViewById(R.id.message_tv);
+        cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
+        doneTv = (TextView) view.findViewById(R.id.done_tv);
 
+//        DialogInterface.OnCancelListener onCancelListener = new DialogInterface.OnCancelListener() {
+//            @Override
+//            public void onCancel(DialogInterface dialog) {
+//                dialog.dismiss();
+//            }
+//        };
+//        alertDialog.setOnCancelListener(onCancelListener);
         titleTv.setText(title);
         messageTv.setText(message);
 
@@ -130,8 +133,9 @@ public class BaseFragment extends Fragment {
                 doneTv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
-                        positiveListener.onClick(dialog, AlertDialog.BUTTON_POSITIVE);
+                        positiveListener.onClick(alertDialog, AlertDialog.BUTTON_POSITIVE);
+                        if (alertDialog.isShowing())
+                            alertDialog.dismiss();
                     }
                 });
             }
@@ -144,15 +148,20 @@ public class BaseFragment extends Fragment {
                 cancelTv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
-                        negativeListener.onClick(dialog, AlertDialog.BUTTON_NEGATIVE);
+                        negativeListener.onClick(alertDialog, AlertDialog.BUTTON_NEGATIVE);
+                        if (alertDialog.isShowing())
+                            alertDialog.dismiss();
                     }
                 });
             }
         }
 
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.show();
+        alertDialog.setView(view);
+        alertDialog.show();
+
+//
+//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        dialog.show();
     }
 
     public void showSuccessView(Fragment fragment, int requestId) {

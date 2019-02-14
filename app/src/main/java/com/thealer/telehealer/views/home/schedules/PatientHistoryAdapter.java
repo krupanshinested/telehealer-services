@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +44,16 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
     public PatientHistoryAdapter(FragmentActivity activity) {
         this.activity = activity;
         createScheduleViewModel = ViewModelProviders.of(activity).get(CreateScheduleViewModel.class);
+        if (createScheduleViewModel.getPatientHistory() == null) {
+            createScheduleViewModel.setPatientHistory(new ArrayList<>());
+            for (int i = 0; i < questions.size(); i++) {
+                HistoryBean historyBean = new HistoryBean();
+                historyBean.setQuestion(questions.get(i));
+                historyBean.setIsYes(false);
+                historyBean.setReason("");
+                createScheduleViewModel.getPatientHistory().add(historyBean);
+            }
+        }
         patientHistory = createScheduleViewModel.getPatientHistory();
     }
 
@@ -102,7 +112,7 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
             viewHolder.itemSwitch.setChecked(patientHistory.get(i).isIsYes());
             if (patientHistory.get(i).getReason() != null && !patientHistory.get(i).getReason().isEmpty()) {
                 viewHolder.commentsEt.setText(patientHistory.get(i).getReason());
-            }else {
+            } else {
                 viewHolder.commentsEt.setVisibility(View.GONE);
             }
         }

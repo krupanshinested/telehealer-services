@@ -93,6 +93,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private TextView nextTv;
     private LinearLayout bottomView;
     private BottomNavigationView userDetailBnv;
+    private String view_type;
 
     @Override
     public void onAttach(Context context) {
@@ -376,12 +377,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         fragmentList = new ArrayList<>();
         titleList = new ArrayList<String>();
 
+        view_type = getArguments().getString(Constants.VIEW_TYPE);
+
         AboutFragment aboutFragment = new AboutFragment();
-        aboutFragment.setArguments(getArguments());
         addFragment(getString(R.string.about), aboutFragment);
 
 
-        String view_type = getArguments().getString(Constants.VIEW_TYPE);
         if (view_type != null) {
             if (view_type.equals(Constants.VIEW_CONNECTION)) {
 
@@ -456,6 +457,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private void addFragment(String title, Fragment fragment) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.USER_DETAIL, resultBean);
+        bundle.putString(Constants.VIEW_TYPE, view_type);
         fragment.setArguments(bundle);
         fragmentList.add(fragment);
         titleList.add(title);
