@@ -41,7 +41,7 @@ public class QuestionnaireBean implements Serializable {
     @SerializedName("Personal History")
     private PersonalHistoryBean personalHistoryBean;
 
-    public boolean isQuestionariesEmpty(){
+    public boolean isQuestionariesEmpty() {
         return getMedication() != null ||
                 getPastMedicalHistoryBean() != null ||
                 getSurgeries() != null ||
@@ -51,6 +51,7 @@ public class QuestionnaireBean implements Serializable {
                 getHealthHabitBean() != null ||
                 getPersonalHistoryBean() != null;
     }
+
     //getter setters
     public MedicationBean getMedication() {
         return Medication;
@@ -152,7 +153,7 @@ public class QuestionnaireBean implements Serializable {
 
     }
 
-    public static class SurgeriesBean extends CommonItemBean {
+    public static class SurgeriesBean extends CommonItemBean implements Serializable {
         private String otherInformation;
 
         public SurgeriesBean(String otherInformation, List<MedicalHistoryCommonModel> items) {
@@ -219,7 +220,7 @@ public class QuestionnaireBean implements Serializable {
         }
     }
 
-    public static class PersonalHistoryBean implements Serializable{
+    public static class PersonalHistoryBean implements Serializable {
         public List<PersonalHistoryModel> items;
 
         public PersonalHistoryBean(List<PersonalHistoryModel> items) {

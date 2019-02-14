@@ -87,11 +87,11 @@ public class RetrofitManager extends ContextWrapper {
         });
 
         RetrofitLogger logging = new RetrofitLogger();
-        if (BuildConfig.DEBUG) {
+//        if (BuildConfig.DEBUG) {
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        } else {
-            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
-        }
+//        } else {
+//            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
+//        }
         httpClient.addInterceptor(logging);
 
         OkHttpClient client = httpClient.build();
@@ -123,11 +123,11 @@ public class RetrofitManager extends ContextWrapper {
         });
 
         RetrofitLogger logging = new RetrofitLogger();
-        if (BuildConfig.DEBUG) {
+//        if (BuildConfig.DEBUG) {
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        } else {
-            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
-        }
+//        } else {
+//            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
+//        }
         httpClient.addInterceptor(logging);
 
 

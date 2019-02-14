@@ -71,13 +71,6 @@ public class VitalUserReportListFragment extends BaseFragment {
                 }
             }
         });
-
-        vitalsApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
-            @Override
-            public void onChanged(@Nullable ErrorModel errorModel) {
-
-            }
-        });
     }
 
     private void updateList(ArrayList<VitalsApiResponseModel> vitalsApiResponseModelArrayList) {

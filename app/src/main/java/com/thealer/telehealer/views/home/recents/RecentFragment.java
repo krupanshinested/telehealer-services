@@ -77,7 +77,6 @@ public class RecentFragment extends BaseFragment {
                     recentsApiResponseModel = (RecentsApiResponseModel) baseApiResponseModel;
 
                     totalCount = recentsApiResponseModel.getCount();
-                    recentsCelv.setTotalCount(totalCount);
 
                     updateList();
 
@@ -188,6 +187,8 @@ public class RecentFragment extends BaseFragment {
                     listChild.put(videoListHeader.get(i), listHashMap);
                 }
             }
+
+            recentsCelv.setTotalCount(totalCount + listHeader.size());
 
             if (recentListAdapter != null) {
                 recentListAdapter.setData(listHeader, listChild, page);

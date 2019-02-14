@@ -75,6 +75,7 @@ import me.toptas.fancyshowcase.FancyShowCaseView;
 import me.toptas.fancyshowcase.FocusShape;
 import me.toptas.fancyshowcase.listener.DismissListener;
 
+import static com.thealer.telehealer.TeleHealerApplication.application;
 import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
 import static org.webrtc.ContextUtils.getApplicationContext;
 
@@ -928,7 +929,7 @@ public class Utils {
             }).start();
 
         } else {
-            Bitmap imageBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.profile_placeholder);
+            Bitmap imageBitmap = BitmapFactory.decodeResource(application.getResources(), R.drawable.profile_placeholder);
             displyNotification(title, message, imageBitmap, intent);
         }
 
