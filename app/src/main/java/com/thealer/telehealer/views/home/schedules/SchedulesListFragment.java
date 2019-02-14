@@ -68,7 +68,6 @@ public class SchedulesListFragment extends BaseFragment {
                     isApiRequested = false;
                     schedulesElv.hideProgressBar();
                     schedulesApiResponseModel = (SchedulesApiResponseModel) baseApiResponseModel;
-                    schedulesElv.setTotalCount(schedulesApiResponseModel.getCount());
                     generateList();
                 }
             }
@@ -95,8 +94,10 @@ public class SchedulesListFragment extends BaseFragment {
 
     private void generateList() {
         List<SchedulesApiResponseModel.ResultBean> resultBeanList = schedulesApiResponseModel.getResult();
-        headerList.clear();
-        childList.clear();
+        if (page == 1) {
+            headerList.clear();
+            childList.clear();
+        }
         if (resultBeanList != null && resultBeanList.size() > 0) {
             for (int i = 0; i < resultBeanList.size(); i++) {
                 String date = Utils.getDayMonthYear(resultBeanList.get(i).getStart());
@@ -114,6 +115,8 @@ public class SchedulesListFragment extends BaseFragment {
 
                 childList.put(date, resultBeans);
             }
+
+            schedulesElv.setTotalCount(schedulesApiResponseModel.getCount() + headerList.size());
 
             if (headerList.size() > 0) {
                 schedulesListAdapter.setData(headerList, childList, page);
