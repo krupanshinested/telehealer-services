@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -136,6 +137,138 @@ public class AboutFragment extends BaseFragment {
         if (getArguments() != null) {
             userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
 
+            if (userDetail != null) {
+                switch (userDetail.getRole()) {
+                    case Constants.ROLE_DOCTOR:
+                        doctorDetailView.setVisibility(View.VISIBLE);
+                        patientDetailView.setVisibility(View.GONE);
+
+                        if (userDetail.getUser_detail() != null &&
+                                userDetail.getUser_detail().getData() != null) {
+
+                            npiTv.setText(userDetail.getUser_detail().getData().getNpi());
+                            doctorBioTv.setText(userDetail.getUser_detail().getData().getBio());
+
+                            if (userDetail.getUser_detail().getData().getLicenses() != null) {
+
+                                StringBuilder license = new StringBuilder();
+                                for (int i = 0; i < userDetail.getUser_detail().getData().getLicenses().size(); i++) {
+                                    license.append(userDetail.getUser_detail().getData().getLicenses().get(i).getState())
+                                            .append(" ")
+                                            .append(userDetail.getUser_detail().getData().getLicenses().get(i).getNumber())
+                                            .append("\n");
+                                }
+                                licenseTv.setText(license.toString());
+                            }
+
+                            StringBuilder clinicAddress = new StringBuilder();
+                            if (userDetail.getUser_detail().getData().getPractices().size() > 0) {
+                                clinicAddress.append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getStreet())
+                                        .append(",")
+                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getStreet2())
+                                        .append(",")
+                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getCity())
+                                        .append(",")
+                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getState())
+                                        .append(",")
+                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getZip());
+                            }
+                            clinicAddressTv.setText(clinicAddress);
+
+                        }
+
+                        moreLessTv.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (moreLessTv.getText().toString().equals(getString(R.string.more))) {
+
+                                    moreLessTv.setText(getString(R.string.less));
+                                    doctorBioTv.setEllipsize(null);
+                                    doctorBioTv.setMaxLines(Integer.MAX_VALUE);
+                                } else {
+                                    moreLessTv.setText(getString(R.string.more));
+                                    doctorBioTv.setEllipsize(TextUtils.TruncateAt.END);
+                                    doctorBioTv.setMaxLines(4);
+                                }
+                            }
+                        });
+
+
+                        String view_type = getArguments().getString(Constants.VIEW_TYPE);
+                        setDisconnectTv(view_type);
+
+
+                        break;
+                    case Constants.ROLE_PATIENT:
+                        doctorDetailView.setVisibility(View.GONE);
+                        patientDetailView.setVisibility(View.VISIBLE);
+
+                        patientEmailTv.setText(userDetail.getEmail());
+
+                        List<String> insuranceImageList = new ArrayList<>();
+
+                        if (userDetail.getUser_detail() != null &&
+                                userDetail.getUser_detail().getData() != null) {
+
+
+                            if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                                insuranceImageList.add(userDetail.getUser_detail().getData().getCertification());
+                            } else {
+                                insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_front());
+                                insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_back());
+                            }
+
+                            OnBoardingViewPagerAdapter onBoardingViewPagerAdapter = new OnBoardingViewPagerAdapter(getActivity(), insuranceImageList, true);
+
+                            insuranceViewPager.setAdapter(onBoardingViewPagerAdapter);
+                            insuranceViewPager.setCurrentItem(0, true);
+                            insuranceViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                                @Override
+                                public void onPageScrolled(int i, float v, int i1) {
+
+                                }
+
+                                @Override
+                                public void onPageSelected(int i) {
+                                    for (int j = 0; j < insuranceImageList.size(); j++) {
+                                        indicators[j].setImageDrawable(getActivity().getDrawable(R.drawable.circular_unselected_indicator));
+                                    }
+                                    indicators[i].setImageDrawable(getActivity().getDrawable(R.drawable.circular_selected_indicator));
+                                }
+
+                                @Override
+                                public void onPageScrollStateChanged(int i) {
+
+                                }
+                            });
+
+                            createIndicator(insuranceImageList.size());
+
+                            insuranceImageLl.setVisibility(View.VISIBLE);
+                            insuranceCashTv.setVisibility(View.GONE);
+
+                        } else {
+                            insuranceImageLl.setVisibility(View.GONE);
+                            insuranceCashTv.setVisibility(View.VISIBLE);
+                        }
+
+
+                        break;
+                    case Constants.ROLE_ASSISTANT:
+                        doctorDetailView.setVisibility(View.GONE);
+                        patientDetailView.setVisibility(View.GONE);
+
+                        medicalHistoryBtn.setVisibility(View.GONE);
+
+                        if (userDetail.getConnection_status() == null || !userDetail.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
+                            disconnectTv.setVisibility(View.GONE);
+                        } else {
+                            disconnectTv.setVisibility(View.VISIBLE);
+                        }
+                        break;
+                }
+            }
+
             medicalHistoryBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -150,128 +283,6 @@ public class AboutFragment extends BaseFragment {
                     showSubFragmentInterface.onShowFragment(fragment);
                 }
             });
-
-            userType = appPreference.getInt(Constants.USER_TYPE);
-
-            if (userType == Constants.TYPE_PATIENT) {
-                doctorDetailView.setVisibility(View.VISIBLE);
-                patientDetailView.setVisibility(View.GONE);
-
-                if (userDetail.getUser_detail() != null &&
-                        userDetail.getUser_detail().getData() != null) {
-
-                    npiTv.setText(userDetail.getUser_detail().getData().getNpi());
-                    doctorBioTv.setText(userDetail.getUser_detail().getData().getBio());
-
-                    if (userDetail.getUser_detail().getData().getLicenses() != null) {
-
-                        StringBuilder license = new StringBuilder();
-                        for (int i = 0; i < userDetail.getUser_detail().getData().getLicenses().size(); i++) {
-                            license.append(userDetail.getUser_detail().getData().getLicenses().get(i).getState())
-                                    .append(" ")
-                                    .append(userDetail.getUser_detail().getData().getLicenses().get(i).getNumber())
-                                    .append("\n");
-                        }
-                        licenseTv.setText(license.toString());
-                    }
-
-                    StringBuilder clinicAddress = new StringBuilder();
-                    if (userDetail.getUser_detail().getData().getPractices().size() > 0) {
-                        clinicAddress.append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getStreet())
-                                .append(",")
-                                .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getStreet2())
-                                .append(",")
-                                .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getCity())
-                                .append(",")
-                                .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getState())
-                                .append(",")
-                                .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getZip());
-                    }
-                    clinicAddressTv.setText(clinicAddress);
-
-                }
-
-                moreLessTv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (moreLessTv.getText().toString().equals(getString(R.string.more))) {
-
-                            moreLessTv.setText(getString(R.string.less));
-                            doctorBioTv.setEllipsize(null);
-                            doctorBioTv.setMaxLines(Integer.MAX_VALUE);
-                        } else {
-                            moreLessTv.setText(getString(R.string.more));
-                            doctorBioTv.setEllipsize(TextUtils.TruncateAt.END);
-                            doctorBioTv.setMaxLines(4);
-                        }
-                    }
-                });
-
-                String view_type = getArguments().getString(Constants.VIEW_TYPE);
-                setDisconnectTv(view_type);
-
-            } else if (userType == Constants.TYPE_DOCTOR) {
-                patientDetailView.setVisibility(View.VISIBLE);
-                doctorDetailView.setVisibility(View.GONE);
-
-                patientEmailTv.setText(userDetail.getEmail());
-
-                List<String> insuranceImageList = new ArrayList<>();
-
-                if (userDetail.getUser_detail() != null &&
-                        userDetail.getUser_detail().getData() != null) {
-
-
-                    if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
-                        insuranceImageList.add(userDetail.getUser_detail().getData().getCertification());
-                    } else {
-                        insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_front());
-                        insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_back());
-                    }
-
-                    OnBoardingViewPagerAdapter onBoardingViewPagerAdapter = new OnBoardingViewPagerAdapter(getActivity(), insuranceImageList, true);
-
-                    insuranceViewPager.setAdapter(onBoardingViewPagerAdapter);
-                    insuranceViewPager.setCurrentItem(0, true);
-                    insuranceViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                        @Override
-                        public void onPageScrolled(int i, float v, int i1) {
-
-                        }
-
-                        @Override
-                        public void onPageSelected(int i) {
-                            for (int j = 0; j < insuranceImageList.size(); j++) {
-                                indicators[j].setImageDrawable(getActivity().getDrawable(R.drawable.circular_unselected_indicator));
-                            }
-                            indicators[i].setImageDrawable(getActivity().getDrawable(R.drawable.circular_selected_indicator));
-                        }
-
-                        @Override
-                        public void onPageScrollStateChanged(int i) {
-
-                        }
-                    });
-
-                    createIndicator(insuranceImageList.size());
-
-                    insuranceImageLl.setVisibility(View.VISIBLE);
-                    insuranceCashTv.setVisibility(View.GONE);
-
-                } else {
-                    insuranceImageLl.setVisibility(View.GONE);
-                    insuranceCashTv.setVisibility(View.VISIBLE);
-                }
-
-                if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
-                    medicalHistoryBtn.setVisibility(View.GONE);
-                    if (userDetail.getConnection_status() == null || !userDetail.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
-                        disconnectTv.setVisibility(View.GONE);
-                    } else {
-                        disconnectTv.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
 
             disconnectTv.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -301,6 +312,8 @@ public class AboutFragment extends BaseFragment {
             } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
                 disconnectTv.setVisibility(View.VISIBLE);
             }
+        } else {
+            disconnectTv.setVisibility(View.GONE);
         }
     }
 
