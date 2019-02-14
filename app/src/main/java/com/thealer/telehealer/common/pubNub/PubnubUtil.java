@@ -15,7 +15,6 @@ import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 import com.pubnub.api.models.consumer.push.PNPushAddChannelResult;
 import com.pubnub.api.models.consumer.push.PNPushRemoveAllChannelsResult;
-import com.pubnub.api.models.consumer.push.PNPushRemoveChannelResult;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.Pubnub.PubNubViewModel;
 import com.thealer.telehealer.common.Config;
@@ -24,7 +23,6 @@ import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -83,16 +81,16 @@ public class PubnubUtil {
         });
     }
 
-    void grantPubNub(String token,String channelName) {
+    void grantPubNub(String token, String channelName) {
         PubNubViewModel pubNubViewModel = new PubNubViewModel(TeleHealerApplication.application);
-        pubNubViewModel.grantPubNub(channelName,token);
+        pubNubViewModel.grantPubNub(channelName, token);
     }
 
-    public void enablePushOnChannel(String token,String channelName) {
+    public void enablePushOnChannel(String token, String channelName) {
         unsubscribePush(new SuccessViewInterface() {
             @Override
             public void onSuccessViewCompletion(boolean success) {
-                Log.d("PubnubUtil","enablePushOnChannel " +channelName);
+                Log.d("PubnubUtil", "enablePushOnChannel " + channelName);
                 pubnub.addPushNotificationsOnChannels()
                         .pushType(PNPushType.GCM)
                         .channels(Collections.singletonList(channelName))
@@ -101,23 +99,23 @@ public class PubnubUtil {
                             @Override
                             public void onResponse(PNPushAddChannelResult result, PNStatus status) {
                                 if (status.isError()) {
-                                    Log.d("PubnubUtil","Error on push notification" + status.getErrorData());
-                                    
+                                    Log.d("PubnubUtil", "Error on push notification" + status.getErrorData());
+
                                     HashMap<String, String> detail = new HashMap<>();
                                     detail.put("status", "fail");
                                     detail.put("reason", status.getErrorData().getInformation());
                                     detail.put("event", "registerForPushOn");
-                                    
-                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
-                                    
+
+                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub, detail);
+
                                 } else {
-                                    Log.d("PubnubUtil","Push notification added ");
-                                    
+                                    Log.d("PubnubUtil", "Push notification added ");
+
                                     HashMap<String, String> detail = new HashMap<>();
                                     detail.put("status", "success");
                                     detail.put("event", "registerForPushOn");
-                                    
-                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
+
+                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub, detail);
                                 }
                             }
                         });
@@ -125,11 +123,11 @@ public class PubnubUtil {
         });
     }
 
-    public void enableVoipOnChannel(String token,String channelName) {
+    public void enableVoipOnChannel(String token, String channelName) {
         unsubscribeVoip(new SuccessViewInterface() {
             @Override
             public void onSuccessViewCompletion(boolean success) {
-                Log.d("PubnubUtil","enableVoipOnChannel " +channelName);
+                Log.d("PubnubUtil", "enableVoipOnChannel " + channelName);
                 voipPubnub.addPushNotificationsOnChannels()
                         .pushType(PNPushType.GCM)
                         .channels(Collections.singletonList(channelName))
@@ -138,23 +136,23 @@ public class PubnubUtil {
                             @Override
                             public void onResponse(PNPushAddChannelResult result, PNStatus status) {
                                 if (status.isError()) {
-                                    Log.d("PubnubUtil","Error on voip notification" + status.getErrorData());
-                                    
+                                    Log.d("PubnubUtil", "Error on voip notification" + status.getErrorData());
+
                                     HashMap<String, String> detail = new HashMap<>();
                                     detail.put("status", "fail");
                                     detail.put("reason", status.getErrorData().getInformation());
                                     detail.put("event", "registerForVoip");
-                                    
-                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
-                                    
+
+                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub, detail);
+
                                 } else {
-                                    Log.d("PubnubUtil","voip notification added ");
-                                    
+                                    Log.d("PubnubUtil", "voip notification added ");
+
                                     HashMap<String, String> detail = new HashMap<>();
                                     detail.put("status", "success");
                                     detail.put("event", "registerForVoip");
-                                    
-                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
+
+                                    TeleLogger.shared.log(TeleLogExternalAPI.pubnub, detail);
                                 }
                             }
                         });
@@ -162,7 +160,8 @@ public class PubnubUtil {
         });
     }
 
-    public void publishPushMessage(PushPayLoad pushPayLoad,@Nullable PubNubResult resultPNCallback) {
+    public void publishPushMessage(PushPayLoad pushPayLoad, @Nullable PubNubResult resultPNCallback) {
+        Log.d("Pubnub Util", "publishPushMessage: " + new Gson().toJson(pushPayLoad));
         pubnub.publish()
                 .message(pushPayLoad)
                 .channel(pushPayLoad.getPn_apns().getTo())
@@ -170,7 +169,7 @@ public class PubnubUtil {
                     @Override
                     public void onResponse(PNPublishResult result, PNStatus status) {
 
-                        if(!status.isError()) {
+                        if (!status.isError()) {
                             System.out.println("pub timetoken: " + result.getTimetoken());
                         } else {
                             HashMap<String, String> detail = new HashMap<>();
@@ -178,7 +177,7 @@ public class PubnubUtil {
                             detail.put("reason", status.getErrorData().getInformation());
                             detail.put("event", "publishPushMessage");
 
-                            TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
+                            TeleLogger.shared.log(TeleLogExternalAPI.pubnub, detail);
                         }
 
                         if (resultPNCallback != null) {
@@ -188,18 +187,18 @@ public class PubnubUtil {
                 });
     }
 
-    public void publishVoipMessage(PushPayLoad pushPayLoad,@Nullable PubNubResult resultPNCallback) {
+    public void publishVoipMessage(PushPayLoad pushPayLoad, @Nullable PubNubResult resultPNCallback) {
         Gson gson = new Gson();
         Log.d("PubnubUtil", gson.toJson(pushPayLoad));
 
-       voipPubnub.publish()
+        voipPubnub.publish()
                 .message(pushPayLoad)
                 .channel(pushPayLoad.getPn_apns().getTo())
                 .async(new PNCallback<PNPublishResult>() {
                     @Override
                     public void onResponse(PNPublishResult result, PNStatus status) {
 
-                        if(!status.isError()) {
+                        if (!status.isError()) {
                             System.out.println("pub timetoken: " + result.getTimetoken());
                         } else {
                             HashMap<String, String> detail = new HashMap<>();
@@ -207,7 +206,7 @@ public class PubnubUtil {
                             detail.put("reason", status.getErrorData().getInformation());
                             detail.put("event", "publishVoipMessage");
 
-                            TeleLogger.shared.log(TeleLogExternalAPI.pubnub,detail);
+                            TeleLogger.shared.log(TeleLogExternalAPI.pubnub, detail);
                         }
 
                         if (resultPNCallback != null) {
@@ -223,14 +222,14 @@ public class PubnubUtil {
     }
 
     private void unsubscribeVoip(@Nullable SuccessViewInterface successViewInterface) {
-        Log.d("PubnubUtil","unsubscribeVoip");
+        Log.d("PubnubUtil", "unsubscribeVoip");
 
         voipPubnub.removeAllPushNotificationsFromDeviceWithPushToken()
                 .deviceId(TelehealerFirebaseMessagingService.getCurrentToken())
                 .pushType(PNPushType.GCM).async(new PNCallback<PNPushRemoveAllChannelsResult>() {
             @Override
             public void onResponse(PNPushRemoveAllChannelsResult result, PNStatus status) {
-                if(!status.isError()) {
+                if (!status.isError()) {
                     System.out.println("Voip Successfully unscubscribed");
                 }
                 if (successViewInterface != null)
@@ -241,14 +240,14 @@ public class PubnubUtil {
     }
 
     private void unsubscribePush(@Nullable SuccessViewInterface successViewInterface) {
-        Log.d("PubnubUtil","unsubscribePush");
+        Log.d("PubnubUtil", "unsubscribePush");
 
         pubnub.removeAllPushNotificationsFromDeviceWithPushToken()
                 .deviceId(TelehealerFirebaseMessagingService.getCurrentToken())
                 .pushType(PNPushType.GCM).async(new PNCallback<PNPushRemoveAllChannelsResult>() {
             @Override
             public void onResponse(PNPushRemoveAllChannelsResult result, PNStatus status) {
-                if(!status.isError()) {
+                if (!status.isError()) {
                     System.out.println("push Successfully unscubscribed");
                 }
 

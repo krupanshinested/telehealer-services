@@ -89,6 +89,14 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT:
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
                 return "No Medical Assistant";
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH:
+                return "No Vital Measurements";
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK:
+                return "No Vital Measurements for last week";
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_TWO_WEEK:
+                return "No Vital Measurements for last two week";
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH:
+                return "No Vital Measurements for last month";
             default:
                 return null;
         }
@@ -194,6 +202,11 @@ public class EmptyStateUtil {
                 return "No calls were made on selected month";
             case EmptyViewConstants.EMPTY_VITAL_LOGS:
                 return "No vitals were visited on selected month";
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH:
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK:
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_TWO_WEEK:
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH:
+                return "Patients who measured their vitals will eventually show up here";
             default:
                 return null;
         }
@@ -268,6 +281,10 @@ public class EmptyStateUtil {
                 return R.drawable.emptystate_credit_card;
             case EmptyViewConstants.EMPTY_CARDS:
                 return R.drawable.emptystate_credit_card;
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH:
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK:
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_TWO_WEEK:
+            case EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH:
             case EmptyViewConstants.EMPTY_PATIENT_SEARCH:
             case EmptyViewConstants.EMPTY_PATIENT:
             case EmptyViewConstants.EMPTY_PATIENT_WITH_BTN:

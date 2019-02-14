@@ -13,7 +13,16 @@
           "package_name": "com.thealer"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1092527537093-6fcd1shdmka5g69rb0365j4cjq8qdvch.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thealer",
+            "certificate_hash": "fe1a82319e7e7958ad7521ee268bc3726d8023eb"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBqOe1QpRDsKRQRIh0M07BZYIRomhl0IWk"
@@ -24,8 +33,20 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092527537093-meuo13qng2ln73l4dsi36jkqqalicbf2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1092527537093-u806vjqvrtd95les2fh3ira3ml4b7j5p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.thealer.pro"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2
@@ -39,7 +60,16 @@
           "package_name": "com.thealer.pro"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1092527537093-gun54eh7f6bjbjummdqfj1s90jkp2npi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thealer.pro",
+            "certificate_hash": "fe1a82319e7e7958ad7521ee268bc3726d8023eb"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBqOe1QpRDsKRQRIh0M07BZYIRomhl0IWk"
@@ -50,8 +80,20 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092527537093-meuo13qng2ln73l4dsi36jkqqalicbf2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1092527537093-u806vjqvrtd95les2fh3ira3ml4b7j5p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.thealer.pro"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2

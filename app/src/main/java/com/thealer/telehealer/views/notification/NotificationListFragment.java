@@ -59,14 +59,13 @@ public class NotificationListFragment extends BaseFragment {
                         if (baseApiResponseModel != null) {
                             if (baseApiResponseModel instanceof NotificationApiResponseModel) {
                                 notificationApiResponseModel = (NotificationApiResponseModel) baseApiResponseModel;
-                                notificationCelv.setTotalCount(notificationApiResponseModel.getCount());
                                 updateNotificationList();
 
                                 if (notificationApiResponseModel.getResult().getUnread_count() > 0) {
                                     updateNotificationStatus();
                                 }
-                            }else if (baseApiResponseModel instanceof NotificationRequestUpdateResponseModel){
-                                if (baseApiResponseModel.isSuccess()){
+                            } else if (baseApiResponseModel instanceof NotificationRequestUpdateResponseModel) {
+                                if (baseApiResponseModel.isSuccess()) {
                                     page = 1;
                                     getNotification(true);
                                 }
@@ -77,7 +76,7 @@ public class NotificationListFragment extends BaseFragment {
     }
 
     private void updateNotificationList() {
-        if (page == 1){
+        if (page == 1) {
             headerList.clear();
             childList.clear();
         }
@@ -110,6 +109,7 @@ public class NotificationListFragment extends BaseFragment {
             notificationCelv.hideEmptyState();
             expandList();
         }
+        notificationCelv.setTotalCount(notificationApiResponseModel.getCount() + headerList.size());
 
         notificationCelv.setScrollable(true);
     }

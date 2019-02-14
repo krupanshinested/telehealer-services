@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
+import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -25,9 +27,11 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
  */
 public class DoctorOnBoardingActivity extends BaseActivity {
 
-    private WhoAmIApiViewModel whoAmIApiViewModel;
     private TextView userNameTv;
     private CircleImageView userAvatarCiv;
+
+    private WhoAmIApiViewModel whoAmIApiViewModel;
+    private SigninApiViewModel signinApiViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,6 +39,9 @@ public class DoctorOnBoardingActivity extends BaseActivity {
         setContentView(R.layout.activity_doctor_onboarding);
 
         whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+        signinApiViewModel = ViewModelProviders.of(this).get(SigninApiViewModel.class);
+
+        attachObserver(signinApiViewModel);
         attachObserver(whoAmIApiViewModel);
 
         whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
@@ -46,13 +53,25 @@ public class DoctorOnBoardingActivity extends BaseActivity {
                             UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
 
                             if (appPreference.getBoolean(PreferenceConstants.IS_USER_ACTIVATED)) {
-                                startActivity(new Intent(DoctorOnBoardingActivity.this, HomeActivity.class));
-                                finish();
+                                signinApiViewModel.refreshToken();
                             }
                         }
                     }
                 });
 
+        signinApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
+                    if (signinApiResponseModel.isSuccess()) {
+                        appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
+                        startActivity(new Intent(DoctorOnBoardingActivity.this, HomeActivity.class));
+                        finish();
+                    }
+                }
+            }
+        });
         initView();
     }
 
