@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "1092527537093",
+    "firebase_url": "https://telehealer-prod-767f5.firebaseio.com",
+    "project_id": "telehealer-prod-767f5",
+    "storage_bucket": "telehealer-prod-767f5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092527537093:android:71587c44288f20f7",
+        "android_client_info": {
+          "package_name": "com.thealer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqOe1QpRDsKRQRIh0M07BZYIRomhl0IWk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092527537093:android:65eeb7c6e536b8ad",
+        "android_client_info": {
+          "package_name": "com.thealer.pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqOe1QpRDsKRQRIh0M07BZYIRomhl0IWk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
