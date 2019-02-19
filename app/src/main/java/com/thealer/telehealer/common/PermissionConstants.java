@@ -26,6 +26,7 @@ public class PermissionConstants {
     public static final int PERMISSION_LOCATION_STORAGE_VITALS = 13;
     public static final int PERMISSION_LOCATION_VITALS = 14;
     public static final int PERMISSION_WRITE_STORAGE_VITALS = 15;
+    public static final int PERMISSION_CONTACTS = 16;
 
     public static int CAMERA_REQUEST_CODE = 300;
     public static int GALLERY_REQUEST_CODE = 301;
@@ -33,6 +34,7 @@ public class PermissionConstants {
     public static int LOC_STORAGE_REQUEST_CODE = 303;
     public static int LOC_REQUEST_CODE = 304;
     public static int STORAGE_REQUEST_CODE =305;
+    public static int CONTACTS_REQUEST_CODE =306;
 
 
 }
