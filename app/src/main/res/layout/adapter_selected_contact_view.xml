@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_default">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatar_civ"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:civ_border_color="@color/colorGrey"
+        app:civ_border_width="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/profile_placeholder" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/close_iv"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:src="@drawable/ic_close_white_40dp"
+        app:civ_border_color="@color/colorWhite"
+        app:civ_border_width="1dp"
+        app:civ_circle_background_color="@color/colorGrey"
+        app:layout_constraintEnd_toEndOf="@id/avatar_civ"
+        app:layout_constraintTop_toTopOf="@+id/avatar_civ" />
+
+    <TextView
+        android:id="@+id/contact_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxWidth="100dp"
+        android:maxLines="1"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/avatar_civ"
+        tools:text="@string/dummy_text" />
+</android.support.constraint.ConstraintLayout>
