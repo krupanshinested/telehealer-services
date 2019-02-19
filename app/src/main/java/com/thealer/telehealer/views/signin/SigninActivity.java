@@ -280,7 +280,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         super.onResume();
         LocalBroadcastManager.getInstance(this).registerReceiver(quickLoginBroadcastReceiver, new IntentFilter(getString(R.string.quick_login_broadcast_receiver)));
         setQuickLoginView();
-        if (authResponse == ArgumentKeys.AUTH_SUCCESS) {
+        if (authResponse == ArgumentKeys.AUTH_SUCCESS && appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN) != null) {
             makeRefreshTokenApiCall();
         }
     }

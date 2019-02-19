@@ -23,14 +23,14 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/disable_signature_tv"
+                android:id="@+id/invite_manually_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:gravity="center"
                 android:padding="8dp"
-                android:layout_margin="8dp"
-                android:text="@string/disable_signature"
-                android:textColor="@color/red" />
+                android:text="@string/invite_manually"
+                android:textColor="@color/app_gradient_start" />
 
             <View
                 android:layout_width="match_parent"
@@ -38,13 +38,13 @@
                 android:background="@color/colorGrey_light" />
 
             <TextView
-                android:id="@+id/new_signature_tv"
+                android:id="@+id/invite_contacts_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
                 android:layout_margin="8dp"
-                android:text="@string/new_signature"
-                android:textColor="@color/color_blue" />
+                android:padding="8dp"
+                android:text="@string/invite_from_contacts"
+                android:textColor="@color/app_gradient_start" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
@@ -60,10 +60,10 @@
 
         <TextView
             style="@style/text_app_color"
-            android:layout_margin="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_margin="8dp"
             android:text="@string/Cancel"
             android:textColor="@color/color_blue" />
     </android.support.v7.widget.CardView>
