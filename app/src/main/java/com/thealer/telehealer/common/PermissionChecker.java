@@ -93,9 +93,17 @@ public class PermissionChecker {
                     return true;
                 }
                 break;
+            case PermissionConstants.PERMISSION_CONTACTS:
+                return isContactsPermissionGranted();
         }
 
         return false;
+    }
+
+    private boolean isContactsPermissionGranted() {
+        boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
+        TeleLogger.shared.log(TeleLogCapability.contacts, isGranted);
+        return isGranted;
     }
 
     private boolean isMicPermissionGranted() {
@@ -215,6 +223,8 @@ public class PermissionChecker {
                 return context.getString(R.string.permission_loc_vitals_message);
             case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
                 return context.getString(R.string.permission_storage_vitals_message);
+            case PermissionConstants.PERMISSION_CONTACTS:
+                return context.getString(R.string.permission_contact_message);
         }
         return null;
     }
@@ -251,6 +261,8 @@ public class PermissionChecker {
                 return context.getString(R.string.permission_location_title);
             case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
                 return context.getString(R.string.permission_storage_title);
+            case PermissionConstants.PERMISSION_CONTACTS:
+                return context.getString(R.string.permission_contact_title);
         }
         return null;
     }
@@ -286,6 +298,8 @@ public class PermissionChecker {
                 return R.drawable.permission_location;
             case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
                 return R.drawable.permission_location;
+            case PermissionConstants.PERMISSION_CONTACTS:
+                return R.drawable.permission_contacts;
         }
         return 0;
     }
@@ -313,7 +327,8 @@ public class PermissionChecker {
                 return PermissionConstants.LOC_REQUEST_CODE;
             case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
                 return PermissionConstants.STORAGE_REQUEST_CODE;
-
+            case PermissionConstants.PERMISSION_CONTACTS:
+                return PermissionConstants.CONTACTS_REQUEST_CODE;
         }
         return 0;
     }
@@ -337,6 +352,8 @@ public class PermissionChecker {
                 return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
             case PermissionConstants.PERMISSION_MICROPHONE:
                 return new String[]{Manifest.permission.RECORD_AUDIO};
+            case PermissionConstants.PERMISSION_CONTACTS:
+                return new String[]{Manifest.permission.READ_CONTACTS};
         }
         return new String[0];
     }

@@ -24,6 +24,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".TeleHealerApplication"
@@ -133,6 +134,8 @@
         </receiver>
 
         <receiver android:name=".views.notification.NotificationCancelAppointmentReceiver" />
+
+        <activity android:name=".views.inviteUser.InviteContactUserActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
