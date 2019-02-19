@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.base;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.arch.lifecycle.Observer;
@@ -10,7 +11,9 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -34,6 +37,7 @@ import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
 
 /**
@@ -340,5 +344,23 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(new Intent(this, HomeActivity.class));
         finish();
     }
+
+    public void showSuccessView(int requestId) {
+        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+        successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+    }
+
+    public void sendSuccessViewBroadCast(Context context, boolean status, String title, String description) {
+
+        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, status);
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, title);
+        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, description);
+        intent.putExtras(bundle);
+
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
 }
 

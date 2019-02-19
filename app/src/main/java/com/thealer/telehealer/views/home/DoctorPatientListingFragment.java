@@ -4,20 +4,26 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -39,6 +45,8 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
+import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
+import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 
 import me.toptas.fancyshowcase.listener.DismissListener;
@@ -272,9 +280,54 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 if (!UserType.isUserDoctor()) {
                     startActivity(new Intent(getActivity(), AddConnectionActivity.class));
                 } else {
-                    startActivity(new Intent(getActivity(), InviteUserActivity.class));
+                    showInviteAlert();
                 }
                 break;
         }
+    }
+
+    private void showInviteAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View alertView = LayoutInflater.from(getActivity()).inflate(R.layout.view_invite_alert, null);
+        builder.setView(alertView);
+
+        AlertDialog alertDialog = builder.create();
+
+        TextView inviteManuallyTv;
+        TextView inviteContactsTv;
+        CardView cancelCv;
+
+        inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
+        inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
+        cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+
+        inviteManuallyTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                startActivity(new Intent(getActivity(), InviteUserActivity.class));
+            }
+        });
+
+        inviteContactsTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                startActivity(new Intent(getActivity(), InviteContactUserActivity.class));
+            }
+        });
+
+        cancelCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            alertDialog.getWindow().setGravity(Gravity.BOTTOM);
+        }
+        alertDialog.show();
     }
 }

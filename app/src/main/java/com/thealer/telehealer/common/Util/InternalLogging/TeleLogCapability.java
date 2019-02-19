@@ -17,6 +17,7 @@ public class TeleLogCapability {
     public static final String mic = "mic";
     public static final String location = "location";
     public static final String photo = "photo";
+    public static final String contacts = "contacts";
 
     private String getKey(String type) {
         String key;
