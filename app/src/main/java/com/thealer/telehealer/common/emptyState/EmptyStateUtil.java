@@ -92,6 +92,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT:
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
                 return "No Medical Assistant";
+            case EmptyViewConstants.EMPTY_DIET:
+                return "No Diet";
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH:
                 return "No Vital Measurements";
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK:
@@ -100,6 +102,8 @@ public class EmptyStateUtil {
                 return "No Vital Measurements for last two week";
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH:
                 return "No Vital Measurements for last month";
+            case EmptyViewConstants.EMPTY_FOOD_ITEMS:
+                return "No Food items";
             case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
             case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
                 return "No Pending Invites";
@@ -217,6 +221,10 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_TWO_WEEK:
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH:
                 return "Patients who measured their vitals will eventually show up here";
+            case EmptyViewConstants.EMPTY_DIET:
+                return "Patient's diet will eventually show up here";
+            case EmptyViewConstants.EMPTY_FOOD_ITEMS:
+                return "Type your food item and press search from your keyboard";
             case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
                 return "Invites which waiting for your action will eventually show up here";
             case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
@@ -313,6 +321,9 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT:
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
                 return R.drawable.emptystate_no_medical_assistant;
+            case EmptyViewConstants.EMPTY_DIET:
+            case EmptyViewConstants.EMPTY_FOOD_ITEMS:
+                return R.drawable.emptystate_diet;
             case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
             case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
                 return R.drawable.emptystate_pending_invites;

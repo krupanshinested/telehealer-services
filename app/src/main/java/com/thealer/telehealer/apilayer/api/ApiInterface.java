@@ -14,6 +14,10 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.commonResponseModel.DataBean;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
+import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
+import com.thealer.telehealer.apilayer.models.diet.food.FoodDetailApiResponseModel;
+import com.thealer.telehealer.apilayer.models.diet.food.FoodListApiResponseModel;
+import com.thealer.telehealer.apilayer.models.diet.food.NutrientsDetailRequestModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.TypeAHeadResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByDemographicRequestModel;
@@ -58,6 +62,7 @@ import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -74,6 +79,7 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -109,6 +115,7 @@ public interface ApiInterface {
     String CALL_QUALITY = "call_quality";
     String MONTH = "month";
     String FILTER = "filter";
+    String DATE = "date";
     String MEDICAL_ASSISTANT = "medical_assistant";
     String STATUS = "status";
     String ACCEPTED = "accepted";
@@ -458,6 +465,20 @@ public interface ApiInterface {
 
     @GET("api/connection-status/{id}")
     Observable<ConnectionStatusApiResponseModel> getUserConnectionStatus(@Path(ID) String userGuid);
+
+    @GET("api/user-diet")
+    Observable<ArrayList<DietApiResponseModel>> getDietDetails(@Query(DATE) String date, @Query(USER_GUID) String userGuid);
+
+    @Multipart
+    @POST("api/user-diet")
+    Observable<BaseApiResponseModel> addDiet(@PartMap Map<String, RequestBody> requestBodyMap, @Part MultipartBody.Part file);
+
+    @GET("/api/food-database/parser")
+    Observable<FoodListApiResponseModel> getFoodList(@Query("ingr") String query, @Query("session") int session, @Query("app_id") String appId, @Query("app_key") String appKey);
+
+    @POST("/api/food-database/nutrients")
+    Observable<FoodDetailApiResponseModel> getFoodDetail(@Query("app_id") String appId, @Query("app_key") String appKey, @Body Map<String, List<NutrientsDetailRequestModel>> param);
+
     @GET("api/requests")
     Observable<NotificationApiResponseModel> getPendingInvites(@QueryMap Map<String, Object> map, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 

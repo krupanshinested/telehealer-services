@@ -115,6 +115,10 @@ public class CustomRecyclerView extends ConstraintLayout {
         return recyclerView;
     }
 
+    public ConstraintLayout getEmptyStateView(){
+        return recyclerEmptyStateView;
+    }
+
     public void setOnPaginateInterface(OnPaginateInterface onPaginateInterface) {
         this.onPaginateInterface = onPaginateInterface;
     }
