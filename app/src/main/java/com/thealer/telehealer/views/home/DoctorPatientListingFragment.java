@@ -9,11 +9,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.CardView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -23,6 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -43,6 +48,7 @@ import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
@@ -71,10 +77,19 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private EditText searchEt;
     private View bottomView;
     private ImageView searchClearIv;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private LinearLayout searchLl;
+    private CardView searchCv;
+    private OnCloseActionInterface onCloseActionInterface;
+    private boolean isDietView;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onOrientationChangeInterface = (OnOrientationChangeInterface) getActivity();
     }
@@ -161,6 +176,11 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         doctorPatientListCrv = (CustomRecyclerView) view.findViewById(R.id.doctor_patient_list_crv);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
 
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+
         topView = (View) view.findViewById(R.id.top_view);
         searchEt = (EditText) view.findViewById(R.id.search_et);
         bottomView = (View) view.findViewById(R.id.bottom_view);
@@ -201,6 +221,24 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         addFab.setOnClickListener(this);
 
+        if (getArguments() != null) {
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                toolbarTitle.setText(getString(R.string.patients));
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onCloseActionInterface.onClose(false);
+                    }
+                });
+            }
+            isDietView = getArguments().getBoolean(ArgumentKeys.IS_DIET_VIEW);
+
+            if (isDietView) {
+                addFab.hide();
+            }
+        }
+
         if (UserType.isUserPatient() || UserType.isUserAssistant()) {
             doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_WITH_BTN);
         } else if (UserType.isUserDoctor()) {
@@ -209,9 +247,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         doctorPatientListRv = doctorPatientListCrv.getRecyclerView();
 
-        LinearLayoutManager linearLayoutManager = doctorPatientListCrv.getLayoutManager();
-
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity());
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView);
 
         doctorPatientListRv.setAdapter(doctorPatientListAdapter);
 
@@ -226,6 +262,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         });
 
         getAssociationsList(null, true);
+
 
         doctorPatientListCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override

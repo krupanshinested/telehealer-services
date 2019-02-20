@@ -133,4 +133,12 @@ public class EventRecorder {
         analytics.logEvent("vitals_event",bundle);
     }
 
+    public static void recordMeals(String meal,String type){
+        Bundle bundle = new Bundle();
+        bundle.putString("MEAL", meal);
+        bundle.putString("MEAL_TYPE", type);
+        bundle.putString("DATE", Utils.getStringFromDate( new Date(),"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        analytics.logEvent("meals_event",bundle);
+    }
+
 }
