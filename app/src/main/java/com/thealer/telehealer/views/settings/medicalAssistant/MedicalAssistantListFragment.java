@@ -85,7 +85,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
 
         medicalAssistantCrv.setEmptyState(EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN);
 
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity());
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), false);
 
         medicalAssistantCrv.getRecyclerView().setAdapter(doctorPatientListAdapter);
 

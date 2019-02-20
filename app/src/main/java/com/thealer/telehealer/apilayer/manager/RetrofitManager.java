@@ -3,7 +3,6 @@ package com.thealer.telehealer.apilayer.manager;
 import android.content.Context;
 import android.content.ContextWrapper;
 
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.api.ApiInterface;
@@ -22,6 +21,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Created by Aswin on 08,October,2018
  */
@@ -31,6 +31,7 @@ public class RetrofitManager extends ContextWrapper {
     private static RetrofitManager mInstance;
     private Retrofit defaultRetrofit;
     private Retrofit authRetrofit;
+    private Retrofit foodRetrofit;
 
 
     private RetrofitManager(Context base) {
@@ -55,12 +56,18 @@ public class RetrofitManager extends ContextWrapper {
         return defaultRetrofit;
     }
 
-
     private Retrofit getAuthRetrofit() {
         if (authRetrofit == null) {
             createAuthRetrofit();
         }
         return authRetrofit;
+    }
+
+    private Retrofit getFoodRetrofit() {
+        if (foodRetrofit == null) {
+            createFoodRetrofit();
+        }
+        return foodRetrofit;
     }
 
     private void createDefaultRetrofit() {
@@ -87,15 +94,45 @@ public class RetrofitManager extends ContextWrapper {
         });
 
         RetrofitLogger logging = new RetrofitLogger();
-//        if (BuildConfig.DEBUG) {
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-//        } else {
-//            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
-//        }
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClient.addInterceptor(logging);
 
         OkHttpClient client = httpClient.build();
         defaultRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.api_base_url))
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(client)
+                .build();
+    }
+
+    private void createFoodRetrofit() {
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new ConnectivityInterceptor(getApplicationContext()));
+        httpClient.connectTimeout(60, TimeUnit.SECONDS);
+        httpClient.readTimeout(60, TimeUnit.SECONDS);
+        httpClient.writeTimeout(60, TimeUnit.SECONDS);
+        httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+
+                Request request = original.newBuilder()
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "application/json")
+                        .method(original.method(), original.body())
+                        .build();
+                return chain.proceed(request);
+
+            }
+        });
+
+        RetrofitLogger logging = new RetrofitLogger();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        httpClient.addInterceptor(logging);
+
+        OkHttpClient client = httpClient.build();
+        foodRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.food_api_base_url))
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(client)
@@ -123,11 +160,7 @@ public class RetrofitManager extends ContextWrapper {
         });
 
         RetrofitLogger logging = new RetrofitLogger();
-//        if (BuildConfig.DEBUG) {
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-//        } else {
-//            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
-//        }
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClient.addInterceptor(logging);
 
 
@@ -153,4 +186,7 @@ public class RetrofitManager extends ContextWrapper {
         return getAuthRetrofit().create(ApiInterface.class);
     }
 
+    public ApiInterface getFoodApiService() {
+        return getFoodRetrofit().create(ApiInterface.class);
+    }
 }

@@ -9,4 +9,5 @@ public class TeleLogExternalAPI {
     public static final String google = "google";
     public static final String pubnub = "pubnub";
     public static final String ihealth = "ihealth";
+    public static final String edamam = "edamam";
 }
