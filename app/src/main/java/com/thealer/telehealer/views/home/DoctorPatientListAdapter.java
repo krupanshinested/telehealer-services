@@ -18,6 +18,8 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.monitoring.diet.DietDetailFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +33,13 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
     private FragmentActivity fragmentActivity;
     private List<CommonUserApiResponseModel> associationApiResponseModelResult;
     private OnActionCompleteInterface onActionCompleteInterface;
+    private boolean isDietView;
 
-    public DoctorPatientListAdapter(FragmentActivity activity) {
+    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView) {
         fragmentActivity = activity;
         associationApiResponseModelResult = new ArrayList<>();
         onActionCompleteInterface = (OnActionCompleteInterface) activity;
+        this.isDietView = isDietView;
     }
 
     @NonNull
@@ -72,7 +76,14 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
     private void proceed(CommonUserApiResponseModel resultBean) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.USER_DETAIL, resultBean);
-        onActionCompleteInterface.onCompletionResult(RequestID.REQ_SHOW_DETAIL_VIEW, true, bundle);
+        if (!isDietView) {
+            onActionCompleteInterface.onCompletionResult(RequestID.REQ_SHOW_DETAIL_VIEW, true, bundle);
+        } else {
+            ShowSubFragmentInterface showSubFragmentInterface = (ShowSubFragmentInterface) fragmentActivity;
+            DietDetailFragment dietDetailFragment = new DietDetailFragment();
+            dietDetailFragment.setArguments(bundle);
+            showSubFragmentInterface.onShowFragment(dietDetailFragment);
+        }
     }
 
     private void loadAvatar(ImageView imageView, String user_avatar) {

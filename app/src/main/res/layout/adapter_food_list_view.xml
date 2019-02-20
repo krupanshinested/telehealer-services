@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_cl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/item_iv"
+        android:layout_width="@dimen/card_image_view_size"
+        android:layout_height="@dimen/card_image_view_size"
+        android:layout_margin="@dimen/margin_default"
+        android:src="@drawable/diet_food_placeholder"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/item_title_tv"
+        style="@style/card_sub_title_text"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin_default"
+        android:gravity="bottom"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintBottom_toTopOf="@+id/item_sub_title_tv"
+        app:layout_constraintEnd_toStartOf="@id/calories_tv"
+        app:layout_constraintStart_toEndOf="@id/item_iv"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/dummy_text" />
+
+    <TextView
+        android:id="@+id/item_sub_title_tv"
+        style="@style/card_sub_title_text"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_view"
+        app:layout_constraintEnd_toStartOf="@id/calories_tv"
+        app:layout_constraintStart_toStartOf="@id/item_title_tv"
+        app:layout_constraintTop_toBottomOf="@+id/item_title_tv"
+        tools:text="@string/dummy_text" />
+
+    <TextView
+        android:id="@+id/calories_tv"
+        style="@style/text_sub_title_bold"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:padding="@dimen/padding_default"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1000 kcals" />
+
+    <View
+        android:id="@+id/bottom_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGrey_light"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</android.support.constraint.ConstraintLayout>

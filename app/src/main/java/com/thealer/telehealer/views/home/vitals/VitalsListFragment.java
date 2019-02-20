@@ -4,22 +4,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.home.VitalsOrdersListAdapter;
 
@@ -34,6 +40,12 @@ public class VitalsListFragment extends BaseFragment {
     private RecyclerView listRv;
     private FloatingActionButton fab;
     private View view;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+
+    private OnCloseActionInterface onCloseActionInterface;
 
     @Nullable
     @Override
@@ -46,6 +58,10 @@ public class VitalsListFragment extends BaseFragment {
     private void initView(View view) {
 
         fab = view.findViewById(R.id.add_fab);
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
 
         if (UserType.isUserPatient()) {
             if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_VITALS)) {
@@ -59,7 +75,7 @@ public class VitalsListFragment extends BaseFragment {
                     if (UserType.isUserPatient()) {
 
                         if (TokBox.shared.isActiveCallPreset()) {
-                            Toast.makeText(getActivity(),getString(R.string.live_call_going_error),Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), getString(R.string.live_call_going_error), Toast.LENGTH_LONG).show();
                             return;
                         }
 
@@ -77,9 +93,24 @@ public class VitalsListFragment extends BaseFragment {
 
         if (getArguments() != null) {
 
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                toolbarTitle.setText(getString(R.string.vitals));
+                onCloseActionInterface = (OnCloseActionInterface) getActivity();
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onCloseActionInterface.onClose(false);
+                    }
+                });
+            } else {
+                appbarLayout.setVisibility(View.GONE);
+            }
+
             VitalsOrdersListAdapter vitalsOrdersListAdapter = new VitalsOrdersListAdapter(getActivity(), SupportedMeasurementType.items, Constants.VIEW_VITALS, getArguments());
             listRv.setAdapter(vitalsOrdersListAdapter);
         }
+
     }
 
     @Override

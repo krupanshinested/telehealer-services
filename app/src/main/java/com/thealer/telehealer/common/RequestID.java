@@ -16,11 +16,12 @@ public class RequestID {
     public static final int REQ_SELECT_ASSOCIATION_PATIENT = 5004;
     public static final int REQ_SELECT_ASSOCIATION_DOCTOR = 5005;
     public static final int REQ_SELECT_ICD_CODE = 5006;
-    public static final int REQ_HISTORY_UPDATE = 6000;
     public static final int REQ_PROFILE_UPDATE = 5007;
     public static final int REQ_SLOT_SELECTION = 5008;
+    public static final int REQ_SIGNATURE = 5009;
+    public static final int REQ_HISTORY_UPDATE = 6000;
     public static final int REQ_CONTENT_VIEW = 7000;
-    public static final int REQ_SIGNATURE = 5007;
+    public static final int REQ_SELECT_DIET = 8000;
 
     public static final String REQ_PASSWORD_RESET_OTP = "REQ_RESET_OTP";
     public static final String REQ_RESET_PASSWORD = "REQ_RESET_PASSWORD";

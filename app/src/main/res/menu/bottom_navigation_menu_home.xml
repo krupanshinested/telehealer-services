@@ -20,7 +20,13 @@
         <item
             android:id="@+id/menu_vitals"
             android:icon="@drawable/ic_vitals_24dp"
-            android:title="@string/vitals" />
+            android:title="@string/vitals"
+            android:visible="false" />
+
+        <item
+            android:id="@+id/menu_monitoring"
+            android:icon="@drawable/ic_vitals"
+            android:title="@string/monitoring" />
 
         <item
             android:id="@+id/menu_orders"

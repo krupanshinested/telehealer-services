@@ -44,7 +44,7 @@ import com.thealer.telehealer.views.home.HomeActivity;
  * Created by Aswin on 08,October,2018
  */
 public class BaseActivity extends AppCompatActivity {
-    private static final String TAG = BaseActivity.class.getSimpleName();
+    public static final String TAG = "aswin";
     private int showScreenType;
     private RelativeLayout relativeLayout;
 

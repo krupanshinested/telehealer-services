@@ -265,6 +265,9 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     public ApiInterface getPublicApiService() {
         return RetrofitManager.getInstance(getApplication()).getPublicApiService();
     }
+    public ApiInterface getFoodApiService() {
+        return RetrofitManager.getInstance(getApplication()).getFoodApiService();
+    }
 
     public ApiInterface getAuthApiService() {
         return RetrofitManager.getInstance(getApplication()).getAuthApiService();
