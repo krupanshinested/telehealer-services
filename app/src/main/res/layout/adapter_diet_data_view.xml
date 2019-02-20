@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        app:cardCornerRadius="6dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
+
+            <ImageView
+                android:id="@+id/food_iv"
+                android:layout_width="@dimen/card_image_view_size"
+                android:layout_height="@dimen/card_image_view_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/diet_food_placeholder" />
+
+            <TextView
+                android:id="@+id/food_title_tv"
+                style="@style/card_title_text"
+                app:layout_constraintBottom_toTopOf="@+id/food_subtitle_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/food_iv"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/dummy_text" />
+
+            <TextView
+                android:id="@+id/food_subtitle_tv"
+                style="@style/card_sub_title_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/food_title_tv"
+                app:layout_constraintStart_toStartOf="@id/food_title_tv"
+                app:layout_constraintTop_toBottomOf="@+id/food_title_tv"
+                tools:text="@string/dummy_text" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>

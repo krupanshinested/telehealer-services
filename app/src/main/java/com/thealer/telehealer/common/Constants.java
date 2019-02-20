@@ -52,6 +52,7 @@ public class Constants {
     public static final int TYPE_EXPIRATION = 2;
     public static final int TILL_CURRENT_DAY = 3;
     public static final int TYPE_ORDER_CREATION = 4;
+    public static final int DIET_CALENDAR = 5;
     public static final String DATE_PICKER_INTENT = "datepicker";
     public static final String YEAR = "year";
     public static final String DAY = "day";

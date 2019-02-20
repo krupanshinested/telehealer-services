@@ -54,6 +54,7 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
+import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
 import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
@@ -527,9 +528,19 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_orders:
                 showOrdersView();
                 break;
+            case R.id.menu_monitoring:
+                showMonitoringView();
+                break;
         }
         toggleDrawer();
         return true;
+    }
+
+    private void showMonitoringView() {
+        helpContent = HelpContent.HELP_VITAL_REPORT;
+        setToolbarTitle(getString(R.string.monitoring));
+        MonitoringFragment monitoringFragment = new MonitoringFragment();
+        setFragment(monitoringFragment);
     }
 
     private void showVitalReportView() {
