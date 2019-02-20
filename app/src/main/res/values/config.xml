@@ -7,4 +7,12 @@
     <string name="get_image_url">api/download?path=</string>
     <string name="feedback_url">http://telehealer.com/feedback</string>
     <string name="privacy_url">http://telehealer.com/privacy/</string>
+
+    //Food Api service
+    <string name="food_api_base_url">https://api.edamam.com</string>
+
+    <string name="food_db_app_id">1e9168c1</string>
+    <string name="food_db_app_key">861d428891f85fefe9dae2c52a02acf4</string>
+    <string name="food_detail_app_id">7e6be163</string>
+    <string name="food_detail_app_key">66f25a8e5d9b1a821fb2f59d1156898e</string>
 </resources>

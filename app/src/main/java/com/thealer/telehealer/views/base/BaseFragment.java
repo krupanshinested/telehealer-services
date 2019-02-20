@@ -36,6 +36,7 @@ import static android.app.Activity.RESULT_OK;
  */
 public class BaseFragment extends Fragment {
 
+    public static final String TAG = "aswin";
     public Dialog dialog;
 
     @Nullable

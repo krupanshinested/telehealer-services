@@ -81,6 +81,7 @@ import me.toptas.fancyshowcase.listener.DismissListener;
 import static com.thealer.telehealer.TeleHealerApplication.application;
 import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
 
+
 /**
  * Created by Aswin on 12,October,2018
  */
@@ -162,6 +163,11 @@ public class Utils {
                 datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
                 calendar.set(year + 1, month, day - 1);
                 datePickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+                break;
+            case Constants.DIET_CALENDAR:
+                calendar.set(2019, 0, 1);
+                datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+                datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
                 break;
         }
 
@@ -281,7 +287,10 @@ public class Utils {
                 Glide.with(context).load(glideUrl).into(imageView);
             }
         } else {
-            imageView.setImageDrawable(context.getDrawable(R.drawable.profile_placeholder));
+            if (placeHolder == null)
+                imageView.setImageDrawable(context.getDrawable(R.drawable.profile_placeholder));
+            else
+                imageView.setImageDrawable(placeHolder);
         }
     }
 

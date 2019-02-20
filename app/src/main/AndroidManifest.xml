@@ -135,6 +135,8 @@
 
         <receiver android:name=".views.notification.NotificationCancelAppointmentReceiver" />
 
+        <activity android:name=".views.home.monitoring.diet.SelectDietActivity" />
+
         <activity android:name=".views.inviteUser.InviteContactUserActivity" />
 
         <meta-data

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/appbar_back_with_title_app_color_diet" />
+
+    <LinearLayout
+        android:id="@+id/calendar_ll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/app_background_gradient"
+            android:paddingBottom="4dp"
+            android:splitMotionEvents="false"
+            app:mcv_calendarMode="week"
+            app:mcv_dateTextAppearance="@style/calendar_text_appearance"
+            app:mcv_headerTextAppearance="@style/text_light"
+            app:mcv_leftArrowMask="@drawable/ic_keyboard_arrow_left_white_24dp"
+            app:mcv_rightArrowMask="@drawable/ic_keyboard_arrow_right_white_24dp"
+            app:mcv_selectionColor="@color/colorWhite"
+            app:mcv_selectionMode="single"
+            app:mcv_showOtherDates="other_months"
+            app:mcv_tileSize="36dp"
+            app:mcv_tileWidth="match_parent"
+            app:mcv_titleAnimationOrientation="horizontal"
+            app:mcv_weekDayTextAppearance="@style/text_light" />
+
+    </LinearLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/diet_detail_cl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/app_background_gradient"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calendar_ll">
+
+        <TextView
+            android:id="@+id/energy_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="@string/energy"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/carbs_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/carbs_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="@string/carbs"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/fat_label"
+            app:layout_constraintStart_toEndOf="@id/energy_label"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/fat_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="@string/fat"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/protein_label"
+            app:layout_constraintStart_toEndOf="@id/carbs_label"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/protein_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="@string/protein"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/fat_label"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/energy_count_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:text="0"
+            android:textColor="@color/colorWhite"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toStartOf="@id/carbs_count_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/energy_label" />
+
+        <TextView
+            android:id="@+id/carbs_count_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:text="0.0"
+            android:textColor="@color/colorWhite"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toStartOf="@id/fat_count_tv"
+            app:layout_constraintStart_toEndOf="@id/energy_count_tv"
+            app:layout_constraintTop_toBottomOf="@+id/carbs_label" />
+
+        <TextView
+            android:id="@+id/fat_count_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:text="0.0"
+            android:textColor="@color/colorWhite"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toStartOf="@id/protein_count_tv"
+            app:layout_constraintStart_toEndOf="@id/carbs_count_tv"
+            app:layout_constraintTop_toBottomOf="@+id/fat_label" />
+
+        <TextView
+            android:id="@+id/protein_count_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:text="0.0"
+            android:textColor="@color/colorWhite"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/fat_count_tv"
+            app:layout_constraintTop_toBottomOf="@+id/protein_label" />
+
+        <TextView
+            android:id="@+id/energy_unit_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/carbs_count_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/energy_count_tv"
+            tools:text="gms" />
+
+        <TextView
+            android:id="@+id/carbs_unit_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/fat_count_tv"
+            app:layout_constraintStart_toEndOf="@id/energy_count_tv"
+            app:layout_constraintTop_toBottomOf="@+id/carbs_count_tv"
+            tools:text="gms" />
+
+        <TextView
+            android:id="@+id/fat_unit_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/protein_count_tv"
+            app:layout_constraintStart_toEndOf="@id/carbs_count_tv"
+            app:layout_constraintTop_toBottomOf="@+id/fat_count_tv"
+            tools:text="gms" />
+
+        <TextView
+            android:id="@+id/protein_unit_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/fat_count_tv"
+            app:layout_constraintTop_toBottomOf="@+id/protein_count_tv"
+            tools:text="gms" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/diet_list_vp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/diet_detail_cl" />
+
+    <com.thealer.telehealer.common.CustomRecyclerView
+        android:id="@+id/diet_list_crv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/diet_detail_cl" />
+</android.support.constraint.ConstraintLayout>
