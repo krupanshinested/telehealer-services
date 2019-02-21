@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -37,7 +38,6 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         requestFullScreenMode();
-
         setContentView(R.layout.activity_splash);
 
         if (savedInstanceState != null) {
