@@ -96,7 +96,8 @@
             android:parentActivityName=".views.home.HomeActivity" />
 
         <activity android:name=".views.notification.NotificationDetailActivity" />
-        <activity android:name=".views.call.CallNetworkTestActivity"/>
+        <activity android:name=".views.call.CallNetworkTestActivity" />
+
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
             android:enabled="true">
@@ -115,21 +116,22 @@
             android:name=".common.OpenTok.CallMinimizeService"
             android:exported="false" />
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="066e8b8d88db9729e4c796eabdd396f1edc0d7d8" />
-
         <receiver
             android:name=".views.home.schedules.LocalNotificationReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.media.action.DISPLAY_NOTIFICATION" />
                 <action android:name="android.intent.action.NOTIFY" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
         <receiver android:name=".views.notification.NotificationCancelAppointmentReceiver" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="${fabric_key}" />
     </application>
 
 </manifest>
