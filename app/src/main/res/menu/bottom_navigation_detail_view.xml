@@ -6,6 +6,6 @@
         android:title="@string/call" />
     <item
         android:id="@+id/menu_schedules"
-        android:icon="@drawable/ic_drawer_schedule"
+        android:icon="@drawable/ic_schedules"
         android:title="@string/schedules" />
 </menu>

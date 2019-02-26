@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginTop="8dp"
-        android:background="@color/colorGrey_light"
+        android:background="@color/color_grey_light_background"
         android:gravity="top"
         android:hint="@string/post_your_comments"
         android:inputType="textMultiLine"

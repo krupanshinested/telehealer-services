@@ -97,8 +97,8 @@ public class SchedulesListAdapter extends BaseExpandableListAdapter {
 
         itemCv = (CardView) convertView.findViewById(R.id.item_cv);
         itemCiv = (CircleImageView) convertView.findViewById(R.id.item_civ);
-        itemTitleTv = (TextView) convertView.findViewById(R.id.item_title_tv);
-        itemSubTitleTv = (TextView) convertView.findViewById(R.id.item_sub_title_tv);
+        itemTitleTv = (TextView) convertView.findViewById(R.id.list_title_tv);
+        itemSubTitleTv = (TextView) convertView.findViewById(R.id.list_sub_title_tv);
         statusIv = (ImageView) convertView.findViewById(R.id.status_iv);
         statusIv.setVisibility(View.GONE);
 

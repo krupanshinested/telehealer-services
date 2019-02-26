@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.orders.document;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -26,6 +27,7 @@ import com.thealer.telehealer.common.CustomExpandableListView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -208,11 +210,8 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             public void onPaginate() {
                 if (!isApiRequested) {
                     documentsCelv.setScrollable(false);
-                    Log.e("aswin", "onPaginate: ");
                     page = page + 1;
                     getDocuments(false);
-                } else {
-                    Log.e("aswin", "onPaginate: false");
                 }
 
             }
@@ -255,8 +254,16 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
                 break;
             case R.id.add_fab:
                 addFab.setClickable(false);
-                startActivity(new Intent(getActivity(), CreateOrderActivity.class).putExtras(getArguments()));
+                startActivityForResult(new Intent(getActivity(), CreateOrderActivity.class).putExtras(getArguments()), RequestID.REQ_UPDATE_DOCUMENT);
                 break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestID.REQ_UPDATE_DOCUMENT && resultCode == Activity.RESULT_OK) {
+            getDocuments(true);
         }
     }
 

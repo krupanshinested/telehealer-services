@@ -86,6 +86,7 @@
         <item name="android:textColor">@color/app_gradient_start</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/text_title_size</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">8dp</item>
         <item name="android:alpha">1</item>
@@ -111,10 +112,105 @@
         <item name="android:layout_marginBottom">16dp</item>
     </style>
 
+    <style name="text_title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">@dimen/text_title_size</item>
+    </style>
+
+    <style name="text_title_bold">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_title_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="text_title_light">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">@dimen/text_title_size</item>
+    </style>
+
+    <style name="text_title_lignt_bold">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_title_size</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="text_title_app_color">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textSize">@dimen/text_title_size</item>
+        <item name="android:textColor">@color/app_gradient_start</item>
+    </style>
+
+    <style name="text_title_bold_app_color">
+        <item name="android:textSize">@dimen/text_title_size</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/app_gradient_start</item>
+    </style>
+
+    <style name="text_sub_title">
+        <item name="android:layout_marginStart">1dp</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_sub_title_size</item>
+    </style>
+
+    <style name="text_sub_title_bold">
+        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_sub_title_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="text_sub_title_light">
+        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">@dimen/text_sub_title_size</item>
+    </style>
+
+    <style name="text_sub_title_lignt_bold">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_sub_title_size</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="text_sub_title_app_color">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_sub_title_size</item>
+        <item name="android:textColor">@color/app_gradient_start</item>
+    </style>
+
+    <style name="text_sub_title_bold_app_color">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textSize">@dimen/text_sub_title_size</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/app_gradient_start</item>
+    </style>
+
 
     <style name="toolbar_menu_light">
         <item name="android:actionMenuTextColor">@color/colorWhite</item>
     </style>
+
     <style name="calendar_text_appearance" parent="TextAppearance.MaterialCalendarWidget.Date">
         <item name="android:textColor">@color/calendar_date_selector</item>
     </style>

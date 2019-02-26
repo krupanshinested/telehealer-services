@@ -16,7 +16,6 @@ import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -31,6 +30,7 @@ public class DoctorCertificateFragment extends BaseFragment implements DoCurrent
     private OnActionCompleteInterface onActionCompleteInterface;
     private OnViewChangeInterface onViewChangeInterface;
     private String doctorCertificatePath;
+    private ImageView addIv;
 
     @Override
     public void onAttach(Context context) {
@@ -68,6 +68,7 @@ public class DoctorCertificateFragment extends BaseFragment implements DoCurrent
     private void initView(View view) {
         certificateIv = (ImageView) view.findViewById(R.id.certificate_iv);
         pageHintTv = (TextView) view.findViewById(R.id.page_hint_tv);
+        addIv = (ImageView) view.findViewById(R.id.add_iv);
 
         certificateIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +95,9 @@ public class DoctorCertificateFragment extends BaseFragment implements DoCurrent
     private void setCertificateImage() {
         if (doctorCertificatePath != null && !doctorCertificatePath.isEmpty()) {
             onViewChangeInterface.enableNext(true);
+            addIv.setVisibility(View.GONE);
             certificateIv.setImageBitmap(getBitmpaFromPath(doctorCertificatePath));
+            certificateIv.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
     }
 

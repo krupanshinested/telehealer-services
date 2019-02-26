@@ -20,6 +20,7 @@
                 android:id="@+id/patient_ocv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="4dp"
                 app:arrow_visible="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -32,6 +33,7 @@
                 android:id="@+id/copy_result_ocv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="4dp"
                 app:arrow_visible="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -41,8 +43,9 @@
 
             <TextView
                 android:id="@+id/radiology_label"
-                style="@style/text_app_color"
+                style="@style/text_sub_title_bold_app_color"
                 android:layout_marginStart="4dp"
+                android:padding="@dimen/padding_default"
                 android:text="@string/radiology"
                 android:textAllCaps="true"
                 app:layout_constraintStart_toStartOf="parent"
@@ -93,8 +96,9 @@
 
             <TextView
                 android:id="@+id/icd_label"
-                style="@style/text_app_color"
+                style="@style/text_sub_title_bold_app_color"
                 android:layout_marginStart="4dp"
+                android:padding="@dimen/padding_default"
                 android:text="@string/icd_10"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/radiology_ll" />
@@ -142,6 +146,7 @@
 
             <Switch
                 android:id="@+id/stat_switch"
+                style="@style/text_sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -166,6 +171,7 @@
                 android:id="@+id/date_ocv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="4dp"
                 app:arrow_visible="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -175,8 +181,9 @@
 
             <TextView
                 android:id="@+id/comments_label"
-                style="@style/text_app_color"
+                style="@style/text_sub_title_bold_app_color"
                 android:layout_marginStart="4dp"
+                android:padding="@dimen/padding_default"
                 android:text="@string/comments"
                 android:textAllCaps="true"
                 app:layout_constraintStart_toStartOf="parent"
@@ -187,7 +194,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="4dp"
                 android:layout_marginBottom="32dp"
                 android:inputType="text"
                 android:paddingTop="4dp"

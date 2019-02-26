@@ -106,6 +106,8 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 orderDetailCelv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModels != null && baseApiResponseModels.size() > 0) {
                     updateArrayList(baseApiResponseModels);
+                } else {
+                    orderDetailCelv.showEmptyState();
                 }
             }
         });

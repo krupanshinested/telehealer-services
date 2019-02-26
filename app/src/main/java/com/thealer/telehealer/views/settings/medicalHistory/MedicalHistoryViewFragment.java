@@ -27,6 +27,7 @@ import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
@@ -116,6 +117,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
     @Override
     public void onResume() {
         super.onResume();
+        Utils.hideKeyboard(getActivity());
         if (UserType.isUserPatient()) {
             changeTitleInterface.onTitleChange(getString(R.string.health_profile));
             onViewChangeInterface.hideOrShowNext(true);

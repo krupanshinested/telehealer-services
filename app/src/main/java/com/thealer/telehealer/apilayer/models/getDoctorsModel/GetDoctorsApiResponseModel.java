@@ -2,13 +2,14 @@ package com.thealer.telehealer.apilayer.models.getDoctorsModel;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.EducationsBean;
-import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
+import com.thealer.telehealer.apilayer.models.createuser.PhonesBean;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
 import com.thealer.telehealer.apilayer.models.createuser.SpecialtiesBean;
 import com.thealer.telehealer.apilayer.models.createuser.VisitAddressBean;
 import com.thealer.telehealer.common.Utils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -121,18 +122,19 @@ public class GetDoctorsApiResponseModel extends BaseApiResponseModel implements 
             }
         }
 
-        public String getDoctorPhone(){
+        public String getDoctorPhone() {
             if (getPractices() != null &&
                     getPractices().size() > 0 &&
                     getPractices().get(0).getPhones() != null &&
-                    getPractices().get(0).getPhones().size() > 0){
+                    getPractices().get(0).getPhones().size() > 0) {
 
                 return getPractices().get(0).getPhones().get(0).getNumber();
 
-            }else {
+            } else {
                 return "";
             }
         }
+
         public String getUid() {
             return uid;
         }
@@ -302,6 +304,171 @@ public class GetDoctorsApiResponseModel extends BaseApiResponseModel implements 
                     this.name = name;
                 }
             }
+        }
+
+        public static class LicensesBean implements Serializable {
+
+            private String state;
+            private String number;
+            private String end_date;
+
+            public LicensesBean() {
+            }
+
+            public LicensesBean(String state, String number, String end_date) {
+                this.state = state;
+                this.number = number;
+                this.end_date = end_date;
+            }
+
+            public String getState() {
+                return state;
+            }
+
+            public void setState(String state) {
+                this.state = state;
+            }
+
+            public String getNumber() {
+                return number;
+            }
+
+            public void setNumber(String number) {
+                this.number = number;
+            }
+
+            public String getEnd_date() {
+                return end_date;
+            }
+
+            public void setEnd_date(String end_date) {
+                this.end_date = end_date;
+            }
+
+            public boolean isEqual(com.thealer.telehealer.apilayer.models.createuser.LicensesBean licensesBean) {
+                return licensesBean.getState().equals(getState()) && licensesBean.getNumber().equals(getNumber()) && Utils.getDateFromPossibleFormat(getEnd_date()).equals(Utils.getDateFromPossibleFormat(licensesBean.getEnd_date()));
+            }
+        }
+
+        public static class SpecialtiesBean implements Serializable {
+
+            private String actors;
+            private String description;
+            private String category;
+            private String uid;
+            private String name;
+            private String actor;
+
+            public SpecialtiesBean() {
+            }
+
+            public SpecialtiesBean(String actors, String description, String category, String uid, String name, String actor) {
+                this.actors = actors;
+                this.description = description;
+                this.category = category;
+                this.uid = uid;
+                this.name = name;
+                this.actor = actor;
+            }
+
+            public String getActors() {
+                return actors;
+            }
+
+            public void setActors(String actors) {
+                this.actors = actors;
+            }
+
+            public String getDescription() {
+                return description;
+            }
+
+            public void setDescription(String description) {
+                this.description = description;
+            }
+
+            public String getCategory() {
+                return category;
+            }
+
+            public void setCategory(String category) {
+                this.category = category;
+            }
+
+            public String getUid() {
+                return uid;
+            }
+
+            public void setUid(String uid) {
+                this.uid = uid;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public String getActor() {
+                return actor;
+            }
+
+            public void setActor(String actor) {
+                this.actor = actor;
+            }
+        }
+
+        public static class PracticesBean implements Serializable{
+
+            private String name;
+            private String website;
+            private VisitAddressBean visit_address;
+            private List<PhonesBean> phones = new ArrayList<>();
+
+            public PracticesBean() {
+            }
+
+            public PracticesBean(String name, String website, VisitAddressBean visit_address, List<PhonesBean> phones) {
+                this.name = name;
+                this.website = website;
+                this.visit_address = visit_address;
+                this.phones = phones;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public String getWebsite() {
+                return website;
+            }
+
+            public void setWebsite(String website) {
+                this.website = website;
+            }
+
+            public VisitAddressBean getVisit_address() {
+                return visit_address;
+            }
+
+            public void setVisit_address(VisitAddressBean visit_address) {
+                this.visit_address = visit_address;
+            }
+
+            public List<PhonesBean> getPhones() {
+                return phones;
+            }
+
+            public void setPhones(List<PhonesBean> phones) {
+                this.phones = phones;
+            }
+
         }
 
     }

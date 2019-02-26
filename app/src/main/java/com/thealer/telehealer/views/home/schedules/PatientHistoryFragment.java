@@ -10,13 +10,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -116,7 +114,7 @@ public class PatientHistoryFragment extends BaseFragment {
     }
 
     private void createSchedule() {
-        showSuccessView(null, RequestID.REQ_SHOW_SUCCESS_VIEW);
+        showSuccessView(null, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
         sendSuccessViewBroadCast(getActivity(), true, getString(R.string.please_wait), getString(R.string.posting_your_appointment));
         checkForHistoryUpdate();
         schedulesApiViewModel.createSchedule(null, createScheduleViewModel.getDoctorCommonModel().getUser_guid(), createScheduleViewModel.getSchedulesCreateRequestModel(), false);

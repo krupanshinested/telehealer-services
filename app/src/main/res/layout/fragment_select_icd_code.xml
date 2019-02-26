@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <include
+        android:id="@+id/search_ll"
         layout="@layout/layout_search_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,7 +18,7 @@
         app:layout_constraintBottom_toTopOf="@+id/selected_icd_cv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bottom_view" />
+        app:layout_constraintTop_toBottomOf="@+id/search_ll" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/selected_icd_cv"

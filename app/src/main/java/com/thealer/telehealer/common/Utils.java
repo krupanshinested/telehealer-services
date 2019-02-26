@@ -31,10 +31,9 @@ import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
@@ -51,6 +50,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 
@@ -77,17 +78,15 @@ import me.toptas.fancyshowcase.listener.DismissListener;
 
 import static com.thealer.telehealer.TeleHealerApplication.application;
 import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
-import static org.webrtc.ContextUtils.getApplicationContext;
-
-import com.thealer.telehealer.R;
-import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
-import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 
 /**
  * Created by Aswin on 12,October,2018
  */
 public class Utils {
 
+    public static final String UTCFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final TimeZone UtcTimezone = TimeZone.getTimeZone("UTC");
+    public static final String defaultDateFormat = "dd MMM, yyyy";
     private static FancyShowCaseView fancyShowCaseView;
 
     public static void showOverlay(FragmentActivity fragmentActivity, View view, String message, DismissListener dismissListener) {
@@ -194,7 +193,7 @@ public class Utils {
     }
 
     public static boolean isEmailValid(String email) {
-        String emailPattern = "[A-Z0-9a-z-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}";
+        String emailPattern = "[A-Z0-9a-z-._+-]+@[A-Za-z0-9-]+\\.[A-Za-z]{2,64}";
         return Pattern.matches(emailPattern, email);
     }
 
@@ -207,14 +206,14 @@ public class Utils {
 
     public static boolean isDateExpired(String date) {
         try {
-            DateFormat dateFormat = new SimpleDateFormat("d MMM, yyyy", Locale.ENGLISH);
+            DateFormat dateFormat = new SimpleDateFormat(defaultDateFormat, Locale.ENGLISH);
             Date inputDate = dateFormat.parse(date);
             Date currentDate = new Date();
 
             return inputDate.compareTo(currentDate) >= 0;
 
         } catch (ParseException e) {
-            return isDateExpired(date, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            return isDateExpired(date, UTCFormat);
         }
     }
 
@@ -234,8 +233,8 @@ public class Utils {
 
     public static boolean isDateTimeExpired(String date) {
         try {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
-            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
+            dateFormat.setTimeZone(UtcTimezone);
             Date inputDate = dateFormat.parse(date);
             Date currentDate = new Date();
 
@@ -245,6 +244,13 @@ public class Utils {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static boolean isDateTimeExpired(Date date) {
+        Date currentDate = new Date();
+        Log.e("aswin", "isDateTimeExpired: " + currentDate.compareTo(date));
+        return currentDate.compareTo(date) >= 0;
+
     }
 
     public static int getUserTypeFromRole(String role) {
@@ -306,8 +312,8 @@ public class Utils {
     }
 
     public static String getFormatedTime(String updated_at) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+        dateFormat.setTimeZone(UtcTimezone);
 
         DateFormat returnFormat = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
@@ -321,8 +327,8 @@ public class Utils {
     }
 
     public static Date getDateFromString(String dateString) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+        dateFormat.setTimeZone(UtcTimezone);
         try {
             return dateFormat.parse(dateString);
         } catch (ParseException e) {
@@ -332,9 +338,9 @@ public class Utils {
     }
 
     public static Date getCurrentZoneDate(String dateString) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        DateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+        dateFormat.setTimeZone(UtcTimezone);
+        DateFormat outFormat = new SimpleDateFormat(UTCFormat);
         outFormat.setTimeZone(TimeZone.getDefault());
         try {
             dateString = outFormat.format(dateFormat.parse(dateString));
@@ -356,11 +362,11 @@ public class Utils {
     }
 
     public static Date getDateFromPossibleFormat(String dateString) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
         try {
             return dateFormat.parse(dateString);
         } catch (Exception e) {
-            dateFormat = new SimpleDateFormat("dd MMM, yyyy");
+            dateFormat = new SimpleDateFormat(defaultDateFormat);
             try {
                 return dateFormat.parse(dateString);
             } catch (Exception e1) {
@@ -377,22 +383,22 @@ public class Utils {
 
     public static String getDayMonthYear(String date) {
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        DateFormat returnFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH);
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+        dateFormat.setTimeZone(UtcTimezone);
+        DateFormat returnFormat = new SimpleDateFormat(defaultDateFormat, Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
             return returnFormat.format(dateFormat.parse(date));
         } catch (ParseException e) {
             e.printStackTrace();
+            return date;
         }
-        return "";
     }
 
     public static String getYearMonthDay(String date) {
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+        dateFormat.setTimeZone(UtcTimezone);
         DateFormat returnFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
@@ -405,8 +411,8 @@ public class Utils {
 
     public static String getDayMonth(String date) {
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+        dateFormat.setTimeZone(UtcTimezone);
         DateFormat returnFormat = new SimpleDateFormat("dd MMM", Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
@@ -419,8 +425,8 @@ public class Utils {
 
     public static String getDayMonthTime(String date) {
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+        dateFormat.setTimeZone(UtcTimezone);
         DateFormat returnFormat = new SimpleDateFormat("dd MMM, hh:mm aa", Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
@@ -479,7 +485,7 @@ public class Utils {
     public static String getCurrentFomatedDate() {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.sss");
-        DateFormat outDateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH);
+        DateFormat outDateFormat = new SimpleDateFormat(defaultDateFormat, Locale.ENGLISH);
         try {
             return outDateFormat.format(dateFormat.parse(new Timestamp(System.currentTimeMillis()).toString()));
         } catch (ParseException e) {
@@ -504,8 +510,8 @@ public class Utils {
     }
 
     public static String getFormatedDateTime(String created_at) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+        dateFormat.setTimeZone(UtcTimezone);
         DateFormat returnFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm aa", Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
@@ -517,8 +523,8 @@ public class Utils {
     }
 
     public static String getFormatedDateTime(String created_at, String format) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+        dateFormat.setTimeZone(UtcTimezone);
         DateFormat returnFormat = new SimpleDateFormat(format, Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
@@ -551,8 +557,8 @@ public class Utils {
     public static String getUTCfromGMT(String timeStamp) {
         DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         inputFormat.setTimeZone(TimeZone.getDefault());
-        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat outputFormat = new SimpleDateFormat(UTCFormat);
+        outputFormat.setTimeZone(UtcTimezone);
         try {
             return outputFormat.format(inputFormat.parse(timeStamp));
         } catch (ParseException e) {
@@ -566,7 +572,7 @@ public class Utils {
         inputFormat.setTimeZone(TimeZone.getDefault());
         DateFormat outputFormat = new SimpleDateFormat("EE, dd MMM, yyyy");
 
-        outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        outputFormat.setTimeZone(UtcTimezone);
         try {
             return outputFormat.format(inputFormat.parse(timeStamp));
         } catch (ParseException e) {
@@ -587,8 +593,8 @@ public class Utils {
     }
 
     public static String getSlotTimeDate(String timeStamp) {
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat inputFormat = new SimpleDateFormat(UTCFormat);
+        inputFormat.setTimeZone(UtcTimezone);
         DateFormat outputFormat = new SimpleDateFormat("hh:mm aa EE dd MMM, yyyy");
         outputFormat.setTimeZone(TimeZone.getDefault());
         try {
@@ -600,7 +606,7 @@ public class Utils {
     }
 
     public static String getIncreasedTime(int timeDifference, String timeStamp) {
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat inputFormat = new SimpleDateFormat(UTCFormat);
         Calendar calendar = Calendar.getInstance();
         try {
             calendar.setTime(inputFormat.parse(timeStamp));
@@ -613,9 +619,9 @@ public class Utils {
     }
 
     public static String getSelectedSlotDate(String timeSlot) {
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat inputFormat = new SimpleDateFormat(UTCFormat);
         DateFormat outputFormat = new SimpleDateFormat("EE, dd MMM, yyyy");
-        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        inputFormat.setTimeZone(UtcTimezone);
         outputFormat.setTimeZone(TimeZone.getDefault());
         try {
             return outputFormat.format(inputFormat.parse(timeSlot));
@@ -626,9 +632,9 @@ public class Utils {
     }
 
     public static String getSelectedSlotTime(String timeSlot) {
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat inputFormat = new SimpleDateFormat(UTCFormat);
         DateFormat outputFormat = new SimpleDateFormat("hh:mm aa");
-        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        inputFormat.setTimeZone(UtcTimezone);
         outputFormat.setTimeZone(TimeZone.getDefault());
         try {
             return outputFormat.format(inputFormat.parse(timeSlot));
@@ -640,8 +646,8 @@ public class Utils {
 
     public static Calendar getCalendar(String timeStamp) {
         Calendar calendar = Calendar.getInstance();
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat inputFormat = new SimpleDateFormat(UTCFormat);
+        inputFormat.setTimeZone(UtcTimezone);
         try {
             calendar.setTime(inputFormat.parse(timeStamp));
         } catch (ParseException e) {
@@ -854,8 +860,8 @@ public class Utils {
     public static String[] getNotificationSlotTime(String timeSlot) {
 
         String[] notificationSlotTimes = new String[2];
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat inputFormat = new SimpleDateFormat(UTCFormat);
+        inputFormat.setTimeZone(UtcTimezone);
 
         DateFormat timeFormat = new SimpleDateFormat("hh:mm aa, EE");
         timeFormat.setTimeZone(TimeZone.getDefault());
@@ -875,12 +881,25 @@ public class Utils {
 
     public static String getPushNotificationTimeFormat(String timeSlot) {
 
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat inputFormat = new SimpleDateFormat(UTCFormat);
         DateFormat outputFormat = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        inputFormat.setTimeZone(UtcTimezone);
         outputFormat.setTimeZone(TimeZone.getDefault());
         try {
             return outputFormat.format(inputFormat.parse(timeSlot));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String getUTCFormat(String date, String inputFormat) {
+        DateFormat dateFormat = new SimpleDateFormat(inputFormat);
+        DateFormat outFormat = new SimpleDateFormat(UTCFormat);
+        outFormat.setTimeZone(UtcTimezone);
+
+        try {
+            return outFormat.format(dateFormat.parse(date));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -913,9 +932,9 @@ public class Utils {
                 public void run() {
                     try {
 
-                        GlideUrl glideUrl = Utils.getGlideUrlWithAuth(getApplicationContext(), imageUrl);
+                        GlideUrl glideUrl = Utils.getGlideUrlWithAuth(application, imageUrl);
 
-                        FutureTarget<Bitmap> futureTarget = Glide.with(getApplicationContext()).asBitmap().load(glideUrl).submit();
+                        FutureTarget<Bitmap> futureTarget = Glide.with(application).asBitmap().load(glideUrl).submit();
 
                         Bitmap imageBitmap = futureTarget.get();
 
@@ -937,7 +956,7 @@ public class Utils {
 
     public static void displyNotification(String title, String message, Bitmap imageBitmap, Intent intent) {
 
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), notificationChannelId)
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(application, notificationChannelId)
                 .setSmallIcon(R.drawable.app_icon)
                 .setBadgeIconType(R.drawable.app_icon)
                 .setContentTitle(title)
@@ -952,7 +971,7 @@ public class Utils {
 
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(application);
             taskStackBuilder.addNextIntentWithParentStack(intent);
 
             PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -962,7 +981,7 @@ public class Utils {
 
         Random random = new Random();
 
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(application);
         notificationManagerCompat.notify(random.nextInt(1000), notification.build());
     }
 

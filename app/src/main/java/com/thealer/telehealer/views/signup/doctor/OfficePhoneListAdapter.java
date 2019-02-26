@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.PhonesBean;
@@ -37,7 +35,7 @@ class OfficePhoneListAdapter extends RecyclerView.Adapter<OfficePhoneListAdapter
     private List<PhonesBean> phonesBeanList = new ArrayList<>();
     private CurrentModeInterface currentModeInterface;
 
-    public OfficePhoneListAdapter(FragmentActivity activity, int practiceId, boolean isNewPractice,CurrentModeInterface currentModeInterface) {
+    public OfficePhoneListAdapter(FragmentActivity activity, int practiceId, boolean isNewPractice, CurrentModeInterface currentModeInterface) {
         this.fragmentActivity = activity;
         this.practiceId = practiceId;
         this.isNewPractice = isNewPractice;
@@ -72,7 +70,9 @@ class OfficePhoneListAdapter extends RecyclerView.Adapter<OfficePhoneListAdapter
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
 
-        viewHolder.officePhoneTil.setHint(phonesBeanList.get(i).getType());
+        String hint = phonesBeanList.get(i).getType();
+        hint = hint.replace(hint.charAt(0), String.valueOf(hint.charAt(0)).toUpperCase().charAt(0));
+        viewHolder.officePhoneTil.setHint(hint);
         viewHolder.officePhoneEt.setText(phonesBeanList.get(i).getNumber());
 
         viewHolder.officePhoneEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -104,9 +104,9 @@ class OfficePhoneListAdapter extends RecyclerView.Adapter<OfficePhoneListAdapter
         });
 
         if (currentModeInterface.getCurrentMode() == Constants.VIEW_MODE) {
-            Utils.setEditable(viewHolder.officePhoneEt,false);
+            Utils.setEditable(viewHolder.officePhoneEt, false);
         } else {
-            Utils.setEditable(viewHolder.officePhoneEt,true);
+            Utils.setEditable(viewHolder.officePhoneEt, true);
         }
     }
 

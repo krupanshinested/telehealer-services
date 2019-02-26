@@ -3,6 +3,9 @@ package com.thealer.telehealer.common;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by Aswin on 11,October,2018
  */
@@ -37,12 +40,21 @@ public class AppPreference {
         return sharedPreferences.getString(key, "");
     }
 
-    public void setInt(String key, int value){
+    public void setStringSet(String key, Set<String> value) {
+        editor.putStringSet(key, value);
+        editor.commit();
+    }
+
+    public Set<String> getStringSet(String key) {
+        return sharedPreferences.getStringSet(key, new HashSet<>());
+    }
+
+    public void setInt(String key, int value) {
         editor.putInt(key, value);
         editor.commit();
     }
 
-    public int getInt(String key){
+    public int getInt(String key) {
         return sharedPreferences.getInt(key, -1);
     }
 

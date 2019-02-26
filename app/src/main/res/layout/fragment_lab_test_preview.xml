@@ -32,6 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
+                style="@style/text_sub_title"
                 android:text="@string/stat"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"

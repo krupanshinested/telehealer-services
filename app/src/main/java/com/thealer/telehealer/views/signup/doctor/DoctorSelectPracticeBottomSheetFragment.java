@@ -1,7 +1,5 @@
 package com.thealer.telehealer.views.signup.doctor;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,10 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseBottomSheetDialogFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -38,8 +34,7 @@ public class DoctorSelectPracticeBottomSheetFragment extends BaseBottomSheetDial
     private RecyclerView practiceRv;
     private TextView addNewTv;
     private OnActionCompleteInterface onActionCompleteInterface;
-    private GetDoctorsApiViewModel getDoctorsApiViewModel;
-    private GetDoctorsApiResponseModel getDoctorsApiResponseModel;
+    private GetDoctorsApiResponseModel.DataBean doctorDetail;
     private int position;
     private List<PracticesBean> practicesBeanList = new ArrayList<>();
     private DoctorPracticeSelectAdapter doctorPracticeSelectAdapter;
@@ -47,9 +42,7 @@ public class DoctorSelectPracticeBottomSheetFragment extends BaseBottomSheetDial
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-
     }
 
     @Nullable
@@ -84,6 +77,7 @@ public class DoctorSelectPracticeBottomSheetFragment extends BaseBottomSheetDial
                 bundle.putBoolean(Constants.IS_CREATE_MANUALLY, false);
                 bundle.putBoolean(Constants.IS_NEW_PRACTICE, true);
                 bundle.putSerializable(Constants.DOCTOR_ID, position);
+                bundle.putSerializable(Constants.USER_DETAIL, doctorDetail);
 
                 onActionCompleteInterface.onCompletionResult(null, true, bundle);
             }
@@ -106,19 +100,11 @@ public class DoctorSelectPracticeBottomSheetFragment extends BaseBottomSheetDial
             }
         });
 
-        getDoctorsApiViewModel = ViewModelProviders.of(getActivity()).get(GetDoctorsApiViewModel.class);
 
-        getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-
-                    getDoctorsApiResponseModel = (GetDoctorsApiResponseModel) baseApiResponseModel;
-
-                    setData();
-                }
-            }
-        });
+        if (getArguments() != null) {
+            doctorDetail = (GetDoctorsApiResponseModel.DataBean) getArguments().getSerializable(Constants.USER_DETAIL);
+            setData();
+        }
 
     }
 
@@ -127,12 +113,11 @@ public class DoctorSelectPracticeBottomSheetFragment extends BaseBottomSheetDial
 
             position = getArguments().getInt(Constants.SELECTE_POSITION);
 
-            doctorNameTv.setText(getDoctorsApiResponseModel.getData().get(position).getProfile().getFirst_name() + ", " +
-                    getDoctorsApiResponseModel.getData().get(position).getProfile().getTitle());
+            doctorNameTv.setText(doctorDetail.getProfile().getFirst_name() + ", " + doctorDetail.getProfile().getTitle());
 
             practiceRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-            doctorPracticeSelectAdapter = new DoctorPracticeSelectAdapter(getActivity(), practicesBeanList, getDialog(), position);
+            doctorPracticeSelectAdapter = new DoctorPracticeSelectAdapter(getActivity(), practicesBeanList, getDialog(), position, doctorDetail);
 
             practiceRv.setAdapter(doctorPracticeSelectAdapter);
 
@@ -145,19 +130,26 @@ public class DoctorSelectPracticeBottomSheetFragment extends BaseBottomSheetDial
 
         if (search.isEmpty()) {
 
-            if ( getDoctorsApiResponseModel != null && getDoctorsApiResponseModel.getData() != null) {
-                practicesBeanList.addAll(getDoctorsApiResponseModel.getData().get(position).getPractices());
+            if (doctorDetail != null) {
+                for (int i = 0; i < doctorDetail.getPractices().size(); i++) {
+                    practicesBeanList.add(new PracticesBean(doctorDetail.getPractices().get(i).getName(),
+                            doctorDetail.getPractices().get(i).getWebsite(),
+                            doctorDetail.getPractices().get(i).getVisit_address(),
+                            doctorDetail.getPractices().get(i).getPhones()));
+                }
 
                 doctorPracticeSelectAdapter.notifyDataSetChanged();
             }
 
         } else {
 
-            GetDoctorsApiResponseModel.DataBean dataBean = getDoctorsApiResponseModel.getData().get(position);
 
-            for (int i = 0; i < dataBean.getPractices().size(); i++) {
-                if (dataBean.getPractices().get(i).getName().toLowerCase().contains(search.trim().toLowerCase()))
-                    practicesBeanList.add(dataBean.getPractices().get(i));
+            for (int i = 0; i < doctorDetail.getPractices().size(); i++) {
+                if (doctorDetail.getPractices().get(i).getName().toLowerCase().contains(search.trim().toLowerCase()))
+                    practicesBeanList.add(new PracticesBean(doctorDetail.getPractices().get(i).getName(),
+                            doctorDetail.getPractices().get(i).getWebsite(),
+                            doctorDetail.getPractices().get(i).getVisit_address(),
+                            doctorDetail.getPractices().get(i).getPhones()));
             }
 
             doctorPracticeSelectAdapter.notifyDataSetChanged();

@@ -57,7 +57,6 @@ public class TranscriptionPdfGenerator {
                 "        \n" +
                 "        h2 {\n" +
                 "            display: block;\n" +
-                "            font-size: 1.90em;\n" +
                 "            margin-top: 0.33em;\n" +
                 "            margin-bottom: 0.33em;\n" +
                 "            margin-left: 0;\n" +
@@ -67,7 +66,6 @@ public class TranscriptionPdfGenerator {
                 "        \n" +
                 "        h4 {\n" +
                 "            display: block;\n" +
-                "            font-size: 1.20em;\n" +
                 "            margin-top: 0.33em;\n" +
                 "            margin-bottom: 0.33em;\n" +
                 "            margin-left: 0;\n" +
@@ -76,6 +74,11 @@ public class TranscriptionPdfGenerator {
                 "        }\n" +
                 "        \n" +
                 "        footer {\n" +
+                "            /*position: fixed;\n" +
+                "            height: 80px;\n" +
+                "            bottom: 0px;\n" +
+                "            left: 20px;\n" +
+                "            right: 20px;*/\n" +
                 "            margin-top: 20px;\n" +
                 "            margin-bottom: 10px;\n" +
                 "        }\n" +
@@ -123,19 +126,23 @@ public class TranscriptionPdfGenerator {
                 "        </table>\n" +
                 "        <footer>\n" +
                 "            <hr color = \"#BACKGROUND_COLOR#\">\n" +
-                "            <h4><font face=\"Helvetica Neue\" color=\"gray\">#TRANSCRIPT_NOTE#</font></h4>\n" +
+                "            <h4><font face=\"Helvetica Neue\" color=\"gray\" size=\"2\">#TRANSCRIPT_NOTE#</font></h4>\n" +
                 "            <br>\n" +
                 "        </footer>\n" +
                 "    </body>\n" +
-                "</html>";
+                "</html>\n" +
+                "\n" +
+                "\n";
     }
 
     private String transcriptionBody;
 
     {
         transcriptionBody = "<tr style=\"padding-left: 4px; padding-right: 4px; margin-top:5px; margin-top:5px;\">\n" +
-                "    <td width=\"20%\" align=\"right\"><font face=\"Helvetica Neue\" size=\"4\">#SENDER#</font></td>\n" +
-                "    <td width=\"80%\" style=\"padding-left: 20px;\"><font face=\"Helvetica Neue\" size=\"4\">#MESSAGE#</font></td></tr>";
+                "    <td width=\"20%\" align=\"right\" style=\"vertical-align: top; white-space: nowrap;\n" +
+                "        overflow: hidden;\"><font face=\"Helvetica Neue\" size=\"4\">#SENDER#</font></td>\n" +
+                "    <td width=\"80%\" style=\"padding-left: 20px; vertical-align: top;\"><font face=\"Helvetica Neue\" size=\"4\">#MESSAGE#</font></td>\n" +
+                "</tr>";
     }
 
     private String CHAT_TITLE_LABEL = "#CHAT_TITLE#";

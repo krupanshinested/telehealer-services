@@ -126,8 +126,8 @@
 
             <TextView
                 android:id="@+id/history_label"
-                style="@style/text_app_color"
-                android:layout_marginStart="4dp"
+                style="@style/text_sub_title_bold_app_color"
+                android:padding="@dimen/padding_default"
                 android:text="@string/patient_history"
                 android:textAllCaps="true"
                 app:layout_constraintStart_toStartOf="parent"

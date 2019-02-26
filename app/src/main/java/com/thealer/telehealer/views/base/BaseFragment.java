@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -103,6 +105,9 @@ public class BaseFragment extends Fragment {
 
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         View view = LayoutInflater.from(context).inflate(R.layout.view_alert, null);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.width = 150;
+        view.setLayoutParams(layoutParams);
         alertDialog.setCancelable(false);
 
 //        Dialog dialog = alertDialog.create();
@@ -156,6 +161,7 @@ public class BaseFragment extends Fragment {
             }
         }
 
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.setView(view);
         alertDialog.show();
 
@@ -164,8 +170,11 @@ public class BaseFragment extends Fragment {
 //        dialog.show();
     }
 
-    public void showSuccessView(Fragment fragment, int requestId) {
+    public void showSuccessView(Fragment fragment, int requestId, Bundle bundle) {
         SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+        if (bundle != null) {
+            successViewDialogFragment.setArguments(bundle);
+        }
         if (fragment != null) {
             successViewDialogFragment.setTargetFragment(fragment, requestId);
         }

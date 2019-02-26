@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_cv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_default"
+    app:cardCornerRadius="6dp"
+    app:cardUseCompatPadding="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/card_default_padding">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/list_iv"
+            android:layout_width="@dimen/card_image_view_size"
+            android:layout_height="@dimen/card_image_view_size"
+            android:layout_centerVertical="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/list_title_tv"
+            style="@style/text_title_bold"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/card_default_padding"
+            android:gravity="left|bottom"
+            app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/list_iv"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/dummy_text" />
+
+        <TextView
+            android:id="@+id/list_sub_title_tv"
+            style="@style/text_sub_title"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginBottom="2dp"
+            android:ellipsize="end"
+            android:ems="3"
+            android:fontFamily="@font/open_sans_semibold"
+            android:gravity="left|top"
+            android:maxLines="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/list_title_tv"
+            app:layout_constraintStart_toStartOf="@id/list_title_tv"
+            app:layout_constraintTop_toBottomOf="@id/list_title_tv"
+            tools:text="@string/dummy_text" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

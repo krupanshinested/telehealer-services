@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,7 +72,6 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
     private TextView transcriptTv;
     private ImageView backIv;
     private TextView toolbarTitle;
-    private TextView timerTv;
 
     private SimpleExoPlayer simpleExoPlayer;
 
@@ -84,6 +84,8 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
     private int position = -1;
     private TranscriptionListAdapter transcriptionListAdapter;
     private ConstraintLayout parent;
+    private NestedScrollView transcriptNsv;
+    private TextView infoTv;
 
     @Override
     public void onAttach(Context context) {
@@ -112,24 +114,24 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                                     toolbarTitle.setTextColor(Color.WHITE);
                                     toolbarTitle.setText(username + "\n" + Utils.getDayMonthYear(transcriptionApiResponseModel.getOrder_start_time()));
 
-                                    if (transcriptionApiResponseModel.getDoctor() != null){
-                                        if (transcriptionApiResponseModel.getDoctor().getUser_id() == transcriptionApiResponseModel.getCaller_id()){
+                                    if (transcriptionApiResponseModel.getDoctor() != null) {
+                                        if (transcriptionApiResponseModel.getDoctor().getUser_id() == transcriptionApiResponseModel.getCaller_id()) {
                                             transcriptionApiResponseModel.setCaller(transcriptionApiResponseModel.getDoctor());
-                                        }else if (transcriptionApiResponseModel.getDoctor().getUser_id() == transcriptionApiResponseModel.getCallee_id()){
+                                        } else if (transcriptionApiResponseModel.getDoctor().getUser_id() == transcriptionApiResponseModel.getCallee_id()) {
                                             transcriptionApiResponseModel.setCallee(transcriptionApiResponseModel.getDoctor());
                                         }
                                     }
-                                    if (transcriptionApiResponseModel.getPatient() != null){
-                                        if (transcriptionApiResponseModel.getPatient().getUser_id() == transcriptionApiResponseModel.getCaller_id()){
+                                    if (transcriptionApiResponseModel.getPatient() != null) {
+                                        if (transcriptionApiResponseModel.getPatient().getUser_id() == transcriptionApiResponseModel.getCaller_id()) {
                                             transcriptionApiResponseModel.setCaller(transcriptionApiResponseModel.getPatient());
-                                        }else if (transcriptionApiResponseModel.getPatient().getUser_id() == transcriptionApiResponseModel.getCallee_id()){
+                                        } else if (transcriptionApiResponseModel.getPatient().getUser_id() == transcriptionApiResponseModel.getCallee_id()) {
                                             transcriptionApiResponseModel.setCallee(transcriptionApiResponseModel.getPatient());
                                         }
                                     }
-                                    if (transcriptionApiResponseModel.getMedical_assistant() != null){
-                                        if (transcriptionApiResponseModel.getMedical_assistant().getUser_id() == transcriptionApiResponseModel.getCaller_id()){
+                                    if (transcriptionApiResponseModel.getMedical_assistant() != null) {
+                                        if (transcriptionApiResponseModel.getMedical_assistant().getUser_id() == transcriptionApiResponseModel.getCaller_id()) {
                                             transcriptionApiResponseModel.setCaller(transcriptionApiResponseModel.getMedical_assistant());
-                                        }else if (transcriptionApiResponseModel.getMedical_assistant().getUser_id() == transcriptionApiResponseModel.getCallee_id()){
+                                        } else if (transcriptionApiResponseModel.getMedical_assistant().getUser_id() == transcriptionApiResponseModel.getCallee_id()) {
                                             transcriptionApiResponseModel.setCallee(transcriptionApiResponseModel.getMedical_assistant());
                                         }
                                     }
@@ -189,6 +191,9 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
         transcriptTv = (TextView) view.findViewById(R.id.transcript_tv);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        parent = (ConstraintLayout) view.findViewById(R.id.parent);
+        transcriptNsv = (NestedScrollView) view.findViewById(R.id.transcript_nsv);
+        infoTv = (TextView) view.findViewById(R.id.info_tv);
 
         backIv.setOnClickListener(this);
         transcriptTv.setOnClickListener(this);
@@ -203,8 +208,6 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                 recentsApiViewModel.getTranscriptionDetail(resultBean.getTranscription_id(), true);
             }
         }
-        timerTv = (TextView) view.findViewById(R.id.timer_tv);
-        parent = (ConstraintLayout) view.findViewById(R.id.parent);
     }
 
     private void updateTranscript() {
@@ -325,12 +328,14 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.transcript_tv:
-                if (transcriptRv.getVisibility() == View.VISIBLE) {
-                    transcriptRv.setVisibility(View.GONE);
+                if (transcriptNsv.getVisibility() == View.VISIBLE) {
+                    infoTv.setVisibility(View.INVISIBLE);
+                    transcriptNsv.setVisibility(View.GONE);
                     printIv.setVisibility(View.GONE);
                     featuresIv.setVisibility(View.GONE);
                 } else {
-                    transcriptRv.setVisibility(View.VISIBLE);
+                    transcriptNsv.setVisibility(View.VISIBLE);
+                    infoTv.setVisibility(View.VISIBLE);
                     printIv.setVisibility(View.VISIBLE);
                     featuresIv.setVisibility(View.VISIBLE);
                 }

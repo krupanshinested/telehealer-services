@@ -2,7 +2,6 @@ package com.thealer.telehealer.apilayer.models.createuser;
 
 import android.arch.lifecycle.ViewModel;
 
-import com.google.gson.annotations.SerializedName;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 
@@ -25,6 +24,20 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
     private String doctor_certificate_path;
     private boolean hasValidLicenses = true;
     private List<Boolean> hasValidLicensesList = new ArrayList<>();
+
+
+    public void clearData() {
+        this.user_data = new UserDataBean();
+        this.user_detail = new UserDetailBean();
+        this.user_avatar_path = null;
+        this.insurance_front_path = null;
+        this.insurance_back_path = null;
+        this.certification_path = null;
+        this.doctor_driving_license_path = null;
+        this.doctor_certificate_path = null;
+        this.hasValidLicenses = true;
+        this.hasValidLicensesList.clear();
+    }
 
     public List<Boolean> getHasValidLicensesList() {
         return hasValidLicensesList;
@@ -215,9 +228,9 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
         }
 
         public String getGenderKey() {
-            if (gender != null && !gender.isEmpty()){
+            if (gender != null && !gender.isEmpty()) {
                 return gender.replace(String.valueOf(gender.charAt(0)), String.valueOf(gender.charAt(0)).toUpperCase());
-            }else {
+            } else {
                 return gender;
             }
         }

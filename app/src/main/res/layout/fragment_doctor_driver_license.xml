@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:gravity="center">
+    android:gravity="center"
+    android:padding="@dimen/padding_default">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -12,42 +13,70 @@
 
         <TextView
             android:id="@+id/title_tv"
-            style="@style/text_app_color"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            style="@style/text_title_bold_app_color"
             android:gravity="bottom|center"
-            android:text="@string/driver_license"
+            android:padding="@dimen/padding_default"
+            android:text="@string/upload_driver_license"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/license_iv"
+            app:layout_constraintBottom_toTopOf="@+id/license_cv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/license_iv"
-            android:layout_width="250dp"
-            android:layout_height="150dp"
-            android:scaleType="fitXY"
-            android:background="@color/colorGrey"
-            android:src="@drawable/placeholder_license"
+        <android.support.v7.widget.CardView
+            android:id="@+id/license_cv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="0dp"
+            app:cardCornerRadius="6dp"
             app:layout_constraintBottom_toTopOf="@+id/page_hint_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+            app:layout_constraintTop_toBottomOf="@+id/title_tv">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/license_iv"
+                    android:layout_width="250dp"
+                    android:layout_height="150dp"
+                    android:background="@color/colorGrey_light"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/placeholder_driver_license_image"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/add_iv"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:clickable="false"
+                    android:src="@drawable/add_drawable"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
 
         <TextView
             android:id="@+id/page_hint_tv"
+            style="@style/text_sub_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/margin_default"
             android:layout_marginBottom="10dp"
-            android:gravity="center|top"
+            android:gravity="center|top|left"
             android:text="@string/doctor_driving_license_hint"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/license_iv"
+            app:layout_constraintEnd_toEndOf="@id/license_cv"
+            app:layout_constraintStart_toStartOf="@id/license_cv"
+            app:layout_constraintTop_toBottomOf="@+id/license_cv"
             app:layout_constraintWidth_max="@dimen/max_width" />
     </android.support.constraint.ConstraintLayout>
 
