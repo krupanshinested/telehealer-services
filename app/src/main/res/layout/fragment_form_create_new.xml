@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:arrow_visible="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:sub_title_visible="false"
         app:title_text="@string/Click_here_to_select_patient"
@@ -26,7 +28,9 @@
         app:layout_constraintTop_toBottomOf="@+id/patient_ocv">
 
         <TextView
-            style="@style/text_app_color"
+            style="@style/text_sub_title_bold_app_color"
+            android:layout_marginStart="4dp"
+            android:padding="@dimen/padding_default"
             android:text="@string/form" />
 
         <android.support.v7.widget.RecyclerView

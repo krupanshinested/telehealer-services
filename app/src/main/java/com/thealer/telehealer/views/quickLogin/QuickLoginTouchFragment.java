@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -25,8 +26,8 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
  */
 public class QuickLoginTouchFragment extends BaseFragment implements View.OnClickListener {
     private ImageView closeIv;
-    private TextView enableTv;
     private TextView touchIdAgreementTv;
+    private CustomButton enableBtn;
 
     @Nullable
     @Override
@@ -38,32 +39,38 @@ public class QuickLoginTouchFragment extends BaseFragment implements View.OnClic
 
     private void initView(View view) {
         closeIv = (ImageView) view.findViewById(R.id.close_iv);
-        enableTv = (TextView) view.findViewById(R.id.enable_tv);
         touchIdAgreementTv = (TextView) view.findViewById(R.id.touch_id_agreement_tv);
+        enableBtn = (CustomButton) view.findViewById(R.id.enable_btn);
 
         closeIv.setOnClickListener(this);
-        enableTv.setOnClickListener(this);
+        enableBtn.setOnClickListener(this);
         touchIdAgreementTv.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View v) {
-        Bundle bundle = new Bundle();
-        bundle.putInt(ArgumentKeys.QUICK_LOGIN_STATUS, ArgumentKeys.QUICK_LOGIN_CREATED);
 
         switch (v.getId()) {
             case R.id.close_iv:
+                sendBroadCast();
                 EventRecorder.recordRegistration("QuickLogin_skipped", UserDetailPreferenceManager.getUser_guid());
                 appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_NONE);
                 break;
-            case R.id.enable_tv:
+            case R.id.enable_btn:
+                sendBroadCast();
                 EventRecorder.recordRegistration("TouchID_enabled", UserDetailPreferenceManager.getUser_guid());
                 appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_TOUCH);
                 break;
             case R.id.touch_id_agreement_tv:
+                startActivity(new Intent(getActivity(), QuickLoginAgreementActivity.class));
                 break;
         }
+    }
+
+    private void sendBroadCast() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ArgumentKeys.QUICK_LOGIN_STATUS, ArgumentKeys.QUICK_LOGIN_CREATED);
 
         LocalBroadcastManager.getInstance(getActivity())
                 .sendBroadcast(new Intent(getString(R.string.quick_login_broadcast_receiver))

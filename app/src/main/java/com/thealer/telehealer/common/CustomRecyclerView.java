@@ -9,9 +9,9 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 
@@ -26,7 +26,7 @@ public class CustomRecyclerView extends ConstraintLayout {
     private TextView emptyTitleTv;
     private TextView emptyMessageTv;
     private CustomButton emptyActionBtn;
-    private ProgressBar recyclerLoader;
+    private ImageView recyclerLoader;
     private Context context;
     private LinearLayoutManager linearLayoutManager;
     private String emptyState;
@@ -54,8 +54,10 @@ public class CustomRecyclerView extends ConstraintLayout {
         emptyTitleTv = (TextView) view.findViewById(R.id.empty_title_tv);
         emptyMessageTv = (TextView) view.findViewById(R.id.empty_message_tv);
         emptyActionBtn = (CustomButton) view.findViewById(R.id.empty_action_btn);
-        recyclerLoader = (ProgressBar) view.findViewById(R.id.recycler_loader);
+        recyclerLoader = (ImageView) view.findViewById(R.id.recycler_loader);
         swipeLayout = (CustomSwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
+
+        Glide.with(context).load(R.raw.throbber).into(recyclerLoader);
 
         linearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -93,7 +95,7 @@ public class CustomRecyclerView extends ConstraintLayout {
         });
     }
 
-    public CustomSwipeRefreshLayout getSwipeLayout(){
+    public CustomSwipeRefreshLayout getSwipeLayout() {
         return swipeLayout;
     }
 

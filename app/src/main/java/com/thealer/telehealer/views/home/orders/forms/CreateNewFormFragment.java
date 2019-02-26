@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiRes
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.base.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -181,7 +179,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_form_create_new, container, false);
-        setTitle("New Form");
+        setTitle(getString(R.string.new_form));
         initView(view);
         return view;
     }
@@ -209,6 +207,10 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
         if (getArguments() != null) {
             CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             if (commonUserApiResponseModel != null) {
+
+                patientOcv.setArrow_visible(false);
+                patientOcv.setClickable(false);
+
                 title = commonUserApiResponseModel.getUserDisplay_name();
                 subtitle = commonUserApiResponseModel.getDob();
                 isSubtitleVisible = true;

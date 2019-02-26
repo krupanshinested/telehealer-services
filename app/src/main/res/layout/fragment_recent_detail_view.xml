@@ -4,8 +4,10 @@
     android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:background="@color/colorWhite"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/player_view"
@@ -29,6 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/grey_border_drawable"
+        android:padding="@dimen/padding_default"
         app:layout_constraintBottom_toTopOf="@+id/transcript_nsv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -65,30 +68,23 @@
 
         <TextView
             android:id="@+id/transcript_tv"
-            style="@style/text_app_color"
-            android:layout_marginTop="8dp"
+            style="@style/text_sub_title_app_color"
+            android:layout_width="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:padding="@dimen/padding_default"
             android:text="@string/transcript"
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/print_iv"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/timer_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:padding="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/transcript_nsv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:animateLayoutChanges="true"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -102,11 +98,13 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/info_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorGrey_light"
+                android:background="@color/card_view_background"
                 android:gravity="center"
                 android:padding="8dp"
+                android:textSize="12sp"
                 android:text="@string/fine_transcript_message" />
 
             <com.thealer.telehealer.common.CustomRecyclerView

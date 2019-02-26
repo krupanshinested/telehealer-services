@@ -25,14 +25,16 @@ public class VitalPdfGenerator {
             "        <meta charset=\"utf-8\" />\n" +
             "        <title>Chat Details</title>\n" +
             "    </head>\n" +
-            "    <body style=\"margin:40px\">\n" +
+            "    <body style=\"margin:40px;overflow: visible;\">\n" +
             "        <style>\n" +
             "            div {\n" +
             "                text-align: center;\n" +
             "                position: relative;\n" +
+            "                overflow: visible;\n" +
             "            }\n" +
             "        span {\n" +
             "            display: inline-block;\n" +
+            "            overflow: visible;\n" +
             "        }\n" +
             "        span:before,\n" +
             "        span:after {\n" +
@@ -49,6 +51,25 @@ public class VitalPdfGenerator {
             "            right: 0;\n" +
             "            left: auto;\n" +
             "        }\n" +
+            "        \n" +
+            "        h2 {\n" +
+            "            display: block;\n" +
+            "            margin-top: 0.33em;\n" +
+            "            margin-bottom: 0.33em;\n" +
+            "            margin-left: 0;\n" +
+            "            margin-right: 0;\n" +
+            "            font-weight: bold;\n" +
+            "        }\n" +
+            "        \n" +
+            "        h4 {\n" +
+            "            display: block;\n" +
+            "            margin-top: 0.33em;\n" +
+            "            margin-bottom: 0.33em;\n" +
+            "            margin-left: 0;\n" +
+            "            margin-right: 0;\n" +
+            "            font-weight: bold;\n" +
+            "        }\n" +
+            "        \n" +
             "        </style>\n" +
             "        <table width=\"100%\" height=\"20\">\n" +
             "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
@@ -66,29 +87,29 @@ public class VitalPdfGenerator {
             "        <br>\n" +
             "        <table width=\"100%\" height=\"20\">\n" +
             "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
-            "                <td width=\"20%\"><font face=\"Helvetica Neue\">#PATIENT_NAME_LABEL#</font></td>\n" +
-            "                <td width=\"80%\"><h4><b><font face=\"Helvetica Neue\">#PATIENT_NAME#</font></b></h4></td>\n" +
+            "                <td width=\"20%\"><font face=\"Helvetica Neue\" size=\"4\">#PATIENT_NAME_LABEL#</font></td>\n" +
+            "                <td width=\"80%\"><h4><b><font face=\"Helvetica Neue\" size=\"4\">#PATIENT_NAME#</font></b></h4></td>\n" +
             "            </tr>\n" +
             "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
-            "                <td width=\"20%\"><font face=\"Helvetica Neue\">#PATIENT_DOB_LABEL#</font></td>\n" +
-            "                <td width=\"80%\"><h4><b><font face=\"Helvetica Neue\">#PATIENT_DOB#</font></b></h4></td>\n" +
+            "                <td width=\"20%\"><font face=\"Helvetica Neue\" size=\"4\">#PATIENT_DOB_LABEL#</font></td>\n" +
+            "                <td width=\"80%\"><h4><b><font face=\"Helvetica Neue\" size=\"4\">#PATIENT_DOB#</font></b></h4></td>\n" +
             "            </tr>\n" +
             "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
-            "                <td width=\"20%\"><font face=\"Helvetica Neue\">#PATIENT_GENDER_LABEL#</font></td>\n" +
-            "                <td width=\"80%\"><h4><b><font face=\"Helvetica Neue\">#PATIENT_GENDER#</font></b></h4></td>\n" +
+            "                <td width=\"20%\"><font face=\"Helvetica Neue\" size=\"4\">#PATIENT_GENDER_LABEL#</font></td>\n" +
+            "                <td width=\"80%\"><h4><b><font face=\"Helvetica Neue\"size=\"4\" >#PATIENT_GENDER#</font></b></h4></td>\n" +
             "            </tr>\n" +
             "            <tr style=\"padding-left: 4px; padding-right: 4px;\">\n" +
-            "                <td width=\"20%\"><font face=\"Helvetica Neue\">#PERIOD_LABEL#</font></td>\n" +
-            "                <td width=\"80%\"><h4><b><font face=\"Helvetica Neue\">#PERIOD#</font></b></h4></td>\n" +
+            "                <td width=\"20%\"><font face=\"Helvetica Neue\" size=\"4\">#PERIOD_LABEL#</font></td>\n" +
+            "                <td width=\"80%\"><h4><b><font face=\"Helvetica Neue\" size=\"4\">#PERIOD#</font></b></h4></td>\n" +
             "            </tr>\n" +
             "        </table>\n" +
             "        <br>\n" +
             "        <table width = \"100%\" height = \"40\">\n" +
             "            <tr style=\"background-color:#EEEEEE; padding-left: 4px; padding-right: 4px;\">\n" +
-            "                <td width=\"30%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\">#CREATED_AT_LABEL#</font></td>\n" +
-            "                <td width=\"20%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\">#VALUE_LABEL#</font></td>\n" +
-            "                <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\">#CAPTURED_BY_LABEL#</font></td>\n" +
-            "                <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\">#MODE_LABEL#</font></td>\n" +
+            "                <td width=\"30%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\" >#CREATED_AT_LABEL#</font></td>\n" +
+            "                <td width=\"20%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#VALUE_LABEL#</font></td>\n" +
+            "                <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#CAPTURED_BY_LABEL#</font></td>\n" +
+            "                <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#MODE_LABEL#</font></td>\n" +
             "            </tr>\n" +
             "        </table>\n" +
             "        <table width = \"100%\" height = \"50\">\n" +
@@ -99,10 +120,10 @@ public class VitalPdfGenerator {
             "\n" +
             "\n";
     private final String htmlList = "<tr style=\"padding-left: 4px; padding-right: 4px; margin-top:5px; margin-top:5px;\">\n" +
-            "    <td width=\"30%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\">#CREATED_AT#</font></td>\n" +
-            "    <td width=\"20%\" align = \"center\"><b><font face=\"Helvetica Neue\" color = \"black\">#VALUE#</font></b></td>\n" +
-            "    <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\">#CREATED_BY#</font></td>\n" +
-            "    <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\">#MODE#</font></td>\n" +
+            "    <td width=\"30%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#CREATED_AT#</font></td>\n" +
+            "    <td width=\"20%\" align = \"center\"><b><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#VALUE#</font></b></td>\n" +
+            "    <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#CREATED_BY#</font></td>\n" +
+            "    <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#MODE#</font></td>\n" +
             "</tr>\n";
 
 

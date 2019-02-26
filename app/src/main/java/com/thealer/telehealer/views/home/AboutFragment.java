@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -35,8 +33,6 @@ import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFr
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 14,November,2018
@@ -62,12 +58,13 @@ public class AboutFragment extends BaseFragment {
     private CardView phoneCv;
     private TextView userPhoneTv;
     private TextView disconnectTv;
-
-    private CommonUserApiResponseModel userDetail;
-    private int userType;
     private ImageView[] indicators;
     private TextView insuranceCashTv;
     private LinearLayout insuranceImageLl;
+
+    private int userType;
+    private String view_type;
+    private CommonUserApiResponseModel userDetail;
     private DisconnectAssociationApiViewModel disconnectAssociationApiViewModel;
     private OnCloseActionInterface onCloseActionInterface;
     private AttachObserverInterface attachObserverInterface;
@@ -87,16 +84,14 @@ public class AboutFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
-                    dialog = Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.association_deleted))
-                            .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.association_deleted), getString(R.string.yes),
+                            null, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
                                     onCloseActionInterface.onClose(true);
                                 }
-                            })
-                            .create();
-                    dialog.show();
+                            }, null);
                 }
             }
         });
@@ -136,12 +131,22 @@ public class AboutFragment extends BaseFragment {
 
         if (getArguments() != null) {
             userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            view_type = getArguments().getString(Constants.VIEW_TYPE);
+
+            if (view_type.equals(Constants.VIEW_CONNECTION)) {
+
+                disconnectTv.setVisibility(View.GONE);
+
+            } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
+                disconnectTv.setVisibility(View.VISIBLE);
+            }
 
             if (userDetail != null) {
                 switch (userDetail.getRole()) {
                     case Constants.ROLE_DOCTOR:
                         doctorDetailView.setVisibility(View.VISIBLE);
                         patientDetailView.setVisibility(View.GONE);
+                        phoneCv.setVisibility(View.GONE);
 
                         if (userDetail.getUser_detail() != null &&
                                 userDetail.getUser_detail().getData() != null) {
@@ -194,7 +199,7 @@ public class AboutFragment extends BaseFragment {
                         });
 
 
-                        String view_type = getArguments().getString(Constants.VIEW_TYPE);
+                        view_type = getArguments().getString(Constants.VIEW_TYPE);
                         setDisconnectTv(view_type);
 
 
@@ -203,12 +208,20 @@ public class AboutFragment extends BaseFragment {
                         doctorDetailView.setVisibility(View.GONE);
                         patientDetailView.setVisibility(View.VISIBLE);
 
+                        if (view_type.equals(Constants.VIEW_CONNECTION)) {
+                            medicalHistoryBtn.setVisibility(View.GONE);
+                        } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
+                            medicalHistoryBtn.setVisibility(View.VISIBLE);
+                        }
+
                         patientEmailTv.setText(userDetail.getEmail());
 
                         List<String> insuranceImageList = new ArrayList<>();
 
                         if (userDetail.getUser_detail() != null &&
-                                userDetail.getUser_detail().getData() != null) {
+                                userDetail.getUser_detail().getData() != null &&
+                                (userDetail.getUser_detail().getData().getInsurance_front() != null ||
+                                        userDetail.getUser_detail().getData().getInsurance_back() != null)) {
 
 
                             if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
@@ -252,12 +265,10 @@ public class AboutFragment extends BaseFragment {
                             insuranceCashTv.setVisibility(View.VISIBLE);
                         }
 
-
                         break;
                     case Constants.ROLE_ASSISTANT:
                         doctorDetailView.setVisibility(View.GONE);
                         patientDetailView.setVisibility(View.GONE);
-
                         medicalHistoryBtn.setVisibility(View.GONE);
 
                         if (userDetail.getConnection_status() == null || !userDetail.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
@@ -287,17 +298,20 @@ public class AboutFragment extends BaseFragment {
             disconnectTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dialog = Utils.showAlertDialog(getActivity(), getString(R.string.delete_connection),
-                            getString(R.string.disassoctiate_this_connection))
-                            .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    showAlertDialog(getActivity(), getString(R.string.delete_connection),
+                            getString(R.string.disassoctiate_this_connection), getString(R.string.yes),
+                            getString(R.string.no), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     disconnectAssociationApiViewModel.disconnectUser(userDetail.getUser_guid());
                                     dialog.dismiss();
                                 }
-                            })
-                            .create();
-                    dialog.show();
+                            }, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
                 }
             });
 

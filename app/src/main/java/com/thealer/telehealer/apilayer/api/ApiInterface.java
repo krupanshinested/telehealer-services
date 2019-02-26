@@ -19,9 +19,9 @@ import com.thealer.telehealer.apilayer.models.getDoctorsModel.TypeAHeadResponseM
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByDemographicRequestModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
+import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
-import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
@@ -47,6 +47,7 @@ import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestMo
 import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
+import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
@@ -252,8 +253,9 @@ public interface ApiInterface {
     @DELETE("api/users")
     Observable<BaseApiResponseModel> deleteAccount();
 
+    @Multipart
     @PUT("api/users/profile")
-    Observable<BaseApiResponseModel> updateUserDetail(@Body RequestBody body);
+    Observable<BaseApiResponseModel> updateUserDetail(@Part("user_data") RequestBody body);
 
     @Multipart
     @PUT("api/users/profile")
@@ -434,7 +436,8 @@ public interface ApiInterface {
 
     @Multipart
     @POST("api/call/{id}")
-    Observable<BaseApiResponseModel> postTranscript(@Path(ID) String sessionId,@Part MultipartBody.Part file);
+    Observable<BaseApiResponseModel> postTranscript(@Path(ID) String sessionId, @Part MultipartBody.Part file);
 
-
+    @GET("api/connection-status/{id}")
+    Observable<ConnectionStatusApiResponseModel> getUserConnectionStatus(@Path(ID) String userGuid);
 }

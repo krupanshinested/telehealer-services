@@ -20,13 +20,14 @@ import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.signup.doctor.CreateDoctorDetailFragment;
 import com.thealer.telehealer.views.signup.doctor.DoctorCertificateFragment;
-import com.thealer.telehealer.views.signup.doctor.DoctorDetailFragment;
 import com.thealer.telehealer.views.signup.doctor.DoctorDriverLicenseFragment;
 import com.thealer.telehealer.views.signup.doctor.DoctorListFragment;
 import com.thealer.telehealer.views.signup.doctor.DoctorRegistrationInfoFragment;
@@ -49,7 +50,7 @@ import static com.thealer.telehealer.common.UserType.isUserPatient;
  * Created by Aswin on 11,October,2018
  */
 public class SignUpActivity extends BaseActivity implements View.OnClickListener, OnViewChangeInterface, OnActionCompleteInterface,
-        SuccessViewInterface{
+        SuccessViewInterface, AttachObserverInterface {
 
     private static final java.lang.String CURRENT_STEP = "current_step";
     private int currentStep = 1;
@@ -73,14 +74,30 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         setUserType();
         initView();
 
-
-        if (savedInstanceState != null) {
-            currentStep = savedInstanceState.getInt(CURRENT_STEP);
-            setCurrentStep();
-        } else {
-            setFragment(null);
+        boolean isVerifyOtp = false;
+        if (getIntent().getExtras() != null) {
+            isVerifyOtp = getIntent().getExtras().getBoolean(ArgumentKeys.IS_VERIFY_OTP, false);
         }
 
+        if (isVerifyOtp) {
+            showOtpVerification();
+        } else {
+            if (savedInstanceState != null) {
+                currentStep = savedInstanceState.getInt(CURRENT_STEP);
+                setCurrentStep();
+            } else {
+                setFragment(null);
+            }
+        }
+    }
+
+    private void showOtpVerification() {
+        signupToolbarTitleTv.setVisibility(View.GONE);
+        OtpVerificationFragment otpVerificationFragment = new OtpVerificationFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ArgumentKeys.IS_VERIFY_OTP, true);
+        otpVerificationFragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.signup_fragment_container, otpVerificationFragment).commit();
     }
 
     @Override
@@ -187,7 +204,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             return new DoctorListFragment();
                         case 4:
                             viewInfoStack.push(getString(R.string.doctor_detail_info));
-                            return new DoctorDetailFragment();
+                            return new CreateDoctorDetailFragment();
                         case 5:
                             viewInfoStack.push(getString(R.string.doctor_driving_license_hint));
                             return new DoctorDriverLicenseFragment();
@@ -235,7 +252,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     signupToolbarTitleTv.setText(currentStep - 1 + " of 8");
                 }
                 if (isUserDoctor()) {
-                    signupToolbarTitleTv.setText(currentStep - 1 + " of 10");
+                    signupToolbarTitleTv.setText(currentStep - 1 + " of 11");
                 }
             }
         }
@@ -281,6 +298,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 proceedNext();
                 break;
             case R.id.close_iv:
+                appPreference.deletePreference();
+                startActivity(new Intent(this, OnBoardingActivity.class));
                 finish();
                 break;
         }
@@ -293,7 +312,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             doCurrentTransactionInterface.doCurrentTransaction();
         } else {
             if (getCurrentFragment() instanceof DoCurrentTransactionInterface) {
-                ((DoCurrentTransactionInterface)getCurrentFragment()).doCurrentTransaction();
+                ((DoCurrentTransactionInterface) getCurrentFragment()).doCurrentTransaction();
             }
         }
     }
@@ -453,7 +472,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     ((CameraInterface) getSupportFragmentManager().getFragments().get(0)).onImageReceived(imagePath);
                 } else {
                     if (getCurrentFragment() instanceof CameraInterface) {
-                        ((CameraInterface)getCurrentFragment()).onImageReceived(imagePath);
+                        ((CameraInterface) getCurrentFragment()).onImageReceived(imagePath);
                     }
                 }
 

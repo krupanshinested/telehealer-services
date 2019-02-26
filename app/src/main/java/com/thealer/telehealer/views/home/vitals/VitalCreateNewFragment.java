@@ -209,27 +209,24 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
             vital2Et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-
                     updateEditText(vital2Et, hasFocus);
                 }
             });
+
         }
     }
 
+
     private void updateEditText(EditText editText, boolean hasFocus) {
-        if (!hasFocus) {
-            editText.setInputType(InputType.TYPE_NULL);
-            String[] number = editText.getText().toString().split(" ");
-            if (number[0].isEmpty()) {
-                number[0] = "0";
-            }
-            editText.setText(number[0] + " " + inputUnit);
-        } else {
-            if (editText.getText().toString().length() > 0 && editText.getText().toString().charAt(0) == '0') {
+
+        if (hasFocus) {
+            String value = editText.getText().toString().replace(inputUnit, "").trim();
+            if (value.equals("0")) {
                 editText.setText(null);
             } else {
-                editText.setText(editText.getText().toString().replace(inputUnit, " ").trim());
+                editText.setText(value);
             }
+
             switch (selectedItem) {
                 case SupportedMeasurementType.weight:
                 case SupportedMeasurementType.temperature:
@@ -239,36 +236,69 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     break;
             }
+
+        } else {
+            editText.setInputType(InputType.TYPE_NULL);
+
+            if (editText.getText().toString().isEmpty()) {
+                editText.setText("0 " + inputUnit);
+            } else {
+                String[] number = editText.getText().toString().split(" ");
+                if (number[0].isEmpty()) {
+                    number[0] = "0";
+                }
+                editText.setText(number[0] + " " + inputUnit);
+            }
         }
     }
 
     private void validateFirstVital(String data) {
-        if (data.isEmpty() || !isValidInput(data) || data.equals("0")) {
-            vital1Til.setError(VitalsConstant.getInputError(inputType));
-            enableOrDisableSubmit(false);
+
+        if (!data.isEmpty() && !data.equals("0")) {
+            isInputValid = false;
+            if (!isValidInput(data, inputType)) {
+                vital1Til.setError(VitalsConstant.getInputError(inputType));
+                enableOrDisableSubmit(false);
+            } else {
+                isInputValid = true;
+                enableOrDisableSubmit(true);
+            }
         } else {
-            isInputValid = true;
-            enableOrDisableSubmit(true);
+            isInputValid = false;
+            enableOrDisableSubmit(false);
         }
 
-        if (vital2Til.getVisibility() == View.VISIBLE) {
+        if (vital2Til.getVisibility() == View.VISIBLE && !data.split(" ")[0].equals("0")) {
             validateSecondVital(vital2Et.getText().toString().split(" ")[0]);
         }
     }
 
     private void validateSecondVital(String data) {
-        if (data.isEmpty() || !isValidInput(data) || data.equals("0")) {
-            vital2Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_DIASTOLE));
+
+        if (data.isEmpty()) {
             enableOrDisableSubmit(false);
         } else {
-            enableOrDisableSubmit(false);
-            if (isInputValid) {
-                enableOrDisableSubmit(true);
+            if (data.equals("0")) {
+                enableOrDisableSubmit(false);
+                if (vital2Et.isFocused()) {
+                    vital2Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_DIASTOLE));
+                }
+            } else {
+                if (!isValidInput(data, VitalsConstant.INPUT_DIASTOLE)) {
+                    vital2Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_DIASTOLE));
+                    enableOrDisableSubmit(false);
+                } else {
+                    enableOrDisableSubmit(true);
+                }
             }
+        }
+
+        if (!isInputValid) {
+            enableOrDisableSubmit(false);
         }
     }
 
-    private boolean isValidInput(String data) {
+    private boolean isValidInput(String data, String inputType) {
         if (data.length() == 1 && data.charAt(0) == '.') {
             return false;
         } else {
@@ -276,6 +306,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                 data = "0" + data;
             }
         }
+
         return Float.parseFloat(data) > getMinRange(inputType) && Float.parseFloat(data) <= getMaxRange(inputType);
     }
 
@@ -290,7 +321,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.submit_btn:
-                showOrHideSoftInputWindow(false);
+                Utils.hideKeyboard(getActivity());
                 CreateVitalApiRequestModel vitalApiRequestModel = new CreateVitalApiRequestModel();
 
                 vitalApiRequestModel.setType(selectedItem);
@@ -309,7 +340,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                 } else if (UserType.isUserPatient()) {
                     vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_PATIENT);
                     vitalApiRequestModel.setDisplay_name(UserDetailPreferenceManager.getUserDisplayName());
-                }else {
+                } else {
                     vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DEVICE);
                     vitalApiRequestModel.setDisplay_name(VitalsConstant.VITAL_MODE_DEVICE);
                 }

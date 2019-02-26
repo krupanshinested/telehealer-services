@@ -11,8 +11,9 @@
 
         <TextView
             android:id="@+id/title_tv"
-            style="@style/text_app_color"
-            android:layout_width="0dp"
+            style="@style/text_title_app_color"
+            android:gravity="center"
+            android:padding="@dimen/padding_default"
             android:text="@string/registration"
             app:layout_constraintBottom_toTopOf="@+id/circular_layout"
             app:layout_constraintEnd_toEndOf="parent"

@@ -45,7 +45,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:gravity="center"
+            android:gravity="center|left"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title_tv"
@@ -53,25 +53,15 @@
 
         <TextView
             android:id="@+id/resend_tv"
-            style="@style/text_app_color"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:text="@string/resend_mail"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:gravity="center|left"
+            app:layout_constraintEnd_toEndOf="@id/email_message"
+            app:layout_constraintStart_toStartOf="@id/email_message"
             app:layout_constraintTop_toBottomOf="@+id/email_message" />
 
-        <TextView
-            android:id="@+id/confirmed_tv"
-            style="@style/text_title_dark"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/confirmed_your_mail"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toTopOf="@+id/done_btn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/resend_tv"
-            app:layout_constraintVertical_bias="1.0" />
 
         <com.thealer.telehealer.common.CustomButton
             android:id="@+id/done_btn"
@@ -79,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:text="@string/done"
+            android:text="@string/confirmed"
             app:app_gradient="true"
             app:corner_radius="25dp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:gravity="center"
     android:maxWidth="@dimen/max_width"
+    android:padding="@dimen/padding_default"
     android:theme="@style/AppTheme">
 
 
     <TextView
         android:id="@+id/title_tv"
-        style="@style/text_app_color"
-        android:text="Enter your email"
+        style="@style/text_title_app_color"
+        android:gravity="center"
+        android:padding="@dimen/padding_default"
+        android:text="@string/enter_your_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -41,7 +43,8 @@
         android:id="@+id/remember_cb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/margin_default"
+        android:buttonTint="@color/app_gradient_start"
         android:text="@string/remember_me"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,13 +53,14 @@
 
     <TextView
         android:id="@+id/page_hint_tv"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
+        android:layout_marginTop="@dimen/margin_default"
+        android:gravity="center|left"
+        style="@style/text_sub_title"
         android:text="@string/email_info"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/email_til"
+        app:layout_constraintStart_toStartOf="@id/email_til"
         app:layout_constraintTop_toBottomOf="@+id/remember_cb"
         app:layout_constraintWidth_max="@dimen/max_width" />
 

@@ -7,8 +7,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
-import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
+import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
@@ -38,19 +38,12 @@ public class AppointmentSlotUpdate extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
 
-                    HashMap<String, Object> value = new HashMap<>();
                     HashMap<String, String> key = new HashMap<>();
                     key.put("appt_length", slot);
-                    value.put("user_data", key);
 
-                    RequestBody body = RequestBody.create(MediaType.parse("application/json"), value.toString());
+                    RequestBody body = FormBody.create(MediaType.parse("application/form-data"), new Gson().toJson(key));
 
-                    RequestBody requestBody = new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addPart(body)
-                            .build();
-
-                    getAuthApiService().updateUserDetail(requestBody)
+                    getAuthApiService().updateUserDetail(body)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -110,9 +103,6 @@ public class AppointmentSlotUpdate extends BaseApiViewModel {
                 if (status) {
                     Map<String, String> history = new HashMap<>();
                     history.put("history", new Gson().toJson(historyBeanList));
-
-                    Log.e("aswin", "onStatus: " + new Gson().toJson(historyBeanList));
-                    Log.e("aswin", "onStatus: " + history.toString());
 
                     RequestBody requestBody = FormBody.create(MediaType.parse("application/form-data"), new Gson().toJson(historyBeanList));
 

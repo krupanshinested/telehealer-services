@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseBottomSheetDialogFragment;
 
 /**
@@ -55,6 +56,7 @@ public class DoctorBioBottomSheetFragment extends BaseBottomSheetDialogFragment 
             public void onClick(View v) {
                 createUserRequestModel.getUser_detail().getData().setBio(bioBottomsheetEt.getText().toString());
                 getTargetFragment().onActivityResult(getTargetRequestCode(), RequestID.REQ_BIO, null);
+                Utils.hideKeyboard(getActivity());
                 getDialog().dismiss();
             }
         });

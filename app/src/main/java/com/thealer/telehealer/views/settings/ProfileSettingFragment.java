@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.settings;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,18 +13,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
-import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
@@ -50,6 +48,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     private Boolean isSlotLoaded = false;
     private LinearLayout medicalAssistantLl;
     private ProfileCellView medicalAssistant;
+    private TextView versionTv;
+    private String selectedItem;
 
     @Nullable
     @Override
@@ -83,7 +83,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.signOut && TokBox.shared.isActiveCallPreset()) {
-            Toast.makeText(getActivity(),getString(R.string.live_call_going_error),Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), getString(R.string.live_call_going_error), Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -108,6 +108,14 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         payments_billings = baseView.findViewById(R.id.payments_billings);
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
+        versionTv = (TextView) baseView.findViewById(R.id.version_tv);
+
+
+        try {
+            versionTv.setText(getString(R.string.version) + " " + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         appointment_slots = baseView.findViewById(R.id.appointment_slots);
         String[] titleList = getActivity().getResources().getStringArray(R.array.doctor_appointment_slots);
@@ -124,6 +132,13 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
 
+                    WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+                    whoAmIApiResponseModel.setAppt_length(Integer.parseInt(selectedItem));
+                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+
+                    appointment_slots.updateUI(false);
+                    appointment_slots.updateValue(selectedItem);
+
                 }
             }
         });
@@ -134,11 +149,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 if (!isSlotLoaded) {
                     isSlotLoaded = true;
                 } else {
-                    String selectedItem = parent.getItemAtPosition(position).toString(); //this is your selected item
+                    selectedItem = parent.getItemAtPosition(position).toString();
                     appointmentSlotUpdate.updateAppointmentSlot(selectedItem);
-                    UserDetailPreferenceManager.setAppt_length(Integer.parseInt(selectedItem));
-                    appointment_slots.updateUI(false);
-                    appointment_slots.updateValue(selectedItem);
                 }
 
             }

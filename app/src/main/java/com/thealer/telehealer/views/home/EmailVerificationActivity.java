@@ -92,16 +92,14 @@ public class EmailVerificationActivity extends BaseActivity implements View.OnCl
         resendTv = (TextView) findViewById(R.id.resend_tv);
         doneBtn = (CustomButton) findViewById(R.id.done_btn);
 
-        String email;
-        if (UserDetailPreferenceManager.getWhoAmIResponse() == null) {
-            email = UserDetailPreferenceManager.getEmail();
-        } else {
-            email = UserDetailPreferenceManager.getWhoAmIResponse().getEmail();
-        }
+        String email = UserDetailPreferenceManager.getEmail();
 
-        String htmlText = "<p>You have not validated the mail we sent to <font color=red>" + email + "</font>. Go to your email and please validate.</p>";
+        String htmlText = "<p>Check the email sent to <font color=red>" + email + "</font> for a verification message and follow the link provided in order to continue.</p>";
 
         emailMessage.setText(Utils.fromHtml(htmlText));
+
+        String resendText = "<p>Can’t find the email in your inbox? Check your junk and spam folders. Otherwise, we can <font color=red> send a new verifications email.</font></p>";
+        resendTv.setText(Utils.fromHtml(resendText));
 
         doneBtn.setOnClickListener(this);
         resendTv.setOnClickListener(this);

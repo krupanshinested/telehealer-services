@@ -126,7 +126,7 @@ public class BaseActivity extends AppCompatActivity {
         DrawableImageViewTarget drawableImageViewTarget = new DrawableImageViewTarget(imageView);
 
 
-        Glide.with(this)
+        Glide.with(getApplicationContext())
                 .load(R.raw.throbber)
                 .into(drawableImageViewTarget);
 
@@ -193,7 +193,7 @@ public class BaseActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate(R.layout.loader_view, null);
         builder.setView(view);
         ImageView iv = view.findViewById(R.id.loader_iv);
-        Glide.with(this).load(R.drawable.loader_medical).into(iv);
+        Glide.with(getApplicationContext()).load(R.drawable.loader_medical).into(iv);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
         alertDialog.getWindow().setLayout(250, 250);

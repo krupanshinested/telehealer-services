@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
-            android:background="@color/app_gradient_start"
+            android:background="@drawable/app_background_gradient"
             android:paddingBottom="4dp"
             android:splitMotionEvents="false"
             app:mcv_calendarMode="week"

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +12,12 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCommonResultResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -117,8 +115,8 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
         itemCv = (CardView) convertView.findViewById(R.id.item_cv);
         itemCiv = (CircleImageView) convertView.findViewById(R.id.item_civ);
-        itemTitleTv = (TextView) convertView.findViewById(R.id.item_title_tv);
-        itemSubTitleTv = (TextView) convertView.findViewById(R.id.item_sub_title_tv);
+        itemTitleTv = (TextView) convertView.findViewById(R.id.list_title_tv);
+        itemSubTitleTv = (TextView) convertView.findViewById(R.id.list_sub_title_tv);
         statusIv = (ImageView) convertView.findViewById(R.id.status_iv);
 
         Bundle bundle = new Bundle();
@@ -183,7 +181,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
                 fragment = new SpecialistDetailViewFragment();
 
-            }else if (ordersCommonResultResponseModel instanceof GetRadiologyResponseModel.ResultBean){
+            } else if (ordersCommonResultResponseModel instanceof GetRadiologyResponseModel.ResultBean) {
                 fragment = new RadiologyDetailViewFragment();
             }
 

@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.home.vitals;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -483,15 +484,25 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             }
         }
 
-        VitalPdfGenerator vitalPdfGenerator = new VitalPdfGenerator(getActivity());
-        String htmlContent = vitalPdfGenerator.generatePdfFor(pdfList, commonUserApiResponseModel);
+        if (!pdfList.isEmpty()) {
+            VitalPdfGenerator vitalPdfGenerator = new VitalPdfGenerator(getActivity());
+            String htmlContent = vitalPdfGenerator.generatePdfFor(pdfList, commonUserApiResponseModel);
 
-        PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(ArgumentKeys.HTML_FILE, htmlContent);
-        bundle.putString(ArgumentKeys.PDF_TITLE, "VitalsFile");
-        pdfViewerFragment.setArguments(bundle);
-        showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+            PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(ArgumentKeys.HTML_FILE, htmlContent);
+            bundle.putString(ArgumentKeys.PDF_TITLE, "VitalsFile");
+            pdfViewerFragment.setArguments(bundle);
+            showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+        } else {
+            showAlertDialog(getActivity(), getString(R.string.alert), "No data available for " + timePeriod, getString(R.string.ok), null,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }, null);
+        }
     }
 
     private void updateList(ArrayList<VitalsApiResponseModel> vitalsApiResponseModelArrayList) {
@@ -587,7 +598,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             case R.id.add_fab:
 
                 if (TokBox.shared.isActiveCallPreset()) {
-                    Toast.makeText(getActivity(),getString(R.string.live_call_going_error),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.live_call_going_error), Toast.LENGTH_LONG).show();
                     return;
                 }
 
