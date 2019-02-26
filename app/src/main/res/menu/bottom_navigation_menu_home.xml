@@ -14,17 +14,17 @@
 
         <item
             android:id="@+id/menu_schedules"
-            android:icon="@drawable/ic_drawer_schedule"
+            android:icon="@drawable/ic_schedule_24dp"
             android:title="@string/schedules" />
 
         <item
             android:id="@+id/menu_vitals"
-            android:icon="@drawable/ic_vitals"
+            android:icon="@drawable/ic_vitals_24dp"
             android:title="@string/vitals" />
 
         <item
             android:id="@+id/menu_orders"
-            android:icon="@drawable/ic_orders_documents"
+            android:icon="@drawable/ic_documents_24"
             android:title="@string/orders" />
 
         <item
@@ -36,6 +36,6 @@
     <item
         android:id="@+id/menu_profile_settings"
         android:checkable="false"
-        android:icon="@drawable/recent_drawable_selector"
+        android:icon="@drawable/ic_settings_24dp"
         android:title="@string/profile_settings" />
 </menu>

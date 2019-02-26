@@ -42,7 +42,7 @@ public class DocumentsPagerAdapter extends PagerAdapter {
 
         pagerItemIv = (ImageView) view.findViewById(R.id.pager_item_iv);
 
-        Utils.setImageWithGlide(context, pagerItemIv, result.get(position).getPath(), context.getDrawable(R.drawable.ic_orders_documents), true);
+        Utils.setImageWithGlide(context, pagerItemIv, result.get(position).getPath(), context.getDrawable(R.drawable.document_placeholder_drawable), true);
 
         return view;
     }

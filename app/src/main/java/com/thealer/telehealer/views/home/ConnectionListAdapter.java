@@ -77,12 +77,26 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        if (apiResponseModelList.get(i).getConnection_status() == null) {
-            viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_connect_user));
-            viewHolder.actionIv.setImageTintList(null);
-        } else if (apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_OPEN)) {
+
+        if (apiResponseModelList.get(i).getConnection_status() != null && apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_OPEN)) {
             viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_access_time_24dp));
             viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.color_green_light)));
+        } else {
+            viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_connect_user));
+            viewHolder.actionIv.setImageTintList(null);
+            viewHolder.actionIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.vibrate(fragmentActivity);
+                    selected_position = i;
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.get(i).getUser_id());
+                    bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
+
+                    onActionCompleteInterface.onCompletionResult(null, true, bundle);
+                }
+            });
+
         }
 
         Utils.setImageWithGlide(context, viewHolder.avatarCiv, apiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
@@ -96,21 +110,6 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
                 onListItemSelectInterface.onListItemSelected(i, bundle);
-            }
-        });
-
-        viewHolder.actionIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.vibrate(fragmentActivity);
-                if (apiResponseModelList.get(i).getConnection_status() == null) {
-                    selected_position = i;
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.get(i).getUser_id());
-                    bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
-
-                    onActionCompleteInterface.onCompletionResult(null, true, bundle);
-                }
             }
         });
     }
@@ -136,8 +135,8 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             super(itemView);
             itemCv = (CardView) itemView.findViewById(R.id.item_cv);
             avatarCiv = (CircleImageView) itemView.findViewById(R.id.avatar_civ);
-            titleTv = (TextView) itemView.findViewById(R.id.title_tv);
-            subTitleTv = (TextView) itemView.findViewById(R.id.sub_title_tv);
+            titleTv = (TextView) itemView.findViewById(R.id.list_title_tv);
+            subTitleTv = (TextView) itemView.findViewById(R.id.list_sub_title_tv);
             actionIv = (ImageView) itemView.findViewById(R.id.action_iv);
         }
     }

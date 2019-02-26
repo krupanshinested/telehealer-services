@@ -10,14 +10,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -41,7 +40,7 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
     private EditText searchEt;
     private ImageView clearIv;
     private RecyclerView searchListRv;
-    private ProgressBar progressbar;
+    private ImageView progressbar;
 
     private OnActionCompleteInterface onActionCompleteInterface;
     private OnViewChangeInterface onViewChangeInterface;
@@ -53,6 +52,7 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
     private boolean isApiRequested = false, isSearch = true;
     private List<String> doctorsNameList = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
+    private ImageView throbber;
 
     @Override
     public void onAttach(Context context) {
@@ -64,8 +64,12 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
         getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                throbber.setVisibility(View.GONE);
                 isApiRequested = false;
                 progressbar.setVisibility(View.GONE);
+                if (!searchEt.getText().toString().isEmpty())
+                    clearIv.setVisibility(View.VISIBLE);
+
                 if (baseApiResponseModel != null) {
                     typeAHeadResponseModel = (TypeAHeadResponseModel) baseApiResponseModel;
 
@@ -76,7 +80,7 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
                     doctorsNameList.addAll(typeAHeadResponseModel.getData());
                     setSearchList();
 
-                    EventRecorder.recordRegistration("doctor_lookup_success",null);
+                    EventRecorder.recordRegistration("doctor_lookup_success", null);
                 }
             }
         });
@@ -107,7 +111,11 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
         searchEt = (EditText) view.findViewById(R.id.search_et);
         clearIv = (ImageView) view.findViewById(R.id.clear_iv);
         searchListRv = (RecyclerView) view.findViewById(R.id.search_list_rv);
-        progressbar = (ProgressBar) view.findViewById(R.id.progressbar);
+        progressbar = (ImageView) view.findViewById(R.id.progressbar);
+        throbber = (ImageView) view.findViewById(R.id.throbber);
+
+        Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(throbber);
+        Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(progressbar);
 
         searchEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -123,6 +131,8 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
             @Override
             public void afterTextChanged(Editable s) {
                 if (isSearch) {
+                    clearIv.setVisibility(View.GONE);
+                    throbber.setVisibility(View.VISIBLE);
                     page = 1;
                     if (searchListAdapter != null) {
                         searchListAdapter.setData(new ArrayList<>());
@@ -130,7 +140,6 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
                     if (!s.toString().isEmpty()) {
                         makeApiCall(s.toString());
                         onViewChangeInterface.enableNext(true);
-                        clearIv.setVisibility(View.VISIBLE);
                     } else {
                         onViewChangeInterface.enableNext(false);
                         clearIv.setVisibility(View.GONE);

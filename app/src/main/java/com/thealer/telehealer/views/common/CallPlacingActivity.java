@@ -1,21 +1,23 @@
 package com.thealer.telehealer.views.common;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
-import com.thealer.telehealer.R;
 
 import com.braintreepayments.api.dropin.DropInActivity;
 import com.braintreepayments.api.dropin.DropInRequest;
 import com.braintreepayments.api.dropin.DropInResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
@@ -72,6 +74,9 @@ public class CallPlacingActivity extends BaseActivity {
     }
 
     public void openCallIfPossible(CallInitiateModel callInitiateModel) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(Integer.parseInt(callInitiateModel.getScheduleId()));
+
         if (UserType.isUserDoctor()) {
             fetchSessionId(callInitiateModel);
         } else if (UserType.isUserAssistant()) {
@@ -93,7 +98,7 @@ public class CallPlacingActivity extends BaseActivity {
                     TokenFetchModel tokenFetchModel = (TokenFetchModel) baseApiResponseModel;
                     callInitiateModel.update(tokenFetchModel);
 
-                    if ( (!appPreference.getBoolean(PreferenceConstants.PATIENT_VIDEO_FEED) && callInitiateModel.getCallType().equals(OpenTokConstants.video)) || (!appPreference.getBoolean(PreferenceConstants.ONE_WAY_CALL_INFO) && callInitiateModel.getCallType().equals(OpenTokConstants.oneWay))) {
+                    if ((!appPreference.getBoolean(PreferenceConstants.PATIENT_VIDEO_FEED) && callInitiateModel.getCallType().equals(OpenTokConstants.video)) || (!appPreference.getBoolean(PreferenceConstants.ONE_WAY_CALL_INFO) && callInitiateModel.getCallType().equals(OpenTokConstants.oneWay))) {
                         Intent intent = new Intent(CallPlacingActivity.this, ContentActivity.class);
                         intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
                         intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
@@ -113,7 +118,7 @@ public class CallPlacingActivity extends BaseActivity {
                             intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.one_way_call_description));
                             intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.one_way_call);
                             intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
-                            intent.putExtra(ArgumentKeys.SKIP_TITLE,getString(R.string.CANCEL));
+                            intent.putExtra(ArgumentKeys.SKIP_TITLE, getString(R.string.CANCEL));
 
                             requestId = CallPlacingActivity.OneWayCallRequestID;
                         }
@@ -128,9 +133,9 @@ public class CallPlacingActivity extends BaseActivity {
                     }
 
                 } else {
-                    Log.d("CallPlacingFragment","failed to cast TokenFetchModel");
+                    Log.d("CallPlacingFragment", "failed to cast TokenFetchModel");
                     if (baseApiResponseModel != null)
-                        Log.d("CallPlacingFragment",baseApiResponseModel.toString());
+                        Log.d("CallPlacingFragment", baseApiResponseModel.toString());
                 }
 
             }
@@ -142,15 +147,16 @@ public class CallPlacingActivity extends BaseActivity {
 
                 String errorMessage = null;
                 if (errorModel != null) {
-                    Type type = new TypeToken<HashMap<String,Object>>(){}.getType();
-                    HashMap<String,Object> errorObject = new Gson().fromJson(errorModel.getResponse(),type);
+                    Type type = new TypeToken<HashMap<String, Object>>() {
+                    }.getType();
+                    HashMap<String, Object> errorObject = new Gson().fromJson(errorModel.getResponse(), type);
 
 
                     if (errorObject.get("is_cc_captured") != null) {
                         Boolean is_cc_captured = (Boolean) errorObject.get("is_cc_captured");
 
                         if (is_cc_captured != null && !is_cc_captured) {
-                            openTrialContentScreen(UserType.isUserDoctor(),callInitiateModel.getDoctorName());
+                            openTrialContentScreen(UserType.isUserDoctor(), callInitiateModel.getDoctorName());
                         } else {
                             errorMessage = errorModel.getMessage();
                         }
@@ -179,7 +185,7 @@ public class CallPlacingActivity extends BaseActivity {
             callType = OpenTokConstants.video;
         }
 
-        openTokViewModel.postaVoipCall(callInitiateModel.getDoctorGuid(),callInitiateModel.getToUserGuid(),callInitiateModel.getScheduleId(),callType);
+        openTokViewModel.postaVoipCall(callInitiateModel.getDoctorGuid(), callInitiateModel.getToUserGuid(), callInitiateModel.getScheduleId(), callType);
 
     }
 
@@ -193,7 +199,7 @@ public class CallPlacingActivity extends BaseActivity {
 
             Intent intent = new Intent(application, CallActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(CALL_INITIATE_MODEL,callInitiateModel);
+            intent.putExtra(CALL_INITIATE_MODEL, callInitiateModel);
             application.startActivity(intent);
 
             didOpenCallKit();
@@ -212,7 +218,7 @@ public class CallPlacingActivity extends BaseActivity {
 
             Intent intent = new Intent(application, CallActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(CALL_INITIATE_MODEL,callInitiateModel);
+            intent.putExtra(CALL_INITIATE_MODEL, callInitiateModel);
             application.startActivity(intent);
 
             didOpenCallKit();
@@ -231,7 +237,7 @@ public class CallPlacingActivity extends BaseActivity {
 
             Intent intent = new Intent(application, CallActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(CALL_INITIATE_MODEL,callInitiateModel);
+            intent.putExtra(CALL_INITIATE_MODEL, callInitiateModel);
             application.startActivity(intent);
 
             didOpenCallKit();
@@ -268,12 +274,12 @@ public class CallPlacingActivity extends BaseActivity {
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel instanceof BrainTreeClientToken) {
-                        DropInRequest dropInRequest = new DropInRequest().clientToken(((BrainTreeClientToken)baseApiResponseModel).getClient_token());
-                        startActivityForResult(dropInRequest.getIntent(CallPlacingActivity.this),CallPlacingActivity.BRAIN_TREE_REQUEST);
+                        DropInRequest dropInRequest = new DropInRequest().clientToken(((BrainTreeClientToken) baseApiResponseModel).getClient_token());
+                        startActivityForResult(dropInRequest.getIntent(CallPlacingActivity.this), CallPlacingActivity.BRAIN_TREE_REQUEST);
                     } else if (baseApiResponseModel instanceof BrainTreeCustomer) {
                         BrainTreeCustomer customer = (BrainTreeCustomer) baseApiResponseModel;
 
-                        HashMap<String ,String> param = new HashMap<>();
+                        HashMap<String, String> param = new HashMap<>();
                         if (customer.getPaymentMethods() != null) {
                             param.put("customerId", UserDetailPreferenceManager.getUser_guid());
                             param.put("verifyCard", "true");
@@ -298,21 +304,21 @@ public class CallPlacingActivity extends BaseActivity {
         });
     }
 
-    private void openTrialContentScreen(Boolean forDoctor,String doctorName) {
+    private void openTrialContentScreen(Boolean forDoctor, String doctorName) {
         didOpenTrialScreen();
 
         Intent intent = new Intent(CallPlacingActivity.this, ContentActivity.class);
         int requestId;
 
-        if  (forDoctor) {
-            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE,getString(R.string.proceed));
-            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION,true);
+        if (forDoctor) {
+            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
+            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
 
             String description = getString(R.string.trial_period_expired_doc_sec_1);
             description += " <a href=\"https://telehealer.com/product/doctors/#pricing\">https://telehealer.com/product/doctors/#pricing</a> ";
             description += getString(R.string.trial_period_expired_doc_sec_2);
 
-            intent.putExtra(ArgumentKeys.DESCRIPTION,description);
+            intent.putExtra(ArgumentKeys.DESCRIPTION, description);
             requestId = CallPlacingActivity.DOCTOR_PAYMENT_REQUEST;
 
             if (brainTreeViewModel == null) {
@@ -321,21 +327,21 @@ public class CallPlacingActivity extends BaseActivity {
 
         } else {
 
-            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE,getString(R.string.ok));
-            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION,false);
+            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
+            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
 
             String name = TextUtils.isEmpty(doctorName) ? getString(R.string.doctor) : doctorName;
-            String description = getString(R.string.trial_period_expired_ma_sec_1,name);
+            String description = getString(R.string.trial_period_expired_ma_sec_1, name);
 
-            intent.putExtra(ArgumentKeys.DESCRIPTION,description);
+            intent.putExtra(ArgumentKeys.DESCRIPTION, description);
             requestId = CallPlacingActivity.MA_DOC_PAYMENT_REQUEST;
         }
 
-        intent.putExtra(ArgumentKeys.RESOURCE_ICON,R.drawable.emptystate_credit_card);
-        intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED,false);
-        intent.putExtra(ArgumentKeys.TITLE,getString(R.string.payment_information_required));
-        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED,true);
-        intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED,false);
+        intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
+        intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+        intent.putExtra(ArgumentKeys.TITLE, getString(R.string.payment_information_required));
+        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+        intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
 
         this.callInitiateModel = null;
 
@@ -351,9 +357,9 @@ public class CallPlacingActivity extends BaseActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode,int resultCode,Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        Log.d("CallPlacingFragment","onActivityResult "+requestCode+"_"+resultCode);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("CallPlacingFragment", "onActivityResult " + requestCode + "_" + resultCode);
         switch (requestCode) {
             case PermissionConstants.PERMISSION_CAM_MIC:
             case PermissionConstants.PERMISSION_MICROPHONE:
@@ -374,28 +380,28 @@ public class CallPlacingActivity extends BaseActivity {
                 if (resultCode == RESULT_OK) {
                     DropInResult result = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
 
-                    HashMap<String,Object> param = new HashMap<>();
+                    HashMap<String, Object> param = new HashMap<>();
                     if (result.getPaymentMethodNonce() != null) {
                         param.put("payment_method_nonce", result.getPaymentMethodNonce().getNonce());
                     }
-                    param.put("amount","0");
-                    param.put("savePayment",true);
+                    param.put("amount", "0");
+                    param.put("savePayment", true);
 
                     brainTreeViewModel.checkOutBrainTree(param);
 
                 } else if (resultCode == Activity.RESULT_CANCELED) {
-                    Log.d("CallPlacingFragment","Braintree Cancelled");
+                    Log.d("CallPlacingFragment", "Braintree Cancelled");
                     finish();
                 } else {
                     Exception error = (Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
-                    Log.d("CallPlacingFragment",error.getLocalizedMessage());
+                    Log.d("CallPlacingFragment", error.getLocalizedMessage());
                     finish();
                 }
 
                 break;
             case CallPlacingActivity.VideoFeedRequestID:
 
-                appPreference.setBoolean(PreferenceConstants.PATIENT_VIDEO_FEED,data.getBooleanExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED,false));
+                appPreference.setBoolean(PreferenceConstants.PATIENT_VIDEO_FEED, data.getBooleanExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED, false));
 
                 if (callInitiateModel != null) {
                     openCall();

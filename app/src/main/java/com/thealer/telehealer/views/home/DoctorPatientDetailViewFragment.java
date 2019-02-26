@@ -19,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,8 @@ import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
+import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
+import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
@@ -86,6 +89,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private OnActionCompleteInterface onActionCompleteInterface;
     private GetUsersApiViewModel getUsersApiViewModel;
     private AttachObserverInterface attachObserverInterface;
+    private ConnectionStatusApiViewModel connectionStatusApiViewModel;
+    private ConnectionStatusApiResponseModel connectionStatusApiResponseModel;
 
     private List<Fragment> fragmentList;
     private List<String> titleList;
@@ -101,9 +106,27 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
+
         getUsersApiViewModel = ViewModelProviders.of(this).get(GetUsersApiViewModel.class);
-        attachObserverInterface.attachObserver(getUsersApiViewModel);
         addConnectionApiViewModel = ViewModelProviders.of(getActivity()).get(AddConnectionApiViewModel.class);
+        connectionStatusApiViewModel = ViewModelProviders.of(this).get(ConnectionStatusApiViewModel.class);
+
+        attachObserverInterface.attachObserver(getUsersApiViewModel);
+        attachObserverInterface.attachObserver(connectionStatusApiViewModel);
+
+        connectionStatusApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    connectionStatusApiResponseModel = (ConnectionStatusApiResponseModel) baseApiResponseModel;
+                    if (connectionStatusApiResponseModel.getConnection_status() == null) {
+                        view_type = Constants.VIEW_CONNECTION;
+                    }
+                    updateView(resultBean);
+                    updateDateConnectionStatus(connectionStatusApiResponseModel.getConnection_status());
+                }
+            }
+        });
 
         addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -295,18 +318,26 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
 
         if (getArguments() != null) {
+
+            view_type = getArguments().getString(Constants.VIEW_TYPE);
+
             if (getArguments().getSerializable(Constants.USER_DETAIL) != null &&
                     getArguments().getSerializable(Constants.USER_DETAIL) instanceof CommonUserApiResponseModel) {
 
                 resultBean = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 updateView(resultBean);
 
-                if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
-                    Set<String> set = new HashSet<>();
-                    set.add(resultBean.getUser_guid());
-                    getUsersApiViewModel.getUserByGuid(set);
+                if (getArguments().getBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, false)) {
+                    connectionStatusApiViewModel.getConnectionStatus(resultBean.getUser_guid(), true);
                 } else {
-                    updateUserStatus(resultBean);
+
+                    if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
+                        Set<String> set = new HashSet<>();
+                        set.add(resultBean.getUser_guid());
+                        getUsersApiViewModel.getUserByGuid(set);
+                    } else {
+                        updateUserStatus(resultBean);
+                    }
                 }
 
             } else {
@@ -377,11 +408,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         fragmentList = new ArrayList<>();
         titleList = new ArrayList<String>();
 
-        view_type = getArguments().getString(Constants.VIEW_TYPE);
 
         AboutFragment aboutFragment = new AboutFragment();
         addFragment(getString(R.string.about), aboutFragment);
-
 
         if (view_type != null) {
             if (view_type.equals(Constants.VIEW_CONNECTION)) {
@@ -390,17 +419,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 actionBtn.setVisibility(View.VISIBLE);
                 userDetailBnv.setVisibility(View.GONE);
 
-                if (resultBean.getConnection_status() == null) {
-                    actionBtn.setText(getString(R.string.add_connection_connect));
-                    actionBtn.setEnabled(true);
-                } else {
-                    if (resultBean.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
-                        actionBtn.setVisibility(View.GONE);
-                    } else {
-                        actionBtn.setText(getString(R.string.add_connection_pending));
-                        actionBtn.setEnabled(false);
-                    }
-                }
+                updateDateConnectionStatus(resultBean.getConnection_status());
 
                 actionBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -408,9 +427,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                         Utils.vibrate(getActivity());
                         Bundle bundle = new Bundle();
                         bundle.putInt(Constants.ADD_CONNECTION_ID, resultBean.getUser_id());
+                        bundle.putString(ArgumentKeys.USER_GUID, resultBean.getUser_guid());
                         bundle.putSerializable(Constants.USER_DETAIL, resultBean);
 
                         onActionCompleteInterface.onCompletionResult(null, true, bundle);
+
                     }
                 });
 
@@ -451,6 +472,24 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 }
             });
 
+        }
+    }
+
+    private void updateDateConnectionStatus(String connection_status) {
+        Log.e("aswin", "updateDateConnectionStatus: " + connection_status);
+        if (connection_status == null) {
+            actionBtn.setText(getString(R.string.add_connection_connect));
+            actionBtn.setEnabled(true);
+        } else {
+            if (connection_status.equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
+                actionBtn.setVisibility(View.GONE);
+            } else if (connection_status.equals(Constants.CONNECTION_STATUS_OPEN)) {
+                actionBtn.setText(getString(R.string.add_connection_pending));
+                actionBtn.setEnabled(false);
+            } else {
+                actionBtn.setText(getString(R.string.add_connection_connect));
+                actionBtn.setEnabled(true);
+            }
         }
     }
 

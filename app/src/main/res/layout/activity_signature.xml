@@ -16,17 +16,19 @@
 
             <TextView
                 android:id="@+id/cancel_tv"
-                style="@style/text_app_color"
+                style="@style/text_sub_title_app_color"
+                android:padding="8dp"
+                android:layout_width="wrap_content"
                 android:text="@string/Cancel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/erase_tv"
+                style="@style/text_sub_title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="Erase All"
+                android:text="@string/erase_all"
                 android:textColor="@color/colorBlack"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

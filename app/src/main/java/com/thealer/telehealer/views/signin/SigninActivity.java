@@ -14,7 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,6 +30,7 @@ import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -41,8 +41,6 @@ import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -57,11 +55,10 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     private TextInputLayout passwordTil;
     private EditText passwordEt;
     private CheckBox rememberCb;
-    private Button loginBtn;
+    private CustomButton loginBtn;
     private TextView forgetPasswordTv;
-    private TextView orLoginTv;
     private LinearLayout quickLoginLl;
-    private CircleImageView quickLoginCiv;
+    private ImageView quickLoginCiv;
     private TextView quickLoginTv;
 
 
@@ -223,11 +220,10 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         passwordTil = (TextInputLayout) findViewById(R.id.password_til);
         passwordEt = (EditText) findViewById(R.id.password_et);
         rememberCb = (CheckBox) findViewById(R.id.remember_cb);
-        loginBtn = (Button) findViewById(R.id.login_btn);
+        loginBtn = (CustomButton) findViewById(R.id.login_btn);
         forgetPasswordTv = (TextView) findViewById(R.id.forget_password_tv);
-        orLoginTv = (TextView) findViewById(R.id.or_login_tv);
         quickLoginLl = (LinearLayout) findViewById(R.id.quick_login_ll);
-        quickLoginCiv = (CircleImageView) findViewById(R.id.quick_login_civ);
+        quickLoginCiv = (ImageView) findViewById(R.id.quick_login_civ);
         quickLoginTv = (TextView) findViewById(R.id.quick_login_tv);
 
         toolbarTitle.setText(getString(R.string.login));
@@ -325,11 +321,9 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
     private void setQuickLoginText(boolean visible, String text) {
         if (visible) {
-            orLoginTv.setVisibility(View.VISIBLE);
             quickLoginLl.setVisibility(View.VISIBLE);
             quickLoginTv.setText(text);
         } else {
-            orLoginTv.setVisibility(View.GONE);
             quickLoginLl.setVisibility(View.GONE);
         }
     }

@@ -1,19 +1,30 @@
 package com.thealer.telehealer.views.notification;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -21,6 +32,7 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.HomeActivity;
 
@@ -38,10 +50,48 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
     private LinearLayout fragmentHolder;
     private LinearLayout subFragmentHolder;
 
+    private AddConnectionApiViewModel addConnectionApiViewModel;
+    private CommonUserApiResponseModel commonUserApiResponseModel;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
+        addConnectionApiViewModel = ViewModelProviders.of(this).get(AddConnectionApiViewModel.class);
+        attachObserver(addConnectionApiViewModel);
+        addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+
+                    Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                    intent.putExtra(Constants.SUCCESS_VIEW_STATUS, baseApiResponseModel.isSuccess());
+
+                    if (baseApiResponseModel.isSuccess()) {
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_success_prefix) + " " + commonUserApiResponseModel.getFirst_name() + " " + getString(R.string.add_connection_success_suffix));
+                    } else {
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_failure_prefix) + " " + commonUserApiResponseModel.getFirst_name() + " " + getString(R.string.add_connection_failure_suffix));
+                    }
+
+                    LocalBroadcastManager.getInstance(NotificationActivity.this).sendBroadcast(intent);
+                }
+            }
+        });
+
+        addConnectionApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null) {
+                    Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                    intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                    intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                    LocalBroadcastManager.getInstance(NotificationActivity.this).sendBroadcast(intent);
+                }
+            }
+        });
+
         initView();
     }
 
@@ -115,7 +165,23 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
 
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
+        if (success) {
+            int selectedId = bundle.getInt(Constants.ADD_CONNECTION_ID);
+            String userGuid = bundle.getString(ArgumentKeys.USER_GUID);
+            commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
 
+            bundle = new Bundle();
+            bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_requesting));
+
+            SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+            successViewDialogFragment.setArguments(bundle);
+
+            successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+
+            addConnectionApiViewModel.connectUser(userGuid, String.valueOf(selectedId));
+
+        }
     }
 
     @Override

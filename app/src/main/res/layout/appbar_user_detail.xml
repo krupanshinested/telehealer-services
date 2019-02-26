@@ -24,6 +24,7 @@
 
             <TextView
                 android:id="@+id/toolbar_title"
+                style="@style/text_title_lignt_bold"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -49,8 +50,8 @@
 
             <ImageView
                 android:id="@+id/gender_iv"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:layout_margin="5dp"
@@ -58,6 +59,7 @@
 
             <TextView
                 android:id="@+id/user_name_tv"
+                style="@style/text_title_lignt_bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/user_dob_tv"
@@ -65,7 +67,7 @@
                 android:layout_toLeftOf="@+id/gender_iv"
                 android:text="@string/dummy_text"
                 android:textColor="@color/colorWhite"
-                android:textSize="18sp" />
+                android:textSize="@dimen/toolbar_title" />
 
             <TextView
                 android:id="@+id/user_dob_tv"
@@ -79,6 +81,8 @@
                 android:drawablePadding="10dp"
                 android:gravity="center|left"
                 android:text="@string/dummy_text"
+                android:textSize="@dimen/toolbar_subtitle"
+                style="@style/text_sub_title_lignt_bold"
                 android:textColor="@color/colorWhite" />
         </RelativeLayout>
 

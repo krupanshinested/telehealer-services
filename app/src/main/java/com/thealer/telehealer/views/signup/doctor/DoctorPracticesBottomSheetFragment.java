@@ -186,6 +186,7 @@ public class DoctorPracticesBottomSheetFragment extends BaseBottomSheetDialogFra
 
     private void notifyParent() {
         getTargetFragment().onActivityResult(getTargetRequestCode(), RequestID.REQ_PRACTICE, null);
+        Utils.hideKeyboard(getActivity());
     }
 
     private void setData() {

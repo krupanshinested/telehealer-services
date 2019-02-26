@@ -40,7 +40,7 @@ public class PatientChoosePaymentFragment extends BaseFragment implements View.O
         View view = inflater.inflate(R.layout.fragment_registration_choose_payment, container, false);
 
         if (getArguments() != null) {
-            currentScreenType = getArguments().getInt(ArgumentKeys.SCREEN_TYPE,Constants.forRegistration);
+            currentScreenType = getArguments().getInt(ArgumentKeys.SCREEN_TYPE, Constants.forRegistration);
         }
 
         initView(view);
@@ -76,11 +76,11 @@ public class PatientChoosePaymentFragment extends BaseFragment implements View.O
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.choose_payment_insurance_btn:
                 switch (currentScreenType) {
                     case Constants.forRegistration:
-                        ((SignUpActivity)getActivity()).addChildFragment( new PatientUploadInsuranceFragment());
+                        ((SignUpActivity) getActivity()).addChildFragment(new PatientUploadInsuranceFragment());
                         break;
                     case Constants.forProfileUpdate:
                         onActionCompleteInterface.onCompletionResult(RequestID.INSURANCE_REQUEST_IMAGE, true, null);
@@ -94,35 +94,29 @@ public class PatientChoosePaymentFragment extends BaseFragment implements View.O
     }
 
     private void showConformationDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        alertDialog.setTitle(R.string.alert);
-        alertDialog.setMessage(getActivity().getResources().getString(R.string.payment_info));
-        alertDialog.setNegativeButton("Continue", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+        showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.payment_alert_info),
+                getString(R.string.cancel), getString(R.string.Continue), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        switch (currentScreenType) {
+                            case Constants.forRegistration:
+                                onActionCompleteInterface.onCompletionResult(null, true, null);
+                                break;
+                            case Constants.forProfileUpdate:
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean(ArgumentKeys.CASH_SELECTED, true);
+                                onActionCompleteInterface.onCompletionResult(RequestID.INSURANCE_CHANGE_RESULT, true, bundle);
+                                break;
+                        }
 
-                switch (currentScreenType) {
-                    case Constants.forRegistration:
-                        onActionCompleteInterface.onCompletionResult(null, true, null);
-                        break;
-                    case Constants.forProfileUpdate:
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean(ArgumentKeys.CASH_SELECTED,true);
-                        onActionCompleteInterface.onCompletionResult(RequestID.INSURANCE_CHANGE_RESULT, true, bundle);
-                        break;
-                }
-            }
-        });
-        alertDialog.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialog = alertDialog.create();
-        dialog.setCancelable(false);
-        dialog.show();
+                    }
+                });
     }
 
     @Override

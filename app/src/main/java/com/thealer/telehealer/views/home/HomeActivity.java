@@ -21,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +38,8 @@ import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.PermissionChecker;
+import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -108,7 +111,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             isChildVisible = savedInstanceState.getBoolean(IS_CHILD_VISIBLE);
             selecteMenuItem = savedInstanceState.getInt(SELECTED_MENU_ITEM);
         } else {
-            selecteMenuItem = getIntent().getIntExtra(ArgumentKeys.SELECTED_MENU_ITEM,0);
+            selecteMenuItem = getIntent().getIntExtra(ArgumentKeys.SELECTED_MENU_ITEM, 0);
         }
 
         if (checkIsUserActivated()) {
@@ -231,7 +234,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             selecteMenuItem = R.id.menu_schedules;
         }
 
-        attachView();
+        if (PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC))
+            attachView();
 
         checkForMedicalHistory();
     }
@@ -265,6 +269,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (requestCode == RequestID.REQ_CONTENT_VIEW && resultCode == Activity.RESULT_OK) {
             showMedicalHistory();
+        }
+
+        if (requestCode == PermissionConstants.PERMISSION_CAM_MIC) {
+            attachView();
         }
     }
 
@@ -327,7 +335,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private void updateProfilePic() {
         View view = navigationView.getHeaderView(0);
         ImageView userProfileIv = view.findViewById(R.id.home_header_iv);
-        Utils.setImageWithGlide(this, userProfileIv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getApplicationContext(), userProfileIv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true);
     }
 
     @Override

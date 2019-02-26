@@ -10,6 +10,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,6 @@ import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.DatePickerDialogFragment;
-import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseBottomSheetDialogFragment;
 import com.thealer.telehealer.views.common.DateBroadcastReceiver;
@@ -89,7 +89,6 @@ public class DoctorLicenseBottomSheetFragment extends BaseBottomSheetDialogFragm
                 createUserRequestModel.getUser_detail().getData().getLicenses().remove(licenseId);
                 createUserRequestModel.getHasValidLicensesList().remove(licenseId);
                 notifyParent();
-                getDialog().dismiss();
             }
         });
 
@@ -103,7 +102,6 @@ public class DoctorLicenseBottomSheetFragment extends BaseBottomSheetDialogFragm
                         updateLicense();
                     }
                     notifyParent();
-                    getDialog().dismiss();
                 }
             }
         });
@@ -194,7 +192,7 @@ public class DoctorLicenseBottomSheetFragment extends BaseBottomSheetDialogFragm
         if (expirationEt.getText().toString().isEmpty()) {
             expirationTil.setError(getString(R.string.expiration_empty_error));
             status = false;
-        }else if (!Utils.isDateExpired(expirationEt.getText().toString())) {
+        } else if (!Utils.isDateExpired(expirationEt.getText().toString())) {
             expirationTil.setError(getString(R.string.expired_date_error));
             status = false;
         }
@@ -202,20 +200,23 @@ public class DoctorLicenseBottomSheetFragment extends BaseBottomSheetDialogFragm
     }
 
     private void notifyParent() {
+        Log.e("aswin", "notifyParent: " + getTargetFragment().getClass().getSimpleName());
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
+        Utils.hideKeyboard(getActivity());
+        getDialog().dismiss();
     }
 
     private void updateLicense() {
         createUserRequestModel.getUser_detail().getData().getLicenses().get(licenseId).setState(stateEt.getText().toString());
         createUserRequestModel.getUser_detail().getData().getLicenses().get(licenseId).setNumber(numberEt.getText().toString());
-        createUserRequestModel.getUser_detail().getData().getLicenses().get(licenseId).setEnd_date(expirationEt.getText().toString());
+        createUserRequestModel.getUser_detail().getData().getLicenses().get(licenseId).setEnd_date(Utils.getUTCFormat(expirationEt.getText().toString(), Utils.defaultDateFormat));
         createUserRequestModel.getHasValidLicensesList().set(licenseId, true);
     }
 
     private void addNewLicense() {
         createUserRequestModel.getUser_detail().getData().getLicenses().add(new LicensesBean(stateEt.getText().toString(),
                 numberEt.getText().toString(),
-                expirationEt.getText().toString()));
+                Utils.getUTCFormat(expirationEt.getText().toString(), Utils.defaultDateFormat)));
         createUserRequestModel.getHasValidLicensesList().add(true);
     }
 
@@ -225,7 +226,10 @@ public class DoctorLicenseBottomSheetFragment extends BaseBottomSheetDialogFragm
 
             stateEt.setText(createUserRequestModel.getUser_detail().getData().getLicenses().get(licenseId).getState());
             numberEt.setText(createUserRequestModel.getUser_detail().getData().getLicenses().get(licenseId).getNumber());
-            expirationEt.setText(createUserRequestModel.getUser_detail().getData().getLicenses().get(licenseId).getEnd_date());
+
+            if (createUserRequestModel.getUser_detail().getData().getLicenses().get(licenseId).getEnd_date() != null &&
+                    !createUserRequestModel.getUser_detail().getData().getLicenses().get(licenseId).getEnd_date().isEmpty())
+                expirationEt.setText(Utils.getDayMonthYear(createUserRequestModel.getUser_detail().getData().getLicenses().get(licenseId).getEnd_date()));
 
             checkInputFields();
         } else {

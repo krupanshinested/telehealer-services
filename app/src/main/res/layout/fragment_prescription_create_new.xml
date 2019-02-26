@@ -14,7 +14,8 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_default">
 
             <com.thealer.telehealer.views.home.orders.OrdersCustomView
                 android:id="@+id/patient_ocv"
@@ -150,11 +151,12 @@
 
             <TextView
                 android:id="@+id/refill_label_tv"
-                style="@style/text_app_color"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/text_sub_title_bold_app_color"
                 android:gravity="left"
+                android:padding="@dimen/padding_default"
                 android:text="@string/refill"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dispense_til" />
 
             <TextView
@@ -203,6 +205,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/do_not_disturb"
+                android:textAllCaps="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/refill_bottom_view" />
@@ -226,9 +229,9 @@
     <Button
         android:id="@+id/save_btn"
         style="@style/button_app_background_white_text"
-        android:text="@string/save"
         android:layout_width="0dp"
         android:layout_marginRight="1dp"
+        android:text="@string/save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/save_fax_btn"
         app:layout_constraintStart_toStartOf="parent" />

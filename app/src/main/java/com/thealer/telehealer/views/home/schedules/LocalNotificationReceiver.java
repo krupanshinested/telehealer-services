@@ -105,13 +105,13 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
 
         // Call click intent
         Intent callIntent = new Intent(context, CallPlacingActivity.class);
-        CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(),resultBean.getPatient(),null,null,resultBean.getSchedule_id()+"", OpenTokConstants.video);
+        CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(), resultBean.getPatient(), null, null, resultBean.getSchedule_id() + "", OpenTokConstants.video);
         callIntent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
 
         TaskStackBuilder builder = TaskStackBuilder.create(context);
         builder.addNextIntentWithParentStack(callIntent);
 
-        PendingIntent callPendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent callPendingIntent = builder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         String title = "%s Appointment", message = "You have an appointment with %s at %s";
 

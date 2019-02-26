@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 
 import io.michaelrocks.libphonenumber.android.NumberParseException;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
+import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 /**
  * Created by Aswin on 12,October,2018
@@ -41,6 +44,9 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
     private OnActionCompleteInterface onActionCompleteInterface;
     private OnViewChangeInterface onViewChangeInterface;
     private String mobileNumber;
+    private PhoneNumberUtil phoneNumberUtil;
+    private TextWatcher textWatcher;
+    private PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher = null;
 
     @Nullable
     @Override
@@ -81,6 +87,7 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
     }
 
     private void initView(View view) {
+        phoneNumberUtil = PhoneNumberUtil.createInstance(getActivity());
 
         countyCode = (CountryCodePicker) view.findViewById(R.id.county_code);
         numberEt = (EditText) view.findViewById(R.id.number_et);
@@ -94,9 +101,18 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
 
         onViewChangeInterface.hideOrShowNext(true);
 
+        countyCode.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
+            @Override
+            public void onCountrySelected() {
+                setHint();
+            }
+        });
+
+        setHint();
+
         validateNumber();
 
-        numberEt.addTextChangedListener(new TextWatcher() {
+        textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -111,9 +127,42 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
             public void afterTextChanged(Editable s) {
                 validateNumber();
             }
-        });
+        };
 
         numberEt.requestFocus();
+    }
+
+    private void setHint() {
+
+        if (phoneNumberFormattingTextWatcher != null) {
+            numberEt.removeTextChangedListener(phoneNumberFormattingTextWatcher);
+        }
+
+        phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher(countyCode.getSelectedCountryNameCode()) {
+
+            @Override
+            public synchronized void afterTextChanged(Editable s) {
+                super.afterTextChanged(s);
+                validateNumber();
+            }
+
+
+        };
+
+        numberEt.addTextChangedListener(phoneNumberFormattingTextWatcher);
+
+        try {
+
+            String countryNameCode = countyCode.getSelectedCountryNameCode();
+            String hintNumber = String.valueOf(phoneNumberUtil.getExampleNumber(countryNameCode).getNationalNumber());
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(hintNumber, countyCode.getSelectedCountryNameCode());
+            hintNumber = phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL).replace(countyCode.getSelectedCountryCodeWithPlus(), "").trim();
+
+            numberEt.setHint(hintNumber);
+
+        } catch (NumberParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -127,19 +176,20 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
         if (!numberEt.getText().toString().isEmpty()) {
 
             try {
-                PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.createInstance(getActivity());
-                boolean isValid = phoneNumberUtil.isValidNumber(phoneNumberUtil.parse(numberEt.getText().toString(), countyCode.getSelectedCountryNameCode()));
 
-                if (isValid){
+                Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(numberEt.getText().toString(), countyCode.getSelectedCountryNameCode());
+                boolean isValid = phoneNumberUtil.isValidNumber(phoneNumber);
+
+                if (isValid) {
                     setNextEnable(true);
-                }else {
+                } else {
                     setNextEnable(false);
                 }
             } catch (NumberParseException e) {
                 e.printStackTrace();
                 setNextEnable(false);
             }
-        }else {
+        } else {
             setNextEnable(false);
         }
     }

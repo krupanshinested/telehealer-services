@@ -36,12 +36,10 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_max="@dimen/max_width" />
 
-            <ProgressBar
+            <ImageView
                 android:id="@+id/recycler_loader"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:layout_margin="5dp"
-                android:indeterminate="true"
+                android:layout_width="@dimen/pagination_throbber_size"
+                android:layout_height="@dimen/pagination_throbber_size"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

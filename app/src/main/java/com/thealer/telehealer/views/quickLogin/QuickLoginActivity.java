@@ -5,12 +5,16 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.LinearLayout;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.biometric.BioMetricAuth;
 import com.thealer.telehealer.common.biometric.BiometricInterface;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -20,6 +24,7 @@ import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.signup.SignUpActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -185,9 +190,21 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     }
 
     private void goToMainActivity() {
-        appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
-        startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-        finish();
+        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+
+        if (whoAmIApiResponseModel != null && whoAmIApiResponseModel.getUser_activated() != null &&
+                whoAmIApiResponseModel.getUser_activated().equals(Constants.ACTIVATION_PENDING)) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(ArgumentKeys.IS_VERIFY_OTP, true);
+
+            startActivity(new Intent(this, SignUpActivity.class).putExtras(bundle)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+            finish();
+        } else {
+            appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
+            startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+            finish();
+        }
     }
 
     private void sendQuickLoginBroadCast(Bundle bundle) {

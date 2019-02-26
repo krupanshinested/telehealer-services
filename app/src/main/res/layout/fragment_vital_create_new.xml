@@ -5,10 +5,11 @@
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
     android:fitsSystemWindows="true">
+
     <include
         android:id="@+id/appbar"
-        android:visibility="gone"
         layout="@layout/appbar_back_with_title_app_color"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -16,10 +17,10 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true"
         app:layout_constraintBottom_toTopOf="@+id/submit_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        android:fitsSystemWindows="true"
-        android:fillViewport="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appbar">
 
@@ -61,9 +62,9 @@
                     android:id="@+id/vital_1_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:digits="@string/digitsNumeric"
                     android:imeOptions="actionDone"
                     android:inputType="number"
-                    android:digits="@string/digitsNumeric"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -71,8 +72,9 @@
                 android:id="@+id/vital_2_til"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginStart="@dimen/margin_default"
+                android:layout_marginTop="@dimen/margin_default"
+                android:layout_marginEnd="@dimen/margin_default"
                 android:visibility="gone"
                 app:hintEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"

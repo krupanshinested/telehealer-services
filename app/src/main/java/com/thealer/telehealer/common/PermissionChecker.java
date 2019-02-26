@@ -34,7 +34,7 @@ public class PermissionChecker {
 
     public boolean checkPermission(int permissionFor) {
         if (isGranted(permissionFor)) {
-            return  true;
+            return true;
         } else {
             showProposer(permissionFor);
             return false;
@@ -44,7 +44,7 @@ public class PermissionChecker {
     @Nullable
     public Intent checkAndReturn(int permissionFor) {
         if (isGranted(permissionFor)) {
-            return  null;
+            return null;
         } else {
             return getIntent(permissionFor);
         }
@@ -52,9 +52,9 @@ public class PermissionChecker {
 
     public boolean checkPermissionForFragment(int permissionFor, Fragment fragment) {
         if (isGranted(permissionFor)) {
-            return  true;
+            return true;
         } else {
-            showProposerForFragment(permissionFor,fragment);
+            showProposerForFragment(permissionFor, fragment);
             return false;
         }
     }
@@ -84,13 +84,13 @@ public class PermissionChecker {
                 }
                 break;
             case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
-                if (isLocationPermissionGranted() && isWriteStoragePermissionGranted())  {
+                if (isLocationPermissionGranted() && isWriteStoragePermissionGranted()) {
                     return true;
                 }
                 break;
             case PermissionConstants.PERMISSION_MICROPHONE:
                 if (isMicPermissionGranted()) {
-                    return  true;
+                    return true;
                 }
                 break;
         }
@@ -100,31 +100,31 @@ public class PermissionChecker {
 
     private boolean isMicPermissionGranted() {
         Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-        TeleLogger.shared.log(TeleLogCapability.mic,isGranted);
+        TeleLogger.shared.log(TeleLogCapability.mic, isGranted);
         return isGranted;
     }
 
     private boolean isGalleryPermissionGranted() {
         Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-        TeleLogger.shared.log(TeleLogCapability.photo,isGranted);
+        TeleLogger.shared.log(TeleLogCapability.photo, isGranted);
         return isGranted;
     }
 
     private boolean isCamerPermissionGranted() {
         Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-        TeleLogger.shared.log(TeleLogCapability.camera,isGranted);
+        TeleLogger.shared.log(TeleLogCapability.camera, isGranted);
         return isGranted;
     }
 
     private boolean isLocationPermissionGranted() {
         Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        TeleLogger.shared.log(TeleLogCapability.location,isGranted);
+        TeleLogger.shared.log(TeleLogCapability.location, isGranted);
         return isGranted;
     }
 
     private boolean isWriteStoragePermissionGranted() {
-        Boolean isGranted =  ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE   ) == PackageManager.PERMISSION_GRANTED;
-        TeleLogger.shared.log(TeleLogCapability.photo,isGranted);
+        Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        TeleLogger.shared.log(TeleLogCapability.photo, isGranted);
         return isGranted;
     }
 
@@ -139,7 +139,7 @@ public class PermissionChecker {
         return intent;
     }
 
-    private void showProposerForFragment(int permissionFor,Fragment fragment) {
+    private void showProposerForFragment(int permissionFor, Fragment fragment) {
         fragment.startActivityForResult(getIntent(permissionFor), permissionFor, null);
     }
 
@@ -327,12 +327,12 @@ public class PermissionChecker {
             case PermissionConstants.PERMISSION_STORAGE:
                 return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
             case PermissionConstants.PERMISSION_CAM_MIC:
-                return new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+                return new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
             case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
-                return new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                return new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE};
             case PermissionConstants.PERMISSION_LOCATION_VITALS:
             case PermissionConstants.PERMISSION_LOCATION:
-                return new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
+                return new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
             case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
                 return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
             case PermissionConstants.PERMISSION_MICROPHONE:
@@ -344,7 +344,6 @@ public class PermissionChecker {
     public boolean isPermissionDenied(int permissionFor) {
 
         String[] permissions = getPermissions(permissionFor);
-
         for (String permission :
                 permissions) {
             if (TeleHealerApplication.appPreference.getBoolean(permission)) {
