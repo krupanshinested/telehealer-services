@@ -116,8 +116,13 @@
             android:name=".common.OpenTok.CallMinimizeService"
             android:exported="false" />
 
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
         <receiver
             android:name=".views.home.schedules.LocalNotificationReceiver"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.media.action.DISPLAY_NOTIFICATION" />
@@ -132,6 +137,8 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_key}" />
+
+        <activity android:name=".views.quickLogin.QuickLoginAgreementActivity" />
     </application>
 
 </manifest>

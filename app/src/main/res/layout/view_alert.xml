@@ -5,22 +5,22 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center|top"
+    android:maxWidth="250dp"
+    android:minWidth="200dp"
     app:cardCornerRadius="6dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
 
         <TextView
             android:id="@+id/title_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/text_title_bold"
             android:layout_marginLeft="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginRight="24dp"
             android:gravity="center"
-            android:textColor="@color/colorBlack"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,8 +28,7 @@
 
         <TextView
             android:id="@+id/message_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/text_sub_title_bold"
             android:layout_marginLeft="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginRight="24dp"
@@ -65,7 +64,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:text="@string/Done"
-            android:textColor="@color/color_blue"
+            android:textColor="@color/app_gradient_start"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/cancel_tv"

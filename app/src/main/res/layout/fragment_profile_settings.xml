@@ -6,10 +6,14 @@
     android:background="@color/colorWhite">
 
     <android.support.v4.widget.NestedScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@color/card_view_background"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/container_view"
@@ -86,9 +90,9 @@
                     android:id="@+id/appointment_slots"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:isSpinnerType="true"
                     app:hideSpiltter="true"
-                    app:icon="@drawable/ic_schedule_settings"
+                    app:icon="@drawable/ic_schedules"
+                    app:isSpinnerType="true"
                     app:title="@string/appointment_slots" />
 
                 <View
@@ -103,9 +107,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:visibility="gone"
                 android:background="@android:color/transparent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <View
                     android:layout_width="fill_parent"
@@ -116,8 +120,8 @@
                     android:id="@+id/medical_assistant"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:icon="@drawable/medical_assistant_icon"
                     app:hideSpiltter="true"
+                    app:icon="@drawable/medical_assistant_icon"
                     app:title="@string/medical_assistant" />
 
                 <View
@@ -218,10 +222,10 @@
                     app:layout_constraintTop_toTopOf="@+id/app_icon" />
 
                 <TextView
+                    android:id="@+id/version_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="Version 1.0"
                     android:textColor="@color/colorGrey"
                     android:textSize="12sp"
                     app:layout_constraintLeft_toRightOf="@+id/app_icon"

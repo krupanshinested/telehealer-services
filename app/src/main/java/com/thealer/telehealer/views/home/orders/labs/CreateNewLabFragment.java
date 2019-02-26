@@ -147,6 +147,10 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
             boolean isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 
             if (!isFromHome) {
+
+                patientOcv.setArrow_visible(false);
+                patientOcv.setClickable(false);
+
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             }
 
@@ -253,7 +257,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
         SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
         successViewDialogFragment.show(getActivity().getSupportFragmentManager(), SuccessViewDialogFragment.class.getSimpleName());
 
-        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
 
         ordersCreateApiViewModel.createLabOrder(createTestApiRequestModel);
 

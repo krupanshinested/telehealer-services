@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         android:id="@+id/item_cv"
@@ -81,7 +80,6 @@
                 android:ems="3"
                 android:gravity="left|center"
                 android:maxLines="1"
-                android:textColor="@color/colorBlack"
                 app:layout_constraintEnd_toStartOf="@id/info_iv"
                 app:layout_constraintStart_toEndOf="@+id/time_tv"
                 app:layout_constraintTop_toBottomOf="@+id/user_name_tv"

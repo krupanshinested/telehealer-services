@@ -73,7 +73,7 @@ class DoctorLicenseListAdapter extends RecyclerView.Adapter<DoctorLicenseListAda
         }
 
         if (isValidData(licensesBeanList.get(i).getEnd_date())) {
-            viewHolder.expirationTv.setText("Exp : " + licensesBeanList.get(i).getEnd_date());
+            viewHolder.expirationTv.setText("Exp : " + Utils.getDayMonthYear(licensesBeanList.get(i).getEnd_date()));
             if (!Utils.isDateExpired(licensesBeanList.get(i).getEnd_date())) {
                 showError(viewHolder, viewHolder.expirationTv, true, fragmentActivity.getString(R.string.expired_date_error), i);
             } else {
@@ -123,8 +123,6 @@ class DoctorLicenseListAdapter extends RecyclerView.Adapter<DoctorLicenseListAda
             textView.setTextColor(fragmentActivity.getColor(android.R.color.holo_red_light));
             viewHolder.view.setBackgroundColor(fragmentActivity.getColor(android.R.color.holo_red_light));
             viewHolder.errorTv.setVisibility(View.VISIBLE);
-            Log.e("aswin", "showError: " + position);
-            Log.e("aswin", "showError: " + new Gson().toJson(createUserRequestModel));
             if (createUserRequestModel.getHasValidLicensesList().size() != 0 &&
                     createUserRequestModel.getHasValidLicensesList().size() > position) {
                 createUserRequestModel.getHasValidLicensesList().set(position, false);

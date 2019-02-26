@@ -669,6 +669,9 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
                         if (baseApiResponseModel.isSuccess()) {
                             if (getTargetFragment() != null) {
                                 Bundle bundle = new Bundle();
+                                if (commonUserApiResponseModel.getQuestionnaire() == null){
+                                    commonUserApiResponseModel.setQuestionnaire(new QuestionnaireBean());
+                                }
                                 switch (type) {
                                     case MH_MEDICATION:
                                         commonUserApiResponseModel.getQuestionnaire().setMedication(questionaryBodyModel.getQuestionnaire().getMedication());
@@ -739,6 +742,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Utils.hideKeyboard(getActivity());
         onViewChangeInterface.hideOrShowNext(false);
     }
 }

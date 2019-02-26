@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/title_tv"
-        style="@style/text_app_color"
+        style="@style/text_title_bold_app_color"
         android:layout_marginTop="72dp"
+        android:gravity="center"
+        android:padding="@dimen/padding_default"
         android:text="@string/image_of_certification"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +23,7 @@
         android:layout_marginTop="32dp"
         android:drawableStart="@drawable/ic_photo_camera_white_24dp"
         android:drawableTint="@color/app_gradient_start"
-        android:paddingLeft="10dp"
+        android:paddingLeft="15dp"
         android:text="@string/take_photo"
         app:background_color="@color/colorWhite"
         app:corner_radius="25dp"
@@ -40,7 +41,7 @@
         android:layout_marginTop="32dp"
         android:drawableStart="@drawable/ic_add_white_24dp"
         android:drawableTint="@color/app_gradient_start"
-        android:paddingLeft="10dp"
+        android:paddingLeft="15dp"
         android:text="@string/add_document"
         app:background_color="@color/colorWhite"
         app:corner_radius="25dp"

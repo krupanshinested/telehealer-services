@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="false" android:drawable="@drawable/recent_inactive"/>
+    <item android:drawable="@drawable/ic_recent_24dp" android:state_checked="false" />
     <item android:state_checked="true">
-        <bitmap android:src="@drawable/recent_active" android:tint="@color/app_gradient_start"/>
+        <bitmap android:src="@drawable/recent_active" android:tint="@color/app_gradient_start" />
     </item>
 </selector>

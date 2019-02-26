@@ -195,7 +195,7 @@ public class QuickLoginPinFragment extends BaseFragment {
 
     private void sendQuickLoginBroadCast(int Authorized) {
         pinEt.clearFocus();
-        showOrHideSoftInputWindow(false);
+        Utils.hideKeyboard(getActivity());
 
         Intent intent = new Intent(getString(R.string.quick_login_broadcast_receiver));
         Bundle bundle = new Bundle();
@@ -252,6 +252,7 @@ public class QuickLoginPinFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         pinEt.clearFocus();
-        showOrHideSoftInputWindow(false);
+        Utils.hideKeyboard(getActivity());
+//        showOrHideSoftInputWindow(false);
     }
 }

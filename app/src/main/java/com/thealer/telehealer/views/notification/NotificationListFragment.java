@@ -56,6 +56,7 @@ public class NotificationListFragment extends BaseFragment {
                 new Observer<BaseApiResponseModel>() {
                     @Override
                     public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                        notificationCelv.hideProgressBar();
                         if (baseApiResponseModel != null) {
                             if (baseApiResponseModel instanceof NotificationApiResponseModel) {
                                 notificationApiResponseModel = (NotificationApiResponseModel) baseApiResponseModel;
@@ -146,6 +147,7 @@ public class NotificationListFragment extends BaseFragment {
                 notificationCelv.setScrollable(false);
                 page = page + 1;
                 getNotification(false);
+                notificationCelv.showProgressBar();
             }
         });
 

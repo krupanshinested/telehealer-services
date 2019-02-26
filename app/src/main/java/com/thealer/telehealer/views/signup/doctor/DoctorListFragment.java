@@ -8,18 +8,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
-import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiViewModel;
 import com.thealer.telehealer.common.Constants;
@@ -43,16 +41,17 @@ public class DoctorListFragment extends BaseFragment implements DoCurrentTransac
 
     private int page = 0, totalCount = 0;
     private String searchName;
-    private ProgressBar progressbar;
+    private ImageView progressbar;
     private DoctorResultListAdapter doctorResultListAdapter;
     private boolean isApiRequested = false;
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
-        getDoctorsApiViewModel = ViewModelProviders.of(getActivity()).get(GetDoctorsApiViewModel.class);
+        getDoctorsApiViewModel = ViewModelProviders.of(this).get(GetDoctorsApiViewModel.class);
         onViewChangeInterface.attachObserver(getDoctorsApiViewModel);
 
         getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -109,7 +108,8 @@ public class DoctorListFragment extends BaseFragment implements DoCurrentTransac
         searchCountTv = (TextView) view.findViewById(R.id.search_count_tv);
         resultListRv = (RecyclerView) view.findViewById(R.id.result_list_rv);
         registerManuallyTv = (TextView) view.findViewById(R.id.register_manually_tv);
-        progressbar = (ProgressBar) view.findViewById(R.id.progressbar);
+        progressbar = (ImageView) view.findViewById(R.id.progressbar);
+        Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(progressbar);
 
         registerManuallyTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,22 +171,9 @@ public class DoctorListFragment extends BaseFragment implements DoCurrentTransac
 
         bundle.putBoolean(Constants.IS_CREATE_MANUALLY, true);
 
-        clearUserRequest();
-
         onActionCompleteInterface.onCompletionResult(null, true, bundle);
 
     }
-
-    private void clearUserRequest() {
-        CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
-        createUserRequestModel.getUser_detail().getData().getLicenses().clear();
-        createUserRequestModel.getUser_detail().getData().getPractices().clear();
-        createUserRequestModel.getUser_detail().getData().getSpecialties().clear();
-        createUserRequestModel.setUser_data(new CreateUserRequestModel.UserDataBean());
-        createUserRequestModel.setUser_detail(new UserDetailBean());
-        createUserRequestModel.getHasValidLicensesList().clear();
-    }
-
 
     @Override
     public void doCurrentTransaction() {

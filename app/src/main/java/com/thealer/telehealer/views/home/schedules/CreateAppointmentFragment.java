@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -507,7 +505,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                     if (UserType.isUserAssistant()) {
                         doctorGuid = createScheduleViewModel.getDoctorCommonModel().getUser_guid();
                     }
-                    showSuccessView(null, RequestID.REQ_SHOW_SUCCESS_VIEW);
+                    showSuccessView(null, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
                     schedulesApiViewModel.createSchedule(doctorGuid, to_guid, createScheduleViewModel.getSchedulesCreateRequestModel(), false);
                 }
                 break;

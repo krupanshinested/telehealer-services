@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -29,12 +27,14 @@ import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.requestotp.OtpVerificationResponseModel;
 import com.thealer.telehealer.apilayer.models.requestotp.RequestOtpApiViewModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
@@ -76,6 +76,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
     private View view;
     private SuccessViewDialogFragment successViewDialogFragment;
     private ResetPasswordRequestModel resetPasswordRequestModel;
+    private boolean isVerifyUser = false;
 
     private int otpType = signup;
 
@@ -144,7 +145,15 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                         String email = appPreference.getString(PreferenceConstants.USER_EMAIL);
                         int userType = appPreference.getInt(PreferenceConstants.USER_TYPE);
 
-                        appPreference.deletePreference();
+                        if (!isVerifyUser) {
+                            appPreference.deletePreference();
+                        } else {
+                            UserDetailPreferenceManager.setUser_activated(Constants.ACTIVATED);
+                            WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+                            whoAmIApiResponseModel.setUser_activated(Constants.ACTIVATED);
+                            UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                        }
+
                         appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, otpVerificationResponseModel.getData().getToken());
                         appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, otpVerificationResponseModel.getData().getRefresh_token());
                         appPreference.setString(PreferenceConstants.USER_NAME, otpVerificationResponseModel.getData().getName());
@@ -157,7 +166,15 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, otpVerificationResponseModel.isSuccess());
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, baseApiResponseModel.getMessage());
+                        String description;
+
+                        if (otpType == signup) {
+                            description = getString(R.string.registration_success);
+                        } else {
+                            description = getString(R.string.reset_password_success);
+                        }
+
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, description);
                         bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
 
                         TelehealerFirebaseMessagingService.refresh();
@@ -236,6 +253,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
         if (getArguments() != null) {
             int type = getArguments().getInt(ArgumentKeys.OTP_TYPE);
+            isVerifyUser = getArguments().getBoolean(ArgumentKeys.IS_VERIFY_OTP);
             this.otpType = type;
             switch (type) {
                 case OtpVerificationFragment.forgot_password:
@@ -249,8 +267,14 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
         }
 
         if (otpType == signup) {
-            CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
-            titleTv.setText(getString(R.string.enter_the_authorization_code_sent_to) + " " + createUserRequestModel.getUser_data().getPhone());
+            String phone;
+            if (!isVerifyUser) {
+                CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+                phone = createUserRequestModel.getUser_data().getPhone();
+            } else {
+                phone = UserDetailPreferenceManager.getWhoAmIResponse().getPhone();
+            }
+            titleTv.setText(getString(R.string.enter_the_authorization_code_sent_to) + " " + phone);
         }
 
         if (!isApiRequested)
@@ -275,8 +299,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
     private void requestOtpValidation() {
 
-        otpEt.clearFocus();
-        showOrHideSoftInputWindow(false);
+        Utils.hideKeyboard(getActivity());
 
         if (isRequestWithEmail) {
 
@@ -363,7 +386,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
     @Override
     public void onPause() {
         super.onPause();
-        showOrHideSoftInputWindow(false);
+        Utils.hideKeyboard(getActivity());
     }
 
     @Override

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
+import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 
@@ -27,13 +28,15 @@ class DoctorPracticeSelectAdapter extends RecyclerView.Adapter<DoctorPracticeSel
     private List<PracticesBean> practicesBeanList;
     private Dialog dialog;
     private int position;
+    private GetDoctorsApiResponseModel.DataBean doctorDetail;
 
-    public DoctorPracticeSelectAdapter(FragmentActivity activity, List<PracticesBean> practicesBeanList, Dialog dialog, int position) {
+    public DoctorPracticeSelectAdapter(FragmentActivity activity, List<PracticesBean> practicesBeanList, Dialog dialog, int position, GetDoctorsApiResponseModel.DataBean doctorDetail) {
         this.fragmentActivity = activity;
         this.practicesBeanList = practicesBeanList;
         onActionCompleteInterface = (OnActionCompleteInterface) activity;
         this.dialog = dialog;
         this.position = position;
+        this.doctorDetail = doctorDetail;
     }
 
     @Override
@@ -67,6 +70,7 @@ class DoctorPracticeSelectAdapter extends RecyclerView.Adapter<DoctorPracticeSel
                 bundle.putBoolean(Constants.IS_NEW_PRACTICE, false);
                 bundle.putInt(Constants.PRACTICE_ID, i);
                 bundle.putInt(Constants.DOCTOR_ID, position);
+                bundle.putSerializable(Constants.USER_DETAIL, doctorDetail);
 
                 dialog.dismiss();
 

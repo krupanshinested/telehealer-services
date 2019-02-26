@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -50,6 +52,7 @@ public class RecentFragment extends BaseFragment {
     private AttachObserverInterface attachObserverInterface;
     private boolean isApiRequested = false;
     private int totalCount = 0;
+    private ImageView throbberIv;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -74,6 +77,8 @@ public class RecentFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 recentsCelv.getSwipeLayout().setRefreshing(false);
+                throbberIv.setVisibility(View.GONE);
+
                 if (baseApiResponseModel != null) {
 
                     recentsApiResponseModel = (RecentsApiResponseModel) baseApiResponseModel;
@@ -91,7 +96,6 @@ public class RecentFragment extends BaseFragment {
                     }
                 }
                 isApiRequested = false;
-                recentsCelv.hideProgressBar();
                 recentsCelv.setScrollable(true);
             }
         });
@@ -107,6 +111,9 @@ public class RecentFragment extends BaseFragment {
 
     private void initView(View view) {
         recentsCelv = (CustomExpandableListView) view.findViewById(R.id.recents_celv);
+        throbberIv = (ImageView) view.findViewById(R.id.throbber_iv);
+
+        Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(throbberIv);
 
         recentsCelv.setEmptyState(EmptyViewConstants.EMPTY_CALLS);
 
@@ -125,6 +132,7 @@ public class RecentFragment extends BaseFragment {
         recentsCelv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
             public void onPaginate() {
+                throbberIv.setVisibility(View.VISIBLE);
                 ++page;
                 makeApiCall(false);
                 isApiRequested = true;
@@ -165,9 +173,10 @@ public class RecentFragment extends BaseFragment {
             for (int i = 0; i < recentsApiResponseModel.getResult().size(); i++) {
 
                 if (!recentsApiResponseModel.getResult().get(i).getUpdated_at().isEmpty()) {
-                    if (recentsApiResponseModel.getResult().get(i).getCorr_type().equals("call")) {
+                    if (recentsApiResponseModel.getResult().get(i).getCorr_type().equals(Constants.CALL)) {
                         addTocall(recentsApiResponseModel.getResult().get(i), i);
-                    } else if (recentsApiResponseModel.getResult().get(i).getCorr_type().equals("chat")) {
+
+                    } else if (recentsApiResponseModel.getResult().get(i).getCorr_type().equals(Constants.CHAT)) {
                         addToChat(recentsApiResponseModel.getResult().get(i), i);
                     }
                 }
@@ -204,6 +213,12 @@ public class RecentFragment extends BaseFragment {
                 recentListAdapter.setData(listHeader, listChild, page);
                 expandListView();
             }
+
+            if (listHeader.isEmpty()) {
+                recentsCelv.showEmptyState();
+            }
+        } else {
+            recentsCelv.showEmptyState();
         }
     }
 
@@ -217,21 +232,21 @@ public class RecentFragment extends BaseFragment {
         String date = Utils.getDayMonthYear(resultBean.getUpdated_at()).concat("-c");
         List<RecentsApiResponseModel.ResultBean> beanList = new ArrayList<>();
 
-        if (!chatList.containsKey(date)) {
-
-            beanList.add(resultBean);
-
-            chatList.put(date, beanList);
+        if (!chatListHeader.contains(date)) {
             chatListHeader.add(date);
-        } else {
-
-            beanList.addAll(chatList.get(date));
-            beanList.add(resultBean);
-
-            chatList.put(chatListHeader.get(i), beanList);
-
         }
 
+        if (!chatList.isEmpty()) {
+            beanList = chatList.get(date);
+        }
+
+
+        if (beanList == null) {
+            beanList = new ArrayList<>();
+        }
+
+        beanList.add(resultBean);
+        chatList.put(date, beanList);
     }
 
     private void addTocall(RecentsApiResponseModel.ResultBean resultBean, int i) {
@@ -240,8 +255,9 @@ public class RecentFragment extends BaseFragment {
 
         if (!videoListHeader.contains(date)) {
             videoListHeader.add(date);
-            beanList.add(resultBean);
-        } else {
+        }
+
+        if (!videoList.isEmpty()) {
             beanList = videoList.get(date);
         }
 
@@ -254,6 +270,9 @@ public class RecentFragment extends BaseFragment {
     }
 
     private void makeApiCall(boolean isShowProgress) {
+        if (recentsCelv != null) {
+            recentsCelv.hideEmptyState();
+        }
         if (!isApiRequested) {
             if (recentsApiViewModel != null) {
                 if (getArguments() != null) {
