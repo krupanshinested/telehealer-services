@@ -87,8 +87,9 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
                             createUserRequestModel.getUser_data().setEmail(emailEt.getText().toString());
 
                             if (rememberCb.isChecked()) {
-                                appPreference.setString(PreferenceConstants.USER_EMAIL, emailEt.getText().toString());
+                                appPreference.setBoolean(PreferenceConstants.IS_REMEMBER_EMAIL, true);
                             }
+                            appPreference.setString(PreferenceConstants.USER_EMAIL, emailEt.getText().toString());
 
                             checkUserEmailMobileApiViewModel.getBaseApiResponseModelMutableLiveData().setValue(null);
 
@@ -174,6 +175,7 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
         } else
             onViewChangeInterface.enableNext(false);
     }
+
     @Override
     public void doCurrentTransaction() {
         makeApiCall();

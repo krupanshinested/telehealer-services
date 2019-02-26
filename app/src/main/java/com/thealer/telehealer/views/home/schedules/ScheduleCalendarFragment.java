@@ -73,6 +73,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import me.toptas.fancyshowcase.listener.DismissListener;
 
@@ -105,6 +106,8 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
     private Calendar currentDay;
     private LinearLayout parent;
     private boolean isWeekScrollEnabled = false;
+    private Set<String> notificationCreatedId = new HashSet<>();
+    private LocalNotificationReceiver localNotificationReceiver = null;
 
     @Override
     public void onAttach(Context context) {
@@ -155,8 +158,20 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         for (int i = 0; i < responseModelArrayList.size(); i++) {
 
             if (!Utils.isDateTimeExpired(responseModelArrayList.get(i).getStart())) {
-                addLocalNotification(responseModelArrayList.get(i));
+                if (!notificationCreatedId.contains(String.valueOf(responseModelArrayList.get(i).getSchedule_id()))) {
+                    notificationCreatedId.add(String.valueOf(responseModelArrayList.get(i).getSchedule_id()));
+                    appPreference.setStringSet(PreferenceConstants.NOTIFICATIONS_IDS, notificationCreatedId);
+                    Log.e("aswin", "updateCalendar: added " + notificationCreatedId.toString());
+                    addLocalNotification(responseModelArrayList.get(i));
+                }
+            } else {
+                if (notificationCreatedId.contains(String.valueOf(responseModelArrayList.get(i).getSchedule_id()))) {
+                    notificationCreatedId.remove(String.valueOf(responseModelArrayList.get(i).getSchedule_id()));
+                    appPreference.setStringSet(PreferenceConstants.NOTIFICATIONS_IDS, notificationCreatedId);
+                    Log.e("aswin", "updateCalendar: removed " + notificationCreatedId.toString());
+                }
             }
+
 
             CalendarDay calendarDay = CalendarDay.from(LocalDate.parse(responseModelArrayList.get(i).getStart(), dateTimeFormatter));
             calendarDayHashSet.add(calendarDay);
@@ -217,15 +232,17 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
     }
 
     private void createScheduledNotification() {
-        String action = getString(R.string.notification_intent_action);
+        if (localNotificationReceiver == null) {
+            String action = getString(R.string.notification_intent_action);
 
-        IntentFilter intentFilter = new IntentFilter(action);
-        intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+            IntentFilter intentFilter = new IntentFilter(action);
+            intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 
-        LocalNotificationReceiver localNotificationReceiver = new LocalNotificationReceiver();
-
-        getActivity().registerReceiver(localNotificationReceiver, intentFilter);
-
+            localNotificationReceiver = new LocalNotificationReceiver();
+            if (getActivity() != null) {
+                getActivity().registerReceiver(localNotificationReceiver, intentFilter);
+            }
+        }
     }
 
     private void addLocalNotification(SchedulesApiResponseModel.ResultBean resultBean) {
@@ -244,10 +261,10 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         calendar.setTime(date);
         calendar.add(Calendar.MINUTE, -10);
 
-        Log.e("aswin", "addLocalNotification: " + calendar.getTime());
-
-        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
-        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        if (!Utils.isDateTimeExpired(calendar.getTime())) {
+            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
 
     }
 
@@ -268,6 +285,9 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         emptyTitleTv = (TextView) view.findViewById(R.id.empty_title_tv);
         emptyMessageTv = (TextView) view.findViewById(R.id.empty_message_tv);
         parent = (LinearLayout) view.findViewById(R.id.parent);
+
+        notificationCreatedId = appPreference.getStringSet(PreferenceConstants.NOTIFICATIONS_IDS);
+        Log.e("aswin", "updateCalendar: " + notificationCreatedId.toString());
 
         setEmptyState();
 

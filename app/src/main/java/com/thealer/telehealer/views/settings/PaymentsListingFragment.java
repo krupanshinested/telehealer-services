@@ -3,12 +3,9 @@ package com.thealer.telehealer.views.settings;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,11 +91,12 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             public void onClick(View view, int position) {
                 Transaction transaction = paymentAdapter.getTransactions().get(position);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(ArgumentKeys.TRANSACTION,transaction);
+                bundle.putSerializable(ArgumentKeys.TRANSACTION, transaction);
                 onActionCompleteInterface.onCompletionResult(RequestID.TRANSACTION_DETAIL, true, bundle);
             }
         };
 
+        recyclerContainer.getSwipeLayout().setEnabled(false);
         transactionApiViewModel.getTransactions();
     }
 
@@ -115,9 +113,9 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
                         ArrayList<Transaction> transactions = transactionResponse.mergeTransactions();
 
                         if (transactions.size() == 0) {
-                           loadEmptyView();
+                            loadEmptyView();
                         }
-                        
+
                         paymentAdapter.update(transactions);
                     } else {
                         loadEmptyView();

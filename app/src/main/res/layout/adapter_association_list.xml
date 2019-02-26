@@ -19,24 +19,34 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/title_tv"
-        style="@style/text_title_dark"
-        android:gravity="left"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/sub_title_tv"
-        app:layout_constraintStart_toEndOf="@+id/avatar_civ"
+        android:id="@+id/list_title_tv"
+        style="@style/text_title_bold"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/card_default_padding"
+        android:gravity="left|bottom"
+        app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
+        app:layout_constraintEnd_toStartOf="@id/action_iv"
+        app:layout_constraintStart_toEndOf="@id/avatar_civ"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/dummy_text" />
 
     <TextView
-        android:id="@+id/sub_title_tv"
+        android:id="@+id/list_sub_title_tv"
+        style="@style/text_sub_title"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:padding="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/action_iv"
-        app:layout_constraintStart_toEndOf="@+id/avatar_civ"
-        app:layout_constraintTop_toBottomOf="@+id/title_tv"
+        android:layout_height="0dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="2dp"
+        android:fontFamily="@font/open_sans_semibold"
+        android:gravity="left|top"
+        android:maxLines="1"
+        android:ems="3"
+        android:ellipsize="end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/list_title_tv"
+        app:layout_constraintStart_toStartOf="@id/list_title_tv"
+        app:layout_constraintTop_toBottomOf="@id/list_title_tv"
         tools:text="@string/dummy_text" />
 
     <ImageView
@@ -54,6 +64,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorGrey_light"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sub_title_tv" />
 
 </android.support.constraint.ConstraintLayout>

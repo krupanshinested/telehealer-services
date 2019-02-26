@@ -83,6 +83,41 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
 
         notification.updateSwitch(isNotificationEnabled());
     }
+    private void initView(View view) {
+        checkCallQuality = view.findViewById(R.id.check_call_quality);
+        presence = view.findViewById(R.id.presence);
+        quickLogin = view.findViewById(R.id.quick_login);
+        signature = view.findViewById(R.id.signature);
+        deleteView = view.findViewById(R.id.delete_view);
+        notification = (SettingsCellView) view.findViewById(R.id.notification);
+
+        checkCallQuality.setOnClickListener(this);
+        notification.setOnClickListener(this);
+        presence.setOnClickListener(this);
+        quickLogin.setOnClickListener(this);
+        signature.setOnClickListener(this);
+        deleteView.setOnClickListener(this);
+
+        quickLogin.updateSwitch(QuickLoginUtil.isQuickLoginEnable(getActivity()));
+
+        switch (appPreference.getInt(Constants.USER_TYPE)) {
+            case Constants.TYPE_PATIENT:
+                signature.setVisibility(View.GONE);
+                break;
+            case Constants.TYPE_DOCTOR:
+                break;
+            case Constants.TYPE_MEDICAL_ASSISTANT:
+                signature.setVisibility(View.GONE);
+                break;
+        }
+
+        whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+
+        if (whoAmIApiResponseModel.getStatus().equals(Constants.AVAILABLE))
+            presence.updateSwitch(true);
+        else
+            presence.updateSwitch(false);
+    }
 
     @Override
     public void onClick(View view) {
@@ -189,41 +224,6 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         showSubFragmentInterface.onShowFragment(signatureViewFragment);
     }
 
-    private void initView(View view) {
-        checkCallQuality = view.findViewById(R.id.check_call_quality);
-        presence = view.findViewById(R.id.presence);
-        quickLogin = view.findViewById(R.id.quick_login);
-        signature = view.findViewById(R.id.signature);
-        deleteView = view.findViewById(R.id.delete_view);
-        notification = (SettingsCellView) view.findViewById(R.id.notification);
-
-        checkCallQuality.setOnClickListener(this);
-        notification.setOnClickListener(this);
-        presence.setOnClickListener(this);
-        quickLogin.setOnClickListener(this);
-        signature.setOnClickListener(this);
-        deleteView.setOnClickListener(this);
-
-        quickLogin.updateSwitch(QuickLoginUtil.isQuickLoginEnable(getActivity()));
-
-        switch (appPreference.getInt(Constants.USER_TYPE)) {
-            case Constants.TYPE_PATIENT:
-                signature.setVisibility(View.GONE);
-                break;
-            case Constants.TYPE_DOCTOR:
-                break;
-            case Constants.TYPE_MEDICAL_ASSISTANT:
-                signature.setVisibility(View.GONE);
-                break;
-        }
-
-        whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
-
-        if (whoAmIApiResponseModel.getStatus().equals(Constants.AVAILABLE))
-            presence.updateSwitch(true);
-        else
-            presence.updateSwitch(false);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

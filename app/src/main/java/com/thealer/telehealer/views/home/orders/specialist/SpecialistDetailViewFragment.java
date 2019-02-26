@@ -167,17 +167,23 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.cancel_tv:
-                dialog = Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps), getString(R.string.cancel_prescription_order))
-                        .setPositiveButton(getString(R.string.yes),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        ordersApiViewModel.cancelSpecialistOrder(resultBean.getReferral_id());
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .create();
-                dialog.show();
+                showAlertDialog(getActivity(), getString(R.string.cancel_caps),
+                        getString(R.string.cancel_prescription_order),
+                        getString(R.string.yes),
+                        getString(R.string.no),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ordersApiViewModel.cancelSpecialistOrder(resultBean.getReferral_id());
+                                dialog.dismiss();
+
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
                 break;
         }
     }

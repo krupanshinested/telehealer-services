@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -28,7 +27,6 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
-import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -207,7 +205,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             }
 
             selectionType = getArguments().getString(ArgumentKeys.SEARCH_TYPE);
-            Log.e("aswin", "initView: "+ selectionType);
+            Log.e("aswin", "initView: " + selectionType);
 
             if (selectionType != null) {
 
@@ -226,11 +224,11 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                         break;
                     case ArgumentKeys.SEARCH_ASSOCIATION:
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_PATIENT_SEARCH);
-                        changeTitleInterface.onTitleChange(getString(R.string.patient_name));
+                        changeTitleInterface.onTitleChange(getString(R.string.choose_patient));
                         getAssociationList(true);
                         break;
                     case ArgumentKeys.SEARCH_ASSOCIATION_DOCTOR:
-                        changeTitleInterface.onTitleChange(getString(R.string.specialist));
+                        changeTitleInterface.onTitleChange(getString(R.string.choose_doctor));
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_SPECIALIST);
                         searchEt.setHint(getString(R.string.search_doctors));
                         getAssociationList(true);

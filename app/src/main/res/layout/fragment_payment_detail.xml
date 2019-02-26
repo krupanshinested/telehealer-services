@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main_container"
-    android:background="@color/app_gradient_start">
+    android:id="@+id/main_container">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/detail_view"

@@ -18,7 +18,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,13 +47,8 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingViewPagerAdapter;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import id.zelory.compressor.Compressor;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
@@ -332,6 +326,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_btn:
+                Utils.hideKeyboard(getActivity());
                 if (!isShareIntent) {
                     if (!isEditMode) {
                         uploadDocument();
@@ -355,7 +350,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
 
     private void uploadMultipleDocument() {
         ordersCreateApiViewModel.uploadDocument(documentNameEt.getText().toString().concat("_" + next), imagePathList.get(0), false);
-        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
     }
 
     private void updateDocument() {
@@ -365,7 +360,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     private void uploadDocument() {
 
         ordersCreateApiViewModel.uploadDocument(documentNameEt.getText().toString(), image_path, false);
-        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
     }
 
     @Override
@@ -389,6 +384,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
                         if (mngr.getAppTasks().get(0).getTaskInfo().numActivities <= 1) {
                             startActivity(new Intent(getActivity(), HomeActivity.class));
                         }
+                        getActivity().setResult(Activity.RESULT_OK);
                         getActivity().finish();
                     }
                 } catch (Exception e) {

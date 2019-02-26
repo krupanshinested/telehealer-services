@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
@@ -30,7 +28,6 @@ import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyRespo
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
@@ -40,8 +37,6 @@ import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.labs.IcdCodeListAdapter;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Aswin on 12,December,2018
@@ -251,16 +246,24 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.cancel_tv:
-                dialog = Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps), getString(R.string.cancel_xray_order))
-                        .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+
+                showAlertDialog(getActivity(), getString(R.string.cancel_caps),
+                        getString(R.string.cancel_xray_order),
+                        getString(R.string.yes),
+                        getString(R.string.no),
+                        new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 ordersApiViewModel.cancelLabOrder(getRadiologyResponseModel.getReferral_id());
                                 dialog.dismiss();
+
                             }
-                        })
-                        .create();
-                dialog.show();
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
                 break;
         }
     }

@@ -54,6 +54,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.thealer.telehealer.common.Constants.TILL_CURRENT_DAY;
 import static com.thealer.telehealer.common.Constants.TYPE_DOB;
 
 /**
@@ -431,9 +432,10 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                 }
 
                 if (hasFocus) {
+                    Utils.hideKeyboard(getActivity());
                     DatePickerDialogFragment datePickerDialogFragment = new DatePickerDialogFragment();
                     Bundle bundle = new Bundle();
-                    bundle.putInt(Constants.DATE_PICKER_TYPE, TYPE_DOB);
+                    bundle.putInt(Constants.DATE_PICKER_TYPE, TILL_CURRENT_DAY);
                     datePickerDialogFragment.setArguments(bundle);
                     datePickerDialogFragment.show(getActivity().getSupportFragmentManager(), DatePickerDialogFragment.class.getSimpleName());
                 }

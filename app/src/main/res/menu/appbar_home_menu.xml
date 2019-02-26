@@ -10,7 +10,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_event"
-        android:icon="@drawable/ic_calendar"
+        android:icon="@drawable/ic_schedules"
         android:iconTint="@color/colorWhite"
         android:title="events"
         android:visible="false"

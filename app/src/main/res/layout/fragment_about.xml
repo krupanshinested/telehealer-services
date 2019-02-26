@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -33,12 +34,14 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        style="@style/text_app_color"
+                        style="@style/text_sub_title_bold_app_color"
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:gravity="left"
-                        android:text="@string/medical_history"
+                        android:padding="@dimen/padding_default"
+                        android:text="@string/health_profile"
+                        android:textAllCaps="true"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -72,14 +75,17 @@
 
                     <TextView
                         android:id="@+id/insurance_detail_tv"
-                        style="@style/text_app_color"
+                        style="@style/text_sub_title_bold_app_color"
+                        android:padding="@dimen/padding_default"
                         android:text="@string/insurance_details"
                         android:textAllCaps="true" />
 
                     <TextView
                         android:id="@+id/insurance_cash_tv"
-                        style="@style/text_title_dark"
-                        android:text="@string/cash" />
+                        style="@style/text_sub_title_bold"
+                        android:padding="@dimen/padding_default"
+                        android:text="@string/cash"
+                        android:textColor="@color/colorBlack" />
 
                     <LinearLayout
                         android:id="@+id/insurance_image_ll"
@@ -120,16 +126,19 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/text_app_color"
+                        style="@style/text_sub_title_bold_app_color"
+                        android:padding="@dimen/padding_default"
                         android:text="@string/email_id"
                         android:textAllCaps="true" />
 
                     <TextView
                         android:id="@+id/patient_email_tv"
+                        style="@style/text_sub_title_bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:textColor="@color/colorBlack" />
+                        android:layout_margin="@dimen/margin_default"
+                        android:textColor="@color/colorBlack"
+                        tools:text="@string/dummy_text" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -155,19 +164,22 @@
 
                 <TextView
                     android:id="@+id/license_hint_tv"
-                    style="@style/text_app_color"
+                    style="@style/text_sub_title_bold_app_color"
                     android:layout_width="0dp"
                     android:gravity="left"
+                    android:padding="@dimen/padding_default"
                     android:text="@string/license"
+                    android:textAllCaps="true"
                     app:layout_constraintEnd_toStartOf="@id/npi_hint_tv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/npi_hint_tv"
-                    style="@style/text_app_color"
+                    style="@style/text_sub_title_bold_app_color"
                     android:layout_width="0dp"
                     android:gravity="left"
+                    android:padding="@dimen/padding_default"
                     android:text="@string/npi"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/license_hint_tv"
@@ -182,7 +194,8 @@
                     android:textSize="16sp"
                     app:layout_constraintEnd_toStartOf="@+id/npi_tv"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/license_hint_tv" />
+                    app:layout_constraintTop_toBottomOf="@id/license_hint_tv"
+                    tools:text="@string/dummy_text" />
 
                 <TextView
                     android:id="@+id/npi_tv"
@@ -193,7 +206,8 @@
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/license_tv"
-                    app:layout_constraintTop_toBottomOf="@+id/npi_hint_tv" />
+                    app:layout_constraintTop_toBottomOf="@+id/npi_hint_tv"
+                    tools:text="@string/dummy_text" />
 
                 <TextView
                     android:id="@+id/doctor_bio_tv"
@@ -204,7 +218,8 @@
                     android:maxLines="4"
                     android:padding="8dp"
                     android:textColor="@color/colorBlack"
-                    app:layout_constraintTop_toBottomOf="@+id/license_tv" />
+                    app:layout_constraintTop_toBottomOf="@+id/license_tv"
+                    tools:text="@string/dummy_text" />
 
                 <TextView
                     android:id="@+id/more_less_tv"
@@ -234,9 +249,10 @@
 
                     <TextView
                         android:id="@+id/label_tv"
-                        style="@style/text_app_color"
+                        style="@style/text_sub_title_bold_app_color"
                         android:layout_width="0dp"
                         android:gravity="left"
+                        android:padding="@dimen/padding_default"
                         android:text="@string/clinic"
                         app:layout_constraintEnd_toStartOf="@+id/map_iv"
                         app:layout_constraintStart_toStartOf="parent"
@@ -250,7 +266,8 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/map_iv"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/label_tv" />
+                        app:layout_constraintTop_toBottomOf="@+id/label_tv"
+                        tools:text="@string/dummy_text" />
 
                     <ImageView
                         android:id="@+id/map_iv"
@@ -286,18 +303,21 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/text_app_color"
+                    style="@style/text_sub_title_bold_app_color"
+                    android:padding="@dimen/padding_default"
                     android:text="@string/phone"
                     android:textAllCaps="true" />
 
                 <TextView
                     android:id="@+id/user_phone_tv"
+                    style="@style/text_sub_title_bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
+                    android:layout_margin="@dimen/margin_default"
                     android:drawableEnd="@drawable/ic_call_black_24dp"
                     android:drawableTint="@color/app_gradient_start"
-                    android:textColor="@color/colorBlack" />
+                    android:textColor="@color/colorBlack"
+                    tools:text="@string/dummy_text" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 

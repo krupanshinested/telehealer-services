@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiRespo
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -48,6 +50,8 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
     private OnCloseActionInterface onCloseActionInterface;
     private AttachObserverInterface attachObserverInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
+    private AppBarLayout appbarLayout;
+    private ImageView backgroundIv;
 
     @Override
     public void onAttach(Context context) {
@@ -89,12 +93,14 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         countTv = (TextView) view.findViewById(R.id.count_tv);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        backgroundIv = (ImageView) view.findViewById(R.id.background_iv);
 
         if (getArguments() != null) {
 
-            boolean isFromHome =  getArguments().getBoolean(Constants.IS_FROM_HOME);
+            boolean isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 
-            if (isFromHome){
+            if (isFromHome) {
                 toolbar.inflateMenu(R.menu.documents_menu);
                 toolbar.setOnMenuItemClickListener(this);
             }
@@ -147,6 +153,7 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
 
     private void setPositionCount(int i, int size) {
         countTv.setText((i + 1) + " of " + size);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), backgroundIv, documentsApiResponseModel.getResult().get(i).getPath(), getActivity().getDrawable(R.drawable.document_placeholder_drawable), true);
     }
 
     private void setToolbarTitle(String name) {
@@ -194,7 +201,7 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == Activity.RESULT_OK && requestCode == RequestID.REQ_UPDATE_DOCUMENT){
+        if (resultCode == Activity.RESULT_OK && requestCode == RequestID.REQ_UPDATE_DOCUMENT) {
             onCloseActionInterface.onClose(false);
         }
     }

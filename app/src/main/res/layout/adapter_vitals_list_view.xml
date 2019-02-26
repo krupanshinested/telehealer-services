@@ -18,13 +18,14 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_default">
 
             <ImageView
                 android:id="@+id/vital_iv"
                 android:layout_width="@dimen/card_image_view_size"
                 android:layout_height="@dimen/card_image_view_size"
-                android:tint="@color/colorGrey"
+                android:tint="@color/app_gradient_start"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -33,39 +34,46 @@
 
             <TextView
                 android:id="@+id/value_tv"
+                style="@style/text_title_bold_app_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center|left"
-                android:padding="8dp"
-                android:textColor="@color/app_gradient_start"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@+id/description_tv"
                 app:layout_constraintStart_toEndOf="@id/vital_iv"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/dummy_text" />
+                tools:text="10" />
 
             <TextView
                 android:id="@+id/unit_tv"
+                style="@style/text_title_bold"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center|left"
-                android:paddingTop="8dp"
-                android:paddingRight="8dp"
-                android:paddingBottom="8dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:ems="3"
+                android:gravity="center|left|bottom"
+                android:maxLines="1"
                 android:textColor="@color/colorBlack"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/value_tv"
                 app:layout_constraintEnd_toStartOf="@id/time_tv"
                 app:layout_constraintStart_toEndOf="@id/value_tv"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@id/value_tv"
                 tools:text="@string/dummy_text" />
 
             <TextView
                 android:id="@+id/description_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center|left"
-                android:padding="8dp"
+                android:gravity="top"
+                android:maxLines="1"
+                android:ems="3"
+                android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/time_tv"
-                app:layout_constraintStart_toEndOf="@id/vital_iv"
+                app:layout_constraintStart_toStartOf="@id/value_tv"
                 app:layout_constraintTop_toBottomOf="@+id/value_tv"
                 tools:text="@string/dummy_text" />
 
@@ -73,12 +81,13 @@
                 android:id="@+id/time_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:gravity="top|left"
-                android:padding="8dp"
+                android:layout_marginEnd="@dimen/margin_default"
+                android:gravity="center|bottom"
                 android:textColor="@color/colorBlack"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/value_tv"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/value_tv"
+                tools:text="10:00 PM" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

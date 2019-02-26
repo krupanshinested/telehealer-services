@@ -175,6 +175,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
             }
         });
 
+        pharmacyCrv.getSwipeLayout().setEnabled(false);
         nextBtn.setOnClickListener(this);
 
         if (getArguments() != null) {

@@ -10,14 +10,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
-import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -31,7 +30,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 public class ResetPasswordFragment extends BaseFragment implements View.OnClickListener {
 
     private CircleImageView profileView;
-    private TextView profileTitle,description;
+    private TextView profileTitle, description;
     private CustomButton okButton;
 
     private OnActionCompleteInterface actionCompleteInterface;
@@ -56,7 +55,7 @@ public class ResetPasswordFragment extends BaseFragment implements View.OnClickL
     public void onAttach(Context context) {
         super.onAttach(context);
         actionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        viewChangeInterface  = (OnViewChangeInterface) getActivity();
+        viewChangeInterface = (OnViewChangeInterface) getActivity();
     }
 
     @Override
@@ -64,7 +63,7 @@ public class ResetPasswordFragment extends BaseFragment implements View.OnClickL
         switch (view.getId()) {
             case R.id.ok_btn:
                 if (actionCompleteInterface != null)
-                    actionCompleteInterface.onCompletionResult(RequestID.REQ_PASSWORD_RESET_OTP,true,null);
+                    actionCompleteInterface.onCompletionResult(RequestID.REQ_PASSWORD_RESET_OTP, true, null);
                 break;
         }
     }
@@ -75,9 +74,11 @@ public class ResetPasswordFragment extends BaseFragment implements View.OnClickL
         description = view.findViewById(R.id.description_tv);
         okButton = view.findViewById(R.id.ok_btn);
 
-        profileTitle.setText(getString(R.string.hi)+" "+ UserDetailPreferenceManager.getUserDisplayName());
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), profileView, UserDetailPreferenceManager.getWhoAmIResponse().getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
 
-        description.setText(getString(R.string.reset_password_string)+" ( "+appPreference.getString(PreferenceConstants.USER_EMAIL) + ")");
+        profileTitle.setText(getString(R.string.hi) + " " + UserDetailPreferenceManager.getUserDisplayName());
+
+        description.setText(getString(R.string.reset_password_string) + " ( " + appPreference.getString(PreferenceConstants.USER_EMAIL) + ")");
 
         okButton.setOnClickListener(this);
     }
