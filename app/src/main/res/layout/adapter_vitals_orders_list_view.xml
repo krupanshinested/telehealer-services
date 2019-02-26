@@ -13,25 +13,21 @@
             android:id="@+id/list_iv"
             android:layout_width="@dimen/card_image_view_size"
             android:layout_height="@dimen/card_image_view_size"
-            android:padding="8dp"
-            android:tint="@color/app_gradient_start"
             android:src="@drawable/ic_orders_prescriptions"
+            android:tint="@color/app_gradient_start"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/list_tv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/list_tv"
+            style="@style/text_title_bold"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:padding="8dp"
+            android:layout_marginStart="8dp"
             android:text="@string/dummy_text"
-            android:textStyle="bold"
-            android:textColor="@color/colorBlack"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/list_iv"
+            app:layout_constraintStart_toEndOf="@id/list_iv"
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>

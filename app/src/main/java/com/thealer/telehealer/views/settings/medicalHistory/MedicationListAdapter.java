@@ -67,8 +67,6 @@ public class MedicationListAdapter extends RecyclerView.Adapter<MedicationListAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
 
-        Log.e("aswin", "onBindViewHolder: " + i + " " + new Gson().toJson(medicationModelList.get(i)));
-
         int metricPosition = 0, directionOnePosition = 0, directionTwoPosition = 0;
 
         if (medicationModelList.get(i).getUnit() != null) {

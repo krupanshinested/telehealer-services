@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
     android:id="@+id/list_item"
-    android:padding="8dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <RadioButton
         android:id="@+id/icd_code_rb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textStyle="bold"
+        android:layout_margin="@dimen/margin_default"
+        app:layout_constraintBottom_toBottomOf="@+id/icd_detail_tv"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/icd_detail_tv"
+        tool:text="@string/dummy_text" />
 
     <TextView
         android:id="@+id/icd_detail_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:layout_margin="@dimen/margin_default"
+        android:fontFamily="@font/open_sans_semibold"
+        android:gravity="center|left"
+        android:padding="@dimen/padding_default"
         android:textColor="@color/colorBlack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/icd_code_rb"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tool:text="@string/dummy_text" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginStart="@dimen/margin_default"
+        android:layout_marginTop="@dimen/margin_default"
+        android:layout_marginEnd="@dimen/margin_default"
         android:background="@color/colorGrey_light"
-        app:layout_constraintTop_toBottomOf="@+id/icd_detail_tv"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/icd_detail_tv" />
 </android.support.constraint.ConstraintLayout>

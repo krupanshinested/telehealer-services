@@ -7,5 +7,5 @@
     android:textColor="@android:color/holo_red_light"
     android:gravity="center"
     android:rotation="-45"
-    android:textSize="60dp"
+    android:textSize="30dp"
     android:id="@+id/cancel_watermark_tv"/>

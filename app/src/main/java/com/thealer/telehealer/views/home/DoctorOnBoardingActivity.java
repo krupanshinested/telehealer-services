@@ -90,7 +90,7 @@ public class DoctorOnBoardingActivity extends BaseActivity {
         userAvatarCiv = (CircleImageView) findViewById(R.id.user_avatar_civ);
 
         userNameTv.setText("Hi " + UserDetailPreferenceManager.getFirst_name() + "!");
-        Utils.setImageWithGlide(this, userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true);
     }
 
     @Override

@@ -226,16 +226,23 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.cancel_tv:
-                dialog = Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps), getString(R.string.cancel_prescription_order))
-                        .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                showAlertDialog(getActivity(), getString(R.string.cancel_caps),
+                        getString(R.string.cancel_prescription_order),
+                        getString(R.string.yes),
+                        getString(R.string.no),
+                        new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelLabOrder(labsResponseBean.getReferral_id());
+                                ordersApiViewModel.cancelSpecialistOrder(labsResponseBean.getReferral_id());
+                                dialog.dismiss();
+
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                             }
-                        })
-                        .create();
-                dialog.show();
+                        });
                 break;
         }
     }

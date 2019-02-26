@@ -149,6 +149,10 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 
             if (!isFromHome) {
+
+                patientOcv.setArrow_visible(false);
+                patientOcv.setClickable(false);
+
                 patientModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             }
 

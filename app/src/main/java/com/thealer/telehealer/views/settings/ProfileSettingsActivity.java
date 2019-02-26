@@ -61,7 +61,7 @@ import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import com.thealer.telehealer.views.signup.OtpVerificationFragment;
-import com.thealer.telehealer.views.signup.doctor.DoctorDetailFragment;
+import com.thealer.telehealer.views.signup.doctor.CreateDoctorDetailFragment;
 import com.thealer.telehealer.views.signup.medicalAssistant.MedicalAssistantDetailFragment;
 import com.thealer.telehealer.views.signup.patient.PatientChoosePaymentFragment;
 import com.thealer.telehealer.views.signup.patient.PatientRegistrationDetailFragment;
@@ -147,7 +147,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                         setFragment(medicalAssistantDetailFragment, false, true, true);
                         break;
                     case Constants.TYPE_DOCTOR:
-                        DoctorDetailFragment doctorDetailFragment = new DoctorDetailFragment();
+                        CreateDoctorDetailFragment doctorDetailFragment = new CreateDoctorDetailFragment();
                         doctorDetailFragment.setArguments(profile);
                         setFragment(doctorDetailFragment, false, true, true);
                         break;
@@ -374,7 +374,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             genderIv.setVisibility(View.GONE);
         }
         updateUserDetails();
-        Utils.setImageWithGlide(ProfileSettingsActivity.this, userProfileIv, UserDetailPreferenceManager.getUser_avatar(), ProfileSettingsActivity.this.getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getApplicationContext(), userProfileIv, UserDetailPreferenceManager.getUser_avatar(), ProfileSettingsActivity.this.getDrawable(R.drawable.profile_placeholder), true);
     }
 
     public void updateUserDetails() {

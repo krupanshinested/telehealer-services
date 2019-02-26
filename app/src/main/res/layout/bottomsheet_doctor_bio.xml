@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/parent_view">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -26,30 +26,33 @@
 
             <TextView
                 android:id="@+id/done_tv"
-                style="@style/text_app_color"
+                style="@style/text_sub_title_app_color"
                 android:layout_width="wrap_content"
                 android:layout_height="?android:attr/actionBarSize"
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:padding="@dimen/padding_default"
                 android:text="@string/done"
                 android:textAllCaps="true" />
 
             <View
+                android:id="@+id/view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:id="@+id/view"
+                style="@style/text_title_bold"
                 android:layout_below="@+id/done_tv"
                 android:background="@color/colorGrey" />
 
             <EditText
-                android:layout_below="@+id/view"
                 android:id="@+id/bio_bottomsheet_et"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_below="@+id/view"
                 android:layout_margin="5dp"
                 android:background="@null"
-                android:imeOptions="actionDone"
                 android:gravity="left|top"
+                android:imeOptions="actionDone"
                 android:inputType="textMultiLine" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>

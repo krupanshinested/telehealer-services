@@ -70,7 +70,7 @@ public class InviteUserBaseFragment extends BaseFragment {
     }
 
     public void showSuccessFragment() {
-        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
     }
 
     private void sendSuccessMessage() {

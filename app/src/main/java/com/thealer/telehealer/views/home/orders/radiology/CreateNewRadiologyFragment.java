@@ -173,6 +173,10 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
         if (getArguments() != null) {
             boolean isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
             if (!isFromHome) {
+
+                patientOcv.setArrow_visible(false);
+                patientOcv.setClickable(false);
+
                 userModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             }
 
@@ -294,7 +298,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
             }
         });
         ordersCreateApiViewModel.createRadiologyOrder(createRadiologyRequestModel);
-        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
         sendSuccessViewBroadCast(getActivity(), false, getString(R.string.posting), getString(R.string.posting_please_wait));
     }
 

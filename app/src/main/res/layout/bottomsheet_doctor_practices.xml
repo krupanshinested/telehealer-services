@@ -18,26 +18,30 @@
 
             <TextView
                 android:id="@+id/delete_tv"
-                style="@style/text_app_color"
-                android:textColor="@android:color/holo_red_light"
+                style="@style/text_sub_title_app_color"
+                android:textColor="@color/red"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="@dimen/padding_default"
                 android:layout_marginLeft="10dp"
                 android:text="@string/delete"
                 android:visibility="gone"/>
 
             <TextView
-                style="@style/text_title_dark"
+                style="@style/text_title_bold"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/address" />
 
             <TextView
                 android:id="@+id/done_tv"
-                style="@style/text_app_color"
+                style="@style/text_sub_title_app_color"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="@dimen/padding_default"
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="10dp"
                 android:text="@string/done"

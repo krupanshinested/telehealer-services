@@ -5,12 +5,14 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.common.AppUpdateActivity;
@@ -37,6 +40,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,6 +59,7 @@ import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.application;
 
 /**
  * Created by Aswin on 08,October,2018
@@ -415,6 +420,9 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 isLoadingLiveData.setValue(false);
                 errorModelLiveData.setValue(new ErrorModel(-1, e1.getMessage(), e1.getMessage()));
             }
+        } else if (e instanceof UnknownHostException) {
+            isLoadingLiveData.setValue(false);
+            errorModelLiveData.setValue(new ErrorModel(-1, "Network Error", "Please check your network connection"));
         } else {
             isLoadingLiveData.setValue(false);
             errorModelLiveData.setValue(new ErrorModel(-1, e.getMessage(), e.getMessage()));

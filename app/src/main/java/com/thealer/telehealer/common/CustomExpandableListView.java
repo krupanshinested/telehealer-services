@@ -3,16 +3,15 @@ package com.thealer.telehealer.common;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 
@@ -27,7 +26,7 @@ public class CustomExpandableListView extends ConstraintLayout {
     private TextView emptyTitleTv;
     private TextView emptyMessageTv;
     private CustomButton emptyActionBtn;
-    private ProgressBar recyclerLoader;
+    private ImageView recyclerLoader;
     private Context context;
     private String emptyState;
     private boolean isScrollable = false;
@@ -35,8 +34,7 @@ public class CustomExpandableListView extends ConstraintLayout {
     private OnPaginateInterface onPaginateInterface;
     private CustomSwipeRefreshLayout swipeLayout;
     private LinearLayout emptyLl;
-
-
+    
     public CustomExpandableListView(Context context) {
         super(context);
     }
@@ -57,7 +55,9 @@ public class CustomExpandableListView extends ConstraintLayout {
         emptyTitleTv = (TextView) view.findViewById(R.id.empty_title_tv);
         emptyMessageTv = (TextView) view.findViewById(R.id.empty_message_tv);
         emptyActionBtn = (CustomButton) view.findViewById(R.id.empty_action_btn);
-        recyclerLoader = (ProgressBar) view.findViewById(R.id.recycler_loader);
+        recyclerLoader = (ImageView) view.findViewById(R.id.recycler_loader);
+
+        Glide.with(context).load(R.raw.throbber).into(recyclerLoader);
         swipeLayout = (CustomSwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
         emptyLl = (LinearLayout) view.findViewById(R.id.empty_ll);
 
@@ -73,7 +73,6 @@ public class CustomExpandableListView extends ConstraintLayout {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                Log.e("aswin", "onScroll: " + totalCount + " " + totalItemCount);
                 if (totalItemCount < totalCount && isScrollable) {
                     if (firstVisibleItem < totalItemCount - 1) {
                         if ((firstVisibleItem + visibleItemCount == totalItemCount)) {

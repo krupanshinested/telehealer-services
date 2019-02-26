@@ -27,6 +27,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -42,7 +43,7 @@ import java.util.List;
  * Created by Aswin on 19,November,2018
  */
 public class AddConnectionActivity extends BaseActivity implements OnCloseActionInterface,
-        OnActionCompleteInterface, SuccessViewInterface, OnListItemSelectInterface, AttachObserverInterface , ShowSubFragmentInterface {
+        OnActionCompleteInterface, SuccessViewInterface, OnListItemSelectInterface, AttachObserverInterface, ShowSubFragmentInterface {
 
     private ImageView backIv;
     private TextView toolbarTitle;
@@ -146,18 +147,19 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     @Override
     public void onCompletionResult(String requestId, Boolean success, Bundle bundle) {
         if (success) {
-            CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
-
             selectedId = bundle.getInt(Constants.ADD_CONNECTION_ID);
+            String userGuid = bundle.getString(ArgumentKeys.USER_GUID);
 
-            addConnectionApiViewModel.connectUser(commonUserApiResponseModel.getUser_guid(), String.valueOf(selectedId));
-
-            SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+            bundle = new Bundle();
             bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
             bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_requesting));
+
+            SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
             successViewDialogFragment.setArguments(bundle);
 
             successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+
+            addConnectionApiViewModel.connectUser(userGuid, String.valueOf(selectedId));
 
         }
     }

@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.UserType;
@@ -118,7 +121,6 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    CommonUserApiResponseModel doctorModel = null, patientModel = null;
     String doctorGuid = null;
 
     public static class ChildViewHolder {
@@ -138,6 +140,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         CardView notificationCv;
         ChildViewHolder childViewHolder;
+        CommonUserApiResponseModel doctorModel = null, patientModel = null;
 
         if (convertView == null) {
             convertView = LayoutInflater.from(activity).inflate(R.layout.adapter_notification_list, parent, false);
@@ -154,8 +157,8 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
         childViewHolder.titleTv = (TextView) convertView.findViewById(R.id.title_tv);
         childViewHolder.userDetailCl = (ConstraintLayout) convertView.findViewById(R.id.user_detail_cl);
         childViewHolder.avatarCiv = (CircleImageView) convertView.findViewById(R.id.avatar_civ);
-        childViewHolder.nameTv = (TextView) convertView.findViewById(R.id.name_tv);
-        childViewHolder.userDetailTv = (TextView) convertView.findViewById(R.id.user_detail_tv);
+        childViewHolder.nameTv = (TextView) convertView.findViewById(R.id.list_title_tv);
+        childViewHolder.userDetailTv = (TextView) convertView.findViewById(R.id.list_sub_title_tv);
         childViewHolder.infoIv = (ImageView) convertView.findViewById(R.id.info_iv);
         childViewHolder.descriptionTv = (TextView) convertView.findViewById(R.id.description_tv);
         childViewHolder.slotCl = (ConstraintLayout) convertView.findViewById(R.id.slot_cl);
@@ -194,6 +197,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
 
         childViewHolder.actionCl.setVisibility(View.GONE);
         childViewHolder.slotCl.setVisibility(View.GONE);
+        childViewHolder.bottomView.setVisibility(View.GONE);
 
         switch (resultModel.getType()) {
             case REQUEST_TYPE_APPOINTMENT:
@@ -335,15 +339,18 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
             }
         }
 
+        CommonUserApiResponseModel finalPatientModel = patientModel;
+        CommonUserApiResponseModel finalDoctorModel = doctorModel;
         childViewHolder.infoIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
                 Bundle bundle = new Bundle();
                 if (UserType.isUserDoctor()) {
-                    bundle.putSerializable(Constants.USER_DETAIL, patientModel);
+                    bundle.putSerializable(Constants.USER_DETAIL, finalPatientModel);
                 } else {
-                    bundle.putSerializable(Constants.USER_DETAIL, doctorModel);
+                    bundle.putSerializable(Constants.USER_DETAIL, finalDoctorModel);
                 }
 
                 if (resultModel.getType().equals(REQUEST_TYPE_CONNECTION)) {
@@ -355,6 +362,8 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                 } else {
                     bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
                 }
+
+                bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
 
                 doctorPatientDetailViewFragment.setArguments(bundle);
                 showSubFragmentInterface.onShowFragment(doctorPatientDetailViewFragment);

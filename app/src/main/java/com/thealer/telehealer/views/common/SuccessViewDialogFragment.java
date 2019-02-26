@@ -71,8 +71,13 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         doneBtn = (CustomButton) view.findViewById(R.id.done_btn);
         preloaderIv = (ImageView) view.findViewById(R.id.preloader_iv);
 
-        titleTv.setText("Loading");
-        messageTv.setText("Please wait...");
+        if (getArguments() != null) {
+            onDataUpdated(getArguments());
+        } else {
+            titleTv.setText("Loading");
+            messageTv.setText("Please wait...");
+        }
+
         doneBtn.setVisibility(View.GONE);
 
         animatable2 = (Animatable2) loaderIv.getDrawable();
@@ -91,10 +96,6 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
                 }
             }
         });
-
-        if (getArguments() != null) {
-            onDataUpdated(getArguments());
-        }
     }
 
     public void onDataUpdated(Bundle bundle) {

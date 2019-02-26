@@ -16,7 +16,6 @@ import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -32,6 +31,7 @@ public class DoctorDriverLicenseFragment extends BaseFragment implements DoCurre
     private ImageView licenseIv;
     private TextView pageHintTv;
     private String doctorLicensePath;
+    private ImageView addIv;
 
     @Override
     public void onAttach(Context context) {
@@ -44,7 +44,7 @@ public class DoctorDriverLicenseFragment extends BaseFragment implements DoCurre
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             doctorLicensePath = savedInstanceState.getString(Constants.LICENSE_IMAGE_PATH);
         }
     }
@@ -77,6 +77,7 @@ public class DoctorDriverLicenseFragment extends BaseFragment implements DoCurre
     private void initView(View view) {
         licenseIv = (ImageView) view.findViewById(R.id.license_iv);
         pageHintTv = (TextView) view.findViewById(R.id.page_hint_tv);
+        addIv = (ImageView) view.findViewById(R.id.add_iv);
 
         licenseIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +86,7 @@ public class DoctorDriverLicenseFragment extends BaseFragment implements DoCurre
             }
         });
 
-        if (isDeviceXLarge() && isModeLandscape()){
+        if (isDeviceXLarge() && isModeLandscape()) {
             pageHintTv.setVisibility(View.INVISIBLE);
         }
 
@@ -96,6 +97,7 @@ public class DoctorDriverLicenseFragment extends BaseFragment implements DoCurre
     private void setLicenseImage() {
         if (doctorLicensePath != null && !doctorLicensePath.isEmpty()) {
             licenseIv.setImageBitmap(getBitmpaFromPath(doctorLicensePath));
+            addIv.setVisibility(View.GONE);
             onViewChangeInterface.enableNext(true);
         }
     }

@@ -22,11 +22,9 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiViewModel;
-import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
-import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.base.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -75,18 +73,18 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
 
         icdCodeApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
                 new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    icdCodeApiResponseModel = (IcdCodeApiResponseModel) baseApiResponseModel;
-                    selectIcdCodeAdapter.setIcdCodeApiResponseModel(icdCodeApiResponseModel.getResults(), startKey);
-                    icdListCrv.setTotalCount(icdCodeApiResponseModel.getTotal_count());
-                    icdListCrv.setScrollable(true);
-                    icdListCrv.hideProgressBar();
-                    isApiRequested = false;
-                }
-            }
-        });
+                    @Override
+                    public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                        if (baseApiResponseModel != null) {
+                            icdCodeApiResponseModel = (IcdCodeApiResponseModel) baseApiResponseModel;
+                            selectIcdCodeAdapter.setIcdCodeApiResponseModel(icdCodeApiResponseModel.getResults(), startKey);
+                            icdListCrv.setTotalCount(icdCodeApiResponseModel.getTotal_count());
+                            icdListCrv.setScrollable(true);
+                            icdListCrv.hideProgressBar();
+                            isApiRequested = false;
+                        }
+                    }
+                });
 
         icdCodesDataViewModel.selectedIcdCodeList.observe(this,
                 new Observer<List<String>>() {
@@ -139,7 +137,7 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
                 startKey = 1;
 
                 String key = null;
-                if (!s.toString().isEmpty()){
+                if (!s.toString().isEmpty()) {
                     key = s.toString();
                 }
                 getIcdCodes(key, true);
@@ -152,11 +150,14 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
 
         icdListCrv.setEmptyState(EmptyViewConstants.EMPTY_SEARCH);
 
+        icdListCrv.getSwipeLayout().setEnabled(false);
+
         icdListCrv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
             public void onPaginate() {
                 startKey = startKey + 1;
                 icdListCrv.setScrollable(false);
+                icdListCrv.showProgressBar();
                 getIcdCodes(searchEt.getText().toString(), false);
                 isApiRequested = true;
             }
@@ -203,7 +204,7 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
         switch (v.getId()) {
             case R.id.done_btn:
                 onCloseActionInterface.onClose(false);
-                if (getTargetFragment() != null){
+                if (getTargetFragment() != null) {
                     getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
                 }
                 break;

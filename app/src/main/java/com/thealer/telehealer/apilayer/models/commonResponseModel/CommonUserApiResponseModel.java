@@ -95,8 +95,7 @@ public class CommonUserApiResponseModel extends BaseApiResponseModel implements 
         } else {
             if (getFirst_name() != null && !getFirst_name().isEmpty()) {
 
-                char c = getFirst_name().charAt(0);
-                return getFirst_name().replace(c, String.valueOf(c).toUpperCase().charAt(0)) + " " + getLast_name();
+                return getFirst_name().substring(0, 1).toUpperCase() + getFirst_name().substring(1) + " " + getLast_name();
             }
         }
         return "";

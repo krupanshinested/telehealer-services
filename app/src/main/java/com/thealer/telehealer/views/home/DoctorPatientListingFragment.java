@@ -85,7 +85,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                     AssociationApiResponseModel associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
 
                     if (associationApiResponseModel.getResult().size() > 0) {
-                        showProposer();
+//                        showProposer();
                     } else {
                         if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION)) {
 
