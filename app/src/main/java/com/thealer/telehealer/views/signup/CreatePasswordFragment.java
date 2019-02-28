@@ -58,6 +58,7 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
     private boolean isReEnterPassword;
     private ResetPasswordRequestModel resetPasswordRequestModel;
     private int type;
+    private CreateUserRequestModel createUserRequestModel;
 
     @Nullable
     @Override
@@ -72,6 +73,7 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
         super.onActivityCreated(savedInstanceState);
 
         createUserApiViewModel = ViewModelProviders.of(this).get(CreateUserApiViewModel.class);
+        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
 
         onViewChangeInterface.attachObserver(createUserApiViewModel);
 
@@ -89,9 +91,9 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
 
 
                     if (errorModel.getMessage() != null) {
-                        EventRecorder.recordRegistration("SIGNUP_ERROR_"+errorModel.getMessage(),null);
+                        EventRecorder.recordRegistration("SIGNUP_ERROR_" + errorModel.getMessage(), null);
                     } else {
-                        EventRecorder.recordRegistration("SIGNUP_ERROR_UNKNOWN",null);
+                        EventRecorder.recordRegistration("SIGNUP_ERROR_UNKNOWN", null);
                     }
                 }
             }
@@ -118,7 +120,6 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
                             onActionCompleteInterface.onCompletionResult(null, true, null);
 
                             if (getActivity() != null) {
-                                CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
 
                                 switch (createUserRequestModel.getUser_data().getRole()) {
                                     case Constants.ROLE_PATIENT:
@@ -225,9 +226,6 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
 
 
     private void createUser() {
-        CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
-
-        createUserRequestModel.getUser_data().setPassword(passwordEt.getText().toString());
 
         if (UserType.isUserPatient()) {
 
@@ -318,7 +316,12 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
                 }
                 break;
             default:
-                createUser();
+                createUserRequestModel.getUser_data().setPassword(passwordEt.getText().toString());
+                if (UserType.isUserDoctor()) {
+                    onActionCompleteInterface.onCompletionResult(null, true, null);
+                } else {
+                    createUser();
+                }
         }
     }
 
