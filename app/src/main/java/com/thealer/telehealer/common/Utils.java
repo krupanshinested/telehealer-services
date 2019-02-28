@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -24,6 +26,9 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
@@ -53,6 +58,8 @@ import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
+import com.thealer.telehealer.views.common.OptionsSelectionAdapter;
 import com.thealer.telehealer.views.common.CustomDialogs.OptionSelectionDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
@@ -442,7 +449,7 @@ public class Utils {
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
             return returnFormat.format(dateFormat.parse(date));
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "";
@@ -996,6 +1003,82 @@ public class Utils {
         notificationManagerCompat.notify(random.nextInt(1000), notification.build());
     }
 
+    public static void showOptionSelectionAlert(FragmentActivity activity,
+                                                @NonNull List<String> optionList,
+                                                @NonNull PickerListener pickerListener,
+                                                @Nullable String positiveTitle,
+                                                @Nullable String negativeTitle,
+                                                @Nullable View.OnClickListener positiveListener,
+                                                @Nullable View.OnClickListener negativeListener,
+                                                @Nullable int positiveColor,
+                                                @Nullable int negativeColor) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        View alertView = LayoutInflater.from(activity).inflate(R.layout.view_option_select_alert, null);
+        builder.setView(alertView);
+
+        AlertDialog alertDialog = builder.create();
+
+        RecyclerView optionsRv;
+        CardView cancelCv;
+        TextView negativeTv;
+        CardView doneCv;
+        TextView positiveTv;
+
+        optionsRv = (RecyclerView) alertView.findViewById(R.id.options_rv);
+        cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+        negativeTv = (TextView) alertView.findViewById(R.id.negative_tv);
+        doneCv = (CardView) alertView.findViewById(R.id.done_cv);
+        positiveTv = (TextView) alertView.findViewById(R.id.positive_tv);
+
+        alertDialog.setCanceledOnTouchOutside(false);
+        optionsRv.setLayoutManager(new LinearLayoutManager(activity));
+        optionsRv.setAdapter(new OptionsSelectionAdapter(activity, optionList, pickerListener, alertDialog));
+
+        if (positiveTitle != null) {
+            doneCv.setVisibility(View.VISIBLE);
+            positiveTv.setText(positiveTitle);
+
+            if (positiveListener != null) {
+                doneCv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        positiveListener.onClick(v);
+                        alertDialog.dismiss();
+                    }
+                });
+            }
+        }
+
+        if (negativeTitle != null) {
+            cancelCv.setVisibility(View.VISIBLE);
+            negativeTv.setText(negativeTitle);
+
+            if (negativeListener != null) {
+                cancelCv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        negativeListener.onClick(v);
+                        alertDialog.dismiss();
+                    }
+                });
+            }
+        }
+
+        if (positiveColor != 0) {
+            positiveTv.setTextColor(activity.getColor(positiveColor));
+        }
+
+        if (negativeColor != 0) {
+            negativeTv.setTextColor(activity.getColor(negativeColor));
+        }
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            alertDialog.getWindow().setGravity(Gravity.BOTTOM);
+        }
+        alertDialog.show();
+    }
     public static void showOptionsSelectionAlert(Context context, List<String> options, PickerListener pickerListener){
         OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(context, options, pickerListener);
         optionSelectionDialog.show();

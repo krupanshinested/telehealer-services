@@ -7,6 +7,7 @@ import com.thealer.telehealer.R;
  */
 
 public class SupportedMeasurementType {
+    public static final String bpHeart = "bp,heartRate";
     public static final String bp = "bp";
     public static final String weight = "weight";
     public static final String temperature = "temperature";
@@ -17,6 +18,8 @@ public class SupportedMeasurementType {
 
     public static int getTitle(String type) {
         switch (type) {
+            case SupportedMeasurementType.bpHeart:
+                return R.string.blood_pressure_heart_rate;
             case SupportedMeasurementType.bp:
                 return R.string.blood_pressure;
             case SupportedMeasurementType.weight:
@@ -37,6 +40,7 @@ public class SupportedMeasurementType {
     public static int getDrawable(String type) {
         switch (type) {
             case SupportedMeasurementType.bp:
+            case SupportedMeasurementType.bpHeart:
                 return R.drawable.ic_vitals_bp;
             case SupportedMeasurementType.weight:
                 return R.drawable.ic_vitals_weight;
@@ -56,6 +60,7 @@ public class SupportedMeasurementType {
     public static String getVitalUnit(String supportedMeasurementType) {
         switch (supportedMeasurementType) {
             case SupportedMeasurementType.bp:
+            case SupportedMeasurementType.bpHeart:
                 return "mmHg";
             case SupportedMeasurementType.gulcose:
                 return "mg/dL";
@@ -71,6 +76,7 @@ public class SupportedMeasurementType {
         return null;
     }
 
-    public static final String[] items = new String[]{bp,weight,temperature,gulcose,pulseOximeter,heartRate};
+    public static final String[] items = new String[]{bpHeart, weight, temperature, gulcose, pulseOximeter};
+    public static final String[] vitalItems = new String[]{bp, weight, temperature, gulcose, pulseOximeter, heartRate};
 
 }
