@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -62,6 +64,7 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -96,6 +99,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private HashMap<Float, String> xaxisLables;
     private ArrayList<Entry> line1Entry;
     private ArrayList<Entry> line2Entry;
+    private ArrayList<Entry> line3Entry;
     private Toolbar toolbar;
     private ArrayList<VitalsApiResponseModel> vitalsApiResponseModelArrayList;
     private GetUsersApiViewModel getUsersApiViewModel;
@@ -131,6 +135,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                             String message = "";
                             switch (selectedItem) {
                                 case SupportedMeasurementType.bp:
+                                case SupportedMeasurementType.bpHeart:
                                     message = OverlayViewConstants.OVERLAY_NO_BP;
                                     break;
                                 case SupportedMeasurementType.gulcose:
@@ -208,12 +213,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             linechart.getDescription().setEnabled(false);
             linechart.setDrawGridBackground(false);
 
-            line1Entry = new ArrayList<>();
             xaxisLables = new HashMap<>();
             List<ILineDataSet> lineDataSetList = new ArrayList<>();
+            line1Entry = new ArrayList<>();
             line2Entry = new ArrayList<>();
-            line1Entry.add(new Entry(0, 0));
-            line2Entry.add(new Entry(0, 0));
+            line3Entry = new ArrayList<>();
 
             String dataSet1Name = getString(SupportedMeasurementType.getTitle(selectedItem));
 
@@ -225,10 +229,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
             xAxis.setDrawGridLines(false);
             xAxis.setSpaceMin(1f);
-            xAxis.setAxisMinimum(1f);
+            xAxis.setAxisMinimum(-0.2f);
             xAxis.setSpaceMax(1f);
             xAxis.setDrawAxisLine(false);
-            xAxis.setTextColor(Color.WHITE);
+            xAxis.setTextColor(Color.BLACK);
             xAxis.setValueFormatter(new IAxisValueFormatter() {
                 @Override
                 public String getFormattedValue(float value, AxisBase axis) {
@@ -243,8 +247,9 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             YAxis yAxis = linechart.getAxisLeft();
             yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
             yAxis.setDrawGridLines(false);
-            yAxis.setTextColor(Color.WHITE);
+            yAxis.setTextColor(Color.BLACK);
             yAxis.setDrawAxisLine(false);
+
             linechart.getAxisLeft().setEnabled(true);
             linechart.getAxisRight().setEnabled(false);
 
@@ -256,25 +261,47 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 String value = vitalsApiResponseModelArrayList.get(i).getValue()
                         .replace(SupportedMeasurementType.getVitalUnit(selectedItem), "").trim();
 
-                if (selectedItem.equals(SupportedMeasurementType.bp)) {
-                    String[] values = value.split("/");
+                String type = vitalsApiResponseModelArrayList.get(i).getType();
 
-                    if (Float.parseFloat(values[0]) > maxVlaue) {
-                        maxVlaue = Float.parseFloat(values[0]);
-                    }
-                    if (i == 1) {
-                        minValue = Float.parseFloat(values[1]);
-                    } else {
-                        if (Float.parseFloat(values[0]) < minValue) {
-                            maxVlaue = Float.parseFloat(values[0]);
-                        }
-                        if (Float.parseFloat(values[1]) < minValue) {
-                            maxVlaue = Float.parseFloat(values[1]);
-                        }
-                    }
+                if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
 
-                    line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0])));
-                    line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1])));
+                    switch (type) {
+                        case SupportedMeasurementType.bp:
+                            String[] values = value.split("/");
+
+                            if (Float.parseFloat(values[0]) > maxVlaue) {
+                                maxVlaue = Float.parseFloat(values[0]);
+                            }
+                            if (i == 1) {
+                                minValue = Float.parseFloat(values[1]);
+                            } else {
+                                if (Float.parseFloat(values[0]) < minValue) {
+                                    maxVlaue = Float.parseFloat(values[0]);
+                                }
+                                if (Float.parseFloat(values[1]) < minValue) {
+                                    maxVlaue = Float.parseFloat(values[1]);
+                                }
+                            }
+
+                            line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0])));
+                            line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1])));
+                            break;
+                        case SupportedMeasurementType.heartRate:
+
+                            if (Float.parseFloat(value) > maxVlaue) {
+                                maxVlaue = Float.parseFloat(value);
+                            }
+                            if (i == 1) {
+                                minValue = Float.parseFloat(value);
+                            } else {
+                                if (Float.parseFloat(value) < minValue) {
+                                    minValue = Float.parseFloat(value);
+                                }
+                            }
+                            line3Entry.add(new Entry(i + 1, Float.parseFloat(value)));
+
+                            break;
+                    }
                 } else {
                     if (Float.parseFloat(value) > maxVlaue) {
                         maxVlaue = Float.parseFloat(value);
@@ -294,26 +321,17 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             yAxis.calculate(maxVlaue, minValue);
 
+            int color1 = getContext().getColor(R.color.app_gradient_start);
 
-            if (selectedItem.equals(SupportedMeasurementType.bp)) {
-                dataSet1Name = VitalsConstant.INPUT_SYSTOLE;
-                String dataSet2Name = VitalsConstant.INPUT_DIASTOLE;
-                LineDataSet lineDataSet2 = new LineDataSet(line2Entry, dataSet2Name);
-                lineDataSet2.setCircleColor(Color.BLACK);
-                lineDataSet2.setColor(Color.BLACK);
-                lineDataSet2.setLineWidth(2f);
-                lineDataSet2.setDrawValues(false);
-                lineDataSet2.setCircleRadius(4f);
-                lineDataSet2.setDrawCircleHole(false);
-                lineDataSet2.setValueTextColor(Color.WHITE);
-                lineDataSet2.setDrawHighlightIndicators(false);
-
-                lineDataSetList.add(lineDataSet2);
+            if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                dataSet1Name = VitalsConstant.SYSTOLE;
+                color1 = getContext().getColor(R.color.char_line_1);
             }
 
+
             LineDataSet lineDataSet1 = new LineDataSet(line1Entry, dataSet1Name);
-            lineDataSet1.setCircleColor(Color.WHITE);
-            lineDataSet1.setColor(Color.WHITE);
+            lineDataSet1.setCircleColor(color1);
+            lineDataSet1.setColor(color1);
             lineDataSet1.setLineWidth(2f);
             lineDataSet1.setCircleRadius(4f);
             lineDataSet1.setDrawValues(false);
@@ -321,6 +339,38 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             lineDataSet1.setDrawHighlightIndicators(false);
 
             lineDataSetList.add(lineDataSet1);
+
+            if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                String dataSet2Name = VitalsConstant.DIASTOLE;
+                String dataSet3Name = getString(SupportedMeasurementType.getTitle(SupportedMeasurementType.heartRate));
+
+                int color2 = getContext().getColor(R.color.char_line_2);
+
+                LineDataSet lineDataSet2 = new LineDataSet(line2Entry, dataSet2Name);
+                lineDataSet2.setCircleColor(color2);
+                lineDataSet2.setColor(color2);
+                lineDataSet2.setLineWidth(2f);
+                lineDataSet2.setDrawValues(false);
+                lineDataSet2.setCircleRadius(4f);
+                lineDataSet2.setDrawCircleHole(false);
+                lineDataSet2.setValueTextColor(color2);
+                lineDataSet2.setDrawHighlightIndicators(false);
+
+                int color3 = getContext().getColor(R.color.char_line_3);
+
+                LineDataSet lineDataSet3 = new LineDataSet(line3Entry, dataSet3Name);
+                lineDataSet3.setCircleColor(color3);
+                lineDataSet3.setColor(color3);
+                lineDataSet3.setLineWidth(2f);
+                lineDataSet3.setDrawValues(false);
+                lineDataSet3.setCircleRadius(4f);
+                lineDataSet3.setDrawCircleHole(false);
+                lineDataSet3.setValueTextColor(color3);
+                lineDataSet3.setDrawHighlightIndicators(false);
+
+                lineDataSetList.add(lineDataSet2);
+                lineDataSetList.add(lineDataSet3);
+            }
 
             LineData lineData = new LineData(lineDataSetList);
 
@@ -335,8 +385,18 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             linechart.setScaleEnabled(false);
             linechart.setDoubleTapToZoomEnabled(false);
             linechart.setPinchZoom(false);
-            linechart.setNoDataTextColor(getActivity().getColor(R.color.colorWhite));
-            linechart.getLegend().setTextColor(Color.WHITE);
+            linechart.setNoDataTextColor(getActivity().getColor(R.color.colorBlack));
+
+            Legend legend = linechart.getLegend();
+
+            legend.setFormSize(10f);
+            legend.setForm(Legend.LegendForm.LINE);
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+            legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+            legend.setTextColor(Color.BLACK);
+            legend.setXEntrySpace(10f);
+
+            linechart.setExtraOffsets(0, 0, 0, 10);
 
             toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
             toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
@@ -486,7 +546,12 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         if (!pdfList.isEmpty()) {
             VitalPdfGenerator vitalPdfGenerator = new VitalPdfGenerator(getActivity());
-            String htmlContent = vitalPdfGenerator.generatePdfFor(pdfList, commonUserApiResponseModel);
+
+            boolean isVitalReport = false;
+            if (selectedItem.equals(SupportedMeasurementType.bpHeart))
+                isVitalReport = true;
+
+            String htmlContent = vitalPdfGenerator.generatePdfFor(pdfList, commonUserApiResponseModel, isVitalReport);
 
             PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
             Bundle bundle = new Bundle();
@@ -564,6 +629,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         setTitle(getString(SupportedMeasurementType.getTitle(selectedItem)));
         switch (selectedItem) {
             case SupportedMeasurementType.bp:
+            case SupportedMeasurementType.bpHeart:
                 emptyStateType = EmptyViewConstants.EMPTY_BP;
                 break;
             case SupportedMeasurementType.gulcose:
@@ -603,28 +669,67 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 }
 
                 addFab.setClickable(false);
-                if (UserType.isUserPatient()) {
-                    Intent intent = new Intent(getActivity(), VitalCreationActivity.class);
-                    intent.putExtra(ArgumentKeys.MEASUREMENT_TYPE, selectedItem);
-                    getActivity().startActivity(intent);
+
+                if (!selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                    proceedAdd(selectedItem);
                 } else {
-                    VitalCreateNewFragment vitalCreateNewFragment = new VitalCreateNewFragment();
-                    Bundle bundle = getArguments();
-                    if (bundle == null) {
-                        bundle = new Bundle();
-                    }
-                    if (isAbnormalVitalView) {
-                        bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModel);
-                    }
-                    bundle.putString(ArgumentKeys.MEASUREMENT_TYPE, selectedItem);
-                    bundle.putBoolean(ArgumentKeys.USE_OWN_TOOLBAR, true);
-                    vitalCreateNewFragment.setArguments(bundle);
-                    showSubFragmentInterface.onShowFragment(vitalCreateNewFragment);
+                    List<String> optionList = Arrays.asList(getString(SupportedMeasurementType.getTitle(SupportedMeasurementType.bp)),
+                            getString(SupportedMeasurementType.getTitle(SupportedMeasurementType.heartRate)));
+
+                    Utils.showOptionSelectionAlert(getActivity(), optionList,
+                            new PickerListener() {
+                                @Override
+                                public void didSelectedItem(int position) {
+                                    addFab.setClickable(true);
+                                    if (position == 0) {
+                                        proceedAdd(SupportedMeasurementType.bp);
+                                    } else {
+                                        proceedAdd(SupportedMeasurementType.heartRate);
+                                    }
+                                }
+
+                                @Override
+                                public void didCancelled() {
+
+                                }
+                            },
+                            null,
+                            getString(R.string.Cancel),
+                            null, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    addFab.setClickable(true);
+                                }
+                            },
+                            0,
+                            R.color.red);
                 }
                 break;
             case R.id.info_iv:
                 showUserDetailView();
                 break;
+        }
+    }
+
+
+    private void proceedAdd(String selectedItem) {
+        if (UserType.isUserPatient()) {
+            Intent intent = new Intent(getActivity(), VitalCreationActivity.class);
+            intent.putExtra(ArgumentKeys.SELECTED_VITAL_TYPE, selectedItem);
+            getActivity().startActivity(intent);
+        } else {
+            VitalCreateNewFragment vitalCreateNewFragment = new VitalCreateNewFragment();
+            Bundle bundle = getArguments();
+            if (bundle == null) {
+                bundle = new Bundle();
+            }
+            if (isAbnormalVitalView) {
+                bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModel);
+            }
+            bundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE, selectedItem);
+            bundle.putBoolean(ArgumentKeys.USE_OWN_TOOLBAR, true);
+            vitalCreateNewFragment.setArguments(bundle);
+            showSubFragmentInterface.onShowFragment(vitalCreateNewFragment);
         }
     }
 
@@ -691,20 +796,71 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             linechart.moveViewToX(e.getX() - 3);
 
-            String value;
-            String unit = SupportedMeasurementType.getVitalUnit(selectedItem);
+            String value = "";
+            String unit;
 
-            if (selectedItem.equals(SupportedMeasurementType.bp)) {
-                String systole = "Systole : " + (int) line1Entry.get((int) e.getX()).getY() + " " + unit;
-                String diastole = "Diastole : " + (int) line2Entry.get((int) e.getX()).getY() + " " + unit;
+            if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                String systole = null;
+                String diastole = null;
+                String heartRate = null;
 
-                value = systole + "\n" + diastole;
+                unit = SupportedMeasurementType.getVitalUnit(SupportedMeasurementType.bp);
+                if (line1Entry.contains(e) || line2Entry.contains(e)) {
+                    for (int i = 0; i < line1Entry.size(); i++) {
+                        if (line1Entry.get(i).equalTo(e)) {
+                            systole = "Systole : " + (int) line1Entry.get(i).getY() + " " + unit;
+                            break;
+                        }
+                    }
+                    for (int i = 0; i < line2Entry.size(); i++) {
+                        if (line2Entry.get(i).equalTo(e)) {
+                            diastole = "Diastole : " + (int) line2Entry.get(i).getY() + " " + unit;
+                            break;
+                        }
+                    }
+                }
+
+                if (line3Entry.contains(e)) {
+                    unit = SupportedMeasurementType.getVitalUnit(SupportedMeasurementType.heartRate);
+                    for (int i = 0; i < line3Entry.size(); i++) {
+                        if (line3Entry.get(i).equalTo(e)) {
+                            heartRate = String.valueOf((int) line3Entry.get(i).getY()) + " " + unit;
+                            break;
+                        }
+                    }
+                }
+
+                if (systole != null) {
+                    value = value.concat(systole);
+                }
+                if (diastole != null) {
+                    if (!value.isEmpty()) {
+                        value = value.concat("\n");
+                    }
+                    value = value.concat(diastole);
+                }
+                if (heartRate != null) {
+                    if (!value.isEmpty()) {
+                        value = value.concat("\n");
+                    }
+                    value = value.concat(heartRate);
+                }
 
             } else {
-                value = String.valueOf(line1Entry.get((int) e.getX()).getY()) + " " + unit;
+                unit = SupportedMeasurementType.getVitalUnit(selectedItem);
+
+                Log.e("aswin", "refreshContent: " + line1Entry.toString());
+                Log.e("aswin", "refreshContent: " + e.getX() + " " + e.getY());
+                for (int i = 0; i < line1Entry.size(); i++) {
+                    if (line1Entry.get(i).equalTo(e)) {
+                        value = String.valueOf((int) line1Entry.get(i).getY()) + " " + unit;
+                        break;
+                    }
+                }
             }
             valueTv.setText(value);
             dateTv.setText(Utils.getDayMonthTime(xaxisLables.get(e.getX())));
+
             super.refreshContent(e, highlight);
         }
     }

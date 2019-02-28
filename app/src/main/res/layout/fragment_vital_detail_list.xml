@@ -28,7 +28,6 @@
                 android:id="@+id/linechart"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:background="@color/app_gradient_start"
                 android:visibility="gone"
                 app:layout_constraintHeight_default="percent"
                 app:layout_constraintHeight_percent="0.4"

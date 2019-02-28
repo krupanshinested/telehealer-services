@@ -175,6 +175,8 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
         vitalReportUserListAdapter = new VitalReportUserListAdapter(getActivity());
         patientListCrv.getRecyclerView().setAdapter(vitalReportUserListAdapter);
 
+        patientListCrv.getSwipeLayout().setEnabled(false);
+
         selectedFilter = VitalReportApiViewModel.LAST_WEEK;
         getUsersList(VitalReportApiViewModel.LAST_WEEK);
 
