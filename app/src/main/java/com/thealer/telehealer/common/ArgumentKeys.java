@@ -64,6 +64,8 @@ public class ArgumentKeys {
     public static final int HISTORY_UPDATE = 0;
     public static final String VIEW_ABNORMAL_VITAL = "abnormalVital";
     public static final String IS_MEDICAL_ASSISTANT = "isMedicalAssistant";
+    public static final String IS_CREATE_USER = "isCreateUser";
+    public static final String SIGNATURE_PATH = "signaturePath";
     public static final String CHECK_CONNECTION_STATUS = "checkConnectionStatus";
     public static final String IS_VERIFY_OTP = "verifyOtp";
     public static int AUTH_NONE = 0;
