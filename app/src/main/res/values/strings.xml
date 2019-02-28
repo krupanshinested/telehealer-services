@@ -27,6 +27,7 @@
     <string name="phone_info">Your phone number will be used to validate your identity via an authorization code. You agree that you are responsible for paying any of your carrier\'s charges related to SMS messages received from Telehealer.</string>
     <string name="patient_info">Enter your first name,last name,gender and Date of birth.</string>
     <string name="password_info">Enter the password for your account.</string>
+    <string name="baa_info">"Your signature will be used to sign the BAA and will be automatically emailed to you after successfully completing registration and onboarding."</string>
     <string name="country_info">Select the country code.</string>
     <string name="role_info">Select your role</string>
     <string name="assistant_info">Enter your first name,last name,gender,title and Degree.</string>
@@ -784,6 +785,9 @@
     <string name="enable_overflow">Enable overflow</string>
     <string name="enable_overflow_description">Please enable display over other apps property inorder to minimize this call.</string>
     <string name="start_your_measurement_from_device">Start your measurement from Device.</string>
+    <string name="business_associates_agreement">Business Associates Agreement</string>
+    <string name="agree_sign"><![CDATA[Agree & Sign]]></string>
+    <string name="signature_capture">Signature Capture</string>
     <string name="upload_driver_license">Upload your driver\'s license</string>
     <string name="upload_doctor_certificate">Upload your medical school diploma / certificate</string>
     <string name="payment_alert_info">You will be responsible for any copays/deductible/coinsurance resulting from any interactions with your doctor.</string>

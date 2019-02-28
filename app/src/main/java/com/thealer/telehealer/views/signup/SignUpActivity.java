@@ -26,6 +26,7 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.signup.doctor.BAAFragment;
 import com.thealer.telehealer.views.signup.doctor.CreateDoctorDetailFragment;
 import com.thealer.telehealer.views.signup.doctor.DoctorCertificateFragment;
 import com.thealer.telehealer.views.signup.doctor.DoctorDriverLicenseFragment;
@@ -227,6 +228,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             viewInfoStack.push(getResources().getString(R.string.password_info));
                             return new CreatePasswordFragment();
                         case 12:
+                            viewInfoStack.push(getResources().getString(R.string.password_info));
+                            return new BAAFragment();
+                        case 13:
                             viewInfoStack.push(getResources().getString(R.string.otp_info));
                             return new OtpVerificationFragment();
                         default:
@@ -252,7 +256,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     signupToolbarTitleTv.setText(currentStep - 1 + " of 8");
                 }
                 if (isUserDoctor()) {
-                    signupToolbarTitleTv.setText(currentStep - 1 + " of 11");
+                    if (currentStep > 3) {
+                        signupToolbarTitleTv.setText(currentStep - 3 + " of 10");
+                    } else {
+                        signupToolbarTitleTv.setVisibility(View.GONE);
+                    }
                 }
             }
         }
@@ -408,7 +416,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void updateNextTitle(String nextTitle) {
-
+        nextTv.setText(nextTitle);
     }
 
     @Override

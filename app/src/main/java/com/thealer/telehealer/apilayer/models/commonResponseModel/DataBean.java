@@ -1,7 +1,6 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
 import android.arch.lifecycle.ViewModel;
-import android.view.View;
 
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
@@ -32,6 +31,7 @@ public class DataBean extends ViewModel implements Serializable {
     private List<LicensesBean> licenses = new ArrayList<>();
     private List<SpecialtiesBean> specialties = new ArrayList<>();
     private List<PracticesBean> practices = new ArrayList<>();
+    private ClinicBean clinic;
 
     public DataBean() {
 
@@ -194,5 +194,13 @@ public class DataBean extends ViewModel implements Serializable {
 
     public void setDiploma_certificate(String diploma_certificate) {
         this.diploma_certificate = diploma_certificate;
+    }
+
+    public ClinicBean getClinic() {
+        return clinic;
+    }
+
+    public void setClinic(ClinicBean clinic) {
+        this.clinic = clinic;
     }
 }

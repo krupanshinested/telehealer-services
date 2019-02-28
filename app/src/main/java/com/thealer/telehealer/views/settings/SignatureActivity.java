@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -19,6 +18,7 @@ import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseMode
 import com.thealer.telehealer.apilayer.models.signature.SignatureApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.PermissionChecker;
@@ -42,6 +42,7 @@ public class SignatureActivity extends BaseActivity implements View.OnClickListe
     private CustomButton proceedBtn;
     private TextView cancel2Tv;
     private TextView cancelInfoTv;
+    private boolean isCreateUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -94,6 +95,7 @@ public class SignatureActivity extends BaseActivity implements View.OnClickListe
 
         if (getIntent() != null) {
             boolean showProposer = getIntent().getBooleanExtra(ArgumentKeys.SHOW_SIGNATURE_PROPOSER, false);
+            isCreateUser = getIntent().getBooleanExtra(ArgumentKeys.IS_CREATE_USER, false);
             isShowSignatureProposer(showProposer);
         }
     }
@@ -105,7 +107,15 @@ public class SignatureActivity extends BaseActivity implements View.OnClickListe
                 signaturepad.clear();
                 break;
             case R.id.save_btn:
-                signatureApiViewModel.uploadSignature(true, signaturepad.getSignatureBitmap());
+                if (isCreateUser) {
+                    String signaturePath = CameraUtil.getBitmapFilePath(this, signaturepad.getSignatureBitmap());
+                    Intent intent = new Intent();
+                    intent.putExtra(ArgumentKeys.SIGNATURE_PATH, signaturePath);
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
+                } else {
+                    signatureApiViewModel.uploadSignature(true, signaturepad.getSignatureBitmap());
+                }
                 break;
             case R.id.proceed_btn:
                 isShowSignatureProposer(false);

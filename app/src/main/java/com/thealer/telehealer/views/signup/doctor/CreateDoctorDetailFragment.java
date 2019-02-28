@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.ClinicBean;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
@@ -967,5 +968,12 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
 
         createUserRequestModel.getUser_detail().getData().setWebsite(websiteEt.getText().toString());
 
+        ClinicBean clinicBean = new ClinicBean();
+        clinicBean.setName(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getName());
+        clinicBean.setState(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getState());
+
+        createUserRequestModel.getUser_detail().getData().setClinic(clinicBean);
+        Log.e("aswin", "createUserRequestModel: " + new Gson().toJson(createUserRequestModel.getUser_detail().getData().getPractices()));
+        Log.e("aswin", "createUserRequestModel: " + new Gson().toJson(createUserRequestModel.getUser_detail().getData().getClinic()));
     }
 }
