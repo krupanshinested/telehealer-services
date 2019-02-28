@@ -165,8 +165,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (UserDetailPreferenceManager.getWhoAmIResponse() == null ||
                 !UserDetailPreferenceManager.getWhoAmIResponse().isEmail_verified()) {
             startActivity(new Intent(this, EmailVerificationActivity.class));
-            finish();
-            return false;
         }
         return true;
     }

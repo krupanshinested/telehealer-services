@@ -2,6 +2,7 @@ package com.thealer.telehealer.apilayer.models.createuser;
 
 import android.arch.lifecycle.ViewModel;
 
+import com.google.gson.annotations.SerializedName;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 
@@ -22,8 +23,17 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
     private String certification_path;
     private String doctor_driving_license_path;
     private String doctor_certificate_path;
+    private String doctor_signature_path;
     private boolean hasValidLicenses = true;
     private List<Boolean> hasValidLicensesList = new ArrayList<>();
+
+    public String getDoctor_signature_path() {
+        return doctor_signature_path;
+    }
+
+    public void setDoctor_signature_path(String doctor_signature_path) {
+        this.doctor_signature_path = doctor_signature_path;
+    }
 
 
     public void clearData() {
