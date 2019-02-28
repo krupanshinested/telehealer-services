@@ -86,7 +86,7 @@ public class VitalCreationActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vital_creation);
 
-        measurementType = getIntent().getStringExtra(ArgumentKeys.MEASUREMENT_TYPE);
+        measurementType = getIntent().getStringExtra(ArgumentKeys.SELECTED_VITAL_TYPE);
 
         initView();
 
@@ -101,7 +101,7 @@ public class VitalCreationActivity extends BaseActivity implements
             Bundle bundle = new Bundle();
 
             if (measurementType != null && !TextUtils.isEmpty(measurementType)) {
-                bundle.putString(ArgumentKeys.MEASUREMENT_TYPE,measurementType);
+                bundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE,measurementType);
             }
 
             vitalDeviceListFragment.setArguments(bundle);

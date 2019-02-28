@@ -54,7 +54,7 @@ public class NewVitalDeviceSetUpFragment extends BaseFragment {
         super.onCreate(saveInstance);
 
         if (getArguments() != null) {
-            String device = getArguments().getString(ArgumentKeys.MEASUREMENT_TYPE);
+            String device = getArguments().getString(ArgumentKeys.SELECTED_VITAL_TYPE);
             if (device != null && !device.isEmpty()) {
                 measurementType = device;
             }
