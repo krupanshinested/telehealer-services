@@ -16,6 +16,9 @@ public class VitalsConstant {
     public static final String INPUT_TEMPERATURE = "TEMPERATURE";
     public static final String INPUT_WEIGHT = "WEIGHT";
 
+    public static final String SYSTOLE = "Systole";
+    public static final String DIASTOLE = "Diastole";
+
     public static final String VITAL_MODE_DOCTOR = "doctor";
     public static final String VITAL_MODE_PATIENT = "patient";
     public static final String VITAL_MODE_DEVICE = "automated";

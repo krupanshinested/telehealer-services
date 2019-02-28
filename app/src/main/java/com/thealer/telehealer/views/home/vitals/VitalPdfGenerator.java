@@ -12,7 +12,10 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Aswin on 13,December,2018
@@ -103,22 +106,23 @@ public class VitalPdfGenerator {
             "                <td width=\"80%\"><h4><b><font face=\"Helvetica Neue\" size=\"4\">#PERIOD#</font></b></h4></td>\n" +
             "            </tr>\n" +
             "        </table>\n" +
-            "        <br>\n" +
-            "        <table width = \"100%\" height = \"40\">\n" +
-            "            <tr style=\"background-color:#EEEEEE; padding-left: 4px; padding-right: 4px;\">\n" +
-            "                <td width=\"30%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\" >#CREATED_AT_LABEL#</font></td>\n" +
-            "                <td width=\"20%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#VALUE_LABEL#</font></td>\n" +
-            "                <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#CAPTURED_BY_LABEL#</font></td>\n" +
-            "                <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#MODE_LABEL#</font></td>\n" +
-            "            </tr>\n" +
-            "        </table>\n" +
-            "        <table width = \"100%\" height = \"50\">\n" +
-            "        #MESSAGE_INFO#\n" +
-            "        </table>\n" +
+            "        #VITAL_BODY#\n" +
             "    </body>\n" +
-            "</html>\n" +
-            "\n" +
-            "\n";
+            "</html>";
+    private final String htmlBody = "</br>\n" +
+            "<b><font face=\"Helvetica Neue\" color = \"black\" size=\"4\">#VITAL_CATEGORY_TITLE#</font></b>" +
+            "</b></br>\n" +
+            "<table width = \"100%\" height = \"40\">\n" +
+            "    <tr style=\"background-color:#EEEEEE; padding-left: 4px; padding-right: 4px;\">\n" +
+            "        <td width=\"30%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\" >#CREATED_AT_LABEL#</font></td>\n" +
+            "        <td width=\"20%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#VALUE_LABEL#</font></td>\n" +
+            "        <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#CAPTURED_BY_LABEL#</font></td>\n" +
+            "        <td width=\"25%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#MODE_LABEL#</font></td>\n" +
+            "    </tr>\n" +
+            "</table>\n" +
+            "<table width = \"100%\" height = \"50\">\n" +
+            "    #MESSAGE_INFO#\n" +
+            "</table>";
     private final String htmlList = "<tr style=\"padding-left: 4px; padding-right: 4px; margin-top:5px; margin-top:5px;\">\n" +
             "    <td width=\"30%\" align = \"center\"><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#CREATED_AT#</font></td>\n" +
             "    <td width=\"20%\" align = \"center\"><b><font face=\"Helvetica Neue\" color = \"black\" size=\"3\">#VALUE#</font></b></td>\n" +
@@ -139,6 +143,9 @@ public class VitalPdfGenerator {
     private final String PATIENT_GENDER = "#PATIENT_GENDER#";
     private final String PERIOD_LABLE = "#PERIOD_LABEL#";
     private final String PERIOD = "#PERIOD#";
+    private final String PDF_BODY = "#VITAL_BODY#";
+
+    private final String VITAL_CATEGORY_TITLE = "#VITAL_CATEGORY_TITLE#";
     private final String CREATED_AT_LABLE = "#CREATED_AT_LABEL#";
     private final String VALUE_LABLE = "#VALUE_LABEL#";
     private final String CAPTURED_BY_LABLE = "#CAPTURED_BY_LABEL#";
@@ -151,18 +158,87 @@ public class VitalPdfGenerator {
     private final String MODE = "#MODE#";
 
     private Context context;
+    private boolean isVitalReport;
 
     public VitalPdfGenerator(Context context) {
         this.context = context;
     }
 
 
-    public String generatePdfFor(List<VitalsApiResponseModel> pdfList, CommonUserApiResponseModel commonUserApiResponseModel) {
-        String itemsList = generateList(pdfList);
+    public String generatePdfFor(List<VitalsApiResponseModel> pdfList, CommonUserApiResponseModel commonUserApiResponseModel, boolean isVitalReport) {
+        this.isVitalReport = isVitalReport;
+
         String headerDetail = generateHeaderDetail(pdfList, commonUserApiResponseModel);
 
-        String displayHtml = headerDetail.replace(MESSAGE_INFO, itemsList);
+        String body = generateBody(pdfList);
+
+        String displayHtml = headerDetail.replace(PDF_BODY, body);
+
         return displayHtml;
+    }
+
+    private String generateBody(List<VitalsApiResponseModel> pdfList) {
+        Map<String, List<VitalsApiResponseModel>> vitalsMap = new HashMap<>();
+
+        for (VitalsApiResponseModel vitalsApiResponseModel : pdfList) {
+
+            List<VitalsApiResponseModel> apiResponseModelList = new ArrayList<>();
+
+            if (!vitalsMap.containsKey(vitalsApiResponseModel.getType())) {
+                vitalsMap.put(vitalsApiResponseModel.getType(), apiResponseModelList);
+            }
+
+            apiResponseModelList = vitalsMap.get(vitalsApiResponseModel.getType());
+
+            apiResponseModelList.add(vitalsApiResponseModel);
+
+            vitalsMap.put(vitalsApiResponseModel.getType(), apiResponseModelList);
+        }
+
+        StringBuilder body = new StringBuilder();
+
+        for (String key : vitalsMap.keySet()) {
+            String createdAt = "DATE", value = "VITALS", capturedBy = "DONE BY", mode = "MODE", category = "";
+
+            String pdfBody = htmlBody;
+
+            String itemsList = generateList(vitalsMap.get(key));
+
+            if (isVitalReport) {
+                category = context.getString(getCategoryTitle(key)) + " Values";
+            }
+
+            pdfBody = pdfBody
+                    .replace(VITAL_CATEGORY_TITLE, category)
+                    .replace(CREATED_AT_LABLE, createdAt)
+                    .replace(VALUE_LABLE, value)
+                    .replace(CAPTURED_BY_LABLE, capturedBy)
+                    .replace(MODE_LABLE, mode)
+                    .replace(MESSAGE_INFO, itemsList);
+
+            body = body.append(pdfBody);
+        }
+
+        return body.toString();
+    }
+
+    private int getCategoryTitle(String key) {
+        switch (key) {
+            case SupportedMeasurementType.bp:
+                return R.string.blood_pressure;
+            case SupportedMeasurementType.weight:
+                return R.string.weight;
+            case SupportedMeasurementType.temperature:
+                return R.string.bodyTemperature;
+            case SupportedMeasurementType.gulcose:
+                return R.string.bloodGlucose;
+            case SupportedMeasurementType.pulseOximeter:
+                return R.string.pulseOximeter;
+            case SupportedMeasurementType.heartRate:
+                return R.string.heartRate;
+            default:
+                return R.string.vitals_report;
+        }
     }
 
     private String generateHeaderDetail(List<VitalsApiResponseModel> pdfList, CommonUserApiResponseModel commonUserApiResponseModel) {
@@ -176,7 +252,11 @@ public class VitalPdfGenerator {
         String valueLable = "VITALS";
         String capturedByLable = "DONE BY";
         String modeLable = "MODE";
-        String pdfTitle = context.getString(SupportedMeasurementType.getTitle(pdfList.get(0).getType())) + " Report";
+
+        String pdfTitle = context.getString(R.string.vitals_report);
+        if (!isVitalReport)
+            pdfTitle = context.getString(SupportedMeasurementType.getTitle(pdfList.get(0).getType())) + " Report";
+
         String pdfDate = Utils.getCurrentFomatedDate();
         String icon;
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {

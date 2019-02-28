@@ -128,7 +128,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
         timeOcv.setTitleTv(Utils.getCurrentFomatedTime());
 
         if (getArguments() != null) {
-            selectedItem = getArguments().getString(ArgumentKeys.MEASUREMENT_TYPE);
+            selectedItem = getArguments().getString(ArgumentKeys.SELECTED_VITAL_TYPE);
 
             inputUnit = SupportedMeasurementType.getVitalUnit(selectedItem);
 

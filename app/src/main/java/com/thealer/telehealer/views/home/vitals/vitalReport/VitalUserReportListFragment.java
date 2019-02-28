@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
@@ -27,6 +27,9 @@ import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.PdfViewerFragment;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.vitals.VitalPdfGenerator;
 import com.thealer.telehealer.views.home.vitals.VitalsDetailListAdapter;
 
 import java.util.ArrayList;
@@ -53,13 +56,15 @@ public class VitalUserReportListFragment extends BaseFragment {
     private VitalsDetailListAdapter vitalsDetailListAdapter;
     private CommonUserApiResponseModel commonUserApiResponseModel;
     private String filter;
+    private ShowSubFragmentInterface showSubFragmentInterface;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
+        showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
+
         vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
         attachObserverInterface.attachObserver(vitalsApiViewModel);
         vitalsApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
@@ -68,6 +73,7 @@ public class VitalUserReportListFragment extends BaseFragment {
                 if (baseApiResponseModels != null) {
                     vitalsApiResponseModel = (ArrayList<VitalsApiResponseModel>) (Object) baseApiResponseModels;
                     updateList(vitalsApiResponseModel);
+                    enableOrDisablePrint();
                 }
             }
         });
@@ -112,6 +118,12 @@ public class VitalUserReportListFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -126,6 +138,22 @@ public class VitalUserReportListFragment extends BaseFragment {
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         vitalsListCelv = (CustomExpandableListView) view.findViewById(R.id.vitals_list_cerv);
+
+        toolbar.inflateMenu(R.menu.orders_detail_menu);
+        toolbar.getMenu().removeItem(R.id.send_fax_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.print_menu:
+                        generatePrintList();
+                        break;
+                }
+                return true;
+            }
+        });
+
+        enableOrDisablePrint();
 
         backIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,6 +177,27 @@ public class VitalUserReportListFragment extends BaseFragment {
             }
         }
 
+    }
+
+    private void generatePrintList() {
+        VitalPdfGenerator vitalPdfGenerator = new VitalPdfGenerator(getActivity());
+        String htmlContent = vitalPdfGenerator.generatePdfFor(vitalsApiResponseModel, commonUserApiResponseModel, true);
+
+        PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(ArgumentKeys.HTML_FILE, htmlContent);
+        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.vitals_report));
+        pdfViewerFragment.setArguments(bundle);
+        showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+
+    }
+
+    private void enableOrDisablePrint() {
+        if (vitalsApiResponseModel == null || vitalsApiResponseModel.size() == 0) {
+            toolbar.getMenu().findItem(R.id.print_menu).setVisible(false);
+        } else {
+            toolbar.getMenu().findItem(R.id.print_menu).setVisible(true);
+        }
     }
 
     @Override

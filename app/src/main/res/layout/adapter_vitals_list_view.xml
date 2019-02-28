@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:paddingBottom="8dp">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -67,10 +69,10 @@
                 android:id="@+id/description_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:ems="3"
                 android:gravity="top"
                 android:maxLines="1"
-                android:ems="3"
-                android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/time_tv"
                 app:layout_constraintStart_toStartOf="@id/value_tv"
