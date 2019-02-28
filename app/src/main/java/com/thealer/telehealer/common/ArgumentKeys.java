@@ -84,6 +84,7 @@ public class ArgumentKeys {
     public static int AUTH_CANCELLED = 3;
 
     public static final String MEASUREMENT_TYPE = "MEASUREMENT_TYPE";
+    public static final String SELECTED_VITAL_TYPE = "SELECTED_VITAL_TYPE";
     public static final String DEVICE_TYPE = "DEVICE_TYPE";
     public static final String DEVICE_MAC = "DEVICE_MAC";
     public static final String VITAL_DEVICE = "VITAL_DEVICE";
