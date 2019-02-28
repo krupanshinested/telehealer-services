@@ -135,7 +135,8 @@ public interface ApiInterface {
                                                         @Part(USER_DETAIL) DataBean user_detail,
                                                         @Part MultipartBody.Part user_avatar,
                                                         @Part MultipartBody.Part certification,
-                                                        @Part MultipartBody.Part license);
+                                                        @Part MultipartBody.Part license,
+                                                        @Part MultipartBody.Part signature);
 
     @Multipart
     @PUT("api/users/profile")

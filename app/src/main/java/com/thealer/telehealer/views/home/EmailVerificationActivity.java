@@ -32,6 +32,7 @@ public class EmailVerificationActivity extends BaseActivity implements View.OnCl
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private EmailValidationApiViewModel emailValidationApiViewModel;
+    private TextView skipTv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +92,7 @@ public class EmailVerificationActivity extends BaseActivity implements View.OnCl
         emailMessage = (TextView) findViewById(R.id.email_message);
         resendTv = (TextView) findViewById(R.id.resend_tv);
         doneBtn = (CustomButton) findViewById(R.id.done_btn);
+        skipTv = (TextView) findViewById(R.id.skip_tv);
 
         String email = UserDetailPreferenceManager.getEmail();
 
@@ -103,6 +105,7 @@ public class EmailVerificationActivity extends BaseActivity implements View.OnCl
 
         doneBtn.setOnClickListener(this);
         resendTv.setOnClickListener(this);
+        skipTv.setOnClickListener(this);
     }
 
     @Override
@@ -114,6 +117,9 @@ public class EmailVerificationActivity extends BaseActivity implements View.OnCl
                 break;
             case R.id.resend_tv:
                 emailValidationApiViewModel.requestVerificationMain(true);
+                break;
+            case R.id.skip_tv:
+                finish();
                 break;
         }
     }
