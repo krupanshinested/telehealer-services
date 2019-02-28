@@ -26,10 +26,22 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_avatar_civ"
-            android:layout_width="@dimen/card_circular_image_size"
-            android:layout_height="@dimen/card_circular_image_size"
-            android:layout_marginTop="8dp"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
             android:src="@drawable/profile_placeholder"
+            app:layout_constraintBottom_toBottomOf="@+id/circular_progress"
+            app:layout_constraintEnd_toEndOf="@id/circular_progress"
+            app:layout_constraintStart_toStartOf="@id/circular_progress"
+            app:layout_constraintTop_toTopOf="@+id/circular_progress" />
+
+        <fr.castorflex.android.circularprogressbar.CircularProgressBar
+            android:id="@+id/circular_progress"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:indeterminate="true"
+            app:cpb_color="@color/app_gradient_start"
+            app:cpb_rotation_speed="0.5"
+            app:cpb_stroke_width="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_name_tv" />
@@ -44,7 +56,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_avatar_civ" />
+            app:layout_constraintTop_toBottomOf="@+id/circular_progress" />
 
         <TextView
             android:layout_width="match_parent"
