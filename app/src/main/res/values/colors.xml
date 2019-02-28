@@ -18,4 +18,10 @@
     <color name="card_background_grey">#F0F0F0</color>
 
     <color name="call_vital_title">#64000000</color>
+
+    <color name="char_line_3">#FFA555</color>
+    <color name="char_line_1">#59BAF6</color>
+    <color name="char_line_2">#FF363C</color>
+    <color name="char_popup_background">#0A192A</color>
+
 </resources>

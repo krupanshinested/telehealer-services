@@ -504,6 +504,7 @@
     <string name="bluetooth_disabled">Bluetooth_disabled</string>
     <string name="bluetooth_enabled">bluetooth_enabled</string>
     <string name="blood_pressure">Blood Pressure</string>
+    <string name="blood_pressure_heart_rate">BP &amp; Heart Rate</string>
     <string name="weight">Weight</string>
     <string name="bodyTemperature">Body Temperature</string>
     <string name="bloodGlucose">Blood Glucose</string>
@@ -715,7 +716,7 @@
     <string name="UPDATE">UPDATE</string>
     <string name="help_content_doctor_patient">View your list of connected %s here. You can add to this list by requesting a new connection with one or more of your established %s.\n\nClick the “+” icon on the right top corner to send a request to %s you already know. Once a connection request has been accepted, the %s will automatically show up on this list.</string>
     <string name="help_content_orders">Create and optionally fax any new orders.\n\nClick the “+” icon on the right top corner to get started. Orders can vary from prescriptions, labs, radiology, referrals, and/or medical questionnaires. Once an order has been created, you can vIew and/or print these orders.</string>
-    <string name="help_content_vitals">Pair with a list of supported devices and initiate a measurement.\n\nClick the “+” icon on the right top corner to get started. Measurements can be captured directly from the device or manually recorded by either the doctor or patient. All captured vitals can be viewed and/or printed. Vital measurements can vary from blood pressure, weight, glucose, temperature, pulse ox, and heart rate.</string>
+    <string name="help_content_vitals">Pair with a list of supported devices and initiate a measurement.\n\nClick the “+” icon on the right top corner to get started. Measurements can be captured directly from the device or manually recorded by either the doctor or patient. All captured vitals can be viewed and/or printed.\n\nVital measurements can vary from blood pressure, weight, glucose, temperature, pulse ox, and heart rate.</string>
     <string name="help_content_vital_report">Perform remote monitoring by reviewing your patient\'s captured vitals. The list shows all patients who have captured their vitals during a selected monitoring period. Vital measurements captured by the patient can vary from blood pressure, weight, glucose, temperature, pulse ox, and heart rate.</string>
     <string name="help_content_recents">View the list of prior calls with your %s. Clicking each entry will display the recorded encounter along with the transcript of the call.</string>
     <string name="help_content_schedules">View all your upcoming appointments and their associated details.\n\nClick the “+” icon on the right top corner to initiate an appointment request. Only requests that are accepted will appear here on the schedules page. The application also provides an automatic reminder 10 minutes prior to a scheduled appointment.</string>
@@ -865,4 +866,5 @@
     <string name="secondary_insurance_back">Secondary Insurance (Back Side)</string>
     <string name="miscellaneous_referral">Miscellaneous Referral</string>
     <string name="login_error_message">Unable to login. Please ensure that your email and password are entered correctly and try again.</string>
+    <string name="vitals_report">Vitals Report</string>
 </resources>

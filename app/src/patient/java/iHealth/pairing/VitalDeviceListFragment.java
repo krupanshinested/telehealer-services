@@ -30,10 +30,11 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
-import iHealth.pairing.Adapters.VitalDeviceListAdapter;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
+
+import iHealth.pairing.Adapters.VitalDeviceListAdapter;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -61,8 +62,9 @@ public class VitalDeviceListFragment extends BaseFragment {
     public void onCreate(Bundle saveInstance) {
         super.onCreate(saveInstance);
 
-        String measurementType = getArguments().getString(ArgumentKeys.MEASUREMENT_TYPE);
-        this.measurementType = measurementType;
+        measurementType = getArguments().getString(ArgumentKeys.SELECTED_VITAL_TYPE);
+
+        Log.e("aswin", "onCreate: " + measurementType);
 
         generateDataSource();
 
@@ -89,8 +91,8 @@ public class VitalDeviceListFragment extends BaseFragment {
         toolBarInterface.updateTitle(getString(R.string.new_vital));
         onViewChangeInterface.hideOrShowClose(true);
         onViewChangeInterface.hideOrShowBackIv(false);
-        toolBarInterface.updateSubTitle("",View.GONE);
-        vitalManagerInstance.updateBatteryView(View.GONE,0);
+        toolBarInterface.updateSubTitle("", View.GONE);
+        vitalManagerInstance.updateBatteryView(View.GONE, 0);
     }
 
     @Override
@@ -103,7 +105,7 @@ public class VitalDeviceListFragment extends BaseFragment {
     }
 
     @Override
-    public  void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
 
         if (getActivity() != null) {
@@ -115,7 +117,7 @@ public class VitalDeviceListFragment extends BaseFragment {
         recyclerView = baseView.findViewById(R.id.device_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        VitalDeviceListAdapter vitalDeviceListAdapter = new VitalDeviceListAdapter(getActivity(),connectedDevice,unconnectedDevice);
+        VitalDeviceListAdapter vitalDeviceListAdapter = new VitalDeviceListAdapter(getActivity(), connectedDevice, unconnectedDevice);
         this.vitalDeviceListAdapter = vitalDeviceListAdapter;
         recyclerView.setAdapter(vitalDeviceListAdapter);
 
@@ -127,7 +129,7 @@ public class VitalDeviceListFragment extends BaseFragment {
                 Bundle bundle = null;
                 if (measurementType != null) {
                     bundle = new Bundle();
-                    bundle.putString(ArgumentKeys.MEASUREMENT_TYPE, measurementType);
+                    bundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE, measurementType);
                 }
 
                 switch (dataSource.getDataSubType()) {
@@ -140,14 +142,14 @@ public class VitalDeviceListFragment extends BaseFragment {
                             onActionCompleteInterface.onCompletionResult(RequestID.TRIGGER_MANUAL_ENTRY, true, bundle);
                         } else {
                             ArrayList<String> titles = new ArrayList<>();
-                            for(String type : SupportedMeasurementType.items) {
+                            for (String type : SupportedMeasurementType.vitalItems) {
                                 titles.add(getString(SupportedMeasurementType.getTitle(type)));
                             }
-                            ItemPickerDialog pickerDialog = new ItemPickerDialog(getActivity(),getString(R.string.choose_the_type) ,titles, new PickerListener() {
+                            ItemPickerDialog pickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_the_type), titles, new PickerListener() {
                                 @Override
                                 public void didSelectedItem(int position) {
                                     Bundle finalBundle = new Bundle();
-                                    finalBundle.putString(ArgumentKeys.MEASUREMENT_TYPE,SupportedMeasurementType.items[position]);
+                                    finalBundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE, SupportedMeasurementType.vitalItems[position]);
                                     onActionCompleteInterface.onCompletionResult(RequestID.TRIGGER_MANUAL_ENTRY, true, finalBundle);
                                 }
 
@@ -170,7 +172,7 @@ public class VitalDeviceListFragment extends BaseFragment {
                         bundle.putString(ArgumentKeys.DEVICE_TYPE, dataSource.getDevice().getType());
                         bundle.putString(ArgumentKeys.DEVICE_MAC, dataSource.getDevice().getDeviceId());
                         bundle.putSerializable(ArgumentKeys.VITAL_DEVICE, dataSource.getDevice());
-                        bundle.putBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY,true);
+                        bundle.putBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY, true);
 
                         if (dataSource.getDevice().getConnected()) {
                             onActionCompleteInterface.onCompletionResult(RequestID.OPEN_CONNECTED_DEVICE, true, bundle);
@@ -198,7 +200,7 @@ public class VitalDeviceListFragment extends BaseFragment {
             if (!TextUtils.isEmpty(measurementType)) {
 
                 if (measurementType.equals(SupportedMeasurementType.heartRate)) {
-                    if (deviceType.equals(SupportedMeasurementType.bp) || deviceType.equals(SupportedMeasurementType.pulseOximeter) ) {
+                    if (deviceType.equals(SupportedMeasurementType.bp) || deviceType.equals(SupportedMeasurementType.pulseOximeter)) {
 
                         if (vitalManagerInstance.getInstance().isConnected(device.getType(), device.getDeviceId())) {
                             device.setConnected(true);
@@ -211,7 +213,7 @@ public class VitalDeviceListFragment extends BaseFragment {
                     }
                 } else if (deviceType.equals(measurementType)) {
 
-                    if (vitalManagerInstance.getInstance().isConnected(device.getType(),device.getDeviceId())) {
+                    if (vitalManagerInstance.getInstance().isConnected(device.getType(), device.getDeviceId())) {
                         device.setConnected(true);
                         connectedDevice.add(device);
                     } else {
@@ -237,7 +239,7 @@ public class VitalDeviceListFragment extends BaseFragment {
     private BroadcastReceiver deviceStateChanger = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("VitalDeviceList","device connection changed refresh");
+            Log.d("VitalDeviceList", "device connection changed refresh");
             generateDataSource();
             if (vitalDeviceListAdapter != null)
                 vitalDeviceListAdapter.notifyDataSetChanged();
