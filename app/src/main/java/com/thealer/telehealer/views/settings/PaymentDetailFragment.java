@@ -120,6 +120,7 @@ public class PaymentDetailFragment extends BaseFragment {
         loadEmptyViewIfNeeded();
         recyclerContainer.hideEmptyState();
 
+        recyclerContainer.getSwipeLayout().setEnabled(false);
         mainLay = view.findViewById(R.id.main_container);
         detail_view = view.findViewById(R.id.detail_view);
         call_charges_tv = view.findViewById(R.id.call_charges_tv);

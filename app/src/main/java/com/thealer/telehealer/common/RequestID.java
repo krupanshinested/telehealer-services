@@ -24,7 +24,7 @@ public class RequestID {
 
     public static final String REQ_PASSWORD_RESET_OTP = "REQ_RESET_OTP";
     public static final String REQ_RESET_PASSWORD = "REQ_RESET_PASSWORD";
-    public static final String REQ_FORGOT_PASSWORD = "REQ_RESET_PASSWORD";
+    public static final String REQ_FORGOT_PASSWORD = "REQ_FORGOT_PASSWORD";
     public static final String FORGOT_PASSWORD_OTP_VALIDATED = "FORGOT_PASSWORD_OTP_VALIDATED";
     public static final String RESET_PASSWORD_OTP_VALIDATED = "RESET_PASSWORD_OTP_VALIDATED";
 

@@ -125,5 +125,6 @@ public class ArgumentKeys {
     public static final String CALL_REQUEST_DATA_1 = "CALL_REQUEST_DATA_1";
     public static final String SKIP_TITLE = "SKIP_TITLE";
 
+    public static final String IS_PASSWORD_ENTERED = "IS_PASSWORD_ENTERED";
 
 }

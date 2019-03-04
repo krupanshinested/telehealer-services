@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -277,7 +278,11 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
             onViewChangeInterface.updateNextTitle(getString(R.string.next));
             onViewChangeInterface.updateTitle(getString(R.string.password));
         } else {
-            onViewChangeInterface.updateTitle(getString(R.string.reenter_password));
+            if (getArguments() != null && !TextUtils.isEmpty(getArguments().getString(ArgumentKeys.TITLE))) {
+                onViewChangeInterface.updateTitle(getArguments().getString(ArgumentKeys.TITLE));
+            } else {
+                onViewChangeInterface.updateTitle(getString(R.string.reenter_password));
+            }
         }
 
         onViewChangeInterface.hideOrShowNext(true);
@@ -290,11 +295,18 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
 
         switch (type) {
             case reset_password:
-                //TODO hanlde password or confirm password here
-                resetPasswordRequestModel.setPassword(passwordEt.getText().toString());
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(Constants.IS_RESET_PASSWORD, true);
-                onActionCompleteInterface.onCompletionResult(RequestID.RESET_PASSWORD_OTP_VALIDATED, true, bundle);
+
+                if (getArguments() != null) {
+                    if (getArguments().getBoolean(ArgumentKeys.IS_PASSWORD_ENTERED)) {
+                        resetPasswordRequestModel.setConfirm_password(passwordEt.getText().toString());
+                        makeResetPasswordApiCall();
+                    } else {
+                        Bundle bundle = new Bundle();
+                        resetPasswordRequestModel.setPassword(passwordEt.getText().toString());
+                        bundle.putBoolean(ArgumentKeys.IS_PASSWORD_ENTERED,true);
+                        onActionCompleteInterface.onCompletionResult(RequestID.RESET_PASSWORD_OTP_VALIDATED, true, bundle);
+                    }
+                }
                 break;
             case forgot_password:
                 if (!isReEnterPassword) {

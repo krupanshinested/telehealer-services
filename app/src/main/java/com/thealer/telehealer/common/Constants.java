@@ -122,7 +122,6 @@ public class Constants {
     public static final String CURRENT_STEP = "current_step";
     public static final String WHERE_FROM = "where_from";
     public static final String EMAIL = "email";
-    public static final String IS_RESET_PASSWORD = "is_reset_password";
     public static final String USER_DETAIL = "user_detail";
 
     public static final int CREATE_MODE = 0;
