@@ -84,13 +84,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
                         intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_success_prefix) + " " + connectionListResponseModel.getResult().get(selectedPosition).getFirst_name() + " " + getString(R.string.add_connection_success_suffix));
 
-                        for (int i = 0; i < commonUserApiResponseModelList.size(); i++) {
-                            if (commonUserApiResponseModelList.get(i).getUser_id() == selectedId) {
-                                commonUserApiResponseModelList.get(i).setConnection_status(Constants.CONNECTION_STATUS_OPEN);
-                                break;
-                            }
-                        }
-                        connectionListAdapter.setData(commonUserApiResponseModelList);
+                        connectionListAdapter.setData(commonUserApiResponseModelList, selectedPosition);
                     } else {
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                         intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_failure_prefix) + " " + connectionListResponseModel.getResult().get(selectedPosition).getFirst_name() + " " + getString(R.string.add_connection_failure_suffix));
@@ -129,7 +123,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                         } else {
                             commonUserApiResponseModelList.addAll(connectionListResponseModel.getResult());
                         }
-                        connectionListAdapter.setData(commonUserApiResponseModelList);
+                        connectionListAdapter.setData(commonUserApiResponseModelList, -1);
 
                         connectionListCrv.setTotalCount(totalCount);
 

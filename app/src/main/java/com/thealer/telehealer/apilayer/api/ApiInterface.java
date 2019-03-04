@@ -40,6 +40,7 @@ import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescrip
 import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
+import com.thealer.telehealer.apilayer.models.pendingInvites.PendingInvitesNonRegisterdApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
@@ -110,6 +111,7 @@ public interface ApiInterface {
     String FILTER = "filter";
     String MEDICAL_ASSISTANT = "medical_assistant";
     String STATUS = "status";
+    String ACCEPTED = "accepted";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -456,4 +458,9 @@ public interface ApiInterface {
 
     @GET("api/connection-status/{id}")
     Observable<ConnectionStatusApiResponseModel> getUserConnectionStatus(@Path(ID) String userGuid);
+    @GET("api/requests")
+    Observable<NotificationApiResponseModel> getPendingInvites(@QueryMap Map<String, Object> map, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+
+    @GET("api/invites")
+    Observable<PendingInvitesNonRegisterdApiResponseModel> getNonRegisteredUserInvites(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(ACCEPTED) boolean accepted);
 }

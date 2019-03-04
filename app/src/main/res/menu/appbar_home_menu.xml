@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_pending_invites"
+        android:icon="@drawable/ic_pending_invite"
+        android:title="@string/pending_invites"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/menu_help"
         android:icon="@drawable/ic_help_outline"
         android:title="help"
