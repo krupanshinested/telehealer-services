@@ -4,8 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.thealer.telehealer.common.Constants;
 
 import io.michaelrocks.libphonenumber.android.NumberParseException;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
+import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 /**
  * Created by Aswin on 17,December,2018
@@ -32,6 +34,9 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
 
     private String doctor_guid = null;
     private CommonUserApiResponseModel commonUserApiResponseModel;
+    private PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher = null;
+    private PhoneNumberUtil phoneNumberUtil;
+    private Phonenumber.PhoneNumber phoneNumber;
 
     @Nullable
     @Override
@@ -47,6 +52,7 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
         numberTil = (TextInputLayout) view.findViewById(R.id.number_til);
         numberEt = (EditText) view.findViewById(R.id.number_et);
         inviteBtn = (Button) view.findViewById(R.id.invite_btn);
+        phoneNumberUtil = PhoneNumberUtil.createInstance(getActivity());
 
         if (getArguments() != null && getArguments().getSerializable(Constants.USER_DETAIL) != null) {
             commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
@@ -58,7 +64,7 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
         inviteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String number = countyCode.getSelectedCountryCodeWithPlus() + "" + numberEt.getText().toString();
+                String number = countyCode.getSelectedCountryCodeWithPlus() + "" + phoneNumber.getNationalNumber();
                 showSuccessFragment();
                 InviteByEmailPhoneRequestModel inviteByEmailPhoneRequestModel = new InviteByEmailPhoneRequestModel();
                 inviteByEmailPhoneRequestModel.getInvitations().add(new InviteByEmailPhoneRequestModel.InvitationsBean(null, number));
@@ -66,31 +72,59 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
 
             }
         });
-
-        numberEt.addTextChangedListener(new TextWatcher() {
+        countyCode.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                validateNumber();
+            public void onCountrySelected() {
+                setHint();
             }
         });
+
+        setHint();
+
+        validateNumber();
+
+        numberEt.requestFocus();
+    }
+
+    private void setHint() {
+
+        if (phoneNumberFormattingTextWatcher != null) {
+            numberEt.removeTextChangedListener(phoneNumberFormattingTextWatcher);
+        }
+
+        phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher(countyCode.getSelectedCountryNameCode()) {
+
+            @Override
+            public synchronized void afterTextChanged(Editable s) {
+                super.afterTextChanged(s);
+                validateNumber();
+            }
+
+
+        };
+
+        numberEt.addTextChangedListener(phoneNumberFormattingTextWatcher);
+
+        try {
+
+            String countryNameCode = countyCode.getSelectedCountryNameCode();
+            String hintNumber = String.valueOf(phoneNumberUtil.getExampleNumber(countryNameCode).getNationalNumber());
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(hintNumber, countyCode.getSelectedCountryNameCode());
+            hintNumber = phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL).replace(countyCode.getSelectedCountryCodeWithPlus(), "").trim();
+
+            numberEt.setHint(hintNumber);
+
+        } catch (NumberParseException e) {
+            e.printStackTrace();
+        }
     }
 
     private void validateNumber() {
         if (!numberEt.getText().toString().isEmpty()) {
 
             try {
-                PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.createInstance(getActivity());
-                boolean isValid = phoneNumberUtil.isValidNumber(phoneNumberUtil.parse(numberEt.getText().toString(), countyCode.getSelectedCountryNameCode()));
+                phoneNumber = phoneNumberUtil.parse(numberEt.getText().toString(), countyCode.getSelectedCountryNameCode());
+                boolean isValid = phoneNumberUtil.isValidNumber(phoneNumber);
 
                 if (isValid) {
                     enableOrDisableInvite(true);

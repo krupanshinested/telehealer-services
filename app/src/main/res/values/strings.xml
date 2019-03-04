@@ -792,6 +792,11 @@
     <string name="enable_overflow">Enable overflow</string>
     <string name="enable_overflow_description">Please enable display over other apps property inorder to minimize this call.</string>
     <string name="start_your_measurement_from_device">Start your measurement from Device.</string>
+    <string name="received">Received</string>
+    <string name="sent">Sent</string>
+    <string name="registered_users">Registered users</string>
+    <string name="non_registered_users">Non-Registered users</string>
+    <string name="pending_invites">Pending Invites</string>
     <string name="invite_manually">Invite Manually</string>
     <string name="invite_from_contacts">Invite from Contacts</string>
     <string name="disable_signature">Disable Signature</string>

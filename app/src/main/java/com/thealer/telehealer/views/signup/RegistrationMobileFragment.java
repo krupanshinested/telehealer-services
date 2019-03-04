@@ -44,8 +44,8 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
     private OnViewChangeInterface onViewChangeInterface;
     private String mobileNumber;
     private PhoneNumberUtil phoneNumberUtil;
-    private TextWatcher textWatcher;
     private PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher = null;
+    private Phonenumber.PhoneNumber phoneNumber;
 
     @Nullable
     @Override
@@ -111,23 +111,6 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
 
         validateNumber();
 
-        textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                validateNumber();
-            }
-        };
-
         numberEt.requestFocus();
     }
 
@@ -176,7 +159,7 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
 
             try {
 
-                Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(numberEt.getText().toString(), countyCode.getSelectedCountryNameCode());
+                phoneNumber = phoneNumberUtil.parse(numberEt.getText().toString(), countyCode.getSelectedCountryNameCode());
                 boolean isValid = phoneNumberUtil.isValidNumber(phoneNumber);
 
                 if (isValid) {
@@ -198,7 +181,7 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
     }
 
     private void makeApiCall() {
-        mobileNumber = countyCode.getSelectedCountryCodeWithPlus() + "" + numberEt.getText().toString().replace(" ", "");
+        mobileNumber = countyCode.getSelectedCountryCodeWithPlus() + "" + phoneNumber.getNationalNumber();
         checkUserEmailMobileApiViewModel.checkUserMobile(mobileNumber);
     }
 

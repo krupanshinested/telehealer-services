@@ -19,6 +19,9 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by Aswin on 17,December,2018
  */
@@ -39,13 +42,41 @@ public class InviteUserBaseFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
+                    boolean status = true;
+                    String title = getString(R.string.success);
+                    String message = getString(R.string.invite_user_success_message);
+
                     if (baseApiResponseModel instanceof InviteByEmailPhoneApiResponseModel) {
                         InviteByEmailPhoneApiResponseModel inviteByEmailPhoneApiResponseModel = (InviteByEmailPhoneApiResponseModel) baseApiResponseModel;
+
+                        if (inviteByEmailPhoneApiResponseModel.getSuccessCount() == 0 && inviteByEmailPhoneApiResponseModel.getFailureCount() == 1) {
+                            status = false;
+                            title = getString(R.string.failure);
+                            message = inviteByEmailPhoneApiResponseModel.getResultData().get(0).getMessage();
+
+                        } else if (inviteByEmailPhoneApiResponseModel.getSuccessCount() > 0 && inviteByEmailPhoneApiResponseModel.getFailureCount() > 0) {
+
+                            title = getString(R.string.partially_success);
+
+                            Set<String> stringSet = new HashSet<>();
+                            if (inviteByEmailPhoneApiResponseModel.getFailureCount() > 0) {
+                                for (int i = 0; i < inviteByEmailPhoneApiResponseModel.getResultData().size(); i++) {
+                                    if (!inviteByEmailPhoneApiResponseModel.getResultData().get(i).isSuccess()) {
+                                        stringSet.add(inviteByEmailPhoneApiResponseModel.getResultData().get(i).getMessage());
+                                    }
+                                }
+
+                                message = String.format("Out of %s, %s invites has failed due to following reasons, %s", inviteByEmailPhoneApiResponseModel.getResultData().size(),
+                                        inviteByEmailPhoneApiResponseModel.getFailureCount(), stringSet.toString().substring(1, stringSet.toString().length() - 1));
+                            }
+                        }
+
                         if (inviteByEmailPhoneApiResponseModel.isSuccess()) {
-                            sendSuccessMessage();
+                            sendSuccessMessage(status, title, message);
                             if (inviteByEmailPhoneApiResponseModel.getResultData() != null) {
                                 for (int i = 0; i < inviteByEmailPhoneApiResponseModel.getResultData().size(); i++) {
-                                    if (inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid() != null &&
+                                    if (inviteByEmailPhoneApiResponseModel.getResultData().get(i).isSuccess() &&
+                                            inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid() != null &&
                                             !inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid().isEmpty()) {
                                         PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionPayload(inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid()), null);
                                     }
@@ -53,7 +84,7 @@ public class InviteUserBaseFragment extends BaseFragment {
                             }
                         }
                     } else if (baseApiResponseModel.isSuccess()) {
-                        sendSuccessMessage();
+                        sendSuccessMessage(status, title, message);
                     }
                 }
             }
@@ -73,8 +104,8 @@ public class InviteUserBaseFragment extends BaseFragment {
         showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
     }
 
-    private void sendSuccessMessage() {
-        sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.invite_user_success_message));
+    private void sendSuccessMessage(boolean status, String title, String message) {
+        sendSuccessViewBroadCast(getActivity(), status, title, message);
 
     }
 
