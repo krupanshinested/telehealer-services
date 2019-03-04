@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,17 +78,38 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-
-        if (apiResponseModelList.get(i).getConnection_status() != null && apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_OPEN)) {
+        Log.e("aswin", "onBindViewHolder: " + apiResponseModelList.get(i).getDisplayName() + " " + apiResponseModelList.get(i).getConnection_status());
+        if (apiResponseModelList.get(i).getConnection_status() == null ||
+                apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_REJECTED)) {
+            viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_connect_user));
+            viewHolder.actionIv.setImageTintList(null);
+        } else if (apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_OPEN) ||
+                apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_PENDING)) {
             viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_access_time_24dp));
             viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.color_green_light)));
         } else {
-            viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_connect_user));
-            viewHolder.actionIv.setImageTintList(null);
-            viewHolder.actionIv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Utils.vibrate(fragmentActivity);
+            viewHolder.actionIv.setVisibility(View.GONE);
+        }
+
+        Utils.setImageWithGlide(context, viewHolder.avatarCiv, apiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
+
+        viewHolder.titleTv.setText(apiResponseModelList.get(i).getDisplayName());
+        viewHolder.subTitleTv.setText(apiResponseModelList.get(i).getDisplayInfo());
+
+        viewHolder.itemCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
+                onListItemSelectInterface.onListItemSelected(i, bundle);
+            }
+        });
+
+        viewHolder.actionIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.vibrate(fragmentActivity);
+                if (apiResponseModelList.get(i).getConnection_status() == null) {
                     selected_position = i;
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.get(i).getUser_id());
@@ -95,9 +117,8 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
 
                     onActionCompleteInterface.onCompletionResult(null, true, bundle);
                 }
-            });
-
-        }
+            }
+        });
 
         Utils.setImageWithGlide(context, viewHolder.avatarCiv, apiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
 
@@ -119,9 +140,15 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         return apiResponseModelList.size();
     }
 
-    public void setData(List<CommonUserApiResponseModel> commonUserApiResponseModelList) {
+    public void setData(List<CommonUserApiResponseModel> commonUserApiResponseModelList, int selectedPosition) {
         apiResponseModelList = commonUserApiResponseModelList;
-        notifyDataSetChanged();
+        if (selectedPosition == -1)
+            notifyDataSetChanged();
+        else {
+            apiResponseModelList.get(selectedPosition).setConnection_status(Constants.CONNECTION_STATUS_OPEN);
+            notifyItemChanged(selected_position);
+        }
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -147,6 +147,7 @@ public class Constants {
     public static final String CONNECTION_STATUS_OPEN = "open";
     public static final String CONNECTION_STATUS_PENDING = "pending";
     public static final String CONNECTION_STATUS_ACCEPTED = "accepted";
+    public static final String CONNECTION_STATUS_REJECTED = "rejected";
 
     public static final String CALL_STARTED_BROADCAST = "CALL_STARTED_BROADCAST";
     public static final String CALL_ENDED_BROADCAST = "CALL_ENDED_BROADCAST";
