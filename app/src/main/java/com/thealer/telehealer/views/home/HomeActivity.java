@@ -57,6 +57,7 @@ import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
+import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.home.recents.RecentDetailView;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
 import com.thealer.telehealer.views.home.schedules.ScheduleCalendarFragment;
@@ -375,6 +376,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_help:
                 showHelpContent();
                 break;
+            case R.id.menu_pending_invites:
+                showPendingInvites();
+                break;
             case R.id.menu_notification:
                 showNotificationFragment();
                 showOrHideNotificationCount(false, 0);
@@ -382,6 +386,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showPendingInvites() {
+        startActivity(new Intent(this, PendingInvitesActivity.class));
     }
 
     private void removeAllNotification() {

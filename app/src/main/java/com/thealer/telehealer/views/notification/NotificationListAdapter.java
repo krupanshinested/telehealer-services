@@ -51,14 +51,14 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
     public static final String REQUEST_TYPE_APPOINTMENT = "appointment";
     private final String REQUEST_TYPE_MISSED_CALL = "missed_call";
 
-    private final String REQUEST_STATUS_OPEN = "open";
-    private final String REQUEST_STATUS_ACCEPTED = "accepted";
-    private final String REQUEST_STATUS_REJECTED = "rejected";
-    private final String REQUEST_STATUS_CANCELED = "cancel";
+    public static final String REQUEST_STATUS_OPEN = "open";
+    public static final String REQUEST_STATUS_ACCEPTED = "accepted";
+    public static final String REQUEST_STATUS_REJECTED = "rejected";
+    public static final String REQUEST_STATUS_CANCELED = "cancel";
 
     private final String PENDING = "PENDING";
-    private final String ACCEPTED = "ACCEPTED";
-    private final String REJECTED = "REJECTED";
+    public static final String ACCEPTED = "ACCEPTED";
+    public static final String REJECTED = "REJECTED";
     private final String CANCELED = "CANCELED";
 
 
