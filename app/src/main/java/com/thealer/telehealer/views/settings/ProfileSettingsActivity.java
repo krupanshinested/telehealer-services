@@ -482,7 +482,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 setFragment(otpVerificationFragment, false, true, false);
                 break;
             case RequestID.REQ_RESET_PASSWORD:
-                updateDetailTitle(getString(R.string.password));
+                String title = getString(R.string.password);
+                updateDetailTitle(title);
                 CreatePasswordFragment createPasswordFragment = new CreatePasswordFragment();
 
                 Bundle passwordBundle = bundle;
@@ -491,12 +492,14 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                     passwordBundle = new Bundle();
                 }
                 passwordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
+                passwordBundle.putString(ArgumentKeys.TITLE,title);
                 createPasswordFragment.setArguments(passwordBundle);
                 setFragment(createPasswordFragment, false, true, false);
 
                 break;
             case RequestID.RESET_PASSWORD_OTP_VALIDATED:
-                updateDetailTitle(getString(R.string.reenter_password));
+                String re_title = getString(R.string.reenter_password);
+                updateDetailTitle(re_title);
                 CreatePasswordFragment reEnterPassword = new CreatePasswordFragment();
 
                 Bundle repasswordBundle = bundle;
@@ -505,6 +508,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                     repasswordBundle = new Bundle();
                 }
                 repasswordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
+                repasswordBundle.putString(ArgumentKeys.TITLE,re_title);
                 reEnterPassword.setArguments(repasswordBundle);
                 setFragment(reEnterPassword, false, true, false);
 
@@ -680,7 +684,11 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     @Override
     public void hideOrShowOtherOption(boolean hideOrShow) {
-
+        if (hideOrShow) {
+            other_option_iv.setVisibility(View.VISIBLE);
+        } else {
+            other_option_iv.setVisibility(View.GONE);
+        }
     }
 
     @Override
