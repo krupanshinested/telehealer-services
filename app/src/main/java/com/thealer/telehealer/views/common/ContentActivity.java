@@ -92,6 +92,18 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
         } else {
             check_box_view.setVisibility(View.GONE);
         }
+
+        sub_title_tv.post(new Runnable() {
+            @Override
+            public void run() {
+                int lineCount = sub_title_tv.getLineCount();
+                if (lineCount == 1) {
+                    sub_title_tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                } else {
+                    sub_title_tv.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+                }
+            }
+        });
     }
 
     private void initView() {

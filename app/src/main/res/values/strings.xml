@@ -18,7 +18,7 @@
 
     //Password requirements
     <string name="requirement_1">8 to 20 characters long</string>
-    <string name="requirement_2">Use atleast 1 uppercase letter, 1 lowercase letter and 1 number</string>
+    <string name="requirement_2">Use at least 1 uppercase letter, 1 lowercase letter and 1 number</string>
     <string name="requirement_3">Not repeat the same number or letter more than three times in a row</string>
     <string name="requirement_4">Not contain spaces, and may only use these special characters \'@#*()+={}/?~;,.-_\'</string>
 
