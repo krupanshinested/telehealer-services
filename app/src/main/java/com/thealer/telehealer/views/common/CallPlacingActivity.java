@@ -388,7 +388,7 @@ public class CallPlacingActivity extends BaseActivity {
                     param.put("savePayment", true);
 
                     brainTreeViewModel.checkOutBrainTree(param);
-
+                    finish();
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     Log.d("CallPlacingFragment", "Braintree Cancelled");
                     finish();
