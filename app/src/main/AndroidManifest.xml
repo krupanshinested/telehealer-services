@@ -141,6 +141,8 @@
             android:name="io.fabric.ApiKey"
             android:value="${fabric_key}" />
 
+        <activity android:name=".views.home.pendingInvites.PendingInvitesActivity" />
+
         <activity android:name=".views.quickLogin.QuickLoginAgreementActivity" />
     </application>
 

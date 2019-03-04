@@ -100,6 +100,9 @@ public class EmptyStateUtil {
                 return "No Vital Measurements for last two week";
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH:
                 return "No Vital Measurements for last month";
+            case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
+            case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
+                return "No Pending Invites";
             default:
                 return null;
         }
@@ -214,6 +217,10 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_TWO_WEEK:
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH:
                 return "Patients who measured their vitals will eventually show up here";
+            case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
+                return "Invites which waiting for your action will eventually show up here";
+            case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
+                return "Invites which you created and waiting for other person's action will eventually show up here";
             default:
                 return null;
         }
@@ -306,6 +313,9 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT:
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
                 return R.drawable.emptystate_no_medical_assistant;
+            case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
+            case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
+                return R.drawable.emptystate_pending_invites;
             default:
                 return 0;
         }
