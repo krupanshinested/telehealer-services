@@ -100,10 +100,16 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
 
     public void onDataUpdated(Bundle bundle) {
         if (bundle != null) {
-            status = bundle.getBoolean(Constants.SUCCESS_VIEW_STATUS);
             title = bundle.getString(Constants.SUCCESS_VIEW_TITLE);
             message = bundle.getString(Constants.SUCCESS_VIEW_DESCRIPTION);
-            setData();
+
+            if (bundle.containsKey(Constants.SUCCESS_VIEW_STATUS)) {
+                status = bundle.getBoolean(Constants.SUCCESS_VIEW_STATUS);
+                setData();
+            } else {
+                titleTv.setText(title);
+                messageTv.setText(message);
+            }
         }
     }
 

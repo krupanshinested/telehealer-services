@@ -31,6 +31,8 @@ import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiRes
 import com.thealer.telehealer.apilayer.models.orders.lab.CreateTestApiRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.miscellaneous.CreateMiscellaneousRequestModel;
+import com.thealer.telehealer.apilayer.models.orders.miscellaneous.MiscellaneousApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.pharmacy.GetPharmaciesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.pharmacy.SendFaxRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
@@ -329,6 +331,15 @@ public interface ApiInterface {
 
     @GET("api/referrals/x-rays")
     Observable<GetRadiologyResponseModel> getUserRadiologyList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid);
+
+    @GET("api/referrals/miscellaneous")
+    Observable<MiscellaneousApiResponseModel> getMiscellaneousList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+
+    @GET("api/referrals/miscellaneous")
+    Observable<MiscellaneousApiResponseModel> getUserMiscellaneousList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid);
+
+    @POST("api/referrals/miscellaneous")
+    Observable<BaseApiResponseModel> createMiscellaneous(@Body CreateMiscellaneousRequestModel createMiscellaneousRequestModel);
 
     @GET("api/schedule")
     Observable<SchedulesApiResponseModel> getSchedules(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuidList);

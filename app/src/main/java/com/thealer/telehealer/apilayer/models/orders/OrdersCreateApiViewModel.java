@@ -2,12 +2,12 @@ package com.thealer.telehealer.apilayer.models.orders;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.CreateFormRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.CreateTestApiRequestModel;
+import com.thealer.telehealer.apilayer.models.orders.miscellaneous.CreateMiscellaneousRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.pharmacy.SendFaxRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRequestModel;
@@ -147,6 +147,24 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().createRadiology(createRadiologyRequestModel)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void createMiscellaneousOrder(CreateMiscellaneousRequestModel createMiscellaneousRequestModel) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().createMiscellaneous(createMiscellaneousRequestModel)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override

@@ -23,6 +23,7 @@ import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiRespon
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.miscellaneous.MiscellaneousApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -365,6 +366,48 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                     addToUserGuidList(getRadiologyResponseModel.getResultBeanList().get(i).getPatient().getUser_guid());
                 }
             }
+        } else if (baseApiResponseModel instanceof MiscellaneousApiResponseModel) {
+            MiscellaneousApiResponseModel miscellaneousApiResponseModel = (MiscellaneousApiResponseModel) baseApiResponseModel;
+
+            if (!UserType.isUserPatient() && page == 1 && miscellaneousApiResponseModel.getResult().size() == 0) {
+                if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_MISC)) {
+                    appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_MISC, true);
+                    orderDetailCelv.showOrHideMessage(false);
+                    Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_RADIOLOGY, dismissListener);
+                }
+            }
+
+            for (int i = 0; i < miscellaneousApiResponseModel.getResult().size(); i++) {
+
+                String date = Utils.getDayMonthYear(miscellaneousApiResponseModel.getResult().get(i).getCreated_at());
+                OrdersDetailListAdapterModel ordersDetailListAdapterModel = new OrdersDetailListAdapterModel();
+
+                ordersDetailListAdapterModel.setSubTitle(miscellaneousApiResponseModel.getResult().get(i).getDetail().getNotes());
+                ordersDetailListAdapterModel.setCommonResultResponseModel(miscellaneousApiResponseModel.getResult().get(i));
+
+                if (!headerList.contains(date)) {
+                    headerList.add(date);
+                }
+
+                List<OrdersDetailListAdapterModel> childListData = new ArrayList<>();
+
+                if (childList.containsKey(date)) {
+                    childListData.addAll(childList.get(date));
+                }
+
+                childListData.add(ordersDetailListAdapterModel);
+
+                childList.put(date, childListData);
+
+                if (miscellaneousApiResponseModel.getResult().get(i).getDoctor() != null &&
+                        miscellaneousApiResponseModel.getResult().get(i).getDoctor().getUser_guid() != null) {
+                    addToUserGuidList(miscellaneousApiResponseModel.getResult().get(i).getDoctor().getUser_guid());
+                }
+                if (miscellaneousApiResponseModel.getResult().get(i).getPatient() != null &&
+                        miscellaneousApiResponseModel.getResult().get(i).getPatient().getUser_guid() != null) {
+                    addToUserGuidList(miscellaneousApiResponseModel.getResult().get(i).getPatient().getUser_guid());
+                }
+            }
         }
 
         ordersDetailListAdapter.setData(headerList, childList);
@@ -521,6 +564,14 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 ordersApiViewModel.getUserSpecialist(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
             }
 
+        } else if (selectedItem.equals(OrderConstant.ORDER_MISC)) {
+
+            if (isFromHome) {
+                ordersApiViewModel.getMiscellaneousList(page, isShowProgress);
+            } else {
+                ordersApiViewModel.getUserMiscellaneousList(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
+            }
+
         }
     }
 
@@ -597,6 +648,16 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 emptyStateType = EmptyViewConstants.EMPTY_SPECIALIST;
             } else {
                 emptyStateType = EmptyViewConstants.EMPTY_SPECIALIST_WITH_BTN;
+            }
+        } else if (selectedItem.equals(OrderConstant.ORDER_MISC)) {
+
+            setTitle(OrderConstant.ORDER_MISC);
+
+            if (UserType.isUserPatient()) {
+                showOrHideFab(false);
+                emptyStateType = EmptyViewConstants.EMPTY_MISC;
+            } else {
+                emptyStateType = EmptyViewConstants.EMPTY_MISC_WITH_BTN;
             }
         }
 

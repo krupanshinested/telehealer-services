@@ -22,4 +22,5 @@ public class OverlayViewConstants {
     public static final String OVERLAY_NO_LAB_RECORD = "You can add a Lab record by tapping the '+' button";
     public static final String OVERLAY_NO_SPECIALIST = "You can add a Specialist by tapping the '+' button";
     public static final String OVERLAY_NO_RADIOLOGY = "You can add a Radiology by tapping the '+' button";
+    public static final String OVERLAY_NO_MISC = "You can add a Miscellaneous by tapping the '+' button";
 }
