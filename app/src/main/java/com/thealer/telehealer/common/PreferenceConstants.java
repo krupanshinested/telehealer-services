@@ -53,5 +53,6 @@ public class PreferenceConstants {
     public static final String IS_OVERLAY_ADD_PRESCRIPTION = "add_prescription_overlay";
     public static final String IS_OVERLAY_ADD_SPECIALIST = "add_specialist_overlay";
     public static final String IS_OVERLAY_ADD_RADIOLOGY = "add_radiology_overlay";
+    public static final String IS_OVERLAY_ADD_MISC = "add_miscellaneous_overlay";
     public static final String NOTIFICATIONS_IDS = "notification_created_id";
 }

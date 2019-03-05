@@ -11,6 +11,7 @@ public class OrderConstant {
     public static final String ORDER_LABS = "Labs";
     public static final String ORDER_RADIOLOGY = "Radiology";
     public static final String ORDER_DOCUMENTS = "Documents";
+    public static final String ORDER_MISC = "Miscellaneous";
 
     public static final String[] labTestList = {"Amylase",
             "BMP",
