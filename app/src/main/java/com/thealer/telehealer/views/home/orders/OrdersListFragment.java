@@ -49,8 +49,8 @@ public class OrdersListFragment extends BaseFragment {
             titleList.clear();
             imageList.clear();
 
-            String[] ordersTitles = {OrderConstant.ORDER_PRESCRIPTIONS, OrderConstant.ORDER_REFERRALS, OrderConstant.ORDER_LABS, OrderConstant.ORDER_RADIOLOGY, OrderConstant.ORDER_FORM, OrderConstant.ORDER_DOCUMENTS};
-            Integer[] ordersImages = {R.drawable.ic_orders_prescriptions, R.drawable.ic_orders_referrals, R.drawable.ic_orders_labs, R.drawable.ic_orders_radiology, R.drawable.ic_orders_forms, R.drawable.ic_orders_documents};
+            String[] ordersTitles = {OrderConstant.ORDER_PRESCRIPTIONS, OrderConstant.ORDER_REFERRALS, OrderConstant.ORDER_LABS, OrderConstant.ORDER_RADIOLOGY, OrderConstant.ORDER_FORM, OrderConstant.ORDER_DOCUMENTS, OrderConstant.ORDER_MISC};
+            Integer[] ordersImages = {R.drawable.ic_orders_prescriptions, R.drawable.ic_orders_referrals, R.drawable.ic_orders_labs, R.drawable.ic_orders_radiology, R.drawable.ic_orders_forms, R.drawable.ic_orders_documents, R.drawable.ic_orders_documents};
 
             titleList.addAll(Arrays.asList(ordersTitles));
             imageList.addAll(Arrays.asList(ordersImages));

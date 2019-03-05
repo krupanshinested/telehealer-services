@@ -306,6 +306,7 @@
     <string name="no">No</string>
     <string name="cancel_caps">CANCEL</string>
     <string name="cancel_prescription_order">Do you really want to cancel this prescription order?</string>
+    <string name="cancel_miscellaneous_order">Do you really want to cancel this Miscellaneous order?</string>
     <string name="cancel_specialist_order">Do you really want to cancel this specialist order?</string>
     <string name="cancel_lab_order">Do you really want to cancel this Lab order?</string>
 
@@ -717,6 +718,8 @@
     <string name="associations">Associations</string>
     <string name="referral_success">Your referral for %s has been posted successfully.</string>
     <string name="referral_failure">Your referral for %s has not been posted successfully.</string>
+    <string name="miscellaneous_success">Your miscellaneous order for %s has been posted successfully.</string>
+    <string name="miscellaneous_failure">Your miscellaneous order for %s has not been posted successfully.</string>
     <string name="create_radiology_success">Your X-Ray order for %s has been posted successfully</string>
     <string name="create_radiology_failure">Your X-Ray order for %s is not posted successfully, please try again,</string>
     <string name="create_lab_success">Your Lab order for %s is posted successfully.</string>
@@ -785,6 +788,9 @@
     <string name="enable_overflow">Enable overflow</string>
     <string name="enable_overflow_description">Please enable display over other apps property inorder to minimize this call.</string>
     <string name="start_your_measurement_from_device">Start your measurement from Device.</string>
+    <string name="notes">Notes</string>
+    <string name="new_miscellaneous">New Miscellaneous</string>
+    <string name="posting_your_miscellaneous_request">Posting your Miscellaneous request</string>
     <string name="business_associates_agreement">Business Associates Agreement</string>
     <string name="agree_sign"><![CDATA[Agree & Sign]]></string>
     <string name="signature_capture">Signature Capture</string>
@@ -808,4 +814,5 @@
      <string name="UPLOAD">UPLOAD</string>
     <string name="SYNC">SYNC</string>
     <string name="scale_support_description">Stand on scale with your bare feet</string>
+    <string name="miscellaneous_referral">Miscellaneous Referral</string>
 </resources>

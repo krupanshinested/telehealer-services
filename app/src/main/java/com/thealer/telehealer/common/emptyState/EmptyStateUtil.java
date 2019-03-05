@@ -19,6 +19,9 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_DOCUMENTS:
             case EmptyViewConstants.EMPTY_DOCUMENTS_WITH_BTN:
                 return "No Documents";
+            case EmptyViewConstants.EMPTY_MISC:
+            case EmptyViewConstants.EMPTY_MISC_WITH_BTN:
+                return "No Miscellaneous";
             case EmptyViewConstants.EMPTY_PRESCRIPTION:
             case EmptyViewConstants.EMPTY_PRESCRIPTION_WITH_BTN:
                 return "No Prescription";
@@ -113,9 +116,13 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_VITALS_WITH_BTN:
                 return "Connect your vitals device to measure your vitals by tapping the '+' button";
             case EmptyViewConstants.EMPTY_DOCUMENTS:
-                return "Documents  will eventually show up here";
+                return "Documents will eventually show up here";
             case EmptyViewConstants.EMPTY_DOCUMENTS_WITH_BTN:
                 return "Add a Document by tapping the '+' button";
+            case EmptyViewConstants.EMPTY_MISC:
+                return "Miscellaneous will eventually show up here";
+            case EmptyViewConstants.EMPTY_MISC_WITH_BTN:
+                return "Add a Miscellaneous by tapping the '+' button";
             case EmptyViewConstants.EMPTY_PRESCRIPTION:
                 return "Prescription orders will eventually show up here";
             case EmptyViewConstants.EMPTY_PRESCRIPTION_WITH_BTN:
@@ -223,6 +230,9 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_DOCUMENTS:
             case EmptyViewConstants.EMPTY_DOCUMENTS_WITH_BTN:
                 return R.drawable.emptystate_no_document;
+            case EmptyViewConstants.EMPTY_MISC:
+            case EmptyViewConstants.EMPTY_MISC_WITH_BTN:
+                return R.drawable.emptystate_misc;
             case EmptyViewConstants.EMPTY_PRESCRIPTION:
             case EmptyViewConstants.EMPTY_PRESCRIPTION_WITH_BTN:
                 return R.drawable.emptystate_no_prescription;
