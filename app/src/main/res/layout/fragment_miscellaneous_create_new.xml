@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.thealer.telehealer.views.home.orders.OrdersCustomView
+        android:id="@+id/patient_ocv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        app:arrow_visible="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:sub_title_visible="false"
+        app:title_text="@string/Click_here_to_select_patient"
+        app:view_label="@string/patient_name" />
+
+    <TextView
+        android:id="@+id/notes_label"
+        style="@style/text_sub_title_bold_app_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:gravity="left|center"
+        android:padding="@dimen/padding_default"
+        android:text="@string/notes"
+        android:textAllCaps="true"
+        app:layout_constraintTop_toBottomOf="@+id/patient_ocv" />
+
+    <EditText
+        android:id="@+id/notes_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/grey_border_drawable"
+        android:gravity="center|top|left"
+        android:inputType="textMultiLine"
+        android:lines="6"
+        android:padding="@dimen/padding_default"
+        app:layout_constraintTop_toBottomOf="@+id/notes_label"
+        tools:text="@string/dummy_text" />
+
+    <Button
+        android:id="@+id/send_btn"
+        style="@style/button_app_background_white_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/send"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</android.support.constraint.ConstraintLayout>
