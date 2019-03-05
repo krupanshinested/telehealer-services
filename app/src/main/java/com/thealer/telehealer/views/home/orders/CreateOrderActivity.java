@@ -27,6 +27,7 @@ import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.orders.document.CreateNewDocumentFragment;
 import com.thealer.telehealer.views.home.orders.forms.CreateNewFormFragment;
 import com.thealer.telehealer.views.home.orders.labs.CreateNewLabFragment;
+import com.thealer.telehealer.views.home.orders.miscellaneous.CreateNewMiscellaneousFragment;
 import com.thealer.telehealer.views.home.orders.prescription.CreateNewPrescriptionFragment;
 import com.thealer.telehealer.views.home.orders.radiology.CreateNewRadiologyFragment;
 import com.thealer.telehealer.views.home.orders.specialist.CreateNewSpecialistFragment;
@@ -127,6 +128,8 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
                 return new CreateNewRadiologyFragment();
             case OrderConstant.ORDER_REFERRALS:
                 return new CreateNewSpecialistFragment();
+            case OrderConstant.ORDER_MISC:
+                return new CreateNewMiscellaneousFragment();
         }
         return null;
     }

@@ -18,6 +18,7 @@ import com.thealer.telehealer.apilayer.models.orders.OrdersCommonResultResponseM
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.miscellaneous.MiscellaneousApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -28,6 +29,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.labs.LabsDetailViewFragment;
+import com.thealer.telehealer.views.home.orders.miscellaneous.MiscellaneousDetailViewFragment;
 import com.thealer.telehealer.views.home.orders.prescription.PrescriptionDetailViewFragment;
 import com.thealer.telehealer.views.home.orders.radiology.RadiologyDetailViewFragment;
 import com.thealer.telehealer.views.home.orders.specialist.SpecialistDetailViewFragment;
@@ -183,6 +185,8 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
             } else if (ordersCommonResultResponseModel instanceof GetRadiologyResponseModel.ResultBean) {
                 fragment = new RadiologyDetailViewFragment();
+            } else if (ordersCommonResultResponseModel instanceof MiscellaneousApiResponseModel.ResultBean) {
+                fragment = new MiscellaneousDetailViewFragment();
             }
 
             if (statusImage != 0)
