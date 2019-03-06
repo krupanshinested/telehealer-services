@@ -48,6 +48,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     private Boolean isSlotLoaded = false;
     private LinearLayout medicalAssistantLl;
     private ProfileCellView medicalAssistant;
+    private ProfileCellView documents;
     private TextView versionTv;
     private String selectedItem;
 
@@ -96,6 +97,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private void initView(View baseView) {
         profile = baseView.findViewById(R.id.profile);
+        documents = (ProfileCellView) baseView.findViewById(R.id.documents);
         medical_history = baseView.findViewById(R.id.medical_history);
         settings = baseView.findViewById(R.id.settings);
         email_id = baseView.findViewById(R.id.email_id);
@@ -161,6 +163,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         });
 
         profile.setOnClickListener(this);
+        documents.setOnClickListener(this);
         medical_history.setOnClickListener(this);
         settings.setOnClickListener(this);
         email_id.setOnClickListener(this);
@@ -182,6 +185,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 appointment_slots.setVisibility(View.GONE);
                 change_password.hideSplitter(true);
                 payments_billings.setVisibility(View.GONE);
+                documents.setVisibility(View.VISIBLE);
                 break;
             case Constants.TYPE_DOCTOR:
                 appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length() + "");

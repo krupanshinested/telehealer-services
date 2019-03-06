@@ -1,5 +1,6 @@
 package com.thealer.telehealer.apilayer.models.orders.documents;
 
+import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiResponseModel;
 
 import java.io.Serializable;
@@ -27,6 +28,8 @@ public class DocumentsApiResponseModel extends OrdersApiResponseModel {
         private String path;
         private String created_at;
         private String updated_at;
+        private UserBean creator;
+        private UserBean doctor;
 
         public int getUser_file_id() {
             return user_file_id;
@@ -66,6 +69,22 @@ public class DocumentsApiResponseModel extends OrdersApiResponseModel {
 
         public void setUpdated_at(String updated_at) {
             this.updated_at = updated_at;
+        }
+
+        public UserBean getCreator() {
+            return creator;
+        }
+
+        public void setCreator(UserBean creator) {
+            this.creator = creator;
+        }
+
+        public UserBean getDoctor() {
+            return doctor;
+        }
+
+        public void setDoctor(UserBean doctor) {
+            this.doctor = doctor;
         }
     }
 }
