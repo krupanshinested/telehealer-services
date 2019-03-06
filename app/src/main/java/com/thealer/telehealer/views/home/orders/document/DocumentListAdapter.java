@@ -104,6 +104,8 @@ class DocumentListAdapter extends BaseExpandableListAdapter {
 
         titleTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getName());
 
+        sizeTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getCreator().getUserName());
+
         documentCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
