@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -51,6 +52,8 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.common.WebViewFragment;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
+import com.thealer.telehealer.views.home.orders.document.DocumentListFragment;
 import com.thealer.telehealer.views.quickLogin.QuickLoginPinFragment;
 import com.thealer.telehealer.views.settings.Interface.BundleReceiver;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
@@ -157,6 +160,19 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                         setFragment(patientRegistrationDetailFragment, false, true, true);
                         break;
                 }
+                break;
+            case R.id.documents:
+                updateDetailTitle(getString(R.string.documents));
+
+                DocumentListFragment documentListFragment = new DocumentListFragment();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(Constants.IS_FROM_HOME, true);
+                bundle.putString(Constants.SELECTED_ITEM, OrderConstant.ORDER_DOCUMENTS);
+                documentListFragment.setArguments(bundle);
+
+                setFragment(documentListFragment, false, true, true);
+
+                hideOrShowToolbarTile(true);
                 break;
             case R.id.medical_history:
                 if (whoAmIApiViewModel == null) {
@@ -267,7 +283,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     @Override
     public void onBackPressed() {
 
-        hideOrShowToolbarTile(false);
         if (getIntent() != null && getIntent().getExtras() != null &&
                 getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == Constants.SCHEDULE_CREATION_MODE) {
             finish();
@@ -279,10 +294,11 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             if (currentBackStackCount > maxCount) {
                 getSupportFragmentManager().popBackStack();
 
-                if ((currentBackStackCount - 1) <= maxCount) {
+                if (currentBackStackCount == 1) {
                     updateDetailTitle(UserDetailPreferenceManager.getUserDisplayName());
                     setExpandEnabled(true);
                     hideOrShowNext(false);
+                    hideOrShowToolbarTile(false);
                 }
 
             } else {
@@ -369,7 +385,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     public void updateProfile() {
         if (UserType.isUserPatient()) {
             genderIv.setVisibility(View.VISIBLE);
-            Utils.setGenderImage(ProfileSettingsActivity.this, genderIv, UserDetailPreferenceManager.getGender());
+            Utils.setGenderImage(getApplicationContext(), genderIv, UserDetailPreferenceManager.getGender());
         } else {
             genderIv.setVisibility(View.GONE);
         }
@@ -423,13 +439,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         }
 
         int containerId;
-       /* if (toBase) {
-            containerId = mainContainer.getId();
-            findViewById(containerId).bringToFront();
-        } else {
-            //containerId = R.id.detail_container;
-            //findViewById(R.id.detail_parent_container).bringToFront();
-        }*/
 
         containerId = mainContainer.getId();
         findViewById(containerId).bringToFront();
