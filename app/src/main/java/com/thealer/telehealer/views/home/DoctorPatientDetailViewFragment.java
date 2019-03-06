@@ -51,7 +51,10 @@ import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
+import com.thealer.telehealer.views.home.orders.document.DocumentListFragment;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
 import com.thealer.telehealer.views.home.schedules.CreateNewScheduleActivity;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
@@ -218,6 +221,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             enableOrDisableCall(true);
         }
 
+
+        if (!UserType.isUserPatient()) {
+            userDetailTab.setTabMode(TabLayout.MODE_SCROLLABLE);
+        }
         userDetailBnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -276,6 +283,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                         itemPickerDialog.show();
 
                         break;
+                    case R.id.menu_upload:
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constants.SELECTED_ITEM, OrderConstant.ORDER_DOCUMENTS);
+                        bundle.putSerializable(Constants.USER_DETAIL, resultBean);
+                        startActivity(new Intent(getActivity(), CreateOrderActivity.class).putExtras(bundle));
+                        break;
                 }
                 return false;
             }
@@ -326,6 +339,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
                 resultBean = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 updateView(resultBean);
+
+                if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
+                    userDetailBnv.getMenu().findItem(R.id.menu_upload).setVisible(true);
+                }
 
                 if (getArguments().getBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, false)) {
                     connectionStatusApiViewModel.getConnectionStatus(resultBean.getUser_guid(), true);
@@ -445,6 +462,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     addFragment(getString(R.string.vitals), vitalsFragment);
                 }
 
+                if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
+                    DocumentListFragment documentListFragment = new DocumentListFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
+                    documentListFragment.setArguments(bundle);
+                    addFragment(getString(R.string.documents), documentListFragment);
+                }
+
                 RecentFragment recentFragment = new RecentFragment();
                 addFragment(getString(R.string.recents), recentFragment);
 
@@ -494,7 +519,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     }
 
     private void addFragment(String title, Fragment fragment) {
-        Bundle bundle = new Bundle();
+        Bundle bundle = fragment.getArguments();
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+
         bundle.putSerializable(Constants.USER_DETAIL, resultBean);
         bundle.putString(Constants.VIEW_TYPE, view_type);
         fragment.setArguments(bundle);

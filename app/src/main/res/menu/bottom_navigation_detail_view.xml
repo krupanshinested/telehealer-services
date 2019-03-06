@@ -8,4 +8,9 @@
         android:id="@+id/menu_schedules"
         android:icon="@drawable/ic_schedules"
         android:title="@string/schedules" />
+    <item
+        android:id="@+id/menu_upload"
+        android:icon="@drawable/ic_document_upload"
+        android:visible="false"
+        android:title="@string/upload" />
 </menu>
