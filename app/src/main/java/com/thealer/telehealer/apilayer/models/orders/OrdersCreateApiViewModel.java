@@ -2,6 +2,8 @@ package com.thealer.telehealer.apilayer.models.orders;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -67,7 +69,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
     }
 
 
-    public void uploadDocument(String name, String image_path, boolean isProgressVisible) {
+    public void uploadDocument(@Nullable String userGuid, String name, String image_path, boolean isProgressVisible) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -75,7 +77,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
                     MultipartBody.Part file = getMultipartFile("file", image_path);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), name);
                     getAuthApiService()
-                            .uploadDocument(requestBody, file)
+                            .uploadDocument(requestBody, file, userGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisible)) {
                                 @Override

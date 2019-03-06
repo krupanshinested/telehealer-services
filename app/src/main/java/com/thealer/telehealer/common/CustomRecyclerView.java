@@ -1,7 +1,6 @@
 package com.thealer.telehealer.common;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +29,7 @@ public class CustomRecyclerView extends ConstraintLayout {
     private Context context;
     private LinearLayoutManager linearLayoutManager;
     private String emptyState;
-    private boolean isScrollable = false;
+    private boolean isScrollable = false, isLayoutChanging = false;
     private int totalCount = 0;
     private OnPaginateInterface onPaginateInterface;
     private CustomSwipeRefreshLayout swipeLayout;
@@ -62,22 +61,22 @@ public class CustomRecyclerView extends ConstraintLayout {
         linearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
-            @Override
-            public void onChildViewAttachedToWindow(@NonNull View view) {
-                updateView();
-            }
-
-            @Override
-            public void onChildViewDetachedFromWindow(@NonNull View view) {
-                updateView();
-            }
-        });
+//        recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+//            @Override
+//            public void onChildViewAttachedToWindow(@NonNull View view) {
+//                updateView();
+//            }
+//
+//            @Override
+//            public void onChildViewDetachedFromWindow(@NonNull View view) {
+//                updateView();
+//            }
+//        });
 
         recyclerView.setOnScrollChangeListener(new OnScrollChangeListener() {
             @Override
             public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (isScrollable) {
+                if (isScrollable && !isLayoutChanging) {
                     if (linearLayoutManager.getItemCount() < totalCount) {
                         if (linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1) {
                             onPaginateInterface.onPaginate();
@@ -121,13 +120,17 @@ public class CustomRecyclerView extends ConstraintLayout {
     }
 
     public void updateView() {
-        if (linearLayoutManager.getItemCount() > 0) {
-            recyclerView.setVisibility(VISIBLE);
-            recyclerEmptyStateView.setVisibility(GONE);
+        if (!isLayoutChanging) {
+            if (linearLayoutManager.getItemCount() > 0) {
+                recyclerView.setVisibility(VISIBLE);
+                recyclerEmptyStateView.setVisibility(GONE);
+            } else {
+                recyclerView.setVisibility(GONE);
+                recyclerEmptyStateView.setVisibility(VISIBLE);
+                showEmptyState(emptyState);
+            }
         } else {
-            recyclerView.setVisibility(GONE);
-            recyclerEmptyStateView.setVisibility(VISIBLE);
-            showEmptyState(emptyState);
+            isLayoutChanging = false;
         }
     }
 
@@ -169,5 +172,19 @@ public class CustomRecyclerView extends ConstraintLayout {
 
     public void hideProgressBar() {
         recyclerLoader.setVisibility(GONE);
+    }
+
+    public void showOrHideMessage(boolean show) {
+        if (show) {
+            emptyMessageTv.setVisibility(VISIBLE);
+        } else {
+            emptyMessageTv.setVisibility(GONE);
+        }
+    }
+
+    public void setLayoutManager(LinearLayoutManager layoutManager) {
+        isLayoutChanging = true;
+        this.linearLayoutManager = layoutManager;
+        recyclerView.setLayoutManager(layoutManager);
     }
 }

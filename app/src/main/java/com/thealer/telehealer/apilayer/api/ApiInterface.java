@@ -294,7 +294,7 @@ public interface ApiInterface {
 
     @Multipart
     @POST("api/users/files")
-    Observable<BaseApiResponseModel> uploadDocument(@Part(NAME) RequestBody name, @Part MultipartBody.Part file);
+    Observable<BaseApiResponseModel> uploadDocument(@Part(NAME) RequestBody name, @Part MultipartBody.Part file, @Query(USER_GUID) String userGuid);
 
     @GET("api/users/files")
     Observable<DocumentsApiResponseModel> getDocuments(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
