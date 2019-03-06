@@ -18,6 +18,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
@@ -82,6 +84,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     private List<String> imagePathList = new ArrayList<>();
     private int next = 1;
     private ConstraintLayout parent;
+    private String patientGuid = null;
 
 
     @Override
@@ -227,6 +230,11 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
 
                 showShareData();
             }
+
+            CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            if (patientDetail != null) {
+                patientGuid = patientDetail.getUser_guid();
+            }
         }
 
         isDataObtained();
@@ -349,7 +357,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     }
 
     private void uploadMultipleDocument() {
-        ordersCreateApiViewModel.uploadDocument(documentNameEt.getText().toString().concat("_" + next), imagePathList.get(0), false);
+        ordersCreateApiViewModel.uploadDocument(null, documentNameEt.getText().toString().concat("_" + next), imagePathList.get(0), false);
         showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
     }
 
@@ -359,7 +367,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
 
     private void uploadDocument() {
 
-        ordersCreateApiViewModel.uploadDocument(documentNameEt.getText().toString(), image_path, false);
+        ordersCreateApiViewModel.uploadDocument(patientGuid, documentNameEt.getText().toString(), image_path, false);
         showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
     }
 
