@@ -12,14 +12,9 @@
 
         <TextView
             android:id="@+id/pharmacy_name_tv"
-            style="@style/text_title_dark"
-            android:layout_width="0dp"
+            style="@style/card_title_text"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_default"
             android:layout_marginTop="@dimen/margin_default"
-            android:gravity="left"
-            android:padding="0dp"
-            android:paddingStart="@dimen/padding_default"
             app:layout_constraintEnd_toStartOf="@id/selected_iv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -27,15 +22,12 @@
 
         <TextView
             android:id="@+id/pharmacy_address_tv"
-            style="@style/text_sub_title"
-            android:layout_width="0dp"
+            style="@style/card_sub_title_text"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_default"
             android:layout_marginBottom="@dimen/margin_default"
-            android:paddingStart="9dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_view"
             app:layout_constraintEnd_toStartOf="@id/selected_iv"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@id/pharmacy_name_tv"
             app:layout_constraintTop_toBottomOf="@+id/pharmacy_name_tv"
             tool:text="@string/dummy_text" />
 
@@ -53,8 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin_default"
             android:src="@drawable/ic_done_green_24dp"
-            android:visibility="visible"
             android:tint="@color/app_gradient_start"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,19 +134,27 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                                 isDemographicUpdated = true;
                             }
 
-                            if (createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front() != null &&
-                                    createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_back() != null &&
-                                    whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front() != null &&
-                                    whoAmIApiResponseModel.getUser_detail().getData().getInsurance_back() != null) {
+                            if (createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front() == null &&
+                                    whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front() == null) {
 
-                                if (!createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front()
-                                        .equals(whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front()) ||
-                                        !createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_back()
-                                                .equals(whoAmIApiResponseModel.getUser_detail().getData().getInsurance_back())) {
+                                isInsuranceUpdated = false;
 
-                                    isInsuranceUpdated = true;
-                                }
+                            } else if (createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front() != null &&
+                                    whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front() == null ||
+                                    createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front() == null &&
+                                            whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front() != null) {
+
+                                isInsuranceUpdated = true;
+
+                            } else if (createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front() != null &&
+                                    whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front() != null) {
+
+                                isInsuranceUpdated = createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front().equals(whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front());
+
                             }
+
+                            Log.e("aswin", "insurance updated: " + isInsuranceUpdated);
+
                         }
                         createScheduleViewModel.setPatientCommonModel(whoAmIApiResponseModel);
                     } else {
@@ -165,10 +174,8 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                     for (SchedulesApiResponseModel.ResultBean resultBean : arrayList) {
                         if (isDoctorSchedules) {
                             doctorSchedulesTimeList.add(resultBean.getStart());
-//                            doctorSchedulesTimeList.add(resultBean.getEnd());
                         } else {
                             patientSchedulesTimeList.add(resultBean.getStart());
-//                            patientSchedulesTimeList.add(resultBean.getEnd());
                         }
                     }
 

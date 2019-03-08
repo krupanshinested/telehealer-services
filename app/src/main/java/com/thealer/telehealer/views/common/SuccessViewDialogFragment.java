@@ -182,9 +182,6 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
     }
 
     private void stopLoaderAnimation(boolean status) {
-        if (animatable2 != null && animatable2.isRunning()) {
-            animatable2.stop();
-        }
         if (status) {
             loaderIv.setImageDrawable(getActivity().getDrawable(R.drawable.success_animation_drawable));
         } else {

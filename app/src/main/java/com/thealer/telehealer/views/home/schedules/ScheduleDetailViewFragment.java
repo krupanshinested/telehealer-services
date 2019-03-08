@@ -15,6 +15,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
@@ -44,7 +46,6 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -174,26 +175,29 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
         if (getArguments() != null) {
             resultBean = (SchedulesApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SCHEDULE_DETAIL);
+            Log.e("aswin", "initView: " + new Gson().toJson(resultBean));
             if (resultBean != null) {
 
                 String statusInfo = "Patient %s has been updated";
                 String detail = "";
-                if (resultBean.getDetail().isChange_medical_info()) {
+                if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isChange_demographic() && resultBean.getDetail().isInsurance_to_date()) {
+                    detail = "demographic,history and insurance";
+                } else if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isChange_demographic()) {
+                    detail = "demographic and history ";
+                } else if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isInsurance_to_date()) {
+                    detail = "history and insurance";
+                } else if (resultBean.getDetail().isChange_demographic() && resultBean.getDetail().isInsurance_to_date()) {
+                    detail = "demographic and insurance";
+                } else if (resultBean.getDetail().isChange_medical_info()) {
                     detail = "history";
                 } else if (resultBean.getDetail().isChange_demographic()) {
                     detail = "demographic";
                 } else if (resultBean.getDetail().isInsurance_to_date()) {
                     detail = "insurance";
-                } else if (resultBean.getDetail().isChange_medical_info() &&
-                        resultBean.getDetail().isChange_demographic()) {
-                    detail = "demographic and history";
-                } else if (resultBean.getDetail().isChange_medical_info() &&
-                        resultBean.getDetail().isInsurance_to_date()) {
-                    detail = "insurance and history";
-                } else if (resultBean.getDetail().isChange_demographic() &&
-                        resultBean.getDetail().isInsurance_to_date()) {
-                    detail = "demographic and insurance";
+                } else {
+                    detail = "detail";
                 }
+
                 if (!detail.isEmpty()) {
                     statusInfo = String.format(statusInfo, detail);
                     statusTv.setText(statusInfo);
@@ -318,7 +322,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                         CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(), resultBean.getPatient(), null, null, null, callType);
 
                         Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
-                        intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL,callInitiateModel);
+                        intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
                         startActivity(intent);
 
                     }
