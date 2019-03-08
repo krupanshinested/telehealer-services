@@ -27,15 +27,12 @@
 
             <TextView
                 android:id="@+id/user_name_tv"
-                style="@style/text_title_dark"
-                android:layout_width="0dp"
-                android:layout_marginStart="8dp"
-                android:gravity="left|center"
+                style="@style/card_title_text"
+                android:layout_height="wrap_content"
                 android:text="@string/dummy_text"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@id/label_iv"
                 app:layout_constraintStart_toEndOf="@+id/user_avatar_civ"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@id/user_avatar_civ" />
 
             <ImageView
                 android:id="@+id/label_iv"
