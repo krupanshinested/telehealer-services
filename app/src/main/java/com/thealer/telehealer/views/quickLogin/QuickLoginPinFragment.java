@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -253,6 +252,11 @@ public class QuickLoginPinFragment extends BaseFragment {
         super.onPause();
         pinEt.clearFocus();
         Utils.hideKeyboard(getActivity());
-//        showOrHideSoftInputWindow(false);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utils.hideKeyboard(getActivity());
     }
 }

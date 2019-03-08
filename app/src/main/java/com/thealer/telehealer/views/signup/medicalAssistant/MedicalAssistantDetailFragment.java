@@ -61,7 +61,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     private TextInputLayout lastnameTil;
     private EditText lastnameEt;
     private TextView titleTv;
-    private LinearLayout title_lay,gender_lay;
+    private LinearLayout title_lay, gender_lay;
     private Spinner titleSpinner;
     private CardView certificate_card;
     private TextInputLayout degreeTil;
@@ -72,13 +72,13 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     //not for Registration
     private ImageView certificate_iv;
     private TextView certificate_tv;
-    private TextView gender_value,title_value;
+    private TextView gender_value, title_value;
 
     private String certificateImagePath;
     private String profileImgPath;
     private OnViewChangeInterface onViewChangeInterface;
     private OnActionCompleteInterface onActionCompleteInterface;
-    private String[] genderList,titleList;
+    private String[] genderList, titleList;
     private int imagePickedFor;
 
     private CreateUserRequestModel createUserRequestModel;
@@ -130,7 +130,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         if (savedInstanceState == null && getArguments() != null) {
             currentDisplayType = getArguments().getInt(ArgumentKeys.VIEW_TYPE, Constants.CREATE_MODE);
         } else if (savedInstanceState != null) {
-            currentDisplayType = savedInstanceState.getInt(ArgumentKeys.VIEW_TYPE,Constants.CREATE_MODE);
+            currentDisplayType = savedInstanceState.getInt(ArgumentKeys.VIEW_TYPE, Constants.CREATE_MODE);
         } else {
             currentDisplayType = Constants.CREATE_MODE;
         }
@@ -162,7 +162,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             outState.putString("certificateImagePath", certificateImagePath);
         }
 
-        outState.putInt(ArgumentKeys.VIEW_TYPE,currentDisplayType);
+        outState.putInt(ArgumentKeys.VIEW_TYPE, currentDisplayType);
     }
 
     private void initView(View view) {
@@ -317,10 +317,10 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     }
 
     private void reloadUI() {
-        switch (currentDisplayType){
+        switch (currentDisplayType) {
             case Constants.EDIT_MODE:
                 updateAllViews(true);
-                onViewChangeInterface.updateNextTitle(getString(R.string.update));
+                onViewChangeInterface.updateNextTitle(getString(R.string.Save));
                 break;
             case Constants.CREATE_MODE:
                 updateAllViews(true);
@@ -329,7 +329,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             case Constants.VIEW_MODE:
                 updateAllViews(false);
                 onViewChangeInterface.updateNextTitle(getString(R.string.edit));
-                Utils.hideKeyboardFrom(getActivity(),this.getView());
+                Utils.hideKeyboardFrom(getActivity(), this.getView());
                 break;
         }
 
@@ -337,9 +337,9 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     }
 
     private void updateAllViews(Boolean enabled) {
-        Utils.setEditable(firstnameEt,enabled);
-        Utils.setEditable(lastnameEt,enabled);
-        Utils.setEditable(degreeEt,enabled);
+        Utils.setEditable(firstnameEt, enabled);
+        Utils.setEditable(lastnameEt, enabled);
+        Utils.setEditable(degreeEt, enabled);
 
         if (enabled) {
             gender_value.setVisibility(View.GONE);
@@ -420,7 +420,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             if (profileImg != null)
                 profileCiv.setImageBitmap(profileImg);
         } else if (createUserRequestModel.getUser_data().getUser_avatar() != null) {
-            Utils.setImageWithGlide(getContext(), profileCiv,createUserRequestModel.getUser_data().getUser_avatar() , getContext().getDrawable(R.drawable.profile_placeholder), true);
+            Utils.setImageWithGlide(getContext(), profileCiv, createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true);
         }
     }
 
@@ -430,7 +430,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             if (certificate != null)
                 certificate_iv.setImageBitmap(certificate);
         } else if (createUserRequestModel.getUser_detail().getData().getCertification() != null) {
-            Utils.setImageWithGlide(getContext(), certificate_iv,createUserRequestModel.getUser_detail().getData().getCertification() , getContext().getDrawable(R.drawable.placeholder_certificate), true);
+            Utils.setImageWithGlide(getContext(), certificate_iv, createUserRequestModel.getUser_detail().getData().getCertification(), getContext().getDrawable(R.drawable.placeholder_certificate), true);
         }
     }
 
@@ -462,7 +462,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         dataBean.setDegree(degreeEt.getText().toString());
         dataBean.setTitle(titleSpinner.getSelectedItem().toString());
 
-        UserDetailBean userDetailBean = new UserDetailBean(dataBean,null);
+        UserDetailBean userDetailBean = new UserDetailBean(dataBean, null);
 
         createUserRequestModel.setUser_data(userDataBean);
         createUserRequestModel.setUser_detail(userDetailBean);

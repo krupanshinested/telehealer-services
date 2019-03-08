@@ -10,7 +10,6 @@ import android.support.design.widget.TextInputLayout;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -199,7 +198,7 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
     }
 
     private void makeApiCall() {
-        mobileNumber = countyCode.getSelectedCountryCodeWithPlus() + "" + numberEt.getText().toString();
+        mobileNumber = countyCode.getSelectedCountryCodeWithPlus() + "" + numberEt.getText().toString().replace(" ", "");
         checkUserEmailMobileApiViewModel.checkUserMobile(mobileNumber);
     }
 

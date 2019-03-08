@@ -23,11 +23,7 @@
 
         <TextView
             android:id="@+id/list_title_tv"
-            style="@style/text_title_bold"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/card_default_padding"
-            android:gravity="left|bottom"
+            style="@style/card_title_text"
             app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
             app:layout_constraintEnd_toStartOf="@id/status_iv"
             app:layout_constraintStart_toEndOf="@id/item_civ"
@@ -36,16 +32,7 @@
 
         <TextView
             android:id="@+id/list_sub_title_tv"
-            style="@style/text_sub_title"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginBottom="2dp"
-            android:ellipsize="end"
-            android:fontFamily="@font/open_sans_semibold"
-            android:gravity="left|top"
-            android:maxEms="3"
-            android:maxLines="1"
+            style="@style/card_sub_title_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/list_title_tv"
             app:layout_constraintStart_toStartOf="@id/list_title_tv"

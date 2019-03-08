@@ -67,6 +67,7 @@ public class DoctorOnBoardingActivity extends BaseActivity {
                     SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
                     if (signinApiResponseModel.isSuccess()) {
                         appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
+                        TelehealerFirebaseMessagingService.refresh();
                         startActivity(new Intent(DoctorOnBoardingActivity.this, HomeActivity.class));
                         finish();
                         TelehealerFirebaseMessagingService.refresh();

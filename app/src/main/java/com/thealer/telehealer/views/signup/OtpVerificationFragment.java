@@ -28,6 +28,7 @@ import com.thealer.telehealer.apilayer.models.requestotp.OtpVerificationResponse
 import com.thealer.telehealer.apilayer.models.requestotp.RequestOtpApiViewModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
@@ -79,6 +80,8 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
     private boolean isVerifyUser = false;
 
     private int otpType = signup;
+    private WhoAmIApiViewModel whoAmIApiViewModel;
+    private OtpVerificationResponseModel otpVerificationResponseModel;
 
     @Nullable
     @Override
@@ -109,8 +112,10 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
         super.onActivityCreated(savedInstanceState);
 
         requestOtpApiViewModel = ViewModelProviders.of(getActivity()).get(RequestOtpApiViewModel.class);
+        whoAmIApiViewModel = ViewModelProviders.of(getActivity()).get(WhoAmIApiViewModel.class);
 
         onViewChangeInterface.attachObserver(requestOtpApiViewModel);
+        onViewChangeInterface.attachObserver(whoAmIApiViewModel);
 
         requestOtpApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
@@ -140,7 +145,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
                         EventRecorder.recordRegistration("OTP_VERIFIED", UserDetailPreferenceManager.getUser_guid());
 
-                        OtpVerificationResponseModel otpVerificationResponseModel = (OtpVerificationResponseModel) baseApiResponseModel;
+                        otpVerificationResponseModel = (OtpVerificationResponseModel) baseApiResponseModel;
 
                         String email = appPreference.getString(PreferenceConstants.USER_EMAIL);
                         int userType = appPreference.getInt(PreferenceConstants.USER_TYPE);
@@ -164,23 +169,15 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                         UserDetailPreferenceManager.setUser_guid(otpVerificationResponseModel.getData().getUser_guid());
                         UserDetailPreferenceManager.setFirst_name(otpVerificationResponseModel.getData().getName());
 
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, otpVerificationResponseModel.isSuccess());
-                        String description;
-
-                        if (otpType == signup) {
-                            description = getString(R.string.registration_success);
-                        } else {
-                            description = getString(R.string.reset_password_success);
-                        }
-
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, description);
-                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-
                         TelehealerFirebaseMessagingService.refresh();
                         EventRecorder.updateUserId(otpVerificationResponseModel.getData().getUser_guid());
 
-                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver)).putExtras(bundle));
+
+                        if (otpType == signup) {
+                            whoAmIApiViewModel.checkWhoAmI();
+                        } else {
+                            sendSuccessBroadcast();
+                        }
 
                     } else {
                         if (baseApiResponseModel.isSuccess()) {
@@ -195,7 +192,36 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
             }
         });
 
+        whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                    sendSuccessBroadcast();
+                }
+            }
+        });
+
         initView(view);
+    }
+
+    private void sendSuccessBroadcast() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, otpVerificationResponseModel.isSuccess());
+        String description;
+
+        if (otpType == signup) {
+            description = getString(R.string.registration_success);
+        } else {
+            description = getString(R.string.reset_password_success);
+        }
+
+        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, description);
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver)).putExtras(bundle));
+
     }
 
     @Override

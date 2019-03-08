@@ -80,11 +80,11 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                     associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
 
                     associationRv.setTotalCount(associationApiResponseModel.getCount());
-                    associationRv.setScrollable(true);
-                    associationRv.hideProgressBar();
 
                     associationListAdapter.setCommonUserApiResponseModelList(associationApiResponseModel.getResult(), page);
                 }
+                associationRv.setScrollable(true);
+                associationRv.hideProgressBar();
             }
         });
 
@@ -94,11 +94,11 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                 if (baseApiResponseModels != null) {
                     ArrayList<CommonUserApiResponseModel> commonUserApiResponseModelArrayList = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
                     associationRv.setTotalCount(commonUserApiResponseModelArrayList.size());
-                    associationRv.setScrollable(true);
-                    associationRv.hideProgressBar();
                     List<CommonUserApiResponseModel> responseModelList = new ArrayList<>(commonUserApiResponseModelArrayList);
                     associationListAdapter.setCommonUserApiResponseModelList(responseModelList, page);
                 }
+                associationRv.setScrollable(true);
+                associationRv.hideProgressBar();
             }
         });
 
@@ -109,12 +109,12 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                     getDoctorsApiResponseModel = (GetDoctorsApiResponseModel) baseApiResponseModel;
 
                     associationRv.setTotalCount(getDoctorsApiResponseModel.getTotal_count());
-                    associationRv.setScrollable(true);
-                    associationRv.hideProgressBar();
 
                     associationListAdapter.setDoctorsApiResponseModel(getDoctorsApiResponseModel.getData(), page);
 
                 }
+                associationRv.setScrollable(true);
+                associationRv.hideProgressBar();
             }
         });
 
@@ -153,6 +153,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
         associationRv = (CustomRecyclerView) view.findViewById(R.id.association_rv);
 
 
+        associationRv.getSwipeLayout().setEnabled(false);
         associationRv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
             public void onPaginate() {
@@ -160,8 +161,8 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                 page = page + 1;
                 associationRv.showProgressBar();
 
-                if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR)) {
-                    getSpecialist(searchEt.getText().toString(), false);
+                if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR) || selectionType.equals(ArgumentKeys.SEARCH_COPY_TO)) {
+                    getSpecialist(null, false);
                 } else {
                     getAssociationList(false);
                 }
@@ -182,7 +183,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             @Override
             public void afterTextChanged(Editable s) {
                 page = 1;
-                if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR)) {
+                if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR) || selectionType.equals(ArgumentKeys.SEARCH_COPY_TO)) {
                     if (s.toString().isEmpty()) {
                         getSpecialist(null, false);
                     } else {
