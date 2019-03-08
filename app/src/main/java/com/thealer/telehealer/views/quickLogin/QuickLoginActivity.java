@@ -50,11 +50,12 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success_title_touchid));
 
                     if (quickLoginType == Constants.QUICK_LOGIN_TYPE_TOUCH) {
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success_title_touchid));
                         bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.success_message_touchid));
                     } else if (quickLoginType == Constants.QUICK_LOGIN_TYPE_PIN) {
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success_title_pin));
                         bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.success_message_pin));
                     }
 

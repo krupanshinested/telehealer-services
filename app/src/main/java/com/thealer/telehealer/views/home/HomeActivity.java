@@ -72,6 +72,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 public class HomeActivity extends BaseActivity implements AttachObserverInterface,
         OnActionCompleteInterface, NavigationView.OnNavigationItemSelectedListener, OnOrientationChangeInterface,
         OnCloseActionInterface, ShowSubFragmentInterface, SuccessViewInterface, ChangeTitleInterface, ToolBarInterface, OnViewChangeInterface {
+    private static final String TAG = "aswin";
     private Toolbar toolbar;
     private LinearLayout fragmentHolder, subFragmentHolder;
     private DrawerLayout drawerLayout;
@@ -145,11 +146,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showOrHideNotificationCount(boolean isShow, int unread_count) {
-        notificationCountTv.setText(String.valueOf(unread_count));
-        if (isShow) {
-            notificationCountTv.setVisibility(View.VISIBLE);
-        } else {
-            notificationCountTv.setVisibility(View.GONE);
+        Log.e(TAG, "showOrHideNotificationCount: ");
+        if (notificationCountTv != null) {
+            notificationCountTv.setText(String.valueOf(unread_count));
+            if (isShow) {
+                notificationCountTv.setVisibility(View.VISIBLE);
+            } else {
+                notificationCountTv.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -236,6 +240,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             attachView();
 
         checkForMedicalHistory();
+        Log.e(TAG, "initView: ");
     }
 
     private void checkForMedicalHistory() {
@@ -338,6 +343,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.e(TAG, "onCreateOptionsMenu: ");
         optionsMenu = menu;
         getMenuInflater().inflate(R.menu.appbar_home_menu, menu);
 
