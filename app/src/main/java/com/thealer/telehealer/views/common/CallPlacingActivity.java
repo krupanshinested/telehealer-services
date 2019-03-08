@@ -74,8 +74,10 @@ public class CallPlacingActivity extends BaseActivity {
     }
 
     public void openCallIfPossible(CallInitiateModel callInitiateModel) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(Integer.parseInt(callInitiateModel.getScheduleId()));
+        if (callInitiateModel.getScheduleId() != null) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(Integer.parseInt(callInitiateModel.getScheduleId()));
+        }
 
         if (UserType.isUserDoctor()) {
             fetchSessionId(callInitiateModel);

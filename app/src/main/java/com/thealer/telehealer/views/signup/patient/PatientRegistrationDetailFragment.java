@@ -210,7 +210,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                 break;
             case Constants.EDIT_MODE:
                 updateAllViews(true);
-                onViewChangeInterface.updateNextTitle(getString(R.string.update));
+                onViewChangeInterface.updateNextTitle(getString(R.string.Save));
                 break;
             case Constants.CREATE_MODE:
                 updateAllViews(true);

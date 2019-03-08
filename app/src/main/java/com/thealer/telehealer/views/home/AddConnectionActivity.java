@@ -26,8 +26,8 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
-import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -138,6 +138,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                 isApiRequested = false;
                 connectionListCrv.setScrollable(true);
                 connectionListCrv.hideProgressBar();
+                connectionListCrv.getSwipeLayout().setRefreshing(false);
             }
         });
 
@@ -240,6 +241,15 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             }
         });
 
+        connectionListCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                page = 1;
+                getApiData(false);
+                isApiRequested = true;
+                connectionListCrv.setScrollable(false);
+            }
+        });
         getApiData(true);
     }
 
