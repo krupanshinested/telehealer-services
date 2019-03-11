@@ -17,6 +17,7 @@ public class VitalDeviceType {
         add(VitalsConstant.TYPE_550BT);
         add(VitalsConstant.TYPE_BP7);
         add(VitalsConstant.TYPE_HS4S);
+        add(VitalsConstant.TYPE_HS2);
         add(VitalsConstant.TYPE_BP3L);
         add(VitalsConstant.TYPE_BP5);
         add(VitalsConstant.TYPE_BG5);
@@ -38,6 +39,7 @@ public class VitalDeviceType {
             case VitalsConstant.TYPE_HS6: return R.string.core_title;
             case VitalsConstant.TYPE_TS28B: return R.string.ts28_title;
             case VitalsConstant.TYPE_FDIR_V3: return R.string.fdir_title;
+            case VitalsConstant.TYPE_HS2 : return R.string.lina_title;
             default:
                 return 0;
         }
@@ -57,6 +59,7 @@ public class VitalDeviceType {
             case VitalsConstant.TYPE_HS6: return VitalsConstant.core_key;
             case VitalsConstant.TYPE_TS28B: return VitalsConstant.ts28_key;
             case VitalsConstant.TYPE_FDIR_V3: return VitalsConstant.thv3_key;
+            case VitalsConstant.TYPE_HS2 : return VitalsConstant.lina_key;
             default:
                 return "";
         }
@@ -76,6 +79,7 @@ public class VitalDeviceType {
             case VitalsConstant.core_key: return VitalsConstant.TYPE_HS6;
             case VitalsConstant.ts28_key: return VitalsConstant.TYPE_TS28B;
             case VitalsConstant.thv3_key: return VitalsConstant.TYPE_FDIR_V3;
+            case VitalsConstant.lina_key: return VitalsConstant.TYPE_HS2;
             default:
                 return "";
         }
@@ -95,6 +99,7 @@ public class VitalDeviceType {
         case VitalsConstant.TYPE_HS6: return R.string.wireless_Weight_Scale;
         case VitalsConstant.TYPE_TS28B: return R.string.wireless_Thermometer;
         case VitalsConstant.TYPE_FDIR_V3: return R.string.wireless_Thermometer;
+        case VitalsConstant.TYPE_HS2 : return R.string.wireless_Weight_Scale;
         default:
             return 0;
         }
@@ -114,6 +119,7 @@ public class VitalDeviceType {
             case VitalsConstant.TYPE_HS6: return R.string.core_description;
             case VitalsConstant.TYPE_TS28B: return R.string.ts28_description;
             case VitalsConstant.TYPE_FDIR_V3: return R.string.fdir_description;
+            case VitalsConstant.TYPE_HS2 : return R.string.lina_description;
             default:
                 return 0;
         }
@@ -134,6 +140,7 @@ public class VitalDeviceType {
         case VitalsConstant.TYPE_FDIR_V3: return "https://ihealthlabs.com";
         case VitalsConstant.TYPE_BP7S:
             return "https://ihealthlabs.com/blood-pressure-monitors/wireless-blood-pressure-wrist-monitor-view-bp7s/";
+            case VitalsConstant.TYPE_HS2: return "https://ihealthlabs.eu/en/62-ihealth-lina-hs2.html";
             default: return "";
         }
     }
@@ -153,6 +160,7 @@ public class VitalDeviceType {
         case VitalsConstant.TYPE_FDIR_V3: return "https://ihealthlabs.com/support/thermometer/pt3";
         case VitalsConstant.TYPE_BP7S:
             return "https://ihealthlabs.com/support/blood-pressure-monitors/view-wireless-blood-pressure-wrist-monitor/";
+            case VitalsConstant.TYPE_HS2 : return "https://ihealthlabs.com/support/wireless-scales/ihealth-lite/";
             default: return "";
         }
     }
@@ -171,7 +179,8 @@ public class VitalDeviceType {
         case VitalsConstant.TYPE_HS6: return R.drawable.ihealth_scale_core;
         case VitalsConstant.TYPE_TS28B: return R.drawable.ihealth_ts28b;
         case VitalsConstant.TYPE_BP7S: return R.drawable.ihealth_bloodpressure_view;
-        default:
+            case VitalsConstant.TYPE_HS2 : return R.drawable.ihealth_lina;
+            default:
             return 0;
         }
     }
@@ -190,6 +199,7 @@ public class VitalDeviceType {
         case VitalsConstant.TYPE_HS6: return "SGUMQ7u2GS8";
         case VitalsConstant.TYPE_TS28B: return "xifp2ZMWDBc";
         case VitalsConstant.TYPE_BP7S: return "TGmWV2yKWQs";
+            case VitalsConstant.TYPE_HS2 : return "RIbi6h2Sva8";
             default:
                 return "";
         }
@@ -221,6 +231,8 @@ public class VitalDeviceType {
                 return SupportedMeasurementType.temperature;
             case VitalsConstant.TYPE_TS28B:
                 return SupportedMeasurementType.temperature;
+            case VitalsConstant.TYPE_HS2 :
+                return SupportedMeasurementType.weight;
             default:
                 return "";
         }
@@ -252,6 +264,8 @@ public class VitalDeviceType {
                 return new String[]{VitalsConstant.TYPE_FDIR_V3};
             case VitalsConstant.TYPE_TS28B:
                 return new String[]{VitalsConstant.TYPE_TS28B,"DTS28B"};
+            case VitalsConstant.TYPE_HS2 :
+                return new String[]{VitalsConstant.TYPE_HS2};
             default:
                 return new String[]{};
         }

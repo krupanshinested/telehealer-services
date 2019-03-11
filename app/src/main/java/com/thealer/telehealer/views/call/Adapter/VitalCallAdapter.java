@@ -32,6 +32,7 @@ import com.thealer.telehealer.views.call.Interfaces.LiveVitalCallBack;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewDialogFragment;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewViewModel;
 import com.thealer.telehealer.views.home.vitals.measure.BPMeasureFragment;
+import com.thealer.telehealer.views.home.vitals.measure.BPTrackMeasureFragment;
 import com.thealer.telehealer.views.home.vitals.measure.PulseMeasureFragment;
 import com.thealer.telehealer.views.home.vitals.measure.ThermoMeasureFragment;
 import com.thealer.telehealer.views.home.vitals.measure.WeightMeasureFragment;
@@ -162,11 +163,21 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
 
         switch (VitalDeviceType.shared.getMeasurementType(vitalDevice.getType())) {
             case SupportedMeasurementType.bp:
-                BPMeasureFragment bpMeasureFragment = new BPMeasureFragment();
-                bpMeasureFragment.setArguments(bundle);
-                bpMeasureFragment.callVitalPagerInterFace = this;
 
-                callVitalEvents = bpMeasureFragment;
+                if (vitalDevice.getType().equals(VitalsConstant.TYPE_550BT)) {
+                    BPTrackMeasureFragment bpMeasureFragment = new BPTrackMeasureFragment();
+                    bpMeasureFragment.setArguments(bundle);
+                    bpMeasureFragment.callVitalPagerInterFace = this;
+
+                    callVitalEvents = bpMeasureFragment;
+                } else {
+                    BPMeasureFragment bpMeasureFragment = new BPMeasureFragment();
+                    bpMeasureFragment.setArguments(bundle);
+                    bpMeasureFragment.callVitalPagerInterFace = this;
+
+                    callVitalEvents = bpMeasureFragment;
+                }
+
                 break;
             case SupportedMeasurementType.pulseOximeter:
                 PulseMeasureFragment pulseMeasureFragment = new PulseMeasureFragment();
