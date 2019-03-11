@@ -3,6 +3,7 @@ package iHealth.pairing;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -34,10 +35,13 @@ import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.CallPlacingActivity;
+import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
@@ -129,14 +133,44 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
         onViewChangeInterface.hideOrShowClose(true);
         onViewChangeInterface.hideOrShowBackIv(true);
 
-        if (!getArguments().getBoolean("isDisplayGulcoDialog") && deviceType.equals(iHealthDevicesManager.TYPE_BG5)) {
+        if (!getArguments().getBoolean("isDisplaySupportDialog") && deviceType.equals(iHealthDevicesManager.TYPE_BG5)) {
             this.showAlertDialog(getActivity(), getString(VitalDeviceType.shared.getTitle(deviceType)), getString(R.string.gulcoWarning), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                 }
             },null);
-            getArguments().putBoolean("isDisplayGulcoDialog",true);
+            getArguments().putBoolean("isDisplaySupportDialog",true);
+        } else if (!getArguments().getBoolean("isDisplaySupportDialog") && deviceType.equals(iHealthDevicesManager.TYPE_550BT)) {
+
+            Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
+            contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
+            contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
+            contentIntent.putExtra(ArgumentKeys.TITLE, "");
+            contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.track_support_description));
+            contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.track_support);
+            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+
+            startActivity(contentIntent);
+
+            getArguments().putBoolean("isDisplaySupportDialog",true);
+        } else if (!getArguments().getBoolean("isDisplaySupportDialog") && ( deviceType.equals(iHealthDevicesManager.TYPE_HS2) || deviceType.equals(iHealthDevicesManager.TYPE_HS4S))) {
+
+            Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
+            contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
+            contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
+            contentIntent.putExtra(ArgumentKeys.TITLE, "");
+            contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.scale_support_description));
+            contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ihealth_lina);
+            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+
+            startActivity(contentIntent);
+
+            getArguments().putBoolean("isDisplaySupportDialog",true);
         }
 
     }
