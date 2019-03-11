@@ -275,6 +275,22 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
             bpMeasureInterface.didFailBPMesure(deviceType,error);
     }
 
+    @Override
+    public void didFinishBpMeasure(Object object) {
+        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+
+            HashMap<String, String> detail = new HashMap<>();
+            detail.put("status", "success");
+            detail.put("event", "didFinishBPMesure");
+
+            TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
+        }
+
+
+        if (bpMeasureInterface != null)
+            bpMeasureInterface.didFinishBpMeasure(object);
+    }
+
     //VitalBatteryFetcher methods
     @Override
     public void updateBatteryDetails(BatteryResult batteryResult) {

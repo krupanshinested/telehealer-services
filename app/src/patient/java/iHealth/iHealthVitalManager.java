@@ -13,6 +13,7 @@ import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.ihealth.communication.manager.iHealthDevicesUpgradeManager;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
@@ -496,6 +497,8 @@ public class iHealthVitalManager extends VitalsManager {
                 return iHealthDevicesManager.DISCOVERY_TS28B;
             case iHealthDevicesManager.TYPE_BP7S:
                 return iHealthDevicesManager.DISCOVERY_BP7S;
+            case iHealthDevicesManager.TYPE_HS2:
+                return iHealthDevicesManager.DISCOVERY_HS2;
             default:
                 return 124L;
         }
@@ -623,6 +626,25 @@ public class iHealthVitalManager extends VitalsManager {
         }
 
         publishMessage(deviceType,message);
+    }
+
+    @Override
+    public void didFinishBpMeasure(Object object){
+        super.didFinishBpMeasure(object);
+
+        ArrayList<BPTrack> tracks = (ArrayList<BPTrack>) object;
+
+        ArrayList<HashMap<String,String>> items = new ArrayList<>();
+
+        for(BPTrack track : tracks) {
+            items.add(track.getDictionary());
+        }
+
+        HashMap<String,Object> message = new HashMap<>();
+        message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.finishedMeasure);
+        message.put(VitalsConstant.VitalCallMapKeys.data, tracks);
+        publishMessage(VitalsConstant.TYPE_550BT,message);
+
     }
 
     //ThermoMeasureInterface methods
