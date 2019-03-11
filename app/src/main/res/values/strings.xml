@@ -801,5 +801,11 @@
     <string name="reset_password_success">Remember to use your new password when loggin in next time around.</string>
     <string name="erase_all">Erase All</string>
     <string name="i_agree_continue"><![CDATA[I Agree & Continue]]></string>
+    <string name="lina_title">iHealth Lina</string>
+    <string name="lina_description">iHealth Lina is an intelligent Bluetooth scale that measures your weight and your BMI. Thanks to its small size and light weight it will fit into any space.</string>
+    <string name="track_support_description">Please press the M button on the blood pressure monitor to turn on Bluetooth.</string>
 
+     <string name="UPLOAD">UPLOAD</string>
+    <string name="SYNC">SYNC</string>
+    <string name="scale_support_description">Stand on scale with your bare feet</string>
 </resources>
