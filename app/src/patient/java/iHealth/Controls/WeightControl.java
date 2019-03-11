@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Message;
 import android.util.Log;
 
+import com.ihealth.communication.control.Hs2Control;
 import com.ihealth.communication.control.Hs4sControl;
 import com.ihealth.communication.control.HsProfile;
 import com.ihealth.communication.manager.iHealthDevicesManager;
@@ -29,6 +30,7 @@ public class WeightControl {
     private Context context;
 
     private Hs4sControl hs4Device;
+    private Hs2Control hs2Control;
 
     public WeightControl(Context context, WeightMeasureInterface weightMeasureInterface, VitalBatteryFetcher vitalBatteryFetcher) {
         this.weightMeasureInterface = weightMeasureInterface;
@@ -115,6 +117,9 @@ public class WeightControl {
                 break;
             case iHealthDevicesManager.TYPE_HS6:
                 break;
+            case iHealthDevicesManager.TYPE_HS2:
+                startHs2Measure(type,deviceMac);
+                break;
             default:
                 break;
         }
@@ -140,6 +145,8 @@ public class WeightControl {
                 return getInstance(deviceType,deviceMac) != null;
             case iHealthDevicesManager.TYPE_HS6:
                 return false;
+            case iHealthDevicesManager.TYPE_HS2:
+                return getInstance(deviceType,deviceMac) != null;
             default:
                 return false;
         }
@@ -151,6 +158,8 @@ public class WeightControl {
                return iHealthDevicesManager.getInstance().getHs4sControl(deviceMac);
             case iHealthDevicesManager.TYPE_HS6:
                 return null;
+            case iHealthDevicesManager.TYPE_HS2:
+                return iHealthDevicesManager.getInstance().getHs2Control(deviceMac);
             default:
                 return null;
         }
@@ -162,6 +171,9 @@ public class WeightControl {
                 vitalBatteryFetcher.updateBatteryDetails(new BatteryResult(type,deviceMac,-1));
                 break;
             case iHealthDevicesManager.TYPE_HS6:
+                vitalBatteryFetcher.updateBatteryDetails(new BatteryResult(type,deviceMac,-1));
+                break;
+            case iHealthDevicesManager.TYPE_HS2:
                 vitalBatteryFetcher.updateBatteryDetails(new BatteryResult(type,deviceMac,-1));
                 break;
             default:
@@ -177,6 +189,17 @@ public class WeightControl {
             weightMeasureInterface.didStartWeightMeasure(deviceType);
             hs4Device.measureOnline(2,123);
 
+        } else {
+            weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
+        }
+    }
+
+    private void startHs2Measure(String deviceType,String deviceMac) {
+        Object object = getInstance(deviceType,deviceMac);
+        if (object != null) {
+            hs2Control = (Hs2Control) object;
+            weightMeasureInterface.didStartWeightMeasure(deviceType);
+            hs2Control.measureOnline(2,123);
         } else {
             weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
         }

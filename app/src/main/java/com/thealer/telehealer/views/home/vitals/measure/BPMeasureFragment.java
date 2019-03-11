@@ -103,6 +103,8 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
     @Nullable
     public CallVitalPagerInterFace callVitalPagerInterFace;
 
+    private ArrayList<Entry> entries = new ArrayList<>();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -234,7 +236,6 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
         graph.getAxisLeft().setEnabled(false);
         graph.getAxisRight().setEnabled(false);
 
-        setData(5, 180);
         Easing.EasingFunction easingFunction = new Easing.EasingFunction() {
             @Override
             public float getInterpolation(float input) {
@@ -311,7 +312,7 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
                 save_bt.setVisibility(View.VISIBLE);
 
                 bp_value.setText(finalBPValue);
-                spo2_value.setText(finalHeartRateValue + "%");
+                spo2_value.setText(finalHeartRateValue+"");
 
                 break;
             case MeasureState.startedToReceieveValues:
@@ -358,22 +359,16 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
             vitalManagerInstance.getInstance().fetchBattery(vitalDevice.getType(),vitalDevice.getDeviceId());
     }
 
-    private void setData(int count, float range) {
+    private void setData(Double value) {
 
-        ArrayList<Entry> values = new ArrayList<>();
-
-        for (int i = 0; i < count; i++) {
-
-            float val = (float) (Math.random() * range) - 30;
-            values.add(new Entry(i, val, getResources().getDrawable(R.drawable.app_icon)));
-        }
+        entries.add(new Entry(entries.size(), value.intValue(), getResources().getDrawable(R.drawable.app_icon)));
 
         LineDataSet set1;
 
         if (graph.getData() != null &&
                 graph.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) graph.getData().getDataSetByIndex(0);
-            set1.setValues(values);
+            set1.setValues(entries);
             set1.notifyDataSetChanged();
             graph.getData().notifyDataChanged();
             graph.notifyDataSetChanged();
@@ -383,7 +378,7 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
 
         } else {
             // create a dataset and give it a type
-            set1 = new LineDataSet(values, "DataSet 1");
+            set1 = new LineDataSet(entries, "DataSet 1");
 
             set1.setDrawIcons(false);
 
@@ -506,12 +501,28 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
 
     @Override
     public void didStartBPMesure(String deviceType) {
+        entries = new ArrayList<>();
 
+        setCurrentState(MeasureState.started);
     }
 
     @Override
     public void didUpdateBPMesure(String deviceType,ArrayList<Double> value) {
 
+        if (currentState != MeasureState.startedToReceieveValues) {
+            setCurrentState(MeasureState.startedToReceieveValues);
+        }
+
+        setData(getAverage(value));
+    }
+
+    double getAverage(ArrayList<Double> values)  {
+
+        double total = 0.0;
+        for (Double vote : values) {
+            total += vote;
+        }
+        return total/values.size();
     }
 
     @Override
@@ -541,6 +552,11 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
     public void didFailBPMesure(String deviceType,String error) {
         message_tv.setText(error);
         setCurrentState(MeasureState.failed);
+    }
+
+    @Override
+    public void didFinishBpMeasure(Object object) {
+
     }
 
     @Override

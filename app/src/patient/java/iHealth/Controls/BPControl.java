@@ -12,6 +12,8 @@ import com.ihealth.communication.control.BpProfile;
 import com.ihealth.communication.control.Bpm1Control;
 import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.BPMeasureInterface;
@@ -19,6 +21,10 @@ import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.BPMeasureInterf
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by rsekar on 11/28/18.
@@ -46,8 +52,12 @@ public class BPControl {
     }
 
     public void onDeviceNotify(String mac, String deviceType, String action, String message) {
-        Log.d("BPControl - action", action);
-        Log.d("BPControl - message", message);
+
+        if (action != null)
+            Log.d("BPControl - action", action);
+
+        if (message != null)
+            Log.d("BPControl - message", message);
 
         switch (action) {
             case BpProfile.ACTION_BATTERY_BP:
@@ -78,26 +88,33 @@ public class BPControl {
                 }
                 break;
             case BpProfile.ACTION_HISTORICAL_DATA_BP:
-                String str = "";
                 try {
                     JSONObject info = new JSONObject(message);
                     if (info.has(BpProfile.HISTORICAL_DATA_BP)) {
                         JSONArray array = info.getJSONArray(BpProfile.HISTORICAL_DATA_BP);
+
+                        ArrayList<BPTrack> tracks = new ArrayList<>();
+
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject obj = array.getJSONObject(i);
+
+                            Date createdDate = new Date();
                             String date = obj.getString(BpProfile.MEASUREMENT_DATE_BP);
-                            String hightPressure = obj.getString(BpProfile.HIGH_BLOOD_PRESSURE_BP);
-                            String lowPressure = obj.getString(BpProfile.LOW_BLOOD_PRESSURE_BP);
-                            String pulseWave = obj.getString(BpProfile.PULSE_BP);
-                            String ahr = obj.getString(BpProfile.MEASUREMENT_AHR_BP);
-                            String hsd = obj.getString(BpProfile.MEASUREMENT_HSD_BP);
-                            str = "date:" + date
-                                    + "hightPressure:" + hightPressure + "\n"
-                                    + "lowPressure:" + lowPressure + "\n"
-                                    + "pulseWave" + pulseWave + "\n"
-                                    + "ahr:" + ahr + "\n"
-                                    + "hsd:" + hsd + "\n";
+
+                            if (Utils.getDateFromPossibleFormat(date) != null) {
+                                createdDate = Utils.getDateFromPossibleFormat(date);
+                            }
+
+                            double sys = obj.getDouble(BpProfile.HIGH_BLOOD_PRESSURE_BP);
+                            double dia = obj.getDouble(BpProfile.LOW_BLOOD_PRESSURE_BP);
+                            double pulseWave = obj.getDouble(BpProfile.PULSE_BP);
+                            String id = obj.getString(BpProfile.DATAID);
+
+                            tracks.add(new BPTrack(sys,dia,pulseWave,createdDate,id));
                         }
+
+                        bpMeasureInterface.didFinishBpMeasure(tracks);
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -127,16 +144,59 @@ public class BPControl {
                 try {
                     JSONObject info = new JSONObject(message);
                     String pressure = info.getString(BpProfile.BLOOD_PRESSURE_BP);
+
+                    if (pressure != null && pressure.length() > 3) {
+
+                        pressure = pressure.replaceAll("\\[","");
+                        pressure = pressure.replaceAll("]","");
+
+                        String items[] = pressure.split(",");
+                        ArrayList<Double> waveItems = new ArrayList<Double>();
+
+                        for (String vl : items) {
+                            waveItems.add(Double.parseDouble(vl));
+                        }
+
+                        bpMeasureInterface.didUpdateBPM(deviceType,waveItems);
+
+                    } else {
+                        bpMeasureInterface.didUpdateBPM(deviceType,new ArrayList<>());
+                    }
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
             case BpProfile.ACTION_ONLINE_PULSEWAVE_BP:
                 try {
+                    //{"pressure":129,"wave":"[39,39,37,34,30]","heartbeat":false}
                     JSONObject info = new JSONObject(message);
+
                     String pressure = info.getString(BpProfile.BLOOD_PRESSURE_BP);
                     String wave = info.getString(BpProfile.PULSEWAVE_BP);
                     String heartbeat = info.getString(BpProfile.FLAG_HEARTBEAT_BP);
+
+                    if (wave != null && wave.length() > 3) {
+
+                        Log.e("BPControl","parsing wave");
+                        wave = wave.replaceAll("\\[","");
+                        wave = wave.replaceAll("]","");
+
+                        String items[] = wave.split(",");
+                        ArrayList<Double> waveItems = new ArrayList<Double>();
+
+                        for (String vl : items) {
+                            waveItems.add(Double.parseDouble(vl));
+                        }
+
+                        Log.e("BPControl","parsing wave "+waveItems.toString());
+                        bpMeasureInterface.didUpdateBPMesure(deviceType,waveItems);
+
+                    } else {
+                        bpMeasureInterface.didUpdateBPMesure(deviceType,new ArrayList<>());
+                    }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     bpMeasureInterface.didFailBPMesure(deviceType,e.getLocalizedMessage());
@@ -145,10 +205,13 @@ public class BPControl {
             case BpProfile.ACTION_ONLINE_RESULT_BP:
                 try {
                     JSONObject info = new JSONObject(message);
-                    String highPressure = info.getString(BpProfile.HIGH_BLOOD_PRESSURE_BP);
-                    String lowPressure = info.getString(BpProfile.LOW_BLOOD_PRESSURE_BP);
+                    String highPressure = info.getString(BpProfile.HIGH_BLOOD_PRESSURE_BP); //sys
+                    String lowPressure = info.getString(BpProfile.LOW_BLOOD_PRESSURE_BP); //dia
                     String ahr = info.getString(BpProfile.MEASUREMENT_AHR_BP);
                     String pulse = info.getString(BpProfile.PULSE_BP);
+
+                    bpMeasureInterface.didFinishBPMesure(deviceType,Double.parseDouble(highPressure),Double.parseDouble(lowPressure),Double.parseDouble(pulse));
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     bpMeasureInterface.didFailBPMesure(deviceType,e.getLocalizedMessage());
@@ -283,6 +346,7 @@ public class BPControl {
         Object object = getInstance(deviceType, deviceMac);
         if (object != null) {
             bp3lControl = (Bp3lControl) object;
+            bpMeasureInterface.didStartBPMesure(deviceType);
             bp3lControl.startMeasure();
         } else {
             bpMeasureInterface.didFailBPMesure(deviceType,context.getString(R.string.unable_to_connect));
@@ -293,7 +357,8 @@ public class BPControl {
         Object object = getInstance(deviceType, deviceMac);
         if (object != null) {
             bp550BTControl = (Bp550BTControl) object;
-            //TODO
+            bp550BTControl.getOfflineData();
+            bpMeasureInterface.didStartBPMesure(deviceType);
         } else {
             bpMeasureInterface.didFailBPMesure(deviceType,context.getString(R.string.unable_to_connect));
         }
@@ -304,6 +369,7 @@ public class BPControl {
         if (object != null) {
             bp5Control = (Bp5Control) object;
             bp5Control.startMeasure();
+            bpMeasureInterface.didStartBPMesure(deviceType);
         } else {
             bpMeasureInterface.didFailBPMesure(deviceType,context.getString(R.string.unable_to_connect));
         }
@@ -314,6 +380,7 @@ public class BPControl {
         if (object != null) {
             bp7Control = (Bp7Control) object;
             bp7Control.startMeasure();
+            bpMeasureInterface.didStartBPMesure(deviceType);
         } else {
             bpMeasureInterface.didFailBPMesure(deviceType,context.getString(R.string.unable_to_connect));
         }
