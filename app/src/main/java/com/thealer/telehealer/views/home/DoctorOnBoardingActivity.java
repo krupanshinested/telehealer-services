@@ -16,6 +16,7 @@ import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -68,6 +69,7 @@ public class DoctorOnBoardingActivity extends BaseActivity {
                         appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
                         startActivity(new Intent(DoctorOnBoardingActivity.this, HomeActivity.class));
                         finish();
+                        TelehealerFirebaseMessagingService.refresh();
                     }
                 }
             }

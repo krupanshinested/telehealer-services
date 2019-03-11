@@ -2,6 +2,7 @@ package iHealth.pairing;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -22,6 +24,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -93,6 +96,38 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
             otherOptionView.setClickable(true);
             otherOptionView.setOnClickListener(this);
             otherOptionView.setImageResource(R.drawable.info);
+        }
+
+        if (!getArguments().getBoolean("isDisplaySupportDialog") && vitalDevice.getType().equals(iHealthDevicesManager.TYPE_550BT)) {
+
+            Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
+            contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
+            contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
+            contentIntent.putExtra(ArgumentKeys.TITLE, "");
+            contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.track_support_description));
+            contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.track_support);
+            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+
+            startActivity(contentIntent);
+
+            getArguments().putBoolean("isDisplaySupportDialog",true);
+        } else if (!getArguments().getBoolean("isDisplaySupportDialog") && ( vitalDevice.getType().equals(iHealthDevicesManager.TYPE_HS2) || vitalDevice.getType().equals(iHealthDevicesManager.TYPE_HS4S))) {
+
+            Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
+            contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
+            contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
+            contentIntent.putExtra(ArgumentKeys.TITLE, "");
+            contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.scale_support_description));
+            contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ihealth_lina);
+            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+
+            startActivity(contentIntent);
+
+            getArguments().putBoolean("isDisplaySupportDialog",true);
         }
 
     }

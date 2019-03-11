@@ -13,4 +13,6 @@ public interface BPMeasureInterface {
     public void didUpdateBPM(String deviceType,ArrayList<Double> value);
     public void didFinishBPMesure(String deviceType,Double systolicValue,Double diastolicValue,Double heartRate);
     public void didFailBPMesure(String deviceType,String error);
+
+    public void didFinishBpMeasure(Object object);
 }

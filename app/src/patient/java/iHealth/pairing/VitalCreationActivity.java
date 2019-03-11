@@ -33,6 +33,7 @@ import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.GulcoQRCapture;
 
+import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -43,6 +44,7 @@ import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.vitals.BluetoothEnableActivity;
 import com.thealer.telehealer.views.home.vitals.VitalCreateNewFragment;
 import com.thealer.telehealer.views.home.vitals.measure.BPMeasureFragment;
+import com.thealer.telehealer.views.home.vitals.measure.BPTrackMeasureFragment;
 import com.thealer.telehealer.views.home.vitals.measure.GulcoMeasureFragment;
 import com.thealer.telehealer.views.home.vitals.measure.PulseMeasureFragment;
 import com.thealer.telehealer.views.home.vitals.measure.ThermoMeasureFragment;
@@ -210,9 +212,15 @@ public class VitalCreationActivity extends BaseActivity implements
 
                 switch (measurementType) {
                     case SupportedMeasurementType.bp:
-                        BPMeasureFragment bpMeasureFragment = new BPMeasureFragment();
-                        bpMeasureFragment.setArguments(bundle);
-                        setFragment(bpMeasureFragment,true);
+                        if (type.equals(VitalsConstant.TYPE_550BT)) {
+                            BPTrackMeasureFragment bpMeasureFragment = new BPTrackMeasureFragment();
+                            bpMeasureFragment.setArguments(bundle);
+                            setFragment(bpMeasureFragment,true);
+                        } else {
+                            BPMeasureFragment bpMeasureFragment = new BPMeasureFragment();
+                            bpMeasureFragment.setArguments(bundle);
+                            setFragment(bpMeasureFragment,true);
+                        }
                         break;
                     case SupportedMeasurementType.weight:
                         WeightMeasureFragment weightMeasureFragment = new WeightMeasureFragment();
