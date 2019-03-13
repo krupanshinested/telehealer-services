@@ -43,9 +43,9 @@ public class PharmacyListAdapter extends RecyclerView.Adapter<PharmacyListAdapte
         viewHolder.pharmacyNameTv.setText(results.get(i).getContact_name());
         viewHolder.pharmacyAddressTv.setText(results.get(i).getAddr1().concat(",").concat(results.get(i).getCity()).concat(",").concat(results.get(i).getState()));
 
-        if (i == selectedItemPosition){
+        if (i == selectedItemPosition) {
             viewHolder.selectedIv.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             viewHolder.selectedIv.setVisibility(View.GONE);
         }
         viewHolder.itemCv.setOnClickListener(new View.OnClickListener() {
@@ -60,11 +60,16 @@ public class PharmacyListAdapter extends RecyclerView.Adapter<PharmacyListAdapte
 
     @Override
     public int getItemCount() {
-        if (results != null){
+        if (results != null) {
             return results.size();
-        }else {
+        } else {
             return 0;
         }
+    }
+
+    public void removeSelected() {
+        selectedItemPosition = -1;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -83,9 +88,9 @@ public class PharmacyListAdapter extends RecyclerView.Adapter<PharmacyListAdapte
     }
 
     public void setResults(List<GetPharmaciesApiResponseModel.ResultsBean> results, int nextPage) {
-        if (nextPage == 1){
+        if (nextPage == 1) {
             this.results = results;
-        }else {
+        } else {
             this.results.addAll(results);
         }
         notifyDataSetChanged();
