@@ -172,6 +172,9 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
             public void afterTextChanged(Editable s) {
                 nextPage = 1;
                 getPharmacies(s.toString(), null, true);
+                pharmacyListAdapter.removeSelected();
+                selectedPosition = -1;
+                enableOrDisableNext();
             }
         });
 
@@ -332,7 +335,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     }
 
     @Override
-    public void onLocationUpdated(String city,String state) {
+    public void onLocationUpdated(String city, String state) {
         if (city == null) {
             getLastKnownLocation();
         } else {

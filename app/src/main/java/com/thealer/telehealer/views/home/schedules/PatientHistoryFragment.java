@@ -122,11 +122,16 @@ public class PatientHistoryFragment extends BaseFragment {
 
     private void checkForHistoryUpdate() {
         if (createScheduleViewModel != null && createScheduleViewModel.getPatientHistory() != null) {
+            createScheduleViewModel.getSchedulesCreateRequestModel().getDetail().setChange_medical_info(false);
             if (whoAmIApiResponseModel.getHistory() != null) {
                 for (int i = 0; i < createScheduleViewModel.getPatientHistory().size(); i++) {
-                    if (createScheduleViewModel.getPatientHistory().get(i).isIsYes() != whoAmIApiResponseModel.getHistory().get(i).isIsYes() ||
-                            createScheduleViewModel.getPatientHistory().get(i).getReason() == null ||
-                            !createScheduleViewModel.getPatientHistory().get(i).getReason().equals(whoAmIApiResponseModel.getHistory().get(i).getReason())) {
+
+                    if ((createScheduleViewModel.getPatientHistory().get(i).isIsYes() && !whoAmIApiResponseModel.getHistory().get(i).isIsYes()) ||
+                            (!createScheduleViewModel.getPatientHistory().get(i).isIsYes() && whoAmIApiResponseModel.getHistory().get(i).isIsYes()) ||
+                            (createScheduleViewModel.getPatientHistory().get(i).getReason() == null && whoAmIApiResponseModel.getHistory().get(i).getReason() != null) ||
+                            (createScheduleViewModel.getPatientHistory().get(i).getReason() != null && whoAmIApiResponseModel.getHistory().get(i).getReason() == null) ||
+                            (createScheduleViewModel.getPatientHistory().get(i).getReason() != null && whoAmIApiResponseModel.getHistory().get(i).getReason() != null &&
+                                    !createScheduleViewModel.getPatientHistory().get(i).getReason().trim().equals(whoAmIApiResponseModel.getHistory().get(i).getReason().trim()))) {
 
                         appointmentSlotUpdate.updateUserHistory(createScheduleViewModel.getPatientHistory(), false);
 

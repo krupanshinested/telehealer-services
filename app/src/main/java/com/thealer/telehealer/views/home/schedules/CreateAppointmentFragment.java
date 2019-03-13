@@ -149,13 +149,17 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                             } else if (createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front() != null &&
                                     whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front() != null) {
 
-                                isInsuranceUpdated = createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front().equals(whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front());
+                                if (createScheduleViewModel.getPatientCommonModel().getUser_detail().getData().getInsurance_front().equals(whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front()))
+                                    isInsuranceUpdated = false;
+                                else
+                                    isInsuranceUpdated = true;
 
                             }
 
-                            Log.e("aswin", "insurance updated: " + isInsuranceUpdated);
 
                         }
+                        Log.e("aswin", "Demographic: " + isDemographicUpdated);
+                        Log.e("aswin", "insurance : " + isInsuranceUpdated);
                         createScheduleViewModel.setPatientCommonModel(whoAmIApiResponseModel);
                     } else {
                         createScheduleViewModel.setDoctorCommonModel(whoAmIApiResponseModel);
