@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
@@ -175,8 +174,9 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
         if (getArguments() != null) {
             resultBean = (SchedulesApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SCHEDULE_DETAIL);
-            Log.e("aswin", "initView: " + new Gson().toJson(resultBean));
             if (resultBean != null) {
+
+                Log.e("aswin", "initView: history : " + resultBean.getDetail().isChange_medical_info() + "\t demograph : " + resultBean.getDetail().isChange_demographic() + "\t insurance : " + resultBean.getDetail().isInsurance_to_date());
 
                 String statusInfo = "Patient %s has been updated";
                 String detail = "";
