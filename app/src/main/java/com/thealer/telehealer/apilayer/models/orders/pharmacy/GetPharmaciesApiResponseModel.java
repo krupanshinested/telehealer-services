@@ -49,7 +49,7 @@ public class GetPharmaciesApiResponseModel extends BaseApiResponseModel {
 
     public static class ResultsBean implements Serializable {
 
-        private int npi;
+        private String npi;
         private String contact_name;
         private String company;
         private String addr1;
@@ -62,12 +62,11 @@ public class GetPharmaciesApiResponseModel extends BaseApiResponseModel {
         private String addr2;
         private String alt_fax;
 
-
-        public int getNpi() {
+        public String getNpi() {
             return npi;
         }
 
-        public void setNpi(int npi) {
+        public void setNpi(String npi) {
             this.npi = npi;
         }
 
