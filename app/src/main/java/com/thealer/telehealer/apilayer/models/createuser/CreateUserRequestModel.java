@@ -2,7 +2,6 @@ package com.thealer.telehealer.apilayer.models.createuser;
 
 import android.arch.lifecycle.ViewModel;
 
-import com.google.gson.annotations.SerializedName;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 
@@ -20,6 +19,8 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
     private String user_avatar_path;
     private String insurance_front_path;
     private String insurance_back_path;
+    private String secondary_insurance_front_path;
+    private String secondary_insurance_back_path;
     private String certification_path;
     private String doctor_driving_license_path;
     private String doctor_certificate_path;
@@ -42,6 +43,8 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
         this.user_avatar_path = null;
         this.insurance_front_path = null;
         this.insurance_back_path = null;
+        this.secondary_insurance_front_path = null;
+        this.secondary_insurance_back_path = null;
         this.certification_path = null;
         this.doctor_driving_license_path = null;
         this.doctor_certificate_path = null;
@@ -121,12 +124,35 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
         this.insurance_back_path = insurance_back_path;
     }
 
+    public String getSecondary_insurance_front_path() {
+        return secondary_insurance_front_path;
+    }
+
+    public void setSecondary_insurance_front_path(String secondary_insurance_front_path) {
+        this.secondary_insurance_front_path = secondary_insurance_front_path;
+    }
+
+    public String getSecondary_insurance_back_path() {
+        return secondary_insurance_back_path;
+    }
+
+    public void setSecondary_insurance_back_path(String secondary_insurance_back_path) {
+        this.secondary_insurance_back_path = secondary_insurance_back_path;
+    }
+
     public String getCertification_path() {
         return certification_path;
     }
 
     public void setCertification_path(String certification_path) {
         this.certification_path = certification_path;
+    }
+
+    public boolean isInsurancePresent() {
+        return getInsurance_front_path() != null && getInsurance_back_path() != null;
+    }
+    public boolean isSecondaryInsurancePresent() {
+        return getInsurance_front_path() != null && getInsurance_back_path() != null;
     }
 
     public static class UserDataBean extends ViewModel implements Serializable {

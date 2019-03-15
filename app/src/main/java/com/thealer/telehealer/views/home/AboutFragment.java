@@ -25,11 +25,14 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.onboarding.OnBoardingViewPagerAdapter;
+import com.thealer.telehealer.views.common.imagePreview.ImagePreviewDialogFragment;
+import com.thealer.telehealer.views.common.imagePreview.ImagePreviewViewModel;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
+import com.thealer.telehealer.views.signup.patient.InsuranceViewPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -217,6 +220,7 @@ public class AboutFragment extends BaseFragment {
                         patientEmailTv.setText(userDetail.getEmail());
 
                         List<String> insuranceImageList = new ArrayList<>();
+                        List<String> insuranceLabelList = new ArrayList<>();
 
                         if (userDetail.getUser_detail() != null &&
                                 userDetail.getUser_detail().getData() != null &&
@@ -225,15 +229,41 @@ public class AboutFragment extends BaseFragment {
 
 
                             if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                                insuranceLabelList.add("");
                                 insuranceImageList.add(userDetail.getUser_detail().getData().getCertification());
                             } else {
+                                insuranceLabelList.add(getString(R.string.primary_insurance_front));
+                                insuranceLabelList.add(getString(R.string.primary_insurance_back));
+
                                 insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_front());
                                 insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_back());
+
+                                if (userDetail.getUser_detail().getData().isSecondaryInsurancePresent()) {
+                                    insuranceLabelList.add(getString(R.string.secondary_insurance_front));
+                                    insuranceLabelList.add(getString(R.string.secondary_insurance_back));
+
+                                    insuranceImageList.add(userDetail.getUser_detail().getData().getSecondary_insurance_front());
+                                    insuranceImageList.add(userDetail.getUser_detail().getData().getSecondary_insurance_back());
+                                }
                             }
+                            ImagePreviewViewModel imagePreviewViewModel = ViewModelProviders.of(getActivity()).get(ImagePreviewViewModel.class);
+                            imagePreviewViewModel.setImageList(insuranceImageList);
 
-                            OnBoardingViewPagerAdapter onBoardingViewPagerAdapter = new OnBoardingViewPagerAdapter(getActivity(), insuranceImageList, true);
+                            InsuranceViewPagerAdapter insuranceViewPagerAdapter = new InsuranceViewPagerAdapter(getActivity(), insuranceLabelList, new PickerListener() {
+                                @Override
+                                public void didSelectedItem(int position) {
+                                    ImagePreviewDialogFragment imagePreviewDialogFragment = new ImagePreviewDialogFragment();
+                                    imagePreviewDialogFragment.show(getActivity().getSupportFragmentManager(), ImagePreviewDialogFragment.class.getSimpleName());
+                                }
 
-                            insuranceViewPager.setAdapter(onBoardingViewPagerAdapter);
+                                @Override
+                                public void didCancelled() {
+
+                                }
+                            });
+
+                            insuranceViewPagerAdapter.setImageList(insuranceImageList);
+                            insuranceViewPager.setAdapter(insuranceViewPagerAdapter);
                             insuranceViewPager.setCurrentItem(0, true);
                             insuranceViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                                 @Override

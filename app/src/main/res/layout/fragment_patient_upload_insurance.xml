@@ -2,12 +2,12 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="50dp">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/textView5"
@@ -19,71 +19,72 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView4"
+        <LinearLayout
+            android:id="@+id/first_insurance_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView5">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/first_insurance_viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:overScrollMode="never" />
+
+            <LinearLayout
+                android:id="@+id/first_insurance_pager_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/second_insurance_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/first_insurance_ll">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/second_insurance_viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:overScrollMode="never" />
+
+            <LinearLayout
+                android:id="@+id/second_insurance_pager_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <com.thealer.telehealer.common.CustomButton
+            android:id="@+id/add_insurance_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="4dp"
-            android:hint="@string/front_side"
-            app:layout_constraintBottom_toTopOf="@+id/insurance_front_cv"
+            android:layout_marginBottom="32dp"
+            android:drawableStart="@drawable/ic_add_white_24dp"
+            android:drawablePadding="@dimen/padding_default"
+            android:drawableTint="@color/app_gradient_start"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
+            android:text="Add Another Insurance"
+            app:corner_radius="25dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/insurance_front_cv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="6dp"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_max="200dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4"
-            app:layout_constraintWidth_max="200dp">
-
-            <ImageView
-                android:id="@+id/insurance_front_iv"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="@color/colorGrey_light"
-                android:scaleType="centerCrop"
-                android:src="@drawable/insurance_placeholder" />
-        </android.support.v7.widget.CardView>
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:hint="@string/back_side"
-            app:layout_constraintBottom_toTopOf="@+id/insurance_back_cv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/insurance_front_cv" />
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/insurance_back_cv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="6dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_max="200dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6"
-            app:layout_constraintWidth_max="200dp">
-
-            <ImageView
-                android:id="@+id/insurance_back_iv"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="@color/colorGrey_light"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/insurance_placeholder" />
-        </android.support.v7.widget.CardView>
+            app:layout_constraintTop_toBottomOf="@+id/second_insurance_ll"
+            app:stroke_color="@color/app_gradient_start"
+            app:stroke_width="2"
+            app:text_color="@color/app_gradient_start" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>
