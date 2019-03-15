@@ -1,0 +1,73 @@
+package com.thealer.telehealer.views.common.CustomDialogs;
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.thealer.telehealer.R;
+
+import java.util.List;
+
+/**
+ * Created by Aswin on 15,March,2019
+ */
+class OptionSelectionAdapter extends RecyclerView.Adapter<OptionSelectionAdapter.ViewHolder> {
+    private Context context;
+    private List<String> optionList;
+    private PickerListener pickerListener;
+    private OptionSelectionDialog optionSelectionDialog;
+
+    public OptionSelectionAdapter(Context context, List<String> optionList, PickerListener pickerListener, OptionSelectionDialog optionSelectionDialog) {
+        this.context = context;
+        this.optionList = optionList;
+        this.pickerListener = pickerListener;
+        this.optionSelectionDialog = optionSelectionDialog;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(context).inflate(R.layout.adapter_options_select, viewGroup, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+        viewHolder.optionCl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickerListener.didSelectedItem(i);
+                optionSelectionDialog.dismiss();
+            }
+        });
+
+        viewHolder.optionTv.setText(optionList.get(i));
+        if (optionList.get(i).equals(context.getString(R.string.Delete))) {
+            viewHolder.optionTv.setTextColor(context.getColor(R.color.red));
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return optionList.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private ConstraintLayout optionCl;
+        private TextView optionTv;
+        private View bottomView;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            optionCl = (ConstraintLayout) itemView.findViewById(R.id.option_cl);
+            optionTv = (TextView) itemView.findViewById(R.id.option_tv);
+            bottomView = (View) itemView.findViewById(R.id.bottom_view);
+
+        }
+    }
+}
