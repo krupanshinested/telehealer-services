@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_default">
+
+    <TextView
+        android:id="@+id/title_tv"
+        style="@style/text_sub_title_app_color"
+        android:layout_width="0dp"
+        android:gravity="center|bottom"
+        android:textAllCaps="true"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/insurance_cv"
+        app:layout_constraintEnd_toEndOf="@id/insurance_cv"
+        app:layout_constraintStart_toStartOf="@id/insurance_cv"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/dummy_text" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/insurance_cv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardBackgroundColor="@color/colorGrey"
+        app:cardCornerRadius="6dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="125dp"
+        app:layout_constraintHeight_min="125dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_tv"
+        app:layout_constraintWidth_max="250dp"
+        app:layout_constraintWidth_min="250dp">
+
+        <ImageView
+            android:id="@+id/insurance_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/insurance_placeholder" />
+    </android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>

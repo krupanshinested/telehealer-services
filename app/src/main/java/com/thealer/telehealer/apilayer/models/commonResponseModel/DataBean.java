@@ -27,6 +27,8 @@ public class DataBean extends ViewModel implements Serializable {
     private String driver_license;
     private String insurance_front;
     private String insurance_back;
+    private String secondary_insurance_front;
+    private String secondary_insurance_back;
     private String website;
     private List<LicensesBean> licenses = new ArrayList<>();
     private List<SpecialtiesBean> specialties = new ArrayList<>();
@@ -38,8 +40,8 @@ public class DataBean extends ViewModel implements Serializable {
     }
 
     public DataBean(String npi, String title, String degree, String certification, String uid, String image_url, String liability,
-                    String bio, String driver_license, String insurance_front, String insurance_back, List<LicensesBean> licenses,
-                    List<SpecialtiesBean> specialties, List<PracticesBean> practices) {
+                    String bio, String driver_license, String insurance_front, String insurance_back, String secondary_insurance_front, String secondary_insurance_back,
+                    List<LicensesBean> licenses, List<SpecialtiesBean> specialties, List<PracticesBean> practices) {
         this.npi = npi;
         this.title = title;
         this.degree = degree;
@@ -51,6 +53,8 @@ public class DataBean extends ViewModel implements Serializable {
         this.driver_license = driver_license;
         this.insurance_front = insurance_front;
         this.insurance_back = insurance_back;
+        this.secondary_insurance_front = secondary_insurance_front;
+        this.secondary_insurance_back = secondary_insurance_back;
         this.licenses = licenses;
         this.specialties = specialties;
         this.practices = practices;
@@ -168,6 +172,22 @@ public class DataBean extends ViewModel implements Serializable {
         this.insurance_back = insurance_back;
     }
 
+    public String getSecondary_insurance_front() {
+        return secondary_insurance_front;
+    }
+
+    public void setSecondary_insurance_front(String secondary_insurance_front) {
+        this.secondary_insurance_front = secondary_insurance_front;
+    }
+
+    public String getSecondary_insurance_back() {
+        return secondary_insurance_back;
+    }
+
+    public void setSecondary_insurance_back(String secondary_insurance_back) {
+        this.secondary_insurance_back = secondary_insurance_back;
+    }
+
     public void setWebsite(String website) {
         this.website = website;
     }
@@ -178,14 +198,10 @@ public class DataBean extends ViewModel implements Serializable {
     }
 
     public Boolean isInsurancePresent() {
-        String insuranceFront = getInsurance_front();
-        String insuranceBack = getInsurance_back();
-
-        if (insuranceFront != null && insuranceBack != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return getInsurance_front() != null && getInsurance_back() != null;
+    }
+    public Boolean isSecondaryInsurancePresent() {
+        return getSecondary_insurance_front() != null && getSecondary_insurance_back() != null;
     }
 
     public String getDiploma_certificate() {

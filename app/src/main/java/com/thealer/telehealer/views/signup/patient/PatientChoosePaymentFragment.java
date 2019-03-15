@@ -83,7 +83,8 @@ public class PatientChoosePaymentFragment extends BaseFragment implements View.O
                         ((SignUpActivity) getActivity()).addChildFragment(new PatientUploadInsuranceFragment());
                         break;
                     case Constants.forProfileUpdate:
-                        onActionCompleteInterface.onCompletionResult(RequestID.INSURANCE_REQUEST_IMAGE, true, null);
+                        Bundle bundle = getArguments();
+                        onActionCompleteInterface.onCompletionResult(RequestID.INSURANCE_REQUEST_IMAGE, true, bundle);
                         break;
                 }
                 break;
