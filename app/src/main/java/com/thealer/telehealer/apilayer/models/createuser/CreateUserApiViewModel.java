@@ -25,11 +25,15 @@ public class CreateUserApiViewModel extends BaseApiViewModel {
         MultipartBody.Part user_avatar = getMultipartFile("user_avatar", createUserRequestModel.getUser_avatar_path());
         MultipartBody.Part insurance_front = getMultipartFile("insurance_front", createUserRequestModel.getInsurance_front_path());
         MultipartBody.Part insurance_back = getMultipartFile("insurance_back", createUserRequestModel.getInsurance_back_path());
+        MultipartBody.Part secondary_insurance_front = getMultipartFile("secondary_insurance_front", createUserRequestModel.getSecondary_insurance_front_path());
+        MultipartBody.Part secondary_insurance_back = getMultipartFile("secondary_insurance_back", createUserRequestModel.getSecondary_insurance_back_path());
 
         getPublicApiService().createPatient(createUserRequestModel.getUser_data(),
                 user_avatar,
                 insurance_front,
-                insurance_back)
+                insurance_back,
+                secondary_insurance_front,
+                secondary_insurance_back)
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                     @Override
