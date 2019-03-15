@@ -81,6 +81,7 @@
     <string name="add_address">Add Address</string>
     <string name="website">Website</string>
     <string name="delete">DELETE</string>
+    <string name="Delete">Delete</string>
     <string name="street">Street</string>
     <string name="street2">Street2</string>
     <string name="city">City</string>
@@ -826,5 +827,10 @@
      <string name="UPLOAD">UPLOAD</string>
     <string name="SYNC">SYNC</string>
     <string name="scale_support_description">Stand on scale with your bare feet</string>
+    <string name="insurance_alert_error">Please select your primary insurance card images before selecting the secondary.</string>
+    <string name="primary_insurance_front">Primary Insurance (Front Side )</string>
+    <string name="primary_insurance_back">Primary Insurance (Back Side)</string>
+    <string name="secondary_insurance_front">Secondary Insurance (Front Side )</string>
+    <string name="secondary_insurance_back">Secondary Insurance (Back Side)</string>
     <string name="miscellaneous_referral">Miscellaneous Referral</string>
 </resources>

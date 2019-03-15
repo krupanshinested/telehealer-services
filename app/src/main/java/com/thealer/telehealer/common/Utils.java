@@ -53,6 +53,8 @@ import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
+import com.thealer.telehealer.views.common.CustomDialogs.OptionSelectionDialog;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 
 import java.io.IOException;
@@ -983,6 +985,11 @@ public class Utils {
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(application);
         notificationManagerCompat.notify(random.nextInt(1000), notification.build());
+    }
+
+    public static void showOptionsSelectionAlert(Context context, List<String> options, PickerListener pickerListener){
+        OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(context, options, pickerListener);
+        optionSelectionDialog.show();
     }
 
 }

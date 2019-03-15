@@ -193,56 +193,27 @@
                 app:text_color="@color/app_gradient_start" />
 
             <LinearLayout
-                android:id="@+id/insurance_front_ll"
-                android:layout_width="0dp"
+                android:id="@+id/insurance_ll"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical"
-                android:visibility="gone"
-                app:layout_constraintEnd_toStartOf="@id/insurance_back_ll"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/insurance_ocv">
-
-                <ImageView
-                    android:id="@+id/front_iv"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp" />
-
-                <TextView
-                    android:id="@+id/front_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="@string/FrontSide"
-                    android:textColor="@color/colorBlack" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/insurance_back_ll"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:orientation="vertical"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/insurance_front_ll"
-                app:layout_constraintTop_toBottomOf="@+id/insurance_ocv">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/insurance_update_btn">
 
-                <ImageView
-                    android:id="@+id/back_iv"
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/insurance_viewPager"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp" />
+                    android:layout_height="200dp" />
 
-                <TextView
-                    android:id="@+id/back_tv"
+                <LinearLayout
+                    android:id="@+id/pager_indicator"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="@string/BackSide"
-                    android:textColor="@color/colorBlack" />
+                    android:orientation="horizontal"
+                    android:gravity="center"/>
             </LinearLayout>
 
         </android.support.constraint.ConstraintLayout>

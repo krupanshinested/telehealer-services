@@ -69,6 +69,8 @@ public class ArgumentKeys {
     public static final String SIGNATURE_PATH = "signaturePath";
     public static final String CHECK_CONNECTION_STATUS = "checkConnectionStatus";
     public static final String IS_VERIFY_OTP = "verifyOtp";
+    public static final String IS_PRIMARY_DELETED = "isPrimaryDeletd";
+    public static final String IS_SECONDARY_DELETED = "isSecondaryDeletd";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
@@ -90,6 +92,8 @@ public class ArgumentKeys {
     public static final String CASH_SELECTED = "CASH_SELECTED";
     public static final String INSURANCE_FRONT = "INSURANCE_FRONT";
     public static final String INSURANCE_BACK = "INSURANCE_BACK";
+    public static final String SECONDARY_INSURANCE_FRONT = "SECONDARY_INSURANCE_FRONT";
+    public static final String SECONDARY_INSURANCE_BACK = "SECONDARY_INSURANCE_BACK";
 
     public static final String IS_OUTGOING_CALL = "IS_OUTGOING_CALL";
     public static final String CALL_TIMER_VALUE = "CALL_TIMER_VALUE";
