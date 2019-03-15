@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -42,10 +44,12 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
+import com.thealer.telehealer.views.signup.patient.InsuranceViewPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,12 +71,6 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
     private View demographView;
     private OrdersCustomView insuranceOcv;
     private CustomButton insuranceUpdateBtn;
-    private LinearLayout insuranceFrontLl;
-    private ImageView frontIv;
-    private TextView frontTv;
-    private LinearLayout insuranceBackLl;
-    private ImageView backIv;
-    private TextView backTv;
     private Button actionBtn;
 
     private ShowSubFragmentInterface showSubFragmentInterface;
@@ -88,6 +86,10 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
     private List<String> patientSchedulesTimeList = new ArrayList<>();
     private boolean isDoctorSchedules = false, isPatientSchedules = false, isDemographicUpdated = false, isInsuranceUpdated = false;
     private String requestee_name;
+    private LinearLayout insuranceLl;
+    private ViewPager insuranceViewPager;
+    private LinearLayout pagerIndicator;
+    private List<String> labelList;
 
     @Override
     public void onAttach(Context context) {
@@ -233,13 +235,10 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
         demographView = (View) view.findViewById(R.id.demograph_view);
         insuranceOcv = (OrdersCustomView) view.findViewById(R.id.insurance_ocv);
         insuranceUpdateBtn = (CustomButton) view.findViewById(R.id.insurance_update_btn);
-        insuranceFrontLl = (LinearLayout) view.findViewById(R.id.insurance_front_ll);
-        frontIv = (ImageView) view.findViewById(R.id.front_iv);
-        frontTv = (TextView) view.findViewById(R.id.front_tv);
-        insuranceBackLl = (LinearLayout) view.findViewById(R.id.insurance_back_ll);
-        backIv = (ImageView) view.findViewById(R.id.back_iv);
-        backTv = (TextView) view.findViewById(R.id.back_tv);
         actionBtn = (Button) view.findViewById(R.id.action_btn);
+        insuranceLl = (LinearLayout) view.findViewById(R.id.insurance_ll);
+        insuranceViewPager = (ViewPager) view.findViewById(R.id.insurance_viewPager);
+        pagerIndicator = (LinearLayout) view.findViewById(R.id.pager_indicator);
 
         if (UserType.isUserPatient()) {
             infoTv.setVisibility(View.VISIBLE);
@@ -249,8 +248,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
             demographView.setVisibility(View.VISIBLE);
             insuranceOcv.setVisibility(View.VISIBLE);
             insuranceUpdateBtn.setVisibility(View.VISIBLE);
-            insuranceFrontLl.setVisibility(View.VISIBLE);
-            insuranceBackLl.setVisibility(View.VISIBLE);
+            insuranceLl.setVisibility(View.VISIBLE);
 
             actionBtn.setText(getString(R.string.next));
 
@@ -348,15 +346,13 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                 setDemographOcv(patientDetailModel.getUserDisplay_name(), patientDetailModel.getGender(), patientDetailModel.getAge());
 
                 if (patientDetailModel.getUser_detail() != null && patientDetailModel.getUser_detail().getData() != null) {
-                    if (patientDetailModel.getUser_detail().getData().getInsurance_front() == null &&
-                            patientDetailModel.getUser_detail().getData().getInsurance_back() == null) {
+                    if (!patientDetailModel.getUser_detail().getData().isInsurancePresent()) {
                         showAsCash();
                     } else {
+                        Log.e("aswin", "updateView: " + new Gson().toJson(UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getData()));
+                        setUpInsuranceVP(patientDetailModel);
                         insuranceOcv.setTitle_visible(false);
-                        insuranceFrontLl.setVisibility(View.VISIBLE);
-                        insuranceBackLl.setVisibility(View.VISIBLE);
-                        Utils.setImageWithGlide(getActivity(), frontIv, patientDetailModel.getUser_detail().getData().getInsurance_front(), null, true);
-                        Utils.setImageWithGlide(getActivity(), backIv, patientDetailModel.getUser_detail().getData().getInsurance_back(), null, true);
+                        insuranceLl.setVisibility(View.VISIBLE);
                     }
                 } else {
                     showAsCash();
@@ -374,6 +370,81 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
         slotsRv.setAdapter(new SlotsListAdapter(getActivity()));
 
         enableOrDisableBtn();
+    }
+
+    private void setUpInsuranceVP(CommonUserApiResponseModel patientDetailModel) {
+
+        Log.e("aswin", "setUpInsuranceVP: " + new Gson().toJson(patientDetailModel.getUser_detail().getData()));
+        labelList = new ArrayList<>();
+        List<String> imageList = new ArrayList<>();
+
+        labelList.add(getString(R.string.primary_insurance_front));
+        labelList.add(getString(R.string.primary_insurance_back));
+
+        imageList.add(patientDetailModel.getUser_detail().getData().getInsurance_front());
+        imageList.add(patientDetailModel.getUser_detail().getData().getInsurance_back());
+
+        if (patientDetailModel.getUser_detail().getData().isSecondaryInsurancePresent()) {
+            labelList.add(getString(R.string.secondary_insurance_front));
+            labelList.add(getString(R.string.secondary_insurance_back));
+
+            imageList.add(patientDetailModel.getUser_detail().getData().getSecondary_insurance_front());
+            imageList.add(patientDetailModel.getUser_detail().getData().getSecondary_insurance_back());
+        }
+
+        InsuranceViewPagerAdapter insuranceViewPagerAdapter = new InsuranceViewPagerAdapter(getActivity(), labelList, new PickerListener() {
+            @Override
+            public void didSelectedItem(int position) {
+            }
+
+            @Override
+            public void didCancelled() {
+
+            }
+        });
+
+        insuranceViewPager.setAdapter(insuranceViewPagerAdapter);
+
+        insuranceViewPager.setCurrentItem(0);
+
+        insuranceViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                updatePagerIndicator(i);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+
+        insuranceViewPagerAdapter.setData(imageList, labelList, true);
+
+        updatePagerIndicator(0);
+
+    }
+
+    private void updatePagerIndicator(int position) {
+        ImageView[] indicators = new ImageView[labelList.size()];
+
+        pagerIndicator.removeAllViewsInLayout();
+
+        for (int i = 0; i < labelList.size(); i++) {
+            indicators[i] = new ImageView(getActivity());
+            indicators[i].setImageDrawable(getActivity().getDrawable(R.drawable.circular_unselected_indicator));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(4, 0, 4, 0);
+
+            pagerIndicator.addView(indicators[i], params);
+        }
+        indicators[position].setImageDrawable(getActivity().getDrawable(R.drawable.circular_selected_indicator));
     }
 
     private void getPatientScheduleList(String user_guid, String doctorGuid) {
@@ -414,8 +485,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
     private void showAsCash() {
         insuranceOcv.setTitleTv(getString(R.string.cash));
         insuranceOcv.setTitle_visible(true);
-        insuranceFrontLl.setVisibility(View.GONE);
-        insuranceBackLl.setVisibility(View.GONE);
+        insuranceLl.setVisibility(View.GONE);
     }
 
     private void setDemographOcv(String userDisplay_name, String gender, String age) {

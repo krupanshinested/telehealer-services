@@ -122,7 +122,9 @@ public interface ApiInterface {
     Observable<CreateUserApiResponseModel> createPatient(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
                                                          @Part MultipartBody.Part user_avatar,
                                                          @Part MultipartBody.Part insurance_front,
-                                                         @Part MultipartBody.Part insurance_back);
+                                                         @Part MultipartBody.Part insurance_back,
+                                                         @Part MultipartBody.Part secondary_insurance_front,
+                                                         @Part MultipartBody.Part secondary_insurance_back);
 
     @Multipart
     @POST("setup")
@@ -160,10 +162,12 @@ public interface ApiInterface {
     Observable<CommonUserApiResponseModel> updatePatient(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
                                                          @Part MultipartBody.Part user_avatar,
                                                          @Part MultipartBody.Part insurance_front,
-                                                         @Part MultipartBody.Part insurance_back);
+                                                         @Part MultipartBody.Part insurance_back,
+                                                         @Part MultipartBody.Part secondary_insurance_front,
+                                                         @Part MultipartBody.Part secondary_insurance_back);
 
     @DELETE("api/users/insurance")
-    Observable<CommonUserApiResponseModel> deleteInsurance();
+    Observable<CommonUserApiResponseModel> deleteInsurance(@QueryMap Map<String, Boolean> params);
 
     @POST("reset-password")
     Observable<BaseApiResponseModel> resetPassword(@Body ResetPasswordRequestModel resetPasswordRequestModel);
