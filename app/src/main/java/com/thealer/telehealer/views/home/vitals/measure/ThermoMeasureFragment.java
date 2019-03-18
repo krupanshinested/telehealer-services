@@ -80,6 +80,7 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
     private String finalThermoValue = "0";
     private VitalsApiViewModel vitalsApiViewModel;
     private Boolean isNeedToTrigger = false;
+    private Boolean isOpeningDirectlyFromPairing = false;
 
     @Nullable
     public CallVitalPagerInterFace callVitalPagerInterFace;
@@ -93,6 +94,7 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
         if (getArguments() != null) {
             vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
             isNeedToTrigger = getArguments().getBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY);
+            isOpeningDirectlyFromPairing = getArguments().getBoolean(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING);
         }
 
         if (savedInstanceState != null) {
@@ -140,8 +142,11 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
             onViewChangeInterface.hideOrShowBackIv(true);
         }
 
-        if (toolBarInterface != null)
+        if (toolBarInterface != null) {
             otherOptionView = toolBarInterface.getExtraOption();
+            toolBarInterface.updateSubTitle("",View.GONE);
+        }
+
         if (otherOptionView != null) {
             otherOptionView.setVisibility(View.VISIBLE);
             otherOptionView.setOnClickListener(this);
@@ -156,6 +161,7 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
             vitalManagerInstance.updateBatteryView(View.GONE, 0);
             vitalManagerInstance.getInstance().setBatteryFetcherListener(this);
         }
+
         fetchBattery();
 
         if (toolBarInterface != null)
@@ -248,14 +254,14 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
         switch (state) {
             case MeasureState.notStarted:
                 result_lay.setVisibility(View.GONE);
-                value_tv.setText("0");
+                value_tv.setText("-");
                 message_tv.setText("");
                 save_bt.setText(getString(R.string.START));
                 save_bt.setVisibility(View.VISIBLE);
                 break;
             case MeasureState.started:
                 message_tv.setText(getString(R.string.start_your_measurement_from_device));
-                value_tv.setText("0");
+                value_tv.setText("-");
                 result_lay.setVisibility(View.GONE);
                 save_bt.setVisibility(View.GONE);
                 break;
@@ -276,7 +282,7 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
                 value_tv.setText(finalThermoValue);
                 break;
             case MeasureState.startedToReceieveValues:
-                value_tv.setText("0");
+                value_tv.setText("-");
                 message_tv.setText("");
                 result_lay.setVisibility(View.VISIBLE);
                 save_bt.setVisibility(View.GONE);
@@ -387,7 +393,9 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
     @Override
     public void didConnected(String type, String serailNumber) {
         fetchBattery();
-        startMeasure();
+        if (isNeedToTrigger && currentState == MeasureState.notStarted) {
+            startMeasure();
+        }
     }
 
     @Override
@@ -400,13 +408,21 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (getActivity() != null) {
-                                getActivity().onBackPressed();
+                                if (isOpeningDirectlyFromPairing) {
+                                    getActivity().finish();
+                                } else {
+                                    getActivity().onBackPressed();
+                                }
                             }
                         }
                     }, null);
                 } else {
                     if (getActivity() != null) {
-                        getActivity().onBackPressed();
+                        if (isOpeningDirectlyFromPairing) {
+                            getActivity().finish();
+                        } else {
+                            getActivity().onBackPressed();
+                        }
                     }
                 }
             } else {

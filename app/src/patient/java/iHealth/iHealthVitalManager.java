@@ -169,7 +169,7 @@ public class iHealthVitalManager extends VitalsManager {
 
         @Override
         public void onDeviceConnectionStateChange(String mac, String deviceType, int status, int errorID) {
-            Log.v("vitalmanager","onDeviceConnectionStateChange "+deviceType);
+            Log.v("vitalmanager","onDeviceConnectionStateChange "+deviceType+" status "+status);
 
             deviceConnectionMap.put(deviceType+"_"+mac,status);
 
@@ -284,7 +284,7 @@ public class iHealthVitalManager extends VitalsManager {
             if (vitalPairInterface != null)
                 vitalPairInterface.didConnected(deviceType,mac);
         } else {
-            Logs.V("vitalmanager","nog in connected state ");
+            Logs.V("vitalmanager","not in connected state ");
 
             boolean req = iHealthDevicesManager.getInstance().connectDevice(userName, mac,deviceType);
 

@@ -115,10 +115,12 @@ public class BPControl {
 
                         bpMeasureInterface.didFinishBpMeasure(tracks);
 
+                    } else {
+                        bpMeasureInterface.didFinishBpMeasure(new ArrayList<BPTrack>());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    bpMeasureInterface.didFailBPMesure(deviceType,e.getLocalizedMessage());
+                    bpMeasureInterface.didFinishBpMeasure(new ArrayList<BPTrack>());
                 }
 
                 break;

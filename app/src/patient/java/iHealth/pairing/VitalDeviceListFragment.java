@@ -172,7 +172,7 @@ public class VitalDeviceListFragment extends BaseFragment {
                         bundle.putString(ArgumentKeys.DEVICE_TYPE, dataSource.getDevice().getType());
                         bundle.putString(ArgumentKeys.DEVICE_MAC, dataSource.getDevice().getDeviceId());
                         bundle.putSerializable(ArgumentKeys.VITAL_DEVICE, dataSource.getDevice());
-                        bundle.putBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY, true);
+                        bundle.putBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY, false);
 
                         if (dataSource.getDevice().getConnected()) {
                             onActionCompleteInterface.onCompletionResult(RequestID.OPEN_CONNECTED_DEVICE, true, bundle);

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.SupportInformation;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
@@ -23,6 +24,7 @@ import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
+import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -81,8 +83,6 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
 
         vitalManagerInstance.getInstance().setListener(this);
 
-        connectVital();
-
         toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
 
         onViewChangeInterface.hideOrShowClose(false);
@@ -98,36 +98,31 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
             otherOptionView.setImageResource(R.drawable.info);
         }
 
-        if (!getArguments().getBoolean("isDisplaySupportDialog") && vitalDevice.getType().equals(iHealthDevicesManager.TYPE_550BT)) {
+        SupportInformation supportInformation = VitalDeviceType.getConnectInfo(vitalDevice.getType());
+
+        if (supportInformation != null && !getArguments().getBoolean("isDisplaySupportDialog") && !vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(),vitalDevice.getDeviceId()) ) {
+            getArguments().putBoolean("isDisplaySupportDialog",true);
 
             Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
             contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
             contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
-            contentIntent.putExtra(ArgumentKeys.TITLE, "");
-            contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.track_support_description));
-            contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.track_support);
+
+            if (supportInformation.getTitleId() != 0) {
+                contentIntent.putExtra(ArgumentKeys.TITLE, getString(supportInformation.getTitleId()));
+            } else {
+                contentIntent.putExtra(ArgumentKeys.TITLE, "");
+            }
+
+            contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(supportInformation.getDescriptionId()));
+            contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, supportInformation.getIconId());
             contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
             contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
             contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
 
             startActivity(contentIntent);
 
-            getArguments().putBoolean("isDisplaySupportDialog",true);
-        } else if (!getArguments().getBoolean("isDisplaySupportDialog") && ( vitalDevice.getType().equals(iHealthDevicesManager.TYPE_HS2) || vitalDevice.getType().equals(iHealthDevicesManager.TYPE_HS4S))) {
-
-            Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
-            contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
-            contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
-            contentIntent.putExtra(ArgumentKeys.TITLE, "");
-            contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.scale_support_description));
-            contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ihealth_lina);
-            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
-            contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
-            contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
-
-            startActivity(contentIntent);
-
-            getArguments().putBoolean("isDisplaySupportDialog",true);
+        } else {
+            connectVital();
         }
 
     }
@@ -177,7 +172,13 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
         switch (state) {
             case connected:
                 startButton.setVisibility(View.VISIBLE);
-                startButton.setText(getResources().getString(R.string.START));
+
+                if (vitalDevice.getType().equals(VitalsConstant.TYPE_550BT)) {
+                    startButton.setText(getResources().getString(R.string.SYNC));
+                } else {
+                    startButton.setText(getResources().getString(R.string.START));
+                }
+                
                 toolBarInterface.updateSubTitle(getString(R.string.connected),View.VISIBLE);
                 suggestionsLay.setVisibility(View.GONE);
                 break;
@@ -254,7 +255,7 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
                     showAlertDialog(getActivity(), getString(R.string.error),
                             errorMessage,
                             getString(R.string.retry),
-                            getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     connectVital();

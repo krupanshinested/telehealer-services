@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
@@ -54,6 +55,8 @@ import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerIns
 import iHealth.iHealthVitalManager;
 import iHealth.pairing.CustomViews.BatteryView;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+
+import static com.thealer.telehealer.common.ArgumentKeys.VITAL_DEVICE;
 
 /**
  * Created by rsekar on 11/28/18.
@@ -186,8 +189,7 @@ public class VitalCreationActivity extends BaseActivity implements
 
     @Override
     public void onSuccessViewCompletion(boolean success) {
-        if (success)
-            finish();
+
     }
 
     @Override

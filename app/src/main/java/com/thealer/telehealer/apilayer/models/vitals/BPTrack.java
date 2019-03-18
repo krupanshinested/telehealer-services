@@ -53,6 +53,9 @@ public class BPTrack extends BaseAdapterObjectModel {
         return Utils.getStringFromDate(date,"dd MMM yyyy");
     }
 
+    @Override
+    public Object getComparableObject() { return date;  }
+
     public double getDia() {
         return dia;
     }

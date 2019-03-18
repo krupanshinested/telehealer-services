@@ -874,4 +874,13 @@
     <string name="fax_number">Fax Number</string>
     <string name="login_error_message">Unable to login. Please ensure that your email and password are entered correctly and try again.</string>
     <string name="vitals_report">Vitals Report</string>
+    <string name="stand_with_bare_feet">Please stand on scale with your bare feet</string>
+    <string name="bg5_information">Please manually connect your iHealth Smart device to your phone\'s bluetooth from the phone\'s settings app before attempting to pair here.</string>
+    <string name="track_information">Please press the M button on the blood pressure monitor to turn on the device\'s bluetooth and initiate pairing.</string>
+    <string name="ts28_information">Please press the button on your thermometer to initiate pairing via bluetooth.</string>
+    <string name="fdir_information">Please press the top button of your thermometer to initiate pairing via bluetooth.</string>
+    <string name="po3_description">Remember to press the button on your device to capture a snapshot of the measured vitals here.</string>
+    <string name="ts28_measure_description">Remember to press the button on your thermometer to capture a snapshot of the measured vitals here.</string>
+    <string name="fdir_measure_description">Remember to press the top button of your thermometer to capture a snapshot of the measured vitals here. Click the remeasure/reload to retrieve any newer values.</string>
+    <string name="track_measurement_info">Inorder to capture your vitals here, please make sure you have manually initiated a prior measurement from the device.</string>
 </resources>

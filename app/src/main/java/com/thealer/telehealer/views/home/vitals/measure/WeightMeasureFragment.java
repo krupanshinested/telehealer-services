@@ -81,6 +81,7 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
 
     private int currentState;
     private Boolean isNeedToTrigger = false;
+    private Boolean isOpeningDirectlyFromPairing = false;
 
     private String finalWeightValue = "";
     private VitalsApiViewModel vitalsApiViewModel;
@@ -97,6 +98,7 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
         if (getArguments() != null) {
             vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
             isNeedToTrigger = getArguments().getBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY);
+            isOpeningDirectlyFromPairing = getArguments().getBoolean(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING);
         }
 
         if (savedInstanceState != null) {
@@ -146,6 +148,7 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
 
         if (toolBarInterface != null) {
             otherOptionView = toolBarInterface.getExtraOption();
+            toolBarInterface.updateSubTitle("",View.GONE);
         }
 
         if (otherOptionView != null) {
@@ -255,13 +258,13 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
         switch (state) {
             case MeasureState.notStarted:
                 result_lay.setVisibility(View.GONE);
-                value_tv.setText("0");
+                value_tv.setText("-");
                 message_tv.setText("");
                 save_bt.setText(getString(R.string.START));
                 break;
             case MeasureState.started:
                 message_tv.setText("");
-                value_tv.setText("0");
+                value_tv.setText("-");
                 result_lay.setVisibility(View.VISIBLE);
                 save_bt.setText(getString(R.string.STOP));
                 break;
@@ -394,7 +397,9 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
     public void didConnected(String type, String serailNumber) {
         Log.e("Weight measure", "state changed " + serailNumber);
         fetchBattery();
-        startMeasure();
+        if (isNeedToTrigger && currentState == MeasureState.notStarted) {
+            startMeasure();
+        }
     }
 
     @Override
@@ -406,7 +411,11 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (getActivity() != null) {
-                                getActivity().onBackPressed();
+                                if (isOpeningDirectlyFromPairing) {
+                                    getActivity().finish();
+                                } else {
+                                    getActivity().onBackPressed();
+                                }
                             }
                         }
                     }, null);
@@ -414,7 +423,11 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
 
                 } else {
                     if (getActivity() != null) {
-                        getActivity().onBackPressed();
+                        if (isOpeningDirectlyFromPairing) {
+                            getActivity().finish();
+                        } else {
+                            getActivity().onBackPressed();
+                        }
                     }
                 }
             } else {
@@ -453,7 +466,7 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
 
         message_tv.setText("");
 
-        value_tv.setText(value + "");
+        value_tv.setText(value+ "");
 
         if (currentState != MeasureState.startedToReceieveValues) {
             setCurrentState(MeasureState.startedToReceieveValues);
@@ -469,7 +482,7 @@ public class WeightMeasureFragment extends BaseFragment implements VitalPairInte
     public void didFinishWeightMeasure(String deviceType,Float weight, String id) {
         message_tv.setText("");
 
-        finalWeightValue = weight + "";
+        finalWeightValue = weight+ "";
         setCurrentState(MeasureState.ended);
 
         if (isPresentedInsideCallActivity()) {
