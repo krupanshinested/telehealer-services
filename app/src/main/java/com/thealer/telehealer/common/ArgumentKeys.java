@@ -145,6 +145,7 @@ public class ArgumentKeys {
     public static final String IS_PASSWORD_ENTERED = "IS_PASSWORD_ENTERED";
     public static final String IS_MODEL_LOAD_INITIALLY = "IS_MODEL_LOAD_INITIALLY";
     public static final String IS_DATA_FETCHED = "IS_DATA_FETCHED";
+    public static final String IS_OPENING_DIRECTLY_FROM_PAIRING = "IS_OPENING_DIRECTLY_FROM_PAIRING";
 
 
 }

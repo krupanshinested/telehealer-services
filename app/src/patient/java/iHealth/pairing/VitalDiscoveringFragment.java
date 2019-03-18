@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -28,6 +29,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.SupportInformation;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -36,6 +39,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
@@ -109,69 +113,53 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
         vitalManagerInstance.updateBatteryView(View.GONE,0);
         updateView(currentState);
 
-        if (VitalDeviceType.shared.getMeasurementType(deviceType).equals(SupportedMeasurementType.temperature)) {
-            final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-             if (manager != null && manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                 if (deviceMac != null) {
-                     connectVital(deviceType, deviceMac);
-                 } else {
-                     scanVital(deviceType);
-                 }
-             } else {
-                 displayLocationSettingsRequest(getActivity());
-             }
-        } else {
-            if (deviceMac != null) {
-                connectVital(deviceType, deviceMac);
-            } else {
-                scanVital(deviceType);
-            }
-        }
-
         toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(deviceType)));
-
         onViewChangeInterface.hideOrShowClose(true);
         onViewChangeInterface.hideOrShowBackIv(true);
 
-        if (!getArguments().getBoolean("isDisplaySupportDialog") && deviceType.equals(iHealthDevicesManager.TYPE_BG5)) {
-            this.showAlertDialog(getActivity(), getString(VitalDeviceType.shared.getTitle(deviceType)), getString(R.string.gulcoWarning), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            },null);
-            getArguments().putBoolean("isDisplaySupportDialog",true);
-        } else if (!getArguments().getBoolean("isDisplaySupportDialog") && deviceType.equals(iHealthDevicesManager.TYPE_550BT)) {
+       SupportInformation supportInformation = VitalDeviceType.getMeasureInfo(deviceType);
 
-            Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
-            contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
-            contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
-            contentIntent.putExtra(ArgumentKeys.TITLE, "");
-            contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.track_support_description));
-            contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.track_support);
-            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
-            contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
-            contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+       if (supportInformation != null && !getArguments().getBoolean("isDisplaySupportDialog")) {
+           getArguments().putBoolean("isDisplaySupportDialog",true);
 
-            startActivity(contentIntent);
+           Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
+           contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
+           contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
 
-            getArguments().putBoolean("isDisplaySupportDialog",true);
-        } else if (!getArguments().getBoolean("isDisplaySupportDialog") && ( deviceType.equals(iHealthDevicesManager.TYPE_HS2) || deviceType.equals(iHealthDevicesManager.TYPE_HS4S))) {
+           if (supportInformation.getTitleId() != 0) {
+               contentIntent.putExtra(ArgumentKeys.TITLE, getString(supportInformation.getTitleId()));
+           } else {
+               contentIntent.putExtra(ArgumentKeys.TITLE, "");
+           }
 
-            Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
-            contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
-            contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
-            contentIntent.putExtra(ArgumentKeys.TITLE, "");
-            contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.scale_support_description));
-            contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ihealth_lina);
-            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
-            contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
-            contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+           contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(supportInformation.getDescriptionId()));
+           contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, supportInformation.getIconId());
+           contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+           contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
+           contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
 
-            startActivity(contentIntent);
+           startActivity(contentIntent);
 
-            getArguments().putBoolean("isDisplaySupportDialog",true);
-        }
+       } else {
+           if (VitalDeviceType.shared.getMeasurementType(deviceType).equals(SupportedMeasurementType.temperature)) {
+               final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+               if (manager != null && manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                   if (deviceMac != null) {
+                       connectVital(deviceType, deviceMac);
+                   } else {
+                       scanVital(deviceType);
+                   }
+               } else {
+                   displayLocationSettingsRequest(getActivity());
+               }
+           } else {
+               if (deviceMac != null) {
+                   connectVital(deviceType, deviceMac);
+               } else {
+                   scanVital(deviceType);
+               }
+           }
+       }
 
     }
 
@@ -210,6 +198,10 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
         deviceImage.setImageResource(VitalDeviceType.shared.getImage(deviceType));
 
         retryButton.setOnClickListener(this);
+
+        Glide.with(getActivity())
+                .load(R.raw.connecting)
+                .into((ImageView) baseView.findViewById(R.id.connecting_view));
     }
 
     private void connectVital(String type, String serailNumber) {
@@ -219,6 +211,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
     }
 
     private void scanVital(String type) {
+        isDeviceFound = false;
         currentState = discovering;
         updateView(currentState);
         vitalManagerInstance.getInstance().startScan(type);
@@ -332,6 +325,9 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
     public void didConnected(String type, String serailNumber) {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
+                deviceMac = serailNumber;
+                deviceType = type;
+
                 currentState = connected;
                 updateView(currentState);
 
@@ -345,6 +341,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
 
                 SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
                 successViewDialogFragment.setArguments(bundle);
+                successViewDialogFragment.setTargetFragment(VitalDiscoveringFragment.this, RequestID.REQ_SHOW_SUCCESS_VIEW);
                 successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
 
             }
@@ -386,6 +383,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
         } else {
             bundle = new Bundle();
         }
+        bundle.putSerializable(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING,true);
         bundle.putString(ArgumentKeys.DEVICE_MAC, deviceMac);
         bundle.putString(ArgumentKeys.DEVICE_TYPE, deviceType);
         bundle.putSerializable(ArgumentKeys.VITAL_DEVICE, getSelectedDevice());
@@ -463,5 +461,23 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
                 }
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW) {
+
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    onActionCompleteInterface.onCompletionResult(RequestID.OPEN_CONNECTED_DEVICE, true, getResultBundle());
+                    break;
+                default:
+                    break;
+            }
+
+
+        }
     }
 }
