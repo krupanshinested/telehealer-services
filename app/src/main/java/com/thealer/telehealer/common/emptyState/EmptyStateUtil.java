@@ -107,6 +107,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
             case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
                 return "No Pending Invites";
+            case EmptyViewConstants.EMPTY_BP_TRACK_VALUE:
+                return "No BP values";
             default:
                 return null;
         }
@@ -229,6 +231,8 @@ public class EmptyStateUtil {
                 return "Invites which waiting for your action will eventually show up here";
             case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
                 return "Invites which you created and waiting for other person's action will eventually show up here";
+            case EmptyViewConstants.EMPTY_BP_TRACK_VALUE:
+                return "No prior readings available to upload. Please measure your vitals on the device before attempting to sync and upload.";
             default:
                 return null;
         }
@@ -327,6 +331,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
             case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
                 return R.drawable.emptystate_pending_invites;
+            case EmptyViewConstants.EMPTY_BP_TRACK_VALUE:
+                return R.drawable.emptystate_no_vitals;
             default:
                 return 0;
         }

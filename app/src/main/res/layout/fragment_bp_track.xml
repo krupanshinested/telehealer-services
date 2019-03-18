@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"/>
 
-    <android.support.v7.widget.RecyclerView
+    <com.thealer.telehealer.common.CustomRecyclerView
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:id="@+id/recyclerView"

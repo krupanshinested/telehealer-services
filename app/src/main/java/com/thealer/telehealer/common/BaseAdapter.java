@@ -12,6 +12,9 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,7 +25,7 @@ public class BaseAdapter extends RecyclerView.Adapter {
     public static final int bodyType = 2;
 
     protected ArrayList<BaseAdapterModel> items = new ArrayList<>();
-
+    protected boolean sortByAscending = false;
 
     @NonNull
     @Override
@@ -50,28 +53,50 @@ public class BaseAdapter extends RecyclerView.Adapter {
     protected void generateModel(ArrayList<BaseAdapterObjectModel> modelList) {
         HashMap<String,ArrayList<BaseAdapterObjectModel>> map = new HashMap<>();
 
-        for (BaseAdapterObjectModel model : modelList) {
-            if (map.get(model.getAdapterTitle()) != null) {
-                map.get(model.getAdapterTitle()).add(model);
-            } else {
-                ArrayList<BaseAdapterObjectModel> models = new ArrayList<>();
-                models.add(model);
-                map.put(model.getAdapterTitle(), models);
-            }
-        }
-
         items = new ArrayList<>();
 
-        for (String key : map.keySet()) {
-            items.add(new BaseAdapterModel(key));
+        Collections.sort(modelList, new Comparator<BaseAdapterObjectModel>() {
+            public int compare(BaseAdapterObjectModel obj1, BaseAdapterObjectModel obj2) {
 
-            if ( map.get(key) != null) {
-                for (BaseAdapterObjectModel model : map.get(key)) {
-                    items.add(new BaseAdapterModel(model));
+                BaseAdapterObjectModel first,second;
+                if (sortByAscending) {
+                    first = obj1;
+                    second = obj2;
+                } else {
+                    first = obj2;
+                    second = obj1;
+                }
+
+                if (obj1 == null || obj2 == null) {
+                    return 0;
+                } else if ((obj1.getComparableObject() instanceof Date)) {
+                    return (((Date) first.getComparableObject()).compareTo((Date) second.getComparableObject()));
+                } else if ((obj1.getComparableObject() instanceof Integer)) {
+                    return (((Integer) first.getComparableObject()).compareTo((Integer) second.getComparableObject()));
+                }  else if ((obj1.getComparableObject() instanceof Double)) {
+                    return (((Double) first.getComparableObject()).compareTo((Double) second.getComparableObject()));
+                } else if ((obj1.getComparableObject() instanceof String)) {
+                    return (((String) first.getComparableObject()).compareTo((String) second.getComparableObject()));
+                } else {
+                    return 0;
                 }
             }
-        }
+        });
 
+        for (BaseAdapterObjectModel model : modelList) {
+
+            if (map.get(model.getAdapterTitle()) == null) {
+                items.add(new BaseAdapterModel(model.getAdapterTitle()));
+            }
+
+            ArrayList<BaseAdapterObjectModel> values = map.get(model.getAdapterTitle());
+            if (values == null) {
+                values = new ArrayList<>();
+            }
+            values.add(model);
+            map.put(model.getAdapterTitle(),values);
+            items.add(new BaseAdapterModel(model));
+        }
     }
 
 
