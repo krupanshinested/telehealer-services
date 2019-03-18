@@ -22,6 +22,7 @@ import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
+import com.thealer.telehealer.common.VitalCommon.VitalDataSource;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -47,7 +48,7 @@ public class NewVitalDeviceSetUpFragment extends BaseFragment {
 
     @Nullable
     private String measurementType;
-    private ArrayList<String> deviceSources = new ArrayList<>();
+    private ArrayList<VitalDataSource> deviceSources = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle saveInstance) {
@@ -68,15 +69,17 @@ public class NewVitalDeviceSetUpFragment extends BaseFragment {
                 String deviceType = VitalDeviceType.shared.getMeasurementType(type);
                 if (measurementType.equals(SupportedMeasurementType.heartRate)) {
                     if (deviceType.equals(SupportedMeasurementType.bp) || deviceType.equals(SupportedMeasurementType.pulseOximeter)) {
-                        deviceSources.add(type);
+                        deviceSources.add(new VitalDataSource(type,VitalDeviceType.shared.getMeasurementType(type)));
                     }
                 } else if (deviceType.equals(measurementType)) {
-                    deviceSources.add(type);
+                    deviceSources.add(new VitalDataSource(type,VitalDeviceType.shared.getMeasurementType(type)));
                 }
 
             }
         } else {
-            deviceSources = VitalDeviceType.types;
+            for(String  type : VitalDeviceType.types) {
+                deviceSources.add(new VitalDataSource(type,VitalDeviceType.shared.getMeasurementType(type)));
+            }
         }
 
     }
@@ -121,18 +124,17 @@ public class NewVitalDeviceSetUpFragment extends BaseFragment {
         learMoreTv.setText(Utils.fromHtml(getString(R.string.device_learn_more)+" "+clickHere));
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        NewVitalSetUpAdapter vitalDeviceListAdapter = new NewVitalSetUpAdapter(getActivity(), deviceSources);
-        recyclerView.setAdapter(vitalDeviceListAdapter);
-
-        vitalDeviceListAdapter.clickListener = new ClickListener() {
+        NewVitalSetUpAdapter vitalDeviceListAdapter = new NewVitalSetUpAdapter(getActivity(), deviceSources, new NewVitalSetUpAdapter.VitalSetUpInterface() {
             @Override
-            public void onClick(View view, int position) {
-                EventRecorder.recordVitals("SELECT_PAIR_DEVICE", deviceSources.get(position));
+            public void didSelect(VitalDataSource dataSource) {
+                EventRecorder.recordVitals("SELECT_PAIR_DEVICE", dataSource.getDeviceType());
                 Bundle bundle = new Bundle();
-                bundle.putString(ArgumentKeys.DEVICE_TYPE,deviceSources.get(position));
+                bundle.putString(ArgumentKeys.DEVICE_TYPE,dataSource.getDeviceType());
                 onActionCompleteInterface.onCompletionResult(RequestID.OPEN_VITAL_SETUP,true,bundle);
             }
-        };
+        });
+        recyclerView.setAdapter(vitalDeviceListAdapter);
+
 
         learMoreTv.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -40,7 +40,7 @@ public class FoodApiViewModel extends BaseApiViewModel {
 
                         HashMap<String, String> details = new HashMap<>();
                         details.put("status", "success");
-                        details.put("event", "getRecipeItems");
+                        details.put("event", "foodDetail");
                         TeleLogger.shared.log(TeleLogExternalAPI.edamam, details);
 
                     }

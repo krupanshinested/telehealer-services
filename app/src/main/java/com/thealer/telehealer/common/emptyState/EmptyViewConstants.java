@@ -56,6 +56,7 @@ public class EmptyViewConstants {
     public static final String EMPTY_DOCTOR_WITH_BTN = "empty_doctor_with_btn";
     public static final String EMPTY_MEDICAL_ASSISTANT = "empty_ma";
     public static final String EMPTY_MEDICAL_ASSISTANT_WITH_BTN = "empty_ma_with_btn";
+    public static final String EMPTY_BP_TRACK_VALUE = "empty_bp_track_value";
 
     public static final String EMPTY_CALL_LOGS = "empty_call_logs";
     public static final String EMPTY_VITAL_LOGS = "empty_vital_logs";

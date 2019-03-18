@@ -1,6 +1,9 @@
 package com.thealer.telehealer.common.VitalCommon;
 
+import android.support.annotation.Nullable;
+
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.SupportInformation;
 
 import java.util.ArrayList;
 
@@ -272,4 +275,57 @@ public class VitalDeviceType {
 
     }
 
+
+    @Nullable
+    public static SupportInformation getConnectInfo(String type) {
+        switch (type) {
+
+        case VitalsConstant.TYPE_HS4S:
+            return new SupportInformation(0,R.string.stand_with_bare_feet,R.drawable.bare_foot);
+
+        case VitalsConstant.TYPE_HS2 :
+            return new SupportInformation(0,R.string.stand_with_bare_feet,R.drawable.bare_foot);
+
+        case VitalsConstant.TYPE_BG5:
+            return new SupportInformation(0,R.string.bg5_information,R.drawable.ihealth_glucometer_smart);
+
+        case VitalsConstant.TYPE_550BT:
+            return new SupportInformation(0,R.string.track_information,R.drawable.ihealth_bloodpressure_track);
+
+        case VitalsConstant.TYPE_TS28B:
+            return new SupportInformation(0,R.string.ts28_information,R.drawable.ihealth_ts28b);
+
+        case VitalsConstant.TYPE_FDIR_V3:
+            return new SupportInformation(0,R.string.fdir_information,R.drawable.ihealth_fdir);
+        default:
+            return null;
+        }
+    }
+
+        @Nullable
+        public static SupportInformation getMeasureInfo(String type) {
+            switch (type) {
+
+        case VitalsConstant.TYPE_PO3:
+            return new SupportInformation(0,R.string.po3_description,R.drawable.ihealth_air);
+
+        case VitalsConstant.TYPE_HS4S:
+            return new SupportInformation(0,R.string.stand_with_bare_feet,R.drawable.bare_foot);
+
+        case VitalsConstant.TYPE_HS2:
+                return new SupportInformation(0,R.string.stand_with_bare_feet,R.drawable.bare_foot);
+
+        case VitalsConstant.TYPE_550BT:
+            return new SupportInformation(0,R.string.track_measurement_info,R.drawable.ihealth_bloodpressure_track);
+
+        case VitalsConstant.TYPE_TS28B:
+            return new SupportInformation(0,R.string.ts28_measure_description,R.drawable.ihealth_ts28b);
+
+        case VitalsConstant.TYPE_FDIR_V3:
+            return new SupportInformation(0,R.string.fdir_measure_description,R.drawable.ihealth_fdir);
+
+        default:
+            return null;
+        }
+    }
 }
