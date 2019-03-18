@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -97,6 +98,7 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
 
     private int currentState;
     private Boolean isNeedToTrigger = false;
+    private Boolean isOpeningDirectlyFromPairing = false;
 
     private String finalBPValue = "",finalHeartRateValue = "";
 
@@ -114,6 +116,7 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
         if (getArguments() != null) {
             vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
             isNeedToTrigger = getArguments().getBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY);
+            isOpeningDirectlyFromPairing = getArguments().getBoolean(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING);
         }
 
         if (savedInstanceState != null) {
@@ -149,8 +152,9 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
 
         assignVitalListener();
 
-        if (toolBarInterface != null)
+        if (toolBarInterface != null) {
             toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
+        }
 
         if (onViewChangeInterface != null) {
             onViewChangeInterface.hideOrShowClose(false);
@@ -232,9 +236,18 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
         save_bt.setOnClickListener(this);
         remeasure_bt.setOnClickListener(this);
 
+        graph.setTouchEnabled(true);
+        graph.getDescription().setEnabled(false);
+        graph.setDrawGridBackground(false);
         graph.getXAxis().setEnabled(false);
         graph.getAxisLeft().setEnabled(false);
         graph.getAxisRight().setEnabled(false);
+        graph.getXAxis().setDrawGridLines(false);
+        graph.getAxisLeft().setDrawGridLines(false);
+        graph.getAxisRight().setDrawGridLines(false);
+
+        Legend legend = graph.getLegend();
+        legend.setEnabled(false);
 
         Easing.EasingFunction easingFunction = new Easing.EasingFunction() {
             @Override
@@ -281,17 +294,17 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
         switch (currentState) {
             case MeasureState.notStarted:
                 graph.setVisibility(View.GONE);
-                result_lay.setVisibility(View.GONE);
-                spo2_value.setText("0");
-                bp_value.setText("0");
+                result_lay.setVisibility(View.VISIBLE);
+                spo2_value.setText("-");
+                bp_value.setText("-");
                 message_tv.setText("");
                 save_bt.setText(getString(R.string.START));
                 break;
             case MeasureState.started:
                 graph.setVisibility(View.VISIBLE);
                 message_tv.setText("");
-                spo2_value.setText("0");
-                bp_value.setText("0");
+                spo2_value.setText("-");
+                bp_value.setText("-");
                 result_lay.setVisibility(View.VISIBLE);
                 save_bt.setText(getString(R.string.STOP));
                 break;
@@ -360,6 +373,9 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
     }
 
     private void setData(Double value) {
+        if (value < 1.0) {
+            return;
+        }
 
         entries.add(new Entry(entries.size(), value.intValue(), getResources().getDrawable(R.drawable.app_icon)));
 
@@ -368,50 +384,25 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
         if (graph.getData() != null &&
                 graph.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) graph.getData().getDataSetByIndex(0);
-            set1.setValues(entries);
+            //set1.setValues(entries);
             set1.notifyDataSetChanged();
+
+            configureLineDataSet(set1);
             graph.getData().notifyDataChanged();
             graph.notifyDataSetChanged();
+            graph.setPinchZoom(false);
 
-            graph.moveViewToAnimated(graph.getData().getEntryCount(),0, YAxis.AxisDependency.LEFT,1000);
+            graph.setScaleEnabled(false);
+            graph.setVisibleXRange(0, 6);
+            int count = graph.getData().getEntryCount();
 
-
+            //graph.moveViewToAnimated(count,0, YAxis.AxisDependency.LEFT,1000);
+            graph.moveViewTo(graph.getData().getEntryCount(),0,YAxis.AxisDependency.LEFT);
         } else {
-            // create a dataset and give it a type
-            set1 = new LineDataSet(entries, "DataSet 1");
+            set1 = new LineDataSet(entries, "");
 
-            set1.setDrawIcons(false);
+            configureLineDataSet(set1);
 
-            // draw dashed line
-            set1.enableDashedLine(10f, 5f, 0f);
-
-            // black lines and points
-            set1.setColor(Color.BLACK);
-            set1.setCircleColor(Color.BLACK);
-
-            // line thickness and point size
-            set1.setLineWidth(1f);
-            set1.setCircleRadius(3f);
-
-            // draw points as solid circles
-            set1.setDrawCircleHole(false);
-
-            set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-            set1.setCubicIntensity(0.2f);
-
-            // customize legend entry
-            set1.setFormLineWidth(1f);
-            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-            set1.setFormSize(15.f);
-
-            // text size of values
-            set1.setValueTextSize(9f);
-
-            // draw selection line as dashed
-            set1.enableDashedHighlightLine(10f, 5f, 0f);
-
-            // set the filled area
-            set1.setDrawFilled(true);
             set1.setFillFormatter(new IFillFormatter() {
                 @Override
                 public float getFillLinePosition(ILineDataSet dataSet, LineDataProvider dataProvider) {
@@ -419,24 +410,28 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
                 }
             });
 
-            // set color of filled area
-                // drawables only supported on api level 18 and above
-            //Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.flag_albania);
-           // set1.setFillDrawable(drawable);
-            set1.setFillColor(Color.TRANSPARENT);
-
             ArrayList<ILineDataSet> dataSets = new ArrayList<>();
             dataSets.add(set1); // add the data sets
-
-            // create a data object with the data sets
             LineData data = new LineData(dataSets);
-
-            // set data
             graph.setData(data);
-
             graph.moveViewToX(data.getEntryCount());
-
         }
+    }
+
+    private void configureLineDataSet(LineDataSet lineDataSet) {
+        lineDataSet.setCircleColor(getResources().getColor(R.color.app_gradient_start));
+        lineDataSet.setColor(getResources().getColor(R.color.app_gradient_start));
+        lineDataSet.setLineWidth(2f);
+        lineDataSet.setCircleRadius(4f);
+        lineDataSet.setDrawValues(false);
+        lineDataSet.setDrawCircleHole(false);
+        lineDataSet.setDrawHighlightIndicators(false);
+        lineDataSet.setDrawIcons(false);
+        lineDataSet.setLineWidth(1f);
+        lineDataSet.setCircleRadius(1f);
+        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        lineDataSet.setCubicIntensity(0.2f);
+        lineDataSet.setValueTextSize(9f);
     }
 
     @Override
@@ -535,8 +530,8 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
 
     @Override
     public void didFinishBPMesure(String deviceType,Double systolicValue, Double diastolicValue, Double heartRate) {
-        finalBPValue = systolicValue + "/" + diastolicValue;
-        finalHeartRateValue = heartRate + "";
+        finalBPValue =  systolicValue.intValue() + "/" + diastolicValue.intValue();
+        finalHeartRateValue = heartRate.intValue() + "";
 
         if (isPresentedInsideCallActivity()) {
             if (UserType.isUserPatient() && vitalManagerInstance != null) {
@@ -585,7 +580,9 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
     public void didConnected(String type, String serailNumber) {
         Log.e("bp measure", "state changed "+serailNumber);
         fetchBattery();
-        startMeasure();
+        if (isNeedToTrigger && currentState == MeasureState.notStarted) {
+            startMeasure();
+        }
     }
 
     @Override
@@ -597,7 +594,11 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (getActivity() != null) {
-                                getActivity().onBackPressed();
+                                if (isOpeningDirectlyFromPairing) {
+                                    getActivity().finish();
+                                } else {
+                                    getActivity().onBackPressed();
+                                }
                             }
                         }
                     }, null);
@@ -605,7 +606,11 @@ public class BPMeasureFragment extends BaseFragment implements VitalPairInterfac
 
                 } else {
                     if (getActivity() != null) {
-                        getActivity().onBackPressed();
+                        if (isOpeningDirectlyFromPairing) {
+                            getActivity().finish();
+                        } else {
+                            getActivity().onBackPressed();
+                        }
                     }
                 }
             } else {

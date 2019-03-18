@@ -7,4 +7,6 @@ public class BaseAdapterObjectModel {
     public String getAdapterTitle() {
         return "";
     }
+
+    public Object getComparableObject() { return null; };
 }

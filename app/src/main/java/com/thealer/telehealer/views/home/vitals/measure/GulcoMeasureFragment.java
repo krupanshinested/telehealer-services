@@ -70,6 +70,7 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
     private String lastError;
     private String finalGulcoValue = "";
     private VitalsApiViewModel vitalsApiViewModel;
+    private Boolean isOpeningDirectlyFromPairing = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,7 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
 
         if (getArguments() != null) {
             vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
+            isOpeningDirectlyFromPairing = getArguments().getBoolean(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING);
         }
 
         if (savedInstanceState != null) {
@@ -114,7 +116,6 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
 
         vitalManagerInstance.getInstance().setListener(this);
         vitalManagerInstance.getInstance().setGulcoListener(this);
-        toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
 
         onViewChangeInterface.hideOrShowClose(false);
         onViewChangeInterface.hideOrShowBackIv(true);
@@ -134,7 +135,10 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
         vitalManagerInstance.getInstance().setBatteryFetcherListener(this);
         fetchBattery();
 
-        toolBarInterface.updateSubTitle("",View.GONE);
+        if (toolBarInterface != null) {
+            toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
+            toolBarInterface.updateSubTitle("", View.GONE);
+        }
     }
 
     @Override
@@ -328,7 +332,9 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
     public void didCapture(String result) {
         setCurrentState(MeasureState.capturedCodeString);
         vitalManagerInstance.getInstance().updateStripBottleId(vitalDevice.getType(),vitalDevice.getDeviceId(),result);
-        startMeasure();
+        if (currentState == MeasureState.notStarted) {
+            startMeasure();
+        }
     }
 
     //GulcoMeasureInterface methods
@@ -416,7 +422,11 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (getActivity() != null) {
-                            getActivity().onBackPressed();
+                            if (isOpeningDirectlyFromPairing) {
+                                getActivity().finish();
+                            } else {
+                                getActivity().onBackPressed();
+                            }
                         }
                     }
                 }, null);
@@ -424,7 +434,11 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
 
             } else {
                 if (getActivity() != null) {
-                    getActivity().onBackPressed();
+                    if (isOpeningDirectlyFromPairing) {
+                        getActivity().finish();
+                    } else {
+                        getActivity().onBackPressed();
+                    }
                 }
             }
         }

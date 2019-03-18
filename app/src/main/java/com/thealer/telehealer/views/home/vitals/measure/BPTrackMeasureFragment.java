@@ -30,6 +30,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
@@ -42,6 +43,8 @@ import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFet
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
+import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
+import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.call.CallActivity;
@@ -75,7 +78,7 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
 
     private VitalDevice vitalDevice;
 
-    private RecyclerView recyclerView;
+    private CustomRecyclerView recyclerView;
     private ImageView otherOptionView;
     private TextView message_tv,title_tv;
     private CustomButton sync_bt;
@@ -91,6 +94,7 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
     public CallVitalPagerInterFace callVitalPagerInterFace;
 
     private boolean isModelLoadInitially,isDataFetched;
+    private Boolean isOpeningDirectlyFromPairing = false;
 
     private ArrayList<BPTrack> selectedList = new ArrayList<>();
 
@@ -106,6 +110,7 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
         if (getArguments() != null) {
             vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
             isNeedToTrigger = getArguments().getBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY);
+            isOpeningDirectlyFromPairing = getArguments().getBoolean(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING);
         }
 
         if (savedInstanceState != null) {
@@ -353,8 +358,9 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
 
             TrackBPAdapter adapter = new TrackBPAdapter(getActivity(),tracks,selectedList);
             this.adapter = adapter;
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerView.setAdapter(adapter);
+            recyclerView.getRecyclerView().setLayoutManager(new LinearLayoutManager(getActivity()));
+            recyclerView.getRecyclerView().setAdapter(adapter);
+            recyclerView.setEmptyState(EmptyViewConstants.EMPTY_BP_TRACK_VALUE);
         }
 
         updateSyncButtonTitle();
@@ -396,7 +402,11 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (getActivity() != null) {
-                            getActivity().onBackPressed();
+                            if (isOpeningDirectlyFromPairing) {
+                                getActivity().finish();
+                            } else {
+                                getActivity().onBackPressed();
+                            }
                         }
                     }
                 }, null);
