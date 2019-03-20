@@ -24,15 +24,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
-import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.pharmacy.GetPharmaciesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.pharmacy.SendFaxRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
-import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.LocationTracker;
@@ -41,11 +39,11 @@ import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
-import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 
 /**
  * Created by Aswin on 30,November,2018
@@ -57,14 +55,12 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
 
     private PharmacyListAdapter pharmacyListAdapter;
     private GetPharmaciesApiResponseModel getPharmaciesApiResponseModel;
+    private GetPharmaciesApiResponseModel.ResultsBean selectedPharmacy = null;
     private OrdersApiViewModel ordersApiViewModel;
-    private OrdersCreateApiViewModel ordersCreateApiViewModel;
-    private CreatePrescriptionResponseModel createPrescriptionResponseModel;
     private CreatePrescriptionRequestModel createPrescriptionRequestModel;
     private OnCloseActionInterface onCloseActionInterface;
 
     private int nextPage = 1;
-    private int selectedPosition = -1;
     private boolean isFromDetailView;
     private int referralId;
     private AppBarLayout appbarLayout;
@@ -73,7 +69,8 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     private Toolbar toolbar;
     private boolean isLocationRequested;
     private LocationTracker locationTracker;
-    private boolean isProposerRequested;
+    private boolean isProposerRequested, isSaveAndFax = false;
+    private String userName;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -88,38 +85,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
         super.onAttach(context);
 
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-
         ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
-        ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
-
-        ordersCreateApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel instanceof CreatePrescriptionResponseModel) {
-                        createPrescriptionResponseModel = (CreatePrescriptionResponseModel) baseApiResponseModel;
-                        sendFax(createPrescriptionResponseModel.getReferral_id());
-                    } else {
-                        if (baseApiResponseModel.isSuccess()) {
-                            sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(),
-                                    getString(R.string.success),
-                                    "Your prescription order for has been posted successfully.");
-
-                        }
-                    }
-                }
-            }
-        });
-
-        ordersCreateApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
-            @Override
-            public void onChanged(@Nullable ErrorModel errorModel) {
-                if (errorModel != null) {
-                    sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure),
-                            "Your prescription order is not posted successfully.");
-                }
-            }
-        });
 
         ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -173,7 +139,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
                 nextPage = 1;
                 getPharmacies(s.toString(), null, true);
                 pharmacyListAdapter.removeSelected();
-                selectedPosition = -1;
+                selectedPharmacy = null;
                 enableOrDisableNext();
             }
         });
@@ -197,6 +163,8 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
                 referralId = getArguments().getInt(ArgumentKeys.PRESCRIPTION_ID);
             } else {
                 createPrescriptionRequestModel = (CreatePrescriptionRequestModel) getArguments().getSerializable(ArgumentKeys.PRESCRIPTION_DATA);
+                userName = getArguments().getString(ArgumentKeys.USER_NAME);
+                isSaveAndFax = true;
             }
         }
 
@@ -205,7 +173,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
         pharmacyListAdapter = new PharmacyListAdapter(getActivity(), new OnListItemSelectInterface() {
             @Override
             public void onListItemSelected(int position, Bundle bundle) {
-                selectedPosition = position;
+                selectedPharmacy = (GetPharmaciesApiResponseModel.ResultsBean) bundle.getSerializable(ArgumentKeys.SELECTED_MENU_ITEM);
                 enableOrDisableNext();
             }
         });
@@ -227,7 +195,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     private void enableOrDisableNext() {
         boolean enable = false;
 
-        if (selectedPosition >= 0) {
+        if (selectedPharmacy != null) {
             enable = true;
         }
 
@@ -248,7 +216,12 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.next_btn:
-                showQuickLogin();
+                Utils.hideKeyboard(getActivity());
+                if (isSaveAndFax) {
+                    showQuickLogin();
+                } else {
+                    sendFax(referralId, true);
+                }
                 break;
             case R.id.back_iv:
                 onCloseActionInterface.onClose(false);
@@ -260,19 +233,15 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter(getString(R.string.proposer_broadcastReceiver)));
-        if (authResponse == ArgumentKeys.AUTH_SUCCESS) {
-            showSuccessView();
-            if (!isFromDetailView) {
-                createPrescription();
-            } else {
-                sendFax(referralId);
-            }
-            authResponse = ArgumentKeys.AUTH_NONE;
-        }
 
         if (!isLocationRequested) {
             requestPharmacies();
         }
+    }
+
+    @Override
+    public void onAuthenticated() {
+        createPrescription(createPrescriptionRequestModel, userName, true);
     }
 
     private void requestPharmacies() {
@@ -302,20 +271,13 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
     }
 
-    private void sendFax(int referralId) {
-        ordersCreateApiViewModel.sendFax(new SendFaxRequestModel(getPharmaciesApiResponseModel.getResults().get(selectedPosition).getFax(),
-                String.valueOf(referralId),
-                new SendFaxRequestModel.DetailBean(getPharmaciesApiResponseModel.getResults().get(selectedPosition))));
-    }
-
-    private void createPrescription() {
-        ordersCreateApiViewModel.createPrescription(createPrescriptionRequestModel);
-    }
-
-    private void showSuccessView() {
-        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-        successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
-        successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+    @Override
+    public void sendFax(int referral_id, boolean isShowProgress) {
+        super.sendFax(referral_id, isShowProgress);
+        Log.e("aswin", "sendFax: " + new Gson().toJson(selectedPharmacy));
+        ordersCreateApiViewModel.sendFax(new SendFaxRequestModel(selectedPharmacy.getFax(),
+                String.valueOf(referral_id),
+                new SendFaxRequestModel.DetailBean(selectedPharmacy)), isShowProgress);
     }
 
     @Override
@@ -325,7 +287,8 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW) {
                 if (!isFromDetailView) {
-                    getActivity().finish();
+                    if (getActivity() != null)
+                        getActivity().finish();
                 } else {
                     onCloseActionInterface.onClose(false);
                     getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);

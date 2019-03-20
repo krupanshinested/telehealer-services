@@ -1,10 +1,12 @@
 package com.thealer.telehealer.views.home.orders;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCommonResultResponseModel;
@@ -129,7 +132,8 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
             OrdersCommonResultResponseModel ordersCommonResultResponseModel = ordersDetailListAdapterModel.getCommonResultResponseModel();
 
-            if (userDetailHashMap.size() >= childPosition) {
+            if (userDetailHashMap.containsKey(ordersCommonResultResponseModel.getDoctor().getUser_guid()) &&
+                    userDetailHashMap.containsKey(ordersCommonResultResponseModel.getPatient().getUser_guid())) {
 
                 HashMap<String, CommonUserApiResponseModel> detailMap = new HashMap<>();
 
@@ -160,19 +164,18 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
             int statusImage = 0;
 
             if (ordersCommonResultResponseModel.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
+
                 statusImage = OrderStatus.getStatusImage(ordersCommonResultResponseModel.getStatus());
+
+            } else {
+                if (ordersCommonResultResponseModel.getFaxes() != null &&
+                        ordersCommonResultResponseModel.getFaxes().size() > 0) {
+                    statusImage = OrderStatus.getStatusImage(ordersCommonResultResponseModel.getFaxes().get(0).getStatus());
+                }
             }
 
             if (ordersCommonResultResponseModel instanceof OrdersPrescriptionApiResponseModel.OrdersResultBean) {
-                if (!ordersCommonResultResponseModel.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
 
-                    OrdersPrescriptionApiResponseModel.OrdersResultBean resultBean = (OrdersPrescriptionApiResponseModel.OrdersResultBean) ordersCommonResultResponseModel;
-
-                    if (resultBean.getFaxes().size() > 0) {
-                        statusImage = OrderStatus.getStatusImage(resultBean.getFaxes().get(0).getStatus());
-                    }
-
-                }
                 fragment = new PrescriptionDetailViewFragment();
 
             } else if (ordersCommonResultResponseModel instanceof OrdersLabApiResponseModel.LabsResponseBean) {
@@ -184,13 +187,21 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                 fragment = new SpecialistDetailViewFragment();
 
             } else if (ordersCommonResultResponseModel instanceof GetRadiologyResponseModel.ResultBean) {
+
                 fragment = new RadiologyDetailViewFragment();
+
             } else if (ordersCommonResultResponseModel instanceof MiscellaneousApiResponseModel.ResultBean) {
+
                 fragment = new MiscellaneousDetailViewFragment();
+
             }
 
-            if (statusImage != 0)
+            if (statusImage != 0) {
                 statusIv.setImageDrawable(context.getDrawable(statusImage));
+                if (statusImage == R.drawable.ic_status_pending) {
+                    statusIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.app_gradient_start)));
+                }
+            }
 
         } else {
             String key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getDoctor().getUser_guid();

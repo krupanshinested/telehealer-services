@@ -45,13 +45,34 @@
                 app:view_label="@string/orders_referrals" />
 
             <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/reason_ocv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/referral_ocv"
                 app:sub_title_visible="false"
-                app:view_label="@string/reason"
-                android:id="@+id/reason_ocv"/>
+                app:view_label="@string/reason" />
 
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/fax_number_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reason_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/fax_number" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/fax_status_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fax_number_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/fax_status" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
 

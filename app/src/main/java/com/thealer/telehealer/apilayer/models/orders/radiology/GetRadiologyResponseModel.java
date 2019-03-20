@@ -25,7 +25,6 @@ public class GetRadiologyResponseModel extends OrdersApiResponseModel {
     public static class ResultBean extends OrdersCommonResultResponseModel {
 
         private DetailBean detail;
-        private List<FaxesBean> faxes;
 
         public DetailBean getDetail() {
             return detail;
@@ -33,14 +32,6 @@ public class GetRadiologyResponseModel extends OrdersApiResponseModel {
 
         public void setDetail(DetailBean detail) {
             this.detail = detail;
-        }
-
-        public List<FaxesBean> getFaxes() {
-            return faxes;
-        }
-
-        public void setFaxes(List<FaxesBean> faxes) {
-            this.faxes = faxes;
         }
 
         public static class DetailBean implements Serializable {

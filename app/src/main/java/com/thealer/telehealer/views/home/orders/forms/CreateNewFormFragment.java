@@ -268,15 +268,11 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (authResponse == ArgumentKeys.AUTH_SUCCESS) {
-            SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-            successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
-            successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
-            assignForms();
-            authResponse = ArgumentKeys.AUTH_NONE;
-        }
+    public void onAuthenticated() {
+        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+        successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+        successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+        assignForms();
     }
 
     private void assignForms() {

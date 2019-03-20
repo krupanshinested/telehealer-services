@@ -33,6 +33,7 @@ import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
+import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,8 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
     private IcdCodeApiViewModel icdCodeApiViewModel;
     private LabTestListAdapter labTestListAdapter;
     private Map<String, String> icdCodeList = new HashMap<>();
+    private OrdersCustomView faxStatusOcv;
+    private OrdersCustomView faxNumberOcv;
 
     @Override
     public void onAttach(Context context) {
@@ -119,18 +122,22 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
         cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
         cancelWatermarkTv = (TextView) view.findViewById(R.id.cancel_watermark_tv);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        faxStatusOcv = (OrdersCustomView) view.findViewById(R.id.fax_status_ocv);
+        faxNumberOcv = (OrdersCustomView) view.findViewById(R.id.fax_number_ocv);
 
         toolbar.inflateMenu(R.menu.orders_detail_menu);
-
+        if (UserType.isUserDoctor()) {
+            toolbar.getMenu().findItem(R.id.send_fax_menu).setVisible(true);
+        }
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Bundle bundle = new Bundle();
+                Bundle bundle;
                 switch (menuItem.getItemId()) {
                     case R.id.print_menu:
 
                         PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
-
+                        bundle = new Bundle();
                         bundle.putString(ArgumentKeys.PDF_TITLE, labsResponseBean.getName());
                         bundle.putString(ArgumentKeys.PDF_URL, labsResponseBean.getPath());
                         bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
@@ -139,7 +146,13 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
 
                         showSubFragmentInterface.onShowFragment(pdfViewerFragment);
                         break;
-
+                    case R.id.send_fax_menu:
+                        SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
+                        bundle = new Bundle();
+                        bundle.putInt(ArgumentKeys.ORDER_ID, labsResponseBean.getReferral_id());
+                        sendFaxByNumberFragment.setArguments(bundle);
+                        showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
+                        break;
                 }
                 return true;
             }
@@ -178,6 +191,21 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
                     cancelTv.setVisibility(View.GONE);
                     cancelWatermarkTv.setVisibility(View.VISIBLE);
                     toolbar.getMenu().clear();
+                }
+                if (labsResponseBean.getStatus().equals(OrderStatus.STATUS_FAILED) || labsResponseBean.getFaxes().size() > 0) {
+                    toolbar.getMenu().removeItem(R.id.send_fax_menu);
+                }
+
+                if (labsResponseBean.getFaxes() != null &&
+                        labsResponseBean.getFaxes().size() > 0) {
+                    faxNumberOcv.setTitleTv(labsResponseBean.getFaxes().get(0).getFax_number());
+                    faxStatusOcv.setTitleTv(labsResponseBean.getFaxes().get(0).getStatus());
+
+                    faxNumberOcv.setVisibility(View.VISIBLE);
+                    faxStatusOcv.setVisibility(View.VISIBLE);
+                } else {
+                    faxNumberOcv.setVisibility(View.GONE);
+                    faxStatusOcv.setVisibility(View.GONE);
                 }
 
                 dateOcv.setTitleTv(Utils.getDayMonthYear(labsResponseBean.getCreated_at()));
