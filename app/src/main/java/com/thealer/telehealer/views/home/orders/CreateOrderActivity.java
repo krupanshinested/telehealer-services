@@ -170,7 +170,11 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClose(boolean isRefreshRequired) {
-        onBackPressed();
+        if (isRefreshRequired) {
+            finish();
+        } else {
+            onBackPressed();
+        }
     }
 
     @Override

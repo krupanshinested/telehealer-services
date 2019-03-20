@@ -4,6 +4,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Aswin on 22,November,2018
@@ -22,6 +23,16 @@ public class OrdersCommonResultResponseModel implements Serializable {
     private DoctorBean doctor;
     private PatientBean patient;
     private MedicalAssistantBean medical_assistant;
+    private List<FaxesBean> faxes;
+
+    public List<FaxesBean> getFaxes() {
+        return faxes;
+    }
+
+    public void setFaxes(List<FaxesBean> faxes) {
+        this.faxes = faxes;
+    }
+
 
     public int getReferral_id() {
         return referral_id;

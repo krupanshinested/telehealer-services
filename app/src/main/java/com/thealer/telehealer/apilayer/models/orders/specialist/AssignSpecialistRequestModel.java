@@ -2,6 +2,8 @@ package com.thealer.telehealer.apilayer.models.orders.specialist;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 
+import java.io.Serializable;
+
 /**
  * Created by Aswin on 29,November,2018
  */
@@ -40,7 +42,7 @@ public class AssignSpecialistRequestModel extends BaseApiResponseModel {
         this.detail = detail;
     }
 
-    public static class DetailBean {
+    public static class DetailBean implements Serializable {
 
         private String description;
         private String specialist;
@@ -76,7 +78,7 @@ public class AssignSpecialistRequestModel extends BaseApiResponseModel {
             this.copy_to = copy_to;
         }
 
-        public static class CopyToBean {
+        public static class CopyToBean implements Serializable {
 
             private String name;
             private String address;

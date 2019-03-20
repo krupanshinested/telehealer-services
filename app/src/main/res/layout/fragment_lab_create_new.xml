@@ -7,7 +7,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/send_btn"
+        app:layout_constraintBottom_toTopOf="@+id/save_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -85,10 +85,22 @@
     </android.support.v4.widget.NestedScrollView>
 
     <Button
-        android:id="@+id/send_btn"
+        android:id="@+id/save_btn"
         style="@style/button_app_background_white_text"
-        android:text="@string/send"
+        android:layout_width="0dp"
+        android:layout_marginRight="1dp"
+        android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/save_fax_btn"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/save_fax_btn"
+        style="@style/button_app_background_white_text"
+        android:layout_width="0dp"
+        android:layout_marginLeft="1dp"
+        android:text="@string/save_fax"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/save_btn" />
 </android.support.constraint.ConstraintLayout>

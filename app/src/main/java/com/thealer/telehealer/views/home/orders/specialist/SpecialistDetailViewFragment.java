@@ -23,7 +23,6 @@ import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponse
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -31,6 +30,7 @@ import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
+import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
 /**
  * Created by Aswin on 26,November,2018
@@ -53,6 +53,8 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
     private OrdersSpecialistApiResponseModel.ResultBean resultBean;
     private ChangeTitleInterface changeTitleInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
+    private OrdersCustomView faxNumberOcv;
+    private OrdersCustomView faxStatusOcv;
 
     @Override
     public void onAttach(Context context) {
@@ -98,9 +100,13 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
         cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
         cancelWatermarkTv = (TextView) view.findViewById(R.id.cancel_watermark_tv);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        faxNumberOcv = (OrdersCustomView) view.findViewById(R.id.fax_number_ocv);
+        faxStatusOcv = (OrdersCustomView) view.findViewById(R.id.fax_status_ocv);
 
         toolbar.inflateMenu(R.menu.orders_detail_menu);
-
+        if (UserType.isUserDoctor()) {
+            toolbar.getMenu().findItem(R.id.send_fax_menu).setVisible(true);
+        }
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -117,6 +123,13 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
                         pdfViewerFragment.setArguments(bundle);
 
                         showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+                        break;
+                    case R.id.send_fax_menu:
+                        SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
+                        bundle = new Bundle();
+                        bundle.putInt(ArgumentKeys.ORDER_ID, resultBean.getReferral_id());
+                        sendFaxByNumberFragment.setArguments(bundle);
+                        showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                         break;
 
                 }
@@ -139,6 +152,21 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
                     cancelWatermarkTv.setVisibility(View.VISIBLE);
                     toolbar.getMenu().clear();
                 }
+                if (resultBean.getStatus().equals(OrderStatus.STATUS_FAILED) || resultBean.getFaxes().size() > 0) {
+                    toolbar.getMenu().removeItem(R.id.send_fax_menu);
+                }
+
+                if (resultBean.getFaxes() != null &&
+                        resultBean.getFaxes().size() > 0) {
+                    faxNumberOcv.setTitleTv(resultBean.getFaxes().get(0).getFax_number());
+                    faxStatusOcv.setTitleTv(resultBean.getFaxes().get(0).getStatus());
+
+                    faxNumberOcv.setVisibility(View.VISIBLE);
+                    faxStatusOcv.setVisibility(View.VISIBLE);
+                } else {
+                    faxNumberOcv.setVisibility(View.GONE);
+                    faxStatusOcv.setVisibility(View.GONE);
+                }
 
                 if (resultBean.getDetail() != null) {
                     reasonOcv.setTitleTv(resultBean.getDetail().getDescription());
@@ -146,7 +174,7 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
                     referralOcv.setTitleTv(resultBean.getDetail().getCopy_to().getName());
                     referralOcv.setSubtitleTv(resultBean.getDetail().getCopy_to().getAddress());
 
-                    if (resultBean.getUserDetailMap() != null) {
+                    if (resultBean.getUserDetailMap() != null && resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()) != null) {
                         referredOcv.setTitleTv(resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()).getDoctorDisplayName());
                         referredOcv.setSubtitleTv(resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()).getDoctorSpecialist());
 

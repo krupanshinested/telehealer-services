@@ -2,12 +2,13 @@ package com.thealer.telehealer.apilayer.models.orders.radiology;
 
 import com.thealer.telehealer.views.home.orders.radiology.RadiologyListModel;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Aswin on 12,December,2018
  */
-public class CreateRadiologyRequestModel {
+public class CreateRadiologyRequestModel implements Serializable {
 
     private String user_guid;
     private String name = "X-Ray Referral";
@@ -45,7 +46,7 @@ public class CreateRadiologyRequestModel {
         this.detail = detail;
     }
 
-    public static class DetailBean {
+    public static class DetailBean implements Serializable{
 
         private String comment;
         private String requested_date;
@@ -94,7 +95,7 @@ public class CreateRadiologyRequestModel {
             this.labs = labs;
         }
 
-        public static class CopyToBean {
+        public static class CopyToBean implements Serializable{
 
             private String name;
             private String address;
@@ -144,7 +145,7 @@ public class CreateRadiologyRequestModel {
             }
         }
 
-        public static class LabsBean {
+        public static class LabsBean implements Serializable{
 
             private boolean stat;
             private List<String> ICD10_codes;

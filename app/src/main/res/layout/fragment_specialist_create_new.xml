@@ -8,24 +8,24 @@
         android:id="@+id/patient_ocv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:view_label="@string/patient_name"
-        app:title_text="@string/Click_here_to_select_patient"
-        app:sub_title_visible="false"
         app:arrow_visible="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:sub_title_visible="false"
+        app:title_text="@string/Click_here_to_select_patient"
+        app:view_label="@string/patient_name" />
 
     <com.thealer.telehealer.views.home.orders.OrdersCustomView
         android:id="@+id/specialist_ocv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:view_label="@string/specialist_name"
-        app:sub_title_visible="false"
         app:arrow_visible="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/patient_ocv" />
+        app:layout_constraintTop_toBottomOf="@+id/patient_ocv"
+        app:sub_title_visible="false"
+        app:view_label="@string/specialist_name" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/instruction_til"
@@ -41,16 +41,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="INSTRUCTIONS"
-            android:maxLines="1"
             android:imeOptions="actionDone"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:maxLines="1" />
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/send_btn"
+        android:id="@+id/save_btn"
         style="@style/button_app_background_white_text"
-        android:text="@string/send"
+        android:layout_width="0dp"
+        android:layout_marginRight="1dp"
+        android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/save_fax_btn"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/save_fax_btn"
+        style="@style/button_app_background_white_text"
+        android:layout_width="0dp"
+        android:layout_marginLeft="1dp"
+        android:text="@string/save_fax"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/save_btn" />
 </android.support.constraint.ConstraintLayout>
