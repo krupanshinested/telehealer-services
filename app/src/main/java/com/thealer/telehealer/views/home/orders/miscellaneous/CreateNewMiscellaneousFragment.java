@@ -177,12 +177,8 @@ public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implement
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (authResponse == ArgumentKeys.AUTH_SUCCESS) {
-            createMiscellaneousOrder();
-            authResponse = ArgumentKeys.AUTH_NONE;
-        }
+    public void onAuthenticated() {
+        createMiscellaneousOrder();
     }
 
     private void createMiscellaneousOrder() {

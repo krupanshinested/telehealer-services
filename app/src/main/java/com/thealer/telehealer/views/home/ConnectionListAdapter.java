@@ -85,7 +85,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             viewHolder.actionIv.setImageTintList(null);
         } else if (apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_OPEN) ||
                 apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_PENDING)) {
-            viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_access_time_24dp));
+            viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_status_pending));
             viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.color_green_light)));
         } else {
             viewHolder.actionIv.setVisibility(View.GONE);

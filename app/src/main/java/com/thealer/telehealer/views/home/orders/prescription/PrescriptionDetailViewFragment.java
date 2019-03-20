@@ -25,7 +25,6 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
@@ -58,6 +57,7 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
     private ShowSubFragmentInterface showSubFragmentInterface;
     private TextView cancelWatermarkTv;
     private Toolbar toolbar;
+    private String userName;
 
     @Override
     public void onAttach(Context context) {
@@ -124,6 +124,7 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
                         bundle.putInt(ArgumentKeys.PRESCRIPTION_ID, ordersResultBean.getReferral_id());
                         bundle.putBoolean(ArgumentKeys.IS_FROM_PRESCRIPTION_DETAIL, true);
                         bundle.putString(ArgumentKeys.VIEW_TITLE, getString(R.string.choose_pharmacy));
+                        bundle.putString(ArgumentKeys.USER_NAME, userName);
 
                         SelectPharmacyFragment selectPharmacyFragment = new SelectPharmacyFragment();
                         selectPharmacyFragment.setArguments(bundle);
@@ -164,18 +165,23 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
                     if (UserType.isUserPatient()) {
                         patientOcv.setTitleTv(ordersResultBean.getUserDetailMap().get(ordersResultBean.getDoctor().getUser_guid()).getDoctorDisplayName());
                     } else {
-                        patientOcv.setTitleTv(ordersResultBean.getUserDetailMap().get(ordersResultBean.getPatient().getUser_guid()).getUserDisplay_name());
+                        userName = ordersResultBean.getUserDetailMap().get(ordersResultBean.getPatient().getUser_guid()).getUserDisplay_name();
+                        patientOcv.setTitleTv(userName);
                     }
                 }
+
+                orderStatusOcv.setTitleTv(ordersResultBean.getStatus());
 
                 if (ordersResultBean.getFaxes().size() > 0) {
                     if (ordersResultBean.getFaxes().get(0).getDetail() != null &&
                             ordersResultBean.getFaxes().get(0).getDetail().getPharmacy() != null) {
                         pharmacyOcv.setTitleTv(ordersResultBean.getFaxes().get(0).getDetail().getPharmacy().getCompany());
+
+                        orderStatusOcv.setLabelTv(getString(R.string.fax_status));
+                        orderStatusOcv.setTitleTv(ordersResultBean.getFaxes().get(0).getStatus());
                     }
                 }
 
-                orderStatusOcv.setTitleTv(ordersResultBean.getStatus());
 
                 if (UserType.isUserPatient()) {
                     cancelTv.setVisibility(View.GONE);

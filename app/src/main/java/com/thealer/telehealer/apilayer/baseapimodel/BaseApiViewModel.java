@@ -398,6 +398,9 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         break;
                     case 403:
                         errorModelLiveData.setValue(errorModel);
+                        if (isRefreshToken){
+                            goToSigninActivity();
+                        }
                         break;
                     case 500:
                         //If server is down, then will get this error code,here we are checking wheteher there is an active
