@@ -2,10 +2,12 @@ package com.thealer.telehealer.apilayer.models.orders.lab;
 
 import android.arch.lifecycle.ViewModel;
 
+import java.io.Serializable;
+
 /**
  * Created by Aswin on 01,December,2018
  */
-public class CreateTestApiRequestModel extends ViewModel {
+public class CreateTestApiRequestModel extends ViewModel implements Serializable {
 
     private String user_guid;
     private String name;

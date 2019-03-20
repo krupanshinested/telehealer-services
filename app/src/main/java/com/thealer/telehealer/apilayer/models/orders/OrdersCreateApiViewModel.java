@@ -108,14 +108,14 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void sendFax(SendFaxRequestModel sendFaxRequestModel) {
+    public void sendFax(SendFaxRequestModel sendFaxRequestModel, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().sendFax(sendFaxRequestModel)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
