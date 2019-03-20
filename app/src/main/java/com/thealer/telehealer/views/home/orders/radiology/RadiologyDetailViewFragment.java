@@ -34,6 +34,7 @@ import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
+import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 import com.thealer.telehealer.views.home.orders.labs.IcdCodeListAdapter;
 
 import java.util.HashMap;
@@ -66,6 +67,8 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
     private ShowSubFragmentInterface showSubFragmentInterface;
     private IcdCodeApiViewModel icdCodeApiViewModel;
     private OrdersApiViewModel ordersApiViewModel;
+    private OrdersCustomView faxNumberOcv;
+    private OrdersCustomView faxStatusOcv;
 
     @Override
     public void onAttach(Context context) {
@@ -131,9 +134,13 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        faxNumberOcv = (OrdersCustomView) view.findViewById(R.id.fax_number_ocv);
+        faxStatusOcv = (OrdersCustomView) view.findViewById(R.id.fax_status_ocv);
 
         toolbar.inflateMenu(R.menu.orders_detail_menu);
-        toolbar.getMenu().removeItem(R.id.send_fax_menu);
+        if (UserType.isUserDoctor()) {
+            toolbar.getMenu().findItem(R.id.send_fax_menu).setVisible(true);
+        }
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -150,6 +157,13 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
 
                         showSubFragmentInterface.onShowFragment(pdfViewerFragment);
 
+                        break;
+                    case R.id.send_fax_menu:
+                        SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
+                        bundle = new Bundle();
+                        bundle.putInt(ArgumentKeys.ORDER_ID, getRadiologyResponseModel.getReferral_id());
+                        sendFaxByNumberFragment.setArguments(bundle);
+                        showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                         break;
                 }
                 return true;
@@ -175,6 +189,21 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
                         cancelTv.setVisibility(View.GONE);
                         cancelWatermarkTv.setVisibility(View.VISIBLE);
                         toolbar.getMenu().clear();
+                    }
+                    if (getRadiologyResponseModel.getStatus().equals(OrderStatus.STATUS_FAILED) || getRadiologyResponseModel.getFaxes().size() > 0) {
+                        toolbar.getMenu().removeItem(R.id.send_fax_menu);
+                    }
+
+                    if (getRadiologyResponseModel.getFaxes() != null &&
+                            getRadiologyResponseModel.getFaxes().size() > 0) {
+                        faxNumberOcv.setTitleTv(getRadiologyResponseModel.getFaxes().get(0).getFax_number());
+                        faxStatusOcv.setTitleTv(getRadiologyResponseModel.getFaxes().get(0).getStatus());
+
+                        faxNumberOcv.setVisibility(View.VISIBLE);
+                        faxStatusOcv.setVisibility(View.VISIBLE);
+                    } else {
+                        faxNumberOcv.setVisibility(View.GONE);
+                        faxStatusOcv.setVisibility(View.GONE);
                     }
 
                     if (getRadiologyResponseModel.getUserDetailMap() != null &&

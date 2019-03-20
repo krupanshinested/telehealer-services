@@ -1,19 +1,14 @@
 package com.thealer.telehealer.views.home.orders.specialist;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,25 +16,19 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.base.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
-import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
-import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
 /**
  * Created by Aswin on 29,November,2018
@@ -49,7 +38,8 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
     private OrdersCustomView specialistOcv;
     private TextInputLayout instructionTil;
     private EditText instructionEt;
-    private Button sendBtn;
+    private Button saveFaxBtn;
+    private Button saveBtn;
 
     private OnCloseActionInterface onCloseActionInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
@@ -58,7 +48,6 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
     private GetDoctorsApiResponseModel.DataBean specialistModel;
     private boolean isFromHome;
 
-    private OrdersCreateApiViewModel ordersCreateApiViewModel;
     private ChangeTitleInterface changeTitleInterface;
 
     @Override
@@ -67,42 +56,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
         changeTitleInterface = (ChangeTitleInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
-        ordersCreateApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel.isSuccess()) {
 
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.referral_success), patientModel.getUserDisplay_name()));
-                        LocalBroadcastManager
-                                .getInstance(getActivity())
-                                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                        .putExtras(bundle));
-
-                    }
-                }
-            }
-        });
-
-        ordersCreateApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
-            @Override
-            public void onChanged(@Nullable ErrorModel errorModel) {
-                if (errorModel != null) {
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
-                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.referral_failure), patientModel.getUserDisplay_name()));
-                    LocalBroadcastManager
-                            .getInstance(getActivity())
-                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                    .putExtras(bundle));
-                }
-            }
-        });
     }
 
     @Nullable
@@ -119,11 +73,13 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
         specialistOcv = (OrdersCustomView) view.findViewById(R.id.specialist_ocv);
         instructionTil = (TextInputLayout) view.findViewById(R.id.instruction_til);
         instructionEt = (EditText) view.findViewById(R.id.instruction_et);
-        sendBtn = (Button) view.findViewById(R.id.send_btn);
+        saveBtn = (Button) view.findViewById(R.id.save_btn);
+        saveFaxBtn = (Button) view.findViewById(R.id.save_fax_btn);
 
         patientOcv.setOnClickListener(this);
         specialistOcv.setOnClickListener(this);
-        sendBtn.setOnClickListener(this);
+        saveBtn.setOnClickListener(this);
+        saveFaxBtn.setOnClickListener(this);
 
         instructionEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -198,7 +154,8 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
             enable = true;
         }
 
-        sendBtn.setEnabled(enable);
+        saveBtn.setEnabled(enable);
+        saveFaxBtn.setEnabled(enable);
     }
 
     @Override
@@ -210,43 +167,41 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
             case R.id.specialist_ocv:
                 showAssociationSelection(2000, ArgumentKeys.SEARCH_DOCTOR);
                 break;
-            case R.id.send_btn:
+            case R.id.save_btn:
                 showQuickLogin();
+                break;
+            case R.id.save_fax_btn:
+                AssignSpecialistRequestModel assignSpecialistRequestModel = getRequestModel();
+
+                SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(ArgumentKeys.ORDER_DATA, assignSpecialistRequestModel);
+                bundle.putString(ArgumentKeys.USER_NAME, patientModel.getDisplayName());
+                sendFaxByNumberFragment.setArguments(bundle);
+                showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                 break;
         }
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (authResponse == ArgumentKeys.AUTH_SUCCESS) {
-            assignSpecialist();
-            authResponse = ArgumentKeys.AUTH_NONE;
-        }
+    public void onAuthenticated() {
+        assignSpecialist(getRequestModel(), patientModel.getDisplayName(), false);
     }
 
-    private void assignSpecialist() {
+    private AssignSpecialistRequestModel getRequestModel() {
         AssignSpecialistRequestModel.DetailBean.CopyToBean copyToBean = new AssignSpecialistRequestModel.DetailBean.CopyToBean(specialistModel.getDoctorDisplayName(),
                 specialistModel.getDoctorAddress(), specialistModel.getDoctorPhone(), specialistModel.getNpi());
 
         AssignSpecialistRequestModel.DetailBean detailBean = new AssignSpecialistRequestModel.DetailBean(instructionEt.getText().toString(),
                 specialistModel.getDoctorDisplayName(),
                 copyToBean);
-
-        AssignSpecialistRequestModel assignSpecialistRequestModel = new AssignSpecialistRequestModel(patientModel.getUser_guid(), detailBean);
-
-
-        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-        successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
-        successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
-
-        ordersCreateApiViewModel.assignSpecialist(assignSpecialistRequestModel, false);
+        return new AssignSpecialistRequestModel(patientModel.getUser_guid(), detailBean);
     }
 
     private void showAssociationSelection(int requestCode, String searchType) {
         Bundle bundle = getArguments();
 
-        if (bundle == null){
+        if (bundle == null) {
             bundle = new Bundle();
         }
 
@@ -264,11 +219,11 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == Activity.RESULT_OK &&
-                requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW) {
-            getActivity().finish();
-        }
+//        if (resultCode == Activity.RESULT_OK &&
+//                requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW) {
+//            if (getActivity() != null)
+//                getActivity().finish();
+//        }
 
         if (data != null) {
             Bundle bundle = data.getExtras();
@@ -287,6 +242,5 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
                 }
             }
         }
-
     }
 }

@@ -40,6 +40,7 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
+import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 import com.thealer.telehealer.views.home.orders.labs.IcdCodeListAdapter;
 import com.thealer.telehealer.views.home.orders.labs.IcdCodesDataViewModel;
 import com.thealer.telehealer.views.home.orders.labs.SelectIcdCodeFragment;
@@ -63,7 +64,6 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
     private Switch statSwitch;
     private OrdersCustomView dateOcv;
     private EditText commentsEt;
-    private Button sendBtn;
 
     private ShowSubFragmentInterface showSubFragmentInterface;
     private OnCloseActionInterface onCloseActionInterface;
@@ -85,6 +85,8 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
             setDate(formatedDate);
         }
     };
+    private Button saveBtn;
+    private Button saveFaxBtn;
 
     @Override
     public void onAttach(Context context) {
@@ -146,7 +148,8 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
         statSwitch = (Switch) view.findViewById(R.id.stat_switch);
         dateOcv = (OrdersCustomView) view.findViewById(R.id.date_ocv);
         commentsEt = (EditText) view.findViewById(R.id.comments_et);
-        sendBtn = (Button) view.findViewById(R.id.send_btn);
+        saveBtn = (Button) view.findViewById(R.id.save_btn);
+        saveFaxBtn = (Button) view.findViewById(R.id.save_fax_btn);
 
         patientOcv.setOnClickListener(this);
         copyResultOcv.setOnClickListener(this);
@@ -155,7 +158,8 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
         icdListLl.setOnClickListener(this);
         icdListIv.setOnClickListener(this);
         dateOcv.setOnClickListener(this);
-        sendBtn.setOnClickListener(this);
+        saveBtn.setOnClickListener(this);
+        saveFaxBtn.setOnClickListener(this);
 
         icdListRv.setLayoutManager(new LinearLayoutManager(getActivity()));
         icdCodeListAdapter = new IcdCodeListAdapter(getActivity(), selectedIcdCodeList, icdCodeDetailHashMap);
@@ -188,6 +192,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
         setCopytoData();
         setDate(Utils.getCurrentFomatedDate());
         enableOrDisableSend();
+
     }
 
     private void enableOrDisableSend() {
@@ -199,7 +204,8 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
             enable = true;
         }
 
-        sendBtn.setEnabled(enable);
+        saveBtn.setEnabled(enable);
+        saveFaxBtn.setEnabled(enable);
     }
 
     private void setDate(String date) {
@@ -224,6 +230,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
 
     @Override
     public void onClick(View v) {
+        Bundle bundle;
         switch (v.getId()) {
             case R.id.patient_ocv:
                 openSelectAssociationFragment(ArgumentKeys.SEARCH_ASSOCIATION, RequestID.REQ_SELECT_ASSOCIATION);
@@ -243,18 +250,26 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
                 break;
             case R.id.date_ocv:
                 DatePickerDialogFragment datePickerDialogFragment = new DatePickerDialogFragment();
-                Bundle bundle = new Bundle();
+                bundle = new Bundle();
                 bundle.putInt(Constants.DATE_PICKER_TYPE, Constants.TYPE_ORDER_CREATION);
                 datePickerDialogFragment.setArguments(bundle);
                 datePickerDialogFragment.show(getActivity().getSupportFragmentManager(), datePickerDialogFragment.getClass().getSimpleName());
                 break;
-            case R.id.send_btn:
+            case R.id.save_btn:
                 showQuickLogin();
+                break;
+            case R.id.save_fax_btn:
+                SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
+                bundle = new Bundle();
+                bundle.putSerializable(ArgumentKeys.ORDER_DATA, getRequest());
+                bundle.putString(ArgumentKeys.USER_NAME, userModel.getUserDisplay_name());
+                sendFaxByNumberFragment.setArguments(bundle);
+                showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                 break;
         }
     }
 
-    private void createNewRadiology() {
+    private CreateRadiologyRequestModel getRequest(){
         List<CreateRadiologyRequestModel.DetailBean.LabsBean> labsBeanList = new ArrayList<>();
         labsBeanList.add(new CreateRadiologyRequestModel.DetailBean.LabsBean(statSwitch.isChecked(),
                 selectedIcdCodeList,
@@ -269,39 +284,12 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
                     copyToModel.getNpi());
         }
 
-        CreateRadiologyRequestModel createRadiologyRequestModel = new CreateRadiologyRequestModel(userModel.getUser_guid(),
+        return new CreateRadiologyRequestModel(userModel.getUser_guid(),
                 new CreateRadiologyRequestModel.DetailBean(commentsEt.getText().toString(),
                         dateOcv.getTitleText(),
                         copyToBean,
                         labsBeanList));
-
-        OrdersCreateApiViewModel ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
-        ordersCreateApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel.isSuccess()) {
-                        sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(), getString(R.string.success),
-                                String.format(getString(R.string.create_radiology_success), userModel.getUserDisplay_name()));
-                    }
-                }
-            }
-        });
-
-        ordersCreateApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
-            @Override
-            public void onChanged(@Nullable ErrorModel errorModel) {
-                if (errorModel != null) {
-                    sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure),
-                            String.format(getString(R.string.create_radiology_failure), userModel.getUserDisplay_name()));
-                }
-            }
-        });
-        ordersCreateApiViewModel.createRadiologyOrder(createRadiologyRequestModel);
-        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
-        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.posting), getString(R.string.posting_please_wait));
     }
-
     private void openSelectAssociationFragment(String type, int reqCode) {
         SelectAssociationFragment selectAssociationFragment = new SelectAssociationFragment();
         Bundle bundle = getArguments();
@@ -318,10 +306,11 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(dateBroadcastReceiver, new IntentFilter(Constants.DATE_PICKER_INTENT));
-        if (authResponse == ArgumentKeys.AUTH_SUCCESS) {
-            createNewRadiology();
-            authResponse = ArgumentKeys.AUTH_NONE;
-        }
+    }
+
+    @Override
+    public void onAuthenticated() {
+        createNewRadiologyOrder(getRequest(), userModel.getUserDisplay_name(), false);
     }
 
     @Override

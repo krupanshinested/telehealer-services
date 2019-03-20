@@ -16,16 +16,15 @@ public class OrderStatus {
 
     public static int getStatusImage(String status) {
         switch (status) {
-            case STATUS_CANCELLED:
-                return R.drawable.ic_close_red_24dp;
             case STATUS_DELIVERED:
-                return R.drawable.ic_done_all_green_24dp;
+                return R.drawable.ic_status_success;
+            case STATUS_CANCELLED:
             case STATUS_FAILED:
                 return R.drawable.ic_status_failed;
             case STATUS_QUEUED:
             case STATUS_ISSUED:
             case STATUS_BUSY:
-                return R.drawable.ic_access_time_24dp;
+                return R.drawable.ic_status_pending;
             default:
                 return 0;
         }

@@ -19,11 +19,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.CreateTestApiRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.LabsBean;
 import com.thealer.telehealer.apilayer.models.orders.lab.LabsDetailBean;
@@ -36,9 +33,9 @@ import com.thealer.telehealer.views.base.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.DateBroadcastReceiver;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
+import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +51,6 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
     private View bottomView;
     private OrdersCustomView dateOcv;
     private OrdersCustomView copyOcv;
-    private Button sendBtn;
 
     private CommonUserApiResponseModel commonUserApiResponseModel;
     private CommonUserApiResponseModel selectedUserModel;
@@ -62,7 +58,6 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
 
     private ShowSubFragmentInterface showSubFragmentInterface;
     private OnCloseActionInterface onCloseActionInterface;
-    private OrdersCreateApiViewModel ordersCreateApiViewModel;
     private LabTestDataViewModel labTestDataViewModel;
     private IcdCodesDataViewModel icdCodesDataViewModel;
     private LabDescriptionListAdapter labDescriptionListAdapter;
@@ -75,34 +70,15 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
             dateOcv.setTitleTv(formatedDate);
         }
     };
+    private Button saveBtn;
+    private Button saveFaxBtn;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
-        ordersCreateApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel.isSuccess()) {
-                        sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(), getString(R.string.success),
-                                String.format(getString(R.string.create_lab_success), commonUserApiResponseModel.getUserDisplay_name()));
-                    }
-                }
-            }
-        });
 
-        ordersCreateApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
-            @Override
-            public void onChanged(@Nullable ErrorModel errorModel) {
-                if (errorModel != null) {
-                    sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure),
-                            String.format(getString(R.string.create_lab_failure), commonUserApiResponseModel.getUserDisplay_name()));
-                }
-            }
-        });
         labTestDataViewModel = ViewModelProviders.of(getActivity()).get(LabTestDataViewModel.class);
         icdCodesDataViewModel = ViewModelProviders.of(getActivity()).get(IcdCodesDataViewModel.class);
         labTestDataViewModel.getLabsBeanLiveData().observe(this,
@@ -135,13 +111,15 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
         bottomView = (View) view.findViewById(R.id.bottom_view);
         dateOcv = (OrdersCustomView) view.findViewById(R.id.date_ocv);
         copyOcv = (OrdersCustomView) view.findViewById(R.id.copy_ocv);
-        sendBtn = (Button) view.findViewById(R.id.send_btn);
+        saveBtn = (Button) view.findViewById(R.id.save_btn);
+        saveFaxBtn = (Button) view.findViewById(R.id.save_fax_btn);
 
         patientOcv.setOnClickListener(this);
         addTestTv.setOnClickListener(this);
         dateOcv.setOnClickListener(this);
         copyOcv.setOnClickListener(this);
-        sendBtn.setOnClickListener(this);
+        saveBtn.setOnClickListener(this);
+        saveFaxBtn.setOnClickListener(this);
 
         if (getArguments() != null) {
             boolean isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
@@ -167,7 +145,6 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
         dateOcv.setTitleTv(Utils.getCurrentFomatedDate());
 
         enableOrDisableSend();
-
     }
 
     private void setDescriptionList() {
@@ -208,15 +185,24 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
             enable = true;
         }
 
-        sendBtn.setEnabled(enable);
+        saveBtn.setEnabled(enable);
+        saveFaxBtn.setEnabled(enable);
 
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.send_btn:
+            case R.id.save_btn:
                 showQuickLogin();
+                break;
+            case R.id.save_fax_btn:
+                SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(ArgumentKeys.ORDER_DATA, getLabRequestModel());
+                bundle.putString(ArgumentKeys.USER_NAME, commonUserApiResponseModel.getUserDisplay_name());
+                sendFaxByNumberFragment.setArguments(bundle);
+                showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                 break;
             case R.id.copy_ocv:
                 showAssociationSelection(RequestID.REQ_SELECT_ASSOCIATION_DOCTOR, ArgumentKeys.SEARCH_COPY_TO);
@@ -235,7 +221,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
         }
     }
 
-    private void createLabOrder() {
+    private CreateTestApiRequestModel getLabRequestModel() {
 
         CreateTestApiRequestModel createTestApiRequestModel = new CreateTestApiRequestModel();
 
@@ -253,14 +239,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
         createTestApiRequestModel.getDetail().setLabs(labsBeanList);
         createTestApiRequestModel.getDetail().setRequested_date(dateOcv.getTitleText());
 
-
-        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-        successViewDialogFragment.show(getActivity().getSupportFragmentManager(), SuccessViewDialogFragment.class.getSimpleName());
-
-        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
-
-        ordersCreateApiViewModel.createLabOrder(createTestApiRequestModel);
-
+        return createTestApiRequestModel;
     }
 
     private void clearDataViewModel() {
@@ -270,7 +249,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
 
     private void showAssociationSelection(int requestCode, String searchType) {
         Bundle bundle = getArguments();
-        if (bundle == null){
+        if (bundle == null) {
             bundle = new Bundle();
         }
         bundle.putString(ArgumentKeys.SEARCH_TYPE, searchType);
@@ -296,10 +275,11 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(dateBroadcastReceiver, new IntentFilter(Constants.DATE_PICKER_INTENT));
         setDescriptionList();
         enableOrDisableSend();
-        if (authResponse == ArgumentKeys.AUTH_SUCCESS){
-            createLabOrder();
-            authResponse = ArgumentKeys.AUTH_NONE;
-        }
+    }
+
+    @Override
+    public void onAuthenticated() {
+        createNewLabOrder(getLabRequestModel(), commonUserApiResponseModel.getUserDisplay_name(), false);
     }
 
     @Override

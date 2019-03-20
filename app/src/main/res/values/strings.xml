@@ -865,6 +865,13 @@
     <string name="secondary_insurance_front">Secondary Insurance (Front Side )</string>
     <string name="secondary_insurance_back">Secondary Insurance (Back Side)</string>
     <string name="miscellaneous_referral">Miscellaneous Referral</string>
+    <string name="order_details_will_be_sent_to_this_fax_number">Order details will be sent to this fax number</string>
+    <string name="enter_fax_number">Enter Fax Number</string>
+    <string name="order_posted_successfully">Order posted successfully</string>
+    <string name="order_posting_failed">Order posting failed.</string>
+    <string name="loading">Loading...</string>
+    <string name="fax_status">Fax Status</string>
+    <string name="fax_number">Fax Number</string>
     <string name="login_error_message">Unable to login. Please ensure that your email and password are entered correctly and try again.</string>
     <string name="vitals_report">Vitals Report</string>
 </resources>

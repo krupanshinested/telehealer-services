@@ -1,5 +1,8 @@
 package com.thealer.telehealer.views.base;
 
+import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,22 +10,136 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersBaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
+import com.thealer.telehealer.apilayer.models.orders.lab.CreateTestApiRequestModel;
+import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
+import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRequestModel;
+import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 04,December,2018
  */
 public class OrdersBaseFragment extends BaseFragment {
-    public int authResponse;
     private ChangeTitleInterface changeTitleInterface;
+
+    public OrdersCreateApiViewModel ordersCreateApiViewModel;
+    private AttachObserverInterface attachObserverInterface;
+    private OnCloseActionInterface onCloseActionInterface;
+
+    private String currentOrder = "";
+    private String patientName = "";
+    private boolean isSendFax = false;
+    public boolean onFaxSent = false;
+    private static boolean onAuthenticated = false;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(quickLoginBroadcastReceiver, new IntentFilter(getString(R.string.quick_login_broadcast_receiver)));
+
+        onCloseActionInterface = (OnCloseActionInterface) getActivity();
+
+        attachObserverInterface = (AttachObserverInterface) getActivity();
+
+        ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
+
+        attachObserverInterface.attachObserver(ordersCreateApiViewModel);
+
+        ordersCreateApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    boolean status = true;
+                    String title = getString(R.string.success);
+                    String description = getString(R.string.order_posted_successfully);
+
+                    OrdersBaseApiResponseModel ordersBaseApiResponseModel = null;
+                    if (baseApiResponseModel instanceof OrdersBaseApiResponseModel) {
+                        ordersBaseApiResponseModel = (OrdersBaseApiResponseModel) baseApiResponseModel;
+                    }
+
+                    switch (currentOrder) {
+                        case OrderConstant.ORDER_PRESCRIPTIONS:
+                            description = String.format(getString(R.string.create_prescription_success), patientName);
+                            break;
+                        case OrderConstant.ORDER_REFERRALS:
+                            description = String.format(getString(R.string.referral_success), patientName);
+                            break;
+                        case OrderConstant.ORDER_LABS:
+                            description = String.format(getString(R.string.create_lab_success), patientName);
+                            break;
+                        case OrderConstant.ORDER_RADIOLOGY:
+                            description = String.format(getString(R.string.create_radiology_success), patientName);
+                            break;
+                        case OrderConstant.ORDER_MISC:
+                            description = String.format(getString(R.string.miscellaneous_success), patientName);
+                            break;
+                    }
+
+                    if (!isSendFax) {
+                        sendSuccessViewBroadCast(getActivity(), status, title, description);
+                        if (onFaxSent) {
+                            onFaxSent = false;
+                            onCloseActionInterface.onClose(false);
+                            showToast("Fax sent successfully");
+                        }
+                    } else {
+                        isSendFax = false;
+                        sendFax(ordersBaseApiResponseModel.getReferral_id(), false);
+                    }
+                }
+            }
+        });
+
+        ordersCreateApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null) {
+                    boolean status = false;
+                    String title = getString(R.string.failure);
+                    String description = getString(R.string.order_posting_failed);
+
+                    switch (currentOrder) {
+                        case OrderConstant.ORDER_PRESCRIPTIONS:
+                            description = String.format(getString(R.string.create_prescription_failure), patientName);
+                            break;
+                        case OrderConstant.ORDER_REFERRALS:
+                            description = String.format(getString(R.string.referral_failure), patientName);
+                            break;
+                        case OrderConstant.ORDER_LABS:
+                            description = String.format(getString(R.string.create_lab_failure), patientName);
+                            break;
+                        case OrderConstant.ORDER_RADIOLOGY:
+                            description = String.format(getString(R.string.create_radiology_failure), patientName);
+                            break;
+                        case OrderConstant.ORDER_MISC:
+                            description = String.format(getString(R.string.miscellaneous_failure), patientName);
+                            break;
+                    }
+                    if (isSendFax) {
+                        isSendFax = false;
+                        description = errorModel.getMessage();
+                    }
+                    sendSuccessViewBroadCast(getActivity(), status, title, description);
+                }
+            }
+        });
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,7 +163,7 @@ public class OrdersBaseFragment extends BaseFragment {
                             }
                         }, null);
             } else {
-                authResponse = status;
+                onAuthenticated = true;
             }
         }
     };
@@ -56,9 +173,20 @@ public class OrdersBaseFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(quickLoginBroadcastReceiver, new IntentFilter(getString(R.string.quick_login_broadcast_receiver)));
+    public void onResume() {
+        super.onResume();
+        if (onAuthenticated) {
+            onAuthenticated = false;
+            onAuthenticated();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW && resultCode == Activity.RESULT_OK) {
+            onCloseActionInterface.onClose(true);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -67,4 +195,62 @@ public class OrdersBaseFragment extends BaseFragment {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(quickLoginBroadcastReceiver);
     }
 
+    public void sendFax(int referral_id, boolean isShowProgress) {
+        onFaxSent = true;
+    }
+
+    public void onAuthenticated() {
+    }
+
+    private void showSuccessView() {
+        Bundle bundle = new Bundle();
+
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+
+        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, String.format("Posting your %s order.", currentOrder));
+
+        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
+    }
+
+    public void assignSpecialist(AssignSpecialistRequestModel requestModel, String userName, boolean sendFax) {
+        currentOrder = OrderConstant.ORDER_REFERRALS;
+        patientName = userName;
+        isSendFax = sendFax;
+
+        showSuccessView();
+
+        ordersCreateApiViewModel.assignSpecialist(requestModel, false);
+    }
+
+    public void createPrescription(CreatePrescriptionRequestModel prescriptionModel, String userDisplay_name, boolean sendFax) {
+
+        currentOrder = OrderConstant.ORDER_PRESCRIPTIONS;
+        patientName = userDisplay_name;
+        isSendFax = sendFax;
+
+        showSuccessView();
+
+        ordersCreateApiViewModel.createPrescription(prescriptionModel);
+    }
+
+    public void createNewRadiologyOrder(CreateRadiologyRequestModel requestModel, String userDisplay_name, boolean sendFax) {
+        currentOrder = OrderConstant.ORDER_RADIOLOGY;
+        patientName = userDisplay_name;
+        isSendFax = sendFax;
+
+        showSuccessView();
+
+        ordersCreateApiViewModel.createRadiologyOrder(requestModel);
+    }
+
+    public void createNewLabOrder(CreateTestApiRequestModel createTestApiRequestModel, String username, boolean sendFax) {
+
+        currentOrder = OrderConstant.ORDER_LABS;
+        patientName = username;
+        isSendFax = sendFax;
+
+        showSuccessView();
+
+        ordersCreateApiViewModel.createLabOrder(createTestApiRequestModel);
+    }
 }
