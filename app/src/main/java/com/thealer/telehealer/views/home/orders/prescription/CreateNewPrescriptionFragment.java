@@ -1,15 +1,12 @@
 package com.thealer.telehealer.views.home.orders.prescription;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -25,10 +22,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -37,7 +31,6 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.base.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
@@ -68,7 +61,6 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
     private Button saveFaxBtn;
 
     private ShowSubFragmentInterface showSubFragmentInterface;
-    private OrdersCreateApiViewModel ordersCreateApiViewModel;
 
     private CommonUserApiResponseModel commonUserApiResponseModel;
     private CommonUserApiResponseModel selectedUserModel;
@@ -82,38 +74,6 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
         super.onAttach(context);
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
-        ordersCreateApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel.isSuccess()) {
-                        sendSuccessBroadCast(baseApiResponseModel.isSuccess(), getString(R.string.success), String.format(getString(R.string.create_prescription_success), commonUserApiResponseModel.getUserDisplay_name()));
-                    }
-                }
-            }
-        });
-
-        ordersCreateApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
-            @Override
-            public void onChanged(@Nullable ErrorModel errorModel) {
-                if (errorModel != null) {
-                    sendSuccessBroadCast(errorModel.isSuccess(), getString(R.string.failure), String.format(getString(R.string.create_prescription_failure), commonUserApiResponseModel.getUserDisplay_name()));
-                }
-            }
-        });
-    }
-
-    private void sendSuccessBroadCast(boolean status, String title, String description) {
-
-        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, status);
-        bundle.putString(Constants.SUCCESS_VIEW_TITLE, title);
-        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, description);
-        intent.putExtras(bundle);
-
-        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
     }
 
     @Nullable
@@ -408,29 +368,16 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
     private void saveAndFaxPrescription() {
         Bundle bundle = new Bundle();
         bundle.putSerializable(ArgumentKeys.PRESCRIPTION_DATA, getPrescriptionModel());
+        bundle.putString(ArgumentKeys.USER_NAME, commonUserApiResponseModel.getUserDisplay_name());
         SelectPharmacyFragment selectPharmacyFragment = new SelectPharmacyFragment();
         selectPharmacyFragment.setArguments(bundle);
 
         showSubFragmentInterface.onShowFragment(selectPharmacyFragment);
     }
 
-    private void createPrescription() {
-        CreatePrescriptionRequestModel createPrescriptionRequestModel = getPrescriptionModel();
-
-        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-        successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
-        successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
-
-        ordersCreateApiViewModel.createPrescription(createPrescriptionRequestModel);
-    }
-
     @Override
-    public void onResume() {
-        super.onResume();
-        if (authResponse == ArgumentKeys.AUTH_SUCCESS) {
-            createPrescription();
-            authResponse = ArgumentKeys.AUTH_NONE;
-        }
+    public void onAuthenticated() {
+        createPrescription(getPrescriptionModel(), commonUserApiResponseModel.getUserDisplay_name(), false);
     }
 
     private CreatePrescriptionRequestModel getPrescriptionModel() {

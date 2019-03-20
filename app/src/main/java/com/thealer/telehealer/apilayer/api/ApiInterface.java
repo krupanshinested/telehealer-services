@@ -26,6 +26,7 @@ import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneReque
 import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersBaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
@@ -40,7 +41,6 @@ import com.thealer.telehealer.apilayer.models.orders.miscellaneous.Miscellaneous
 import com.thealer.telehealer.apilayer.models.orders.pharmacy.GetPharmaciesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.pharmacy.SendFaxRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
-import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
@@ -252,7 +252,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> cancelPrescriptionOrder(@Path(ID) int id, @Query(CANCEL) boolean cancel);
 
     @POST("api/referrals/prescriptions")
-    Observable<CreatePrescriptionResponseModel> createPrescription(@Body CreatePrescriptionRequestModel createPrescriptionRequestModel);
+    Observable<OrdersBaseApiResponseModel> createPrescription(@Body CreatePrescriptionRequestModel createPrescriptionRequestModel);
 
     @GET("users")
     Observable<ArrayList<CommonUserApiResponseModel>> getUsersByGuid(@Query(FILTER_USER_GUID_IN) String data);
@@ -303,7 +303,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> createForms(@Body CreateFormRequestModel createFormRequestModel);
 
     @POST("api/referrals/specialists")
-    Observable<BaseApiResponseModel> assignSpecialist(@Body AssignSpecialistRequestModel assignSpecialistRequestModel);
+    Observable<OrdersBaseApiResponseModel> assignSpecialist(@Body AssignSpecialistRequestModel assignSpecialistRequestModel);
 
     @Multipart
     @POST("api/users/files")
@@ -328,7 +328,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> sendFax(@Body SendFaxRequestModel sendFaxRequestModel);
 
     @POST("api/referrals/labs")
-    Observable<BaseApiResponseModel> createLabOrder(@Body CreateTestApiRequestModel createTestApiRequestModel);
+    Observable<OrdersBaseApiResponseModel> createLabOrder(@Body CreateTestApiRequestModel createTestApiRequestModel);
 
     @GET("api/download")
     Observable<Response<ResponseBody>> getPdfFile(@Query("path") String path, @Query("decrypt") boolean isDecrypt);
@@ -337,7 +337,7 @@ public interface ApiInterface {
     Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken);
 
     @POST("api/referrals/x-rays")
-    Observable<BaseApiResponseModel> createRadiology(@Body CreateRadiologyRequestModel createRadiologyRequestModel);
+    Observable<OrdersBaseApiResponseModel> createRadiology(@Body CreateRadiologyRequestModel createRadiologyRequestModel);
 
     @GET("api/referrals/x-rays")
     Observable<GetRadiologyResponseModel> getRadiologyList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);

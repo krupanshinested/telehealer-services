@@ -47,7 +47,7 @@ public class LabsDetailBean implements Serializable {
         this.copy_to = copy_to;
     }
 
-    public static class CopyToBean {
+    public static class CopyToBean implements Serializable{
 
         private String name;
         private String address;

@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.orders.prescription;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.orders.pharmacy.GetPharmaciesApiResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 
 import java.util.List;
@@ -53,7 +55,9 @@ public class PharmacyListAdapter extends RecyclerView.Adapter<PharmacyListAdapte
             public void onClick(View v) {
                 selectedItemPosition = i;
                 notifyDataSetChanged();
-                onListItemSelectInterface.onListItemSelected(i, null);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(ArgumentKeys.SELECTED_MENU_ITEM, results.get(i));
+                onListItemSelectInterface.onListItemSelected(i, bundle);
             }
         });
     }

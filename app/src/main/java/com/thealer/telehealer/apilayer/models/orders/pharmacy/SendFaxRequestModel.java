@@ -11,6 +11,9 @@ public class SendFaxRequestModel implements Serializable {
     private String referral_id;
     private DetailBean detail;
 
+    public SendFaxRequestModel() {
+    }
+
     public SendFaxRequestModel(String fax_number, String referral_id, DetailBean detail) {
         this.fax_number = fax_number;
         this.referral_id = referral_id;
