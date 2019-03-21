@@ -6,10 +6,12 @@
     android:layout_height="wrap_content"
     android:padding="12dp">
 
-    <Switch
+    <CheckBox
         android:id="@+id/item_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:buttonTint="@color/app_gradient_start"
+        android:paddingStart="@dimen/padding_default"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
