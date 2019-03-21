@@ -6,15 +6,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 
@@ -127,12 +125,12 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private Switch itemSwitch;
+        private CheckBox itemSwitch;
         private EditText commentsEt;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemSwitch = (Switch) itemView.findViewById(R.id.item_switch);
+            itemSwitch = (CheckBox) itemView.findViewById(R.id.item_switch);
             commentsEt = (EditText) itemView.findViewById(R.id.comments_et);
         }
     }
