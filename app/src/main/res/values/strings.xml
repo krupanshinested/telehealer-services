@@ -838,4 +838,5 @@
     <string name="secondary_insurance_front">Secondary Insurance (Front Side )</string>
     <string name="secondary_insurance_back">Secondary Insurance (Back Side)</string>
     <string name="miscellaneous_referral">Miscellaneous Referral</string>
+    <string name="login_error_message">Unable to login. Please ensure that your email and password are entered correctly and try again.</string>
 </resources>
