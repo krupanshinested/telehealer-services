@@ -58,10 +58,9 @@ import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
-import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
-import com.thealer.telehealer.views.common.OptionsSelectionAdapter;
 import com.thealer.telehealer.views.common.CustomDialogs.OptionSelectionDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
+import com.thealer.telehealer.views.common.OptionsSelectionAdapter;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 
 import java.io.IOException;
@@ -139,24 +138,18 @@ public class Utils {
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(activity, new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 sendDateBroadCast(activity, year, month, dayOfMonth);
             }
-        }, year, month, day);
+        };
 
-        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, activity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                setDateCancelBroadCast(activity);
-            }
-        });
+        DatePickerDialog datePickerDialog = new DatePickerDialog(activity, onDateSetListener, year, month, day);
 
         switch (type) {
             case Constants.TYPE_DOB:
-                calendar.set(year - 18, month, day);
-                datePickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+                datePickerDialog = new DatePickerDialog(activity, onDateSetListener, 2000, month, day);
                 break;
             case Constants.TYPE_EXPIRATION:
                 calendar.set(year, month, day + 1);
@@ -177,6 +170,13 @@ public class Utils {
                 datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
                 break;
         }
+
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, activity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                setDateCancelBroadCast(activity);
+            }
+        });
 
         datePickerDialog.show();
         return datePickerDialog;
@@ -1079,7 +1079,8 @@ public class Utils {
         }
         alertDialog.show();
     }
-    public static void showOptionsSelectionAlert(Context context, List<String> options, PickerListener pickerListener){
+
+    public static void showOptionsSelectionAlert(Context context, List<String> options, PickerListener pickerListener) {
         OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(context, options, pickerListener);
         optionSelectionDialog.show();
     }
