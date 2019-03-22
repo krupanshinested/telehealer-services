@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.CustomButton;
-import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
@@ -20,8 +19,6 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by rsekar on 11/19/18.
@@ -78,7 +75,7 @@ public class ResetPasswordFragment extends BaseFragment implements View.OnClickL
 
         profileTitle.setText(getString(R.string.hi) + " " + UserDetailPreferenceManager.getUserDisplayName());
 
-        description.setText(getString(R.string.reset_password_string) + " ( " + appPreference.getString(PreferenceConstants.USER_EMAIL) + ")");
+        description.setText(getString(R.string.reset_password_string) + " ( " + UserDetailPreferenceManager.getWhoAmIResponse().getPhone() + ")");
 
         okButton.setOnClickListener(this);
     }

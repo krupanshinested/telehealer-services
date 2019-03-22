@@ -197,8 +197,8 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
 
                 showAlertDialog(getActivity(), getString(R.string.delete_account),
                         getString(R.string.delete_account_description),
-                        getString(R.string.delete),
-                        getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        getString(R.string.Delete),
+                        getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
