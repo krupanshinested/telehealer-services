@@ -158,7 +158,7 @@ public class PermissionChecker {
         String message = getMessage(subPermission);
 
         Bundle bundle = new Bundle();
-        bundle.putInt(PermissionConstants.PERMISSION_FOR, permissionFor);
+        bundle.putInt(PermissionConstants.PERMISSION_FOR, subPermission);
         bundle.putInt(PermissionConstants.PROPOSER_IMAGE, imageSrc);
         bundle.putString(PermissionConstants.PROPOSER_TITLE, title);
         bundle.putString(PermissionConstants.PROPOSER_MESSAGE, message);
@@ -183,9 +183,9 @@ public class PermissionChecker {
             case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
                 if (!isLocationPermissionGranted() && !isWriteStoragePermissionGranted())
                     return PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS;
-                else if (!isLocationPermissionGranted())
+                else if (!isLocationPermissionGranted() && isWriteStoragePermissionGranted())
                     return PermissionConstants.PERMISSION_LOCATION_VITALS;
-                else if (!isWriteStoragePermissionGranted())
+                else if (isLocationPermissionGranted() && !isWriteStoragePermissionGranted())
                     return PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS;
         }
         return permissionFor;
