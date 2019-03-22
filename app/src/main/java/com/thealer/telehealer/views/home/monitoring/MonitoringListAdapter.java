@@ -40,8 +40,8 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
     public MonitoringListAdapter(FragmentActivity activity) {
         this.activity = activity;
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
-        titleList = Arrays.asList(activity.getString(R.string.vitals), activity.getString(R.string.medication), activity.getString(R.string.diet));
-        imageList = Arrays.asList(activity.getDrawable(R.drawable.ic_vitals_heart), activity.getDrawable(R.drawable.ic_medication), activity.getDrawable(R.drawable.ic_diet));
+        titleList = Arrays.asList(activity.getString(R.string.vitals), activity.getString(R.string.diet));
+        imageList = Arrays.asList(activity.getDrawable(R.drawable.ic_vitals_heart), activity.getDrawable(R.drawable.ic_diet));
     }
 
     @NonNull

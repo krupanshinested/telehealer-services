@@ -187,7 +187,7 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                tools:text="08:15 AM, Wed" />
+                                tools:text="06:30 PM, Fri" />
 
                             <TextView
                                 android:id="@+id/slot_date1_tv"
@@ -197,10 +197,10 @@
                                 android:gravity="center"
                                 android:textSize="12sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="@id/slot_time1_tv"
-                                app:layout_constraintStart_toStartOf="@id/slot_time1_tv"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/slot_time1_tv"
-                                tools:text="Jan 9, 2019" />
+                                tools:text="Mar 22, 2019" />
 
                         </com.thealer.telehealer.views.common.RoundCornerConstraintLayout>
 
@@ -243,8 +243,8 @@
                                 android:gravity="center"
                                 android:textSize="12sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="@id/slot_time2_tv"
-                                app:layout_constraintStart_toStartOf="@id/slot_time2_tv"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/slot_time2_tv"
                                 tools:text="Jan 9, 2019" />
 
@@ -291,8 +291,8 @@
                                 android:gravity="center"
                                 android:textSize="12sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="@id/slot_time3_tv"
-                                app:layout_constraintStart_toStartOf="@id/slot_time3_tv"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/slot_time3_tv"
                                 tools:text="Jan 9, 2019" />
 
