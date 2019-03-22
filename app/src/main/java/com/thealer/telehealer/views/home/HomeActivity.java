@@ -242,7 +242,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             attachView();
 
         checkForMedicalHistory();
-        Log.e(TAG, "initView: ");
     }
 
     private void checkForMedicalHistory() {
