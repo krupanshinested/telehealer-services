@@ -811,9 +811,9 @@
     <string name="diet_post_success">Your diet has been posted successfully</string>
     <string name="diet_post_failure">Your diet is not posted successfully.</string>
     <string name="k_cals">KCal</string>
-    <string name="cals">Cals</string>
-    <string name="gms">gms</string>
-    <string name="k_gms">Kgms</string>
+    <string name="cals">Cal</string>
+    <string name="g">g</string>
+    <string name="kg">Kg</string>
     <string name="search_food_hint">Search food</string>
     <string name="received">Received</string>
     <string name="sent">Sent</string>
@@ -884,4 +884,12 @@
     <string name="fdir_measure_description">Remember to press the top button of your thermometer to capture a snapshot of the measured vitals here. Click the remeasure/reload to retrieve any newer values.</string>
     <string name="track_measurement_info">Inorder to capture your vitals here, please make sure you have manually initiated a prior measurement from the device.</string>
     <string name="view_explainer_video">View Explainer Video</string>
+    <string name="choose_time_period">Choose the time period</string>
+    <string name="no_data_available_for">No data available for</string>
+    <string name="diet_report">Diet Report</string>
+    <string name="food">Food</string>
+    <string name="pdf_label_name">Name :</string>
+    <string name="pdf_label_dob">Dob :</string>
+    <string name="pdf_label_gender">Gender :</string>
+    <string name="pdf_label_period">Period :</string>
 </resources>
