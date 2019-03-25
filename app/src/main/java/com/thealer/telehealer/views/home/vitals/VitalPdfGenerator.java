@@ -244,10 +244,10 @@ public class VitalPdfGenerator {
     private String generateHeaderDetail(List<VitalsApiResponseModel> pdfList, CommonUserApiResponseModel commonUserApiResponseModel) {
         String headerString = htmlHeaderDetail;
 
-        String nameLable = "Name : ";
-        String dobLable = "Dob : ";
-        String genderLable = "Gender : ";
-        String periodLable = "Period : ";
+        String nameLable = context.getString(R.string.pdf_label_name);
+        String dobLable = context.getString(R.string.pdf_label_dob);
+        String genderLable = context.getString(R.string.pdf_label_gender);
+        String periodLable = context.getString(R.string.pdf_label_period);
         String createdAtLable = "DATE";
         String valueLable = "VITALS";
         String capturedByLable = "DONE BY";
