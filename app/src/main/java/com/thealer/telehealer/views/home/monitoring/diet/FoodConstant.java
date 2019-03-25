@@ -16,4 +16,6 @@ public class FoodConstant {
     public static final Set<String> FAT_SET = new HashSet<>(Arrays.asList("FASAT", "FAMS", "FAPU", "FATRN"));
 
     public static final Set<String> CARBS_SET = new HashSet<>(Arrays.asList("FIBTG", "SUGAR", "SUGAR_added"));
+    public static final String UNIT_GRAM = "g";
+    public static final String UNIT_CAL = "cal";
 }
