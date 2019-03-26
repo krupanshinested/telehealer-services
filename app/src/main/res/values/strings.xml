@@ -874,6 +874,9 @@
     <string name="fax_number">Fax Number</string>
     <string name="login_error_message">Unable to login. Please ensure that your email and password are entered correctly and try again.</string>
     <string name="vitals_report">Vitals Report</string>
+    <string name="registration_email_phone_verify_info">Before we create your account, let us make sure that we have correctly captured your mobile number and email</string>
+    <string name="enter_your_mobile_number">Enter your mobile number</string>
+    <string name="confirm_your_mobile_number_and_email_id">Confirm your mobile number and email id</string>
     <string name="do_you_want_to_close">Do you want to close ?</string>
     <string name="search_practices">Search Practices</string>
     <string name="stand_with_bare_feet">Please stand on scale with your bare feet</string>
