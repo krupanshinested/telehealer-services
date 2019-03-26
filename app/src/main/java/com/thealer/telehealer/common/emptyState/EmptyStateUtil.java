@@ -109,6 +109,9 @@ public class EmptyStateUtil {
                 return "No Pending Invites";
             case EmptyViewConstants.EMPTY_BP_TRACK_VALUE:
                 return "No BP values";
+            case EmptyViewConstants.EMPTY_STETHOSCOPE:
+            case EmptyViewConstants.EMPTY_STETHOSCOPE_WITH_BTN:
+                return "No Stethoscope";
             default:
                 return null;
         }
@@ -233,6 +236,10 @@ public class EmptyStateUtil {
                 return "Invites which you created and waiting for other person's action will eventually show up here";
             case EmptyViewConstants.EMPTY_BP_TRACK_VALUE:
                 return "No prior readings available to upload. Please measure your vitals on the device before attempting to sync and upload.";
+            case EmptyViewConstants.EMPTY_STETHOSCOPE:
+                return "Stethoscope results will eventually show up here";
+            case EmptyViewConstants.EMPTY_STETHOSCOPE_WITH_BTN:
+                return "Connect your stethoscope device to measure your vitals";
             default:
                 return null;
         }
@@ -305,6 +312,8 @@ public class EmptyStateUtil {
                 return R.drawable.emptystate_no_history;
             case EmptyViewConstants.EMPTY_HEART_RATE:
             case EmptyViewConstants.EMPTY_HEART_RATE_WITH_BTN:
+            case EmptyViewConstants.EMPTY_STETHOSCOPE:
+            case EmptyViewConstants.EMPTY_STETHOSCOPE_WITH_BTN:
                 return R.drawable.emptystate_no_vitals;
             case EmptyViewConstants.EMPTY_PAYMENTS:
                 return R.drawable.emptystate_credit_card;
