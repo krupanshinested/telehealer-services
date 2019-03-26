@@ -146,6 +146,10 @@
         <activity android:name=".views.home.pendingInvites.PendingInvitesActivity" />
 
         <activity android:name=".views.quickLogin.QuickLoginAgreementActivity" />
+
+        <activity
+            android:name=".views.home.vitals.LandscapeImageView"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

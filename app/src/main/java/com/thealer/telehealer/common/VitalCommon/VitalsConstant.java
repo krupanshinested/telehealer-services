@@ -87,6 +87,8 @@ public class VitalsConstant {
     public static final String ts28_key = "iHealth Thermometer TS28";
     public static final String lina_key = "iHealth Lina";
 
+    public static final String heart = "heart";
+    public static final String lung = "lung";
 
     public static int getMaxRange(String inputType) {
         switch (inputType) {

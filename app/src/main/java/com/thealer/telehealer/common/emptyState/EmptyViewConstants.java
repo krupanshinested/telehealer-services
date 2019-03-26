@@ -47,6 +47,8 @@ public class EmptyViewConstants {
     public static final String EMPTY_PATIENT_HISTORY = "empty_patient_history";
     public static final String EMPTY_HEART_RATE = "empty_heart_rate";
     public static final String EMPTY_HEART_RATE_WITH_BTN = "empty_heart_rate_with_btn";
+    public static final String EMPTY_STETHOSCOPE = "empty_stethoscope";
+    public static final String EMPTY_STETHOSCOPE_WITH_BTN = "empty_stethoscope_with_btn";
     public static final String EMPTY_PAYMENTS = "empty_payments";
     public static final String EMPTY_CARDS = "empty_cards";
     public static final String EMPTY_PATIENT_SEARCH = "empty_patient_search";
