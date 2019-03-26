@@ -115,6 +115,7 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_registration_email, container, false);
+        onViewChangeInterface.hideOrShowNext(true);
         initView(view);
         return view;
     }

@@ -142,21 +142,24 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     viewInfoStack.push(getResources().getString(R.string.patient_info));
                     return new PatientRegistrationDetailFragment();
                 case 2:
-                    viewInfoStack.push(getResources().getString(R.string.email_info));
-                    return new RegistrationEmailFragment();
-                case 3:
-                    viewInfoStack.push(getResources().getString(R.string.phone_info));
-                    return new RegistrationMobileFragment();
-                case 4:
                     viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
                     return new TermsAndConditionFragment();
-                case 5:
+                case 3:
                     viewInfoStack.push(getResources().getString(R.string.payment_info));
                     return new PatientChoosePaymentFragment();
+                case 4:
+                    viewInfoStack.push(getResources().getString(R.string.email_info));
+                    return new RegistrationEmailFragment();
+                case 5:
+                    viewInfoStack.push(getResources().getString(R.string.phone_info));
+                    return new RegistrationMobileFragment();
                 case 6:
+                    viewInfoStack.push(getString(R.string.registration_email_phone_verify_info));
+                    return new RegistrationEmailMobileVerificationFragment();
+                case 7:
                     viewInfoStack.push(getResources().getString(R.string.password_info));
                     return new CreatePasswordFragment();
-                case 7:
+                case 8:
                     viewInfoStack.push(getResources().getString(R.string.otp_info));
                     return new OtpVerificationFragment();
                 default:
@@ -174,23 +177,26 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             viewInfoStack.push(getResources().getString(R.string.assistant_info));
                             return new MedicalAssistantDetailFragment();
                         case 3:
-                            viewInfoStack.push(getResources().getString(R.string.email_info));
-                            return new RegistrationEmailFragment();
-                        case 4:
-                            viewInfoStack.push(getResources().getString(R.string.phone_info));
-                            return new RegistrationMobileFragment();
-                        case 5:
                             viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
                             return new TermsAndConditionFragment();
-                        case 6:
+                        case 4:
                             viewInfoStack.push(getResources().getString(R.string.ma_certificate_info));
                             return new MedicalAssistantCertificateUploadFragment();
-                        case 7:
+                        case 5:
                             return new MedicalAssistantCertificatePreviewFragment();
+                        case 6:
+                            viewInfoStack.push(getResources().getString(R.string.email_info));
+                            return new RegistrationEmailFragment();
+                        case 7:
+                            viewInfoStack.push(getResources().getString(R.string.phone_info));
+                            return new RegistrationMobileFragment();
                         case 8:
+                            viewInfoStack.push(getString(R.string.registration_email_phone_verify_info));
+                            return new RegistrationEmailMobileVerificationFragment();
+                        case 9:
                             viewInfoStack.push(getResources().getString(R.string.password_info));
                             return new CreatePasswordFragment();
-                        case 9:
+                        case 10:
                             viewInfoStack.push(getResources().getString(R.string.otp_info));
                             return new OtpVerificationFragment();
                         default:
@@ -215,24 +221,27 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             viewInfoStack.push(getString(R.string.doctor_certificate_hint));
                             return new DoctorCertificateFragment();
                         case 7:
-                            viewInfoStack.push(getString(R.string.email_info));
-                            return new RegistrationEmailFragment();
-                        case 8:
-                            viewInfoStack.push(getResources().getString(R.string.phone_info));
-                            return new RegistrationMobileFragment();
-                        case 9:
                             viewInfoStack.push(getString(R.string.release_info));
                             return new DoctorRegistrationInfoFragment();
-                        case 10:
+                        case 8:
                             viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
                             return new TermsAndConditionFragment();
+                        case 9:
+                            viewInfoStack.push(getString(R.string.email_info));
+                            return new RegistrationEmailFragment();
+                        case 10:
+                            viewInfoStack.push(getResources().getString(R.string.phone_info));
+                            return new RegistrationMobileFragment();
                         case 11:
-                            viewInfoStack.push(getResources().getString(R.string.password_info));
-                            return new CreatePasswordFragment();
+                            viewInfoStack.push(getString(R.string.registration_email_phone_verify_info));
+                            return new RegistrationEmailMobileVerificationFragment();
                         case 12:
                             viewInfoStack.push(getResources().getString(R.string.password_info));
-                            return new BAAFragment();
+                            return new CreatePasswordFragment();
                         case 13:
+                            viewInfoStack.push(getResources().getString(R.string.baa_info));
+                            return new BAAFragment();
+                        case 14:
                             viewInfoStack.push(getResources().getString(R.string.otp_info));
                             return new OtpVerificationFragment();
                         default:
@@ -248,18 +257,18 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     private void setCurrentStep() {
         if (isUserPatient())
-            signupToolbarTitleTv.setText(currentStep + " of 7");
+            signupToolbarTitleTv.setText(currentStep + " of 8");
         else {
             if (currentStep == 1)
                 signupToolbarTitleTv.setVisibility(View.GONE);
             else {
                 signupToolbarTitleTv.setVisibility(View.VISIBLE);
                 if (isUserAssistant()) {
-                    signupToolbarTitleTv.setText(currentStep - 1 + " of 8");
+                    signupToolbarTitleTv.setText(currentStep - 1 + " of 9");
                 }
                 if (isUserDoctor()) {
                     if (currentStep > 3) {
-                        signupToolbarTitleTv.setText(currentStep - 3 + " of 10");
+                        signupToolbarTitleTv.setText(currentStep - 3 + " of 11");
                     } else {
                         signupToolbarTitleTv.setVisibility(View.GONE);
                     }

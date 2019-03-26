@@ -12,7 +12,7 @@
         style="@style/text_title_app_color"
         android:gravity="center"
         android:padding="@dimen/padding_default"
-        android:text="@string/enter_your_phone_number"
+        android:text="@string/enter_your_mobile_number"
         app:layout_constraintBottom_toTopOf="@+id/number_rl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
