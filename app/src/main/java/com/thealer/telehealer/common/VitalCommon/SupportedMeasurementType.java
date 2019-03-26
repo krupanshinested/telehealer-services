@@ -14,24 +14,27 @@ public class SupportedMeasurementType {
     public static final String gulcose = "gulcose";
     public static final String pulseOximeter = "pulseOximeter";
     public static final String heartRate = "heartRate"; // ony used to save the heart rate which is calculated from bp or pulse machine
+    public static final String stethoscope = "stethoscope";
 
 
     public static int getTitle(String type) {
         switch (type) {
-            case SupportedMeasurementType.bpHeart:
+            case bpHeart:
                 return R.string.blood_pressure_heart_rate;
-            case SupportedMeasurementType.bp:
+            case bp:
                 return R.string.blood_pressure;
-            case SupportedMeasurementType.weight:
+            case weight:
                 return R.string.weight;
-            case SupportedMeasurementType.temperature:
+            case temperature:
                 return R.string.bodyTemperature;
-            case SupportedMeasurementType.gulcose:
+            case gulcose:
                 return R.string.bloodGlucose;
-            case SupportedMeasurementType.pulseOximeter:
+            case pulseOximeter:
                 return R.string.pulseOximeter;
-            case SupportedMeasurementType.heartRate:
+            case heartRate:
                 return R.string.heartRate;
+            case stethoscope:
+                return R.string.stethoscope;
             default:
                 return R.string.blood_pressure;
         }
@@ -39,19 +42,21 @@ public class SupportedMeasurementType {
 
     public static int getDrawable(String type) {
         switch (type) {
-            case SupportedMeasurementType.bp:
-            case SupportedMeasurementType.bpHeart:
+            case bp:
+            case bpHeart:
                 return R.drawable.ic_vitals_bp;
-            case SupportedMeasurementType.weight:
+            case weight:
                 return R.drawable.ic_vitals_weight;
-            case SupportedMeasurementType.temperature:
+            case temperature:
                 return R.drawable.ic_vitals_temperature;
-            case SupportedMeasurementType.gulcose:
+            case gulcose:
                 return R.drawable.ic_vitals_glucose;
-            case SupportedMeasurementType.pulseOximeter:
+            case pulseOximeter:
                 return R.drawable.ic_vitals_pulse;
-            case SupportedMeasurementType.heartRate:
+            case heartRate:
                 return R.drawable.ic_vitals_heart;
+            case stethoscope:
+                return R.drawable.ic_vitals_stethio;
             default:
                 return 0;
         }
@@ -59,21 +64,22 @@ public class SupportedMeasurementType {
 
     public static String getVitalUnit(String supportedMeasurementType) {
         switch (supportedMeasurementType) {
-            case SupportedMeasurementType.bp:
-            case SupportedMeasurementType.bpHeart:
+            case bp:
+            case bpHeart:
                 return "mmHg";
-            case SupportedMeasurementType.gulcose:
+            case gulcose:
                 return "mg/dL";
-            case SupportedMeasurementType.heartRate:
+            case heartRate:
                 return "count/min";
-            case SupportedMeasurementType.pulseOximeter:
+            case pulseOximeter:
                 return "%";
-            case SupportedMeasurementType.temperature:
+            case temperature:
                 return "°F";
-            case SupportedMeasurementType.weight:
+            case weight:
                 return "lbs";
+            default:
+                return "";
         }
-        return null;
     }
 
     public static final String[] items = new String[]{bpHeart, weight, temperature, gulcose, pulseOximeter};

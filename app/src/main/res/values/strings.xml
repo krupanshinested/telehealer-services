@@ -510,6 +510,7 @@
     <string name="bloodGlucose">Blood Glucose</string>
     <string name="pulseOximeter">Pulse Oximeter</string>
     <string name="heartRate">Heart Rate</string>
+    <string name="stethoscope">Stethoscope</string>
     <string name="choose_the_type">Choose the type</string>
     <string name="information_required">Information required</string>
     <string name="other">Other</string>
@@ -876,6 +877,15 @@
     <string name="fax_number">Fax Number</string>
     <string name="login_error_message">Unable to login. Please ensure that your email and password are entered correctly and try again.</string>
     <string name="vitals_report">Vitals Report</string>
+    <string name="ai_result">AI Result</string>
+    <string name="exam_duration">Exam Duration</string>
+    <string name="filter">Filter</string>
+    <string name="segment">Segment</string>
+    <string name="seconds">Seconds</string>
+    <string name="minute">Minute</string>
+    <string name="hour">Hour</string>
+    <string name="Date">Date</string>
+    <string name="stethIO">Steth IO</string>
     <string name="registration_email_phone_verify_info">Before we create your account, let us make sure that we have correctly captured your mobile number and email</string>
     <string name="enter_your_mobile_number">Enter your mobile number</string>
     <string name="confirm_your_mobile_number_and_email_id">Confirm your mobile number and email id</string>

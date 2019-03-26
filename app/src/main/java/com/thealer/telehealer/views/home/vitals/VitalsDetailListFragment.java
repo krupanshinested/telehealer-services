@@ -176,7 +176,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
                     updateList(vitalsApiResponseModelArrayList);
 
-                    updateChart(vitalsApiResponseModelArrayList);
+                    if (!selectedItem.equals(SupportedMeasurementType.stethoscope))
+                        updateChart(vitalsApiResponseModelArrayList);
 
                     if (isAbnormalVitalView) {
                         setUserDetailView();
@@ -258,7 +259,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             for (int i = 0; i < vitalsApiResponseModelArrayList.size(); i++) {
 
-                String value = vitalsApiResponseModelArrayList.get(i).getValue()
+                String value = vitalsApiResponseModelArrayList.get(i).getValue().toString()
                         .replace(SupportedMeasurementType.getVitalUnit(selectedItem), "").trim();
 
                 String type = vitalsApiResponseModelArrayList.get(i).getType();
@@ -480,6 +481,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             selectedItem = getArguments().getString(ArgumentKeys.MEASUREMENT_TYPE);
 
+            if (selectedItem.equals(SupportedMeasurementType.stethoscope)) {
+                toolbar.getMenu().clear();
+                addFab.hide();
+            }
+
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 
             isAbnormalVitalView = getArguments().getBoolean(ArgumentKeys.VIEW_ABNORMAL_VITAL);
@@ -635,6 +641,9 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 break;
             case SupportedMeasurementType.gulcose:
                 emptyStateType = EmptyViewConstants.EMPTY_GULCOSE;
+                break;
+            case SupportedMeasurementType.stethoscope:
+                emptyStateType = EmptyViewConstants.EMPTY_STETHOSCOPE;
                 break;
             case SupportedMeasurementType.heartRate:
                 emptyStateType = EmptyViewConstants.EMPTY_HEART_RATE;
