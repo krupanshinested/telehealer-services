@@ -177,6 +177,8 @@ public class VitalUserReportListFragment extends BaseFragment {
             }
         }
 
+        getUserVitals();
+
     }
 
     private void generatePrintList() {
@@ -203,11 +205,11 @@ public class VitalUserReportListFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        getUserVitals();
     }
 
     private void getUserVitals() {
         if (commonUserApiResponseModel != null) {
+            vitalsListCelv.hideEmptyState();
             vitalsApiViewModel.getUserFilteredVitals(filter, commonUserApiResponseModel.getUser_guid());
         }
     }

@@ -81,6 +81,9 @@ public class ArgumentKeys {
     public static final String IS_MANUAL_ENTRY = "isManualEntry";
     public static final String IS_PRIMARY_DELETED = "isPrimaryDeletd";
     public static final String IS_SECONDARY_DELETED = "isSecondaryDeletd";
+    public static final String VITAL_DETAIL = "vitalDetail";
+    public static final String SEGMENT_DETAIL = "segmentDetail";
+    public static final String SEGMENT = "segment";
     public static final String IS_SHOW_CIRCULAR_AVATAR = "isShowCircularAvatar";
     public static final String CIRCULAR_AVATAR = "circularAvatar";
     public static final String IS_AUTH_REQUIRED = "isAuthRequrired";
