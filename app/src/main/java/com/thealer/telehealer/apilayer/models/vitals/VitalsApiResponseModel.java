@@ -1,5 +1,6 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
@@ -10,7 +11,8 @@ import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 public class VitalsApiResponseModel extends BaseApiResponseModel {
 
     private int user_vital_id;
-    private String value;
+    private Object value;
+    private StethBean stethBean;
     private String type;
     private String display_name;
     private String mode;
@@ -26,12 +28,16 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
         this.user_vital_id = user_vital_id;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
+    }
+
+    public StethBean getStethBean() {
+        return new Gson().fromJson(new Gson().toJson(getValue()), StethBean.class);
     }
 
     public String getType() {
@@ -108,4 +114,5 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
             }
         }
     }
+
 }

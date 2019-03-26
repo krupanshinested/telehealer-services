@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LabelValueCustomView">
+        <attr name="lbcv_label_visible" format="boolean" />
+        <attr name="lbcv_value_visible" format="boolean" />
+        <attr name="lbcv_bottom_view_visible" format="boolean" />
+        <attr name="lbcv_label_text" format="string" />
+        <attr name="lbcv_value_text" format="string" />
+    </declare-styleable>
+</resources>

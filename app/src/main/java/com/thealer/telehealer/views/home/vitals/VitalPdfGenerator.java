@@ -182,6 +182,10 @@ public class VitalPdfGenerator {
 
         for (VitalsApiResponseModel vitalsApiResponseModel : pdfList) {
 
+            if (vitalsApiResponseModel.getType().equals(SupportedMeasurementType.stethoscope)) {
+                continue;
+            }
+
             List<VitalsApiResponseModel> apiResponseModelList = new ArrayList<>();
 
             if (!vitalsMap.containsKey(vitalsApiResponseModel.getType())) {
@@ -309,7 +313,7 @@ public class VitalPdfGenerator {
             String listItem = htmlList;
 
             String createdAt = Utils.getFormatedDateTime(response.getCreated_at());
-            String value = response.getValue() + " " + SupportedMeasurementType.getVitalUnit(response.getType());
+            String value = response.getValue().toString() + " " + SupportedMeasurementType.getVitalUnit(response.getType());
             String mode = "";
             switch (response.getMode()) {
                 case VitalsConstant.VITAL_MODE_DEVICE:
