@@ -248,8 +248,8 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
             recentHeaderTv = (TextView) itemView.findViewById(R.id.recent_header_tv);
 
             avatarCiv = (CircleImageView) itemView.findViewById(R.id.avatar_civ);
-            titleTv = (TextView) itemView.findViewById(R.id.title_tv);
-            subTitleTv = (TextView) itemView.findViewById(R.id.sub_title_tv);
+            titleTv = (TextView) itemView.findViewById(R.id.list_title_tv);
+            subTitleTv = (TextView) itemView.findViewById(R.id.list_sub_title_tv);
             actionCl = (ConstraintLayout) itemView.findViewById(R.id.action_cl);
             acceptBtn = (CustomButton) itemView.findViewById(R.id.accept_btn);
             rejectBtn = (Button) itemView.findViewById(R.id.reject_btn);

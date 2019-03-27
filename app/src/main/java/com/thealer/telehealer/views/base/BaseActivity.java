@@ -1,17 +1,13 @@
 package com.thealer.telehealer.views.base;
 
-import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -164,29 +160,6 @@ public class BaseActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
-    public void showAlertDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Alert");
-        alertDialog.setMessage("Do you want to close ?");
-        alertDialog.setCancelable(false);
-        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                finish();
-            }
-        });
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
-            }
-        });
-        alertDialog.create();
-        alertDialog.show();
-    }
-
     public void showSnack() {
         //create a snack bar view and show here
         Logs.D(TAG, "inside show snack");
@@ -237,28 +210,6 @@ public class BaseActivity extends AppCompatActivity {
 
     public boolean isSplitModeNeeded() {
         return isDeviceXLarge() && isModeLandscape();
-    }
-
-    public Dialog showAlertDialog(String title, String message,
-                                  @Nullable String positiveTitle,
-                                  @Nullable String negativeTitle,
-                                  @Nullable DialogInterface.OnClickListener positiveListener,
-                                  @Nullable DialogInterface.OnClickListener negativeListener) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(BaseActivity.this);
-
-        alertDialog.setTitle(title);
-        alertDialog.setMessage(message);
-        alertDialog.setCancelable(false);
-        if (positiveTitle != null) {
-            alertDialog.setPositiveButton(positiveTitle, positiveListener);
-        }
-
-        if (negativeTitle != null) {
-            alertDialog.setNegativeButton(negativeTitle, negativeListener);
-        }
-        Dialog dialog = alertDialog.create();
-        dialog.show();
-        return dialog;
     }
 
     @Override

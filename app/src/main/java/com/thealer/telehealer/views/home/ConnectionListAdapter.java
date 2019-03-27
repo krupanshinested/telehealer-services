@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -78,7 +78,6 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        Log.e("aswin", "onBindViewHolder: " + apiResponseModelList.get(i).getDisplayName() + " " + apiResponseModelList.get(i).getConnection_status());
         if (apiResponseModelList.get(i).getConnection_status() == null ||
                 apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_REJECTED)) {
             viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_connect_user));
@@ -133,6 +132,8 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
                 onListItemSelectInterface.onListItemSelected(i, bundle);
             }
         });
+
+        viewHolder.userListIv.setStatus(apiResponseModelList.get(i).getStatus());
     }
 
     @Override
@@ -157,14 +158,16 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         private TextView subTitleTv;
         private ImageView actionIv;
         private CardView itemCv;
+        private CustomUserListItemView userListIv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemCv = (CardView) itemView.findViewById(R.id.item_cv);
-            avatarCiv = (CircleImageView) itemView.findViewById(R.id.avatar_civ);
-            titleTv = (TextView) itemView.findViewById(R.id.list_title_tv);
-            subTitleTv = (TextView) itemView.findViewById(R.id.list_sub_title_tv);
-            actionIv = (ImageView) itemView.findViewById(R.id.action_iv);
+            userListIv = (CustomUserListItemView) itemView.findViewById(R.id.user_list_iv);
+            itemCv = userListIv.getListItemCv();
+            avatarCiv = userListIv.getAvatarCiv();
+            titleTv = userListIv.getListTitleTv();
+            subTitleTv = userListIv.getListSubTitleTv();
+            actionIv = userListIv.getActionIv();
         }
     }
 }

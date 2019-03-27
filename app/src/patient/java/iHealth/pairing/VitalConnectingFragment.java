@@ -22,6 +22,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
@@ -252,7 +253,7 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    showAlertDialog(getActivity(), getString(R.string.error),
+                    Utils.showAlertDialog(getActivity(), getString(R.string.error),
                             errorMessage,
                             getString(R.string.retry),
                             getString(R.string.Cancel), new DialogInterface.OnClickListener() {

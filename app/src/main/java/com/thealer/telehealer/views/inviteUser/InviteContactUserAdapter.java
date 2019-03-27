@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
@@ -69,23 +71,16 @@ class InviteContactUserAdapter extends RecyclerView.Adapter<InviteContactUserAda
         } else {
             viewHolder.avatarCiv.setImageResource(R.drawable.profile_placeholder);
         }
-//        String selectedContact = contactModelList.get(i).getSelectedContact();
-//        if (selectedContact != null && !selectedContact.isEmpty()) {
-//            viewHolder.contactTv.setText(selectedContact);
-//            viewHolder.contactTv.setVisibility(View.VISIBLE);
-//            viewHolder.checkbox.setChecked(true);
-//        } else {
-//            viewHolder.contactTv.setVisibility(View.GONE);
-//            viewHolder.checkbox.setChecked(false);
-//        }
 
         if (inviteContactViewModel.selectedIdList.containsKey(contactModelList.get(i).getId())) {
             viewHolder.checkbox.setChecked(true);
             viewHolder.contactTv.setText(contactModelList.get(i).getSelectedContact());
             viewHolder.contactTv.setVisibility(View.VISIBLE);
+            viewHolder.contactNameTv.setGravity(Gravity.BOTTOM | Gravity.START);
         } else {
             viewHolder.checkbox.setChecked(false);
             viewHolder.contactTv.setVisibility(View.GONE);
+            viewHolder.contactNameTv.setGravity(Gravity.CENTER | Gravity.START);
         }
 
         viewHolder.itemViewCl.setOnClickListener(new View.OnClickListener() {
@@ -226,14 +221,21 @@ class InviteContactUserAdapter extends RecyclerView.Adapter<InviteContactUserAda
         private TextView contactNameTv;
         private TextView contactTv;
         private CheckBox checkbox;
+        private CustomUserListItemView userListIv;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            userListIv = (CustomUserListItemView) itemView.findViewById(R.id.user_list_iv);
             itemViewCl = (ConstraintLayout) itemView.findViewById(R.id.itemView);
-            avatarCiv = (CircleImageView) itemView.findViewById(R.id.avatar_civ);
-            contactNameTv = (TextView) itemView.findViewById(R.id.contact_name_tv);
-            contactTv = (TextView) itemView.findViewById(R.id.contact_tv);
-            checkbox = (CheckBox) itemView.findViewById(R.id.checkbox);
+            avatarCiv = userListIv.getAvatarCiv();
+            contactNameTv = userListIv.getListTitleTv();
+            contactTv = userListIv.getListSubTitleTv();
+            checkbox = userListIv.getCheckbox();
+            checkbox.setClickable(false);
+            userListIv.getListItemCv().setUseCompatPadding(false);
+            userListIv.getListItemCv().setRadius(0);
+            userListIv.getListItemCv().setCardElevation(0);
         }
     }
 }

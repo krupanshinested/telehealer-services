@@ -206,7 +206,6 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             }
 
             selectionType = getArguments().getString(ArgumentKeys.SEARCH_TYPE);
-            Log.e("aswin", "initView: " + selectionType);
 
             if (selectionType != null) {
 

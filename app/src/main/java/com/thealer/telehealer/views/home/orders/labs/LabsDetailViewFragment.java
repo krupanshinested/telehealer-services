@@ -254,7 +254,7 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.cancel_tv:
-                showAlertDialog(getActivity(), getString(R.string.cancel_caps),
+                Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps),
                         getString(R.string.cancel_prescription_order),
                         getString(R.string.yes),
                         getString(R.string.no),

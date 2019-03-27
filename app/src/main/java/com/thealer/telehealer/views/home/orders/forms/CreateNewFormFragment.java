@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import com.thealer.telehealer.apilayer.models.orders.forms.OrdersFormsApiRespons
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -86,7 +88,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
 
                     } else {
                         formsLl.setVisibility(View.GONE);
-                        showAlertDialog(getActivity(), "Form", "There is no forms to send", "OK", null, new DialogInterface.OnClickListener() {
+                        Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_forms_to_send), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -147,10 +149,10 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
 
         formsLl.setVisibility(View.GONE);
 
-        enableOrDisableSend(false);
+        enableOrDisableSend();
 
         formsRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        formsListAdapter = new FormsListAdapter(getActivity(), this, remainingFormsList);
+        formsListAdapter = new FormsListAdapter(getActivity(), this, remainingFormsList, selectedFormIds);
         formsRv.setAdapter(formsListAdapter);
 
         String title = getString(R.string.Click_here_to_select_patient), subtitle = null;
@@ -226,8 +228,12 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
         selectedFormIds.remove(0);
     }
 
-    public void enableOrDisableSend(boolean enable) {
-        sendBtn.setEnabled(enable);
+    public void enableOrDisableSend() {
+        if (selectedFormIds.size() > 0) {
+            sendBtn.setEnabled(true);
+        } else {
+            sendBtn.setEnabled(false);
+        }
     }
 
     @Override
@@ -238,11 +244,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
             selectedFormIds.add(String.valueOf(id));
         }
 
-        if (selectedFormIds.size() > 0) {
-            enableOrDisableSend(true);
-        } else {
-            enableOrDisableSend(false);
-        }
+        enableOrDisableSend();
 
     }
 

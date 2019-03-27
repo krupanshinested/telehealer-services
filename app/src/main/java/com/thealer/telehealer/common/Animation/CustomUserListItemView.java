@@ -1,0 +1,221 @@
+package com.thealer.telehealer.common.Animation;
+
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
+import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.thealer.telehealer.R;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+
+/**
+ * Created by Aswin on 27,March,2019
+ */
+public class CustomUserListItemView extends ConstraintLayout {
+    private CircleImageView avatarCiv;
+    private CircleImageView statusCiv;
+
+    public final String AVAILABLE = "AVAILABLE";
+    public final String OFFLINE = "OFFLINE";
+    public final String ACTIVATION_PENDING = "ACTIVATION_PENDING";
+    public final String BUSY = "BUSY";
+    public final String NO_DATA = "NO_DATA";
+    private ConstraintLayout listItemCl;
+    private CardView listItemCv;
+    private TextView listTitleTv;
+    private TextView listSubTitleTv;
+    private LinearLayout actionLl;
+    private ImageView actionIv;
+    private CheckBox checkbox;
+
+    private Drawable avatarDrawable, actionDrawable;
+    private int gravity, actionWidth = 25, actionHeight = 25;
+    private boolean showAction, showCheckbox, showStatus, showBottomView;
+    private View bottomView;
+
+    public CustomUserListItemView(Context context) {
+        super(context);
+        initView(null);
+    }
+
+    public CustomUserListItemView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initView(attrs);
+    }
+
+    private void initView(AttributeSet attrs) {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.view_custom_circle_image_view, this, true);
+        avatarCiv = (CircleImageView) view.findViewById(R.id.avatar_civ);
+        statusCiv = (CircleImageView) view.findViewById(R.id.status_civ);
+        listItemCl = (ConstraintLayout) view.findViewById(R.id.list_item_cl);
+        listItemCv = (CardView) view.findViewById(R.id.list_item_cv);
+        listTitleTv = (TextView) view.findViewById(R.id.list_title_tv);
+        listSubTitleTv = (TextView) view.findViewById(R.id.list_sub_title_tv);
+        actionLl = (LinearLayout) view.findViewById(R.id.action_ll);
+        actionIv = (ImageView) view.findViewById(R.id.action_iv);
+        checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+        bottomView = (View) view.findViewById(R.id.bottom_view);
+
+
+        if (attrs != null) {
+            TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CustomUserListItemView);
+
+            avatarDrawable = typedArray.getDrawable(R.styleable.CustomUserListItemView_image);
+            showAction = typedArray.getBoolean(R.styleable.CustomUserListItemView_show_action, false);
+            if (showAction) {
+                gravity = typedArray.getInteger(R.styleable.CustomUserListItemView_action_gravity, 1);
+                actionDrawable = typedArray.getDrawable(R.styleable.CustomUserListItemView_action_src);
+                setActionImage(actionDrawable);
+                setActionGravity(gravity);
+            }
+            actionWidth = typedArray.getDimensionPixelSize(R.styleable.CustomUserListItemView_action_width, 12);
+            actionHeight = typedArray.getDimensionPixelSize(R.styleable.CustomUserListItemView_action_height, 12);
+            showCheckbox = typedArray.getBoolean(R.styleable.CustomUserListItemView_show_checkbox, false);
+            showStatus = typedArray.getBoolean(R.styleable.CustomUserListItemView_show_status, true);
+            showBottomView = typedArray.getBoolean(R.styleable.CustomUserListItemView_show_bottom_view, false);
+
+            setActionWidthHeight(actionWidth, actionHeight);
+            showActionIv(showAction);
+            showCheckBox(showCheckbox);
+            showStatus(showStatus);
+            showBottomView(showBottomView);
+            setUserAvatar(avatarDrawable);
+
+            typedArray.recycle();
+        }
+    }
+
+    private void setActionWidthHeight(int actionWidth, int actionHeight) {
+
+        ViewGroup.LayoutParams layoutParams = actionIv.getLayoutParams();
+        layoutParams.width = (int) (actionWidth * getContext().getResources().getDisplayMetrics().scaledDensity);
+        layoutParams.height = (int) (actionHeight * getContext().getResources().getDisplayMetrics().scaledDensity);
+
+    }
+
+    private void setActionGravity(int gravity) {
+        int g = Gravity.BOTTOM;
+        switch (gravity) {
+            case 1:
+                g = Gravity.TOP;
+                break;
+            case 2:
+                g = Gravity.CENTER;
+                break;
+            case 3:
+                g = Gravity.BOTTOM;
+                break;
+        }
+
+        actionLl.setGravity(g | Gravity.CENTER);
+    }
+
+    private void setActionImage(Drawable actionDrawable) {
+        if (actionDrawable != null) {
+            actionIv.setImageDrawable(actionDrawable);
+        }
+    }
+
+    private void setUserAvatar(Drawable avatarDrawable) {
+        if (avatarDrawable != null)
+            avatarCiv.setImageDrawable(avatarDrawable);
+    }
+
+    public CircleImageView getAvatarCiv() {
+        return avatarCiv;
+    }
+
+    public TextView getListTitleTv() {
+        return listTitleTv;
+    }
+
+    public TextView getListSubTitleTv() {
+        return listSubTitleTv;
+    }
+
+    public ImageView getActionIv() {
+        return actionIv;
+    }
+
+    public CheckBox getCheckbox() {
+        return checkbox;
+    }
+
+    public ConstraintLayout getListItemCl() {
+        return listItemCl;
+    }
+
+    public CardView getListItemCv() {
+        return listItemCv;
+    }
+
+    public void showActionIv(boolean show) {
+        if (show) {
+            actionIv.setVisibility(VISIBLE);
+        } else {
+            actionIv.setVisibility(GONE);
+        }
+    }
+
+    public void showCheckBox(boolean show) {
+        if (show) {
+            checkbox.setVisibility(VISIBLE);
+        } else {
+            checkbox.setVisibility(GONE);
+        }
+    }
+
+    public void showStatus(boolean show) {
+        if (show) {
+            statusCiv.setVisibility(VISIBLE);
+        } else {
+            statusCiv.setVisibility(GONE);
+        }
+    }
+
+    public void showBottomView(boolean show) {
+        if (show) {
+            bottomView.setVisibility(VISIBLE);
+        } else {
+            bottomView.setVisibility(GONE);
+        }
+    }
+
+    public void setStatus(String status) {
+        int color = R.color.status_offline;
+
+        switch (status) {
+            case AVAILABLE:
+                color = R.color.status_available;
+                break;
+            case OFFLINE:
+                color = R.color.status_offline;
+                break;
+            case ACTIVATION_PENDING:
+                color = R.color.status_activation_pending;
+                break;
+            case BUSY:
+                color = R.color.status_busy;
+                break;
+            case NO_DATA:
+                color = R.color.colorBlack;
+                break;
+        }
+
+        statusCiv.setImageDrawable(new ColorDrawable(getContext().getColor(color)));
+    }
+}

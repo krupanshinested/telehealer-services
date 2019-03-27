@@ -139,7 +139,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                                     recentsApiViewModel.downloadTranscriptDetail(transcriptionApiResponseModel.getTranscript(), true);
                                     createVideoPlayer();
                                 } else {
-                                    showAlertDialog(getActivity(),
+                                    Utils.showAlertDialog(getActivity(),
                                             getString(R.string.alert),
                                             "Your transcription in not ready yet, Please try again after sometimes",
                                             getString(R.string.ok),
@@ -295,7 +295,6 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                Log.e("aswin", "onPlayerStateChanged: " + playWhenReady);
             }
 
             @Override

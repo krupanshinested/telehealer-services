@@ -29,6 +29,7 @@ import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
@@ -364,7 +365,7 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
 
         setCurrentState(MeasureState.failed);
         lastError = error;
-        showAlertDialog(getActivity(), getString(R.string.error), error, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+        Utils.showAlertDialog(getActivity(), getString(R.string.error), error, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
@@ -418,7 +419,7 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
     public void didDisConnected(String type, String serailNumber) {
         if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
             if (currentState == MeasureState.failed) {
-                showAlertDialog(getActivity(), getString(R.string.error), lastError, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                Utils.showAlertDialog(getActivity(), getString(R.string.error), lastError, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (getActivity() != null) {
@@ -446,7 +447,7 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
 
     @Override
     public void didFailConnectDevice(String type, String serailNumber, String errorMessage) {
-        showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+        Utils.showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();

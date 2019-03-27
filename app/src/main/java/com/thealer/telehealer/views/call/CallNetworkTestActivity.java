@@ -79,8 +79,8 @@ public class CallNetworkTestActivity extends BaseActivity implements
     private Handler mHandler = new Handler();
 
     private CircularProgressBar circular_progress;
-    private TextView title_tv,sub_title_tv;
-    private ImageView close_iv,success_iv;
+    private TextView title_tv, sub_title_tv;
+    private ImageView close_iv, success_iv;
 
     private final CallInitiateViewModel callInitiateViewModel = new CallInitiateViewModel(application);
 
@@ -128,9 +128,9 @@ public class CallNetworkTestActivity extends BaseActivity implements
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    showResult(getString(R.string.networkTestFailed),errorModel.getMessage(),false);
+                    showResult(getString(R.string.networkTestFailed), errorModel.getMessage(), false);
                 } else {
-                    showResult(getString(R.string.networkTestFailed),getString(R.string.error_on_contacting_server),false);
+                    showResult(getString(R.string.networkTestFailed), getString(R.string.error_on_contacting_server), false);
                 }
             }
         });
@@ -153,7 +153,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
         }
 
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -181,7 +181,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
 
     }
@@ -236,7 +236,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
     @Override
     public void onError(Session session, OpentokError opentokError) {
         Log.i(LOGTAG, "Session error: " + opentokError.getMessage());
-        showResult("Error", "Session error: " + opentokError.getMessage(),false);
+        showResult("Error", "Session error: " + opentokError.getMessage(), false);
     }
 
     @Override
@@ -268,7 +268,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
     @Override
     public void onError(PublisherKit publisherKit, OpentokError opentokError) {
         Log.i(LOGTAG, "Publisher error: " + opentokError.getMessage());
-        showResult("Error", "Publisher error: " + opentokError.getMessage(),false);
+        showResult("Error", "Publisher error: " + opentokError.getMessage(), false);
     }
 
     @Override
@@ -285,7 +285,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
     @Override
     public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
         Log.i(LOGTAG, "Subscriber error: " + opentokError.getMessage());
-        showResult("Error", "Subscriber error: " + opentokError.getMessage(),false);
+        showResult("Error", "Subscriber error: " + opentokError.getMessage(), false);
     }
 
     private void subscribeToStream(Stream stream) {
@@ -403,7 +403,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
             Log.i(LOGTAG, "Check video quality stats data");
             if (mVideoBw < 150000 || mVideoPLRatio > 0.03) {
                 //go to audio call to check the quality with video disabled
-                showResult(getString(R.string.network_test_succeeded), getString(R.string.audio_good_video_bad),true);
+                showResult(getString(R.string.network_test_succeeded), getString(R.string.audio_good_video_bad), true);
                 mPublisher.setPublishVideo(false);
                 mSubscriber.setSubscribeToVideo(false);
                 mSubscriber.setVideoStatsListener(null);
@@ -411,7 +411,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
             } else {
                 //quality is good for video call
                 mSession.disconnect();
-                showResult(getString(R.string.network_test_succeeded), getString(R.string.audio_video_good),true);
+                showResult(getString(R.string.network_test_succeeded), getString(R.string.audio_video_good), true);
             }
         }
     }
@@ -419,17 +419,17 @@ public class CallNetworkTestActivity extends BaseActivity implements
     private void checkAudioQuality() {
         if (mSession != null) {
             if (mAudioBw < 25000 || mAudioPLRatio > 0.05) {
-                showResult(getString(R.string.network_test_succeeded), getString(R.string.poor_connection),true);
+                showResult(getString(R.string.network_test_succeeded), getString(R.string.poor_connection), true);
             } else {
-                showResult(getString(R.string.network_test_succeeded), getString(R.string.audio_good_video_bad),true);
+                showResult(getString(R.string.network_test_succeeded), getString(R.string.audio_good_video_bad), true);
             }
         }
     }
 
-    private void showResult(String title, String message,Boolean isSuccess) {
-       title_tv.setText(title);
-       sub_title_tv.setText(message);
-       circular_progress.progressiveStop();
+    private void showResult(String title, String message, Boolean isSuccess) {
+        title_tv.setText(title);
+        sub_title_tv.setText(message);
+        circular_progress.progressiveStop();
         circular_progress.setVisibility(View.INVISIBLE);
 
         if (isSuccess) {

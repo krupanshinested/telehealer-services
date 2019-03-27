@@ -75,12 +75,10 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.e("aswin", "onConnectionSuspended: ");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e("aswin", "onConnectionFailed: " + connectionResult.getErrorMessage());
     }
 
     public void createLocationRequest() {
@@ -133,7 +131,6 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
         locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                Log.e("aswin", "onSuccess: " + location);
                 if (locationTrackerInterface != null) {
                     if (location == null) {
                         locationTrackerInterface.onLocationUpdated(null,null);
@@ -142,7 +139,6 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
                         try {
                             List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                             locationTrackerInterface.onLocationUpdated(addressList.get(0).getLocality(),addressList.get(0).getSubAdminArea());
-                            Log.e("aswin", "onSuccess: " + addressList.get(0).getLocality());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

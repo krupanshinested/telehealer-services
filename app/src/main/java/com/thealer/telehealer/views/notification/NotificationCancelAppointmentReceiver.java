@@ -33,7 +33,6 @@ public class NotificationCancelAppointmentReceiver extends BroadcastReceiver {
 
         SchedulesApiResponseModel.ResultBean resultBean = new Gson().fromJson(intent.getStringExtra(ArgumentKeys.SCHEDULE_DETAIL), SchedulesApiResponseModel.ResultBean.class);
 
-        Log.e("aswin", "onReceive: cancel appointment" + notificationId);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(notificationId);
