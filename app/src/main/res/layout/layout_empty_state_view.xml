@@ -34,16 +34,14 @@
 
     <TextView
         android:id="@+id/empty_message_tv"
-        style="@style/text_sub_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_default"
         android:gravity="center"
-        app:layout_constraintWidth_max="@dimen/max_width"
-        android:textColor="@color/colorBlack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/empty_title_tv"
+        app:layout_constraintWidth_max="@dimen/max_width"
         tools:text="@string/dummy_text" />
 
     <com.thealer.telehealer.common.CustomButton

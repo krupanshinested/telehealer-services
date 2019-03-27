@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -65,6 +66,8 @@ public class VitalReportUserListAdapter extends RecyclerView.Adapter<VitalReport
                 Utils.hideKeyboard(fragmentActivity);
             }
         });
+
+        viewHolder.userListIv.setStatus(commonUserApiResponseModelList.get(i).getStatus());
     }
 
     @Override
@@ -84,15 +87,17 @@ public class VitalReportUserListAdapter extends RecyclerView.Adapter<VitalReport
         private TextView subTitleTv;
         private ImageView actionIv;
         private CardView patientTemplateCv;
+        private CustomUserListItemView userListIv;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            patientTemplateCv = (CardView) itemView.findViewById(R.id.patient_template_cv);
-            avatarCiv = (CircleImageView) itemView.findViewById(R.id.avatar_civ);
-            titleTv = (TextView) itemView.findViewById(R.id.list_title_tv);
-            subTitleTv = (TextView) itemView.findViewById(R.id.list_sub_title_tv);
-            actionIv = (ImageView) itemView.findViewById(R.id.action_iv);
+            userListIv = (CustomUserListItemView) itemView.findViewById(R.id.user_list_iv);
+            patientTemplateCv = userListIv.getListItemCv();
+            avatarCiv = userListIv.getAvatarCiv();
+            titleTv = userListIv.getListTitleTv();
+            subTitleTv = userListIv.getListSubTitleTv();
+            actionIv = userListIv.getActionIv();
         }
     }
 }

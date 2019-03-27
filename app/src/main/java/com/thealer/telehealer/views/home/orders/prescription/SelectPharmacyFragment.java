@@ -72,7 +72,6 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("aswin", "onReceive: ");
             isProposerRequested = true;
         }
     };

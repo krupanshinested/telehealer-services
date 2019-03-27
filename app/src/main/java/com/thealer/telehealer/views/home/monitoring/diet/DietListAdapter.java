@@ -114,8 +114,6 @@ public class DietListAdapter extends RecyclerView.Adapter<DietListAdapter.ViewHo
         this.dietListAdapterModelList = dietListAdapterModelList;
         this.selectedDate = selectedDate;
 
-        Log.e("aswin", "setData: rv " + selectedDate);
-        Log.e("aswin", "list: rv " + new Gson().toJson(this.dietListAdapterModelList));
         notifyDataSetChanged();
     }
 

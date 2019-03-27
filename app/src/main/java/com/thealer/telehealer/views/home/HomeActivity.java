@@ -69,6 +69,8 @@ import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
+import java.util.Calendar;
+
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 public class HomeActivity extends BaseActivity implements AttachObserverInterface,
@@ -148,7 +150,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showOrHideNotificationCount(boolean isShow, int unread_count) {
-        Log.e(TAG, "showOrHideNotificationCount: ");
         if (notificationCountTv != null) {
             notificationCountTv.setText(String.valueOf(unread_count));
             if (isShow) {
@@ -170,7 +171,27 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (UserDetailPreferenceManager.getWhoAmIResponse() == null ||
                 !UserDetailPreferenceManager.getWhoAmIResponse().isEmail_verified()) {
-            startActivity(new Intent(this, EmailVerificationActivity.class));
+            Calendar currentTime = Calendar.getInstance();
+            Calendar updateTime;
+            boolean show = false;
+
+            if (appPreference.getString(PreferenceConstants.EMAIL_VERIFICATION_SHOWN_TIME).isEmpty()) {
+
+                show = true;
+            } else {
+                updateTime = Calendar.getInstance();
+                updateTime.setTimeInMillis(Long.parseLong(appPreference.getString(PreferenceConstants.EMAIL_VERIFICATION_SHOWN_TIME)));
+
+                if ((currentTime.get(Calendar.DAY_OF_MONTH) > updateTime.get(Calendar.DAY_OF_MONTH)) ||
+                        (currentTime.get(Calendar.MONTH) > updateTime.get(Calendar.MONTH))) {
+                    show = true;
+                }
+            }
+
+            if (show) {
+                appPreference.setString(PreferenceConstants.EMAIL_VERIFICATION_SHOWN_TIME, String.valueOf(Calendar.getInstance().getTimeInMillis()));
+                startActivity(new Intent(this, EmailVerificationActivity.class));
+            }
         }
         return true;
     }
@@ -308,7 +329,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void checkForDocumentUpload() {
         if (Constants.sharedPath != null) {
-            showAlertDialog("Found Documents", "Do you really want to upload the documents which you shared?", getString(R.string.upload), getString(R.string.cancel),
+            Utils.showAlertDialog(this, "Found Documents", "Do you really want to upload the documents which you shared?", getString(R.string.upload), getString(R.string.cancel),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -344,7 +365,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.e(TAG, "onCreateOptionsMenu: ");
         optionsMenu = menu;
         getMenuInflater().inflate(R.menu.appbar_home_menu, menu);
 
@@ -423,6 +443,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showDoctorPatientList() {
+        showPendingInvitesOption(true);
         helpContent = HelpContent.HELP_DOC_PATIENT;
         setDoctorPatientTitle();
         DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
@@ -499,6 +520,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         showScheduleToolbarOptions(false, 0);
+        if (menuItem.getItemId() != R.id.menu_profile_settings) {
+            showPendingInvitesOption(false);
+        }
         switch (menuItem.getItemId()) {
             case R.id.menu_doctor:
             case R.id.menu_patient:
@@ -563,6 +587,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             } else {
                 optionsMenu.findItem(R.id.menu_schedules).setVisible(false);
                 optionsMenu.findItem(R.id.menu_event).setVisible(false);
+            }
+        }
+    }
+
+    private void showPendingInvitesOption(boolean visible) {
+        if (optionsMenu != null) {
+            if (visible) {
+                optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
+            } else {
+                optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
             }
         }
     }

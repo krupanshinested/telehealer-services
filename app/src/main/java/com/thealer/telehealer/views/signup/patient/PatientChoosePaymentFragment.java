@@ -16,6 +16,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -95,7 +96,7 @@ public class PatientChoosePaymentFragment extends BaseFragment implements View.O
     }
 
     private void showConformationDialog() {
-        showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.payment_alert_info),
+        Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.payment_alert_info),
                 getString(R.string.cancel), getString(R.string.Continue), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

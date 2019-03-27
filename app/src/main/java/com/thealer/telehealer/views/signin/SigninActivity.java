@@ -41,6 +41,7 @@ import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.signup.SignUpActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -196,7 +197,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    showAlertDialog(getString(R.string.error), getString(R.string.login_error_message),
+                    Utils.showAlertDialog(SigninActivity.this, getString(R.string.error), getString(R.string.login_error_message),
                             getString(R.string.ok), null,
                             new DialogInterface.OnClickListener() {
                                 @Override

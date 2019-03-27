@@ -160,8 +160,6 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
 
 
                         }
-                        Log.e("aswin", "Demographic: " + isDemographicUpdated);
-                        Log.e("aswin", "insurance : " + isInsuranceUpdated);
                         createScheduleViewModel.setPatientCommonModel(whoAmIApiResponseModel);
                     } else {
                         createScheduleViewModel.setDoctorCommonModel(whoAmIApiResponseModel);
@@ -349,7 +347,6 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                     if (!patientDetailModel.getUser_detail().getData().isInsurancePresent()) {
                         showAsCash();
                     } else {
-                        Log.e("aswin", "updateView: " + new Gson().toJson(UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getData()));
                         setUpInsuranceVP(patientDetailModel);
                         insuranceOcv.setTitle_visible(false);
                         insuranceLl.setVisibility(View.VISIBLE);
@@ -374,7 +371,6 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
 
     private void setUpInsuranceVP(CommonUserApiResponseModel patientDetailModel) {
 
-        Log.e("aswin", "setUpInsuranceVP: " + new Gson().toJson(patientDetailModel.getUser_detail().getData()));
         labelList = new ArrayList<>();
         List<String> imageList = new ArrayList<>();
 
@@ -626,7 +622,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
 
     private void showSelectAssoctiationAlert(String title) {
 
-        showAlertDialog(getActivity(), title, null, getString(R.string.ok), null,
+        Utils.showAlertDialog(getActivity(), title, null, getString(R.string.ok), null,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

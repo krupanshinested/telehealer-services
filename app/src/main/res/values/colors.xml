@@ -24,4 +24,8 @@
     <color name="char_line_2">#FF363C</color>
     <color name="char_popup_background">#0A192A</color>
 
+    <color name="status_available">#00E800</color>
+    <color name="status_offline">#CCCCCC</color>
+    <color name="status_busy">#FF001A</color>
+    <color name="status_activation_pending">#FFEB3B</color>
 </resources>

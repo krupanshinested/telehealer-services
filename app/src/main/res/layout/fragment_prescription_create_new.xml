@@ -61,6 +61,7 @@
                 android:id="@+id/strength_til"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
                 android:layout_marginTop="24dp"
                 app:layout_constraintEnd_toStartOf="@id/metric_csv"
                 app:layout_constraintStart_toStartOf="parent"
@@ -90,6 +91,7 @@
                 android:id="@+id/direction_til"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
                 android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toStartOf="@id/direction_1_csv"
                 app:layout_constraintStart_toStartOf="parent"
@@ -161,10 +163,12 @@
 
             <TextView
                 android:id="@+id/refill_count_tv"
-                style="@style/text_title_dark"
+                style="@style/text_sub_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/padding_default"
                 android:text="0 time"
+                android:textColor="@color/colorBlack"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/refill_label_tv" />
@@ -177,8 +181,9 @@
                 android:background="@drawable/border_drawable_app_color"
                 android:src="@drawable/ic_add_white_24dp"
                 android:tint="@color/app_gradient_start"
+                app:layout_constraintBottom_toBottomOf="@+id/refill_count_tv"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/refill_label_tv" />
+                app:layout_constraintTop_toTopOf="@+id/refill_count_tv" />
 
             <ImageButton
                 android:id="@+id/sub_ib"
@@ -187,8 +192,9 @@
                 android:background="@drawable/border_drawable_app_color"
                 android:src="@drawable/ic_remove_white_24dp"
                 android:tint="@color/app_gradient_start"
+                app:layout_constraintBottom_toBottomOf="@+id/refill_count_tv"
                 app:layout_constraintEnd_toStartOf="@id/add_ib"
-                app:layout_constraintTop_toBottomOf="@+id/refill_label_tv" />
+                app:layout_constraintTop_toTopOf="@+id/refill_count_tv" />
 
             <View
                 android:id="@+id/refill_bottom_view"

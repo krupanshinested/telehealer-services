@@ -199,7 +199,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                 break;
         }
 
-        showAlertDialog(title, message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+        Utils.showAlertDialog(this, title, message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

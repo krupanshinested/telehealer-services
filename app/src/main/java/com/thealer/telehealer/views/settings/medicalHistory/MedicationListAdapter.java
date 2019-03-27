@@ -160,7 +160,6 @@ public class MedicationListAdapter extends RecyclerView.Adapter<MedicationListAd
             public void afterTextChanged(Editable s) {
                 medicalHistoryViewModel.getMedicationListMutableLiveData().getValue().get(i).setDrugName(s.toString());
                 medicationModelList.get(i).setDrugName(s.toString());
-                Log.e("aswin", "afterTextChanged: " + new Gson().toJson(medicalHistoryViewModel.getMedicationListMutableLiveData().getValue()));
             }
         });
 

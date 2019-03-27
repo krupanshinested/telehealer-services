@@ -53,11 +53,11 @@
 
     <TextView
         android:id="@+id/page_hint_tv"
+        style="@style/text_sub_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_default"
         android:gravity="center|left"
-        style="@style/text_sub_title"
         android:text="@string/email_info"
         app:layout_constraintEnd_toEndOf="@id/email_til"
         app:layout_constraintStart_toStartOf="@id/email_til"

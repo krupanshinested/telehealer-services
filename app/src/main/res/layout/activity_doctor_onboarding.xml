@@ -38,6 +38,7 @@
             android:id="@+id/circular_progress"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:layout_margin="@dimen/margin_default"
             android:indeterminate="true"
             app:cpb_color="@color/app_gradient_start"
             app:cpb_rotation_speed="0.5"
@@ -48,26 +49,27 @@
 
         <TextView
             android:id="@+id/onboarding_tv"
-            style="@style/text_title_dark"
+            style="@style/text_title_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_margin="@dimen/margin_default"
+            android:padding="@dimen/padding_default"
             android:text="@string/onboarding_in_progress"
-            android:textStyle="bold"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/circular_progress" />
 
         <TextView
+            style="@style/text_sub_title_bold"
             android:id="@+id/description_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="476dp"
+            android:layout_margin="@dimen/margin_default"
             android:gravity="center"
+            android:padding="@dimen/padding_default"
             android:text="@string/onboarding_info"
+            android:textColor="@color/colorBlack"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/onboarding_tv" />

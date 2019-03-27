@@ -2,20 +2,16 @@ package com.thealer.telehealer.views.base;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,79 +92,6 @@ public class BaseFragment extends Fragment {
         } else {
             imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, InputMethodManager.RESULT_HIDDEN);
         }
-    }
-
-    public void showAlertDialog(Context context, String title, String message,
-                                @Nullable String positiveTitle,
-                                @Nullable String negativeTitle,
-                                @Nullable DialogInterface.OnClickListener positiveListener,
-                                @Nullable DialogInterface.OnClickListener negativeListener) {
-
-        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-        View view = LayoutInflater.from(context).inflate(R.layout.view_alert, null);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.width = 150;
-        view.setLayoutParams(layoutParams);
-        alertDialog.setCancelable(false);
-
-//        Dialog dialog = alertDialog.create();
-//        dialog = new Dialog(context);
-//        dialog.setContentView(R.layout.view_alert);
-//
-        TextView titleTv, messageTv, cancelTv, doneTv;
-
-        titleTv = (TextView) view.findViewById(R.id.title_tv);
-        messageTv = (TextView) view.findViewById(R.id.message_tv);
-        cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
-        doneTv = (TextView) view.findViewById(R.id.done_tv);
-
-//        DialogInterface.OnCancelListener onCancelListener = new DialogInterface.OnCancelListener() {
-//            @Override
-//            public void onCancel(DialogInterface dialog) {
-//                dialog.dismiss();
-//            }
-//        };
-//        alertDialog.setOnCancelListener(onCancelListener);
-        titleTv.setText(title);
-        messageTv.setText(message);
-
-        if (positiveTitle != null) {
-            doneTv.setVisibility(View.VISIBLE);
-            doneTv.setText(positiveTitle);
-            if (positiveListener != null) {
-                doneTv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        positiveListener.onClick(alertDialog, AlertDialog.BUTTON_POSITIVE);
-                        if (alertDialog.isShowing())
-                            alertDialog.dismiss();
-                    }
-                });
-            }
-        }
-
-        if (negativeTitle != null) {
-            cancelTv.setVisibility(View.VISIBLE);
-            cancelTv.setText(negativeTitle);
-            if (negativeListener != null) {
-                cancelTv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        negativeListener.onClick(alertDialog, AlertDialog.BUTTON_NEGATIVE);
-                        if (alertDialog.isShowing())
-                            alertDialog.dismiss();
-                    }
-                });
-            }
-        }
-
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        alertDialog.setView(view);
-        alertDialog.show();
-
-//
-//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        dialog.show();
     }
 
     public void showSuccessView(Fragment fragment, int requestId, Bundle bundle) {
@@ -255,6 +178,5 @@ public class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //showOrHideSoftInputWindow(false);
     }
 }

@@ -429,7 +429,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
             showSubFragmentInterface.onShowFragment(pdfViewerFragment);
 
         } else {
-            showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + DietConstant.dietPrintOptions.get(position),
+            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + DietConstant.dietPrintOptions.get(position),
                     getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         @Override

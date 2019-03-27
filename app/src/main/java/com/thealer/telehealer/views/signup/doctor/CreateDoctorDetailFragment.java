@@ -600,7 +600,6 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     @SuppressLint("SetTextI18n")
     private void setPractices() {
 
-        Log.e("aswin", "setPractices: " + new Gson().toJson(createUserRequestModel.getUser_detail().getData().getPractices()) + " " + practiceId);
         if (createUserRequestModel != null &&
                 !createUserRequestModel.getUser_detail().getData().getPractices().isEmpty() &&
                 createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address() != null) {
@@ -622,7 +621,6 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                     state + "\n" +
                     zip);
 
-            Log.e("aswin", "setPractices: " + practiceEt.getText().toString());
         } else {
             practiceTil.setVisibility(View.GONE);
             addAddressTil.setVisibility(View.VISIBLE);
@@ -802,7 +800,6 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("aswin", "onActivityResult: " + requestCode + " " + resultCode);
         switch (requestCode) {
             case RequestID.REQ_BIO:
                 updateBio();
@@ -973,7 +970,5 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         clinicBean.setState(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getState());
 
         createUserRequestModel.getUser_detail().getData().setClinic(clinicBean);
-        Log.e("aswin", "createUserRequestModel: " + new Gson().toJson(createUserRequestModel.getUser_detail().getData().getPractices()));
-        Log.e("aswin", "createUserRequestModel: " + new Gson().toJson(createUserRequestModel.getUser_detail().getData().getClinic()));
     }
 }

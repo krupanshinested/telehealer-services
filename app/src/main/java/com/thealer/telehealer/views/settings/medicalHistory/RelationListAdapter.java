@@ -58,7 +58,6 @@ class RelationListAdapter extends RecyclerView.Adapter<RelationListAdapter.ViewH
                     medicalHistoryViewModel.getSelectedRelationsLiveData().getValue().remove(relationList.get(i));
                 }
 
-                Log.e("aswin", "onCheckedChanged: " + new Gson().toJson(medicalHistoryViewModel.getSelectedRelationsLiveData().getValue()));
             }
         });
     }

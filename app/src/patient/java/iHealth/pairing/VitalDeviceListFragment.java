@@ -64,7 +64,6 @@ public class VitalDeviceListFragment extends BaseFragment {
 
         measurementType = getArguments().getString(ArgumentKeys.SELECTED_VITAL_TYPE);
 
-        Log.e("aswin", "onCreate: " + measurementType);
 
         generateDataSource();
 
