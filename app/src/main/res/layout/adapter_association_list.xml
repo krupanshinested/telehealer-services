@@ -1,57 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/view_item_cl"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/avatar_civ"
-        android:layout_width="@dimen/card_image_view_size"
-        android:layout_height="@dimen/card_image_view_size"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+    <com.thealer.telehealer.common.Animation.CustomUserListItemView
+        android:id="@+id/custom_circle_iv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:src="@drawable/profile_placeholder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/list_title_tv"
-        style="@style/card_title_text"
-        app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
-        app:layout_constraintEnd_toStartOf="@id/action_iv"
-        app:layout_constraintStart_toEndOf="@id/avatar_civ"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/dummy_text" />
-
-    <TextView
-        android:id="@+id/list_sub_title_tv"
-        style="@style/card_sub_title_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/list_title_tv"
-        app:layout_constraintStart_toStartOf="@id/list_title_tv"
-        app:layout_constraintTop_toBottomOf="@id/list_title_tv"
-        tools:text="@string/dummy_text" />
-
-    <ImageView
-        android:id="@+id/action_iv"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/ic_done_green_24dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorGrey_light"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sub_title_tv" />
+        app:show_bottom_view="true"
+        app:show_status="false" />
 
 </android.support.constraint.ConstraintLayout>

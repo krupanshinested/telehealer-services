@@ -29,6 +29,7 @@
 
     <TextView
         android:id="@+id/title_tv"
+        style="@style/text_title_bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -43,10 +44,12 @@
 
     <TextView
         android:id="@+id/message_tv"
+        style="@style/text_sub_title_bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:gravity="center"
+        android:textColor="@color/colorBlack"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/allow_btn"
         app:layout_constraintEnd_toEndOf="parent"

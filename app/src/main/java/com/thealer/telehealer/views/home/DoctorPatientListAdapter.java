@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
@@ -71,6 +72,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
             }
         });
 
+        viewHolder.userListIv.setStatus(associationApiResponseModelResult.get(i).getStatus());
     }
 
     private void proceed(CommonUserApiResponseModel resultBean) {
@@ -110,14 +112,17 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
         private TextView titleTv;
         private TextView subTitleTv;
         private ImageView actionIv;
+        private CustomUserListItemView userListIv;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            patientTemplateCv = (CardView) itemView.findViewById(R.id.patient_template_cv);
-            avatarCiv = (CircleImageView) itemView.findViewById(R.id.avatar_civ);
-            titleTv = (TextView) itemView.findViewById(R.id.list_title_tv);
-            subTitleTv = (TextView) itemView.findViewById(R.id.list_sub_title_tv);
-            actionIv = (ImageView) itemView.findViewById(R.id.action_iv);
+            userListIv = (CustomUserListItemView) itemView.findViewById(R.id.user_list_iv);
+            patientTemplateCv = userListIv.getListItemCv();
+            avatarCiv = userListIv.getAvatarCiv();
+            titleTv = userListIv.getListTitleTv();
+            subTitleTv = userListIv.getListSubTitleTv();
+            actionIv = userListIv.getActionIv();
 
         }
     }

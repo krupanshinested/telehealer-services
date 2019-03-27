@@ -73,7 +73,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
     private AppBarLayout appbarLayout;
     private boolean onResume = false;
     private CustomRecyclerView documentsCrv;
-    private NewDocumentListAdapter newDocumentListAdapter;
+    private DocumentListAdapter documentListAdapter;
     private Toolbar toolbar;
     private GridLayoutManager gridLayoutManager;
 
@@ -128,7 +128,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         documentsCrv.setTotalCount(documentsApiResponseModel.getCount());
 
         if (documentsApiResponseModel.getCount() > 0) {
-            newDocumentListAdapter.setData(documentsApiResponseModel.getResult(), page);
+            documentListAdapter.setData(documentsApiResponseModel.getResult(), page);
             documentsCrv.hideEmptyState();
         } else {
             documentsCrv.showEmptyState();
@@ -224,17 +224,17 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
     private void setGridSpan(int spanCount) {
         List<DocumentsApiResponseModel.ResultBean> beanList = new ArrayList<>();
 
-        if (newDocumentListAdapter != null) {
-            beanList = newDocumentListAdapter.getDataList();
+        if (documentListAdapter != null) {
+            beanList = documentListAdapter.getDataList();
         }
 
         gridLayoutManager = new GridLayoutManager(getActivity(), spanCount, LinearLayoutManager.VERTICAL, false);
         documentsCrv.setLayoutManager(gridLayoutManager);
 
-        newDocumentListAdapter = new NewDocumentListAdapter(getActivity(), isFromHome, spanCount);
-        documentsCrv.getRecyclerView().setAdapter(newDocumentListAdapter);
+        documentListAdapter = new DocumentListAdapter(getActivity(), isFromHome, spanCount);
+        documentsCrv.getRecyclerView().setAdapter(documentListAdapter);
 
-        newDocumentListAdapter.setData(beanList, 1);
+        documentListAdapter.setData(beanList, 1);
     }
 
     private void getDocuments(boolean isShowProgress) {

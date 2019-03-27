@@ -455,11 +455,9 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             try {
                 File file = new File(image_path);
 
-                Log.e(TAG, "getMultipartFile: selected size " + getReadableFileSize(file.length()));
 
                 if (file.length() / 1024 > 750) {
                     file = getCompressedFile(file);
-                    Log.e(TAG, "getMultipartFile: compressed file size " + getReadableFileSize(file.length()));
                 }
 
                 return MultipartBody.Part.createFormData(name, file.getName(),

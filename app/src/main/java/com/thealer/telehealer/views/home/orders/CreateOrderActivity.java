@@ -88,7 +88,6 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
                 for (int i = 0; i < uriArrayList.size(); i++) {
                     if (CameraUtil.isTypeImage(this, uriArrayList.get(i))) {
                         String path = CameraUtil.getRealPathFromUri(this, uriArrayList.get(i));
-                        Log.e("aswin", "showShareData: " + path);
                         if (path != null && !path.isEmpty()) {
                             Constants.sharedPath.add(path);
                         }
@@ -185,7 +184,6 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("aswin", "onActivityResult: activity " + requestCode + " " + resultCode);
         if (resultCode == RESULT_OK) {
             if (requestCode == PermissionConstants.PERMISSION_CAM_PHOTOS) {
                 CameraUtil.showImageSelectionAlert(this);

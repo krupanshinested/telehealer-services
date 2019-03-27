@@ -263,7 +263,6 @@ public class Utils {
 
     public static boolean isDateTimeExpired(Date date) {
         Date currentDate = new Date();
-        Log.e("aswin", "isDateTimeExpired: " + currentDate.compareTo(date));
         return currentDate.compareTo(date) >= 0;
 
     }
@@ -456,7 +455,7 @@ public class Utils {
     }
 
     public static String getDoctorDisplayName(String first_name, String last_name, String title) {
-        return "Dr. " + first_name + " " + last_name + " " + title;
+        return "Dr. " + first_name + " " + last_name + " " + ((title != null) ? title : "");
     }
 
     public static String getPatientDisplayName(String first_name, String last_name) {
@@ -465,20 +464,26 @@ public class Utils {
         return first_name + " " + last_name;
     }
 
-    public static AlertDialog.Builder showAlertDialog(Context context, String title, String message) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+    public static Dialog showAlertDialog(Context context, String title, String message,
+                                         @Nullable String positiveTitle,
+                                         @Nullable String negativeTitle,
+                                         @Nullable DialogInterface.OnClickListener positiveListener,
+                                         @Nullable DialogInterface.OnClickListener negativeListener) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context, R.style.custom_alert_dialog_style);
+
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
         alertDialog.setCancelable(false);
+        if (positiveTitle != null) {
+            alertDialog.setPositiveButton(positiveTitle, positiveListener);
+        }
 
-        alertDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        return alertDialog;
+        if (negativeTitle != null) {
+            alertDialog.setNegativeButton(negativeTitle, negativeListener);
+        }
+        AlertDialog dialog = alertDialog.create();
+        dialog.show();
+        return dialog;
     }
 
     public static String getAppType() {

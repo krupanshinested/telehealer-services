@@ -4,26 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
-
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
+import com.thealer.telehealer.views.signin.SigninActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -50,7 +40,12 @@ public class SplashActivity extends BaseActivity {
                 @Override
                 public void run() {
                     if (!appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
-                        startActivity(new Intent(SplashActivity.this, OnBoardingActivity.class));
+                        if (appPreference.getBoolean(PreferenceConstants.IS_FIRST_TIME)) {
+                            appPreference.setBoolean(PreferenceConstants.IS_FIRST_TIME, true);
+                            startActivity(new Intent(SplashActivity.this, OnBoardingActivity.class));
+                        } else {
+                            startActivity(new Intent(SplashActivity.this, SigninActivity.class));
+                        }
                     } else {
 
                         TeleLogger.shared.initialLog();

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,43 +19,45 @@
 
             <TextView
                 android:id="@+id/title_tv"
-                android:layout_width="fill_parent"
+                style="@style/text_title_bold"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:padding="5dp"
-                android:textAlignment="center"
-                android:textColor="@color/colorBlack"
-                android:textSize="20sp"
+                android:layout_margin="@dimen/margin_default"
+                android:gravity="center"
+                android:padding="@dimen/padding_default"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/dummy_text" />
 
             <ImageView
+                android:id="@+id/video_view"
                 android:layout_width="0dp"
                 android:layout_height="200dp"
                 android:layout_marginTop="20dp"
-                android:id="@+id/video_view"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/title_tv"
                 app:layout_constraintWidth_max="@dimen/max_width" />
 
             <ImageView
+                android:id="@+id/play_button"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:id="@+id/play_button"
                 android:src="@drawable/play"
+                app:layout_constraintBottom_toBottomOf="@id/video_view"
                 app:layout_constraintLeft_toLeftOf="@id/video_view"
                 app:layout_constraintRight_toRightOf="@id/video_view"
-                app:layout_constraintTop_toTopOf="@id/video_view"
-                app:layout_constraintBottom_toBottomOf="@id/video_view"/>
+                app:layout_constraintTop_toTopOf="@id/video_view" />
 
             <TextView
-                android:layout_width="fill_parent"
+                style="@style/text_sub_title"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:textAlignment="center"
+                android:layout_margin="@dimen/margin_default"
+                android:padding="@dimen/padding_default"
                 android:text="@string/how_to_connect"
+                android:textAlignment="center"
                 android:textColor="@color/colorBlack"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -67,10 +70,10 @@
         android:id="@+id/next_bt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:app_gradient="true"
-        app:text_color="@color/colorWhite"
         android:text="@string/next"
+        app:app_gradient="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:text_color="@color/colorWhite" />
 </android.support.constraint.ConstraintLayout>

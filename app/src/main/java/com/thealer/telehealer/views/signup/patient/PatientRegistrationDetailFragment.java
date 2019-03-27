@@ -334,7 +334,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     }
 
     private void updateUI() {
-        Log.e("aswin", "updateUI: " + currentDisplayType);
         if (currentDisplayType != Constants.CREATE_MODE) {
             insurance_lay.setVisibility(View.VISIBLE);
             title_tv.setVisibility(View.GONE);

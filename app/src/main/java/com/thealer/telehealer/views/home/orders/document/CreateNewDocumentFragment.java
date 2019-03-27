@@ -251,7 +251,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
             int size = Constants.sharedPath.size();
 
             if (size > 10) {
-                showAlertDialog(getActivity(), getString(R.string.alert), "Maximum of 10 images can be uploaded at a time.",
+                Utils.showAlertDialog(getActivity(), getString(R.string.alert), "Maximum of 10 images can be uploaded at a time.",
                         getString(R.string.ok), null,
                         new DialogInterface.OnClickListener() {
                             @Override

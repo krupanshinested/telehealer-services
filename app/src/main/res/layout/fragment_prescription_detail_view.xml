@@ -31,6 +31,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:sub_title_visible="false"
+                app:layout_constraintTop_toTopOf="parent"
                 app:view_label="@string/patient" />
 
             <com.thealer.telehealer.views.home.orders.OrdersCustomView

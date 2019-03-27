@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomUserListItemView">
+        <attr name="image" format="reference" />
+        <attr name="show_action" format="boolean" />
+        <attr name="show_checkbox" format="boolean" />
+        <attr name="show_status" format="boolean" />
+        <attr name="show_bottom_view" format="boolean" />
+        <attr name="action_src" format="reference" />
+        <attr name="action_width" format="dimension"/>
+        <attr name="action_height" format="dimension"/>
+
+        <attr name="action_gravity">
+            <flag name="top" value="1" />
+            <flag name="center" value="2" />
+            <flag name="bottom" value="3" />
+        </attr>
+    </declare-styleable>
+</resources>

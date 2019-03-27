@@ -501,7 +501,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     }
 
     private void updateDateConnectionStatus(String connection_status) {
-        Log.e("aswin", "updateDateConnectionStatus: " + connection_status);
         if (connection_status == null) {
             actionBtn.setText(getString(R.string.add_connection_connect));
             actionBtn.setEnabled(true);

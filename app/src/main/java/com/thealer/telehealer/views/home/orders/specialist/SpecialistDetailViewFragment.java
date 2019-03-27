@@ -23,6 +23,7 @@ import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponse
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -195,7 +196,7 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.cancel_tv:
-                showAlertDialog(getActivity(), getString(R.string.cancel_caps),
+                Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps),
                         getString(R.string.cancel_prescription_order),
                         getString(R.string.yes),
                         getString(R.string.no),

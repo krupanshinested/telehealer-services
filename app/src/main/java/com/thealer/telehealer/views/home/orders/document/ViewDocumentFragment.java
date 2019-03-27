@@ -173,7 +173,7 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
                 showSubFragmentInterface.onShowFragment(createNewDocumentFragment);
                 break;
             case R.id.menu_delete:
-                showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.are_you_sure_to_delete_document),
+                Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.are_you_sure_to_delete_document),
                         getString(R.string.delete),
                         getString(R.string.cancel),
                         new DialogInterface.OnClickListener() {
