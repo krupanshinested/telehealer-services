@@ -832,7 +832,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     finish();
                     return;
                 } else {
-                    showAlertDialog(getString(R.string.enable_overflow), getString(R.string.enable_overflow_description), getString(R.string.ok), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    Utils.showAlertDialog(this, getString(R.string.enable_overflow), getString(R.string.enable_overflow_description), getString(R.string.ok), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -972,7 +972,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
                 Log.v("CallActivity","onclick");
 
-                this.currentShowingDialog = showAlertDialog(getString(R.string.video_call_request), getString(R.string.video_call_request_confirmation), getString(R.string.yes), getString(R.string.no), new DialogInterface.OnClickListener() {
+                this.currentShowingDialog = Utils.showAlertDialog(this, getString(R.string.video_call_request), getString(R.string.video_call_request_confirmation), getString(R.string.yes), getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -1227,7 +1227,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         if (PermissionChecker.with(CallActivity.this).isGranted(PermissionConstants.PERMISSION_CAM_MIC)) {
             String message = getString(R.string.requested_video_call,name);
 
-            this.currentShowingDialog =showAlertDialog(getString(R.string.video_call_request), message, getString(R.string.yes), getString(R.string.no), new DialogInterface.OnClickListener() {
+            this.currentShowingDialog =Utils.showAlertDialog(this, getString(R.string.video_call_request), message, getString(R.string.yes), getString(R.string.no), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     EventRecorder.recordCallUpdates("audio_to_video_accepted", null);
@@ -1247,7 +1247,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
             String message = getString(R.string.requested_video_no_camera,name);
 
-            this.currentShowingDialog =showAlertDialog(getString(R.string.request_rejected), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+            this.currentShowingDialog =Utils.showAlertDialog(this, getString(R.string.request_rejected), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
@@ -1413,7 +1413,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 if (errorModel != null && TextUtils.isEmpty(errorModel.getMessage())) {
                     String message = errorModel.getMessage();
 
-                    currentShowingDialog = showAlertDialog(getString(R.string.error), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.error), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             TokBox.shared.endCall(OpenTokConstants.other);

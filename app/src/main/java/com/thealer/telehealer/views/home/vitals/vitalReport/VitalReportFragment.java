@@ -146,7 +146,6 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
                             }
                         }
 
-                        Log.e("aswin", "afterTextChanged: " + searchList.size());
                         if (searchList.size() > 0) {
                             if (vitalReportUserListAdapter != null) {
                                 vitalReportUserListAdapter.setData(searchList, selectedFilter);
@@ -160,7 +159,6 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
                     }
                 } else {
                     if (vitalReportApiReponseModel != null) {
-                        Log.e("aswin", "afterTextChanged: " + vitalReportApiReponseModel.getResult().size());
                         vitalReportUserListAdapter.setData(vitalReportApiReponseModel.getResult(), selectedFilter);
                         patientListCrv.showOrhideEmptyState(false);
                     } else {

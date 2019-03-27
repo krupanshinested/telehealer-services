@@ -57,7 +57,7 @@ public class EmailVerificationActivity extends BaseActivity implements View.OnCl
                         startActivity(new Intent(EmailVerificationActivity.this, HomeActivity.class));
                         finish();
                     } else {
-                        showAlertDialog(getString(R.string.alert), String.format(getString(R.string.email_validation_message), whoAmIApiResponseModel.getEmail()), getString(R.string.ok), null,
+                        Utils.showAlertDialog(EmailVerificationActivity.this, getString(R.string.alert), String.format(getString(R.string.email_validation_message), whoAmIApiResponseModel.getEmail()), getString(R.string.ok), null,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -100,7 +100,7 @@ public class EmailVerificationActivity extends BaseActivity implements View.OnCl
 
         emailMessage.setText(Utils.fromHtml(htmlText));
 
-        String resendText = "<p>Can’t find the email in your inbox? Check your junk and spam folders. Otherwise, we can <font color=red> send a new verifications email.</font></p>";
+        String resendText = "<p>Can’t find the email in your inbox? Check your junk and spam folders. Otherwise, we can <font color=" + getString(R.string.app_gradient_start) + "> send a new verifications email.</font></p>";
         resendTv.setText(Utils.fromHtml(resendText));
 
         doneBtn.setOnClickListener(this);

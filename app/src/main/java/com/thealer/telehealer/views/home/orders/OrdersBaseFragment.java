@@ -24,6 +24,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -158,7 +159,7 @@ public class OrdersBaseFragment extends BaseFragment {
         @Override
         public void onQuickLogin(int status) {
             if (status == ArgumentKeys.AUTH_FAILED) {
-                showAlertDialog(getActivity(), "Validation Failed", "User validation failed cannot process the current order", "OK", null,
+                Utils.showAlertDialog(getActivity(), "Validation Failed", "User validation failed cannot process the current order", "OK", null,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

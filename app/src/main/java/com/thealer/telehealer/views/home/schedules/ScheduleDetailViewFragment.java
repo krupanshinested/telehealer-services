@@ -90,7 +90,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                     public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                         if (baseApiResponseModel != null) {
                             if (baseApiResponseModel.isSuccess()) {
-                                showAlertDialog(getActivity(), getString(R.string.success).toUpperCase(), getString(R.string.schedule_deleted), getString(R.string.ok).toUpperCase(), null,
+                                Utils.showAlertDialog(getActivity(), getString(R.string.success).toUpperCase(), getString(R.string.schedule_deleted), getString(R.string.ok).toUpperCase(), null,
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -175,8 +175,6 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         if (getArguments() != null) {
             resultBean = (SchedulesApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SCHEDULE_DETAIL);
             if (resultBean != null) {
-
-                Log.e("aswin", "initView: history : " + resultBean.getDetail().isChange_medical_info() + "\t demograph : " + resultBean.getDetail().isChange_demographic() + "\t insurance : " + resultBean.getDetail().isInsurance_to_date());
 
                 String statusInfo = "Patient %s has been updated";
                 String detail = "";
@@ -279,7 +277,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.cancel_tv:
-                showAlertDialog(getActivity(), getString(R.string.cancel_schedule), getString(R.string.cancel_schedule_conformation), getString(R.string.yes), getString(R.string.no),
+                Utils.showAlertDialog(getActivity(), getString(R.string.cancel_schedule), getString(R.string.cancel_schedule_conformation), getString(R.string.yes), getString(R.string.no),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

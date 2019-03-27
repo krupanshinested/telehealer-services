@@ -55,4 +55,6 @@ public class PreferenceConstants {
     public static final String IS_OVERLAY_ADD_RADIOLOGY = "add_radiology_overlay";
     public static final String IS_OVERLAY_ADD_MISC = "add_miscellaneous_overlay";
     public static final String NOTIFICATIONS_IDS = "notification_created_id";
+    public static final String IS_FIRST_TIME = "isFirstTime";
+    public static final String EMAIL_VERIFICATION_SHOWN_TIME = "EMAIL_VERIFICATION_SHOWN_TIME";
 }

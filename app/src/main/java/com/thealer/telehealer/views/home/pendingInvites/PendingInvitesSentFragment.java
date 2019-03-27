@@ -160,7 +160,8 @@ public class PendingInvitesSentFragment extends BaseFragment {
                                     }
                                     pendingInvitesListAdapter.setData(nonRegisterdApiResponseModel.getResult(), nonRegisteredPage);
                                 } else {
-                                    pendingInvitesCrv.showOrhideEmptyState(true);
+                                    if (invitesResponseModel.getCount() == 0)
+                                        pendingInvitesCrv.showOrhideEmptyState(true);
                                 }
 
                                 isApiRequested = false;

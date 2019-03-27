@@ -108,7 +108,7 @@ public class BAAFragment extends BaseFragment implements DoCurrentTransactionInt
         agreeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAlertDialog(getActivity(), getString(R.string.signature_capture), getString(R.string.baa_info),
+                Utils.showAlertDialog(getActivity(), getString(R.string.signature_capture), getString(R.string.baa_info),
                         getString(R.string.ok), null,
                         new DialogInterface.OnClickListener() {
                             @Override

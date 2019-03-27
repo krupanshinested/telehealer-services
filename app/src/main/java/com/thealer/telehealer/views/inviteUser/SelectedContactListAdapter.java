@@ -44,7 +44,6 @@ public class SelectedContactListAdapter extends RecyclerView.Adapter<SelectedCon
             public void onChanged(@Nullable List<SelectedContactModel> contactModelList) {
                 if (contactModelList != null) {
                     selectedContactModels = contactModelList;
-                    Log.e("aswin", "onChanged: " + inviteContactViewModel.selectedIdList.toString());
                     notifyDataSetChanged();
                 }
             }

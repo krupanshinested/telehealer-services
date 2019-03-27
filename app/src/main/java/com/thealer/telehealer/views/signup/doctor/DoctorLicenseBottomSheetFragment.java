@@ -200,7 +200,6 @@ public class DoctorLicenseBottomSheetFragment extends BaseBottomSheetDialogFragm
     }
 
     private void notifyParent() {
-        Log.e("aswin", "notifyParent: " + getTargetFragment().getClass().getSimpleName());
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
         Utils.hideKeyboard(getActivity());
         getDialog().dismiss();
