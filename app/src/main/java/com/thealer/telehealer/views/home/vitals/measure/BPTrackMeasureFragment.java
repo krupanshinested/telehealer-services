@@ -398,7 +398,7 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
     public void didDisConnected(String type, String serailNumber) {
         if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
             if (!isPresentedInsideCallActivity()) {
-                showAlertDialog(getActivity(), getString(R.string.error), message_tv.getText().toString(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                Utils.showAlertDialog(getActivity(), getString(R.string.error), message_tv.getText().toString(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (getActivity() != null) {
@@ -421,7 +421,7 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
             EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
         }
 
-        showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+        Utils.showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();

@@ -561,7 +561,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             pdfViewerFragment.setArguments(bundle);
             showSubFragmentInterface.onShowFragment(pdfViewerFragment);
         } else {
-            showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for)+ " " + timePeriod, getString(R.string.ok), null,
+            Utils.showAlertDialog(getActivity(), getString(R.string.alert), "No data available for " + timePeriod, getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -850,8 +850,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             } else {
                 unit = SupportedMeasurementType.getVitalUnit(selectedItem);
 
-                Log.e("aswin", "refreshContent: " + line1Entry.toString());
-                Log.e("aswin", "refreshContent: " + e.getX() + " " + e.getY());
                 for (int i = 0; i < line1Entry.size(); i++) {
                     if (line1Entry.get(i).equalTo(e)) {
                         value = String.valueOf((int) line1Entry.get(i).getY()) + " " + unit;

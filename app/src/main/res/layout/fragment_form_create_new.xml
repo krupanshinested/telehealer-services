@@ -31,6 +31,7 @@
             style="@style/text_sub_title_bold_app_color"
             android:layout_marginStart="4dp"
             android:padding="@dimen/padding_default"
+            android:textAllCaps="true"
             android:text="@string/form" />
 
         <android.support.v7.widget.RecyclerView

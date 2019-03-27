@@ -94,7 +94,6 @@ public class DietViewPagerAdapter extends PagerAdapter {
         this.listMap = listMap;
         this.selectedDate = selectedDate;
 
-        Log.e("aswin", "list: " + new Gson().toJson(this.listMap.get(selectedDate)));
 
         if (UserType.isUserPatient()) {
             setAdapter();
@@ -102,7 +101,6 @@ public class DietViewPagerAdapter extends PagerAdapter {
             if (listMap.containsKey(selectedDate) && listMap.get(selectedDate).size() > 0) {
                 setAdapter();
             } else {
-                Log.e("aswin", "setData: else");
                 if (dietListAdapter != null){
                     dietListAdapter.clearData();
                     primaryCrv.showOrhideEmptyState(true);
@@ -113,7 +111,6 @@ public class DietViewPagerAdapter extends PagerAdapter {
 
     private void setAdapter() {
         List<DietListAdapterModel> finalList = createList(listMap.get(selectedDate));
-        Log.e("aswin", "setAdapter: " + new Gson().toJson(finalList));
         if (!finalList.isEmpty()) {
             dietListAdapter.setData(finalList, getUtcDate(selectedDate));
             primaryCrv.showOrhideEmptyState(false);

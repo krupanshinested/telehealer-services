@@ -16,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
+import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 
@@ -71,7 +72,6 @@ class DoctorResultListAdapter extends RecyclerView.Adapter<DoctorResultListAdapt
         viewHolder.doctorListCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("aswin", "onClick: " + new Gson().toJson(doctorsList.get(i)));
                 if (doctorsList.get(i).getPractices().size() < 2) {
 
                     Bundle bundle = new Bundle();
@@ -115,13 +115,16 @@ class DoctorResultListAdapter extends RecyclerView.Adapter<DoctorResultListAdapt
         private TextView doctorNameTv;
         private TextView doctorSpecialityTv;
         private CardView doctorListCv;
+        private CustomUserListItemView userListIv;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            listIv = (CircleImageView) itemView.findViewById(R.id.list_iv);
-            doctorNameTv = (TextView) itemView.findViewById(R.id.list_title_tv);
-            doctorSpecialityTv = (TextView) itemView.findViewById(R.id.list_sub_title_tv);
-            doctorListCv = (CardView) itemView.findViewById(R.id.list_cv);
+            userListIv = (CustomUserListItemView) itemView.findViewById(R.id.user_list_iv);
+            listIv = userListIv.getAvatarCiv();
+            doctorNameTv = userListIv.getListTitleTv();
+            doctorSpecialityTv = userListIv.getListSubTitleTv();
+            doctorListCv = userListIv.getListItemCv();
         }
     }
 }

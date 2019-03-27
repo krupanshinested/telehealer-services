@@ -189,7 +189,6 @@ public class SchedulesListFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("aswin", "onResume: ");
         if (UserType.isUserAssistant()) {
             getDoctorsList();
         } else {
@@ -201,7 +200,6 @@ public class SchedulesListFragment extends BaseFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        Log.e("aswin", "setUserVisibleHint: " + getUserVisibleHint());
     }
 
     private void getDoctorsList() {

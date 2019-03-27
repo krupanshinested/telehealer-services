@@ -874,6 +874,8 @@
     <string name="fax_number">Fax Number</string>
     <string name="login_error_message">Unable to login. Please ensure that your email and password are entered correctly and try again.</string>
     <string name="vitals_report">Vitals Report</string>
+    <string name="do_you_want_to_close">Do you want to close ?</string>
+    <string name="search_practices">Search Practices</string>
     <string name="stand_with_bare_feet">Please stand on scale with your bare feet</string>
     <string name="bg5_information">Please manually connect your iHealth Smart device to your phone\'s bluetooth from the phone\'s settings app before attempting to pair here.</string>
     <string name="track_information">Please press the M button on the blood pressure monitor to turn on the device\'s bluetooth and initiate pairing.</string>
@@ -894,4 +896,5 @@
     <string name="pdf_label_period">Period :</string>
     <string name="sending_your_fax">Sending your fax.</string>
     <string name="fax_sent_successfully">Your fax sent successfully</string>
+    <string name="no_forms_to_send">There is no forms to send</string>
 </resources>

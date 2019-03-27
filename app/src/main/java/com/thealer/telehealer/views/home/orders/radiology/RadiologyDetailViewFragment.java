@@ -28,6 +28,7 @@ import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyRespo
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
@@ -276,7 +277,7 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
                 break;
             case R.id.cancel_tv:
 
-                showAlertDialog(getActivity(), getString(R.string.cancel_caps),
+                Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps),
                         getString(R.string.cancel_xray_order),
                         getString(R.string.yes),
                         getString(R.string.no),

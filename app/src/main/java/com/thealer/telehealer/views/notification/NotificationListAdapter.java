@@ -45,7 +45,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
     private final String APPOINTMENT_REQUEST = "APPOINTMENT REQUEST";
     private final String CONNECTION_REQUEST = "CONNECTION REQUEST";
     private final String NOT_ANSWERED = "NOT ANSWERED";
-    private final String MISSED_CALL = "Missed call";
+    private final String MISSED_CALL = "MISSED CALL";
 
     public static final String REQUEST_TYPE_CONNECTION = "connection";
     public static final String REQUEST_TYPE_APPOINTMENT = "appointment";

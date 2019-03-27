@@ -45,7 +45,6 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
                 resultBean = new Gson().fromJson(intent.getStringExtra(ArgumentKeys.SCHEDULE_DETAIL), SchedulesApiResponseModel.ResultBean.class);
             }
 
-            Log.e("aswin", "onReceive: " + new Gson().toJson(resultBean));
 
             if (resultBean != null) {
 

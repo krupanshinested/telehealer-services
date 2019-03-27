@@ -75,7 +75,7 @@ public class ResetPasswordFragment extends BaseFragment implements View.OnClickL
 
         profileTitle.setText(getString(R.string.hi) + " " + UserDetailPreferenceManager.getUserDisplayName());
 
-        description.setText(getString(R.string.reset_password_string) + " ( " + UserDetailPreferenceManager.getWhoAmIResponse().getPhone() + ")");
+        description.setText(getString(R.string.reset_password_string) + " ( " + UserDetailPreferenceManager.getWhoAmIResponse().getPhone() + " )");
 
         okButton.setOnClickListener(this);
     }

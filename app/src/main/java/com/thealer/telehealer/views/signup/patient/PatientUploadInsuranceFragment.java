@@ -345,7 +345,7 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements DoCu
         switch (v.getId()) {
             case R.id.add_insurance_btn:
                 if (primaryFrontImgPath == null || primaryBackImgPath == null) {
-                    showAlertDialog(getActivity(), getString(R.string.error),
+                    Utils.showAlertDialog(getActivity(), getString(R.string.error),
                             getString(R.string.insurance_alert_error),
                             getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                                 @Override

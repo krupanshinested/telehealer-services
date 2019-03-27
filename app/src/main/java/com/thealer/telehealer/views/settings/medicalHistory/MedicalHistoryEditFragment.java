@@ -542,7 +542,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
                     }
 
                     if (!isAllFieldsEntered) {
-                        showAlertDialog(getActivity(), getString(R.string.error), getString(R.string.drug_name_error_msg), getString(R.string.ok), null,
+                        Utils.showAlertDialog(getActivity(), getString(R.string.error), getString(R.string.drug_name_error_msg), getString(R.string.ok), null,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -723,7 +723,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
     }
 
     private void showSuccessAlert(String title, String message) {
-        showAlertDialog(getActivity(), title, getString(R.string.medical_questionaries_updated), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+        Utils.showAlertDialog(getActivity(), title, getString(R.string.medical_questionaries_updated), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

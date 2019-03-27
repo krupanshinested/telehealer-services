@@ -23,6 +23,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
@@ -87,7 +88,7 @@ public class AboutFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
-                    showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.association_deleted), getString(R.string.yes),
+                    Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.association_deleted), getString(R.string.yes),
                             null, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -328,7 +329,7 @@ public class AboutFragment extends BaseFragment {
             disconnectTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showAlertDialog(getActivity(), getString(R.string.delete_connection),
+                    Utils.showAlertDialog(getActivity(), getString(R.string.delete_connection),
                             getString(R.string.disassoctiate_this_connection), getString(R.string.yes),
                             getString(R.string.no), new DialogInterface.OnClickListener() {
                                 @Override

@@ -5,7 +5,6 @@
         <item name="android:statusBarColor">@color/app_status_bar_color1</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:screenOrientation">portrait</item>
-        <item name="android:fontFamily">@font/open_sans_semibold</item>
     </style>
 
     <style name="AppTheme.Transparent" parent="AppTheme">
@@ -107,6 +106,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:fontFamily">@font/open_sans_semibold</item>
         <item name="android:textSize">@dimen/text_title_size</item>
     </style>
 
@@ -115,12 +115,14 @@
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/text_title_size</item>
+        <item name="android:fontFamily">@font/open_sans_semibold</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="text_title_light">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/open_sans_semibold</item>
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:textSize">@dimen/text_title_size</item>
     </style>
@@ -129,6 +131,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/text_title_size</item>
+        <item name="android:fontFamily">@font/open_sans_semibold</item>
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:textStyle">bold</item>
     </style>
@@ -137,6 +140,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:textSize">@dimen/text_title_size</item>
+        <item name="android:fontFamily">@font/open_sans_semibold</item>
         <item name="android:textColor">@color/app_gradient_start</item>
     </style>
 
@@ -144,6 +148,7 @@
         <item name="android:textSize">@dimen/text_title_size</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/open_sans_semibold</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/app_gradient_start</item>
     </style>
@@ -220,6 +225,23 @@
 
     <style name="calendar_text_appearance" parent="TextAppearance.MaterialCalendarWidget.Date">
         <item name="android:textColor">@color/calendar_date_selector</item>
+    </style>
+
+    <style name="custom_alert_dialog_style" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/app_gradient_start</item>
+    </style>
+
+    <style name="spinner_text_style" parent="text_title_bold">
+        <item name="android:paddingStart">4dp</item>
     </style>
 
 </resources>

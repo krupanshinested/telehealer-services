@@ -40,6 +40,7 @@ import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
@@ -248,7 +249,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
     @Override
     public void didScanFinish() {
         if (!isDeviceFound) {
-            showAlertDialog(getActivity(), getString(R.string.device_not_found),
+            Utils.showAlertDialog(getActivity(), getString(R.string.device_not_found),
                     getString(R.string.device_not_found_description),
                     getString(R.string.retry), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
@@ -271,7 +272,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
 
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                showAlertDialog(getActivity(), getString(R.string.error),
+                Utils.showAlertDialog(getActivity(), getString(R.string.error),
                         error,
                         getString(R.string.retry),
                         getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -306,7 +307,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
 
                     isDeviceFound = true;
 
-                    showAlertDialog(getActivity(), getString(R.string.vital_discover_title),
+                    Utils.showAlertDialog(getActivity(), getString(R.string.vital_discover_title),
                             serailNumber,
                             getString(R.string.connect), null, new DialogInterface.OnClickListener() {
                                 @Override
@@ -357,7 +358,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
     public void didFailConnectDevice(String type, String serailNumber, String errorMessage) {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                showAlertDialog(getActivity(), getString(R.string.error),
+                Utils.showAlertDialog(getActivity(), getString(R.string.error),
                         errorMessage,
                         getString(R.string.retry),
                         getString(R.string.cancel), new DialogInterface.OnClickListener() {

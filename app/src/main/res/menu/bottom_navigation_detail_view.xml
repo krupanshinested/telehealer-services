@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/menu_call"
-        android:icon="@drawable/ic_call_black_24dp"
-        android:title="@string/call" />
-    <item
-        android:id="@+id/menu_schedules"
-        android:icon="@drawable/ic_schedules"
-        android:title="@string/schedules" />
-    <item
-        android:id="@+id/menu_upload"
-        android:icon="@drawable/ic_document_upload"
-        android:visible="false"
-        android:title="@string/upload" />
+    <group android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/menu_call"
+            android:icon="@drawable/ic_call"
+            android:title="@string/call" />
+        <item
+            android:id="@+id/menu_schedules"
+            android:icon="@drawable/ic_schedules"
+            android:title="@string/schedules" />
+        <item
+            android:id="@+id/menu_upload"
+            android:icon="@drawable/ic_document_upload"
+            android:title="@string/upload"
+            android:visible="false" />
+    </group>
+
 </menu>

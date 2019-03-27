@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/title_tv"
-        style="@style/text_title_bold_app_color"
+        style="@style/text_title_app_color"
         android:gravity="center"
         android:padding="@dimen/padding_default"
         android:text="@string/enter_your_phone_number"

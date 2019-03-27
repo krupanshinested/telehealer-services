@@ -267,7 +267,6 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         doctorPatientListCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.e("aswin", "onRefresh: " );
                 getAssociationsList(null, false);
             }
         });
