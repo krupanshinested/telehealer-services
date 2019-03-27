@@ -27,6 +27,7 @@ import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.call.CallNetworkTestActivity;
@@ -127,7 +128,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 startActivity(intent);
                 break;
             case R.id.notification:
-                showAlertDialog(getActivity(), getString(R.string.settings), getString(R.string.notification_setting_alert_message),
+                Utils.showAlertDialog(getActivity(), getString(R.string.settings), getString(R.string.notification_setting_alert_message),
                         getString(R.string.yes), getString(R.string.no),
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -195,7 +196,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 break;
             case R.id.delete_view:
 
-                showAlertDialog(getActivity(), getString(R.string.delete_account),
+                Utils.showAlertDialog(getActivity(), getString(R.string.delete_account),
                         getString(R.string.delete_account_description),
                         getString(R.string.Delete),
                         getString(R.string.Cancel), new DialogInterface.OnClickListener() {

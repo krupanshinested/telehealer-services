@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.signup;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
@@ -337,7 +339,21 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             if (getSupportFragmentManager().getFragments().get(0) instanceof OtpVerificationFragment || getCurrentFragment() instanceof OtpVerificationFragment) {
 
-                showAlertDialog();
+                Utils.showAlertDialog(this, getString(R.string.alert), getString(R.string.do_you_want_to_close),
+                        getString(R.string.ok), getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                finish();
+                            }
+                        },
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
 
             } else if (getSupportFragmentManager().getFragments().get(0) instanceof PatientUploadInsuranceFragment || getCurrentFragment() instanceof PatientUploadInsuranceFragment) {
 

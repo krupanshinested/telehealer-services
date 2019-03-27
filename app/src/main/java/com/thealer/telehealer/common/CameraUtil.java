@@ -204,13 +204,7 @@ public class CameraUtil {
         // MediaStore (and general)
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
 
-            Log.e("aswin", "getRealPathFromUri: " + uri.getPath());
-//            Log.e("aswin", "getRealPathFromUri: " + uri.getAuthority());
-//            Log.e("aswin", "getRealPathFromUri: " + uri.getSchemeSpecificPart());
-//             Return the remote address
             if (isGooglePhotosUri(uri)) {
-//                String pathUri = uri.getPath();
-//                String[] newUri = pathUri.split(":");
                 return getImagePathFromInputStreamUri(context, uri);
             }
 
@@ -267,15 +261,12 @@ public class CameraUtil {
 
         String mimeType = MimeTypeMap.getFileExtensionFromUrl(path);
         String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(mimeType);
-        Log.e("aswin", "isTypeImage: " + type);
         return type != null && type.contains("image/");
     }
 
     public static boolean isTypeImage(Context context, Uri uri) {
 
         String mimeType = context.getContentResolver().getType(uri);
-//        String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(mimeType);
-//        Log.e("aswin", "isTypeImage: " + type);
         return mimeType != null && mimeType.contains("image/");
     }
 

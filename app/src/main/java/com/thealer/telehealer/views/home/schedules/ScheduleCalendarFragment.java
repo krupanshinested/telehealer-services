@@ -161,14 +161,12 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
                 if (!notificationCreatedId.contains(String.valueOf(responseModelArrayList.get(i).getSchedule_id()))) {
                     notificationCreatedId.add(String.valueOf(responseModelArrayList.get(i).getSchedule_id()));
                     appPreference.setStringSet(PreferenceConstants.NOTIFICATIONS_IDS, notificationCreatedId);
-                    Log.e("aswin", "updateCalendar: added " + notificationCreatedId.toString());
                     addLocalNotification(responseModelArrayList.get(i));
                 }
             } else {
                 if (notificationCreatedId.contains(String.valueOf(responseModelArrayList.get(i).getSchedule_id()))) {
                     notificationCreatedId.remove(String.valueOf(responseModelArrayList.get(i).getSchedule_id()));
                     appPreference.setStringSet(PreferenceConstants.NOTIFICATIONS_IDS, notificationCreatedId);
-                    Log.e("aswin", "updateCalendar: removed " + notificationCreatedId.toString());
                 }
             }
 
@@ -287,7 +285,6 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         parent = (LinearLayout) view.findViewById(R.id.parent);
 
         notificationCreatedId = appPreference.getStringSet(PreferenceConstants.NOTIFICATIONS_IDS);
-        Log.e("aswin", "updateCalendar: " + notificationCreatedId.toString());
 
         setEmptyState();
 

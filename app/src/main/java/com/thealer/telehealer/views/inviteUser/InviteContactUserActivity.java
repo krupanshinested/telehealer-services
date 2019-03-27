@@ -221,13 +221,11 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
 
     private void setRecyclerView() {
         contactsRv.setLayoutManager(new LinearLayoutManager(this));
-        Log.e("aswin", "setRecyclerView: " + contactModelList.size());
         inviteContactUserAdapter = new InviteContactUserAdapter(this, contactModelList, inviteContactViewModel);
         contactsRv.setAdapter(inviteContactUserAdapter);
     }
 
     private void updateContacts() {
-        Log.e("aswin", "updateContacts: " + contactModelList.size());
         inviteContactUserAdapter.setContactModelList(contactModelList);
     }
 
@@ -344,7 +342,6 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
         @Override
         protected List<ContactModel> doInBackground(Void... voids) {
 
-            Log.e("aswin", "doInBackground: " + start + " " + end);
             if (!isFirst) {
                 cursor.moveToPosition(100);
             }
@@ -402,7 +399,6 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
 
         @Override
         protected void onPostExecute(List<ContactModel> contactModels) {
-            Log.e("aswin", "onPostExecute: " + contactModels.size());
             if (isFirst) {
                 setRecyclerView();
             } else {

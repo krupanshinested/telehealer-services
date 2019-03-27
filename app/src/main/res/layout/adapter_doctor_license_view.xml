@@ -10,10 +10,9 @@
 
     <TextView
         android:id="@+id/license_number_tv"
-        style="@android:style/TextAppearance.Widget.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="4dp"
+        android:padding="@dimen/padding_default"
         android:textColor="@color/colorBlack"
         app:layout_constraintBottom_toTopOf="@+id/state_tv"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,11 +21,9 @@
 
     <TextView
         android:id="@+id/state_tv"
-        style="@android:style/TextAppearance.Widget.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:padding="4dp"
+        android:padding="@dimen/padding_default"
         android:textColor="@color/colorBlack"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -37,12 +34,12 @@
         android:id="@+id/expiration_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:padding="4dp"
+        android:padding="@dimen/padding_default"
         android:textColor="@color/colorBlack"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintLeft_toRightOf="@+id/state_tv"
-        app:layout_constraintRight_toLeftOf="@+id/view_iv" />
+        app:layout_constraintRight_toLeftOf="@+id/view_iv"
+        tools:text="@string/dummy_text" />
 
     <ImageView
         android:id="@+id/view_iv"

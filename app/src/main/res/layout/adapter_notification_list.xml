@@ -71,6 +71,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    app:civ_border_color="@android:color/darker_gray"
+                    app:civ_border_width="1dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -79,6 +81,7 @@
                 <TextView
                     android:id="@+id/list_title_tv"
                     style="@style/card_title_text"
+                    android:layout_marginEnd="@dimen/margin_default"
                     app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
                     app:layout_constraintEnd_toStartOf="@id/info_iv"
                     app:layout_constraintStart_toEndOf="@id/avatar_civ"

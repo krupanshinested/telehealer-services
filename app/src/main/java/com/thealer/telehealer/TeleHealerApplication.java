@@ -82,7 +82,6 @@ public class TeleHealerApplication extends Application implements LifecycleObser
                     NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(callNotification);
 
-            Log.e("aswin", "createNotificationChannel: " );
         }
 
     }

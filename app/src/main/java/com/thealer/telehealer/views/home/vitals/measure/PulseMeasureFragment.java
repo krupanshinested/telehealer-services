@@ -559,7 +559,7 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
         if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
             if (!isPresentedInsideCallActivity()) {
                 if (currentState == MeasureState.failed) {
-                    showAlertDialog(getActivity(), getString(R.string.error), message_tv.getText().toString(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    Utils.showAlertDialog(getActivity(), getString(R.string.error), message_tv.getText().toString(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (getActivity() != null) {
@@ -589,7 +589,7 @@ public class PulseMeasureFragment extends BaseFragment implements VitalPairInter
 
     @Override
     public void didFailConnectDevice(String type, String serailNumber, String errorMessage) {
-        showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+        Utils.showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();

@@ -6,17 +6,16 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
+import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -62,9 +61,9 @@ public class AssociationListAdapter extends RecyclerView.Adapter<AssociationList
         if (selectionType.equals(ArgumentKeys.SEARCH_ASSOCIATION) || selectionType.equals(ArgumentKeys.SEARCH_ASSOCIATION_DOCTOR)) {
 
             viewHolder.titleTv.setText(commonUserApiResponseModelList.get(i).getUserDisplay_name());
-            if (selectionType.equals(ArgumentKeys.SEARCH_ASSOCIATION)){
+            if (selectionType.equals(ArgumentKeys.SEARCH_ASSOCIATION)) {
                 viewHolder.subTitleTv.setText(commonUserApiResponseModelList.get(i).getDob());
-            }else {
+            } else {
                 viewHolder.subTitleTv.setText(commonUserApiResponseModelList.get(i).getDoctorSpecialist());
             }
             Utils.setImageWithGlide(context, viewHolder.avatarCiv, commonUserApiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
@@ -102,14 +101,22 @@ public class AssociationListAdapter extends RecyclerView.Adapter<AssociationList
         private TextView subTitleTv;
         private ImageView actionIv;
         private ConstraintLayout viewItemCl;
+        private CustomUserListItemView customCircleIv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            avatarCiv = (CircleImageView) itemView.findViewById(R.id.avatar_civ);
-            titleTv = (TextView) itemView.findViewById(R.id.list_title_tv);
-            subTitleTv = (TextView) itemView.findViewById(R.id.list_sub_title_tv);
-            actionIv = (ImageView) itemView.findViewById(R.id.action_iv);
-            viewItemCl = (ConstraintLayout) itemView.findViewById(R.id.view_item_cl);
+            customCircleIv = (CustomUserListItemView) itemView.findViewById(R.id.custom_circle_iv);
+
+            avatarCiv = customCircleIv.getAvatarCiv();
+            titleTv = customCircleIv.getListTitleTv();
+            subTitleTv = customCircleIv.getListSubTitleTv();
+            actionIv = customCircleIv.getActionIv();
+            viewItemCl = customCircleIv.getListItemCl();
+
+            customCircleIv.getListItemCv().setCardElevation(0);
+            customCircleIv.getListItemCv().setRadius(0);
+            customCircleIv.getListItemCv().setUseCompatPadding(false);
+
         }
     }
 

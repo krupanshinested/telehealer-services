@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Aswin on 28,November,2018
@@ -31,13 +33,15 @@ public class FormsListAdapter extends RecyclerView.Adapter<FormsListAdapter.View
     private OnListItemSelectInterface onListItemSelectInterface;
     private ArrayList<OrdersFormsApiResponseModel> formsApiResponseModelArrayList;
     private ShowSubFragmentInterface showSubFragmentInterface;
+    private List<String> selectedFormIds;
 
     public FormsListAdapter(FragmentActivity activity, OnListItemSelectInterface onListItemSelectInterface,
-                            ArrayList<OrdersFormsApiResponseModel> formsApiResponseModelArrayList) {
+                            ArrayList<OrdersFormsApiResponseModel> formsApiResponseModelArrayList, List<String> selectedFormIds) {
         this.context = activity;
         this.onListItemSelectInterface = onListItemSelectInterface;
         this.formsApiResponseModelArrayList = formsApiResponseModelArrayList;
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
+        this.selectedFormIds = selectedFormIds;
     }
 
     @NonNull
@@ -72,8 +76,6 @@ public class FormsListAdapter extends RecyclerView.Adapter<FormsListAdapter.View
             }
         });
 
-        viewHolder.listCb.setChecked(false);
-
         viewHolder.listCb.setText(formsApiResponseModelArrayList.get(i).getName());
 
         viewHolder.listCb.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +84,12 @@ public class FormsListAdapter extends RecyclerView.Adapter<FormsListAdapter.View
                 onListItemSelectInterface.onListItemSelected(formsApiResponseModelArrayList.get(i).getForm_id(), null);
             }
         });
+
+        if (selectedFormIds.contains(String.valueOf(formsApiResponseModelArrayList.get(i).getForm_id()))) {
+            viewHolder.listCb.setChecked(true);
+        } else {
+            viewHolder.listCb.setChecked(false);
+        }
 
     }
 

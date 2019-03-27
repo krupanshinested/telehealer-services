@@ -60,7 +60,6 @@ public class SelectRadiologyTestFragment extends OrdersBaseFragment implements V
                         }
 
                         radiologyModelList = radiologyListModels;
-                        Log.e("aswin", "onChanged: model " + new Gson().toJson(radiologyModelList));
                     }
                 });
 
@@ -69,7 +68,6 @@ public class SelectRadiologyTestFragment extends OrdersBaseFragment implements V
             public void onChanged(@Nullable List<String> list) {
 
                 selectedIdList = list;
-                Log.e("aswin", "onChanged: id " + new Gson().toJson(selectedIdList));
 
                 radiologyListAdapter.setData(radiologyModelList, selectedIdList);
                 radiologySelectedListAdapter.setData(radiologyModelList, selectedIdList);
@@ -109,7 +107,6 @@ public class SelectRadiologyTestFragment extends OrdersBaseFragment implements V
             public void afterTextChanged(Editable s) {
                 if (!s.toString().isEmpty()) {
                     radiologyModelList = new RadiologyConstants().getRadiologyListModel(s.toString().toLowerCase());
-                    Log.e("aswin", "afterTextChanged: " + new Gson().toJson(radiologyModelList));
                 } else {
                     radiologyModelList = new RadiologyConstants().getRadiologyListModel();
                 }

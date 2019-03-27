@@ -254,7 +254,7 @@ public interface ApiInterface {
     @POST("api/referrals/prescriptions")
     Observable<OrdersBaseApiResponseModel> createPrescription(@Body CreatePrescriptionRequestModel createPrescriptionRequestModel);
 
-    @GET("users")
+    @GET("api/users")
     Observable<ArrayList<CommonUserApiResponseModel>> getUsersByGuid(@Query(FILTER_USER_GUID_IN) String data);
 
     @GET("api/referrals/specialists")

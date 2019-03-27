@@ -62,7 +62,7 @@
                 android:background="@null"
                 android:drawableLeft="@drawable/ic_search_grey_24dp"
                 android:drawablePadding="10dp"
-                android:hint="Search Practices"
+                android:hint="@string/search_practices"
                 android:inputType="text"
                 android:maxLines="1" />
         </android.support.v7.widget.CardView>

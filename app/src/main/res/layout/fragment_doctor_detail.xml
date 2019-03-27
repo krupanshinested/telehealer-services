@@ -78,7 +78,8 @@
                     android:hint="@string/title"
                     android:imeOptions="actionDone"
                     android:inputType="text"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    tools:text="@string/dummy_text" />
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
@@ -97,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp"
                     android:text="@string/speciality"
-                    android:textSize="12dp" />
+                    android:textSize="12sp" />
 
                 <Spinner
                     android:id="@+id/speciality_sp"
@@ -108,11 +109,13 @@
 
                 <TextView
                     android:id="@+id/specialist_tv"
+                    style="@style/text_title_bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="4dp"
+                    android:paddingStart="4dp"
                     android:textColor="@color/colorBlack"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:text="@string/dummy_text" />
 
                 <View
                     android:layout_width="match_parent"
@@ -163,7 +166,7 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp"
                     android:text="@string/gender"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/bio_til"
@@ -183,9 +186,10 @@
 
                 <TextView
                     android:id="@+id/gender_value"
+                    style="@style/text_title_bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="4dp"
+                    android:paddingStart="4dp"
                     android:textColor="@color/colorBlack"
                     android:visibility="gone" />
 
@@ -296,7 +300,7 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp"
                     android:text="@string/license"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:visibility="visible" />
 
                 <android.support.v7.widget.RecyclerView
@@ -392,7 +396,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:text="@string/driver_license"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:visibility="visible"
                     app:layout_constraintBottom_toTopOf="@+id/license_card"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -443,7 +447,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:text="@string/medical_school_certificate"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:visibility="visible"
                     app:layout_constraintBottom_toTopOf="@+id/certificate_card"
                     app:layout_constraintLeft_toLeftOf="parent"
