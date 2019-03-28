@@ -1,7 +1,6 @@
 package com.thealer.telehealer.views.home.orders.document;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -42,16 +41,15 @@ import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
+import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.onboarding.OnBoardingViewPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * Created by Aswin on 29,November,2018
@@ -83,7 +81,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     private List<String> imagePathList = new ArrayList<>();
     private int next = 1;
     private ConstraintLayout parent;
-    private String patientGuid = null;
+    private String patientGuid = null, doctorGuid = null;
 
 
     @Override
@@ -234,6 +232,13 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
             if (patientDetail != null) {
                 patientGuid = patientDetail.getUser_guid();
             }
+
+            CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            if (doctorDetail != null) {
+                doctorGuid = doctorDetail.getUser_guid();
+            }
+
+
         }
 
         isDataObtained();
@@ -357,7 +362,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     }
 
     private void uploadMultipleDocument() {
-        ordersCreateApiViewModel.uploadDocument(null, documentNameEt.getText().toString().concat("_" + next), imagePathList.get(0), false);
+        ordersCreateApiViewModel.uploadDocument(null, null, documentNameEt.getText().toString().concat("_" + next), imagePathList.get(0), false);
     }
 
     private void updateDocument() {
@@ -366,7 +371,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
 
     private void uploadDocument() {
 
-        ordersCreateApiViewModel.uploadDocument(patientGuid, documentNameEt.getText().toString(), image_path, false);
+        ordersCreateApiViewModel.uploadDocument(patientGuid, doctorGuid, documentNameEt.getText().toString(), image_path, false);
         showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
     }
 
@@ -384,19 +389,11 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
 
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW) {
-
-                try {
-                    ActivityManager mngr = (ActivityManager) getActivity().getSystemService(ACTIVITY_SERVICE);
-                    if (mngr != null) {
-                        if (mngr.getAppTasks().get(0).getTaskInfo().numActivities <= 1) {
-                            startActivity(new Intent(getActivity(), HomeActivity.class));
-                        }
-                        getActivity().setResult(Activity.RESULT_OK);
-                        getActivity().finish();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (!((BaseActivity) getActivity()).isPreviousActivityAvailable()) {
+                    startActivity(new Intent(getActivity(), HomeActivity.class));
+                    getActivity().setResult(Activity.RESULT_OK);
                 }
+                getActivity().finish();
             }
         }
     }

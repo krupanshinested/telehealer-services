@@ -19,12 +19,12 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getUserVitals(String type, String user_guid, boolean isShowProgress) {
+    public void getUserVitals(String type, String user_guid, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserVitals(type, user_guid)
+                    getAuthApiService().getUserVitals(type, user_guid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAListObserver<VitalsApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
@@ -41,12 +41,12 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getUserFilteredVitals(String type, String user_guid) {
+    public void getUserFilteredVitals(String type, String user_guid, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserFilteredVitals(type, user_guid)
+                    getAuthApiService().getUserFilteredVitals(type, user_guid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAListObserver<VitalsApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -85,12 +85,12 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createVital(CreateVitalApiRequestModel createVitalApiRequestModel){
+    public void createVital(CreateVitalApiRequestModel createVitalApiRequestModel, String doctorGuid){
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status){
-                    getAuthApiService().createVital(createVitalApiRequestModel)
+                    getAuthApiService().createVital(createVitalApiRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override

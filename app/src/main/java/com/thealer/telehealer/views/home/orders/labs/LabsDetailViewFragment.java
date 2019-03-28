@@ -31,6 +31,7 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
@@ -62,6 +63,7 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
     private Map<String, String> icdCodeList = new HashMap<>();
     private OrdersCustomView faxStatusOcv;
     private OrdersCustomView faxNumberOcv;
+    private String doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -126,7 +128,7 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
         faxNumberOcv = (OrdersCustomView) view.findViewById(R.id.fax_number_ocv);
 
         toolbar.inflateMenu(R.menu.orders_detail_menu);
-        if (UserType.isUserDoctor()) {
+        if (!UserType.isUserPatient()) {
             toolbar.getMenu().findItem(R.id.send_fax_menu).setVisible(true);
         }
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -141,6 +143,7 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
                         bundle.putString(ArgumentKeys.PDF_TITLE, labsResponseBean.getName());
                         bundle.putString(ArgumentKeys.PDF_URL, labsResponseBean.getPath());
                         bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
                         pdfViewerFragment.setArguments(bundle);
 
@@ -150,6 +153,7 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
                         SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
                         bundle = new Bundle();
                         bundle.putInt(ArgumentKeys.ORDER_ID, labsResponseBean.getReferral_id());
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                         sendFaxByNumberFragment.setArguments(bundle);
                         showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                         break;
@@ -167,7 +171,7 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
         doctorOcv.setTitleTv("-");
         doctorOcv.setSubtitleTv("-");
 
-        if (UserType.isUserDoctor()) {
+        if (!UserType.isUserPatient()) {
             cancelTv.setVisibility(View.VISIBLE);
         } else {
             cancelTv.setVisibility(View.GONE);
@@ -175,6 +179,7 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
 
         if (getArguments() != null) {
             labsResponseBean = (OrdersLabApiResponseModel.LabsResponseBean) getArguments().getSerializable(Constants.USER_DETAIL);
+            doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
 
             if (labsResponseBean != null) {
 
@@ -261,7 +266,7 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelSpecialistOrder(labsResponseBean.getReferral_id());
+                                ordersApiViewModel.cancelOrder(OrderConstant.ORDER_LABS, labsResponseBean.getReferral_id(), doctorGuid);
                                 dialog.dismiss();
 
                             }

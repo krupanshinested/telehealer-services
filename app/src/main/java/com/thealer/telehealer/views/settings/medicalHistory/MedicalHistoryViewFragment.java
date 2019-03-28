@@ -90,21 +90,23 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
             }
         });
 
-        toolbar.inflateMenu(R.menu.menu_history);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.menu_edit:
-                        showHistoryList();
-                        break;
-                    case R.id.menu_print:
-                        generatePdf();
-                        break;
+        if (!UserType.isUserAssistant()) {
+            toolbar.inflateMenu(R.menu.menu_history);
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.menu_edit:
+                            showHistoryList();
+                            break;
+                        case R.id.menu_print:
+                            generatePdf();
+                            break;
+                    }
+                    return true;
                 }
-                return true;
-            }
-        });
+            });
+        }
 
         medicalHistoryContainer = (LinearLayout) view.findViewById(R.id.medical_history_container);
     }
@@ -131,11 +133,16 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
     @Override
     public void onResume() {
         super.onResume();
+
         Utils.hideKeyboard(getActivity());
+
         if (UserType.isUserPatient()) {
             changeTitleInterface.onTitleChange(getString(R.string.health_profile));
             onViewChangeInterface.hideOrShowNext(true);
             onViewChangeInterface.updateNextTitle(getString(R.string.edit));
+
+        }else if (UserType.isUserAssistant()) {
+            onViewChangeInterface.hideOrShowNext(false);
         }
         toolbarTitle.setText(getString(R.string.health_profile));
 

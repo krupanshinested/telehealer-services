@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -370,7 +371,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         TextView userNameTv = (TextView) findViewById(R.id.user_name_tv);
         TextView userDobTv = (TextView) findViewById(R.id.user_dob_tv);
 
-        toolbarTitle.setText(appPreference.getString(PreferenceConstants.USER_NAME));
+        toolbarTitle.setText(UserDetailPreferenceManager.getUserDisplayName());
         userNameTv.setText(UserDetailPreferenceManager.getUserDisplayName());
 
         switch (UserType.getUserType()) {

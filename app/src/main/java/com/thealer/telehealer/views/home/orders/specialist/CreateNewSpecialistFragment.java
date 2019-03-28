@@ -45,6 +45,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
     private CommonUserApiResponseModel selectedPatientModel;
     private GetDoctorsApiResponseModel.DataBean specialistModel;
     private boolean isFromHome;
+    private String doctorGuid;
 
     private ChangeTitleInterface changeTitleInterface;
 
@@ -104,10 +105,17 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
 
             if (!isFromHome) {
 
-                patientOcv.setArrow_visible(false);
-                patientOcv.setClickable(false);
-
                 patientModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+                if (patientModel != null){
+                    patientOcv.setArrow_visible(false);
+                    patientOcv.setClickable(false);
+                }
+
+                CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                if (doctorModel != null) {
+                    doctorGuid = doctorModel.getUser_guid();
+                }
             }
 
         }
@@ -175,6 +183,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(ArgumentKeys.ORDER_DATA, assignSpecialistRequestModel);
                 bundle.putString(ArgumentKeys.USER_NAME, patientModel.getDisplayName());
+                bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                 sendFaxByNumberFragment.setArguments(bundle);
                 showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                 break;
@@ -183,7 +192,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
 
     @Override
     public void onAuthenticated() {
-        assignSpecialist(getRequestModel(), patientModel.getDisplayName(), false);
+        assignSpecialist(getRequestModel(), patientModel.getDisplayName(), doctorGuid, false);
     }
 
     private AssignSpecialistRequestModel getRequestModel() {
@@ -204,6 +213,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
         }
 
         bundle.putString(ArgumentKeys.SEARCH_TYPE, searchType);
+        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
         SelectAssociationFragment selectAssociationFragment = new SelectAssociationFragment();
 
@@ -217,11 +227,6 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == Activity.RESULT_OK &&
-//                requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW) {
-//            if (getActivity() != null)
-//                getActivity().finish();
-//        }
 
         if (data != null) {
             Bundle bundle = data.getExtras();

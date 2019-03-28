@@ -103,7 +103,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
 
         medicalAssistantCrv.setEmptyState(EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN);
 
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), false);
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), false, getArguments());
 
         medicalAssistantCrv.getRecyclerView().setAdapter(doctorPatientListAdapter);
 
@@ -130,7 +130,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
     private void getMAList(boolean isShowProgress) {
         if (!isApiRequested) {
             isApiRequested = true;
-            associationApiViewModel.getAssociationList(null, page, isShowProgress, true);
+            associationApiViewModel.getAssociationList(null, page, null, isShowProgress, true);
         }
     }
 

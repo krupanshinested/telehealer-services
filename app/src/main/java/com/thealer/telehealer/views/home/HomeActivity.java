@@ -21,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -148,7 +149,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             }
         });
 
-        notificationApiViewModel.getNotifications(1, false);
+        notificationApiViewModel.getNotifications(1, false, null);
     }
 
     private void showOrHideNotificationCount(boolean isShow, int unread_count) {
@@ -257,8 +258,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             navigationView.getMenu().removeItem(R.id.menu_patient);
             navigationView.getMenu().removeItem(R.id.menu_orders);
             navigationView.getMenu().removeItem(R.id.menu_vitals);
+            navigationView.getMenu().removeItem(R.id.menu_monitoring);
             navigationView.getMenu().findItem(R.id.menu_schedules).setChecked(true);
             selecteMenuItem = R.id.menu_schedules;
+            showScheduleToolbarOptions(true, scheduleTypeCalendar);
         }
 
         if (PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC))
@@ -356,6 +359,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     public boolean onCreateOptionsMenu(Menu menu) {
         optionsMenu = menu;
         getMenuInflater().inflate(R.menu.appbar_home_menu, menu);
+
+        if (UserType.isUserAssistant()) {
+            optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
+            optionsMenu.findItem(R.id.menu_schedules).setVisible(true);
+        }
 
         MenuItem menuItem = menu.findItem(R.id.menu_notification);
         View notificationView = menuItem.getActionView();
@@ -514,6 +522,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        Log.e(TAG, "onNavigationItemSelected: ");
         showScheduleToolbarOptions(false, 0);
         if (menuItem.getItemId() != R.id.menu_profile_settings) {
             showPendingInvitesOption(false);
@@ -587,7 +596,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showPendingInvitesOption(boolean visible) {
-        if (optionsMenu != null) {
+        if (!UserType.isUserPatient() && optionsMenu != null) {
             if (visible) {
                 optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
             } else {
@@ -675,6 +684,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     protected void onResume() {
         super.onResume();
+        isPreviousActivityAvailable();
 
         checkNotification();
 
