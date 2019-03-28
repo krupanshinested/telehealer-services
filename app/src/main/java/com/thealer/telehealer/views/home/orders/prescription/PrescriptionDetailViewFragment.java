@@ -29,6 +29,7 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
@@ -57,7 +58,7 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
     private ShowSubFragmentInterface showSubFragmentInterface;
     private TextView cancelWatermarkTv;
     private Toolbar toolbar;
-    private String userName;
+    private String userName, doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -111,7 +112,7 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
 
         toolbar.inflateMenu(R.menu.orders_detail_menu);
 
-        if (UserType.isUserDoctor()) {
+        if (!UserType.isUserPatient()) {
             toolbar.getMenu().findItem(R.id.send_fax_menu).setVisible(true);
         }
 
@@ -125,6 +126,7 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
                         bundle.putBoolean(ArgumentKeys.IS_FROM_PRESCRIPTION_DETAIL, true);
                         bundle.putString(ArgumentKeys.VIEW_TITLE, getString(R.string.choose_pharmacy));
                         bundle.putString(ArgumentKeys.USER_NAME, userName);
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
                         SelectPharmacyFragment selectPharmacyFragment = new SelectPharmacyFragment();
                         selectPharmacyFragment.setArguments(bundle);
@@ -140,6 +142,7 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
                         bundle.putString(ArgumentKeys.PDF_TITLE, ordersResultBean.getName());
                         bundle.putString(ArgumentKeys.PDF_URL, ordersResultBean.getPath());
                         bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
                         pdfViewerFragment.setArguments(bundle);
 
@@ -156,6 +159,7 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
         if (getArguments() != null) {
 
             ordersResultBean = (OrdersPrescriptionApiResponseModel.OrdersResultBean) getArguments().getSerializable(Constants.USER_DETAIL);
+            doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
 
             pharmacyOcv.setTitleTv("-");
 
@@ -226,7 +230,7 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelSpecialistOrder(ordersResultBean.getReferral_id());
+                                ordersApiViewModel.cancelOrder(OrderConstant.ORDER_PRESCRIPTIONS, ordersResultBean.getReferral_id(), doctorGuid);
                                 dialog.dismiss();
 
                             }

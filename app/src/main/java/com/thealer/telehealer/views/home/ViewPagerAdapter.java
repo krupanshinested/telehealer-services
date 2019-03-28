@@ -3,16 +3,16 @@ package com.thealer.telehealer.views.home;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.List;
 
 /**
  * Created by Aswin on 14,November,2018
  */
-public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+public class ViewPagerAdapter extends FragmentPagerAdapter {
     private List<Fragment> fragmentList;
-    private List<String > titleList;
+    private List<String> titleList;
 
     public ViewPagerAdapter(FragmentManager fm, List<Fragment> fragmentList, List<String> titleList) {
         super(fm);

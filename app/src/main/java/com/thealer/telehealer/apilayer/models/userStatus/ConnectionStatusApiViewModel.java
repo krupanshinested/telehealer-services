@@ -15,12 +15,12 @@ public class ConnectionStatusApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getConnectionStatus(String userGuid, boolean isShowProgress) {
+    public void getConnectionStatus(String userGuid, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserConnectionStatus(userGuid)
+                    getAuthApiService().getUserConnectionStatus(userGuid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

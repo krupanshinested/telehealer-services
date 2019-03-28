@@ -60,6 +60,7 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
     private ChangeTitleInterface changeTitleInterface;
     private Object requestData;
     private String userName;
+    private String doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -104,6 +105,7 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
 
         if (getArguments() != null) {
             refferralId = getArguments().getInt(ArgumentKeys.ORDER_ID);
+            doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
 
             if (getArguments().getSerializable(ArgumentKeys.ORDER_DATA) != null) {
                 toolbar.setVisibility(View.GONE);
@@ -195,15 +197,15 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
 
             if (requestData instanceof AssignSpecialistRequestModel) {
 
-                assignSpecialist((AssignSpecialistRequestModel) requestData, userName, true);
+                assignSpecialist((AssignSpecialistRequestModel) requestData, userName, doctorGuid, true);
 
             } else if (requestData instanceof CreateRadiologyRequestModel) {
 
-                createNewRadiologyOrder((CreateRadiologyRequestModel) requestData, userName, true);
+                createNewRadiologyOrder((CreateRadiologyRequestModel) requestData, userName, doctorGuid, true);
 
             } else if (requestData instanceof CreateTestApiRequestModel) {
 
-                createNewLabOrder((CreateTestApiRequestModel) requestData, userName, true);
+                createNewLabOrder((CreateTestApiRequestModel) requestData, userName, doctorGuid, true);
 
             }
         } else {
@@ -226,6 +228,6 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
         String number = countyCode.getSelectedCountryCodeWithPlus() + "" + phoneNumber.getNationalNumber();
         sendFaxRequestModel.setFax_number(number);
 
-        ordersCreateApiViewModel.sendFax(sendFaxRequestModel, isShowProgress);
+        ordersCreateApiViewModel.sendFax(sendFaxRequestModel, doctorGuid, isShowProgress);
     }
 }

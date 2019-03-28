@@ -37,12 +37,17 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
     private List<CommonUserApiResponseModel> associationApiResponseModelResult;
     private OnActionCompleteInterface onActionCompleteInterface;
     private boolean isDietView;
+    private Bundle bundle;
 
-    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView) {
+    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle) {
         fragmentActivity = activity;
         associationApiResponseModelResult = new ArrayList<>();
         onActionCompleteInterface = (OnActionCompleteInterface) activity;
         this.isDietView = isDietView;
+        this.bundle = bundle;
+        if (bundle == null) {
+            this.bundle = new Bundle();
+        }
     }
 
     @NonNull
@@ -78,7 +83,6 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
     }
 
     private void proceed(CommonUserApiResponseModel resultBean) {
-        Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.USER_DETAIL, resultBean);
         if (!isDietView) {
             onActionCompleteInterface.onCompletionResult(RequestID.REQ_SHOW_DETAIL_VIEW, true, bundle);

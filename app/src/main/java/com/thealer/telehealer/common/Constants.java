@@ -1,5 +1,6 @@
 package com.thealer.telehealer.common;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import java.util.List;
@@ -124,6 +125,7 @@ public class Constants {
     public static final String WHERE_FROM = "where_from";
     public static final String EMAIL = "email";
     public static final String USER_DETAIL = "user_detail";
+    public static final String DOCTOR_DETAIL = "doctor_detail";
 
     public static final int CREATE_MODE = 0;
     public static final int EDIT_MODE = 1;
@@ -139,6 +141,7 @@ public class Constants {
     public static final String NOTIFICATION_COUNT_RECEIVER = "notification_count_receiver";
     public static final String CALL = "call";
     public static final String CHAT = "chat";
+    public static final String CONNECTION_STATUS_RECEIVER = "connectionStatusReceiver";
     public static String male = "male";
     public static String female = "female";
 

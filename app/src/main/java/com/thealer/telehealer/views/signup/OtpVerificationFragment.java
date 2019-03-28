@@ -168,7 +168,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, errorModel.isSuccess());
                         bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, ((otpType == signup) ? getString(R.string.failure) : getString(R.string.password_reset_failed)));
 
                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver)).putExtras(bundle));
                     } else {

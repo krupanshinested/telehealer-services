@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
     private OnListItemSelectInterface onListItemSelectInterface;
     private OnActionCompleteInterface onActionCompleteInterface;
     private AddConnectionApiViewModel addConnectionApiViewModel;
-    private int selected_position;
+    private int selected_position = -1;
 
     public ConnectionListAdapter(Context context) {
         this.context = context;
@@ -60,8 +61,9 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel.isSuccess()) {
+                        Log.e("aswin", "onChanged: " + selected_position);
                         apiResponseModelList.get(selected_position).setConnection_status(Constants.CONNECTION_STATUS_OPEN);
-                        notifyDataSetChanged();
+                        notifyItemChanged(selected_position);
                     }
                 }
             }
@@ -81,9 +83,10 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         if (apiResponseModelList.get(i).getConnection_status() == null ||
                 apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_REJECTED)) {
             viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_connect_user));
-            viewHolder.actionIv.setImageTintList(null);
+            viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.app_gradient_start)));
         } else if (apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_OPEN) ||
                 apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_PENDING)) {
+            Log.e("aswin", "onBindViewHolder: " + i);
             viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_status_pending));
             viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.color_green_light)));
         } else {
@@ -110,6 +113,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
                 Utils.vibrate(fragmentActivity);
                 if (apiResponseModelList.get(i).getConnection_status() == null) {
                     selected_position = i;
+                    onListItemSelectInterface.onListItemSelected(i, null);
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.get(i).getUser_id());
                     bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
@@ -133,7 +137,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             }
         });
 
-        viewHolder.userListIv.setStatus(apiResponseModelList.get(i).getStatus());
+//        viewHolder.userListIv.setStatus(apiResponseModelList.get(i).getStatus());
     }
 
     @Override
@@ -146,6 +150,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         if (selectedPosition == -1)
             notifyDataSetChanged();
         else {
+            Log.e("aswin", "setData: " + selectedPosition);
             apiResponseModelList.get(selectedPosition).setConnection_status(Constants.CONNECTION_STATUS_OPEN);
             notifyItemChanged(selected_position);
         }

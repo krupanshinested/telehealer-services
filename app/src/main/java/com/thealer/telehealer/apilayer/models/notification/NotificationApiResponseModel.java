@@ -2,6 +2,8 @@ package com.thealer.telehealer.apilayer.models.notification;
 
 import com.thealer.telehealer.apilayer.models.PaginationCommonResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -161,6 +163,21 @@ public class NotificationApiResponseModel extends PaginationCommonResponseModel 
 
             public void setRequestee(CommonUserApiResponseModel requestee) {
                 this.requestee = requestee;
+            }
+
+            public CommonUserApiResponseModel getDoctorModel() {
+                if (getRequestor().getRole().equals(Constants.ROLE_DOCTOR)) {
+                    return requestor;
+                } else if (getRequestee().getRole().equals(Constants.ROLE_DOCTOR)) {
+                    return requestee;
+                } else {
+                    return null;
+                }
+            }
+
+            public boolean isOwnNotification() {
+                int id = UserDetailPreferenceManager.getWhoAmIResponse().getUser_id();
+                return getRequestor().getUser_id() == id || getRequestee().getUser_id() == id;
             }
 
             public static class DetailBean implements Serializable {

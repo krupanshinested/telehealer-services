@@ -76,6 +76,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
     private DocumentListAdapter documentListAdapter;
     private Toolbar toolbar;
     private GridLayoutManager gridLayoutManager;
+    private String doctorGuid = null, userGuid = null;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -186,6 +187,14 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
                 appbarLayout.setVisibility(View.GONE);
             }
             commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            if (commonUserApiResponseModel != null) {
+                userGuid = commonUserApiResponseModel.getUser_guid();
+            }
+
+            CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            if (doctorDetail != null)
+                doctorGuid = doctorDetail.getUser_guid();
+
             if (!isFromHome) {
                 addFab.hide();
                 documentsCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCUMENTS);
@@ -253,7 +262,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             if (isFromHome) {
                 ordersApiViewModel.getDocuments(page, isShowProgress);
             } else {
-                ordersApiViewModel.getUserDocuments(page, commonUserApiResponseModel.getUser_guid(), isShowProgress);
+                ordersApiViewModel.getUserDocuments(page, commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress);
             }
         }
     }
@@ -292,7 +301,8 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         super.onResume();
         addFab.setClickable(true);
         onResume = true;
-        setUserVisibleHint(true);
+        if (getUserVisibleHint())
+            setUserVisibleHint(true);
     }
 
     @Override
