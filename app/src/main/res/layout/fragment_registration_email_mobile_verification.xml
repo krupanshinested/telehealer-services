@@ -28,7 +28,7 @@
                 android:layout_margin="@dimen/margin_default"
                 android:gravity="center"
                 android:padding="@dimen/padding_default"
-                android:text="@string/confirm_your_mobile_number_and_email_id"
+                android:text="@string/confirm_your_mobile_number_and_email"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

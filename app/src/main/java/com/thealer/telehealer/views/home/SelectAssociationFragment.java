@@ -199,6 +199,8 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
 
         if (getArguments() != null) {
 
+            Bundle bundle = getArguments();
+
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 
             if (!isFromHome) {
@@ -206,6 +208,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             }
 
             selectionType = getArguments().getString(ArgumentKeys.SEARCH_TYPE);
+            Log.e(TAG, "initView: " + selectionType);
 
             if (selectionType != null) {
 

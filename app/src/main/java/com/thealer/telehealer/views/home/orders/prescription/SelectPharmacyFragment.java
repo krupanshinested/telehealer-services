@@ -14,7 +14,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +66,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     private boolean isLocationRequested;
     private LocationTracker locationTracker;
     private boolean isProposerRequested, isSaveAndFax = false;
-    private String userName;
+    private String userName, doctorGuid;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -162,6 +161,8 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
                 userName = getArguments().getString(ArgumentKeys.USER_NAME);
                 isSaveAndFax = true;
             }
+
+            doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
         }
 
         pharmacyCrv.setEmptyState(EmptyViewConstants.EMPTY_SEARCH);
@@ -234,7 +235,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     @Override
     public void onAuthenticated() {
         if (isSaveAndFax) {
-            createPrescription(createPrescriptionRequestModel, userName, true);
+            createPrescription(createPrescriptionRequestModel, userName, doctorGuid, true);
         } else {
             sendFax(referralId, false, true);
         }
@@ -272,7 +273,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
         super.sendFax(referral_id, isShowProgress, isShowAuth);
         ordersCreateApiViewModel.sendFax(new SendFaxRequestModel(selectedPharmacy.getFax(),
                 String.valueOf(referral_id),
-                new SendFaxRequestModel.DetailBean(selectedPharmacy)), isShowProgress);
+                new SendFaxRequestModel.DetailBean(selectedPharmacy)), doctorGuid, isShowProgress);
     }
 
     @Override

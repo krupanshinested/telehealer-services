@@ -14,7 +14,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -294,6 +292,16 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                 doctorDetailCommonModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 createScheduleViewModel.setDoctorCommonModel(doctorDetailCommonModel);
             } else if (UserType.isUserDoctor()) {
+                patientOcv.setOnClickListener(null);
+                patientOcv.setArrow_visible(false);
+                patientDetailModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+                createScheduleViewModel.setPatientCommonModel(patientDetailModel);
+            } else {
+                doctorOcv.setOnClickListener(null);
+                doctorOcv.setArrow_visible(false);
+                doctorDetailCommonModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                createScheduleViewModel.setDoctorCommonModel(doctorDetailCommonModel);
+
                 patientOcv.setOnClickListener(null);
                 patientOcv.setArrow_visible(false);
                 patientDetailModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);

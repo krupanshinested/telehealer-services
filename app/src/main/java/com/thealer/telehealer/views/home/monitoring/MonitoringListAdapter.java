@@ -36,12 +36,14 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
 
     private List<String> titleList;
     private List<Drawable> imageList;
+    private Bundle bundle;
 
-    public MonitoringListAdapter(FragmentActivity activity) {
+    public MonitoringListAdapter(FragmentActivity activity, Bundle arguments) {
         this.activity = activity;
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
         titleList = Arrays.asList(activity.getString(R.string.vitals), activity.getString(R.string.diet));
         imageList = Arrays.asList(activity.getDrawable(R.drawable.ic_vitals_heart), activity.getDrawable(R.drawable.ic_diet));
+        this.bundle = arguments;
     }
 
     @NonNull
@@ -59,7 +61,9 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
             @Override
             public void onClick(View v) {
                 Fragment fragment = null;
-                Bundle bundle = new Bundle();
+                if (bundle == null) {
+                    bundle = new Bundle();
+                }
                 bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
 
                 if (titleList.get(i).equals(activity.getString(R.string.vitals))) {
@@ -81,7 +85,7 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
 
                     if (UserType.isUserPatient()) {
                         fragment = new DietDetailFragment();
-                    } else if (UserType.isUserDoctor()) {
+                    } else {
                         bundle.putBoolean(ArgumentKeys.IS_DIET_VIEW, true);
                         fragment = new DoctorPatientListingFragment();
                         fragment.setArguments(bundle);

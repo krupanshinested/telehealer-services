@@ -70,7 +70,7 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
                         if (whereFrom.equals(ForgotPassword.class.getSimpleName())) {
 
                             if (!checkUserEmailMobileResponseModel.isUser_exists()) {
-                                emailTil.setError(getString(R.string.user_not_allowed_error));
+                                setEmailError(getString(R.string.user_not_allowed_error));
                             } else {
                                 ResetPasswordRequestModel resetPasswordRequestModel = ViewModelProviders.of(getActivity()).get(ResetPasswordRequestModel.class);
                                 resetPasswordRequestModel.setEmail(emailEt.getText().toString());
@@ -96,7 +96,7 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
                             onActionCompleteInterface.onCompletionResult(null, true, null);
 
                         } else {
-                            emailTil.setError(getString(R.string.email_already_taken));
+                            setEmailError(getString(R.string.email_already_taken));
                         }
                     }
                 }
@@ -135,7 +135,7 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                emailTil.setError(null);
+                setEmailError(null);
             }
 
             @Override
@@ -167,7 +167,7 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
         if (!s.isEmpty()) {
             if (!Utils.isEmailValid(s)) {
 
-                emailTil.setError(getString(R.string.enter_valid_email));
+                setEmailError(getString(R.string.enter_valid_email));
                 onViewChangeInterface.enableNext(false);
 
             } else {
@@ -184,6 +184,14 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
 
     public void makeApiCall() {
         checkUserEmailMobileApiViewModel.checkUserEmail(emailEt.getText().toString());
+    }
+
+    private void setEmailError(String error){
+        emailTil.setError(null);
+        emailTil.setErrorEnabled(false);
+        if (error != null){
+            emailTil.setError(error);
+        }
     }
 
 }

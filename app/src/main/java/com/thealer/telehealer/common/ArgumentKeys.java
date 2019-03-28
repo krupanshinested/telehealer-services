@@ -81,6 +81,7 @@ public class ArgumentKeys {
     public static final String IS_MANUAL_ENTRY = "isManualEntry";
     public static final String IS_PRIMARY_DELETED = "isPrimaryDeletd";
     public static final String IS_SECONDARY_DELETED = "isSecondaryDeletd";
+    public static final String HIDE_SEARCH = "hideSearch";
     public static final String VITAL_DETAIL = "vitalDetail";
     public static final String SEGMENT_DETAIL = "segmentDetail";
     public static final String SEGMENT = "segment";
@@ -88,6 +89,7 @@ public class ArgumentKeys {
     public static final String CIRCULAR_AVATAR = "circularAvatar";
     public static final String IS_AUTH_REQUIRED = "isAuthRequrired";
     public static final String DISABLE_BACk = "disableBack";
+    public static final String CONNECTION_STATUS = "connectionStatus";
     public static final String IS_REFRESH_TOKEN = "isRefreshToken";
     public static final String WEB_VIEW_URL = "webViewUrl";
     public static final String IS_CREATE_PIN = "isCreatePin";

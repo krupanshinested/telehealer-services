@@ -73,15 +73,14 @@ public class RoleSelectionFragment extends BaseFragment implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.doctor_iv:
             case R.id.doctor_tv:
                 selectDoctor();
                 break;
             case R.id.medical_assistant_iv:
             case R.id.medical_assistant_tv:
-                //TODO : enable this whenever ma flow completes
-                //selectAssistant();
+                selectAssistant();
                 break;
         }
     }
@@ -101,20 +100,20 @@ public class RoleSelectionFragment extends BaseFragment implements View.OnClickL
     }
 
     private void enableOrDisableAssistant(boolean b) {
-        if (b){
+        if (b) {
             ImageViewCompat.setImageTintList(medicalAssistantIv, ColorStateList.valueOf(getResources().getColor(R.color.app_gradient_start)));
             medicalAssistantTv.setTextColor(getResources().getColor(R.color.app_gradient_start));
-        }else {
+        } else {
             ImageViewCompat.setImageTintList(medicalAssistantIv, ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
             medicalAssistantTv.setTextColor(getResources().getColor(R.color.colorBlack));
         }
     }
 
     private void enableOrDisableDoctor(boolean b) {
-        if (b){
+        if (b) {
             ImageViewCompat.setImageTintList(doctorIv, ColorStateList.valueOf(getResources().getColor(R.color.app_gradient_start)));
             doctorTv.setTextColor(getResources().getColor(R.color.app_gradient_start));
-        }else {
+        } else {
             ImageViewCompat.setImageTintList(doctorIv, ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
             doctorTv.setTextColor(getResources().getColor(R.color.colorBlack));
         }

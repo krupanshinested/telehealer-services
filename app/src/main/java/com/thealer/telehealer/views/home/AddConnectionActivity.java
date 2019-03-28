@@ -69,7 +69,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     private ConnectionListResponseModel connectionListResponseModel;
     private ConnectionListAdapter connectionListAdapter;
     private int page = 1, totalCount = 0;
-    private int selectedPosition, selectedId;
+    private int selectedPosition = -1, selectedId;
     private boolean isApiRequested = false;
     private boolean isMedicalAssistant = false;
     private List<CommonUserApiResponseModel> commonUserApiResponseModelList;
@@ -303,7 +303,8 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     @Override
     public void onListItemSelected(int position, Bundle bundle) {
         this.selectedPosition = position;
-        showDetailView(bundle);
+        if (bundle != null)
+            showDetailView(bundle);
     }
 
     private void showDetailView(Bundle bundle) {

@@ -17,7 +17,11 @@ import com.thealer.telehealer.apilayer.models.notification.NotificationApiRespon
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
 import com.thealer.telehealer.common.CustomExpandableListView;
+import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -27,6 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 07,January,2019
@@ -57,6 +63,7 @@ public class NotificationListFragment extends BaseFragment {
                     @Override
                     public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                         notificationCelv.hideProgressBar();
+                        notificationCelv.getSwipeLayout().setRefreshing(false);
                         if (baseApiResponseModel != null) {
                             if (baseApiResponseModel instanceof NotificationApiResponseModel) {
                                 notificationApiResponseModel = (NotificationApiResponseModel) baseApiResponseModel;
@@ -151,6 +158,15 @@ public class NotificationListFragment extends BaseFragment {
             }
         });
 
+        notificationCelv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                page = 1;
+                getNotification(false);
+                notificationCelv.showProgressBar();
+            }
+        });
+
         notificationListAdapter = new NotificationListAdapter(getActivity());
         notificationCelv.getExpandableView().setAdapter(notificationListAdapter);
 
@@ -160,11 +176,17 @@ public class NotificationListFragment extends BaseFragment {
                 getNotification(true);
             }
         });
+
         notificationCelv.setErrorModel(this, notificationApiViewModel.getErrorModelLiveData());
     }
 
     private void getNotification(boolean isShowProgress) {
-        notificationApiViewModel.getNotifications(page, isShowProgress);
+        String associationGuids = null;
+        if (UserType.isUserAssistant()) {
+            associationGuids = appPreference.getString(PreferenceConstants.ASSOCIATION_GUID_LIST);
+            associationGuids = associationGuids.concat(",").concat(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
+        }
+        notificationApiViewModel.getNotifications(page, isShowProgress, associationGuids);
     }
 
 

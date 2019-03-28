@@ -875,6 +875,7 @@
     <string name="fax_number">Fax Number</string>
     <string name="login_error_message">Unable to login. Please ensure that your email and password are entered correctly and try again.</string>
     <string name="vitals_report">Vitals Report</string>
+    <string name="upload_image_of_certification">Upload your image of certification</string>
     <string name="ai_result">AI Result</string>
     <string name="exam_duration">Exam Duration</string>
     <string name="filter">Filter</string>
@@ -886,7 +887,7 @@
     <string name="stethIO">Steth IO</string>
     <string name="registration_email_phone_verify_info">Before we create your account, let us make sure that we have correctly captured your mobile number and email</string>
     <string name="enter_your_mobile_number">Enter your mobile number</string>
-    <string name="confirm_your_mobile_number_and_email_id">Confirm your mobile number and email id</string>
+    <string name="confirm_your_mobile_number_and_email">Confirm your mobile number and email</string>
     <string name="do_you_want_to_close">Do you want to close ?</string>
     <string name="search_practices">Search Practices</string>
     <string name="stand_with_bare_feet">Please stand on scale with your bare feet</string>
@@ -917,6 +918,11 @@
     <string name="license_expired_message">Your license has expired.Please update your licensing details inorder to continue using the platform.</string>
     <string name="video_missed_call">Missed video call</string>
     <string name="audio_missed_call">Missed voice call</string>
+    <string name="local_notification_title">%s Appointment</string>
+    <string name="local_notification_message">You have an appointment with %s at %s</string>
+    <string name="ma_signature_required_title">Signature Required!!</string>
+    <string name="ma_signature_required_message">Sorry, you are not allowed to create any order on behalf of %s, since we don\'t have signature for %s.</string>
+    <string name="password_reset_failed">Password reset failed!</string>
     <string name="reset_password">Reset password</string>
     <string name="join">join</string>
     <string name="dismiss">dismiss</string>

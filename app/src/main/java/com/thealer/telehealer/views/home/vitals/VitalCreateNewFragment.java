@@ -384,7 +384,13 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
 
                 vitalApiRequestModel.setValue(value);
 
-                vitalsApiViewModel.createVital(vitalApiRequestModel);
+                String doctorGuid = null;
+                CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                if (doctorModel != null){
+                    doctorGuid = doctorModel.getUser_guid();
+                }
+
+                vitalsApiViewModel.createVital(vitalApiRequestModel, doctorGuid);
                 break;
         }
     }

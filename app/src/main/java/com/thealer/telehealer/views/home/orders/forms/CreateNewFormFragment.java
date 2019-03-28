@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +56,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
     private FormsListAdapter formsListAdapter;
     private ArrayList<OrdersFormsApiResponseModel> formsList = new ArrayList<>();
     private ArrayList<OrdersFormsApiResponseModel> remainingFormsList = new ArrayList<>();
-    private String userGuid = null;
+    private String userGuid = null, doctorGuid;
     private List<String> selectedFormIds = new ArrayList<>();
     private OrdersCreateApiViewModel ordersCreateApiViewModel;
 
@@ -170,6 +169,11 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
                 isSubtitleVisible = true;
                 userGuid = commonUserApiResponseModel.getUser_guid();
             }
+
+            CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            if (doctorModel != null) {
+                doctorGuid = doctorModel.getUser_guid();
+            }
         }
 
         if (selectedPatientDetail != null) {
@@ -207,6 +211,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
                     bundle = new Bundle();
                 }
                 bundle.putString(ArgumentKeys.SEARCH_TYPE, ArgumentKeys.SEARCH_ASSOCIATION);
+                bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                 SelectAssociationFragment selectAssociationFragment = new SelectAssociationFragment();
                 selectAssociationFragment.setArguments(bundle);
                 selectAssociationFragment.setTargetFragment(this, 1000);
@@ -224,7 +229,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
     }
 
     private void assignForms() {
-        ordersCreateApiViewModel.createForm(new CreateFormRequestModel(selectedFormIds.get(0), userGuid), false);
+        ordersCreateApiViewModel.createForm(new CreateFormRequestModel(selectedFormIds.get(0), userGuid), doctorGuid, false);
         selectedFormIds.remove(0);
     }
 

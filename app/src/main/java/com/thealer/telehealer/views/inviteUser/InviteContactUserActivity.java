@@ -17,7 +17,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,9 +27,11 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteUserApiViewModel;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
@@ -73,6 +74,7 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
     private InviteByEmailPhoneRequestModel apiRequestModel;
     private RecyclerView selectedContactsRv;
     private TextView emptyTv;
+    private String doctorGuid = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -205,6 +207,13 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
         selectedContactsRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         SelectedContactListAdapter selectedContactListAdapter = new SelectedContactListAdapter(this);
         selectedContactsRv.setAdapter(selectedContactListAdapter);
+
+        if (getIntent().getExtras() != null) {
+            CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getIntent().getExtras().getSerializable(Constants.USER_DETAIL);
+            if (doctorModel != null) {
+                doctorGuid = doctorModel.getUser_guid();
+            }
+        }
     }
 
     private void getSearchList(String name) {
@@ -267,7 +276,7 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
         apiRequestModel = new InviteByEmailPhoneRequestModel();
         apiRequestModel.setInvitations(invitationsBeanList);
 
-        inviteUserApiViewModel.inviteUserByEmailPhone(null, apiRequestModel, false);
+        inviteUserApiViewModel.inviteUserByEmailPhone(doctorGuid, apiRequestModel, false);
     }
 
     @Override
