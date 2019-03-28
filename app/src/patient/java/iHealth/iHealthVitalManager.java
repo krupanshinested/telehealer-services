@@ -448,7 +448,7 @@ public class iHealthVitalManager extends VitalsManager {
         vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DEVICE);
         vitalApiRequestModel.setValue(value);
 
-        vitalsApiViewModel.createVital(vitalApiRequestModel);
+        vitalsApiViewModel.createVital(vitalApiRequestModel, null);
         this.vitalApiRequestModel = vitalApiRequestModel;
     }
 

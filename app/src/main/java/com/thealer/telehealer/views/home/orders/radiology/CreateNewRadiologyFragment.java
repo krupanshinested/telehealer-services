@@ -84,6 +84,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
     };
     private Button saveBtn;
     private Button saveFaxBtn;
+    private String doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -175,10 +176,18 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
             boolean isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
             if (!isFromHome) {
 
-                patientOcv.setArrow_visible(false);
-                patientOcv.setClickable(false);
-
                 userModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+                if (userModel != null){
+                    patientOcv.setArrow_visible(false);
+                    patientOcv.setClickable(false);
+                }
+
+                CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                if (doctorModel != null) {
+                    doctorGuid = doctorModel.getUser_guid();
+                }
+
             }
 
             if (selectedModel != null) {
@@ -260,6 +269,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
                 bundle = new Bundle();
                 bundle.putSerializable(ArgumentKeys.ORDER_DATA, getRequest());
                 bundle.putString(ArgumentKeys.USER_NAME, userModel.getUserDisplay_name());
+                bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                 sendFaxByNumberFragment.setArguments(bundle);
                 showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                 break;
@@ -294,6 +304,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
             bundle = new Bundle();
         }
         bundle.putString(ArgumentKeys.SEARCH_TYPE, type);
+        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
         selectAssociationFragment.setArguments(bundle);
         selectAssociationFragment.setTargetFragment(this, reqCode);
         showSubFragmentInterface.onShowFragment(selectAssociationFragment);
@@ -307,7 +318,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
 
     @Override
     public void onAuthenticated() {
-        createNewRadiologyOrder(getRequest(), userModel.getUserDisplay_name(), false);
+        createNewRadiologyOrder(getRequest(), userModel.getUserDisplay_name(), doctorGuid, false);
     }
 
     @Override

@@ -21,11 +21,11 @@ public class VitalReportApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getVitalUsers(String type, boolean isShowProgress) {
+    public void getVitalUsers(String type, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
-                getAuthApiService().getVitalUsers(type)
+                getAuthApiService().getVitalUsers(type, doctorGuid)
                         .compose(applySchedulers())
                         .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                             @Override

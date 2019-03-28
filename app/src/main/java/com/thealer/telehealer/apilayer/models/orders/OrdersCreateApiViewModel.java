@@ -3,7 +3,6 @@ package com.thealer.telehealer.apilayer.models.orders;
 import android.app.Application;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -30,13 +29,13 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void createForm(CreateFormRequestModel createFormRequestModel, boolean isProgressVisibile) {
+    public void createForm(CreateFormRequestModel createFormRequestModel, String doctorGuid, boolean isProgressVisibile) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
 
-                    getAuthApiService().createForms(createFormRequestModel)
+                    getAuthApiService().createForms(createFormRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisibile)) {
                                 @Override
@@ -50,12 +49,12 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void assignSpecialist(AssignSpecialistRequestModel assignSpecialistRequestModel, boolean isProgressVisibile) {
+    public void assignSpecialist(AssignSpecialistRequestModel assignSpecialistRequestModel, String doctorGuid, boolean isProgressVisibile) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().assignSpecialist(assignSpecialistRequestModel)
+                    getAuthApiService().assignSpecialist(assignSpecialistRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisibile)) {
                                 @Override
@@ -69,7 +68,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
     }
 
 
-    public void uploadDocument(@Nullable String userGuid, String name, String image_path, boolean isProgressVisible) {
+    public void uploadDocument(@Nullable String userGuid, String doctorGuid, String name, String image_path, boolean isProgressVisible) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -77,7 +76,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
                     MultipartBody.Part file = getMultipartFile("file", image_path);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), name);
                     getAuthApiService()
-                            .uploadDocument(requestBody, file, userGuid)
+                            .uploadDocument(requestBody, file, userGuid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisible)) {
                                 @Override
@@ -90,12 +89,12 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createPrescription(CreatePrescriptionRequestModel createPrescriptionRequestModel) {
+    public void createPrescription(CreatePrescriptionRequestModel createPrescriptionRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createPrescription(createPrescriptionRequestModel)
+                    getAuthApiService().createPrescription(createPrescriptionRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
@@ -108,12 +107,12 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void sendFax(SendFaxRequestModel sendFaxRequestModel, boolean isShowProgress) {
+    public void sendFax(SendFaxRequestModel sendFaxRequestModel, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().sendFax(sendFaxRequestModel)
+                    getAuthApiService().sendFax(sendFaxRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
@@ -126,29 +125,12 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createLabOrder(CreateTestApiRequestModel createTestApiRequestModel) {
+    public void createLabOrder(CreateTestApiRequestModel createTestApiRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createLabOrder(createTestApiRequestModel).compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
-                                @Override
-                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
-                                }
-                            });
-                }
-            }
-        });
-    }
-
-    public void createRadiologyOrder(CreateRadiologyRequestModel createRadiologyRequestModel) {
-        fetchToken(new BaseViewInterface() {
-            @Override
-            public void onStatus(boolean status) {
-                if (status) {
-                    getAuthApiService().createRadiology(createRadiologyRequestModel)
+                    getAuthApiService().createLabOrder(createTestApiRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
@@ -161,12 +143,30 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createMiscellaneousOrder(CreateMiscellaneousRequestModel createMiscellaneousRequestModel) {
+    public void createRadiologyOrder(CreateRadiologyRequestModel createRadiologyRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createMiscellaneous(createMiscellaneousRequestModel)
+                    getAuthApiService().createRadiology(createRadiologyRequestModel, doctorGuid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void createMiscellaneousOrder(CreateMiscellaneousRequestModel createMiscellaneousRequestModel, String doctorGuid) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().createMiscellaneous(createMiscellaneousRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override

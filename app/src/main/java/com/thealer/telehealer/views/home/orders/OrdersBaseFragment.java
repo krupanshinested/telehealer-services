@@ -17,6 +17,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersBaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.CreateTestApiRequestModel;
+import com.thealer.telehealer.apilayer.models.orders.miscellaneous.CreateMiscellaneousRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
@@ -230,17 +231,17 @@ public class OrdersBaseFragment extends BaseFragment {
         showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
     }
 
-    public void assignSpecialist(AssignSpecialistRequestModel requestModel, String userName, boolean sendFax) {
+    public void assignSpecialist(AssignSpecialistRequestModel requestModel, String userName, String doctorGuid, boolean sendFax) {
         currentOrder = OrderConstant.ORDER_REFERRALS;
         patientName = userName;
         isSendFax = sendFax;
 
         showSuccessView();
 
-        ordersCreateApiViewModel.assignSpecialist(requestModel, false);
+        ordersCreateApiViewModel.assignSpecialist(requestModel, doctorGuid, false);
     }
 
-    public void createPrescription(CreatePrescriptionRequestModel prescriptionModel, String userDisplay_name, boolean sendFax) {
+    public void createPrescription(CreatePrescriptionRequestModel prescriptionModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
 
         currentOrder = OrderConstant.ORDER_PRESCRIPTIONS;
         patientName = userDisplay_name;
@@ -248,20 +249,20 @@ public class OrdersBaseFragment extends BaseFragment {
 
         showSuccessView();
 
-        ordersCreateApiViewModel.createPrescription(prescriptionModel);
+        ordersCreateApiViewModel.createPrescription(prescriptionModel, doctorGuid);
     }
 
-    public void createNewRadiologyOrder(CreateRadiologyRequestModel requestModel, String userDisplay_name, boolean sendFax) {
+    public void createNewRadiologyOrder(CreateRadiologyRequestModel requestModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
         currentOrder = OrderConstant.ORDER_RADIOLOGY;
         patientName = userDisplay_name;
         isSendFax = sendFax;
 
         showSuccessView();
 
-        ordersCreateApiViewModel.createRadiologyOrder(requestModel);
+        ordersCreateApiViewModel.createRadiologyOrder(requestModel, doctorGuid);
     }
 
-    public void createNewLabOrder(CreateTestApiRequestModel createTestApiRequestModel, String username, boolean sendFax) {
+    public void createNewLabOrder(CreateTestApiRequestModel createTestApiRequestModel, String username, String doctorGuid, boolean sendFax) {
 
         currentOrder = OrderConstant.ORDER_LABS;
         patientName = username;
@@ -269,6 +270,16 @@ public class OrdersBaseFragment extends BaseFragment {
 
         showSuccessView();
 
-        ordersCreateApiViewModel.createLabOrder(createTestApiRequestModel);
+        ordersCreateApiViewModel.createLabOrder(createTestApiRequestModel, doctorGuid);
+    }
+
+    public void createNewMiscellaneousOrder(CreateMiscellaneousRequestModel miscellaneousOrderRequest, String userDisplay_name, String doctorGuid, boolean sendFax){
+        currentOrder = OrderConstant.ORDER_MISC;
+        patientName = userDisplay_name;
+        isSendFax = sendFax;
+
+        showSuccessView();
+
+        ordersCreateApiViewModel.createMiscellaneousOrder(miscellaneousOrderRequest, doctorGuid);
     }
 }

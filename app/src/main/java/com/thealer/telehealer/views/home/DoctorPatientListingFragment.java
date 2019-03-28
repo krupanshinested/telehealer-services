@@ -4,20 +4,16 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,8 +44,6 @@ import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
-import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
-import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +77,8 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private LinearLayout searchLl;
     private CardView searchCv;
     private OnCloseActionInterface onCloseActionInterface;
-    private boolean isDietView;
+    private boolean isDietView, isResumed;
+    private String doctorGuid = null;
     private AssociationApiResponseModel associationApiResponseModel;
 
     @Override
@@ -92,14 +87,10 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onOrientationChangeInterface = (OnOrientationChangeInterface) getActivity();
-    }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         associationApiViewModel = ViewModelProviders.of(this).get(AssociationApiViewModel.class);
-        attachObserverInterface.attachObserver(associationApiViewModel);
 
+        attachObserverInterface.attachObserver(associationApiViewModel);
         associationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -107,7 +98,11 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 if (baseApiResponseModel != null) {
                     associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
 
+
                     if (associationApiResponseModel.getResult().size() == 0) {
+
+                        doctorPatientListCrv.showOrhideEmptyState(true);
+
                         if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION)) {
 
                             appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION, true);
@@ -158,10 +153,6 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         });
     }
 
-    private void showProposer() {
-        PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_CAM_MIC);
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -180,6 +171,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
 
         topView = (View) view.findViewById(R.id.top_view);
+        searchLl = view.findViewById(R.id.search_ll);
         searchEt = (EditText) view.findViewById(R.id.search_et);
         bottomView = (View) view.findViewById(R.id.bottom_view);
         searchClearIv = (ImageView) view.findViewById(R.id.search_clear_iv);
@@ -239,7 +231,14 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             }
             isDietView = getArguments().getBoolean(ArgumentKeys.IS_DIET_VIEW);
 
-            if (isDietView) {
+            CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            if (commonUserApiResponseModel != null) {
+                doctorGuid = commonUserApiResponseModel.getUser_guid();
+            }
+            if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)) {
+                searchLl.setVisibility(View.GONE);
+            }
+            if (isDietView || getArguments().getBoolean(ArgumentKeys.HIDE_ADD)) {
                 addFab.hide();
             }
         }
@@ -252,7 +251,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         doctorPatientListRv = doctorPatientListCrv.getRecyclerView();
 
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView);
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, getArguments());
 
         doctorPatientListRv.setAdapter(doctorPatientListAdapter);
 
@@ -265,8 +264,6 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 doctorPatientListCrv.setScrollable(false);
             }
         });
-
-        getAssociationsList(null, true);
 
         doctorPatientListCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -283,6 +280,18 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         });
 
         doctorPatientListCrv.setErrorModel(this, associationApiViewModel.getErrorModelLiveData());
+
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        isApiRequested = false;
+
+        if (isVisibleToUser && isResumed) {
+            getAssociationsList(null, true);
+        }
     }
 
     private void showSearchList(String search) {
@@ -304,6 +313,10 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     @Override
     public void onResume() {
         super.onResume();
+        isResumed = true;
+        if (getUserVisibleHint()) {
+            setUserVisibleHint(true);
+        }
 
         if (UserType.isUserPatient()) {
             Boolean isCallPermitted = PermissionChecker.with(getActivity()).isGranted(PermissionConstants.PERMISSION_CAM_MIC);
@@ -327,7 +340,8 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
     private void getAssociationsList(String name, boolean isShowProgress) {
         if (!isApiRequested) {
-            associationApiViewModel.getAssociationList(name, page, isShowProgress, false);
+            doctorPatientListCrv.showOrhideEmptyState(false);
+            associationApiViewModel.getAssociationList(name, page, doctorGuid, isShowProgress, false);
         }
     }
 
@@ -344,54 +358,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 if (!UserType.isUserDoctor()) {
                     startActivity(new Intent(getActivity(), AddConnectionActivity.class));
                 } else {
-                    showInviteAlert();
+                    Utils.showInviteAlert(getActivity(), null);
                 }
                 break;
         }
-    }
-
-    private void showInviteAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View alertView = LayoutInflater.from(getActivity()).inflate(R.layout.view_invite_alert, null);
-        builder.setView(alertView);
-
-        AlertDialog alertDialog = builder.create();
-
-        TextView inviteManuallyTv;
-        TextView inviteContactsTv;
-        CardView cancelCv;
-
-        inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
-        inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
-        cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
-
-        inviteManuallyTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                startActivity(new Intent(getActivity(), InviteUserActivity.class));
-            }
-        });
-
-        inviteContactsTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                startActivity(new Intent(getActivity(), InviteContactUserActivity.class));
-            }
-        });
-
-        cancelCv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
-
-        if (alertDialog.getWindow() != null) {
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.getWindow().setGravity(Gravity.BOTTOM);
-        }
-        alertDialog.show();
     }
 }

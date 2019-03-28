@@ -31,6 +31,7 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
@@ -55,6 +56,7 @@ public class MiscellaneousDetailViewFragment extends BaseFragment implements Vie
     private OnCloseActionInterface onCloseActionInterface;
     private OrdersApiViewModel ordersApiViewModel;
     private AttachObserverInterface attachObserverInterface;
+    private String doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -120,7 +122,7 @@ public class MiscellaneousDetailViewFragment extends BaseFragment implements Vie
                         bundle.putString(ArgumentKeys.PDF_TITLE, resultBean.getName());
                         bundle.putString(ArgumentKeys.PDF_URL, resultBean.getPath());
                         bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
-
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                         pdfViewerFragment.setArguments(bundle);
 
                         showSubFragmentInterface.onShowFragment(pdfViewerFragment);
@@ -139,6 +141,7 @@ public class MiscellaneousDetailViewFragment extends BaseFragment implements Vie
 
         if (getArguments() != null) {
             resultBean = (MiscellaneousApiResponseModel.ResultBean) getArguments().getSerializable(Constants.USER_DETAIL);
+            doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
 
             if (resultBean != null) {
                 if (resultBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
@@ -177,7 +180,7 @@ public class MiscellaneousDetailViewFragment extends BaseFragment implements Vie
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelSpecialistOrder(resultBean.getReferral_id());
+                                ordersApiViewModel.cancelOrder(OrderConstant.ORDER_MISC, resultBean.getReferral_id(), doctorGuid);
                                 dialog.dismiss();
 
                             }

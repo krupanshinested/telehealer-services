@@ -14,6 +14,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -65,6 +67,7 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
     private ImageView backIv;
     private TextView toolbarTitle;
     private OnCloseActionInterface onCloseActionInterface;
+    private String doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -175,24 +178,13 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
 
         patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
 
-        vitalReportUserListAdapter = new VitalReportUserListAdapter(getActivity());
-        patientListCrv.getRecyclerView().setAdapter(vitalReportUserListAdapter);
-
-        patientListCrv.getSwipeLayout().setEnabled(false);
-
-        patientListCrv.setActionClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getUsersList(selectedFilter);
+        if (getArguments() != null){
+            CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            if (doctorModel != null) {
+                doctorGuid = doctorModel.getUser_guid();
             }
-        });
 
-        patientListCrv.setErrorModel(this, vitalReportApiViewModel.getErrorModelLiveData());
-
-        getUsersList(selectedFilter);
-
-        if (getArguments() != null) {
-            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)){
                 appbarLayout.setVisibility(View.VISIBLE);
                 toolbarTitle.setText(getString(R.string.vitals));
                 onCloseActionInterface = (OnCloseActionInterface) getActivity();
@@ -206,6 +198,22 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
                 appbarLayout.setVisibility(View.GONE);
             }
         }
+        vitalReportUserListAdapter = new VitalReportUserListAdapter(getActivity(), doctorGuid);
+        patientListCrv.getRecyclerView().setAdapter(vitalReportUserListAdapter);
+
+        patientListCrv.getSwipeLayout().setEnabled(false);
+
+        patientListCrv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getUsersList(selectedFilter);
+            }
+        });
+
+        patientListCrv.setErrorModel(this, vitalReportApiViewModel.getErrorModelLiveData());
+
+        getUsersList(VitalReportApiViewModel.LAST_WEEK);
+
     }
 
     private void showFilterDialog() {
@@ -241,7 +249,7 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void getUsersList(String filter) {
-        vitalReportApiViewModel.getVitalUsers(filter, true);
+        vitalReportApiViewModel.getVitalUsers(filter, doctorGuid, true);
     }
 
     @Override

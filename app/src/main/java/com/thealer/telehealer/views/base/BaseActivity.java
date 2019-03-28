@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -283,7 +284,7 @@ public class BaseActivity extends AppCompatActivity {
         try {
             ActivityManager mngr = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
             if (mngr != null) {
-                return mngr.getAppTasks().get(0).getTaskInfo().numActivities > 1;
+                return mngr.getAppTasks().get(0).getTaskInfo().numActivities >= 1;
             }
         } catch (Exception e) {
             e.printStackTrace();

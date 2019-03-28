@@ -61,6 +61,8 @@ import com.thealer.telehealer.views.common.CustomDialogClickListener;
 import com.thealer.telehealer.views.common.CustomDialogs.OptionSelectionDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OptionsSelectionAdapter;
+import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
+import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 
 import java.io.IOException;
@@ -406,7 +408,7 @@ public class Utils {
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
             return returnFormat.format(dateFormat.parse(date));
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return date;
         }
@@ -1088,6 +1090,51 @@ public class Utils {
     public static void showOptionsSelectionAlert(Context context, List<String> options, PickerListener pickerListener) {
         OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(context, options, pickerListener);
         optionSelectionDialog.show();
+    }
+
+    public static void showInviteAlert(Context context, Bundle bundle) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View alertView = LayoutInflater.from(context).inflate(R.layout.view_invite_alert, null);
+        builder.setView(alertView);
+
+        AlertDialog alertDialog = builder.create();
+
+        TextView inviteManuallyTv;
+        TextView inviteContactsTv;
+        CardView cancelCv;
+
+        inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
+        inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
+        cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+
+        inviteManuallyTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                context.startActivity(new Intent(context, InviteUserActivity.class).putExtras(bundle));
+            }
+        });
+
+        inviteContactsTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                context.startActivity(new Intent(context, InviteContactUserActivity.class).putExtras(bundle));
+            }
+        });
+
+        cancelCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            alertDialog.getWindow().setGravity(Gravity.BOTTOM);
+        }
+        alertDialog.show();
     }
 
 }

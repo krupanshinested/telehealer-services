@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
@@ -24,6 +22,7 @@ import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewMo
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
@@ -140,7 +139,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         CardView notificationCv;
         ChildViewHolder childViewHolder;
-        CommonUserApiResponseModel doctorModel = null, patientModel = null;
+        CommonUserApiResponseModel doctorModel = null, patientModel = null, MaModel = null;
 
         if (convertView == null) {
             convertView = LayoutInflater.from(activity).inflate(R.layout.adapter_notification_list, parent, false);
@@ -180,15 +179,26 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
         NotificationApiResponseModel.ResultBean.RequestsBean resultModel = getChild(groupPosition, childPosition);
 
 
-        if (resultModel.getRequestee().getRole().equals(Constants.ROLE_DOCTOR)) {
-            doctorModel = resultModel.getRequestee();
-        } else {
-            patientModel = resultModel.getRequestee();
+        switch (resultModel.getRequestee().getRole()) {
+            case Constants.ROLE_DOCTOR:
+                doctorModel = resultModel.getRequestee();
+                break;
+            case Constants.ROLE_PATIENT:
+            case Constants.ROLE_ASSISTANT:
+                patientModel = resultModel.getRequestee();
+                MaModel = resultModel.getRequestee();
+                break;
         }
-        if (resultModel.getRequestor().getRole().equals(Constants.ROLE_DOCTOR)) {
-            doctorModel = resultModel.getRequestor();
-        } else {
-            patientModel = resultModel.getRequestor();
+
+        switch (resultModel.getRequestor().getRole()) {
+            case Constants.ROLE_DOCTOR:
+                doctorModel = resultModel.getRequestor();
+                break;
+            case Constants.ROLE_PATIENT:
+            case Constants.ROLE_ASSISTANT:
+                patientModel = resultModel.getRequestor();
+                MaModel = resultModel.getRequestor();
+                break;
         }
 
         String title = "", description = null;
@@ -281,28 +291,53 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                     break;
             }
         }
-        if (UserType.isUserAssistant()) {
+
+        if (UserType.isUserAssistant() && doctorModel != null) {
             childViewHolder.doctorDetailCl.setVisibility(View.VISIBLE);
             title = title.concat(" FOR");
             childViewHolder.doctorNameTv.setText(doctorModel.getUserDisplay_name());
+
+            if (resultModel.getType().equals(REQUEST_TYPE_CONNECTION) &&
+                    MaModel != null && MaModel.getUser_id() == UserDetailPreferenceManager.getWhoAmIResponse().getUser_id()) {
+                childViewHolder.doctorDetailCl.setVisibility(View.GONE);
+            }
         } else {
             childViewHolder.doctorDetailCl.setVisibility(View.GONE);
         }
 
         childViewHolder.titleTv.setText(title);
 
-        if (UserType.isUserDoctor()) {
-            Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, patientModel.getUser_avatar(), null, true);
-            childViewHolder.nameTv.setText(patientModel.getUserDisplay_name());
-            if (patientModel.getRole().equals(Constants.ROLE_PATIENT)) {
-                childViewHolder.userDetailTv.setText(patientModel.getDob());
-            } else {
-                childViewHolder.userDetailTv.setText(patientModel.getAssistantTitle());
+        if (!UserType.isUserPatient()) {
+            if (patientModel != null) {
+                Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, patientModel.getUser_avatar(), null, true);
+                childViewHolder.nameTv.setText(patientModel.getUserDisplay_name());
+                if (patientModel.getRole().equals(Constants.ROLE_PATIENT)) {
+                    childViewHolder.userDetailTv.setText(patientModel.getDob());
+                } else {
+                    childViewHolder.userDetailTv.setText(patientModel.getAssistantTitle());
+                }
+            }
+
+            if (UserType.isUserAssistant() && resultModel.getType().equals(REQUEST_TYPE_CONNECTION) &&
+                    patientModel != null && patientModel.getUser_id() == UserDetailPreferenceManager.getWhoAmIResponse().getUser_id()) {
+                if (doctorModel != null) {
+                    Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, doctorModel.getUser_avatar(), null, true);
+                    childViewHolder.nameTv.setText(doctorModel.getUserDisplay_name());
+                    childViewHolder.userDetailTv.setText(doctorModel.getDisplayInfo());
+                }
             }
         } else {
-            Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, doctorModel.getUser_avatar(), null, true);
-            childViewHolder.nameTv.setText(doctorModel.getUserDisplay_name());
-            childViewHolder.userDetailTv.setText(doctorModel.getDoctorSpecialist());
+            if (doctorModel != null) {
+                Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, doctorModel.getUser_avatar(), null, true);
+                childViewHolder.nameTv.setText(doctorModel.getUserDisplay_name());
+                childViewHolder.userDetailTv.setText(doctorModel.getDisplayInfo());
+            }
+
+            if (MaModel != null) {
+                Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, MaModel.getUser_avatar(), null, true);
+                childViewHolder.nameTv.setText(MaModel.getUserDisplay_name());
+                childViewHolder.userDetailTv.setText(MaModel.getDisplayInfo());
+            }
         }
 
         if (description != null && !description.isEmpty()) {
@@ -340,7 +375,11 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
         }
 
         CommonUserApiResponseModel finalPatientModel = patientModel;
+        if (UserType.isUserPatient() && doctorModel == null && MaModel != null) {
+            doctorModel = MaModel;
+        }
         CommonUserApiResponseModel finalDoctorModel = doctorModel;
+
         childViewHolder.infoIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -349,8 +388,16 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                 Bundle bundle = new Bundle();
                 if (UserType.isUserDoctor()) {
                     bundle.putSerializable(Constants.USER_DETAIL, finalPatientModel);
-                } else {
+                } else if (UserType.isUserPatient()) {
                     bundle.putSerializable(Constants.USER_DETAIL, finalDoctorModel);
+                } else {
+
+                    if (resultModel.getType().equals(REQUEST_TYPE_CONNECTION) && resultModel.isOwnNotification()) {
+                        bundle.putSerializable(Constants.USER_DETAIL, finalDoctorModel);
+                    } else {
+                        bundle.putSerializable(Constants.USER_DETAIL, finalPatientModel);
+                        bundle.putSerializable(Constants.DOCTOR_DETAIL, finalDoctorModel);
+                    }
                 }
 
                 if (resultModel.getType().equals(REQUEST_TYPE_CONNECTION)) {
@@ -401,10 +448,6 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
             }
         });
 
-        if (UserType.isUserAssistant()) {
-            doctorGuid = doctorModel.getUser_guid();
-        }
-
         childViewHolder.rejectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -417,6 +460,9 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                             endDate = resultModel.getDetail().getDates().get(selectedSlot).getEnd();
                         }
                         break;
+                }
+                if (UserType.isUserAssistant()) {
+                    doctorGuid = resultModel.getDoctorModel().getUser_guid();
                 }
                 updateRequest(resultModel.getType(), false, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), REJECTED.toLowerCase(), startDate, endDate, doctorGuid, true);
             }
@@ -435,6 +481,9 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                             endDate = resultModel.getDetail().getDates().get(selectedSlot).getEnd();
                         }
                         break;
+                }
+                if (UserType.isUserAssistant()) {
+                    doctorGuid = resultModel.getDoctorModel().getUser_guid();
                 }
                 updateRequest(resultModel.getType(), true, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), ACCEPTED.toLowerCase(), startDate, endDate, doctorGuid, true);
             }

@@ -29,6 +29,7 @@ import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
@@ -56,6 +57,7 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
     private ShowSubFragmentInterface showSubFragmentInterface;
     private OrdersCustomView faxNumberOcv;
     private OrdersCustomView faxStatusOcv;
+    private String doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -105,7 +107,7 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
         faxStatusOcv = (OrdersCustomView) view.findViewById(R.id.fax_status_ocv);
 
         toolbar.inflateMenu(R.menu.orders_detail_menu);
-        if (UserType.isUserDoctor()) {
+        if (!UserType.isUserPatient()) {
             toolbar.getMenu().findItem(R.id.send_fax_menu).setVisible(true);
         }
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -120,6 +122,7 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
                         bundle.putString(ArgumentKeys.PDF_TITLE, resultBean.getName());
                         bundle.putString(ArgumentKeys.PDF_URL, resultBean.getPath());
                         bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
                         pdfViewerFragment.setArguments(bundle);
 
@@ -129,6 +132,7 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
                         SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
                         bundle = new Bundle();
                         bundle.putInt(ArgumentKeys.ORDER_ID, resultBean.getReferral_id());
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                         sendFaxByNumberFragment.setArguments(bundle);
                         showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                         break;
@@ -146,6 +150,8 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
 
         if (getArguments() != null) {
             resultBean = (OrdersSpecialistApiResponseModel.ResultBean) getArguments().getSerializable(Constants.USER_DETAIL);
+
+            doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
 
             if (resultBean != null) {
                 if (resultBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
@@ -203,7 +209,7 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelSpecialistOrder(resultBean.getReferral_id());
+                                ordersApiViewModel.cancelOrder(OrderConstant.ORDER_REFERRALS, resultBean.getReferral_id(), doctorGuid);
                                 dialog.dismiss();
 
                             }

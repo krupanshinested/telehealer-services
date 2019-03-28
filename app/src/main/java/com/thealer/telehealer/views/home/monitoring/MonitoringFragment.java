@@ -30,6 +30,6 @@ public class MonitoringFragment extends BaseFragment {
         monitoringRv = (RecyclerView) view.findViewById(R.id.monitoring_rv);
 
         monitoringRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        monitoringRv.setAdapter(new MonitoringListAdapter(getActivity()));
+        monitoringRv.setAdapter(new MonitoringListAdapter(getActivity(), getArguments()));
     }
 }
