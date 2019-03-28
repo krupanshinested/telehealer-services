@@ -59,6 +59,7 @@
             app:layout_constraintTop_toBottomOf="@+id/circular_progress" />
 
         <TextView
+            android:id="@+id/description_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -70,6 +71,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/onboarding_tv" />
+
+
+        <TextView
+            android:id="@+id/video_link_tv"
+            style="@style/text_sub_title_app_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_default"
+            android:drawableStart="@drawable/drawable_ic_play"
+            android:drawablePadding="@dimen/padding_default"
+            android:gravity="center"
+            android:padding="@dimen/padding_default"
+            android:text="@string/view_explainer_video"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/description_tv" />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>
