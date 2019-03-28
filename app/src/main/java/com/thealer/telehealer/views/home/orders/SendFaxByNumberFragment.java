@@ -26,7 +26,6 @@ import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRe
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -185,30 +184,32 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
                 break;
             case R.id.send_btn:
                 Utils.hideKeyboard(getActivity());
-                if (isSaveAndFax) {
-                    showQuickLogin();
-                } else {
-                    sendFax(refferralId, true);
-                }
+                showQuickLogin();
                 break;
         }
     }
 
     @Override
     public void onAuthenticated() {
-        if (requestData instanceof AssignSpecialistRequestModel) {
+        if (isSaveAndFax) {
 
-            assignSpecialist((AssignSpecialistRequestModel) requestData, userName, true);
+            if (requestData instanceof AssignSpecialistRequestModel) {
 
-        } else if (requestData instanceof CreateRadiologyRequestModel) {
+                assignSpecialist((AssignSpecialistRequestModel) requestData, userName, true);
 
-            createNewRadiologyOrder((CreateRadiologyRequestModel) requestData, userName, true);
+            } else if (requestData instanceof CreateRadiologyRequestModel) {
 
-        } else if (requestData instanceof CreateTestApiRequestModel) {
+                createNewRadiologyOrder((CreateRadiologyRequestModel) requestData, userName, true);
 
-            createNewLabOrder((CreateTestApiRequestModel) requestData, userName, true);
+            } else if (requestData instanceof CreateTestApiRequestModel) {
 
+                createNewLabOrder((CreateTestApiRequestModel) requestData, userName, true);
+
+            }
+        } else {
+            sendFax(refferralId, false, true);
         }
+
     }
 
     private void onBackPress() {
@@ -218,8 +219,8 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
 
 
     @Override
-    public void sendFax(int referral_id, boolean isShowProgress) {
-        super.sendFax(referral_id, isShowProgress);
+    public void sendFax(int referral_id, boolean isShowProgress, boolean isShowAuth) {
+        super.sendFax(referral_id, isShowProgress, isShowAuth);
         SendFaxRequestModel sendFaxRequestModel = new SendFaxRequestModel();
         sendFaxRequestModel.setReferral_id(String.valueOf(referral_id));
         String number = countyCode.getSelectedCountryCodeWithPlus() + "" + phoneNumber.getNationalNumber();

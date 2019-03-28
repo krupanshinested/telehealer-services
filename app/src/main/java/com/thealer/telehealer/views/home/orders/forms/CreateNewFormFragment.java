@@ -25,16 +25,15 @@ import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.CreateFormRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersFormsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.base.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
 import java.util.ArrayList;
@@ -55,7 +54,6 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
     private AttachObserverInterface attachObserverInterface;
     private FormsListAdapter formsListAdapter;
     private ArrayList<OrdersFormsApiResponseModel> formsList = new ArrayList<>();
-    private ArrayList<OrdersUserFormsApiResponseModel> userFormsList = new ArrayList<>();
     private ArrayList<OrdersFormsApiResponseModel> remainingFormsList = new ArrayList<>();
     private String userGuid = null;
     private List<String> selectedFormIds = new ArrayList<>();
@@ -76,29 +74,26 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
         ordersApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
-                if (baseApiResponseModels != null && baseApiResponseModels.size() > 0) {
+                if (baseApiResponseModels != null) {
 
-                    if (baseApiResponseModels.get(0) instanceof OrdersFormsApiResponseModel) {
+                    if (baseApiResponseModels.size() > 0) {
 
                         formsList.clear();
                         formsList = (ArrayList<OrdersFormsApiResponseModel>) (Object) baseApiResponseModels;
 
-                        makeFormsApiRequest(userGuid);
+                        formsListAdapter.setFormsApiResponseModelArrayList(formsList);
+                        formsLl.setVisibility(View.VISIBLE);
 
+                    } else {
+                        formsLl.setVisibility(View.GONE);
+                        showAlertDialog(getActivity(), "Form", "There is no forms to send", "OK", null, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, null);
                     }
-
-                    if (baseApiResponseModels.get(0) instanceof OrdersUserFormsApiResponseModel) {
-
-                        userFormsList.clear();
-                        userFormsList = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
-                        updateList();
-                    }
-
-                } else {
-                    userFormsList.clear();
-                    updateList();
                 }
-
             }
         });
 
@@ -130,49 +125,6 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
                 sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), getString(R.string.create_form_failure));
             }
         });
-    }
-
-    private void updateList() {
-        remainingFormsList.clear();
-
-        if (formsList.size() > 0) {
-
-            if (userFormsList.size() > 0) {
-
-                for (int i = 0; i < formsList.size(); i++) {
-
-                    boolean isExist = false;
-
-                    for (int j = 0; j < userFormsList.size(); j++) {
-                        if (userFormsList.get(j).getForm_id() == formsList.get(i).getForm_id()) {
-                            isExist = true;
-                            break;
-                        }
-                    }
-
-                    if (!isExist) {
-                        remainingFormsList.add(formsList.get(i));
-                    }
-                }
-
-            } else {
-                remainingFormsList = formsList;
-            }
-
-        }
-
-        if (remainingFormsList.size() > 0) {
-            formsLl.setVisibility(View.VISIBLE);
-        } else {
-            formsLl.setVisibility(View.GONE);
-            showAlertDialog(getActivity(), "Form", "There is no forms to send", "OK", null, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            }, null);
-        }
-        formsListAdapter.setFormsApiResponseModelArrayList(remainingFormsList);
     }
 
     @Nullable
@@ -239,12 +191,6 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
 
     private void getAllForms() {
         ordersApiViewModel.getAllForms(true);
-    }
-
-    public void makeFormsApiRequest(String userGuid) {
-        if (userGuid != null && !userGuid.isEmpty()) {
-            ordersApiViewModel.getUserForms(userGuid, true);
-        }
     }
 
     @Override
