@@ -883,4 +883,5 @@
     <string name="ts28_measure_description">Remember to press the button on your thermometer to capture a snapshot of the measured vitals here.</string>
     <string name="fdir_measure_description">Remember to press the top button of your thermometer to capture a snapshot of the measured vitals here. Click the remeasure/reload to retrieve any newer values.</string>
     <string name="track_measurement_info">Inorder to capture your vitals here, please make sure you have manually initiated a prior measurement from the device.</string>
+    <string name="view_explainer_video">View Explainer Video</string>
 </resources>
