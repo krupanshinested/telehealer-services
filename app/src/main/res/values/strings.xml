@@ -892,4 +892,6 @@
     <string name="pdf_label_dob">Dob :</string>
     <string name="pdf_label_gender">Gender :</string>
     <string name="pdf_label_period">Period :</string>
+    <string name="sending_your_fax">Sending your fax.</string>
+    <string name="fax_sent_successfully">Your fax sent successfully</string>
 </resources>
