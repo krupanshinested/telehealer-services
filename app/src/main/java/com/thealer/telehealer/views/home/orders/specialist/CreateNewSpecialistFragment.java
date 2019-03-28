@@ -1,6 +1,5 @@
 package com.thealer.telehealer.views.home.orders.specialist;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,8 +20,7 @@ import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiRespo
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.base.OrdersBaseFragment;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;

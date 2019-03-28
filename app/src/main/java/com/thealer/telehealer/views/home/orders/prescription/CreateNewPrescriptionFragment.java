@@ -28,7 +28,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomSpinnerView;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.base.OrdersBaseFragment;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
@@ -409,9 +409,6 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
                     if (data != null && data.getExtras() != null) {
                         selectedUserModel = (CommonUserApiResponseModel) data.getExtras().getSerializable(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL);
                     }
-                    break;
-                case RequestID.REQ_SHOW_SUCCESS_VIEW:
-                    onCloseActionInterface.onClose(false);
                     break;
             }
         }
