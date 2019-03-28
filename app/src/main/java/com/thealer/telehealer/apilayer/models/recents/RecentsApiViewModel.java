@@ -21,13 +21,13 @@ public class RecentsApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getUserCorrespondentList(String user_guid, int page, boolean isCalls, boolean isShowProgress) {
+    public void getUserCorrespondentList(String user_guid, String doctorGuid, int page, boolean isCalls, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService()
-                            .getUserCorrespondentHistory(user_guid, isCalls, paginate, page, page_size)
+                            .getUserCorrespondentHistory(user_guid, doctorGuid, isCalls, paginate, page, page_size)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

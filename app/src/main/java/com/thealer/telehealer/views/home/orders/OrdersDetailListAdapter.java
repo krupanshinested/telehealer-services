@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCommonResultResponseModel;
@@ -52,14 +50,16 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
     private ShowSubFragmentInterface showSubFragmentInterface;
     private Fragment fragment = null;
     private HashMap<String, CommonUserApiResponseModel> userDetailHashMap;
+    private String doctorGuid;
 
     public OrdersDetailListAdapter(FragmentActivity fragmentActivity, List<String> headerList, HashMap<String,
-            List<OrdersDetailListAdapterModel>> childList, HashMap<String, CommonUserApiResponseModel> userDetailHashMap) {
+            List<OrdersDetailListAdapterModel>> childList, HashMap<String, CommonUserApiResponseModel> userDetailHashMap, String doctorGuid) {
         this.context = fragmentActivity;
         this.headerList = headerList;
         this.childList = childList;
         showSubFragmentInterface = (ShowSubFragmentInterface) fragmentActivity;
         this.userDetailHashMap = userDetailHashMap;
+        this.doctorGuid = doctorGuid;
     }
 
     @Override
@@ -125,6 +125,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
         statusIv = (ImageView) convertView.findViewById(R.id.status_iv);
 
         Bundle bundle = new Bundle();
+        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
         OrdersDetailListAdapterModel ordersDetailListAdapterModel = childList.get(headerList.get(groupPosition)).get(childPosition);
 
@@ -204,9 +205,15 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
             }
 
         } else {
-            String key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getDoctor().getUser_guid();
+
+            String key;
+            if (UserType.isUserAssistant()) {
+                key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getPatient().getUser_guid();
+            } else {
+                key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getDoctor().getUser_guid();
+            }
             if (userDetailHashMap.containsKey(key)) {
-                itemTitleTv.setText(userDetailHashMap.get(key).getDoctorDisplayName());
+                itemTitleTv.setText(userDetailHashMap.get(key).getUserDisplay_name());
                 Utils.setImageWithGlide(context, itemCiv, userDetailHashMap.get(key).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
             }
 

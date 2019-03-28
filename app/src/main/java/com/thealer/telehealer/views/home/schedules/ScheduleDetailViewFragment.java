@@ -15,7 +15,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +74,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private SchedulesApiResponseModel.ResultBean resultBean;
     private RecyclerView patientHistoryRv;
     private TextView statusTv;
+    private String doctorGuid = null, doctorName = null;
 
     @Override
     public void onAttach(Context context) {
@@ -174,6 +174,10 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
         if (getArguments() != null) {
             resultBean = (SchedulesApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SCHEDULE_DETAIL);
+            if (UserType.isUserAssistant()) {
+                doctorGuid = resultBean.getDoctor().getUser_guid();
+                doctorName = resultBean.getDoctor().getUserDisplay_name();
+            }
             if (resultBean != null) {
 
                 String statusInfo = "Patient %s has been updated";
@@ -282,7 +286,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                schedulesApiViewModel.deleteSchedule(resultBean.getSchedule_id(), resultBean.getStart(), resultBean.getScheduled_by_user().getUser_guid(), true);
+                                schedulesApiViewModel.deleteSchedule(resultBean.getSchedule_id(), resultBean.getStart(), resultBean.getScheduled_by_user().getUser_guid(), doctorGuid, true);
                             }
                         },
                         new DialogInterface.OnClickListener() {
@@ -317,7 +321,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                                 break;
                         }
 
-                        CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(), resultBean.getPatient(), null, null, null, callType);
+                        CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(), resultBean.getPatient(), doctorGuid, doctorName, String.valueOf(resultBean.getSchedule_id()), callType);
 
                         Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
                         intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);

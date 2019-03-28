@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -104,7 +103,7 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
 
         // Call click intent
         Intent callIntent = new Intent(context, CallPlacingActivity.class);
-        CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(), resultBean.getPatient(), null, null, resultBean.getSchedule_id() + "", OpenTokConstants.video);
+        CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(), resultBean.getPatient(), resultBean.getDoctor().getUser_guid(), resultBean.getDoctor().getUserDisplay_name(), resultBean.getSchedule_id() + "", OpenTokConstants.video);
         callIntent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
 
         TaskStackBuilder builder = TaskStackBuilder.create(context);
@@ -112,10 +111,20 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
 
         PendingIntent callPendingIntent = builder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        String title = "%s Appointment", message = "You have an appointment with %s at %s";
+        String title = context.getString(R.string.local_notification_title), message = context.getString(R.string.local_notification_message);
 
-        title = String.format(title, resultBean.getScheduledToUser().getDisplayName());
-        message = String.format(message, resultBean.getScheduledToUser().getDisplayName(), Utils.getPushNotificationTimeFormat(resultBean.getStart()));
+        String titleName, messageName;
+
+        if (UserType.isUserPatient()) {
+            titleName = resultBean.getPatient().getDisplayName();
+            messageName = resultBean.getDoctor().getDisplayName();
+        } else {
+            titleName = resultBean.getDoctor().getDisplayName();
+            messageName = resultBean.getPatient().getDisplayName();
+        }
+
+        title = String.format(title, titleName);
+        message = String.format(message, messageName, Utils.getPushNotificationTimeFormat(resultBean.getStart()));
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context, notificationChannelId)
                 .setSmallIcon(R.drawable.app_icon)
@@ -129,7 +138,7 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .addAction(R.drawable.ic_clear_black_24dp, context.getString(R.string.cancel_appointment), pendingIntent);
 
-        if (UserType.isUserDoctor()) {
+        if (!UserType.isUserPatient()) {
             notification.addAction(R.drawable.ic_call_black_24dp, context.getString(R.string.call), callPendingIntent);
         }
 

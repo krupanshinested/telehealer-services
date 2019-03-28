@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,7 +67,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import iHealth.pairing.VitalCreationActivity;
@@ -86,7 +89,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
     private OnCloseActionInterface onCloseActionInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
-    private CommonUserApiResponseModel commonUserApiResponseModel;
+    private CommonUserApiResponseModel commonUserApiResponseModel, doctorModel;
     private boolean isFromHome;
     private VitalsApiViewModel vitalsApiViewModel;
     private VitalsDetailListAdapter vitalsDetailListAdapter;
@@ -103,7 +106,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private ArrayList<VitalsApiResponseModel> vitalsApiResponseModelArrayList;
     private GetUsersApiViewModel getUsersApiViewModel;
     private boolean isAbnormalVitalView = false;
-    private String userGuid;
+    private String userGuid, doctorGuid;
     private ConstraintLayout userDetailCl;
     private CircleImageView itemCiv;
     private TextView itemTitleTv;
@@ -187,11 +190,23 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         getUsersApiViewModel = ViewModelProviders.of(this).get(GetUsersApiViewModel.class);
         attachObserverInterface.attachObserver(getUsersApiViewModel);
-        getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+
+        getUsersApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    commonUserApiResponseModel = (CommonUserApiResponseModel) baseApiResponseModel;
+            public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                if (baseApiResponseModels != null) {
+                    ArrayList<CommonUserApiResponseModel> commonUserApiResponseModelArrayList = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
+
+                    for (CommonUserApiResponseModel model : commonUserApiResponseModelArrayList) {
+                        if (model.getUser_guid().equals(userGuid)) {
+                            commonUserApiResponseModel = model;
+                        }
+
+                        if (model.getUser_guid().equals(doctorGuid)) {
+                            doctorModel = model;
+                        }
+                    }
+
                     makeApiCall(true);
                 }
             }
@@ -476,6 +491,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             }
         });
 
+        if (UserType.isUserAssistant()) {
+            addFab.hide();
+        }
+
         vitalDetailCelv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -500,10 +519,16 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             if (isAbnormalVitalView) {
                 userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
+                doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
             }
 
             if (!isFromHome) {
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            }
+
+            doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            if (doctorModel != null) {
+                doctorGuid = doctorModel.getUser_guid();
             }
 
             if (selectedItem != null) {
@@ -630,7 +655,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         if (selectedItem != null) {
             if (!isFromHome) {
-                vitalsApiViewModel.getUserVitals(selectedItem, commonUserApiResponseModel.getUser_guid(), isShowProgress);
+                vitalsApiViewModel.getUserVitals(selectedItem, commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress);
             } else {
                 vitalsApiViewModel.getVitals(selectedItem, isShowProgress);
             }
@@ -755,6 +780,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModel);
+        bundle.putSerializable(Constants.DOCTOR_DETAIL, doctorModel);
         bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
 
         doctorPatientDetailViewFragment.setArguments(bundle);
@@ -773,7 +799,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     }
 
     private void getUserDetail() {
-        getUsersApiViewModel.getUserDetail(userGuid, null);
+        Set<String> guidSet = new HashSet<>();
+        guidSet.add(userGuid);
+        guidSet.add(doctorGuid);
+
+        getUsersApiViewModel.getUserByGuid(guidSet);
     }
 
     private class MyMarkerView extends MarkerView {

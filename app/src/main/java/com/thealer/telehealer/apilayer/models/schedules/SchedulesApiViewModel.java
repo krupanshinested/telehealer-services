@@ -2,12 +2,10 @@ package com.thealer.telehealer.apilayer.models.schedules;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
@@ -82,12 +80,12 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void deleteSchedule(int scheduleId, String time, String user_guid, boolean isShowProgress) {
+    public void deleteSchedule(int scheduleId, String time, String user_guid, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().deleteSchedule(scheduleId)
+                    getAuthApiService().deleteSchedule(scheduleId, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

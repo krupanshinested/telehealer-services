@@ -44,12 +44,12 @@ public class NotificationApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getNotifications(int page, boolean isShowProgress) {
+    public void getNotifications(int page, boolean isShowProgress, String associationGuids) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getNotifications(true, page, Constants.PAGINATION_SIZE)
+                    getAuthApiService().getNotifications(true, page, Constants.PAGINATION_SIZE, associationGuids)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

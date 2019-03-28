@@ -28,10 +28,10 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomSpinnerView;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
 /**
@@ -67,6 +67,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
     private OnCloseActionInterface onCloseActionInterface;
     private boolean isFromHome;
     private int refillCount = 0;
+    private String doctorGuid;
 
 
     @Override
@@ -127,10 +128,18 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 
             if (!isFromHome) {
-                patientOcv.setArrow_visible(false);
-                patientOcv.setClickable(false);
 
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+                if (commonUserApiResponseModel != null) {
+                    patientOcv.setArrow_visible(false);
+                    patientOcv.setClickable(false);
+                }
+
+                CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                if (doctorModel != null) {
+                    doctorGuid = doctorModel.getUser_guid();
+                }
             }
         }
 
@@ -352,6 +361,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
                 SelectAssociationFragment selectAssociationFragment = new SelectAssociationFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(ArgumentKeys.SEARCH_TYPE, ArgumentKeys.SEARCH_ASSOCIATION);
+                bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                 selectAssociationFragment.setArguments(bundle);
                 selectAssociationFragment.setTargetFragment(this, RequestID.REQ_SELECT_ASSOCIATION);
                 showSubFragmentInterface.onShowFragment(selectAssociationFragment);
@@ -369,6 +379,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
         Bundle bundle = new Bundle();
         bundle.putSerializable(ArgumentKeys.PRESCRIPTION_DATA, getPrescriptionModel());
         bundle.putString(ArgumentKeys.USER_NAME, commonUserApiResponseModel.getUserDisplay_name());
+        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
         SelectPharmacyFragment selectPharmacyFragment = new SelectPharmacyFragment();
         selectPharmacyFragment.setArguments(bundle);
 
@@ -377,7 +388,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
 
     @Override
     public void onAuthenticated() {
-        createPrescription(getPrescriptionModel(), commonUserApiResponseModel.getUserDisplay_name(), false);
+        createPrescription(getPrescriptionModel(), commonUserApiResponseModel.getUserDisplay_name(), doctorGuid, false);
     }
 
     private CreatePrescriptionRequestModel getPrescriptionModel() {

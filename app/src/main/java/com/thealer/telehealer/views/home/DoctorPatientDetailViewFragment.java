@@ -51,14 +51,15 @@ import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
 import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
 import com.thealer.telehealer.views.home.orders.document.DocumentListFragment;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
 import com.thealer.telehealer.views.home.schedules.CreateNewScheduleActivity;
+import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
-import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -86,7 +87,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private ViewPagerAdapter viewPagerAdapter;
     private FloatingActionButton addFab;
 
-    private CommonUserApiResponseModel resultBean;
+    private CommonUserApiResponseModel resultBean, doctorModel;
     private OnCloseActionInterface onCloseActionInterface;
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private OnActionCompleteInterface onActionCompleteInterface;
@@ -102,6 +103,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private LinearLayout bottomView;
     private BottomNavigationView userDetailBnv;
     private String view_type;
+    private String doctorGuid = null, userGuid = null;
 
     @Override
     public void onAttach(Context context) {
@@ -127,6 +129,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     }
                     updateView(resultBean);
                     updateDateConnectionStatus(connectionStatusApiResponseModel.getConnection_status());
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Constants.CONNECTION_STATUS_RECEIVER).putExtra(ArgumentKeys.CONNECTION_STATUS, connectionStatusApiResponseModel.getConnection_status()));
                 }
             }
         });
@@ -266,7 +269,13 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                                         break;
                                 }
 
-                                CallInitiateModel callInitiateModel = new CallInitiateModel(finalCommonUserApiResponseModel.getUser_guid(), finalCommonUserApiResponseModel, null, null, null, callType);
+                                String doctorGuid = null, doctorName = null;
+                                if (doctorModel != null) {
+                                    doctorGuid = doctorModel.getUser_guid();
+                                    doctorName = doctorModel.getUserDisplay_name();
+                                }
+
+                                CallInitiateModel callInitiateModel = new CallInitiateModel(finalCommonUserApiResponseModel.getUser_guid(), finalCommonUserApiResponseModel, doctorGuid, doctorName, null, callType);
 
                                 Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
                                 intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
@@ -284,7 +293,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
                         break;
                     case R.id.menu_upload:
-                        Bundle bundle = new Bundle();
+                        Bundle bundle = getArguments();
+                        if (bundle == null)
+                            bundle = new Bundle();
+
                         bundle.putString(Constants.SELECTED_ITEM, OrderConstant.ORDER_DOCUMENTS);
                         bundle.putSerializable(Constants.USER_DETAIL, resultBean);
                         startActivity(new Intent(getActivity(), CreateOrderActivity.class).putExtras(bundle));
@@ -299,7 +311,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             addFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getActivity(), InviteUserActivity.class).putExtras(getArguments()));
+                    Utils.showInviteAlert(getActivity(), getArguments());
                 }
             });
 
@@ -329,7 +341,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             }
         });
 
-
         if (getArguments() != null) {
 
             view_type = getArguments().getString(Constants.VIEW_TYPE);
@@ -338,14 +349,30 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     getArguments().getSerializable(Constants.USER_DETAIL) instanceof CommonUserApiResponseModel) {
 
                 resultBean = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+                doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+
+                if (resultBean != null) {
+                    userGuid = resultBean.getUser_guid();
+                }
+
+                if (doctorModel != null) {
+                    doctorGuid = doctorModel.getUser_guid();
+                }
+
                 updateView(resultBean);
+
+                Log.e(TAG, "initView: " + view_type + " " + resultBean.getRole());
+                if (UserType.isUserAssistant() && !resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+                    addFab.hide();
+                }
 
                 if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
                     userDetailBnv.getMenu().findItem(R.id.menu_upload).setVisible(true);
+                    userDetailBnv.setVisibility(View.VISIBLE);
                 }
 
                 if (getArguments().getBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, false)) {
-                    connectionStatusApiViewModel.getConnectionStatus(resultBean.getUser_guid(), true);
+                    connectionStatusApiViewModel.getConnectionStatus(userGuid, doctorGuid, true);
                 } else {
 
                     if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
@@ -425,7 +452,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         fragmentList = new ArrayList<>();
         titleList = new ArrayList<String>();
 
-
         AboutFragment aboutFragment = new AboutFragment();
         addFragment(getString(R.string.about), aboutFragment);
 
@@ -435,6 +461,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 userDetailTab.setVisibility(View.GONE);
                 actionBtn.setVisibility(View.VISIBLE);
                 userDetailBnv.setVisibility(View.GONE);
+                addFab.hide();
 
                 updateDateConnectionStatus(resultBean.getConnection_status());
 
@@ -455,16 +482,34 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 userDetailTab.setVisibility(View.GONE);
 
             } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
-
+                Bundle bundle;
 
                 if (!UserType.isUserPatient()) {
                     VitalsListFragment vitalsFragment = new VitalsListFragment();
                     addFragment(getString(R.string.vitals), vitalsFragment);
                 }
 
+                if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+                    fragmentList.clear();
+                    titleList.clear();
+
+                    bundle = new Bundle();
+                    bundle.putBoolean(ArgumentKeys.HIDE_ADD, true);
+
+                    SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
+                    schedulesListFragment.setArguments(bundle);
+                    addFragment(getString(R.string.schedules), schedulesListFragment);
+
+                    bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
+
+                    DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
+                    doctorPatientListingFragment.setArguments(bundle);
+                    addFragment(getString(R.string.patients), doctorPatientListingFragment);
+                }
+
                 if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
                     DocumentListFragment documentListFragment = new DocumentListFragment();
-                    Bundle bundle = new Bundle();
+                    bundle = new Bundle();
                     bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
                     documentListFragment.setArguments(bundle);
                     addFragment(getString(R.string.documents), documentListFragment);
@@ -475,6 +520,18 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
                 OrdersListFragment ordersFragment = new OrdersListFragment();
                 addFragment(getString(R.string.orders), ordersFragment);
+
+                if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+                    MonitoringFragment monitoringFragment = new MonitoringFragment();
+                    addFragment(getString(R.string.monitoring), monitoringFragment);
+                }
+
+                if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                    userDetailTab.setVisibility(View.GONE);
+                    fragmentList.clear();
+                    titleList.clear();
+                    addFragment(getString(R.string.about), aboutFragment);
+                }
             }
 
             viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);
@@ -504,6 +561,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         if (connection_status == null) {
             actionBtn.setText(getString(R.string.add_connection_connect));
             actionBtn.setEnabled(true);
+            if (UserType.isUserPatient() && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                actionBtn.setVisibility(View.GONE);
+            }
         } else {
             if (connection_status.equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
                 actionBtn.setVisibility(View.GONE);
@@ -523,9 +583,19 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             bundle = new Bundle();
         }
 
-        bundle.putSerializable(Constants.USER_DETAIL, resultBean);
+        if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+            bundle.putSerializable(Constants.DOCTOR_DETAIL, resultBean);
+        } else {
+            if (getArguments() != null) {
+                bundle.putSerializable(Constants.DOCTOR_DETAIL, getArguments().getSerializable(Constants.DOCTOR_DETAIL));
+            }
+            bundle.putSerializable(Constants.USER_DETAIL, resultBean);
+        }
+
         bundle.putString(Constants.VIEW_TYPE, view_type);
+
         fragment.setArguments(bundle);
+
         fragmentList.add(fragment);
         titleList.add(title);
     }
