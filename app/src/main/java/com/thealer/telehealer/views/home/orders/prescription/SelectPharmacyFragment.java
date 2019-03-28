@@ -1,6 +1,5 @@
 package com.thealer.telehealer.views.home.orders.prescription;
 
-import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
@@ -24,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
@@ -38,12 +36,11 @@ import com.thealer.telehealer.common.LocationTrackerInterface;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
-import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
-import com.thealer.telehealer.views.base.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 
 /**
  * Created by Aswin on 30,November,2018
@@ -217,11 +214,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
         switch (v.getId()) {
             case R.id.next_btn:
                 Utils.hideKeyboard(getActivity());
-                if (isSaveAndFax) {
-                    showQuickLogin();
-                } else {
-                    sendFax(referralId, true);
-                }
+                showQuickLogin();
                 break;
             case R.id.back_iv:
                 onCloseActionInterface.onClose(false);
@@ -241,7 +234,11 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
 
     @Override
     public void onAuthenticated() {
-        createPrescription(createPrescriptionRequestModel, userName, true);
+        if (isSaveAndFax) {
+            createPrescription(createPrescriptionRequestModel, userName, true);
+        } else {
+            sendFax(referralId, false, true);
+        }
     }
 
     private void requestPharmacies() {
@@ -272,29 +269,11 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     }
 
     @Override
-    public void sendFax(int referral_id, boolean isShowProgress) {
-        super.sendFax(referral_id, isShowProgress);
-        Log.e("aswin", "sendFax: " + new Gson().toJson(selectedPharmacy));
+    public void sendFax(int referral_id, boolean isShowProgress, boolean isShowAuth) {
+        super.sendFax(referral_id, isShowProgress, isShowAuth);
         ordersCreateApiViewModel.sendFax(new SendFaxRequestModel(selectedPharmacy.getFax(),
                 String.valueOf(referral_id),
                 new SendFaxRequestModel.DetailBean(selectedPharmacy)), isShowProgress);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW) {
-                if (!isFromDetailView) {
-                    if (getActivity() != null)
-                        getActivity().finish();
-                } else {
-                    onCloseActionInterface.onClose(false);
-                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
-                }
-            }
-        }
     }
 
     @Override

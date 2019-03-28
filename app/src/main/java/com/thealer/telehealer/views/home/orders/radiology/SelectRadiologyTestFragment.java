@@ -20,7 +20,7 @@ import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.views.base.OrdersBaseFragment;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 
 import java.util.ArrayList;

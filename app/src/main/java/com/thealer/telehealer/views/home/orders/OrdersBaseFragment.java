@@ -1,4 +1,4 @@
-package com.thealer.telehealer.views.base;
+package com.thealer.telehealer.views.home.orders;
 
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -24,11 +23,11 @@ import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialist
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
-import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 
 /**
@@ -45,6 +44,7 @@ public class OrdersBaseFragment extends BaseFragment {
     private String patientName = "";
     private boolean isSendFax = false;
     public boolean onFaxSent = false;
+    public boolean isShowSuccess = false;
     private static boolean onAuthenticated = false;
 
     @Override
@@ -96,11 +96,14 @@ public class OrdersBaseFragment extends BaseFragment {
                         if (onFaxSent) {
                             onFaxSent = false;
                             onCloseActionInterface.onClose(false);
-                            showToast("Fax sent successfully");
+                            if (isShowSuccess) {
+                                description = getString(R.string.fax_sent_successfully);
+                                sendSuccessViewBroadCast(getActivity(), status, title, description);
+                            }
                         }
                     } else {
                         isSendFax = false;
-                        sendFax(ordersBaseApiResponseModel.getReferral_id(), false);
+                        sendFax(ordersBaseApiResponseModel.getReferral_id(), false, false);
                     }
                 }
             }
@@ -184,7 +187,7 @@ public class OrdersBaseFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW && resultCode == Activity.RESULT_OK) {
-            onCloseActionInterface.onClose(true);
+            onCloseActionInterface.onClose(false);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -195,8 +198,22 @@ public class OrdersBaseFragment extends BaseFragment {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(quickLoginBroadcastReceiver);
     }
 
-    public void sendFax(int referral_id, boolean isShowProgress) {
+    public void sendFax(int referral_id, boolean isShowProgress, boolean showSuccess) {
         onFaxSent = true;
+        isShowSuccess = showSuccess;
+        if (showSuccess) {
+            showFaxSuccessView();
+        }
+    }
+
+    private void showFaxSuccessView() {
+        Bundle bundle = new Bundle();
+
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+
+        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.sending_your_fax));
+
+        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
     }
 
     public void onAuthenticated() {

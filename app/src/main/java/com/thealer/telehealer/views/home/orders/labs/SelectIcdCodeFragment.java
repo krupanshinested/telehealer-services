@@ -25,7 +25,7 @@ import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiViewModel;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
-import com.thealer.telehealer.views.base.OrdersBaseFragment;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
