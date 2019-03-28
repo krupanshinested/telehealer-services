@@ -3,8 +3,10 @@ package com.thealer.telehealer.views.home;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -20,6 +22,7 @@ import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -33,6 +36,10 @@ public class DoctorOnBoardingActivity extends BaseActivity {
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private SigninApiViewModel signinApiViewModel;
+    private CircularProgressBar circularProgress;
+    private TextView onboardingTv;
+    private TextView descriptionTv;
+    private TextView videoLinkTv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,9 +98,23 @@ public class DoctorOnBoardingActivity extends BaseActivity {
     private void initView() {
         userNameTv = (TextView) findViewById(R.id.user_name_tv);
         userAvatarCiv = (CircleImageView) findViewById(R.id.user_avatar_civ);
+        circularProgress = (CircularProgressBar) findViewById(R.id.circular_progress);
+        onboardingTv = (TextView) findViewById(R.id.onboarding_tv);
+        descriptionTv = (TextView) findViewById(R.id.description_tv);
+        videoLinkTv = (TextView) findViewById(R.id.video_link_tv);
 
         userNameTv.setText("Hi " + UserDetailPreferenceManager.getFirst_name() + "!");
         Utils.setImageWithGlide(getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true);
+
+        videoLinkTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://vimeo.com/278934065";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
     }
 
     @Override
