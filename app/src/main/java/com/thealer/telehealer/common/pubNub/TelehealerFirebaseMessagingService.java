@@ -143,6 +143,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 bundle.putBoolean(ArgumentKeys.VIEW_ABNORMAL_VITAL, true);
                 bundle.putString(ArgumentKeys.MEASUREMENT_TYPE, data.getVital_type());
                 bundle.putString(ArgumentKeys.USER_GUID, data.getFrom());
+                bundle.putString(ArgumentKeys.DOCTOR_GUID, data.getDoctor_guid());
                 intent.putExtras(bundle);
 
                 Utils.createNotification(data, intent);

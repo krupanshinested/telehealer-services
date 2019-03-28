@@ -2,15 +2,21 @@ package com.thealer.telehealer.views.home;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +24,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -67,12 +76,19 @@ public class AboutFragment extends BaseFragment {
     private LinearLayout insuranceImageLl;
 
     private int userType;
-    private String view_type;
-    private CommonUserApiResponseModel userDetail;
+    private String view_type, doctorGuid = null;
+    private CommonUserApiResponseModel userDetail, doctorDetail;
     private DisconnectAssociationApiViewModel disconnectAssociationApiViewModel;
     private OnCloseActionInterface onCloseActionInterface;
     private AttachObserverInterface attachObserverInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
+    private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String status = intent.getStringExtra(ArgumentKeys.CONNECTION_STATUS);
+            onStatusUpdate(status);
+        }
+    };
 
     @Override
     public void onAttach(Context context) {
@@ -135,15 +151,27 @@ public class AboutFragment extends BaseFragment {
 
         if (getArguments() != null) {
             userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+
+            Log.e(TAG, "initView: " + new Gson().toJson(doctorDetail));
+
+            if (doctorDetail != null) {
+                doctorGuid = doctorDetail.getUser_guid();
+            }
+
             view_type = getArguments().getString(Constants.VIEW_TYPE);
 
+            if (userDetail == null) {
+                userDetail = doctorDetail;
+            }
+
             if (view_type.equals(Constants.VIEW_CONNECTION)) {
-
                 disconnectTv.setVisibility(View.GONE);
-
             } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
                 disconnectTv.setVisibility(View.VISIBLE);
             }
+
+            Log.e(TAG, "initView: " + new Gson().toJson(userDetail));
 
             if (userDetail != null) {
                 switch (userDetail.getRole()) {
@@ -181,6 +209,22 @@ public class AboutFragment extends BaseFragment {
                                         .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getState())
                                         .append(",")
                                         .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getZip());
+
+                                clinicCv.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        String lat = String.valueOf(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getLat());
+                                        String lon = String.valueOf(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getLon());
+                                        String uriString = String.format("geo:%s,%s?q=%s", lat, lon, clinicAddress);
+                                        Uri uri = Uri.parse(uriString);
+                                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
+                                        mapIntent.setPackage("com.google.android.apps.maps");
+                                        if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                            startActivity(mapIntent);
+                                        }
+                                    }
+                                });
+
                             }
                             clinicAddressTv.setText(clinicAddress);
 
@@ -202,13 +246,12 @@ public class AboutFragment extends BaseFragment {
                             }
                         });
 
-
                         view_type = getArguments().getString(Constants.VIEW_TYPE);
                         setDisconnectTv(view_type);
 
-
                         break;
                     case Constants.ROLE_PATIENT:
+                    case Constants.ROLE_ASSISTANT:
                         doctorDetailView.setVisibility(View.GONE);
                         patientDetailView.setVisibility(View.VISIBLE);
 
@@ -224,29 +267,36 @@ public class AboutFragment extends BaseFragment {
                         List<String> insuranceLabelList = new ArrayList<>();
 
                         if (userDetail.getUser_detail() != null &&
-                                userDetail.getUser_detail().getData() != null &&
-                                (userDetail.getUser_detail().getData().getInsurance_front() != null ||
-                                        userDetail.getUser_detail().getData().getInsurance_back() != null)) {
-
-
+                                userDetail.getUser_detail().getData() != null) {
                             if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
-                                insuranceLabelList.add("");
-                                insuranceImageList.add(userDetail.getUser_detail().getData().getCertification());
+                                if (userDetail.getUser_detail().getData().getCertification() != null) {
+                                    insuranceLabelList.add("");
+                                    insuranceImageList.add(userDetail.getUser_detail().getData().getCertification());
+                                }
                             } else {
-                                insuranceLabelList.add(getString(R.string.primary_insurance_front));
-                                insuranceLabelList.add(getString(R.string.primary_insurance_back));
+                                if (userDetail.getUser_detail().getData().isInsurancePresent()) {
+                                    insuranceLabelList.add(getString(R.string.primary_insurance_front));
+                                    insuranceLabelList.add(getString(R.string.primary_insurance_back));
 
-                                insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_front());
-                                insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_back());
+                                    insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_front());
+                                    insuranceImageList.add(userDetail.getUser_detail().getData().getInsurance_back());
 
-                                if (userDetail.getUser_detail().getData().isSecondaryInsurancePresent()) {
-                                    insuranceLabelList.add(getString(R.string.secondary_insurance_front));
-                                    insuranceLabelList.add(getString(R.string.secondary_insurance_back));
+                                    if (userDetail.getUser_detail().getData().isSecondaryInsurancePresent()) {
+                                        insuranceLabelList.add(getString(R.string.secondary_insurance_front));
+                                        insuranceLabelList.add(getString(R.string.secondary_insurance_back));
 
-                                    insuranceImageList.add(userDetail.getUser_detail().getData().getSecondary_insurance_front());
-                                    insuranceImageList.add(userDetail.getUser_detail().getData().getSecondary_insurance_back());
+                                        insuranceImageList.add(userDetail.getUser_detail().getData().getSecondary_insurance_front());
+                                        insuranceImageList.add(userDetail.getUser_detail().getData().getSecondary_insurance_back());
+                                    }
                                 }
                             }
+                        }
+
+                        if (insuranceImageList.isEmpty()) {
+                            insuranceImageLl.setVisibility(View.GONE);
+                            insuranceCashTv.setVisibility(View.VISIBLE);
+                        } else {
+                            Log.e(TAG, "initView: " + insuranceImageList.toString());
                             ImagePreviewViewModel imagePreviewViewModel = ViewModelProviders.of(getActivity()).get(ImagePreviewViewModel.class);
                             imagePreviewViewModel.setImageList(insuranceImageList);
 
@@ -286,26 +336,17 @@ public class AboutFragment extends BaseFragment {
                                 }
                             });
 
-                            createIndicator(insuranceImageList.size());
+                            if (insuranceImageList.size() > 1)
+                                createIndicator(insuranceImageList.size());
 
                             insuranceImageLl.setVisibility(View.VISIBLE);
                             insuranceCashTv.setVisibility(View.GONE);
-
-                        } else {
-                            insuranceImageLl.setVisibility(View.GONE);
-                            insuranceCashTv.setVisibility(View.VISIBLE);
                         }
 
-                        break;
-                    case Constants.ROLE_ASSISTANT:
-                        doctorDetailView.setVisibility(View.GONE);
-                        patientDetailView.setVisibility(View.GONE);
-                        medicalHistoryBtn.setVisibility(View.GONE);
-
-                        if (userDetail.getConnection_status() == null || !userDetail.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
-                            disconnectTv.setVisibility(View.GONE);
-                        } else {
-                            disconnectTv.setVisibility(View.VISIBLE);
+                        if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                            insuranceDetailTv.setText(getString(R.string.certificate));
+                            medicalHistoryBtn.setVisibility(View.GONE);
+                            onStatusUpdate(userDetail.getConnection_status());
                         }
                         break;
                 }
@@ -334,7 +375,7 @@ public class AboutFragment extends BaseFragment {
                             getString(R.string.no), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    disconnectAssociationApiViewModel.disconnectUser(userDetail.getUser_guid());
+                                    disconnectAssociationApiViewModel.disconnectUser(userDetail.getUser_guid(), doctorGuid);
                                     dialog.dismiss();
                                 }
                             }, new DialogInterface.OnClickListener() {
@@ -346,7 +387,16 @@ public class AboutFragment extends BaseFragment {
                 }
             });
 
-            userPhoneTv.setText(userDetail.getPhone());
+            if (userDetail != null) {
+                userPhoneTv.setText(userDetail.getPhone());
+                phoneCv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Uri uri = Uri.parse("tel:" + userDetail.getPhone());
+                        startActivity(new Intent(Intent.ACTION_DIAL, uri));
+                    }
+                });
+            }
         }
     }
 
@@ -379,4 +429,23 @@ public class AboutFragment extends BaseFragment {
 
     }
 
+    public void onStatusUpdate(String connection_status) {
+        if (connection_status == null || !connection_status.equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
+            disconnectTv.setVisibility(View.GONE);
+        } else {
+            disconnectTv.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(statusReceiver, new IntentFilter(Constants.CONNECTION_STATUS_RECEIVER));
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(statusReceiver);
+    }
 }

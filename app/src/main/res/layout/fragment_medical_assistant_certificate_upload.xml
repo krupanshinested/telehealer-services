@@ -10,7 +10,7 @@
         android:layout_marginTop="72dp"
         android:gravity="center"
         android:padding="@dimen/padding_default"
-        android:text="@string/image_of_certification"
+        android:text="@string/upload_image_of_certification"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

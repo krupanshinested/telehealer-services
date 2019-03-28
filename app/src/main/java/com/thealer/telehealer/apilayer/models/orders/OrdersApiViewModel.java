@@ -10,6 +10,7 @@ import com.thealer.telehealer.apilayer.models.orders.forms.OrdersFormsApiRespons
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,13 +28,13 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getUserLabOrders(String user_guid, int page, boolean showProgress) {
+    public void getUserLabOrders(String user_guid, String doctorGuid, int page, boolean showProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
 
-                    getAuthApiService().getUserLabOrders(paginate, page, page_size, user_guid)
+                    getAuthApiService().getUserLabOrders(paginate, page, page_size, user_guid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
                                 @Override
@@ -65,31 +66,13 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void cancelLabOrder(int id) {
-        fetchToken(new BaseViewInterface() {
-            @Override
-            public void onStatus(boolean status) {
-                if (status) {
-                    getAuthApiService().cancelLabOrder(id, true)
-                            .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
-                                @Override
-                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
-                                }
-                            });
-                }
-            }
-        });
-    }
-
-    public void getUserPrescriptionOrders(String user_guid, int page, boolean showProgress) {
+    public void getUserPrescriptionOrders(String user_guid, String doctorGuid, int page, boolean showProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
 
-                    getAuthApiService().getUserPrescriptionsOrders(paginate, page, page_size, user_guid)
+                    getAuthApiService().getUserPrescriptionsOrders(paginate, page, page_size, user_guid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
                                 @Override
@@ -121,31 +104,13 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void cancelPrescriptionOrder(int id) {
-        fetchToken(new BaseViewInterface() {
-            @Override
-            public void onStatus(boolean status) {
-                if (status) {
-                    getAuthApiService().cancelPrescriptionOrder(id, true)
-                            .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
-                                @Override
-                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
-                                }
-                            });
-                }
-            }
-        });
-    }
-
-    public void getUserSpecialist(String user_guid, int page, boolean isShowProgress) {
+    public void getUserSpecialist(String user_guid, String doctorGuid, int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
 
-                    getAuthApiService().getUserSpecialistList(paginate, page, page_size, user_guid)
+                    getAuthApiService().getUserSpecialistList(paginate, page, page_size, user_guid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
@@ -178,12 +143,32 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void cancelSpecialistOrder(int id) {
+    public void cancelOrder(String orderType, int id, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().cancelPrescriptionOrder(id, true)
+
+                    String type = null;
+                    switch (orderType) {
+                        case OrderConstant.ORDER_PRESCRIPTIONS:
+                            type = "prescriptions";
+                            break;
+                        case OrderConstant.ORDER_REFERRALS:
+                            type = "specialists";
+                            break;
+                        case OrderConstant.ORDER_LABS:
+                            type = "labs";
+                            break;
+                        case OrderConstant.ORDER_RADIOLOGY:
+                            type = "x-rays";
+                            break;
+                        case OrderConstant.ORDER_MISC:
+                            type = "miscellaneous";
+                            break;
+
+                    }
+                    getAuthApiService().cancelOrder(type, id, doctorGuid, true)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -196,12 +181,12 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getUserForms(String user_guid, boolean isShowProgress) {
+    public void getUserForms(String user_guid, String doctorGuid, boolean isShowProgress, boolean assignor) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserForms(user_guid)
+                    getAuthApiService().getUserForms(user_guid, doctorGuid, assignor)
                             .compose(applySchedulers())
                             .subscribe(new RAListObserver<OrdersUserFormsApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
@@ -273,12 +258,12 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getUserDocuments(int page, String userGuid, boolean isShowProgress) {
+    public void getUserDocuments(int page, String userGuid, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserDocuments(paginate, page, page_size, userGuid)
+                    getAuthApiService().getUserDocuments(paginate, page, page_size, userGuid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
@@ -366,12 +351,12 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getUserRadiologyList(String userGuid, int page, boolean isShowProgress) {
+    public void getUserRadiologyList(String userGuid, String doctorGuid, int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserRadiologyList(paginate, page, page_size, userGuid)
+                    getAuthApiService().getUserRadiologyList(paginate, page, page_size, userGuid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
@@ -402,12 +387,12 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getUserMiscellaneousList(String userGuid, int page, boolean isShowProgress) {
+    public void getUserMiscellaneousList(String userGuid, String doctorGuid, int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserMiscellaneousList(paginate, page, page_size, userGuid)
+                    getAuthApiService().getUserMiscellaneousList(paginate, page, page_size, userGuid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

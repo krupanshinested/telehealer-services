@@ -119,8 +119,10 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         super.onAttach(context);
         attachObserverInterface = (AttachObserverInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
+
         associationApiViewModel = ViewModelProviders.of(this).get(AssociationApiViewModel.class);
         schedulesApiViewModel = ViewModelProviders.of(this).get(SchedulesApiViewModel.class);
+
         attachObserverInterface.attachObserver(schedulesApiViewModel);
         attachObserverInterface.attachObserver(associationApiViewModel);
 
@@ -164,6 +166,28 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
                 }
             }
         });
+
+        associationApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                if (baseApiResponseModels != null) {
+                    ArrayList<CommonUserApiResponseModel> commonUserApiResponseModels = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
+
+                    for (int i = 0; i < commonUserApiResponseModels.size(); i++) {
+                        if (doctorGuidList.length() == 0) {
+                            doctorGuidList = doctorGuidList.append(commonUserApiResponseModels.get(i).getUser_guid());
+                        } else {
+                            doctorGuidList = doctorGuidList.append(",").append(commonUserApiResponseModels.get(i).getUser_guid());
+                        }
+                    }
+
+                    appPreference.setString(PreferenceConstants.ASSOCIATION_GUID_LIST, doctorGuidList.toString());
+
+                    getAllSchedules();
+                }
+            }
+        });
+
     }
 
     private void updateCalendar() {
@@ -523,7 +547,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
 
 
     private void getAllSchedules() {
-        schedulesApiViewModel.getUserSchedules(null, null, false, true);
+        schedulesApiViewModel.getUserSchedules(null, doctorGuidList.toString(), false, true);
     }
 
     @Override
@@ -623,7 +647,20 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            makeApiCall();
+        }
+    }
+
+    private void makeApiCall() {
+        if (UserType.isUserAssistant()) {
+            getDoctorsList();
+        } else {
             getAllSchedules();
         }
     }
+
+    private void getDoctorsList() {
+        associationApiViewModel.getAssociationList(true, null);
+    }
+
 }

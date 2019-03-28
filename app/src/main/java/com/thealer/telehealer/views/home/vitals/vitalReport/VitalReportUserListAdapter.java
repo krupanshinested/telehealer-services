@@ -32,10 +32,12 @@ public class VitalReportUserListAdapter extends RecyclerView.Adapter<VitalReport
 
     private ShowSubFragmentInterface showSubFragmentInterface;
     private String filter;
+    private String doctorGuid;
 
-    public VitalReportUserListAdapter(FragmentActivity activity) {
+    public VitalReportUserListAdapter(FragmentActivity activity, String doctorGuid) {
         this.fragmentActivity = activity;
         this.showSubFragmentInterface = (ShowSubFragmentInterface) activity;
+        this.doctorGuid = doctorGuid;
     }
 
     @NonNull
@@ -60,6 +62,7 @@ public class VitalReportUserListAdapter extends RecyclerView.Adapter<VitalReport
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(ArgumentKeys.USER_DETAIL, commonUserApiResponseModelList.get(i));
                 bundle.putString(ArgumentKeys.SEARCH_TYPE, filter);
+                bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                 vitalUserReportListFragment.setArguments(bundle);
                 showSubFragmentInterface.onShowFragment(vitalUserReportListFragment);
 

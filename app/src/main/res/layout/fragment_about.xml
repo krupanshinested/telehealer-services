@@ -137,6 +137,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin_default"
+                        android:drawableEnd="@drawable/ic_mail_outline_24dp"
+                        android:drawableTint="@color/app_gradient_start"
                         android:textColor="@color/colorBlack"
                         tools:text="@string/dummy_text" />
                 </LinearLayout>
@@ -149,7 +151,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/phone_cv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -314,8 +316,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_default"
-                    android:drawableEnd="@drawable/ic_call_black_24dp"
+                    android:drawableEnd="@drawable/ic_call_24dp"
                     android:drawableTint="@color/app_gradient_start"
+                    android:gravity="center|left"
                     android:textColor="@color/colorBlack"
                     tools:text="@string/dummy_text" />
             </LinearLayout>

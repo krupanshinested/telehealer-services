@@ -57,6 +57,7 @@ public class VitalUserReportListFragment extends BaseFragment {
     private CommonUserApiResponseModel commonUserApiResponseModel;
     private String filter;
     private ShowSubFragmentInterface showSubFragmentInterface;
+    private String doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -153,6 +154,16 @@ public class VitalUserReportListFragment extends BaseFragment {
             }
         });
 
+        if (getArguments() != null) {
+            commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(ArgumentKeys.USER_DETAIL);
+            filter = getArguments().getString(ArgumentKeys.SEARCH_TYPE);
+            doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+
+            if (commonUserApiResponseModel != null) {
+                toolbarTitle.setText(commonUserApiResponseModel.getUserDisplay_name());
+            }
+        }
+
         enableOrDisablePrint();
 
         backIv.setOnClickListener(new View.OnClickListener() {
@@ -219,7 +230,7 @@ public class VitalUserReportListFragment extends BaseFragment {
     private void getUserVitals() {
         if (commonUserApiResponseModel != null) {
             vitalsListCelv.hideEmptyState();
-            vitalsApiViewModel.getUserFilteredVitals(filter, commonUserApiResponseModel.getUser_guid());
+            vitalsApiViewModel.getUserFilteredVitals(filter, commonUserApiResponseModel.getUser_guid(), doctorGuid);
         }
     }
 }

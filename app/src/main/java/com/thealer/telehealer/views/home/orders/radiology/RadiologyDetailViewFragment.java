@@ -33,6 +33,7 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
@@ -70,6 +71,7 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
     private OrdersApiViewModel ordersApiViewModel;
     private OrdersCustomView faxNumberOcv;
     private OrdersCustomView faxStatusOcv;
+    private String doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -139,7 +141,7 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
         faxStatusOcv = (OrdersCustomView) view.findViewById(R.id.fax_status_ocv);
 
         toolbar.inflateMenu(R.menu.orders_detail_menu);
-        if (UserType.isUserDoctor()) {
+        if (!UserType.isUserPatient()) {
             toolbar.getMenu().findItem(R.id.send_fax_menu).setVisible(true);
         }
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -153,6 +155,7 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
                         bundle.putString(ArgumentKeys.PDF_TITLE, getRadiologyResponseModel.getName());
                         bundle.putString(ArgumentKeys.PDF_URL, getRadiologyResponseModel.getPath());
                         bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
                         pdfViewerFragment.setArguments(bundle);
 
@@ -163,6 +166,7 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
                         SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
                         bundle = new Bundle();
                         bundle.putInt(ArgumentKeys.ORDER_ID, getRadiologyResponseModel.getReferral_id());
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                         sendFaxByNumberFragment.setArguments(bundle);
                         showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                         break;
@@ -174,7 +178,7 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
         backIv.setOnClickListener(this);
         cancelTv.setOnClickListener(this);
 
-        if (UserType.isUserDoctor()) {
+        if (!UserType.isUserPatient()) {
             cancelTv.setVisibility(View.VISIBLE);
         } else {
             cancelTv.setVisibility(View.GONE);
@@ -182,6 +186,7 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
 
         if (getArguments() != null) {
             getRadiologyResponseModel = (GetRadiologyResponseModel.ResultBean) getArguments().getSerializable(Constants.USER_DETAIL);
+            doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
 
             if (getRadiologyResponseModel != null) {
                 if (getRadiologyResponseModel.getDetail() != null) {
@@ -284,7 +289,7 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelLabOrder(getRadiologyResponseModel.getReferral_id());
+                                ordersApiViewModel.cancelOrder(OrderConstant.ORDER_RADIOLOGY, getRadiologyResponseModel.getReferral_id(), doctorGuid);
                                 dialog.dismiss();
 
                             }

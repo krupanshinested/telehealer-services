@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,15 +94,18 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
                     fragment = new VitalsDetailListFragment();
                 } else if (viewType.equals(Constants.VIEW_ORDERS)) {
                     bundle.putString(Constants.SELECTED_ITEM, titleList.get(i));
-                    if (titleList.get(i).equals(OrderConstant.ORDER_FORM) &&
-                            !UserType.isUserPatient()) {
+                    if (titleList.get(i).equals(OrderConstant.ORDER_FORM)) {
 
-                        if (UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature() != null) {
-                            fragmentActivity.startActivity(new Intent(fragmentActivity, CreateOrderActivity.class)
-                                    .putExtras(bundle));
+                        if (UserType.isUserDoctor()) {
+                            if (UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature() != null) {
+                                fragmentActivity.startActivity(new Intent(fragmentActivity, CreateOrderActivity.class)
+                                        .putExtras(bundle));
+                            } else {
+                                bundle.putBoolean(ArgumentKeys.SHOW_SIGNATURE_PROPOSER, true);
+                                fragmentActivity.startActivity(new Intent(fragmentActivity, SignatureActivity.class).putExtras(bundle));
+                            }
                         } else {
-                            bundle.putBoolean(ArgumentKeys.SHOW_SIGNATURE_PROPOSER, true);
-                            fragmentActivity.startActivity(new Intent(fragmentActivity, SignatureActivity.class).putExtras(bundle));
+                            fragment = new OrdersDetailListFragment();
                         }
 
                     } else if (titleList.get(i).equals(OrderConstant.ORDER_DOCUMENTS)) {

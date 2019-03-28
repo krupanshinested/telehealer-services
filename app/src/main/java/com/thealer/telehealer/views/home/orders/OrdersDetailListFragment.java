@@ -38,6 +38,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.settings.SignatureActivity;
@@ -64,7 +65,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
     private OrdersApiViewModel ordersApiViewModel;
     private AttachObserverInterface attachObserverInterface;
-    private CommonUserApiResponseModel commonUserApiResponseModel;
+    private CommonUserApiResponseModel commonUserApiResponseModel, doctorModel;
     private boolean isFromHome;
     private int page = 1;
     private String selectedItem;
@@ -74,8 +75,9 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
     private OrdersDetailListAdapter ordersDetailListAdapter;
     private ExpandableListView expandableListView;
     private OnCloseActionInterface onCloseActionInterface;
-    private Set<String> userGuid = new HashSet<>();
+    private Set<String> userGuidSet = new HashSet<>();
     private HashMap<String, CommonUserApiResponseModel> userDetailHashMap = new HashMap<>();
+    private String userGuid, doctorGuid;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -143,10 +145,10 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             childList.put(date, childListData);
 
             if (formsApiResponseModel.getDoctor() != null && formsApiResponseModel.getDoctor().getUser_guid() != null) {
-                userGuid.add(formsApiResponseModel.getDoctor().getUser_guid());
+                userGuidSet.add(formsApiResponseModel.getDoctor().getUser_guid());
             }
             if (formsApiResponseModel.getPatient() != null && formsApiResponseModel.getPatient().getUser_guid() != null) {
-                userGuid.add(formsApiResponseModel.getPatient().getUser_guid());
+                userGuidSet.add(formsApiResponseModel.getPatient().getUser_guid());
             }
         }
         ordersDetailListAdapter.setData(headerList, childList);
@@ -158,7 +160,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             orderDetailCelv.showEmptyState();
         }
 
-        getUserDetails(userGuid);
+        getUserDetails(userGuidSet);
 
     }
 
@@ -166,7 +168,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
         headerList.clear();
         childList.clear();
-        userGuid.clear();
+        userGuidSet.clear();
 
         DismissListener dismissListener = new DismissListener() {
             @Override
@@ -184,6 +186,11 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
             OrdersLabApiResponseModel labApiResponseModel = (OrdersLabApiResponseModel) baseApiResponseModel;
 
+            if (labApiResponseModel.getCount() > 0) {
+                orderDetailCelv.showOrhideEmptyState(false);
+            } else {
+                orderDetailCelv.showOrhideEmptyState(true);
+            }
             if (!UserType.isUserPatient() && page == 1 && labApiResponseModel.getLabsResponseBeanList().size() == 0) {
                 if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_LAB)) {
                     appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_LAB, true);
@@ -229,7 +236,11 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
         } else if (baseApiResponseModel instanceof OrdersPrescriptionApiResponseModel) {
 
             OrdersPrescriptionApiResponseModel prescriptionApiResponseModel = (OrdersPrescriptionApiResponseModel) baseApiResponseModel;
-
+            if (prescriptionApiResponseModel.getCount() > 0) {
+                orderDetailCelv.showOrhideEmptyState(false);
+            } else {
+                orderDetailCelv.showOrhideEmptyState(true);
+            }
             if (!UserType.isUserPatient() && page == 1 && prescriptionApiResponseModel.getOrdersResultBeanList().size() == 0) {
                 if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_PRESCRIPTION)) {
                     appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_PRESCRIPTION, true);
@@ -275,7 +286,11 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
         } else if (baseApiResponseModel instanceof OrdersSpecialistApiResponseModel) {
 
             OrdersSpecialistApiResponseModel ordersSpecialistApiResponseModel = (OrdersSpecialistApiResponseModel) baseApiResponseModel;
-
+            if (ordersSpecialistApiResponseModel.getCount() > 0) {
+                orderDetailCelv.showOrhideEmptyState(false);
+            } else {
+                orderDetailCelv.showOrhideEmptyState(true);
+            }
             if (!UserType.isUserPatient() && page == 1 && ordersSpecialistApiResponseModel.getResult().size() == 0) {
                 if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_SPECIALIST)) {
                     appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_SPECIALIST, true);
@@ -319,7 +334,11 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             }
         } else if (baseApiResponseModel instanceof GetRadiologyResponseModel) {
             GetRadiologyResponseModel getRadiologyResponseModel = (GetRadiologyResponseModel) baseApiResponseModel;
-
+            if (getRadiologyResponseModel.getCount() > 0) {
+                orderDetailCelv.showOrhideEmptyState(false);
+            } else {
+                orderDetailCelv.showOrhideEmptyState(true);
+            }
             if (!UserType.isUserPatient() && page == 1 && getRadiologyResponseModel.getResultBeanList().size() == 0) {
                 if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_RADIOLOGY)) {
                     appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_RADIOLOGY, true);
@@ -368,7 +387,11 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             }
         } else if (baseApiResponseModel instanceof MiscellaneousApiResponseModel) {
             MiscellaneousApiResponseModel miscellaneousApiResponseModel = (MiscellaneousApiResponseModel) baseApiResponseModel;
-
+            if (miscellaneousApiResponseModel.getCount() > 0) {
+                orderDetailCelv.showOrhideEmptyState(false);
+            } else {
+                orderDetailCelv.showOrhideEmptyState(true);
+            }
             if (!UserType.isUserPatient() && page == 1 && miscellaneousApiResponseModel.getResult().size() == 0) {
                 if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_MISC)) {
                     appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_MISC, true);
@@ -419,20 +442,20 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             orderDetailCelv.showEmptyState();
         }
 
-        getUserDetails(userGuid);
+        getUserDetails(userGuidSet);
 
     }
 
     private void addToUserGuidList(String user_guid) {
         if (!userDetailHashMap.containsKey(user_guid)) {
-            userGuid.add(user_guid);
+            userGuidSet.add(user_guid);
         }
     }
 
-    private void getUserDetails(Set<String> userGuid) {
+    private void getUserDetails(Set<String> userGuidSet) {
         GetUserDetails
                 .getInstance(getActivity())
-                .getDetails(userGuid)
+                .getDetails(userGuidSet)
                 .getHashMapMutableLiveData()
                 .observe(getActivity(),
                         new Observer<HashMap<String, CommonUserApiResponseModel>>() {
@@ -478,13 +501,21 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
             if (!isFromHome) {
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+                if (commonUserApiResponseModel != null) {
+                    userGuid = commonUserApiResponseModel.getUser_guid();
+                }
+
+                doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                if (doctorModel != null)
+                    doctorGuid = doctorModel.getUser_guid();
+
             }
 
             if (selectedItem != null) {
 
                 setEmptyState();
 
-                ordersDetailListAdapter = new OrdersDetailListAdapter(getActivity(), headerList, childList, userDetailHashMap);
+                ordersDetailListAdapter = new OrdersDetailListAdapter(getActivity(), headerList, childList, userDetailHashMap, doctorGuid);
 
                 expandableListView = orderDetailCelv.getExpandableView();
 
@@ -539,14 +570,14 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             if (isFromHome) {
                 ordersApiViewModel.getForms(isShowProgress);
             } else {
-                ordersApiViewModel.getUserForms(commonUserApiResponseModel.getUser_guid(), isShowProgress);
+                ordersApiViewModel.getUserForms(userGuid, doctorGuid, isShowProgress, !UserType.isUserPatient());
             }
         } else if (selectedItem.equals(OrderConstant.ORDER_LABS)) {
 
             if (isFromHome) {
                 ordersApiViewModel.getLabOrders(page, isShowProgress);
             } else {
-                ordersApiViewModel.getUserLabOrders(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
+                ordersApiViewModel.getUserLabOrders(userGuid, doctorGuid, page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_PRESCRIPTIONS)) {
@@ -554,7 +585,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             if (isFromHome) {
                 ordersApiViewModel.getPrescriptionOrders(page, isShowProgress);
             } else {
-                ordersApiViewModel.getUserPrescriptionOrders(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
+                ordersApiViewModel.getUserPrescriptionOrders(userGuid, doctorGuid, page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_RADIOLOGY)) {
@@ -562,7 +593,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             if (isFromHome) {
                 ordersApiViewModel.getRadiologyList(page, isShowProgress);
             } else {
-                ordersApiViewModel.getUserRadiologyList(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
+                ordersApiViewModel.getUserRadiologyList(userGuid, doctorGuid, page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_REFERRALS)) {
@@ -570,7 +601,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             if (isFromHome) {
                 ordersApiViewModel.getSpecialist(page, isShowProgress);
             } else {
-                ordersApiViewModel.getUserSpecialist(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
+                ordersApiViewModel.getUserSpecialist(userGuid, doctorGuid, page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_MISC)) {
@@ -578,7 +609,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             if (isFromHome) {
                 ordersApiViewModel.getMiscellaneousList(page, isShowProgress);
             } else {
-                ordersApiViewModel.getUserMiscellaneousList(commonUserApiResponseModel.getUser_guid(), page, isShowProgress);
+                ordersApiViewModel.getUserMiscellaneousList(userGuid, doctorGuid, page, isShowProgress);
             }
 
         }
@@ -685,20 +716,28 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 break;
             case R.id.add_fab:
                 addFab.setClickable(false);
-                if (UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature() != null) {
-                    if (getArguments() != null) {
-                        startActivity(new Intent(getActivity(), CreateOrderActivity.class).putExtras(getArguments()));
-                    }
-                } else {
-                    Bundle bundle = getArguments();
+                Bundle bundle = getArguments();
+                if (UserType.isUserDoctor() && UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature() == null) {
                     if (bundle == null) {
                         bundle = new Bundle();
                     }
                     bundle.putBoolean(ArgumentKeys.SHOW_SIGNATURE_PROPOSER, true);
                     startActivity(new Intent(getActivity(), SignatureActivity.class).putExtras(bundle));
+                } else if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getUser_detail() != null && doctorModel.getUser_detail().getSignature() == null) {
+
+                    startActivity(new Intent(getActivity(), ContentActivity.class)
+                            .putExtra(ArgumentKeys.TITLE, R.string.ma_signature_required_title)
+                            .putExtra(ArgumentKeys.DESCRIPTION, String.format(getString(R.string.ma_signature_required_message), doctorModel.getDisplayName(), doctorModel.getDisplayName()))
+                            .putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.app_icon)
+                            .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true)
+                            .putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok)));
+
+                } else {
+                    startActivity(new Intent(getActivity(), CreateOrderActivity.class).putExtras(bundle));
                 }
                 break;
         }
+
     }
 
     @Override

@@ -424,6 +424,9 @@ public class CallPlacingActivity extends BaseActivity {
                     finish();
                 }
                 break;
+            case MA_DOC_PAYMENT_REQUEST:
+                finish();
+                break;
         }
     }
 

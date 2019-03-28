@@ -72,6 +72,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
     };
     private Button saveBtn;
     private Button saveFaxBtn;
+    private String doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -126,10 +127,18 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
 
             if (!isFromHome) {
 
-                patientOcv.setArrow_visible(false);
-                patientOcv.setClickable(false);
-
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+                if (commonUserApiResponseModel != null){
+                    patientOcv.setArrow_visible(false);
+                    patientOcv.setClickable(false);
+                }
+
+                CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                if (doctorModel != null) {
+                    doctorGuid = doctorModel.getUser_guid();
+                }
+
             }
 
             if (selectedUserModel != null) {
@@ -201,6 +210,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(ArgumentKeys.ORDER_DATA, getLabRequestModel());
                 bundle.putString(ArgumentKeys.USER_NAME, commonUserApiResponseModel.getUserDisplay_name());
+                bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                 sendFaxByNumberFragment.setArguments(bundle);
                 showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
                 break;
@@ -253,6 +263,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
             bundle = new Bundle();
         }
         bundle.putString(ArgumentKeys.SEARCH_TYPE, searchType);
+        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
         SelectAssociationFragment selectAssociationFragment = new SelectAssociationFragment();
         selectAssociationFragment.setArguments(bundle);
@@ -279,7 +290,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
 
     @Override
     public void onAuthenticated() {
-        createNewLabOrder(getLabRequestModel(), commonUserApiResponseModel.getUserDisplay_name(), false);
+        createNewLabOrder(getLabRequestModel(), commonUserApiResponseModel.getUserDisplay_name(), doctorGuid, false);
     }
 
     @Override

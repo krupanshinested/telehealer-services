@@ -2,9 +2,11 @@ package com.thealer.telehealer.views.home.recents;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -36,6 +39,7 @@ import java.util.List;
  */
 public class RecentFragment extends BaseFragment {
 
+    private static final String TAG = "aswin recents ";
     private CustomExpandableListView recentsCelv;
     private ExpandableListView recentsElv;
     private RecentsApiViewModel recentsApiViewModel;
@@ -50,26 +54,25 @@ public class RecentFragment extends BaseFragment {
     private RecentListAdapter recentListAdapter;
     private OnOrientationChangeInterface onOrientationChangeInterface;
     private AttachObserverInterface attachObserverInterface;
-    private boolean isApiRequested = false;
+    private boolean isApiRequested = false, isResumed;
     private int totalCount = 0;
     private ImageView throbberIv;
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser)
-            makeApiCall(true);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.e(TAG, "onAttach: " + (recentsApiViewModel == null));
         attachObserverInterface = (AttachObserverInterface) getActivity();
 
         onOrientationChangeInterface = (OnOrientationChangeInterface) getActivity();
 
         recentsApiViewModel = ViewModelProviders.of(this).get(RecentsApiViewModel.class);
+
+        if (recentsApiViewModel.baseApiResponseModelMutableLiveData.hasActiveObservers()) {
+            Log.e(TAG, "onAttach: has observer");
+        } else {
+            Log.e(TAG, "onAttach: no observer");
+        }
 
         attachObserverInterface.attachObserver(recentsApiViewModel);
 
@@ -85,6 +88,7 @@ public class RecentFragment extends BaseFragment {
 
                     totalCount = recentsApiResponseModel.getCount();
 
+                    Log.e(TAG, "onChanged: ");
                     updateList();
 
                     if (!recentsApiResponseModel.getResult().isEmpty()) {
@@ -94,6 +98,8 @@ public class RecentFragment extends BaseFragment {
                         onOrientationChangeInterface.onDataReceived(bundle);
                         recentsCelv.hideEmptyState();
                     }
+                } else {
+                    Log.e(TAG, "onChanged: null");
                 }
                 isApiRequested = false;
                 recentsCelv.setScrollable(true);
@@ -120,12 +126,14 @@ public class RecentFragment extends BaseFragment {
         recentsCelv.hideEmptyState();
 
         recentsElv = recentsCelv.getExpandableView();
+        recentsCelv.hideEmptyState();
 
         boolean isShowInfoAction = false;
-        if (getArguments() != null &&
-                getArguments().getBoolean(Constants.IS_FROM_HOME)) {
+        if (getArguments() != null) {
+            isShowInfoAction = getArguments().getBoolean(Constants.IS_FROM_HOME);
+        }
+        if (getUserVisibleHint()) {
             makeApiCall(true);
-            isShowInfoAction = true;
         }
         recentListAdapter = new RecentListAdapter(getActivity(), listHeader, listChild, isShowInfoAction);
 
@@ -172,8 +180,9 @@ public class RecentFragment extends BaseFragment {
             listHeader.clear();
             listChild.clear();
         }
+        Log.e(TAG, "updateList: 1");
         if (recentsApiResponseModel != null && recentsApiResponseModel.getResult().size() > 0) {
-
+            Log.e(TAG, "updateList: 2");
 
             chatList.clear();
             chatListHeader.clear();
@@ -220,16 +229,24 @@ public class RecentFragment extends BaseFragment {
             recentsCelv.setTotalCount(totalCount + listHeader.size());
 
             if (recentListAdapter != null) {
+                Log.e(TAG, "updateList: 3");
                 recentListAdapter.setData(listHeader, listChild, page);
                 expandListView();
             }
 
+            Log.e(TAG, "updateList: " + new Gson().toJson(listChild));
             if (listHeader.isEmpty()) {
                 recentsCelv.showEmptyState();
+            } else {
+                recentsCelv.hideEmptyState();
             }
         } else {
+            Log.e(TAG, "updateList: 4");
             recentsCelv.showEmptyState();
         }
+
+        Log.e(TAG, "updateList: 5");
+
     }
 
     private void expandListView() {
@@ -287,10 +304,20 @@ public class RecentFragment extends BaseFragment {
                         isApiRequested = true;
                         recentsApiViewModel.getMyCorrespondentList(page, isShowProgress);
                     } else {
+                        boolean isCalls = false;
+
                         CommonUserApiResponseModel userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+                        String userGuid = null;
                         if (userDetail != null) {
-                            recentsApiViewModel.getUserCorrespondentList(userDetail.getUser_guid(), page, false, isShowProgress);
+                            userGuid = userDetail.getUser_guid();
                         }
+                        CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                        String doctorGuid = null;
+                        if (doctorDetail != null) {
+                            doctorGuid = doctorDetail.getUser_guid();
+                            isCalls = true;
+                        }
+                        recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, page, isCalls, isShowProgress);
                     }
                 }
             }
@@ -300,8 +327,19 @@ public class RecentFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserVisibleHint()) {
-            setUserVisibleHint(true);
-        }
+        isResumed = true;
+        Log.e(TAG, "onResume: ");
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.e(TAG, "setUserVisibleHint: " + isVisibleToUser + " " + isResumed);
+
+        isApiRequested = false;
+
+        if (isVisibleToUser && isResumed)
+            makeApiCall(true);
+    }
+
 }

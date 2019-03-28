@@ -28,11 +28,10 @@ import com.thealer.telehealer.apilayer.models.orders.miscellaneous.Miscellaneous
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
 /**
@@ -51,6 +50,7 @@ public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implement
     private OrdersCreateApiViewModel ordersCreateApiViewModel;
 
     private boolean isFromHome;
+    private String doctorGuid;
 
     @Override
     public void onAttach(Context context) {
@@ -136,10 +136,19 @@ public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implement
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 
             if (!isFromHome) {
-                patientOcv.setArrow_visible(false);
-                patientOcv.setClickable(false);
 
                 patientModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+                if (patientModel != null) {
+                    patientOcv.setArrow_visible(false);
+                    patientOcv.setClickable(false);
+                }
+
+                CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                if (doctorModel != null) {
+                    doctorGuid = doctorModel.getUser_guid();
+                }
+
             }
         }
 
@@ -178,17 +187,10 @@ public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implement
 
     @Override
     public void onAuthenticated() {
-        createMiscellaneousOrder();
+        createNewMiscellaneousOrder(getMiscellaneousOrderRequest(), patientModel.getUserDisplay_name(), doctorGuid, false);
     }
 
-    private void createMiscellaneousOrder() {
-        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-        successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
-        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.posting_your_miscellaneous_request));
-        successViewDialogFragment.setArguments(bundle);
-        successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+    private CreateMiscellaneousRequestModel getMiscellaneousOrderRequest() {
 
         MiscellaneousDetailBean miscellaneousDetailBean = new MiscellaneousDetailBean();
         miscellaneousDetailBean.setNotes(notesEt.getText().toString());
@@ -198,7 +200,7 @@ public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implement
         requestModel.setUser_guid(patientModel.getUser_guid());
         requestModel.setName("Miscellaneous Referral");
 
-        ordersCreateApiViewModel.createMiscellaneousOrder(requestModel);
+        return requestModel;
     }
 
     @Override
@@ -221,6 +223,7 @@ public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implement
         }
 
         bundle.putString(ArgumentKeys.SEARCH_TYPE, searchType);
+        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
         SelectAssociationFragment selectAssociationFragment = new SelectAssociationFragment();
 

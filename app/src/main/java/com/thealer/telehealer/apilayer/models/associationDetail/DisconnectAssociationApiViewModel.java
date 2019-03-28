@@ -17,12 +17,12 @@ public class DisconnectAssociationApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void disconnectUser(String user_guid) {
+    public void disconnectUser(String user_guid, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().disconnectUser(user_guid)
+                    getAuthApiService().disconnectUser(user_guid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
