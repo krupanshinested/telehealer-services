@@ -16,6 +16,7 @@ class HelpContent {
     public static final int HELP_RECENTS = 3;
     public static final int HELP_SCHEDULES = 4;
     public static final int HELP_VITAL_REPORT = 5;
+    public static final int HELP_MONITORING = 6;
 
     private Context context;
 
@@ -36,6 +37,8 @@ class HelpContent {
                 return context.getString(R.string.recents);
             case HELP_SCHEDULES:
                 return context.getString(R.string.schedules);
+            case HELP_MONITORING:
+                return context.getString(R.string.monitoring);
         }
         return "";
     }
@@ -61,6 +64,12 @@ class HelpContent {
                 return String.format(context.getString(R.string.help_content_recents), user);
             case HELP_SCHEDULES:
                 return context.getString(R.string.help_content_schedules);
+            case HELP_MONITORING:
+                if (UserType.isUserPatient()){
+                    return context.getString(R.string.help_content_monitoring_patient);
+                }else {
+                    return context.getString(R.string.help_content_monitoring_doctor);
+                }
         }
         return "";
     }

@@ -90,7 +90,6 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
         sendBtn = (Button) view.findViewById(R.id.send_btn);
 
         toolbarTitle.setText(getString(R.string.enter_fax_number));
-        changeTitleInterface.onTitleChange(getString(R.string.enter_fax_number));
 
         phoneNumberUtil = PhoneNumberUtil.createInstance(getActivity());
 
@@ -111,6 +110,7 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
                 isSaveAndFax = true;
                 requestData = getArguments().getSerializable(ArgumentKeys.ORDER_DATA);
                 userName = getArguments().getString(ArgumentKeys.USER_NAME);
+                changeTitleInterface.onTitleChange(getString(R.string.enter_fax_number));
             }
         }
         setHint();

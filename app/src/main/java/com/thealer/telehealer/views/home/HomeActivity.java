@@ -378,6 +378,13 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 onOptionsItemSelected(menuItem);
             }
         });
+
+        if (getSupportFragmentManager().findFragmentById(fragmentHolder.getId()) instanceof DoctorPatientListingFragment) {
+            showPendingInvitesOption(true);
+        } else {
+            showPendingInvitesOption(false);
+        }
+
         return true;
     }
 
@@ -560,7 +567,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showMonitoringView() {
-        helpContent = HelpContent.HELP_VITAL_REPORT;
+        helpContent = HelpContent.HELP_MONITORING;
         setToolbarTitle(getString(R.string.monitoring));
         MonitoringFragment monitoringFragment = new MonitoringFragment();
         setFragment(monitoringFragment);

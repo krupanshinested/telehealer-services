@@ -109,9 +109,9 @@
 
                 <TextView
                     android:id="@+id/specialist_tv"
-                    style="@style/text_title_bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="18sp"
                     android:paddingStart="4dp"
                     android:textColor="@color/colorBlack"
                     android:visibility="gone"
@@ -186,11 +186,12 @@
 
                 <TextView
                     android:id="@+id/gender_value"
-                    style="@style/text_title_bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingStart="4dp"
                     android:textColor="@color/colorBlack"
+                    tools:text="@string/dummy_text"
+                    android:textSize="18sp"
                     android:visibility="gone" />
 
                 <View
