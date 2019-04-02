@@ -40,6 +40,7 @@ import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.notification.NotificationDetailActivity;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -167,12 +168,23 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             return;
         }
 
-        if (TokBox.shared.getConnectingDate() == null && TokBox.shared.getConnectedDate() == null) {
+        if (TokBox.shared.getConnectingDate() == null && TokBox.shared.getConnectedDate() == null && !TokBox.shared.getCalling()) {
+            APNSPayload payload = new APNSPayload();
+            HashMap<String,String> aps = new HashMap<>();
             if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
-                Utils.createNotification(data,getRecentIntent());
+                aps.put(PubNubNotificationPayload.ALERT,getString(R.string.video_missed_call));
             } else {
-                Utils.createNotification(data, getRecentIntent());
+                aps.put(PubNubNotificationPayload.ALERT,getString(R.string.audio_missed_call));
             }
+            if (TokBox.shared.getOtherPersonDetail() != null) {
+                aps.put(PubNubNotificationPayload.TITLE,TokBox.shared.getOtherPersonDetail().getDisplayName());
+            } else {
+                aps.put(PubNubNotificationPayload.TITLE,data.getFrom_name());
+            }
+
+            aps.put(PubNubNotificationPayload.MEDIA_URL,data.getMedia_url());
+            payload.setAps(aps);
+            Utils.createNotification(payload,getRecentIntent());
         }
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
