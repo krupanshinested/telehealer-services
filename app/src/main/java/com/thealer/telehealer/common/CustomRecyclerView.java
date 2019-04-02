@@ -61,18 +61,6 @@ public class CustomRecyclerView extends ConstraintLayout {
         linearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-//        recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
-//            @Override
-//            public void onChildViewAttachedToWindow(@NonNull View view) {
-//                updateView();
-//            }
-//
-//            @Override
-//            public void onChildViewDetachedFromWindow(@NonNull View view) {
-//                updateView();
-//            }
-//        });
-
         recyclerView.setOnScrollChangeListener(new OnScrollChangeListener() {
             @Override
             public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
