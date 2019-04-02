@@ -23,6 +23,8 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.monitoring.diet.DietDetailFragment;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -103,6 +105,15 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
         } else {
             this.associationApiResponseModelResult.addAll(associationApiResponseModelResult);
         }
+
+        Collections.sort(associationApiResponseModelResult,
+                new Comparator<CommonUserApiResponseModel>() {
+                    @Override
+                    public int compare(CommonUserApiResponseModel o1, CommonUserApiResponseModel o2) {
+                        return o1.getFirst_name().compareToIgnoreCase(o2.getFirst_name());
+                    }
+                });
+
         notifyDataSetChanged();
     }
 

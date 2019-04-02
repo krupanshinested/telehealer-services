@@ -14,7 +14,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,6 +98,12 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
         });
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        selectedFilter = VitalReportApiViewModel.LAST_WEEK;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -175,11 +180,10 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
 
         patientListCrv.getSwipeLayout().setEnabled(false);
 
-        selectedFilter = VitalReportApiViewModel.LAST_WEEK;
-        getUsersList(VitalReportApiViewModel.LAST_WEEK);
+        getUsersList(selectedFilter);
 
-        if (getArguments() != null){
-            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)){
+        if (getArguments() != null) {
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
                 toolbarTitle.setText(getString(R.string.vitals));
                 onCloseActionInterface = (OnCloseActionInterface) getActivity();
@@ -189,7 +193,7 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
                         onCloseActionInterface.onClose(false);
                     }
                 });
-            }else {
+            } else {
                 appbarLayout.setVisibility(View.GONE);
             }
         }
