@@ -60,6 +60,7 @@ import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.common.Animation.ConstrainSetUtil;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.LocationTracker;
@@ -87,6 +88,7 @@ import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
+import com.thealer.telehealer.views.home.HomeActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -912,7 +914,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         if (otherPersonDetail != null) {
             Log.d("openTok", "endCall");
-            PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForEndCall(UserDetailPreferenceManager.getUser_guid(), otherPersonDetail.getUser_guid(), currentUUIDString, callRejectionReason);
+            PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForEndCall(UserDetailPreferenceManager.getUserDisplayName(),UserDetailPreferenceManager.getUser_guid(), otherPersonDetail.getUser_guid(), currentUUIDString, callRejectionReason);
             PubnubUtil.shared.publishVoipMessage(pushPayLoad,null);
             EventRecorder.recordNotification("DECLINE_CALL");
         }
