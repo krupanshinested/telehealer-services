@@ -30,7 +30,6 @@
                 android:src="@drawable/profile_placeholder"
                 app:civ_border_color="@android:color/darker_gray"
                 app:civ_border_width="1dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,7 +46,7 @@
             <TextView
                 android:id="@+id/list_sub_title_tv"
                 style="@style/card_sub_title_text"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/avatar_civ"
                 app:layout_constraintEnd_toEndOf="@id/list_title_tv"
                 app:layout_constraintStart_toStartOf="@id/list_title_tv"
                 app:layout_constraintTop_toBottomOf="@id/list_title_tv"
@@ -63,7 +62,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/list_sub_title_tv">
+                app:layout_constraintTop_toBottomOf="@+id/avatar_civ">
 
                 <com.thealer.telehealer.common.CustomButton
                     android:id="@+id/accept_btn"

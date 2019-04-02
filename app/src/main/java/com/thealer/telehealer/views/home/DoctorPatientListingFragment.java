@@ -11,16 +11,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.CardView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +25,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
@@ -53,7 +50,9 @@ import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
-import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import me.toptas.fancyshowcase.listener.DismissListener;
 
@@ -85,6 +84,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private CardView searchCv;
     private OnCloseActionInterface onCloseActionInterface;
     private boolean isDietView;
+    private AssociationApiResponseModel associationApiResponseModel;
 
     @Override
     public void onAttach(Context context) {
@@ -105,11 +105,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 doctorPatientListCrv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModel != null) {
-                    AssociationApiResponseModel associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
+                    associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
 
-                    if (associationApiResponseModel.getResult().size() > 0) {
-//                        showProposer();
-                    } else {
+                    if (associationApiResponseModel.getResult().size() == 0) {
                         if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION)) {
 
                             appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION, true);
@@ -133,6 +131,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                             }
                         }
                     }
+
                     if (doctorPatientListAdapter != null) {
                         totalCount = associationApiResponseModel.getCount();
 
@@ -195,6 +194,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 searchEt.setText(null);
             }
         });
+
         searchEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -207,15 +207,21 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
+                if (!s.toString().isEmpty()) {
                     searchClearIv.setVisibility(View.VISIBLE);
+                    doctorPatientListCrv.setScrollable(false);
+                    showSearchList(s.toString().toLowerCase());
                 } else {
                     searchClearIv.setVisibility(View.GONE);
+                    doctorPatientListCrv.setScrollable(true);
+                    if (associationApiResponseModel != null &&
+                            associationApiResponseModel.getResult().size() > 0) {
+                        doctorPatientListAdapter.setData(associationApiResponseModel.getResult(), page);
+                        doctorPatientListCrv.showOrhideEmptyState(false);
+                    } else {
+                        doctorPatientListCrv.showOrhideEmptyState(true);
+                    }
                 }
-                page = 1;
-                getAssociationsList(s.toString(), false);
-                isApiRequested = true;
-                doctorPatientListCrv.setScrollable(false);
             }
         });
 
@@ -271,6 +277,22 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             }
         });
 
+    }
+
+    private void showSearchList(String search) {
+        List<CommonUserApiResponseModel> searchList = new ArrayList<>();
+        for (CommonUserApiResponseModel usermodel : associationApiResponseModel.getResult()) {
+            if (usermodel.getUserDisplay_name().toLowerCase().contains(search)) {
+                searchList.add(usermodel);
+            }
+        }
+
+        if (searchList.size() > 0) {
+            doctorPatientListCrv.showOrhideEmptyState(false);
+            doctorPatientListAdapter.setData(searchList, 1);
+        } else {
+            doctorPatientListCrv.showOrhideEmptyState(true);
+        }
     }
 
     @Override

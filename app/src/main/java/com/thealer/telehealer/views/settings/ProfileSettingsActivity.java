@@ -15,7 +15,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -501,7 +500,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                     passwordBundle = new Bundle();
                 }
                 passwordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
-                passwordBundle.putString(ArgumentKeys.TITLE,title);
+                passwordBundle.putString(ArgumentKeys.TITLE, title);
                 createPasswordFragment.setArguments(passwordBundle);
                 setFragment(createPasswordFragment, false, true, false);
 
@@ -517,7 +516,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                     repasswordBundle = new Bundle();
                 }
                 repasswordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
-                repasswordBundle.putString(ArgumentKeys.TITLE,re_title);
+                repasswordBundle.putString(ArgumentKeys.TITLE, re_title);
                 reEnterPassword.setArguments(repasswordBundle);
                 setFragment(reEnterPassword, false, true, false);
 
@@ -589,11 +588,14 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_CONNECTION);
                 DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
                 doctorPatientDetailViewFragment.setArguments(bundle);
-                onShowFragment(doctorPatientDetailViewFragment);
-                hideOrShowToolbarTile(true);
+                showSubFragment(doctorPatientDetailViewFragment);
                 break;
         }
 
+    }
+
+    private void showSubFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction().addToBackStack(fragment.getClass().getSimpleName()).replace(R.id.sub_fragment_holder, fragment).commit();
     }
 
     @Override

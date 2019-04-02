@@ -341,6 +341,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
                         updateDocument();
                     }
                 } else {
+                    showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
                     uploadMultipleDocument();
                 }
                 break;
@@ -357,7 +358,6 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
 
     private void uploadMultipleDocument() {
         ordersCreateApiViewModel.uploadDocument(null, documentNameEt.getText().toString().concat("_" + next), imagePathList.get(0), false);
-        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
     }
 
     private void updateDocument() {
