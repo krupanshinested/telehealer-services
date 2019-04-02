@@ -304,7 +304,7 @@ public class PubNubNotificationPayload {
         return pushPayLoad;
     }
 
-    public static PushPayLoad getPayloadForEndCall(String from, String to, String uuid, String callRejectionReason) {
+    public static PushPayLoad getPayloadForEndCall(String displayName,String from, String to, String uuid, String callRejectionReason) {
 
         PushPayLoad pushPayLoad = new PushPayLoad();
         APNSPayload apnsPayload = new APNSPayload();
@@ -318,6 +318,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setUuid(uuid);
         apnsPayload.setIdentifier(uuid);
         apnsPayload.setPn_ttl(20);
+        apnsPayload.setFrom_name(displayName);
         apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
         apnsPayload.setType(APNSPayload.endCall);
         apnsPayload.setCall_rejection(callRejectionReason);
