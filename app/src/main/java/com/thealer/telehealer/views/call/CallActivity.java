@@ -133,6 +133,7 @@ import static android.media.AudioManager.AUDIOFOCUS_GAIN;
 import static android.media.AudioManager.GET_DEVICES_ALL;
 import static android.media.AudioManager.STREAM_VOICE_CALL;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.application;
 import static com.thealer.telehealer.common.pubNub.models.APNSPayload.text;
 import static org.webrtc.ContextUtils.getApplicationContext;
 
@@ -771,6 +772,27 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 if (!TokBox.shared.getCalling() && TokBox.shared.getConnectedDate() == null) {
                     TokBox.shared.endCall(OpenTokConstants.notPickedUp);
                     EventRecorder.recordCallUpdates("declined_call", null);
+
+                    APNSPayload payload = new APNSPayload();
+                    HashMap<String,String> aps = new HashMap<>();
+                    if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
+                        aps.put(PubNubNotificationPayload.ALERT,getString(R.string.video_missed_call));
+                    } else {
+                        aps.put(PubNubNotificationPayload.ALERT,getString(R.string.audio_missed_call));
+                    }
+                    if (TokBox.shared.getOtherPersonDetail() != null) {
+                        aps.put(PubNubNotificationPayload.TITLE, TokBox.shared.getOtherPersonDetail().getDisplayName());
+                        aps.put(PubNubNotificationPayload.MEDIA_URL, TokBox.shared.getOtherPersonDetail().getUser_avatar());
+                    } else {
+                        aps.put(PubNubNotificationPayload.TITLE, "Missed");
+                    }
+                    payload.setAps(aps);
+
+                    Intent intent = new Intent(application, HomeActivity.class);
+                    intent.putExtra(ArgumentKeys.SELECTED_MENU_ITEM,R.id.menu_recent);
+
+                    Utils.createNotification(payload,intent);
+
                 } else  {
                     EventRecorder.recordCallUpdates("end_call_pressed",null);
                     TokBox.shared.endCall(OpenTokConstants.endCallPressed);
