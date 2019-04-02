@@ -6,7 +6,7 @@
         android:id="@+id/menu_pending_invites"
         android:icon="@drawable/ic_pending_invite"
         android:title="@string/pending_invites"
-        android:visible="true"
+        android:visible="false"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_help"

@@ -28,6 +28,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -37,6 +38,7 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -203,12 +205,15 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             @Override
             public void afterTextChanged(Editable s) {
                 if (!s.toString().isEmpty()) {
+                    connectionListCrv.setScrollable(false);
                     searchClearIv.setVisibility(View.VISIBLE);
+                    showSearchResult(s.toString().toLowerCase());
                 } else {
                     searchClearIv.setVisibility(View.GONE);
+                    connectionListAdapter.setData(commonUserApiResponseModelList, -1);
+                    connectionListCrv.setScrollable(true);
+                    connectionListCrv.showOrhideEmptyState(false);
                 }
-                page = 1;
-                getApiData(false);
             }
         });
 
@@ -218,6 +223,10 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                 searchEt.setText("");
             }
         });
+
+        connectionListCrv.setEmptyState(EmptyViewConstants.EMPTY_SEARCH);
+
+        connectionListCrv.showOrhideEmptyState(false);
 
         connectionListRv = connectionListCrv.getRecyclerView();
 
@@ -244,7 +253,26 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                 connectionListCrv.setScrollable(false);
             }
         });
+
         getApiData(true);
+    }
+
+    private void showSearchResult(String search) {
+        List<CommonUserApiResponseModel> searchResult = new ArrayList<>();
+        for (CommonUserApiResponseModel userModel : commonUserApiResponseModelList) {
+            if (userModel.getFirst_name().toLowerCase().contains(search) ||
+                    userModel.getLast_name().toLowerCase().contains(search) ||
+                    userModel.getUserDisplay_name().toLowerCase().contains(search)) {
+                searchResult.add(userModel);
+            }
+        }
+
+        if (searchResult.size() > 0) {
+            connectionListCrv.showOrhideEmptyState(false);
+            connectionListAdapter.setData(searchResult, -1);
+        } else {
+            connectionListCrv.showOrhideEmptyState(true);
+        }
     }
 
     private void getApiData(boolean showProgress) {
