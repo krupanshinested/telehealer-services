@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.home.vitals;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
@@ -78,8 +80,24 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel.isSuccess()) {
-                        onCloseActionInterface.onClose(false);
+
+                    VitalsCreateApiResponseModel createApiResponseModel = (VitalsCreateApiResponseModel) baseApiResponseModel;
+
+                    if (createApiResponseModel.isSuccess()) {
+
+                        if (UserType.isUserPatient() && createApiResponseModel.isAbnormal()) {
+                            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.abnormal_vital_alert_message),
+                                    getString(R.string.ok), null,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            onCloseActionInterface.onClose(false);
+                                        }
+                                    }, null);
+                        } else {
+                            onCloseActionInterface.onClose(false);
+                        }
                     }
                 }
             }

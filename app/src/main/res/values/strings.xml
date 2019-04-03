@@ -910,6 +910,7 @@
     <string name="sending_your_fax">Sending your fax.</string>
     <string name="fax_sent_successfully">Your fax sent successfully</string>
     <string name="no_forms_to_send">There is no forms to send</string>
+    <string name="abnormal_vital_alert_message">Please remember to follow your doctor\'s prescribed guidance for any medications and diet. If you have any questions or concerns with your measured vitals, do not hesitate to reach out directly to your doctor.</string>
     <string name="know_your_numbers">Know your numbers</string>
     <string name="know_your_number_description">While you wait for your doctor to accept the connection request, you can review and purchase one or more supported biometric devices to measure your vitals or manually enter any recent vitals captured outside this app by clicking the ‘+’ button on the bottom right corner of the vitals page.</string>
     <string name="license_expired">License Expired</string>
