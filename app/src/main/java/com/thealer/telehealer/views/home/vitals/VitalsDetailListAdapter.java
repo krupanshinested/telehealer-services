@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.vitals;
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
@@ -104,8 +105,11 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
         TextView descriptionTv;
         TextView timeTv;
         ImageView vitalIv;
+        ConstraintLayout abnormalIndicatorCl;
         CardView itemCv;
 
+
+        abnormalIndicatorCl = (ConstraintLayout) convertView.findViewById(R.id.abnormal_indicator_cl);
         itemCv = (CardView) convertView.findViewById(R.id.item_cv);
         vitalIv = (ImageView) convertView.findViewById(R.id.vital_iv);
         valueTv = (TextView) convertView.findViewById(R.id.value_tv);
@@ -169,6 +173,10 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
                     showSubFragmentInterface.onShowFragment(stethoscopeDetailViewFragment);
                 }
             });
+        }
+
+        if (childList.get(headerList.get(groupPosition)).get(childPosition).isAbnormal()) {
+            abnormalIndicatorCl.setVisibility(View.VISIBLE);
         }
 
         if (imageVisible) {
