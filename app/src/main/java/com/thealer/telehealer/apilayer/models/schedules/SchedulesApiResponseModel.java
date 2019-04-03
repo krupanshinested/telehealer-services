@@ -124,6 +124,13 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
                 return scheduled_with_user;
             }
          }
+        public CommonUserApiResponseModel getDoctor() {
+            if (scheduled_by_user.getRole().equals(Constants.ROLE_DOCTOR)) {
+                return scheduled_by_user;
+            } else {
+                return scheduled_with_user;
+            }
+         }
 
         public static class DetailBean implements Serializable{
 

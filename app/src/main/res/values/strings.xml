@@ -917,4 +917,7 @@
     <string name="license_expired_message">Your license has expired.Please update your licensing details inorder to continue using the platform.</string>
     <string name="video_missed_call">Missed video call</string>
     <string name="audio_missed_call">Missed voice call</string>
+    <string name="join">join</string>
+    <string name="dismiss">dismiss</string>
+    <string name="call_pop_up_title">Your appointment with %s is now in progress.</string>
 </resources>
