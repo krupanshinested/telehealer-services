@@ -58,6 +58,7 @@ import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResp
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 
 import java.util.ArrayList;
@@ -288,7 +289,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> updateUserQuestionnaire(@Path(ID) String userGuid, @Body UpdateQuestionaryBodyModel updateQuestionaryBodyModel);
 
     @POST("api/vitals")
-    Observable<BaseApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel);
+    Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel);
 
     @GET("api/forms")
     Observable<ArrayList<OrdersUserFormsApiResponseModel>> getUserForms(@Query(USER_GUID) String user_guid);
