@@ -28,4 +28,7 @@
     <color name="status_offline">#CCCCCC</color>
     <color name="status_busy">#FF001A</color>
     <color name="status_activation_pending">#FFEB3B</color>
+
+    <color name="call_popup_background">#46495B</color>
+    <color name="call_join">#51C442</color>
 </resources>
