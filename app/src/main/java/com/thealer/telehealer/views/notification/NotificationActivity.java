@@ -10,13 +10,11 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -69,10 +67,10 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
 
                     if (baseApiResponseModel.isSuccess()) {
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_success_prefix) + " " + commonUserApiResponseModel.getFirst_name() + " " + getString(R.string.add_connection_success_suffix));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_success), commonUserApiResponseModel.getFirst_name()));
                     } else {
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_failure_prefix) + " " + commonUserApiResponseModel.getFirst_name() + " " + getString(R.string.add_connection_failure_suffix));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_failure), commonUserApiResponseModel.getFirst_name()));
                     }
 
                     LocalBroadcastManager.getInstance(NotificationActivity.this).sendBroadcast(intent);

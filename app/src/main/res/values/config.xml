@@ -7,6 +7,7 @@
     <string name="get_image_url">api/download?path=</string>
     <string name="feedback_url">http://telehealer.com/feedback</string>
     <string name="privacy_url">http://telehealer.com/privacy/</string>
+    <string name="vital_devices_url">http://telehealer.com/vitals-devices/</string>
 
     //Food Api service
     <string name="food_api_base_url">https://api.edamam.com</string>
