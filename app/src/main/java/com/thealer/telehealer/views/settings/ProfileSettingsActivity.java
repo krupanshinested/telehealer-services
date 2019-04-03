@@ -99,6 +99,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private String detailTitle = "";
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
+    private boolean isBackDisabled = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -140,25 +141,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     public void didSelecteItem(int id) {
         switch (id) {
             case R.id.profile:
-                Bundle profile = new Bundle();
-                profile.putInt(ArgumentKeys.VIEW_TYPE, Constants.VIEW_MODE);
-                switch (appPreference.getInt(Constants.USER_TYPE)) {
-                    case Constants.TYPE_MEDICAL_ASSISTANT:
-                        MedicalAssistantDetailFragment medicalAssistantDetailFragment = new MedicalAssistantDetailFragment();
-                        medicalAssistantDetailFragment.setArguments(profile);
-                        setFragment(medicalAssistantDetailFragment, false, true, true);
-                        break;
-                    case Constants.TYPE_DOCTOR:
-                        CreateDoctorDetailFragment doctorDetailFragment = new CreateDoctorDetailFragment();
-                        doctorDetailFragment.setArguments(profile);
-                        setFragment(doctorDetailFragment, false, true, true);
-                        break;
-                    case Constants.TYPE_PATIENT:
-                        PatientRegistrationDetailFragment patientRegistrationDetailFragment = new PatientRegistrationDetailFragment();
-                        patientRegistrationDetailFragment.setArguments(profile);
-                        setFragment(patientRegistrationDetailFragment, false, true, true);
-                        break;
-                }
+                showUserProfile();
                 break;
             case R.id.documents:
                 updateDetailTitle(getString(R.string.documents));
@@ -259,6 +242,28 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         }
     }
 
+    private void showUserProfile() {
+        Bundle profile = new Bundle();
+        profile.putInt(ArgumentKeys.VIEW_TYPE, Constants.VIEW_MODE);
+        switch (appPreference.getInt(Constants.USER_TYPE)) {
+            case Constants.TYPE_MEDICAL_ASSISTANT:
+                MedicalAssistantDetailFragment medicalAssistantDetailFragment = new MedicalAssistantDetailFragment();
+                medicalAssistantDetailFragment.setArguments(profile);
+                setFragment(medicalAssistantDetailFragment, false, true, true);
+                break;
+            case Constants.TYPE_DOCTOR:
+                CreateDoctorDetailFragment doctorDetailFragment = new CreateDoctorDetailFragment();
+                doctorDetailFragment.setArguments(profile);
+                setFragment(doctorDetailFragment, false, true, true);
+                break;
+            case Constants.TYPE_PATIENT:
+                PatientRegistrationDetailFragment patientRegistrationDetailFragment = new PatientRegistrationDetailFragment();
+                patientRegistrationDetailFragment.setArguments(profile);
+                setFragment(patientRegistrationDetailFragment, false, true, true);
+                break;
+        }
+    }
+
     private void showMedicalAssistantList() {
         MedicalAssistantListFragment medicalAssistantListFragment = new MedicalAssistantListFragment();
         setFragment(medicalAssistantListFragment, false, true, true);
@@ -282,26 +287,28 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     @Override
     public void onBackPressed() {
 
-        if (getIntent() != null && getIntent().getExtras() != null &&
-                getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == Constants.SCHEDULE_CREATION_MODE) {
-            finish();
-        } else {
-
-            int maxCount = isSplitModeNeeded() ? 1 : 0;
-            int currentBackStackCount = getSupportFragmentManager().getBackStackEntryCount();
-
-            if (currentBackStackCount > maxCount) {
-                getSupportFragmentManager().popBackStack();
-
-                if (currentBackStackCount == 1) {
-                    updateDetailTitle(UserDetailPreferenceManager.getUserDisplayName());
-                    setExpandEnabled(true);
-                    hideOrShowNext(false);
-                    hideOrShowToolbarTile(false);
-                }
-
-            } else {
+        if (!isBackDisabled) {
+            if (getIntent() != null && getIntent().getExtras() != null &&
+                    getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == Constants.SCHEDULE_CREATION_MODE) {
                 finish();
+            } else {
+
+                int maxCount = isSplitModeNeeded() ? 1 : 0;
+                int currentBackStackCount = getSupportFragmentManager().getBackStackEntryCount();
+
+                if (currentBackStackCount > maxCount) {
+                    getSupportFragmentManager().popBackStack();
+
+                    if (currentBackStackCount == 1) {
+                        updateDetailTitle(UserDetailPreferenceManager.getUserDisplayName());
+                        setExpandEnabled(true);
+                        hideOrShowNext(false);
+                        hideOrShowToolbarTile(false);
+                    }
+
+                } else {
+                    finish();
+                }
             }
         }
     }
@@ -368,6 +375,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         attachObserver(whoAmIApiViewModel);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
+            isBackDisabled = getIntent().getExtras().getBoolean(ArgumentKeys.DISABLE_BACk, false);
+
             if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == Constants.SCHEDULE_CREATION_MODE) {
                 PatientRegistrationDetailFragment patientRegistrationDetailFragment = new PatientRegistrationDetailFragment();
                 Bundle bundle = new Bundle();
@@ -377,6 +386,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
             } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.HISTORY_UPDATE) {
                 showMedicalHistory();
+            } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.LICENCE_UPDATE) {
+                showUserProfile();
             }
         }
     }

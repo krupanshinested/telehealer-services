@@ -42,6 +42,29 @@
                 tools:src="@drawable/call_kit_education" />
 
             <TextView
+                android:id="@+id/user_name_tv"
+                style="@style/text_sub_title_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorBlack"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/user_avatar_civ"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/dummy_text" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_avatar_civ"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/profile_placeholder"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
                 android:id="@+id/title_tv"
                 style="@style/text_title_bold"
                 android:layout_width="0dp"
