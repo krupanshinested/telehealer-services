@@ -57,4 +57,7 @@ public class PreferenceConstants {
     public static final String NOTIFICATIONS_IDS = "notification_created_id";
     public static final String IS_FIRST_TIME = "isFirstTime";
     public static final String EMAIL_VERIFICATION_SHOWN_TIME = "EMAIL_VERIFICATION_SHOWN_TIME";
+    public static final String IS_KNOW_YOUR_NUMBER_SHOWN = "IS_KNOW_YOUR_NUMBER_SHOWN";
+    public static final String IS_VITAL_DEVICE_CONNECTED = "IS_VITAL_DEVICE_CONNECTED";
+    public static final String DEVICE_CONNECTION_COUNT = "DEVICE_CONNECTION_COUNT";
 }
