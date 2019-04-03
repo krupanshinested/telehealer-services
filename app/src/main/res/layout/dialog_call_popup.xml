@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_default"
+    app:cardBackgroundColor="@color/call_popup_background"
+    app:cardCornerRadius="6dp"
+    app:cardUseCompatPadding="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_default">
+
+        <TextView
+            android:id="@+id/title_tv"
+            style="@style/text_title_lignt_bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_default"
+            android:gravity="center"
+            android:padding="@dimen/padding_default"
+            app:layout_constraintBottom_toTopOf="@+id/join_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/dummy_text" />
+
+        <com.thealer.telehealer.common.CustomButton
+            android:id="@+id/join_btn"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_margin="@dimen/margin_default"
+            android:text="@string/join"
+            app:background_color="@color/call_join"
+            app:corner_radius="25dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/dismiss_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv"
+            app:text_color="@color/colorWhite" />
+
+        <com.thealer.telehealer.common.CustomButton
+            android:id="@+id/dismiss_btn"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_margin="@dimen/margin_default"
+            android:text="@string/dismiss"
+            app:corner_radius="25dp"
+            app:layout_constraintBottom_toBottomOf="@id/join_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/join_btn"
+            app:layout_constraintTop_toTopOf="@+id/join_btn"
+            app:stroke_color="@color/colorWhite"
+            app:stroke_width="2"
+            app:text_color="@color/colorWhite" />
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>
