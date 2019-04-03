@@ -1,6 +1,8 @@
 package com.thealer.telehealer.views.home.vitals;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,10 +23,12 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.home.VitalsOrdersListAdapter;
@@ -32,6 +36,9 @@ import com.thealer.telehealer.views.home.VitalsOrdersListAdapter;
 import iHealth.pairing.VitalCreationActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.isContentViewProceed;
+import static com.thealer.telehealer.TeleHealerApplication.isInForeGround;
+import static com.thealer.telehealer.TeleHealerApplication.isVitalDeviceConnectionShown;
 
 /**
  * Created by Aswin on 21,November,2018
@@ -114,9 +121,60 @@ public class VitalsListFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if (UserType.isUserPatient() && !isContentViewProceed && appPreference.getInt(PreferenceConstants.DEVICE_CONNECTION_COUNT) < 3)
+            checkVitalDeviceConnection();
+
+        if (isContentViewProceed && isInForeGround) {
+            isContentViewProceed = false;
+        }
+    }
+
+    private void checkVitalDeviceConnection() {
+        if (!appPreference.getBoolean(PreferenceConstants.IS_VITAL_DEVICE_CONNECTED) &&
+                !isVitalDeviceConnectionShown) {
+            isVitalDeviceConnectionShown = true;
+            showKnowYourNumber();
+        }
+    }
+
+    private void showKnowYourNumber() {
+
+        int count = appPreference.getInt(PreferenceConstants.DEVICE_CONNECTION_COUNT);
+
+        if (count < 1) {
+            count = 1;
+        } else {
+            count = count + 1;
+        }
+
+        appPreference.setInt(PreferenceConstants.DEVICE_CONNECTION_COUNT, count);
+
+        startActivityForResult(new Intent(getActivity(), ContentActivity.class)
+                        .putExtra(ArgumentKeys.TITLE, getString(R.string.know_your_numbers))
+                        .putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.know_your_number_description))
+                        .putExtra(ArgumentKeys.IS_SKIP_NEEDED, true)
+                        .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true)
+                        .putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed))
+                        .putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_health_heart)
+                , RequestID.REQ_CONNECT_VITAL_CONTENT_VIEW);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         Utils.hideOverlay();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestID.REQ_CONNECT_VITAL_CONTENT_VIEW && resultCode == Activity.RESULT_OK) {
+            isContentViewProceed = true;
+            isInForeGround = false;
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vital_devices_url))));
+        }
+    }
 }
