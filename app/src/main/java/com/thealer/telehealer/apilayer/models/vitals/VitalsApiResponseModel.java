@@ -19,6 +19,15 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
     private int user_id;
     private String created_at;
     private String updated_at;
+    private boolean abnormal;
+
+    public boolean isAbnormal() {
+        return abnormal;
+    }
+
+    public void setAbnormal(boolean abnormal) {
+        this.abnormal = abnormal;
+    }
 
     public int getUser_vital_id() {
         return user_vital_id;
