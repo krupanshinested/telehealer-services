@@ -35,6 +35,7 @@ import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewDisplayable;
 import com.alamkanak.weekview.WeekViewEvent;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -52,6 +53,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.CallPopupDialogFragment;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -173,6 +175,8 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
 
         createScheduledNotification();
 
+        List<SchedulesApiResponseModel.ResultBean> schedulesList = new ArrayList<>();
+
         for (int i = 0; i < responseModelArrayList.size(); i++) {
 
             if (!Utils.isDateTimeExpired(responseModelArrayList.get(i).getStart())) {
@@ -188,6 +192,9 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
                 }
             }
 
+            if (!Utils.isDateTimeExpired(responseModelArrayList.get(i).getEnd())) {
+                schedulesList.add(responseModelArrayList.get(i));
+            }
 
             CalendarDay calendarDay = CalendarDay.from(LocalDate.parse(responseModelArrayList.get(i).getStart(), dateTimeFormatter));
             calendarDayHashSet.add(calendarDay);
@@ -224,9 +231,16 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
                     getActivity().getColor(R.color.calendar_event_color),
                     false,
                     responseModelArrayList.get(i));
+
             weekViewEventList.add(weekViewEvent);
 
         }
+
+        String upcomingList = new Gson().toJson(schedulesList);
+
+        appPreference.setString(PreferenceConstants.UPCOMING_SCHEDULES, upcomingList);
+
+        checkOnGoingCall();
 
         weekView.notifyDataSetChanged();
 
