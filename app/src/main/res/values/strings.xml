@@ -289,10 +289,8 @@
     <string name="camera_not_supported">Camera option is not supported in this device</string>
     <string name="open_drawer">open_drawer</string>
     <string name="close_drawer">close_drawer</string>
-    <string name="add_connection_success_prefix">Your connection request for</string>
-    <string name="add_connection_success_suffix">has been posted successfully.</string>
-    <string name="add_connection_failure_prefix">Your connection request for</string>
-    <string name="add_connection_failure_suffix">has been failed.</string>
+    <string name="add_connection_success">Your connection request for %s has been posted successfully.</string>
+    <string name="add_connection_failure">Your connection request for %s has been failed.</string>
     <string name="add_connection_pending">PENDING</string>
     <string name="add_connection_connect">CONNECT</string>
     <string name="please_wait">Please wait...</string>
@@ -912,6 +910,8 @@
     <string name="sending_your_fax">Sending your fax.</string>
     <string name="fax_sent_successfully">Your fax sent successfully</string>
     <string name="no_forms_to_send">There is no forms to send</string>
+    <string name="know_your_numbers">Know your numbers</string>
+    <string name="know_your_number_description">While you wait for your doctor to accept the connection request, you can review and purchase one or more supported biometric devices to measure your vitals or manually enter any recent vitals captured outside this app by clicking the ‘+’ button on the bottom right corner of the vitals page.</string>
     <string name="license_expired">License Expired</string>
     <string name="license_expired_message">Your license has expired.Please update your licensing details inorder to continue using the platform.</string>
     <string name="video_missed_call">Missed video call</string>

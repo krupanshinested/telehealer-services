@@ -27,29 +27,25 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.SupportInformation;
-import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
-import com.thealer.telehealer.common.FireBase.EventRecorder;
-import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -84,7 +80,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
 
         if (saveInstance != null) {
             currentState = saveInstance.getInt(ArgumentKeys.CURRENT_VITAL_STATE);
-        } else  {
+        } else {
             currentState = connecting;
         }
     }
@@ -111,56 +107,56 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
         super.onResume();
 
         vitalManagerInstance.getInstance().setListener(this);
-        vitalManagerInstance.updateBatteryView(View.GONE,0);
+        vitalManagerInstance.updateBatteryView(View.GONE, 0);
         updateView(currentState);
 
         toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(deviceType)));
         onViewChangeInterface.hideOrShowClose(true);
         onViewChangeInterface.hideOrShowBackIv(true);
 
-       SupportInformation supportInformation = VitalDeviceType.getMeasureInfo(deviceType);
+        SupportInformation supportInformation = VitalDeviceType.getMeasureInfo(deviceType);
 
-       if (supportInformation != null && !getArguments().getBoolean("isDisplaySupportDialog")) {
-           getArguments().putBoolean("isDisplaySupportDialog",true);
+        if (supportInformation != null && !getArguments().getBoolean("isDisplaySupportDialog")) {
+            getArguments().putBoolean("isDisplaySupportDialog", true);
 
-           Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
-           contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
-           contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
+            Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
+            contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
+            contentIntent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
 
-           if (supportInformation.getTitleId() != 0) {
-               contentIntent.putExtra(ArgumentKeys.TITLE, getString(supportInformation.getTitleId()));
-           } else {
-               contentIntent.putExtra(ArgumentKeys.TITLE, "");
-           }
+            if (supportInformation.getTitleId() != 0) {
+                contentIntent.putExtra(ArgumentKeys.TITLE, getString(supportInformation.getTitleId()));
+            } else {
+                contentIntent.putExtra(ArgumentKeys.TITLE, "");
+            }
 
-           contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(supportInformation.getDescriptionId()));
-           contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, supportInformation.getIconId());
-           contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
-           contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
-           contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+            contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(supportInformation.getDescriptionId()));
+            contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, supportInformation.getIconId());
+            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
 
-           startActivity(contentIntent);
+            startActivity(contentIntent);
 
-       } else {
-           if (VitalDeviceType.shared.getMeasurementType(deviceType).equals(SupportedMeasurementType.temperature)) {
-               final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-               if (manager != null && manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                   if (deviceMac != null) {
-                       connectVital(deviceType, deviceMac);
-                   } else {
-                       scanVital(deviceType);
-                   }
-               } else {
-                   displayLocationSettingsRequest(getActivity());
-               }
-           } else {
-               if (deviceMac != null) {
-                   connectVital(deviceType, deviceMac);
-               } else {
-                   scanVital(deviceType);
-               }
-           }
-       }
+        } else {
+            if (VitalDeviceType.shared.getMeasurementType(deviceType).equals(SupportedMeasurementType.temperature)) {
+                final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                if (manager != null && manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    if (deviceMac != null) {
+                        connectVital(deviceType, deviceMac);
+                    } else {
+                        scanVital(deviceType);
+                    }
+                } else {
+                    displayLocationSettingsRequest(getActivity());
+                }
+            } else {
+                if (deviceMac != null) {
+                    connectVital(deviceType, deviceMac);
+                } else {
+                    scanVital(deviceType);
+                }
+            }
+        }
 
     }
 
@@ -221,26 +217,26 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
     private void updateView(int state) {
         switch (state) {
             case discovering:
-                toolBarInterface.updateSubTitle(getString(R.string.discovering),View.VISIBLE);
+                toolBarInterface.updateSubTitle(getString(R.string.discovering), View.VISIBLE);
                 retryButton.setVisibility(View.GONE);
                 break;
             case connecting:
-                toolBarInterface.updateSubTitle(getString(R.string.connecting),View.VISIBLE);
+                toolBarInterface.updateSubTitle(getString(R.string.connecting), View.VISIBLE);
                 retryButton.setVisibility(View.GONE);
                 break;
             case connected:
-                toolBarInterface.updateSubTitle(getString(R.string.connected),View.VISIBLE);
+                toolBarInterface.updateSubTitle(getString(R.string.connected), View.VISIBLE);
                 break;
             case failed:
-                toolBarInterface.updateSubTitle(getString(R.string.failed_to_connect),View.VISIBLE);
+                toolBarInterface.updateSubTitle(getString(R.string.failed_to_connect), View.VISIBLE);
                 retryButton.setVisibility(View.VISIBLE);
                 break;
             case scanned:
-                toolBarInterface.updateSubTitle(getString(R.string.scan_completed),View.VISIBLE);
+                toolBarInterface.updateSubTitle(getString(R.string.scan_completed), View.VISIBLE);
                 retryButton.setVisibility(View.VISIBLE);
                 break;
             case scanningFailed:
-                toolBarInterface.updateSubTitle(getString(R.string.scanning_failed),View.VISIBLE);
+                toolBarInterface.updateSubTitle(getString(R.string.scanning_failed), View.VISIBLE);
                 retryButton.setVisibility(View.VISIBLE);
                 break;
         }
@@ -303,7 +299,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
 
                 VitalPairedDevices vitalPairedDevices = VitalPairedDevices.getAllPairedDevices(appPreference);
 
-                if (!vitalPairedDevices.isAlreadyPaired(type,serailNumber) && type.equals(deviceType)) {
+                if (!vitalPairedDevices.isAlreadyPaired(type, serailNumber) && type.equals(deviceType)) {
 
                     isDeviceFound = true;
 
@@ -326,6 +322,9 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
     public void didConnected(String type, String serailNumber) {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
+
+                appPreference.setBoolean(PreferenceConstants.IS_VITAL_DEVICE_CONNECTED, true);
+
                 deviceMac = serailNumber;
                 deviceType = type;
 
@@ -369,8 +368,8 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
                         }, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                              currentState = failed;
-                              updateView(failed);
+                                currentState = failed;
+                                updateView(failed);
                             }
                         });
             }
@@ -384,7 +383,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
         } else {
             bundle = new Bundle();
         }
-        bundle.putSerializable(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING,true);
+        bundle.putSerializable(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING, true);
         bundle.putString(ArgumentKeys.DEVICE_MAC, deviceMac);
         bundle.putString(ArgumentKeys.DEVICE_TYPE, deviceType);
         bundle.putSerializable(ArgumentKeys.VITAL_DEVICE, getSelectedDevice());
@@ -427,7 +426,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
         result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
             @Override
             public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
-                Log.d("VitalManager","LocationSettingsResponse");
+                Log.d("VitalManager", "LocationSettingsResponse");
                 try {
                     LocationSettingsResponse response =
                             task.getResult(ApiException.class);
@@ -441,7 +440,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
                     }
                 } catch (ApiException ex) {
 
-                    Log.d("VitalManager",ex.getLocalizedMessage());
+                    Log.d("VitalManager", ex.getLocalizedMessage());
 
                     switch (ex.getStatusCode()) {
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
