@@ -26,6 +26,9 @@ import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.call.CallActivity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import io.fabric.sdk.android.Fabric;
 
 
@@ -38,6 +41,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public static TeleHealerApplication application;
     public static final String notificationChannelId = "thealer";
     public FirebaseAnalytics firebaseAnalytics;
+    public static Set<Integer> popUpSchedulesId = new HashSet<>();
     public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false;
 
     @Override
@@ -109,6 +113,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
             }
         });
 
+        popUpSchedulesId.clear();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

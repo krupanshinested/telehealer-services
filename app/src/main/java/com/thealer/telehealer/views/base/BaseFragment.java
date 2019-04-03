@@ -19,13 +19,25 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.CallPopupDialogFragment;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 
+import java.util.List;
+
 import static android.app.Activity.RESULT_OK;
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.popUpSchedulesId;
 
 /**
  * Created by Aswin on 10,October,2018
@@ -175,8 +187,41 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    public void checkOnGoingCall() {
+        if (!UserType.isUserPatient()) {
+
+            String upcomingList = appPreference.getString(PreferenceConstants.UPCOMING_SCHEDULES);
+
+            if (upcomingList != null && !upcomingList.isEmpty()) {
+                List<SchedulesApiResponseModel.ResultBean> upcomingSchedulesList = new Gson().fromJson(upcomingList, new TypeToken<List<SchedulesApiResponseModel.ResultBean>>() {
+                }.getType());
+
+                if (!upcomingSchedulesList.isEmpty()) {
+                    for (int i = 0; i < upcomingSchedulesList.size(); i++) {
+                        if (Utils.isDateTimeExpired(upcomingSchedulesList.get(i).getStart()) &&
+                                !Utils.isDateTimeExpired(upcomingSchedulesList.get(i).getEnd())) {
+
+                            if (!popUpSchedulesId.contains(upcomingSchedulesList.get(i).getSchedule_id())) {
+
+                                popUpSchedulesId.add(upcomingSchedulesList.get(i).getSchedule_id());
+
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable(ArgumentKeys.SCHEDULE_DETAIL, upcomingSchedulesList.get(i));
+
+                                CallPopupDialogFragment callPopupDialogFragment = new CallPopupDialogFragment();
+                                callPopupDialogFragment.setArguments(bundle);
+                                callPopupDialogFragment.show(getChildFragmentManager(), callPopupDialogFragment.getClass().getSimpleName());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
+        checkOnGoingCall();
     }
 }
