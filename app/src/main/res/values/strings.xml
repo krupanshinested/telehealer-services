@@ -902,6 +902,8 @@
     <string name="sending_your_fax">Sending your fax.</string>
     <string name="fax_sent_successfully">Your fax sent successfully</string>
     <string name="no_forms_to_send">There is no forms to send</string>
+    <string name="license_expired">License Expired</string>
+    <string name="license_expired_message">Your license has expired.Please update your licensing details inorder to continue using the platform.</string>
     <string name="video_missed_call">Missed video call</string>
     <string name="audio_missed_call">Missed voice call</string>
 </resources>
