@@ -1,8 +1,10 @@
 package com.thealer.telehealer.views.home;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,9 +30,13 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -40,6 +46,9 @@ import com.thealer.telehealer.views.common.SuccessViewInterface;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.isContentViewProceed;
 
 /**
  * Created by Aswin on 19,November,2018
@@ -84,17 +93,16 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
                     if (baseApiResponseModel.isSuccess()) {
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_success_prefix) + " " + connectionListResponseModel.getResult().get(selectedPosition).getFirst_name() + " " + getString(R.string.add_connection_success_suffix));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_success), connectionListResponseModel.getResult().get(selectedPosition).getFirst_name()));
 
                         connectionListAdapter.setData(commonUserApiResponseModelList, selectedPosition);
                     } else {
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_failure_prefix) + " " + connectionListResponseModel.getResult().get(selectedPosition).getFirst_name() + " " + getString(R.string.add_connection_failure_suffix));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_failure), connectionListResponseModel.getResult().get(selectedPosition).getFirst_name()));
                     }
 
                     LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
                 }
-
             }
         });
 
@@ -283,7 +291,13 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
     @Override
     public void onSuccessViewCompletion(boolean success) {
+        if (UserType.isUserPatient() &&
+                !appPreference.getBoolean(PreferenceConstants.IS_KNOW_YOUR_NUMBER_SHOWN)) {
 
+            appPreference.setBoolean(PreferenceConstants.IS_KNOW_YOUR_NUMBER_SHOWN, true);
+
+            showKnowYourNumber();
+        }
     }
 
     @Override
@@ -321,5 +335,27 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     @Override
     public void onShowFragment(Fragment fragment) {
 
+    }
+
+    private void showKnowYourNumber() {
+
+        startActivityForResult(new Intent(this, ContentActivity.class)
+                        .putExtra(ArgumentKeys.TITLE, getString(R.string.know_your_numbers))
+                        .putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.know_your_number_description))
+                        .putExtra(ArgumentKeys.IS_SKIP_NEEDED, true)
+                        .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true)
+                        .putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed))
+                        .putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_health_heart)
+                , RequestID.REQ_CONTENT_VIEW);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RequestID.REQ_CONTENT_VIEW && resultCode == Activity.RESULT_OK) {
+            isContentViewProceed = true;
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vital_devices_url))));
+        }
     }
 }

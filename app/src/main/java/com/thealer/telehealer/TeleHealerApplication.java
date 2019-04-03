@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -22,8 +21,9 @@ import com.thealer.telehealer.common.AppPreference;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
 import com.thealer.telehealer.common.OpenTok.TokBox;
-import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
+import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.call.CallActivity;
 
 import io.fabric.sdk.android.Fabric;
@@ -38,6 +38,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public static TeleHealerApplication application;
     public static final String notificationChannelId = "thealer";
     public FirebaseAnalytics firebaseAnalytics;
+    public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false;
 
     @Override
     public void onCreate() {
@@ -53,7 +54,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
                     @Override
                     public void onSuccess(InstanceIdResult instanceIdResult) {
                         String token = instanceIdResult.getToken();
-                        Log.d("TeleHealerApplication","received token "+token);
+                        Log.d("TeleHealerApplication", "received token " + token);
                         TelehealerFirebaseMessagingService.assignToken(token);
                     }
                 });
@@ -90,7 +91,9 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onMoveToForeground() {
         // app moved to foreground
+        isInForeGround = true;
 
+        Log.e("aswin", "onMoveToForeground: ");
         EventRecorder.recordLastUpdate("last_open_date");
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
@@ -111,6 +114,12 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onMoveToBackground() {
         // app moved to background
+        Log.e("aswin", "onMoveToBackground: ");
+        isInForeGround = false;
+
+        if (isVitalDeviceConnectionShown) {
+            isVitalDeviceConnectionShown = false;
+        }
 
         if (VitalsManager.instance != null) {
             VitalsManager.instance.disconnectAll();
