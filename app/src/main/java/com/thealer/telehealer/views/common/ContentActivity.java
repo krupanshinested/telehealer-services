@@ -19,6 +19,8 @@ import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by rsekar on 1/4/19.
  */
@@ -32,6 +34,8 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
     private CheckBox check_box;
     private TextView check_box_tv;
     private LinearLayout check_box_view;
+    private CircleImageView userAvatarCiv;
+    private TextView userNameTv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,10 +45,49 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
         setContentView(R.layout.activity_content);
         initView();
 
+    }
+
+    private void initView() {
+        icon = findViewById(R.id.icon);
+        close_iv = findViewById(R.id.close_iv);
+        title_tv = findViewById(R.id.title_tv);
+        sub_title_tv = findViewById(R.id.sub_title_tv);
+        action_btn = findViewById(R.id.action_btn);
+        skip_btn = findViewById(R.id.skip_btn);
+
+        check_box = findViewById(R.id.check_box);
+        check_box_tv = findViewById(R.id.check_box_tv);
+        check_box_view = findViewById(R.id.check_box_view);
+        userAvatarCiv = (CircleImageView) findViewById(R.id.user_avatar_civ);
+        userNameTv = (TextView) findViewById(R.id.user_name_tv);
+
+        close_iv.setOnClickListener(this);
+        action_btn.setOnClickListener(this);
+        skip_btn.setOnClickListener(this);
+
         int resource = getIntent().getIntExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.app_icon);
         icon.setImageDrawable(getDrawable(resource));
 
         title_tv.setText(getIntent().getStringExtra(ArgumentKeys.TITLE));
+
+        if (getIntent().getBooleanExtra(ArgumentKeys.IS_SHOW_CIRCULAR_AVATAR, false)) {
+
+            userAvatarCiv.setVisibility(View.VISIBLE);
+            userNameTv.setVisibility(View.VISIBLE);
+
+            icon.setVisibility(View.INVISIBLE);
+
+            String userAvatar = getIntent().getStringExtra(ArgumentKeys.CIRCULAR_AVATAR);
+
+            String username = getIntent().getStringExtra(ArgumentKeys.USER_NAME);
+
+            userNameTv.setText("Hi " + username);
+
+            boolean isAuthRequred = getIntent().getBooleanExtra(ArgumentKeys.IS_AUTH_REQUIRED, false);
+
+            Utils.setImageWithGlide(getApplicationContext(), userAvatarCiv, userAvatar, getDrawable(R.drawable.profile_placeholder), isAuthRequred);
+
+        }
 
         if (getIntent().getBooleanExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false)) {
             sub_title_tv.setText(Utils.fromHtml(getIntent().getStringExtra(ArgumentKeys.DESCRIPTION)));
@@ -104,23 +147,6 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
                 }
             }
         });
-    }
-
-    private void initView() {
-        icon = findViewById(R.id.icon);
-        close_iv = findViewById(R.id.close_iv);
-        title_tv = findViewById(R.id.title_tv);
-        sub_title_tv = findViewById(R.id.sub_title_tv);
-        action_btn = findViewById(R.id.action_btn);
-        skip_btn = findViewById(R.id.skip_btn);
-
-        check_box = findViewById(R.id.check_box);
-        check_box_tv = findViewById(R.id.check_box_tv);
-        check_box_view = findViewById(R.id.check_box_view);
-
-        close_iv.setOnClickListener(this);
-        action_btn.setOnClickListener(this);
-        skip_btn.setOnClickListener(this);
     }
 
     @Override

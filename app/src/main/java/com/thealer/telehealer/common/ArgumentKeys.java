@@ -62,6 +62,7 @@ public class ArgumentKeys {
     public static final String USER_DETAIL = "user_detail";
 
     public static final int HISTORY_UPDATE = 0;
+    public static final int LICENCE_UPDATE = 1;
     public static final String VIEW_ABNORMAL_VITAL = "abnormalVital";
     public static final String IS_MEDICAL_ASSISTANT = "isMedicalAssistant";
     public static final String SHOW_TOOLBAR = "showToolbar";
@@ -80,6 +81,10 @@ public class ArgumentKeys {
     public static final String IS_MANUAL_ENTRY = "isManualEntry";
     public static final String IS_PRIMARY_DELETED = "isPrimaryDeletd";
     public static final String IS_SECONDARY_DELETED = "isSecondaryDeletd";
+    public static final String IS_SHOW_CIRCULAR_AVATAR = "isShowCircularAvatar";
+    public static final String CIRCULAR_AVATAR = "circularAvatar";
+    public static final String IS_AUTH_REQUIRED = "isAuthRequrired";
+    public static final String DISABLE_BACk = "disableBack";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
