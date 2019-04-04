@@ -64,7 +64,7 @@ public class PatientHistoryFragment extends BaseFragment {
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(), getString(R.string.success),
-                            String.format("Your appointment with %s will appear on the schedules tab as soon as it is accepted", createScheduleViewModel.getDoctorCommonModel().getDoctorDisplayName()));
+                            String.format(getString(R.string.appointment_request_success), createScheduleViewModel.getDoctorCommonModel().getDoctorDisplayName()));
                 }
             }
         });
@@ -74,7 +74,7 @@ public class PatientHistoryFragment extends BaseFragment {
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
                     sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure),
-                            String.format("Your appointment with %s is not requested successfully. Please try again", createScheduleViewModel.getDoctorCommonModel().getDoctorDisplayName()));
+                            String.format(getString(R.string.appointment_request_failure), createScheduleViewModel.getDoctorCommonModel().getDoctorDisplayName()));
                 }
             }
         });

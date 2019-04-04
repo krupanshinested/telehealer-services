@@ -7,17 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.Payments.Transaction;
-import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
 import com.thealer.telehealer.common.ClickListener;
-import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 
 import java.util.ArrayList;
 
@@ -56,17 +50,17 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        PaymentAdapter.DataHolder dataHolder = (PaymentAdapter.DataHolder)viewHolder;
+        PaymentAdapter.DataHolder dataHolder = (PaymentAdapter.DataHolder) viewHolder;
 
         Transaction transaction = transactions.get(i);
         dataHolder.date_tv.setText(transaction.getCreatedMonthYear());
-        dataHolder.bill_tv.setText("Bill No: "+transaction.getId());
-        dataHolder.cash_tv.setText("$"+transaction.getAmount());
+        dataHolder.bill_tv.setText(context.getString(R.string.bill_no) + " " + transaction.getId());
+        dataHolder.cash_tv.setText("$" + transaction.getAmount());
 
         dataHolder.mainContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickListener.onClick(v,i);
+                clickListener.onClick(v, i);
             }
         });
     }
@@ -84,7 +78,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private class DataHolder extends RecyclerView.ViewHolder {
 
-        private TextView date_tv, bill_tv,cash_tv;
+        private TextView date_tv, bill_tv, cash_tv;
         private ConstraintLayout mainContainer;
 
         private DataHolder(@NonNull View itemView) {

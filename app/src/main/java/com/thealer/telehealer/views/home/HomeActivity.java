@@ -366,7 +366,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void checkForDocumentUpload() {
         if (Constants.sharedPath != null) {
-            Utils.showAlertDialog(this, "Found Documents", "Do you really want to upload the documents which you shared?", getString(R.string.upload), getString(R.string.cancel),
+            Utils.showAlertDialog(this, getString(R.string.found_documents), getString(R.string.do_you_want_to_upload), getString(R.string.upload), getString(R.string.cancel),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -397,7 +397,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private void updateProfilePic() {
         View view = navigationView.getHeaderView(0);
         ImageView userProfileIv = view.findViewById(R.id.home_header_iv);
-        Utils.setImageWithGlide(getApplicationContext(), userProfileIv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getApplicationContext(), userProfileIv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
     }
 
     @Override

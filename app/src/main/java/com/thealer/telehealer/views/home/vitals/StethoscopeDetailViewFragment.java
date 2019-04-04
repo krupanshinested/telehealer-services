@@ -91,7 +91,7 @@ public class StethoscopeDetailViewFragment extends BaseFragment {
                     stethoscopeSegmentDetailFragment.setArguments(bundle);
 
                     fragmentList.add(stethoscopeSegmentDetailFragment);
-                    titleList.add("Segment " + i);
+                    titleList.add(getString(R.string.segment) + i);
                 }
 
                 ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);

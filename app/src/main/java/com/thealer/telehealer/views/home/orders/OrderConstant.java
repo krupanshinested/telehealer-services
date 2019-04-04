@@ -1,5 +1,9 @@
 package com.thealer.telehealer.views.home.orders;
 
+import android.content.Context;
+
+import com.thealer.telehealer.R;
+
 /**
  * Created by Aswin on 28,November,2018
  */
@@ -20,6 +24,26 @@ public class OrderConstant {
 
     public static final String RECENT_TYPE_CHAT = "chat";
     public static final String RECENT_TYPE_AUDIO = "audio";
+
+    public static String getDislpayTitle(Context context, String type) {
+        switch (type) {
+            case ORDER_FORM:
+                return context.getString(R.string.form);
+            case ORDER_PRESCRIPTIONS:
+                return context.getString(R.string.prescription);
+            case ORDER_REFERRALS:
+                return context.getString(R.string.orders_referrals);
+            case ORDER_LABS:
+                return context.getString(R.string.labs);
+            case ORDER_RADIOLOGY:
+                return context.getString(R.string.radiology);
+            case ORDER_DOCUMENTS:
+                return context.getString(R.string.documents);
+            case ORDER_MISC:
+                return context.getString(R.string.miscellaneous);
+        }
+        return "";
+    }
 
     public static final String[] labTestList = {"Amylase",
             "BMP",

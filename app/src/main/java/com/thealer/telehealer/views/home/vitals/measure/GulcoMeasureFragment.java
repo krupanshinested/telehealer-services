@@ -38,6 +38,7 @@ import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.GulcoMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.GulcoQRCapture;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -54,11 +55,11 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
         GulcoQRCapture,GulcoMeasureInterface {
 
     private ImageView device_iv;
-    private LinearLayout state_lay,bottom_lay;
-    private Button scan_bt,power_bt,strip_bt,blood_bt;
+    private LinearLayout state_lay, bottom_lay;
+    private Button scan_bt, power_bt, strip_bt, blood_bt;
     private ConstraintLayout result_lay;
-    private TextView gulco_value,gulco;
-    private CustomButton save_bt,close_bt;
+    private TextView gulco_value, gulco;
+    private CustomButton save_bt, close_bt;
 
     private String lastError;
     private String finalGulcoValue = "";
@@ -126,47 +127,47 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
                 result_lay.setVisibility(View.GONE);
                 state_lay.setVisibility(View.VISIBLE);
                 bottom_lay.setVisibility(View.GONE);
-                markAsCurrent(scan_bt,getString(R.string.scan_strip_bottle_qr));
-                markAsNotComplete(power_bt,getString(R.string.power_on));
-                markAsNotComplete(strip_bt,getString(R.string.insert_strip));
-                markAsNotComplete(blood_bt,getString(R.string.drop_blood));
+                markAsCurrent(scan_bt, getString(R.string.scan_strip_bottle_qr));
+                markAsNotComplete(power_bt, getString(R.string.power_on));
+                markAsNotComplete(strip_bt, getString(R.string.insert_strip));
+                markAsNotComplete(blood_bt, getString(R.string.drop_blood));
 
                 break;
             case MeasureState.capturedCodeString:
                 result_lay.setVisibility(View.GONE);
                 state_lay.setVisibility(View.VISIBLE);
                 bottom_lay.setVisibility(View.GONE);
-                markAsFinish(scan_bt,getString(R.string.qr_scanned));
-                markAsCurrent(power_bt,getString(R.string.power_on));
-                markAsNotComplete(strip_bt,getString(R.string.insert_strip));
-                markAsNotComplete(blood_bt,getString(R.string.drop_blood));
+                markAsFinish(scan_bt, getString(R.string.qr_scanned));
+                markAsCurrent(power_bt, getString(R.string.power_on));
+                markAsNotComplete(strip_bt, getString(R.string.insert_strip));
+                markAsNotComplete(blood_bt, getString(R.string.drop_blood));
                 break;
             case MeasureState.started:
                 result_lay.setVisibility(View.GONE);
                 state_lay.setVisibility(View.VISIBLE);
                 bottom_lay.setVisibility(View.GONE);
-                markAsFinish(scan_bt,getString(R.string.qr_scanned));
-                markAsFinish(power_bt,getString(R.string.powered_on));
-                markAsCurrent(strip_bt,getString(R.string.insert_strip));
-                markAsNotComplete(blood_bt,getString(R.string.drop_blood));
+                markAsFinish(scan_bt, getString(R.string.qr_scanned));
+                markAsFinish(power_bt, getString(R.string.powered_on));
+                markAsCurrent(strip_bt, getString(R.string.insert_strip));
+                markAsNotComplete(blood_bt, getString(R.string.drop_blood));
                 break;
             case MeasureState.stripInserted:
                 state_lay.setVisibility(View.VISIBLE);
                 result_lay.setVisibility(View.GONE);
                 bottom_lay.setVisibility(View.GONE);
-                markAsFinish(scan_bt,getString(R.string.qr_scanned));
-                markAsFinish(power_bt,getString(R.string.powered_on));
-                markAsFinish(strip_bt,getString(R.string.strip_inserted));
-                markAsCurrent(blood_bt,getString(R.string.drop_blood));
+                markAsFinish(scan_bt, getString(R.string.qr_scanned));
+                markAsFinish(power_bt, getString(R.string.powered_on));
+                markAsFinish(strip_bt, getString(R.string.strip_inserted));
+                markAsCurrent(blood_bt, getString(R.string.drop_blood));
                 break;
             case MeasureState.bloodDropped:
                 result_lay.setVisibility(View.GONE);
                 state_lay.setVisibility(View.VISIBLE);
                 bottom_lay.setVisibility(View.GONE);
-                markAsFinish(scan_bt,getString(R.string.qr_scanned));
-                markAsFinish(power_bt,getString(R.string.powered_on));
-                markAsFinish(strip_bt,getString(R.string.strip_inserted));
-                markAsFinish(blood_bt,getString(R.string.blood_dropped));
+                markAsFinish(scan_bt, getString(R.string.qr_scanned));
+                markAsFinish(power_bt, getString(R.string.powered_on));
+                markAsFinish(strip_bt, getString(R.string.strip_inserted));
+                markAsFinish(blood_bt, getString(R.string.blood_dropped));
                 break;
             case MeasureState.calculating:
                 state_lay.setVisibility(View.GONE);
@@ -191,22 +192,22 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
         }
     }
 
-    private void markAsFinish(Button button,String title) {
+    private void markAsFinish(Button button, String title) {
         button.setText(title);
-        updateButtonTint(button,R.color.color_green_light);
+        updateButtonTint(button, R.color.color_green_light);
     }
 
-    private void markAsCurrent(Button button,String title) {
+    private void markAsCurrent(Button button, String title) {
         button.setText(title);
-        updateButtonTint(button,R.color.red);
+        updateButtonTint(button, R.color.red);
     }
 
-    private void markAsNotComplete(Button button,String title) {
+    private void markAsNotComplete(Button button, String title) {
         button.setText(title);
-        updateButtonTint(button,R.color.colorGrey_light);
+        updateButtonTint(button, R.color.colorGrey_light);
     }
 
-    private void updateButtonTint(Button button,int color) {
+    private void updateButtonTint(Button button, int color) {
         button.setTextColor(getResources().getColor(color));
         button.setCompoundDrawableTintList(ColorStateList.valueOf(getResources().getColor(color)));
     }
@@ -255,7 +256,7 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
     @Override
     public void didCapture(String result) {
         setCurrentState(MeasureState.capturedCodeString);
-        vitalManagerInstance.getInstance().updateStripBottleId(vitalDevice.getType(),vitalDevice.getDeviceId(),result);
+        vitalManagerInstance.getInstance().updateStripBottleId(vitalDevice.getType(), vitalDevice.getDeviceId(), result);
         if (currentState == MeasureState.notStarted) {
             startMeasure();
         }
@@ -263,14 +264,14 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
 
     //GulcoMeasureInterface methods
     @Override
-    public void updateGulcoMessage(String deviceType,String message) {
+    public void updateGulcoMessage(String deviceType, String message) {
 
     }
 
     @Override
-    public void updateGulcoValue(String deviceType,int value) {
+    public void updateGulcoValue(String deviceType, int value) {
         gulco_value.setText(value + "");
-        finalGulcoValue = value+"";
+        finalGulcoValue = value + "";
         setCurrentState(MeasureState.ended);
     }
 
@@ -280,7 +281,7 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
     }
 
     @Override
-    public void didFinishGulcoMesureWithFailure(String deviceType,String error) {
+    public void didFinishGulcoMesureWithFailure(String deviceType, String error) {
 
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
             EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
@@ -293,7 +294,7 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
-        },null);
+        }, null);
     }
 
     @Override

@@ -1,26 +1,27 @@
 package com.thealer.telehealer.views.common;
 
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.UserType;
 
 /**
  * Created by Aswin on 04,February,2019
  */
 public class OverlayViewConstants {
-    public static final String OVERLAY_NO_MEDICAL_ASSISTANT = "You can add a Medical Assistant by tapping the '+' button";
-    public static final String OVERLAY_NO_DOCTOR = "You can add a Doctor by tapping the '+' button";
-    public static final String OVERLAY_NO_PATIENT = "You can add a Patient by tapping the '+' button";
-    public static final String OVERLAY_NO_APPOINTMENT = "You can add an appointment by tapping the '+' button";
-    public static final String OVERLAY_NO_BP = (UserType.isUserPatient() ? "You can connect your vitals device to measure your Blood Pressure" : "You can add Blood pressure measurement of a patient by tapping '+' button");
-    public static final String OVERLAY_NO_GLUCOSE = (UserType.isUserPatient() ? "You can connect your vitals device to measure your Blood Glucose" : "You can add Blood Glucose measurement of a patient by tapping '+' button");
-    public static final String OVERLAY_NO_HEAR_RATE = (UserType.isUserPatient() ? "You can connect your vitals device to measure your Heart Rate" : "You can add Hear Rate measurement of a patient by tapping '+' button");
-    public static final String OVERLAY_NO_TEMPERATURE = (UserType.isUserPatient() ? "You can connect your vitals device to measure your Body Temperature" : "You can add Body temperature measurement of a patient by tapping '+' button");
-    public static final String OVERLAY_NO_PULSE = (UserType.isUserPatient() ? "You can connect your vitals device to measure your Pulse" : "You can add pulse measurement of a patient by tapping '+' button");
-    public static final String OVERLAY_NO_VITALS = (UserType.isUserPatient() ? "You can connect your vitals device to measure your vitals by tapping the '+' button" : "You can add Vital measurement of a patient by tapping '+' button");
-    public static final String OVERLAY_NO_WEIGHT = (UserType.isUserPatient() ? "You can connect your vitals device to measure your Weight" : "You can add Weight measurement of a patient by tapping '+' button");
-    public static final String OVERLAY_NO_PRESCRIPTION = "You can add a Prescription by tapping the '+' button";
-    public static final String OVERLAY_NO_DOCUMENT = "You can add a Document by tapping the '+' button";
-    public static final String OVERLAY_NO_LAB_RECORD = "You can add a Lab record by tapping the '+' button";
-    public static final String OVERLAY_NO_SPECIALIST = "You can add a Specialist by tapping the '+' button";
-    public static final String OVERLAY_NO_RADIOLOGY = "You can add a Radiology by tapping the '+' button";
-    public static final String OVERLAY_NO_MISC = "You can add a Miscellaneous by tapping the '+' button";
+    public static final int OVERLAY_NO_MEDICAL_ASSISTANT = R.string.OVERLAY_NO_MEDICAL_ASSISTANT_MESSAGE;
+    public static final int OVERLAY_NO_DOCTOR = R.string.OVERLAY_NO_DOCTOR_MESSAGE;
+    public static final int OVERLAY_NO_PATIENT = R.string.OVERLAY_NO_PATIENT_MESSAGE;
+    public static final int OVERLAY_NO_APPOINTMENT = R.string.OVERLAY_NO_APPOINTMENT_MESSAGE;
+    public static final int OVERLAY_NO_BP = (UserType.isUserPatient() ? R.string.OVERLAY_NO_BP_MESSAGE : R.string.OVERLAY_NO_PATIENT_BP_MESSAGE);
+    public static final int OVERLAY_NO_GLUCOSE = (UserType.isUserPatient() ? R.string.OVERLAY_NO_GLUCOSE_MESSAGE : R.string.OVERLAY_NO_PATIENT_GLUCOSE_MESSAGE);
+    public static final int OVERLAY_NO_HEAR_RATE = (UserType.isUserPatient() ? R.string.OVERLAY_NO_HEAR_RATE_MESSAGE : R.string.OVERLAY_NO_PATIENT_HEAR_RATE_MESSAGE);
+    public static final int OVERLAY_NO_TEMPERATURE = (UserType.isUserPatient() ? R.string.OVERLAY_NO_TEMPERATURE_MESSAGE : R.string.OVERLAY_NO_PATIENT_TEMPERATURE_MESSAGE);
+    public static final int OVERLAY_NO_PULSE = (UserType.isUserPatient() ? R.string.OVERLAY_NO_PULSE_MESSAGE : R.string.OVERLAY_NO_PATIENT_PULSE_MESSAGE);
+    public static final int OVERLAY_NO_VITALS = (UserType.isUserPatient() ? R.string.OVERLAY_NO_VITALS_MESSAGE : R.string.OVERLAY_NO_PATIENT_VITALS_MESSAGE);
+    public static final int OVERLAY_NO_WEIGHT = (UserType.isUserPatient() ? R.string.OVERLAY_NO_WEIGHT_MESSAGE : R.string.OVERLAY_NO_PATIENT_WEIGHT_MESSAGE);
+    public static final int OVERLAY_NO_PRESCRIPTION = R.string.OVERLAY_NO_PRESCRIPTION_MESSAGE;
+    public static final int OVERLAY_NO_DOCUMENT = R.string.OVERLAY_NO_DOCUMENT_MESSAGE;
+    public static final int OVERLAY_NO_LAB_RECORD = R.string.OVERLAY_NO_LAB_RECORD_MESSAGE;
+    public static final int OVERLAY_NO_SPECIALIST = R.string.OVERLAY_NO_SPECIALIST_MESSAGE;
+    public static final int OVERLAY_NO_RADIOLOGY = R.string.OVERLAY_NO_RADIOLOGY_MESSAGE;
+    public static final int OVERLAY_NO_MISC = R.string.OVERLAY_NO_MISC_MESSAGE;
 }

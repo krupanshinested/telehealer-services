@@ -65,9 +65,9 @@ class HelpContent {
             case HELP_SCHEDULES:
                 return context.getString(R.string.help_content_schedules);
             case HELP_MONITORING:
-                if (UserType.isUserPatient()){
+                if (UserType.isUserPatient()) {
                     return context.getString(R.string.help_content_monitoring_patient);
-                }else {
+                } else {
                     return context.getString(R.string.help_content_monitoring_doctor);
                 }
         }

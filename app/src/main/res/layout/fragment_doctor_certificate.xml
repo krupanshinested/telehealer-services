@@ -52,8 +52,8 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:clickable="false"
-                    android:visibility="gone"
                     android:src="@drawable/add_drawable"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -63,8 +63,8 @@
 
         <TextView
             android:id="@+id/page_hint_tv"
-            android:layout_width="0dp"
             style="@style/text_sub_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center|top|left"
             android:paddingTop="@dimen/padding_default"

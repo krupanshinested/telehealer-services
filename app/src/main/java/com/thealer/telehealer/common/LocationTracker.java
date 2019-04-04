@@ -2,42 +2,28 @@ package com.thealer.telehealer.common;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.List;
@@ -133,12 +119,12 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
             public void onSuccess(Location location) {
                 if (locationTrackerInterface != null) {
                     if (location == null) {
-                        locationTrackerInterface.onLocationUpdated(null,null);
+                        locationTrackerInterface.onLocationUpdated(null, null);
                     } else {
                         Geocoder geocoder = new Geocoder(context);
                         try {
                             List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                            locationTrackerInterface.onLocationUpdated(addressList.get(0).getLocality(),addressList.get(0).getSubAdminArea());
+                            locationTrackerInterface.onLocationUpdated(addressList.get(0).getLocality(), addressList.get(0).getSubAdminArea());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -154,7 +140,7 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
         });
     }
 
-    public void stopLocationListener(){
+    public void stopLocationListener() {
         locationTrackerInterface = null;
     }
 }

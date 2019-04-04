@@ -108,7 +108,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private String view_type;
     private String doctorGuid = null, userGuid = null;
     private boolean isConnectionStatusChecked = false;
-    boolean checkStatus, isStatusChecked = false;
+    private boolean checkStatus, isUserDataFetched = false;
 
     @Override
     public void onAttach(Context context) {
@@ -128,7 +128,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 if (baseApiResponseModel != null) {
                     isConnectionStatusChecked = true;
                     connectionStatusApiResponseModel = (ConnectionStatusApiResponseModel) baseApiResponseModel;
-                    isStatusChecked = true;
                     if (connectionStatusApiResponseModel.getConnection_status() == null || !connectionStatusApiResponseModel.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
                         view_type = Constants.VIEW_CONNECTION;
                     } else {
@@ -359,8 +358,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 resultBean = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
 
-                Log.e(TAG, "initView: " + view_type + " " + resultBean.getRole());
-
                 updateView(resultBean);
 
                 if (checkStatus) {
@@ -399,44 +396,47 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     }
 
     private void getUserDetail(Set<String> guidSet) {
-        GetUserDetails
-                .getInstance(getActivity())
-                .getDetails(guidSet)
-                .getHashMapMutableLiveData().observe(this, new Observer<HashMap<String, CommonUserApiResponseModel>>() {
-            @Override
-            public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> userDetailHashMap) {
-                if (userDetailHashMap != null) {
+        if (!isUserDataFetched) {
+            GetUserDetails
+                    .getInstance(getActivity())
+                    .getDetails(guidSet)
+                    .getHashMapMutableLiveData().observe(this, new Observer<HashMap<String, CommonUserApiResponseModel>>() {
+                @Override
+                public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> userDetailHashMap) {
+                    if (userDetailHashMap != null) {
+                        isUserDataFetched = true;
 
-                    for (String guid : guidSet) {
-                        CommonUserApiResponseModel model = userDetailHashMap.get(guid);
-                        if (model != null) {
-                            switch (model.getRole()) {
-                                case Constants.ROLE_DOCTOR:
-                                    doctorModel = model;
-                                    if (UserType.isUserPatient() && resultBean == null) {
-                                        resultBean = doctorModel;
-                                    }
-                                    break;
-                                case Constants.ROLE_PATIENT:
-                                case Constants.ROLE_ASSISTANT:
-                                    resultBean = model;
-                                    break;
+                        for (String guid : guidSet) {
+                            CommonUserApiResponseModel model = userDetailHashMap.get(guid);
+                            if (model != null) {
+                                switch (model.getRole()) {
+                                    case Constants.ROLE_DOCTOR:
+                                        doctorModel = model;
+                                        if (UserType.isUserPatient() && resultBean == null) {
+                                            resultBean = doctorModel;
+                                        }
+                                        break;
+                                    case Constants.ROLE_PATIENT:
+                                    case Constants.ROLE_ASSISTANT:
+                                        resultBean = model;
+                                        break;
+                                }
                             }
                         }
-                    }
-                    if (checkStatus) {
-                        if (!UserType.isUserPatient()) {
-                            associationApiViewModel.getUserAssociationDetail(userGuid, doctorGuid, true);
+                        if (checkStatus) {
+                            if (!UserType.isUserPatient()) {
+                                associationApiViewModel.getUserAssociationDetail(userGuid, doctorGuid, true);
+                            } else {
+                                checkConnectionStatus();
+                            }
                         } else {
-                            checkConnectionStatus();
+                            updateView(resultBean);
+                            updateUserStatus(resultBean);
                         }
-                    } else {
-                        updateView(resultBean);
-                        updateUserStatus(resultBean);
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void checkConnectionStatus() {
@@ -494,7 +494,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             userNameTv.setText(resultBean.getUserDisplay_name());
             userDobTv.setText(resultBean.getDisplayInfo());
             Utils.setGenderImage(getActivity(), genderIv, resultBean.getGender());
-            Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
+            Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
 
             switch (resultBean.getRole()) {
                 case Constants.ROLE_PATIENT:
@@ -582,7 +582,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
                 viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);
                 viewPager.setAdapter(viewPagerAdapter);
-                userDetailTab.setupWithViewPager(viewPager);
                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int i, float v, int i1) {
@@ -596,6 +595,23 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
                     @Override
                     public void onPageScrollStateChanged(int i) {
+
+                    }
+                });
+                userDetailTab.setupWithViewPager(viewPager);
+                userDetailTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        viewPager.setCurrentItem(tab.getPosition());
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
 
                     }
                 });

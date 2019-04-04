@@ -1,5 +1,7 @@
 package com.thealer.telehealer.common.emptyState;
 
+import android.content.Context;
+
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.UserType;
 
@@ -8,251 +10,251 @@ import com.thealer.telehealer.common.UserType;
  */
 public class EmptyStateUtil {
 
-    public static String getTitle(String emptyType) {
+    public static String getTitle(Context context, String emptyType) {
         switch (emptyType) {
             case EmptyViewConstants.EMPTY_NO_NETWORK:
-                return "No Internet Connection";
+                return context.getString(R.string.EMPTY_NO_NETWORK_TITLE);
             case EmptyViewConstants.EMPTY_SERVER_DOWN:
-                return "Server Down";
+                return context.getString(R.string.EMPTY_SERVER_DOWN_TITLE);
             case EmptyViewConstants.EMPTY_VITALS:
             case EmptyViewConstants.EMPTY_VITALS_WITH_BTN:
-                return "No Vitals";
+                return context.getString(R.string.EMPTY_VITALS_TITLE);
             case EmptyViewConstants.EMPTY_DOCUMENTS:
             case EmptyViewConstants.EMPTY_DOCUMENTS_WITH_BTN:
-                return "No Documents";
+                return context.getString(R.string.EMPTY_DOCUMENTS_TITLE);
             case EmptyViewConstants.EMPTY_MISC:
             case EmptyViewConstants.EMPTY_MISC_WITH_BTN:
-                return "No Miscellaneous";
+                return context.getString(R.string.EMPTY_MISC_TITLE);
             case EmptyViewConstants.EMPTY_PRESCRIPTION:
             case EmptyViewConstants.EMPTY_PRESCRIPTION_WITH_BTN:
-                return "No Prescription";
+                return context.getString(R.string.EMPTY_PRESCRIPTION_TITLE);
             case EmptyViewConstants.EMPTY_HISTORY:
             case EmptyViewConstants.EMPTY_HISTORY_WITH_BTN:
-                return "No History";
+                return context.getString(R.string.EMPTY_HISTORY_TITLE);
             case EmptyViewConstants.EMPTY_APPOINTMENTS:
             case EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN:
-                return "No Appointment";
+                return context.getString(R.string.EMPTY_APPOINTMENTS_TITLE);
             case EmptyViewConstants.EMPTY_BP:
             case EmptyViewConstants.EMPTY_BP_WITH_BTN:
-                return "No Blood Pressure values";
+                return context.getString(R.string.EMPTY_BP_TITLE);
             case EmptyViewConstants.EMPTY_WEIGHT:
             case EmptyViewConstants.EMPTY_WEIGHT_WITH_BTN:
-                return "No Weight values";
+                return context.getString(R.string.EMPTY_WEIGHT_TITLE);
             case EmptyViewConstants.EMPTY_GULCOSE:
             case EmptyViewConstants.EMPTY_GULCOSE_WITH_BTN:
-                return "No Blood Glucose";
+                return context.getString(R.string.EMPTY_GULCOSE_TITLE);
             case EmptyViewConstants.EMPTY_TEMPERATURE:
             case EmptyViewConstants.EMPTY_TEMPERATURE_WITH_BTN:
-                return "No Body Temperature";
+                return context.getString(R.string.EMPTY_TEMPERATURE_TITLE);
             case EmptyViewConstants.EMPTY_PULSE:
             case EmptyViewConstants.EMPTY_PULSE_WITH_BTN:
-                return "No Pulse";
+                return context.getString(R.string.EMPTY_PULSE_TITLE);
             case EmptyViewConstants.EMPTY_CHATS:
-                return "No Chats";
+                return context.getString(R.string.EMPTY_CHATS_TITLE);
             case EmptyViewConstants.EMPTY_CALLS:
-                return "No Calls";
+                return context.getString(R.string.EMPTY_CALLS_TITLE);
             case EmptyViewConstants.EMPTY_NOTIFICATIONS:
-                return "No Notifications";
+                return context.getString(R.string.EMPTY_NOTIFICATIONS_TITLE);
             case EmptyViewConstants.EMPTY_LABS:
             case EmptyViewConstants.EMPTY_LABS_WITH_BTN:
-                return "No Labs";
+                return context.getString(R.string.EMPTY_LABS_TITLE);
             case EmptyViewConstants.EMPTY_SPECIALIST:
             case EmptyViewConstants.EMPTY_SPECIALIST_WITH_BTN:
-                return "No Specialists";
+                return context.getString(R.string.EMPTY_SPECIALIST_TITLE);
             case EmptyViewConstants.EMPTY_SEARCH:
-                return "No Search";
+                return context.getString(R.string.EMPTY_SEARCH_TITLE);
             case EmptyViewConstants.EMPTY_XRAY:
             case EmptyViewConstants.EMPTY_XRAY_WITH_BTN:
-                return "No XRays";
+                return context.getString(R.string.EMPTY_XRAY_TITLE);
             case EmptyViewConstants.EMPTY_FORMS:
             case EmptyViewConstants.EMPTY_FORMS_WITH_BTN:
-                return "No Forms";
+                return context.getString(R.string.EMPTY_FORMS_TITLE);
             case EmptyViewConstants.EMPTY_TRANSCRIPTS:
             case EmptyViewConstants.EMPTY_TRANSCRIPTS_WITH_BTN:
-                return "No Transcripts";
+                return context.getString(R.string.EMPTY_TRANSCRIPTS_TITLE);
             case EmptyViewConstants.EMPTY_PATIENT_HISTORY:
-                return "No History Records";
+                return context.getString(R.string.EMPTY_PATIENT_HISTORY_TITLE);
             case EmptyViewConstants.EMPTY_HEART_RATE:
             case EmptyViewConstants.EMPTY_HEART_RATE_WITH_BTN:
-                return "No Heart Rate";
+                return context.getString(R.string.EMPTY_HEART_RATE_TITLE);
             case EmptyViewConstants.EMPTY_PAYMENTS:
-                return "No Payments/Billing";
+                return context.getString(R.string.EMPTY_PAYMENTS_TITLE);
             case EmptyViewConstants.EMPTY_CARDS:
-                return "No Cards";
+                return context.getString(R.string.EMPTY_CARDS_TITLE);
             case EmptyViewConstants.EMPTY_PATIENT_SEARCH:
             case EmptyViewConstants.EMPTY_PATIENT:
             case EmptyViewConstants.EMPTY_PATIENT_WITH_BTN:
-                return "No Patients";
+                return context.getString(R.string.EMPTY_PATIENT_TITLE);
             case EmptyViewConstants.EMPTY_DOCTOR:
             case EmptyViewConstants.EMPTY_DOCTOR_WITH_BTN:
-                return "No Doctors";
-            case EmptyViewConstants.EMPTY_CALL_LOGS:
-                return "No Calls";
-            case EmptyViewConstants.EMPTY_VITAL_LOGS:
-                return "No Vitals";
+                return context.getString(R.string.EMPTY_DOCTOR_TITLE);
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT:
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
-                return "No Medical Assistant";
+                return context.getString(R.string.EMPTY_MEDICAL_ASSISTANT_TITLE);
+            case EmptyViewConstants.EMPTY_CALL_LOGS:
+                return context.getString(R.string.EMPTY_CALL_LOGS_TITLE);
+            case EmptyViewConstants.EMPTY_VITAL_LOGS:
+                return context.getString(R.string.EMPTY_VITAL_LOGS_TITLE);
             case EmptyViewConstants.EMPTY_DIET:
-                return "No Diet";
+                return context.getString(R.string.EMPTY_DIET_TITLE);
             case EmptyViewConstants.EMPTY_DIET_LAST_WEEK:
-                return "No Diet Measurements for last week";
+                return context.getString(R.string.EMPTY_DIET_LAST_WEEK);
             case EmptyViewConstants.EMPTY_DIET_FROM_TO:
-                return "No Diet Measurement from %s to %s";
+                return context.getString(R.string.EMPTY_DIET_FROM_TO);
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH:
-                return "No Vital Measurements";
+                return context.getString(R.string.EMPTY_DOCTOR_VITAL_SEARCH_TITLE);
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK:
-                return "No Vital Measurements for last week";
+                return context.getString(R.string.EMPTY_DOCTOR_VITAL_LAST_WEEK_TITLE);
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_TWO_WEEK:
-                return "No Vital Measurements for last two week";
+                return context.getString(R.string.EMPTY_DOCTOR_VITAL_TWO_WEEK_TITLE);
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH:
-                return "No Vital Measurements for last month";
+                return context.getString(R.string.EMPTY_DOCTOR_VITAL_MONTH_TITLE);
             case EmptyViewConstants.EMPTY_FOOD_ITEMS:
-                return "No Food items";
+                return context.getString(R.string.EMPTY_FOOD_ITEMS_TITLE);
             case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
             case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
-                return "No Pending Invites";
+                return context.getString(R.string.EMPTY_PENDING_INVITES_TITLE);
             case EmptyViewConstants.EMPTY_BP_TRACK_VALUE:
-                return "No BP values";
+                return context.getString(R.string.EMPTY_BP_TRACK_VALUE_TITLE);
             case EmptyViewConstants.EMPTY_STETHOSCOPE:
             case EmptyViewConstants.EMPTY_STETHOSCOPE_WITH_BTN:
-                return "No Stethoscope";
+                return context.getString(R.string.EMPTY_STETHOSCOPE_TITLE);
             case EmptyViewConstants.EMPTY_VITAL_FROM_TO:
-                return "No Vital Measurement from %s to %s";
+                return context.getString(R.string.EMPTY_VITAL_FROM_TO);
             default:
                 return null;
         }
     }
 
-    public static String getMessage(String emptyType) {
+    public static String getMessage(Context context, String emptyType) {
         switch (emptyType) {
             case EmptyViewConstants.EMPTY_NO_NETWORK:
-                return "Connect your device with Internet inorder to access this info.";
+                return context.getString(R.string.EMPTY_NO_NETWORK_MESSAGE);
             case EmptyViewConstants.EMPTY_SERVER_DOWN:
-                return "Sorry for inconvience,our server is down for while.";
+                return context.getString(R.string.EMPTY_SERVER_DOWN_MESSAGE);
             case EmptyViewConstants.EMPTY_VITALS:
-                return "Vitals measurement will eventually show up here";
+                return context.getString(R.string.EMPTY_VITALS_MESSAGE);
             case EmptyViewConstants.EMPTY_VITALS_WITH_BTN:
-                return "Connect your vitals device to measure your vitals by tapping the '+' button";
+                return context.getString(R.string.EMPTY_VITALS_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_DOCUMENTS:
-                return "Documents will eventually show up here";
+                return context.getString(R.string.EMPTY_DOCUMENTS_MESSAGE);
             case EmptyViewConstants.EMPTY_DOCUMENTS_WITH_BTN:
-                return "Add a Document by tapping the '+' button";
+                return context.getString(R.string.EMPTY_DOCUMENTS_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_MISC:
-                return "Miscellaneous will eventually show up here";
+                return context.getString(R.string.EMPTY_MISC_MESSAGE);
             case EmptyViewConstants.EMPTY_MISC_WITH_BTN:
-                return "Add a Miscellaneous by tapping the '+' button";
+                return context.getString(R.string.EMPTY_MISC_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_PRESCRIPTION:
-                return "Prescription orders will eventually show up here";
+                return context.getString(R.string.EMPTY_PRESCRIPTION_MESSAGE);
             case EmptyViewConstants.EMPTY_PRESCRIPTION_WITH_BTN:
-                return "Add a Prescription by tapping the '+' button";
+                return context.getString(R.string.EMPTY_PRESCRIPTION_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_HISTORY:
             case EmptyViewConstants.EMPTY_HISTORY_WITH_BTN:
-                return "Inbound and Outbound calls and messages will eventually show up here";
+                return context.getString(R.string.EMPTY_HISTORY_MESSAGE);
             case EmptyViewConstants.EMPTY_APPOINTMENTS:
-                return "Appointments will eventually show up here";
+                return context.getString(R.string.EMPTY_APPOINTMENTS_MESSAGE);
             case EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN:
-                return "Add an appointment by tapping the '+' button";
+                return context.getString(R.string.EMPTY_APPOINTMENTS_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_BP:
-                return "BP results will eventually show up here";
+                return context.getString(R.string.EMPTY_BP_MESSAGE);
             case EmptyViewConstants.EMPTY_BP_WITH_BTN:
-                return "Connect your vitals device to measure your BP";
+                return context.getString(R.string.EMPTY_BP_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_WEIGHT:
-                return "Weight results will eventually show up here";
+                return context.getString(R.string.EMPTY_WEIGHT_MESSAGE);
             case EmptyViewConstants.EMPTY_WEIGHT_WITH_BTN:
-                return "Connect your vitals device to measure your Weight";
+                return context.getString(R.string.EMPTY_WEIGHT_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_GULCOSE:
-                return "Blood Glucose results will eventually show up here";
+                return context.getString(R.string.EMPTY_GULCOSE_MESSAGE);
             case EmptyViewConstants.EMPTY_GULCOSE_WITH_BTN:
-                return "Connect your vitals device to measure your Blood Glucose";
+                return context.getString(R.string.EMPTY_GULCOSE_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_TEMPERATURE:
-                return "Body Temperature results will eventually show up here";
+                return context.getString(R.string.EMPTY_TEMPERATURE_MESSAGE);
             case EmptyViewConstants.EMPTY_TEMPERATURE_WITH_BTN:
-                return "Connect your vitals device to measure your Body Temperature";
+                return context.getString(R.string.EMPTY_TEMPERATURE_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_PULSE:
-                return "Pulse results will eventually show up here";
+                return context.getString(R.string.EMPTY_PULSE_MESSAGE);
             case EmptyViewConstants.EMPTY_PULSE_WITH_BTN:
-                return "Connect your vitals device to measure your Pulse";
+                return context.getString(R.string.EMPTY_PULSE_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_CHATS:
-                return "Messages will eventually show up here";
+                return context.getString(R.string.EMPTY_CHATS_MESSAGE);
             case EmptyViewConstants.EMPTY_CALLS:
-                return "Inbound and Outbound calls will eventually show up here";
+                return context.getString(R.string.EMPTY_CALLS_MESSAGE);
             case EmptyViewConstants.EMPTY_NOTIFICATIONS:
-                return "Notifications and requests will eventually show up here";
+                return context.getString(R.string.EMPTY_NOTIFICATIONS_MESSAGE);
             case EmptyViewConstants.EMPTY_LABS:
-                return "Lab orders will eventually show up here";
+                return context.getString(R.string.EMPTY_LABS_MESSAGE);
             case EmptyViewConstants.EMPTY_LABS_WITH_BTN:
-                return "You can add a Lab record by tapping the '+' button";
+                return context.getString(R.string.EMPTY_LABS_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_SPECIALIST:
-                return "Specialist referrals will eventually show up here";
+                return context.getString(R.string.EMPTY_SPECIALIST_MESSAGE);
             case EmptyViewConstants.EMPTY_SPECIALIST_WITH_BTN:
-                return "Add a Specialist by tapping the '+' button";
-            case EmptyViewConstants.EMPTY_PATIENT:
-                return "Patient referrals will eventually show up here";
-            case EmptyViewConstants.EMPTY_PATIENT_WITH_BTN:
-                return "Add a Patient by tapping the '+' button";
-            case EmptyViewConstants.EMPTY_DOCTOR:
-                return "Doctor referrals will eventually show up here";
-            case EmptyViewConstants.EMPTY_DOCTOR_WITH_BTN:
-                return "Add a Doctor by tapping the '+' button";
-            case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT:
-                return "Medical Assistant referrals will eventually show up here";
-            case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
-                return "Add a Medical Assistant by tapping the '+' button";
+                return context.getString(R.string.EMPTY_SPECIALIST_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_SEARCH:
-                return "No search result found";
+                return context.getString(R.string.EMPTY_SEARCH_MESSAGE);
             case EmptyViewConstants.EMPTY_XRAY:
-                return "XRays will eventually show up here";
+                return context.getString(R.string.EMPTY_XRAY_MESSAGE);
             case EmptyViewConstants.EMPTY_XRAY_WITH_BTN:
-                return "Add a XRay by tapping the '+' button";
+                return context.getString(R.string.EMPTY_XRAY_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_FORMS:
-                return "Forms will eventually show up here";
+                return context.getString(R.string.EMPTY_FORMS_MESSAGE);
             case EmptyViewConstants.EMPTY_FORMS_WITH_BTN:
-                return "Add a Forms by tapping the '+' button";
+                return context.getString(R.string.EMPTY_FORMS_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_TRANSCRIPTS:
             case EmptyViewConstants.EMPTY_TRANSCRIPTS_WITH_BTN:
-                return "Transcripts will eventually show up here";
+                return context.getString(R.string.EMPTY_TRANSCRIPTS_MESSAGE);
             case EmptyViewConstants.EMPTY_PATIENT_HISTORY:
-                return "Patient History will eventually show up here";
+                return context.getString(R.string.EMPTY_PATIENT_HISTORY_MESSAGE);
             case EmptyViewConstants.EMPTY_HEART_RATE:
-                return "Heart Rate results will eventually show up here";
+                return context.getString(R.string.EMPTY_HEART_RATE_MESSAGE);
             case EmptyViewConstants.EMPTY_HEART_RATE_WITH_BTN:
-                return "Connect your vitals device to measure your Heart Rate";
+                return context.getString(R.string.EMPTY_HEART_RATE_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_PAYMENTS:
-                return "Payment/Billing information will eventually show up here";
+                return context.getString(R.string.EMPTY_PAYMENTS_MESSAGE);
             case EmptyViewConstants.EMPTY_CARDS:
-                return "Card Information will eventually show up here";
+                return context.getString(R.string.EMPTY_CARDS_MESSAGE);
+            case EmptyViewConstants.EMPTY_PATIENT:
+                return context.getString(R.string.EMPTY_PATIENT_MESSAGE);
+            case EmptyViewConstants.EMPTY_PATIENT_WITH_BTN:
+                return context.getString(R.string.EMPTY_PATIENT_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_PATIENT_SEARCH:
-                return "No Patient are available on searched name. Try to search with some other name";
+                return context.getString(R.string.EMPTY_PATIENT_SEARCH_MESSAGE);
+            case EmptyViewConstants.EMPTY_DOCTOR:
+                return context.getString(R.string.EMPTY_DOCTOR_MESSAGE);
+            case EmptyViewConstants.EMPTY_DOCTOR_WITH_BTN:
+                return context.getString(R.string.EMPTY_DOCTOR_WITH_BTN_MESSAGE);
+            case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT:
+                return context.getString(R.string.EMPTY_MEDICAL_ASSISTANT_MESSAGE);
+            case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
+                return context.getString(R.string.EMPTY_MEDICAL_ASSISTANT_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_CALL_LOGS:
-                return "No calls were made on selected month";
+                return context.getString(R.string.EMPTY_CALL_LOGS_MESSAGE);
             case EmptyViewConstants.EMPTY_VITAL_LOGS:
-                return "No vitals were visited on selected month";
+                return context.getString(R.string.EMPTY_VITAL_LOGS_MESSAGE);
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH:
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK:
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_TWO_WEEK:
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH:
-                return "Patients who measured their vitals will eventually show up here";
+                return context.getString(R.string.EMPTY_DOCTOR_VITAL_SEARCH_MESSAGE);
             case EmptyViewConstants.EMPTY_DIET:
             case EmptyViewConstants.EMPTY_DIET_LAST_WEEK:
             case EmptyViewConstants.EMPTY_DIET_FROM_TO:
-                return "Patient's diet will eventually show up here";
+                return context.getString(R.string.EMPTY_DIET_MESSAGE);
             case EmptyViewConstants.EMPTY_FOOD_ITEMS:
-                return "Type your food item and press search from your keyboard";
+                return context.getString(R.string.EMPTY_FOOD_ITEMS_MESSAGE);
             case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
-                return "Invites which waiting for your action will eventually show up here";
+                return context.getString(R.string.EMPTY_RECEIVED_PENDING_INVITES_MESSAGE);
             case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
-                return "Invites which you created and waiting for other person's action will eventually show up here";
+                return context.getString(R.string.EMPTY_SENT_PENDING_INVITES_MESSAGE);
             case EmptyViewConstants.EMPTY_BP_TRACK_VALUE:
                 if (UserType.isUserPatient()) {
-                    return "No prior readings available to upload. Please measure your vitals on the device before attempting to sync and upload.";
+                    return context.getString(R.string.EMPTY_BP_TRACK_VALUE_MESSAGE);
                 } else {
                     return "";
                 }
             case EmptyViewConstants.EMPTY_STETHOSCOPE:
-                return "Stethoscope results will eventually show up here";
+                return context.getString(R.string.EMPTY_STETHOSCOPE_MESSAGE);
             case EmptyViewConstants.EMPTY_STETHOSCOPE_WITH_BTN:
-                return "Connect your stethoscope device to measure your vitals";
+                return context.getString(R.string.EMPTY_STETHOSCOPE_WITH_BTN_MESSAGE);
             default:
                 return null;
         }

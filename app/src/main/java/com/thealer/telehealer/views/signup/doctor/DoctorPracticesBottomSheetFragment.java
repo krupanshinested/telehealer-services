@@ -110,9 +110,9 @@ public class DoctorPracticesBottomSheetFragment extends BaseBottomSheetDialogFra
                 } else if (stateEt.getText().toString().isEmpty()) {
                     stateEt.requestFocus();
                     stateTil.setError(getString(R.string.enter_state));
-                } else if (!Utils.isValidState(stateEt.getText().toString())){
+                } else if (!Utils.isValidState(stateEt.getText().toString())) {
                     stateEt.requestFocus();
-                }else if (zipEt.getText().toString().isEmpty()) {
+                } else if (zipEt.getText().toString().isEmpty()) {
                     zipEt.requestFocus();
                     zipTil.setError(getString(R.string.enter_zip_code));
                 } else {
@@ -175,9 +175,9 @@ public class DoctorPracticesBottomSheetFragment extends BaseBottomSheetDialogFra
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (Utils.isValidState(s.toString())){
+                if (Utils.isValidState(s.toString())) {
                     stateTil.setErrorEnabled(false);
-                }else {
+                } else {
                     stateTil.setError(getString(R.string.enter_valid_state));
                 }
             }

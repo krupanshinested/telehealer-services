@@ -132,7 +132,7 @@ public class RecentsSelectionAdapter extends RecyclerView.Adapter<RecentsSelecti
             avatar = resultBeanList.get(i).getPatient().getUser_avatar();
         }
 
-        Utils.setImageWithGlide(context, viewHolder.userAvatarCiv, avatar, context.getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(context, viewHolder.userAvatarCiv, avatar, context.getDrawable(R.drawable.profile_placeholder), true, true);
         viewHolder.userNameTv.setText(name);
         viewHolder.timeTv.setText(Utils.getFormatedTime(resultBeanList.get(i).getUpdated_at()));
 

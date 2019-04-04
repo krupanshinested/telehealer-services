@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 
@@ -20,7 +19,7 @@ public class BTStateChangedBroadcastReceiver extends BroadcastReceiver {
         int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
                 -1);
 
-        switch(state){
+        switch (state) {
             case BluetoothAdapter.STATE_CONNECTED:
                 break;
             case BluetoothAdapter.STATE_CONNECTING:

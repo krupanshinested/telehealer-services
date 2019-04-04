@@ -48,11 +48,11 @@ public class MedicalAssistantCertificatePreviewFragment extends BaseFragment imp
     private void initView(View view) {
         certificatePreviewIv = (ImageView) view.findViewById(R.id.certificate_preview_iv);
 
-        if (getArguments() != null){
+        if (getArguments() != null) {
             certificatePath = getArguments().getString(getString(R.string.image_path));
         }
 
-        if (certificatePath != null){
+        if (certificatePath != null) {
             bitmap = getBitmpaFromPath(certificatePath);
             if (bitmap != null)
                 certificatePreviewIv.setImageBitmap(bitmap);

@@ -5,6 +5,7 @@ package com.thealer.telehealer.views.common.CustomDialogs;
  */
 
 public interface PickerListener {
-    public void didSelectedItem(int position);
-    public void didCancelled();
+    void didSelectedItem(int position);
+
+    void didCancelled();
 }

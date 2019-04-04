@@ -104,8 +104,8 @@
                 android:background="@color/card_view_background"
                 android:gravity="center"
                 android:padding="8dp"
-                android:textSize="12sp"
-                android:text="@string/fine_transcript_message" />
+                android:text="@string/fine_transcript_message"
+                android:textSize="12sp" />
 
             <com.thealer.telehealer.common.CustomRecyclerView
                 android:id="@+id/transcript_rv"

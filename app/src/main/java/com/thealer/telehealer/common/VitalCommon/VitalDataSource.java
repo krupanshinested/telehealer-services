@@ -29,10 +29,12 @@ public class VitalDataSource extends BaseAdapterObjectModel {
 
     @Override
     public String getAdapterTitle() {
-        return  measurementType;
+        return measurementType;
     }
 
     @Override
-    public Object getComparableObject() { return measurementType;  }
+    public Object getComparableObject() {
+        return measurementType;
+    }
 
 }

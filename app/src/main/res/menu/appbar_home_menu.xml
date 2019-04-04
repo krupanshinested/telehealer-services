@@ -11,26 +11,26 @@
     <item
         android:id="@+id/menu_help"
         android:icon="@drawable/ic_help_outline"
-        android:title="help"
+        android:title="@string/help"
         android:visible="true"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_event"
         android:icon="@drawable/ic_schedules"
         android:iconTint="@color/colorWhite"
-        android:title="events"
+        android:title="@string/events"
         android:visible="false"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_schedules"
         android:icon="@drawable/ic_schedule_list"
-        android:title="schedules"
+        android:title="@string/schedules"
         android:visible="false"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_notification"
-        android:title="notification"
+        android:title="@string/notification"
         app:actionLayout="@layout/view_home_notification_icon"
         app:showAsAction="always" />
 

@@ -5,33 +5,33 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/status_lay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/status_lay"
-        android:orientation="horizontal"
         android:layout_margin="20dp"
+        android:orientation="horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <com.thealer.telehealer.common.CustomButton
+            android:id="@+id/status_view"
             android:layout_width="8dp"
             android:layout_height="8dp"
-            app:corner_radius="4dp"
-            android:visibility="gone"
-            android:id="@+id/status_view"
             android:layout_gravity="center_vertical"
-            />
+            android:visibility="gone"
+            app:corner_radius="4dp" />
+
         <TextView
             android:id="@+id/status_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="22sp"
-            android:visibility="gone"
-            android:text="ffkfkfkfkf"
             android:layout_marginLeft="5dp"
+            android:gravity="center"
+            android:text="ffkfkfkfkf"
             android:textColor="@color/colorBlack"
-            />
+            android:textSize="22sp"
+            android:visibility="gone" />
 
     </LinearLayout>
 
@@ -52,10 +52,10 @@
             android:orientation="horizontal"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/retry_button"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/retry_button">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/phone_view"
@@ -71,8 +71,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:src="@drawable/path" />
 
@@ -92,11 +92,11 @@
             android:layout_height="wrap_content"
             android:text="@string/retry"
             app:app_gradient="true"
-             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:text_color="@color/colorWhite" />
-        
+
     </android.support.constraint.ConstraintLayout>
 
 

@@ -734,6 +734,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             }
             if (visitDetailViewModel.isInstructionUpdated()) {
                 visitRequestModel.setInstructions(visitDetailViewModel.getInstruction());
+                visitRequestModel.setDiagnosis(visitDetailViewModel.getDiagnosis());
             }
 
             if (visitDetailViewModel.isTranscriptUpdated() || visitDetailViewModel.isTranscriptEdited()) {

@@ -101,11 +101,11 @@ public class OrdersCustomView extends ConstraintLayout {
         arrowIv.setVisibility(arrow_visible ? VISIBLE : GONE);
     }
 
-    public String getTitleText(){
+    public String getTitleText() {
         return titleTv.getText().toString();
     }
 
-    public String getSubTitleText(){
+    public String getSubTitleText() {
         return subtitleTv.getText().toString();
     }
 }

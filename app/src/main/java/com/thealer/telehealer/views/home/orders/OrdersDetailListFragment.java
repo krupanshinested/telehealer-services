@@ -717,7 +717,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             case R.id.add_fab:
                 addFab.setClickable(false);
                 Bundle bundle = getArguments();
-                if (UserType.isUserDoctor() && UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature() == null) {
+                if (UserType.isUserDoctor() && UserDetailPreferenceManager.getSignature() == null) {
                     if (bundle == null) {
                         bundle = new Bundle();
                     }

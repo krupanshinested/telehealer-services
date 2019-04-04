@@ -53,7 +53,6 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
-    private TextView cancelTv;
     private TextView toolbarTitle;
     private TextView nextTv;
     private ImageView closeIv;
@@ -163,7 +162,6 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
         appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
-        cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         nextTv = (TextView) view.findViewById(R.id.next_tv);
         closeIv = (ImageView) view.findViewById(R.id.close_iv);
@@ -172,7 +170,6 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
         toolbarTitle.setText(getString(R.string.orders));
 
         backIv.setOnClickListener(this);
-        cancelTv.setOnClickListener(this);
         nextTv.setOnClickListener(this);
 
         ordersListCrv.setEmptyState(EmptyViewConstants.EMPTY_PRESCRIPTION);
@@ -318,12 +315,10 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
 
         if (prescriptionList.isEmpty() && referralList.isEmpty() && labList.isEmpty() && miscellaneousList.isEmpty() && radiologyList.isEmpty())
             isEnabled = false;
-
-        nextTv.setEnabled(isEnabled);
         if (isEnabled) {
-            nextTv.setAlpha(1);
+            nextTv.setVisibility(View.VISIBLE);
         } else {
-            nextTv.setAlpha(0.5f);
+            nextTv.setVisibility(View.GONE);
         }
     }
 
@@ -390,13 +385,9 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
                 nextTv.setText(getString(R.string.add_visit));
                 nextTv.setEnabled(true);
                 nextTv.setAlpha(1);
-                backIv.setVisibility(View.VISIBLE);
-                cancelTv.setVisibility(View.GONE);
                 break;
             case Constants.EDIT_MODE:
                 nextTv.setText(getString(R.string.Save));
-                backIv.setVisibility(View.GONE);
-                cancelTv.setVisibility(View.VISIBLE);
                 break;
         }
     }

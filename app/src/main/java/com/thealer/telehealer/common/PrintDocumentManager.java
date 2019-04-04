@@ -8,7 +8,6 @@ import android.print.PageRange;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintDocumentInfo;
-import android.print.PrintJob;
 import android.print.PrintManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;

@@ -41,7 +41,7 @@ public class LabTestListAdapter extends RecyclerView.Adapter<LabTestListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.titleOcv.setLabelTv("Test "+(i+1));
+        viewHolder.titleOcv.setLabelTv(activity.getString(R.string.test) + " " + (i + 1));
         viewHolder.titleOcv.setTitleTv(labsBeanList.get(i).getTest_description());
         viewHolder.statSwitch.setChecked(labsBeanList.get(i).isStat());
 

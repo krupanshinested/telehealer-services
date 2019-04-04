@@ -65,7 +65,7 @@ public class VisitDetailViewModel extends ViewModel {
 
     private Map<String, List<DietApiResponseModel>> dietListModelMap = new HashMap<>();
 
-    private String instruction;
+    private String instruction, diagnosis;
     private boolean isInstructionUpdated;
     private boolean isTranscriptUpdated;
 
@@ -97,6 +97,14 @@ public class VisitDetailViewModel extends ViewModel {
 
     public void setInstruction(String instruction) {
         this.instruction = instruction;
+    }
+
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
     }
 
     public boolean isInstructionUpdated() {

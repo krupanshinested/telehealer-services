@@ -23,7 +23,7 @@ public class SelectedIcdCodeListAdapter extends RecyclerView.Adapter<SelectedIcd
 
     private FragmentActivity fragmentActivity;
     private IcdCodesDataViewModel icdCodesDataViewModel;
-    private List<String > selectedIcdCodesList = new ArrayList<>();
+    private List<String> selectedIcdCodesList = new ArrayList<>();
 
     public SelectedIcdCodeListAdapter(FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
@@ -38,7 +38,7 @@ public class SelectedIcdCodeListAdapter extends RecyclerView.Adapter<SelectedIcd
                 new Observer<List<String>>() {
                     @Override
                     public void onChanged(@Nullable List<String> list) {
-                        if (list != null){
+                        if (list != null) {
                             selectedIcdCodesList = list;
                             notifyDataSetChanged();
                         }

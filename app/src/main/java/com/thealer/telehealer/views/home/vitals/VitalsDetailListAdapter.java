@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.StethBean;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
@@ -131,18 +129,18 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
         VitalsApiResponseModel vitalsApiResponseModel = getChild(groupPosition, childPosition);
 
         timeTv.setText(Utils.getFormatedTime(childList.get(getGroup(groupPosition)).get(childPosition).getCreated_at()));
-        descriptionTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getCapturedBy());
+        descriptionTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getCapturedBy(context));
 
         if (!vitalsApiResponseModel.getType().equals(SupportedMeasurementType.stethoscope)) {
             valueTv.setText(childList.get(getGroup(groupPosition)).get(childPosition).getValue().toString());
             unitTv.setText(SupportedMeasurementType.getVitalUnit(childList.get(headerList.get(groupPosition)).get(childPosition).getType()));
+            itemCv.setCardElevation(0);
+            itemCv.setRadius(0);
         } else {
-
-            Log.e("aswin", "getChildView: " + new Gson().toJson(vitalsApiResponseModel));
 
             StethBean stethBean = vitalsApiResponseModel.getStethBean();
 
-            unitTv.setText(stethBean.getSegments().size() + " - Segment");
+            unitTv.setText(stethBean.getSegments().size() + " - " + context.getString(R.string.segment));
 
             vitalIv.setImageDrawable(context.getDrawable(vitalsApiResponseModel.getStethIoImage()));
             vitalIv.setVisibility(View.VISIBLE);

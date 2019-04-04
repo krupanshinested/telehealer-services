@@ -140,6 +140,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     private String[] specialityArray;
     private int currentGalleryCallingId;
     private TextView nextTv;
+    private boolean isDataUpdated = false;
 
 
     @Override
@@ -373,7 +374,9 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
 
                 if (currentDisplayType == Constants.CREATE_MODE) {
                     if (doctorDetailModel != null) {
-                        if (!isCreateManually) {
+                        if (isDataUpdated) {
+                            setData();
+                        } else if (!isCreateManually) {
                             updateUserRequestModel();
                         } else {
                             createUserRequestModel.getUser_data().setFirst_name(searchKey);
@@ -388,7 +391,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
             if (whoAmi == null) {
                 whoAmIApiViewModel.checkWhoAmI();
             } else {
-                if (createUserRequestModel.getUser_data().getFirst_name() != null) {
+                if (createUserRequestModel != null && createUserRequestModel.getUser_data().getFirst_name() != null) {
                     updateUI(createUserRequestModel);
                 } else {
                     updateUI(whoAmi);
@@ -552,6 +555,8 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
 
         checkFields();
 
+        isDataUpdated = true;
+
     }
 
     public void checkFields() {
@@ -686,12 +691,12 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         if (doctorImagePath != null && !doctorImagePath.isEmpty()) {
             profileCiv.setImageBitmap(getBitmpaFromPath(doctorImagePath));
         } else if (createUserRequestModel != null && createUserRequestModel.getUser_data().getUser_avatar() != null && !createUserRequestModel.getUser_data().getUser_avatar().isEmpty()) {
-            Utils.setImageWithGlide(getActivity().getApplicationContext(), profileCiv, createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true);
+            Utils.setImageWithGlide(getActivity().getApplicationContext(), profileCiv, createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true, true);
         } else if (createUserRequestModel != null &&
                 createUserRequestModel.getUser_detail() != null &&
                 createUserRequestModel.getUser_detail().getData().getImage_url() != null &&
                 !createUserRequestModel.getUser_detail().getData().getImage_url().isEmpty()) {
-            Utils.setImageWithGlide(getActivity().getApplicationContext(), profileCiv, createUserRequestModel.getUser_detail().getData().getImage_url(), getContext().getDrawable(R.drawable.profile_placeholder), false);
+            Utils.setImageWithGlide(getActivity().getApplicationContext(), profileCiv, createUserRequestModel.getUser_detail().getData().getImage_url(), getContext().getDrawable(R.drawable.profile_placeholder), false, true);
         }
     }
 
@@ -933,7 +938,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         if (createUserRequestModel != null && createUserRequestModel.getDoctor_driving_license_path() != null && !createUserRequestModel.getDoctor_driving_license_path().isEmpty()) {
             driverLicenseIv.setImageBitmap(getBitmpaFromPath(createUserRequestModel.getDoctor_driving_license_path()));
         } else if (createUserRequestModel != null && createUserRequestModel.getUser_detail().getData().getDriver_license() != null) {
-            Utils.setImageWithGlide(getActivity().getApplicationContext(), driverLicenseIv, createUserRequestModel.getUser_detail().getData().getDriver_license(), getContext().getDrawable(R.drawable.placeholder_certificate), true);
+            Utils.setImageWithGlide(getActivity().getApplicationContext(), driverLicenseIv, createUserRequestModel.getUser_detail().getData().getDriver_license(), getContext().getDrawable(R.drawable.placeholder_certificate), true, true);
         }
     }
 
@@ -942,7 +947,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
             certificateIv.setImageBitmap(getBitmpaFromPath(createUserRequestModel.getDoctor_certificate_path()));
             certificateIv.setScaleType(ImageView.ScaleType.CENTER_CROP);
         } else if (createUserRequestModel != null && createUserRequestModel.getUser_detail().getData().getDiploma_certificate() != null) {
-            Utils.setImageWithGlide(getActivity().getApplicationContext(), certificateIv, createUserRequestModel.getUser_detail().getData().getDiploma_certificate(), getContext().getDrawable(R.drawable.placeholder_certificate), true);
+            Utils.setImageWithGlide(getActivity().getApplicationContext(), certificateIv, createUserRequestModel.getUser_detail().getData().getDiploma_certificate(), getContext().getDrawable(R.drawable.placeholder_certificate), true, true);
             certificateIv.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
     }
@@ -998,7 +1003,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         createUserRequestModel.setUser_avatar_path(doctorImagePath);
         createUserRequestModel.getUser_data().setFirst_name(firstnameEt.getText().toString());
         createUserRequestModel.getUser_data().setLast_name(lastnameEt.getText().toString());
-        createUserRequestModel.getUser_data().setGender(genderSp.getSelectedItem().toString());
+        createUserRequestModel.getUser_data().setGender(Constants.genderList.get(genderSp.getSelectedItemPosition()));
 
         createUserRequestModel.getUser_detail().getData().setTitle(titleEt.getText().toString());
         createUserRequestModel.getUser_detail().getData().setNpi(npiEt.getText().toString());

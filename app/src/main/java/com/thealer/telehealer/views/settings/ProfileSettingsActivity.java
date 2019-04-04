@@ -15,7 +15,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -364,7 +363,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             genderIv.setVisibility(View.GONE);
         }
         updateUserDetails();
-        Utils.setImageWithGlide(getApplicationContext(), userProfileIv, UserDetailPreferenceManager.getUser_avatar(), ProfileSettingsActivity.this.getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getApplicationContext(), userProfileIv, UserDetailPreferenceManager.getUser_avatar(), ProfileSettingsActivity.this.getDrawable(R.drawable.profile_placeholder), true, true);
     }
 
     public void updateUserDetails() {

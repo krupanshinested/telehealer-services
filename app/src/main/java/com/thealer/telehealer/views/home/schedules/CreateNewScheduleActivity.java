@@ -49,12 +49,12 @@ public class CreateNewScheduleActivity extends BaseActivity implements ChangeTit
 
         backIv.setOnClickListener(this);
 
-        if (getIntent() != null && getIntent().getExtras() != null){
+        if (getIntent() != null && getIntent().getExtras() != null) {
             bundle = getIntent().getExtras();
         }
-        if (UserType.isUserPatient()){
+        if (UserType.isUserPatient()) {
             showPatientDisclaimer();
-        }else {
+        } else {
             showCreateSchedule();
         }
     }
@@ -128,7 +128,7 @@ public class CreateNewScheduleActivity extends BaseActivity implements ChangeTit
 
     @Override
     public void onSuccessViewCompletion(boolean success) {
-        if (success){
+        if (success) {
             finish();
         }
     }

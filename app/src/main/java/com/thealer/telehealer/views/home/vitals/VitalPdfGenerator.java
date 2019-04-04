@@ -159,9 +159,14 @@ public class VitalPdfGenerator {
 
     private Context context;
     private boolean isVitalReport;
+    String createdAt, value, capturedBy, mode, category = "";
 
     public VitalPdfGenerator(Context context) {
         this.context = context;
+        createdAt = context.getString(R.string.date).toUpperCase();
+        value = context.getString(R.string.vitals).toUpperCase();
+        capturedBy = context.getString(R.string.done_by).toUpperCase();
+        mode = context.getString(R.string.mode).toUpperCase();
     }
 
 
@@ -202,14 +207,13 @@ public class VitalPdfGenerator {
         StringBuilder body = new StringBuilder();
 
         for (String key : vitalsMap.keySet()) {
-            String createdAt = "DATE", value = "VITALS", capturedBy = "DONE BY", mode = "MODE", category = "";
 
             String pdfBody = htmlBody;
 
             String itemsList = generateList(vitalsMap.get(key));
 
             if (isVitalReport) {
-                category = context.getString(getCategoryTitle(key)) + " Values";
+                category = context.getString(getCategoryTitle(key)) + " " + context.getString(R.string.values);
             }
 
             pdfBody = pdfBody
@@ -252,14 +256,10 @@ public class VitalPdfGenerator {
         String dobLable = context.getString(R.string.pdf_label_dob);
         String genderLable = context.getString(R.string.pdf_label_gender);
         String periodLable = context.getString(R.string.pdf_label_period);
-        String createdAtLable = "DATE";
-        String valueLable = "VITALS";
-        String capturedByLable = "DONE BY";
-        String modeLable = "MODE";
 
         String pdfTitle = context.getString(R.string.vitals_report);
         if (!isVitalReport)
-            pdfTitle = context.getString(SupportedMeasurementType.getTitle(pdfList.get(0).getType())) + " Report";
+            pdfTitle = context.getString(SupportedMeasurementType.getTitle(pdfList.get(0).getType())) + " " + context.getString(R.string.report);
 
         String pdfDate = Utils.getCurrentFomatedDate();
         String icon;
@@ -286,10 +286,10 @@ public class VitalPdfGenerator {
                 .replace(PATIENT_DOB_LABLE, dobLable)
                 .replace(PATIENT_GENDER_LABLE, genderLable)
                 .replace(PERIOD_LABLE, periodLable)
-                .replace(CREATED_AT_LABLE, createdAtLable)
-                .replace(VALUE_LABLE, valueLable)
-                .replace(CAPTURED_BY_LABLE, capturedByLable)
-                .replace(MODE_LABLE, modeLable)
+                .replace(CREATED_AT_LABLE, createdAt)
+                .replace(VALUE_LABLE, value)
+                .replace(CAPTURED_BY_LABLE, capturedBy)
+                .replace(MODE_LABLE, mode)
                 .replace(PDF_TITLE, pdfTitle)
                 .replace(PDF_DATE, pdfDate)
                 .replace(PDF_ICON, icon)
@@ -317,11 +317,11 @@ public class VitalPdfGenerator {
             String mode = "";
             switch (response.getMode()) {
                 case VitalsConstant.VITAL_MODE_DEVICE:
-                    mode = VitalsConstant.LABLE_AUTOMATED;
+                    mode = context.getString(VitalsConstant.LABLE_AUTOMATED);
                     break;
                 case VitalsConstant.VITAL_MODE_DOCTOR:
                 case VitalsConstant.VITAL_MODE_PATIENT:
-                    mode = VitalsConstant.LABLE_MANUAL;
+                    mode = context.getString(VitalsConstant.LABLE_MANUAL);
                     break;
             }
 
@@ -331,11 +331,11 @@ public class VitalPdfGenerator {
             } else {
                 switch (response.getMode()) {
                     case VitalsConstant.VITAL_MODE_DOCTOR:
-                        createdBy = VitalsConstant.LABLE_DOCTOR;
+                        createdBy = context.getString(VitalsConstant.LABLE_DOCTOR);
                         break;
                     case VitalsConstant.VITAL_MODE_DEVICE:
                     case VitalsConstant.VITAL_MODE_PATIENT:
-                        createdBy = VitalsConstant.LABLE_PATIENT;
+                        createdBy = context.getString(VitalsConstant.LABLE_PATIENT);
                         break;
                 }
             }
