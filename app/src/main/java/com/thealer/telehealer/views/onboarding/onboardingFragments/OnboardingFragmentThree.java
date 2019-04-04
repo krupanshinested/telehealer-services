@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,12 +37,22 @@ public class OnboardingFragmentThree extends BaseFragment {
     private CountDownTimer waveTimer;
     private boolean isResumed;
     private OnboardingConversationAdapter onboardingConversationAdapter;
-    private List<String> conversations = Arrays.asList("G'Evening, Doc!", "G'Evening. How are you doing today?", "Not that well. I've been down with a fever and a bad cough",
-            "How long have you had these symptoms?", "I've had it since the day before", "Ok. Let's get your temperature and other vitals measured while we're on the call.");
+    private List<String> conversations;
     private int count = 0;
 
     private View view;
     private List<CountDownTimer> countDownTimerList;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        conversations = Arrays.asList(getString(R.string.onboarding_conversation_one),
+                getString(R.string.onboarding_conversation_two),
+                getString(R.string.onboarding_conversation_three),
+                getString(R.string.onboarding_conversation_four),
+                getString(R.string.onboarding_conversation_five),
+                getString(R.string.onboarding_conversation_six));
+    }
 
     @Nullable
     @Override

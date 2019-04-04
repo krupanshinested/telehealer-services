@@ -217,7 +217,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
 
                     image_path = resultBean.getPath();
 
-                    Utils.setImageWithGlide(getActivity().getApplicationContext(), documentIv, image_path, getActivity().getDrawable(R.drawable.ic_orders_documents), true);
+                    Utils.setImageWithGlide(getActivity().getApplicationContext(), documentIv, image_path, getActivity().getDrawable(R.drawable.ic_orders_documents), true, true);
 
                 }
 
@@ -262,7 +262,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
             int size = Constants.sharedPath.size();
 
             if (size > 10) {
-                Utils.showAlertDialog(getActivity(), getString(R.string.alert), "Maximum of 10 images can be uploaded at a time.",
+                Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.max_10_images),
                         getString(R.string.ok), null,
                         new DialogInterface.OnClickListener() {
                             @Override

@@ -44,7 +44,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.itemIv, hintsBeanList.get(i).getFood().getImage(), activity.getDrawable(R.drawable.diet_food_placeholder), false);
+        Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.itemIv, hintsBeanList.get(i).getFood().getImage(), activity.getDrawable(R.drawable.diet_food_placeholder), false, true);
         viewHolder.itemTitleTv.setText(hintsBeanList.get(i).getFood().getLabel());
         viewHolder.itemSubTitleTv.setText(hintsBeanList.get(i).getFood().getCategory());
 

@@ -13,7 +13,6 @@ import android.view.View;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.views.base.BaseActivity;
 
 /**
@@ -36,8 +35,8 @@ public class BluetoothEnableActivity extends BaseActivity {
             public void onClick(View view) {
 
                 Intent data = new Intent();
-                data.putExtra(ArgumentKeys.RESULT,false);
-                setResult(Activity.RESULT_OK,data);
+                data.putExtra(ArgumentKeys.RESULT, false);
+                setResult(Activity.RESULT_OK, data);
 
                 finish();
             }
@@ -58,8 +57,8 @@ public class BluetoothEnableActivity extends BaseActivity {
 
     private void didEnabled() {
         Intent data = new Intent();
-        data.putExtra(ArgumentKeys.RESULT,true);
-        setResult(Activity.RESULT_OK,data);
+        data.putExtra(ArgumentKeys.RESULT, true);
+        setResult(Activity.RESULT_OK, data);
 
         finish();
     }
@@ -77,7 +76,7 @@ public class BluetoothEnableActivity extends BaseActivity {
     }
 
     @Override
-    public  void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(bluetoothEnableReceiver);

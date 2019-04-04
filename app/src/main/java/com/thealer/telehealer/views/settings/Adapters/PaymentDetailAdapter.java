@@ -11,11 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.Payments.Transaction;
 import com.thealer.telehealer.apilayer.models.Payments.VitalVisit;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
-import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.Utils;
 
 import java.util.ArrayList;
@@ -60,7 +58,7 @@ public class PaymentDetailAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        PaymentDetailAdapter.DataHolder dataHolder = (PaymentDetailAdapter.DataHolder)viewHolder;
+        PaymentDetailAdapter.DataHolder dataHolder = (PaymentDetailAdapter.DataHolder) viewHolder;
 
         if (isCalls) {
             RecentsApiResponseModel.ResultBean call = calls.get(i);
@@ -109,7 +107,7 @@ public class PaymentDetailAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private class DataHolder extends RecyclerView.ViewHolder {
 
-        private TextView title_tv, time_tv,duration_tv;
+        private TextView title_tv, time_tv, duration_tv;
         private ConstraintLayout mainContainer;
         private ImageView duration_iv;
 

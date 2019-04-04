@@ -10,7 +10,7 @@ import android.view.animation.TranslateAnimation;
 public class AnimationUtil {
 
     public static void animateToVisible(View view) {
-        TranslateAnimation animate = new TranslateAnimation(0,0,0,view.getHeight());
+        TranslateAnimation animate = new TranslateAnimation(0, 0, 0, view.getHeight());
         animate.setDuration(600);
         animate.setFillAfter(true);
         view.startAnimation(animate);
@@ -18,7 +18,7 @@ public class AnimationUtil {
     }
 
     public static void animateToHide(View view) {
-        TranslateAnimation animate = new TranslateAnimation(0,0,view.getHeight(),0);
+        TranslateAnimation animate = new TranslateAnimation(0, 0, view.getHeight(), 0);
         animate.setDuration(600);
         animate.setFillAfter(true);
         view.startAnimation(animate);

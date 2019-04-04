@@ -89,7 +89,7 @@ public class InviteByDemographicFragment extends InviteUserBaseFragment {
                         lastnameEt.getText().toString(),
                         dobEt.getText().toString(),
                         genderSp.getSelectedItem().toString().toLowerCase());
-                inviteUserApiViewModel.inviteUserByDemographic(demographicRequestMode, doctor_guid,false);
+                inviteUserApiViewModel.inviteUserByDemographic(demographicRequestMode, doctor_guid, false);
             }
         });
 

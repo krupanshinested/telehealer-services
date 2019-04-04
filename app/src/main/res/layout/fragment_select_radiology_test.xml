@@ -63,8 +63,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:textAllCaps="true"
-            android:text="@string/selected" />
+            android:text="@string/selected"
+            android:textAllCaps="true" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/selected_radiology_list_rv"

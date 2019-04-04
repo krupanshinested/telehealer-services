@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
@@ -62,7 +61,7 @@ public class OnBoardingViewPagerAdapter extends PagerAdapter {
             Glide.with(view).load(imageBitmapList.get(position)).into(pagerItemIv);
         }
         if (insuranceImageList != null) {
-            Utils.setImageWithGlide(context, pagerItemIv, insuranceImageList.get(position), context.getDrawable(R.drawable.placeholder_license), true);
+            Utils.setImageWithGlide(context, pagerItemIv, insuranceImageList.get(position), context.getDrawable(R.drawable.placeholder_license), true, true);
             if (isPreviewAvailable) {
                 pagerItemIv.setOnClickListener(new View.OnClickListener() {
                     @Override

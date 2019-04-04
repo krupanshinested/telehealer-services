@@ -437,7 +437,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             }
         } else if (e instanceof UnknownHostException) {
             isLoadingLiveData.setValue(false);
-            errorModelLiveData.setValue(new ErrorModel(NETWORK_ERROR_CODE, "Network Error", "Please check your network connection"));
+            errorModelLiveData.setValue(new ErrorModel(NETWORK_ERROR_CODE, getApplication().getResources().getString(R.string.network_error), getApplication().getResources().getString(R.string.please_check_your_network_connection)));
         } else {
             isLoadingLiveData.setValue(false);
             errorModelLiveData.setValue(new ErrorModel(-1, e.getMessage(), e.getMessage()));

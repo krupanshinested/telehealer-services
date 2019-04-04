@@ -20,7 +20,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="fkkfkfkfkf" />
+        tools:text="@string/dummy_text" />
 
     <com.thealer.telehealer.common.CustomRecyclerView
         android:id="@+id/rv"

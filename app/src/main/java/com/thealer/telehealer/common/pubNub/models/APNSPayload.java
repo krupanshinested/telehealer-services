@@ -28,7 +28,7 @@ public class APNSPayload implements Serializable {
     public static final String missedCall = "missedCall";
 
 
-    private HashMap<String,String> aps;
+    private HashMap<String, String> aps;
     private String identifier;
     private String type;
     private String from;

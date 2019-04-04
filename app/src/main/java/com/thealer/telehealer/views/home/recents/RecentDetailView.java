@@ -140,7 +140,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                                 } else {
                                     Utils.showAlertDialog(getActivity(),
                                             getString(R.string.alert),
-                                            "Your transcription in not ready yet, Please try again after sometimes",
+                                            getString(R.string.transcription_not_ready),
                                             getString(R.string.ok),
                                             null,
                                             new DialogInterface.OnClickListener() {

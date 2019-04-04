@@ -34,10 +34,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            app:ccp_autoFormatNumber="true"
-            app:ccp_showFlag="false"
             app:ccp_autoDetectCountry="true"
+            app:ccp_autoFormatNumber="true"
+            app:ccp_autoDetectLanguage="true"
             app:ccp_defaultNameCode="US"
+            app:ccp_showFlag="false"
             app:ccp_showNameCode="false" />
 
         <android.support.design.widget.TextInputLayout
@@ -59,9 +60,9 @@
 
     <TextView
         android:id="@+id/page_hint_tv"
+        style="@style/text_sub_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/text_sub_title"
         android:layout_margin="@dimen/margin_default"
         android:fontFamily="@font/open_sans"
         android:gravity="center|left"

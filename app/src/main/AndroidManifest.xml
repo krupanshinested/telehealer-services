@@ -118,7 +118,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.settings.SignatureActivity"
-            android:screenOrientation="userLandscape" />
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".views.common.CallPlacingActivity"
             android:theme="@style/AppTheme.Transparent" />

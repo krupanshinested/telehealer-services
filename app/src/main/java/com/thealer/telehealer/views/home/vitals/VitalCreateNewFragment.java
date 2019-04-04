@@ -338,7 +338,7 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
         if (!data.isEmpty()) {
             isInputValid = false;
             if (!isValidInput(data, inputType)) {
-                vital1Til.setError(VitalsConstant.getInputError(inputType));
+                vital1Til.setError(VitalsConstant.getInputError(getActivity(), inputType));
                 enableOrDisableSubmit(false);
             } else {
                 isInputValid = true;
@@ -357,7 +357,7 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
 
         if (!data.isEmpty()) {
             if (!isValidInput(data, VitalsConstant.INPUT_DIASTOLE)) {
-                vital2Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_DIASTOLE));
+                vital2Til.setError(VitalsConstant.getInputError(getActivity(), VitalsConstant.INPUT_DIASTOLE));
                 enableOrDisableSubmit(false);
             } else {
                 isSecondValid = true;
@@ -384,11 +384,11 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
             if (data.equals("0")) {
                 enableOrDisableSubmit(false);
                 if (vital3Et.isFocused()) {
-                    vital3Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_PULSE));
+                    vital3Til.setError(VitalsConstant.getInputError(getActivity(), VitalsConstant.INPUT_PULSE));
                 }
             } else {
                 if (!isValidInput(data, VitalsConstant.INPUT_PULSE)) {
-                    vital3Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_PULSE));
+                    vital3Til.setError(VitalsConstant.getInputError(getActivity(), VitalsConstant.INPUT_PULSE));
                     enableOrDisableSubmit(false);
                 } else {
                     isThirdValid = true;

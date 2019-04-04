@@ -41,11 +41,11 @@
         <TextView
             android:id="@+id/empty_tv"
             style="@style/text_sub_title"
-            android:textColor="@color/colorBlack"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:gravity="center"
-            android:text="No Contacts selected" />
+            android:text="@string/no_contacts_selected"
+            android:textColor="@color/colorBlack" />
 
         <View
             android:id="@+id/line"

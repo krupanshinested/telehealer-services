@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,7 +32,6 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.gson.reflect.TypeToken;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -42,15 +39,15 @@ import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
-import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.common.ResultFetcher;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.BPMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -62,8 +59,6 @@ import com.thealer.telehealer.views.call.Interfaces.CallVitalPagerInterFace;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.home.vitals.VitalsSendBaseFragment;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.BPMeasureInterface;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.lang.reflect.Type;
@@ -80,12 +75,12 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
         View.OnClickListener,BPMeasureInterface {
 
     private LineChart graph;
-    private TextView bp_value,bp,spo2_value,spo2,message_tv,title_tv;
-    private CustomButton save_bt,close_bt;
+    private TextView bp_value, bp, spo2_value, spo2, message_tv, title_tv;
+    private CustomButton save_bt, close_bt;
     private Button remeasure_bt;
     private ConstraintLayout result_lay,main_container;
 
-    private String finalBPValue = "",finalHeartRateValue = "";
+    private String finalBPValue = "", finalHeartRateValue = "";
 
     @Nullable
     public CallVitalPagerInterFace callVitalPagerInterFace;
@@ -156,7 +151,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
                 return 100;
             }
         };
-        graph.animateX(1000,easingFunction);
+        graph.animateX(1000, easingFunction);
 
         if (isNeedToTrigger && currentState == MeasureState.notStarted) {
             startMeasure();
@@ -229,7 +224,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
                 save_bt.setVisibility(View.VISIBLE);
 
                 bp_value.setText(finalBPValue);
-                spo2_value.setText(finalHeartRateValue+"");
+                spo2_value.setText(finalHeartRateValue + "");
 
                 break;
             case MeasureState.startedToReceieveValues:
@@ -348,7 +343,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
                 if (isPresentedInsideCallActivity()) {
 
                     if (vitalManagerInstance != null) {
-                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
+                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
                         setCurrentState(MeasureState.notStarted);
                     }
 
@@ -368,7 +363,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
 
     //BPMeasureInterface methods
     @Override
-    public void updateBPMessage(String deviceType,String message) {
+    public void updateBPMessage(String deviceType, String message) {
         message_tv.setText(message);
         result_lay.setVisibility(View.GONE);
     }
@@ -381,7 +376,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
     }
 
     @Override
-    public void didUpdateBPMesure(String deviceType,ArrayList<Double> value) {
+    public void didUpdateBPMesure(String deviceType, ArrayList<Double> value) {
 
         if (currentState != MeasureState.startedToReceieveValues) {
             setCurrentState(MeasureState.startedToReceieveValues);
@@ -390,17 +385,17 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
         setData(getAverage(value));
     }
 
-    double getAverage(ArrayList<Double> values)  {
+    double getAverage(ArrayList<Double> values) {
 
         double total = 0.0;
         for (Double vote : values) {
             total += vote;
         }
-        return total/values.size();
+        return total / values.size();
     }
 
     @Override
-    public void didUpdateBPM(String deviceType,ArrayList<Double> value) {
+    public void didUpdateBPM(String deviceType, ArrayList<Double> value) {
 
         if (currentState != MeasureState.startedToReceieveValues) {
             setCurrentState(MeasureState.startedToReceieveValues);
@@ -408,8 +403,8 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
     }
 
     @Override
-    public void didFinishBPMesure(String deviceType,Double systolicValue, Double diastolicValue, Double heartRate) {
-        finalBPValue =  systolicValue.intValue() + "/" + diastolicValue.intValue();
+    public void didFinishBPMesure(String deviceType, Double systolicValue, Double diastolicValue, Double heartRate) {
+        finalBPValue = systolicValue.intValue() + "/" + diastolicValue.intValue();
         finalHeartRateValue = heartRate.intValue() + "";
 
         if (isPresentedInsideCallActivity()) {
@@ -422,7 +417,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
     }
 
     @Override
-    public void didFailBPMesure(String deviceType,String error) {
+    public void didFailBPMesure(String deviceType, String error) {
         message_tv.setText(error);
         setCurrentState(MeasureState.failed);
     }
@@ -463,6 +458,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
             processSignalMessagesForBP(data);
         }
     }
+
     @Override
     public void assignVitalListener() {
         if (vitalManagerInstance != null) {
@@ -504,7 +500,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
                 case VitalsConstant.VitalCallMapKeys.errorInMeasure:
 
                     String errorMessage = (String) map.get(VitalsConstant.VitalCallMapKeys.message);
-                    didFailBPMesure(vitalDevice.getType(),errorMessage);
+                    didFailBPMesure(vitalDevice.getType(), errorMessage);
 
                     break;
                 case VitalsConstant.VitalCallMapKeys.finishedMeasure:
@@ -513,7 +509,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
                     Double dys = (Double) map.get(VitalsConstant.VitalCallMapKeys.diastolicValue);
                     Double heartRate = (Double) map.get(VitalsConstant.VitalCallMapKeys.heartRate);
 
-                    didFinishBPMesure(vitalDevice.getType(),sys,dys,heartRate);
+                    didFinishBPMesure(vitalDevice.getType(), sys, dys, heartRate);
 
                     break;
             }

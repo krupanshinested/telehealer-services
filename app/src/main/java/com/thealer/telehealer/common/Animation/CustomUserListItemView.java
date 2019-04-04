@@ -20,6 +20,12 @@ import com.thealer.telehealer.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.thealer.telehealer.common.Constants.ACTIVATION_PENDING;
+import static com.thealer.telehealer.common.Constants.AVAILABLE;
+import static com.thealer.telehealer.common.Constants.BUSY;
+import static com.thealer.telehealer.common.Constants.NO_DATA;
+import static com.thealer.telehealer.common.Constants.OFFLINE;
+
 
 /**
  * Created by Aswin on 27,March,2019
@@ -28,11 +34,6 @@ public class CustomUserListItemView extends ConstraintLayout {
     private CircleImageView avatarCiv;
     private CircleImageView statusCiv;
 
-    public final String AVAILABLE = "AVAILABLE";
-    public final String OFFLINE = "OFFLINE";
-    public final String ACTIVATION_PENDING = "ACTIVATION_PENDING";
-    public final String BUSY = "BUSY";
-    public final String NO_DATA = "NO_DATA";
     private ConstraintLayout listItemCl;
     private CardView listItemCv;
     private TextView listTitleTv;

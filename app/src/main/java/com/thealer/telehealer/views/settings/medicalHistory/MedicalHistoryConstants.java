@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.settings.medicalHistory;
 
+import android.content.Context;
 import android.text.InputType;
 
 import com.thealer.telehealer.R;
@@ -45,33 +46,56 @@ public class MedicalHistoryConstants {
         return 0;
     }
 
-    public static String getTitle(String item) {
+    public static int getTitle(String item) {
         switch (item) {
             case MH_MEDICATION:
-                return "Please list any medications that you are now taking.Include non-prescription medications & vitamins or supplements:";
+                return R.string.info_medication;
             case MH_PAST_MEDICAL_HISTORY:
-                return "Do you have or have you ever had?";
+                return R.string.info_past_medical_history;
             case MH_SURGERIES:
-                return "Please select the surgeries which done for you.";
+                return R.string.info_surgeries;
             case MH_FAMILY_HISTORY:
-                return "Check any of the diseases that run in your family";
+                return R.string.info_family_history;
             case MH_PERSONAL_HISTORY:
-                return "Your personal history.";
+                return R.string.info_personal_history;
             case MH_HEALTH_HABITS:
-                return "Your health habits.";
+                return R.string.info_health_habits;
             case MH_SEXUAL_HISTORY:
-                return "Your sexual history";
+                return R.string.info_sexual_history;
             case MH_RECENT_IMMUNIZATION:
-                return "Please select the Immunization which you took recently.";
+                return R.string.info_recent_immunization;
         }
-        return null;
+        return 0;
+    }
+
+    public static final String[] itemList = {MH_MEDICATION, MH_PAST_MEDICAL_HISTORY, MH_SURGERIES,
+            MH_FAMILY_HISTORY, MH_PERSONAL_HISTORY, MH_HEALTH_HABITS, MH_SEXUAL_HISTORY, MH_RECENT_IMMUNIZATION};
+
+    public static String getDisplayTitle(Context context, String type) {
+        switch (type) {
+            case MH_MEDICATION:
+                return context.getString(R.string.medication);
+            case MH_PAST_MEDICAL_HISTORY:
+                return context.getString(R.string.past_medical_history);
+            case MH_SURGERIES:
+                return context.getString(R.string.surgeries);
+            case MH_FAMILY_HISTORY:
+                return context.getString(R.string.family_history);
+            case MH_PERSONAL_HISTORY:
+                return context.getString(R.string.personal_history);
+            case MH_HEALTH_HABITS:
+                return context.getString(R.string.health_habits);
+            case MH_SEXUAL_HISTORY:
+                return context.getString(R.string.sexual_history);
+            case MH_RECENT_IMMUNIZATION:
+                return context.getString(R.string.recent_immunization);
+        }
+        return "";
     }
 
     /**
      * For medication
      */
-    public static final String[] itemList = {MH_MEDICATION, MH_PAST_MEDICAL_HISTORY, MH_SURGERIES,
-            MH_FAMILY_HISTORY, MH_PERSONAL_HISTORY, MH_HEALTH_HABITS, MH_SEXUAL_HISTORY, MH_RECENT_IMMUNIZATION};
 
     public static final String[] metrics = {"mg", "mcg", "gm"};
     public static final String[] directionOne = {"Oral", "Rectum", "Under the tongue", "Sub cutaneous", "Intra muscle"};

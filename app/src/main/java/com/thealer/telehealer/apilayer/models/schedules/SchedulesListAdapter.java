@@ -130,7 +130,7 @@ public class SchedulesListAdapter extends BaseExpandableListAdapter {
         }
 
         if (commonUserApiResponseModel != null) {
-            Utils.setImageWithGlide(activity.getApplicationContext(), itemCiv, commonUserApiResponseModel.getUser_avatar(), activity.getDrawable(R.drawable.profile_placeholder), true);
+            Utils.setImageWithGlide(activity.getApplicationContext(), itemCiv, commonUserApiResponseModel.getUser_avatar(), activity.getDrawable(R.drawable.profile_placeholder), true, true);
             itemSubTitleTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getDetail().getReason());
         }
         itemTitleTv.setText(title);

@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Utils;

@@ -28,7 +28,7 @@ public class PasswordRequirementActivity extends BaseActivity implements View.On
 
         initView();
 
-        if (getIntent() != null){
+        if (getIntent() != null) {
             password = getIntent().getStringExtra("password");
             validatePassword();
         }
@@ -36,9 +36,9 @@ public class PasswordRequirementActivity extends BaseActivity implements View.On
 
 
     private void validatePassword() {
-        if (password == null || password.isEmpty()){
+        if (password == null || password.isEmpty()) {
             disableAll();
-        }else {
+        } else {
             validateWithRegex();
         }
     }
@@ -46,9 +46,9 @@ public class PasswordRequirementActivity extends BaseActivity implements View.On
     private void validateWithRegex() {
         PasswordValidator passwordValidator = new PasswordValidator();
 
-        if (passwordValidator.isLengthMatch(password)){
+        if (passwordValidator.isLengthMatch(password)) {
             enableOrDisable(requirement1Tv, true);
-        }else
+        } else
             enableOrDisable(requirement1Tv, false);
 
         if (passwordValidator.isContainUpperCase(password) &&
@@ -79,7 +79,7 @@ public class PasswordRequirementActivity extends BaseActivity implements View.On
         enableOrDisable(requirement4Tv, false);
     }
 
-    private void enableAll(){
+    private void enableAll() {
         enableOrDisable(requirement1Tv, true);
         enableOrDisable(requirement2Tv, true);
         enableOrDisable(requirement3Tv, true);

@@ -193,7 +193,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(), getString(R.string.success),
-                            String.format("Your appointment with %s will appear on the schedules tab as soon as it is accepted", requestee_name));
+                            String.format(getString(R.string.appointment_request_success), requestee_name));
                 }
             }
         });
@@ -203,7 +203,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
                     sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure),
-                            String.format("Your appointment with %s is not requested successfully. Please try again", requestee_name));
+                            String.format(getString(R.string.appointment_request_failure), requestee_name));
                 }
             }
         });

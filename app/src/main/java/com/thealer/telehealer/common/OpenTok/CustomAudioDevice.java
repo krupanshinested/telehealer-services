@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.AudioFocusRequest;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -27,13 +26,15 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Created by rsekar on 1/8/19.
  */
 
 public class CustomAudioDevice extends BaseAudioDevice {
 
-    private final static String LOG_TAG =  CustomAudioDevice.class.getSimpleName();;
+    private final static String LOG_TAG = CustomAudioDevice.class.getSimpleName();
+    ;
 
     private static final int NUM_CHANNELS_CAPTURING = 1;
     private static final int NUM_CHANNELS_RENDERING = 1;
@@ -233,7 +234,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
             new BluetoothProfile.ServiceListener() {
                 @Override
                 public void onServiceConnected(int type, BluetoothProfile profile) {
-                    if  (BluetoothProfile.HEADSET == type) {
+                    if (BluetoothProfile.HEADSET == type) {
                         bluetoothProfile = profile;
                         List<BluetoothDevice> devices = profile.getConnectedDevices();
                         Log.d(LOG_TAG, "Service Proxy Connected");
@@ -277,7 +278,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
         }
     }
 
-    public CustomAudioDevice(Context context,@Nullable AudioInterface audioInterface) {
+    public CustomAudioDevice(Context context, @Nullable AudioInterface audioInterface) {
         this.context = context;
         this.audioInterface = audioInterface;
 
@@ -288,7 +289,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
         }
         tempBufRec = new byte[DEFAULT_BUFFER_SIZE];
 
-        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         bluetoothProfile = null;
 
@@ -663,7 +664,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
                         rendererLock.lock();
 
-                        if( !isRendererMuted ) {
+                        if (!isRendererMuted) {
                             // After acquiring the lock again
                             // we must check if we are still playing
                             if (audioTrack == null || !CustomAudioDevice.this.isRendering) {
@@ -887,7 +888,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
         audioOutput = type;
     }
 
-    public void setRendererMute (boolean isRendererMuted) {
+    public void setRendererMute(boolean isRendererMuted) {
         this.isRendererMuted = isRendererMuted;
     }
 }

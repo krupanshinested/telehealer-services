@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -107,26 +109,26 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
         this.order_id = order_id;
     }
 
-    public String getCapturedBy() {
-        String prefix = "Captured by ";
+    public String getCapturedBy(Context context) {
+        String prefix = context.getString(R.string.captured_by);
         if (getMode().equals(VitalsConstant.VITAL_MODE_DEVICE)) {
-            return prefix + " " + VitalsConstant.LABLE_DEVICE.toLowerCase();
+            return prefix + " " + context.getString(VitalsConstant.LABLE_DEVICE).toLowerCase();
         } else {
             if (UserType.isUserPatient()) {
                 if (getMode().equals(VitalsConstant.VITAL_MODE_PATIENT)) {
-                    return prefix + " yourself";
+                    return prefix + " " + context.getString(R.string.yourself);
                 } else if (getDisplay_name() != null && !getDisplay_name().isEmpty()) {
                     return prefix + " " + getDisplay_name();
                 } else {
-                    return prefix + " " + VitalsConstant.LABLE_DOCTOR;
+                    return prefix + " " + context.getString(VitalsConstant.LABLE_DOCTOR);
                 }
             } else {
                 if (getDisplay_name() != null && !getDisplay_name().isEmpty()) {
                     return prefix + " " + getDisplay_name();
                 } else if (getMode().equals(VitalsConstant.VITAL_MODE_DOCTOR)) {
-                    return prefix + " " + VitalsConstant.LABLE_DOCTOR;
+                    return prefix + " " + context.getString(VitalsConstant.LABLE_DOCTOR);
                 } else if (getMode().equals(VitalsConstant.VITAL_MODE_PATIENT)) {
-                    return prefix + " " + VitalsConstant.LABLE_PATIENT;
+                    return prefix + " " + context.getString(VitalsConstant.LABLE_PATIENT);
                 } else {
                     return "";
                 }

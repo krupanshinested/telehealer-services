@@ -19,5 +19,6 @@ public class QuickLoginBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-    public void onQuickLogin(int status){}
+    public void onQuickLogin(int status) {
+    }
 }

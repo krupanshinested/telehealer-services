@@ -31,7 +31,6 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
-import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 
 /**
@@ -168,7 +167,7 @@ public class SignatureViewFragment extends BaseFragment {
     }
 
     private void setSignature() {
-        Utils.setImageWithGlide(getActivity().getApplicationContext(), signatureIv, UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature(), null, true);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), signatureIv, UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature(), null, true, true);
     }
 
     @Override

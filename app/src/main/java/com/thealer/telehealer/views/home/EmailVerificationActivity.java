@@ -96,11 +96,18 @@ public class EmailVerificationActivity extends BaseActivity implements View.OnCl
 
         String email = UserDetailPreferenceManager.getEmail();
 
-        String htmlText = "<p>Check the email sent to <font color=red>" + email + "</font> for a verification message and follow the link provided in order to continue.</p>";
+        String htmlText = "<p>%s <font color=red> %s </font>%s</p>";
+
+        htmlText = String.format(htmlText, getString(R.string.email_verification_check), email, getString(R.string.email_verification_link));
 
         emailMessage.setText(Utils.fromHtml(htmlText));
 
-        String resendText = "<p>Can’t find the email in your inbox? Check your junk and spam folders. Otherwise, we can <font color=" + getString(R.string.app_gradient_start) + "> send a new verifications email.</font></p>";
+        String resendText = "<p>%s <font color= %s>%s</font></p>";
+
+        resendText = String.format(resendText, getString(R.string.email_verification_resend_title),
+                getString(R.string.app_gradient_start),
+                getString(R.string.email_verification_new_email));
+
         resendTv.setText(Utils.fromHtml(resendText));
 
         doneBtn.setOnClickListener(this);

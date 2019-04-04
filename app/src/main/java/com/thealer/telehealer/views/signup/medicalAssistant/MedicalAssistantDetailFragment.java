@@ -474,7 +474,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             if (profileImg != null)
                 profileCiv.setImageBitmap(profileImg);
         } else if (createUserRequestModel.getUser_data().getUser_avatar() != null) {
-            Utils.setImageWithGlide(getContext(), profileCiv, createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true);
+            Utils.setImageWithGlide(getContext(), profileCiv, createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true, true);
         }
     }
 
@@ -484,7 +484,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             if (certificate != null)
                 certificate_iv.setImageBitmap(certificate);
         } else if (createUserRequestModel.getUser_detail().getData().getCertification() != null) {
-            Utils.setImageWithGlide(getContext(), certificate_iv, createUserRequestModel.getUser_detail().getData().getCertification(), getContext().getDrawable(R.drawable.placeholder_certificate), true);
+            Utils.setImageWithGlide(getContext(), certificate_iv, createUserRequestModel.getUser_detail().getData().getCertification(), getContext().getDrawable(R.drawable.placeholder_certificate), true, true);
         }
     }
 
@@ -511,7 +511,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         CreateUserRequestModel.UserDataBean userDataBean = new CreateUserRequestModel.UserDataBean();
         userDataBean.setFirst_name(firstnameEt.getText().toString());
         userDataBean.setLast_name(lastnameEt.getText().toString());
-        userDataBean.setGender(genderSp.getSelectedItem().toString());
+        userDataBean.setGender(Constants.genderList.get(genderSp.getSelectedItemPosition()));
 
         DataBean dataBean = new DataBean();
         dataBean.setDegree(degreeEt.getText().toString());

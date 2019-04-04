@@ -49,7 +49,6 @@ public class BioMetricUtils {
     }
 
 
-
     /*
      * Condition II: Check if the device has fingerprint sensors.
      * Note: If you marked android.hardware.fingerprint as something that
@@ -63,7 +62,6 @@ public class BioMetricUtils {
     }
 
 
-
     /*
      * Condition III: Fingerprint authentication can be matched with a
      * registered fingerprint of the user. So we need to perform this check
@@ -74,7 +72,6 @@ public class BioMetricUtils {
         FingerprintManagerCompat fingerprintManager = FingerprintManagerCompat.from(context);
         return fingerprintManager.hasEnrolledFingerprints();
     }
-
 
 
     /*

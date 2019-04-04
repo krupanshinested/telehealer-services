@@ -26,9 +26,9 @@
                 android:id="@+id/disable_signature_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:gravity="center"
                 android:padding="8dp"
-                android:layout_margin="8dp"
                 android:text="@string/disable_signature"
                 android:textColor="@color/red" />
 
@@ -41,8 +41,8 @@
                 android:id="@+id/new_signature_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
                 android:layout_margin="8dp"
+                android:padding="8dp"
                 android:text="@string/new_signature"
                 android:textColor="@color/color_blue" />
         </LinearLayout>
@@ -60,10 +60,10 @@
 
         <TextView
             style="@style/text_app_color"
-            android:layout_margin="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_margin="8dp"
             android:text="@string/Cancel"
             android:textColor="@color/color_blue" />
     </android.support.v7.widget.CardView>

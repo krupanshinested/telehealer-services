@@ -3,7 +3,6 @@ package com.thealer.telehealer.common;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 
@@ -66,7 +65,7 @@ public class GetUserDetails {
             } else {
                 guids.addAll(guidList);
             }
-            
+
             if (guids.size() > 0) {
                 getUsersApiViewModel.getUserByGuid(guids);
             }

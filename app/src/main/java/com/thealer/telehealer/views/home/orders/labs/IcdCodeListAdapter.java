@@ -4,13 +4,11 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiResponseModel;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -89,7 +87,7 @@ public class IcdCodeListAdapter extends RecyclerView.Adapter<IcdCodeListAdapter.
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemCl= (ConstraintLayout) itemView.findViewById(R.id.itemView);
+            itemCl = (ConstraintLayout) itemView.findViewById(R.id.itemView);
             icdCodeTv = (TextView) itemView.findViewById(R.id.icd_code_tv);
             icdDetailTv = (TextView) itemView.findViewById(R.id.icd_detail_tv);
         }

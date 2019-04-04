@@ -113,7 +113,7 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
                                 }
                             }
 
-                            message = String.format("Out of %s, %s invites has failed due to following reasons, %s", apiResponseModel.getResultData().size(),
+                            message = String.format(getString(R.string.invite_contact_error), apiResponseModel.getResultData().size(),
                                     apiResponseModel.getFailureCount(), stringSet.toString().substring(1, stringSet.toString().length() - 1));
                         }
                     }

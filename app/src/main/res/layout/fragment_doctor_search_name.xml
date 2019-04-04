@@ -63,9 +63,9 @@
             android:id="@+id/throbber"
             android:layout_width="32dp"
             android:layout_height="40dp"
-            android:visibility="gone"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/throbber" />
+            android:src="@drawable/throbber"
+            android:visibility="gone" />
 
         <View
             android:id="@+id/view"

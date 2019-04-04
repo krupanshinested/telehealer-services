@@ -85,7 +85,7 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
 
             boolean isAuthRequred = getIntent().getBooleanExtra(ArgumentKeys.IS_AUTH_REQUIRED, false);
 
-            Utils.setImageWithGlide(getApplicationContext(), userAvatarCiv, userAvatar, getDrawable(R.drawable.profile_placeholder), isAuthRequred);
+            Utils.setImageWithGlide(getApplicationContext(), userAvatarCiv, userAvatar, getDrawable(R.drawable.profile_placeholder), isAuthRequred, true);
 
         }
 

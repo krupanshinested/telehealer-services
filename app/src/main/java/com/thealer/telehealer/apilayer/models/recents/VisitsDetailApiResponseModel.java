@@ -33,6 +33,7 @@ public class VisitsDetailApiResponseModel extends BaseApiResponseModel {
         private String category;
         private Object cost;
         private String instructions;
+        private String diagnosis;
         private String created_at;
         private String updated_at;
         private int transcription_id;
@@ -311,6 +312,14 @@ public class VisitsDetailApiResponseModel extends BaseApiResponseModel {
 
         public void setInstructions(String instructions) {
             this.instructions = instructions;
+        }
+
+        public String getDiagnosis() {
+            return diagnosis;
+        }
+
+        public void setDiagnosis(String diagnosis) {
+            this.diagnosis = diagnosis;
         }
 
         public String getTranscription_status() {

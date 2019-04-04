@@ -18,8 +18,8 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.home.DoctorPatientListingFragment;
 import com.thealer.telehealer.views.home.monitoring.diet.DietDetailFragment;
+import com.thealer.telehealer.views.home.monitoring.diet.DietUserListingFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 
@@ -86,8 +86,7 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
                     if (UserType.isUserPatient()) {
                         fragment = new DietDetailFragment();
                     } else {
-                        bundle.putBoolean(ArgumentKeys.IS_DIET_VIEW, true);
-                        fragment = new DoctorPatientListingFragment();
+                        fragment = new DietUserListingFragment();
                         fragment.setArguments(bundle);
                     }
                 }

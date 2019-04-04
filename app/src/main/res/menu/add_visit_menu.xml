@@ -6,7 +6,7 @@
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter"
         android:title="@string/filter"
-        android:visible="false"
+        android:visible="true"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_print"

@@ -213,7 +213,7 @@ public class RecentListAdapter extends BaseExpandableListAdapter {
 
         }
 
-        Utils.setImageWithGlide(context, userAvatarCiv, avatar, context.getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(context, userAvatarCiv, avatar, context.getDrawable(R.drawable.profile_placeholder), true, true);
         userNameTv.setText(userName);
         timeTv.setText(Utils.getFormatedTime(resultBean.getUpdated_at()));
 
