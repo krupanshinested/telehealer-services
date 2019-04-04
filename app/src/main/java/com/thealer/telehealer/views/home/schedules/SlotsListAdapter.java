@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,7 @@ class SlotsListAdapter extends RecyclerView.Adapter<SlotsListAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.titleTv.setText("Slot " + (i + 1));
+        viewHolder.titleTv.setText(activity.getString(R.string.slot) + " " + (i + 1));
         viewHolder.slotTv.setText(Utils.getSlotTimeDate(slotsList.get(i)));
         viewHolder.slotItem.setOnClickListener(new View.OnClickListener() {
             @Override

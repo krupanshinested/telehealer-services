@@ -5,11 +5,17 @@ package com.thealer.telehealer.common.VitalCommon.VitalInterfaces;
  */
 
 public interface GulcoMeasureInterface {
-    public void updateGulcoMessage(String deviceType,String message);
-    public void updateGulcoValue(String deviceType,int value);
-    public void didGulcoStartMeasure(String deviceType);
-    public void didFinishGulcoMesureWithFailure(String deviceType,String error);
-    public void didStripInserted(String deviceType);
-    public void didStripEjected(String deviceType);
-    public void didBloodDropped(String deviceType);
+    void updateGulcoMessage(String deviceType, String message);
+
+    void updateGulcoValue(String deviceType, int value);
+
+    void didGulcoStartMeasure(String deviceType);
+
+    void didFinishGulcoMesureWithFailure(String deviceType, String error);
+
+    void didStripInserted(String deviceType);
+
+    void didStripEjected(String deviceType);
+
+    void didBloodDropped(String deviceType);
 }

@@ -12,6 +12,7 @@ public class PushPayLoad {
     public APNSPayload getPn_apns() {
         return pn_apns;
     }
+
     public GCMPayload getPn_gcm() {
         return pn_gcm;
     }

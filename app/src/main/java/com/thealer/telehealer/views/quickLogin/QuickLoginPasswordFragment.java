@@ -113,7 +113,7 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
         validateBtn.setOnClickListener(this);
 
         userNameTv.setText(UserDetailPreferenceManager.getUserDisplayName());
-        Utils.setImageWithGlide(getActivity().getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
 
         passwordEt.addTextChangedListener(new TextWatcher() {
             @Override

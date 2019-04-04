@@ -27,6 +27,7 @@
                 android:id="@+id/medical_history_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 app:cardUseCompatPadding="true">
 
                 <android.support.constraint.ConstraintLayout
@@ -228,7 +229,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="more"
+                    android:text="@string/more"
                     android:textColor="@color/app_gradient_start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/doctor_bio_tv" />

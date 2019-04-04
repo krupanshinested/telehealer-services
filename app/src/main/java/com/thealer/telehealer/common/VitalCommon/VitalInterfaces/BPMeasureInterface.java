@@ -7,12 +7,17 @@ import java.util.ArrayList;
  */
 
 public interface BPMeasureInterface {
-    public void updateBPMessage(String deviceType,String message);
-    public void didStartBPMesure(String deviceType);
-    public void didUpdateBPMesure(String deviceType,ArrayList<Double> value);
-    public void didUpdateBPM(String deviceType,ArrayList<Double> value);
-    public void didFinishBPMesure(String deviceType,Double systolicValue,Double diastolicValue,Double heartRate);
-    public void didFailBPMesure(String deviceType,String error);
+    void updateBPMessage(String deviceType, String message);
 
-    public void didFinishBpMeasure(Object object);
+    void didStartBPMesure(String deviceType);
+
+    void didUpdateBPMesure(String deviceType, ArrayList<Double> value);
+
+    void didUpdateBPM(String deviceType, ArrayList<Double> value);
+
+    void didFinishBPMesure(String deviceType, Double systolicValue, Double diastolicValue, Double heartRate);
+
+    void didFailBPMesure(String deviceType, String error);
+
+    void didFinishBpMeasure(Object object);
 }

@@ -9,7 +9,8 @@ import java.util.List;
  * Created by Aswin on 06,December,2018
  */
 public class ImagePreviewViewModel extends ViewModel {
-    private List<String > imageList = new ArrayList<>();
+    private List<String> imageList = new ArrayList<>();
+
     public List<String> getImageList() {
         return imageList;
     }

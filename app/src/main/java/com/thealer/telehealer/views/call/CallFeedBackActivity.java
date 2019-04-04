@@ -2,14 +2,11 @@ package com.thealer.telehealer.views.call;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -19,12 +16,9 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
-import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
-import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -39,16 +33,16 @@ import java.util.HashMap;
 
 public class CallFeedBackActivity extends BaseActivity implements View.OnClickListener {
 
-    private TextView app_name_tv,info_tv,quality_tv,ccm_tv;
+    private TextView app_name_tv, info_tv, quality_tv, ccm_tv;
     private ImageView close_iv;
     private RatingBar rating_bar;
     private EditText rating_et;
     private ConstraintLayout ccm_view;
-    private CCMItemView ccm_item,rpm_item,bhi_item;
+    private CCMItemView ccm_item, rpm_item, bhi_item;
     private CustomButton submit_btn;
 
-    private String sessionId,to_guid;
-    private Date startedDate = new Date(),endedDate = new Date();
+    private String sessionId, to_guid;
+    private Date startedDate = new Date(), endedDate = new Date();
 
     private OpenTokViewModel openTokViewModel;
 
@@ -104,8 +98,8 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     protected void onSaveInstanceState(Bundle saveInstance) {
         super.onSaveInstanceState(saveInstance);
 
-        saveInstance.putFloat(ArgumentKeys.FEEDBACK_RATTING,rating_bar.getRating());
-        saveInstance.putString(ArgumentKeys.FEEDBACK_STRING,rating_et.getText().toString());
+        saveInstance.putFloat(ArgumentKeys.FEEDBACK_RATTING, rating_bar.getRating());
+        saveInstance.putString(ArgumentKeys.FEEDBACK_STRING, rating_et.getText().toString());
     }
 
     private void setUp() {
@@ -125,11 +119,11 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
 
         initListeners();
 
-        String startTime = Utils.getStringFromDate(startedDate,"hh:mm a");
-        String endTime = Utils.getStringFromDate(endedDate,"hh:mm a");
-        String date = Utils.getStringFromDate(startedDate,"dd MMM yyyy");
+        String startTime = Utils.getStringFromDate(startedDate, "hh:mm a");
+        String endTime = Utils.getStringFromDate(endedDate, "hh:mm a");
+        String date = Utils.getStringFromDate(startedDate, "dd MMM yyyy");
 
-        info_tv.setText(startTime+" to "+endTime+" | "+date);
+        info_tv.setText(startTime + " to " + endTime + " | " + date);
     }
 
     private void initListeners() {
@@ -204,7 +198,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
-        },null);
+        }, null);
     }
 
     @Override
@@ -215,20 +209,20 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                 submit_btn.setEnabled(false);
 
                 if (ccm_item.getIsSelected()) {
-                    HashMap<String,String> params = new HashMap<>();
+                    HashMap<String, String> params = new HashMap<>();
                     params.put("category", OpenTokConstants.ccm);
-                    openTokViewModel.updateCallStatus(sessionId,params);
+                    openTokViewModel.updateCallStatus(sessionId, params);
                 } else if (bhi_item.getIsSelected()) {
-                    HashMap<String,String> params = new HashMap<>();
+                    HashMap<String, String> params = new HashMap<>();
                     params.put("category", OpenTokConstants.bhi);
-                    openTokViewModel.updateCallStatus(sessionId,params);
+                    openTokViewModel.updateCallStatus(sessionId, params);
                 } else if (rpm_item.getIsSelected()) {
-                    HashMap<String,String> params = new HashMap<>();
+                    HashMap<String, String> params = new HashMap<>();
                     params.put("category", OpenTokConstants.rpm);
-                    openTokViewModel.updateCallStatus(sessionId,params);
+                    openTokViewModel.updateCallStatus(sessionId, params);
                 }
 
-                HashMap<String,Object> params = new HashMap<>();
+                HashMap<String, Object> params = new HashMap<>();
                 params.put("order_id", sessionId);
                 params.put("rating", rating_bar.getRating());
                 params.put("given_to", to_guid);

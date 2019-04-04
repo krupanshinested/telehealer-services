@@ -5,5 +5,5 @@ package com.thealer.telehealer.views.common;
  */
 
 public interface CurrentModeInterface {
-    public int getCurrentMode();
+    int getCurrentMode();
 }

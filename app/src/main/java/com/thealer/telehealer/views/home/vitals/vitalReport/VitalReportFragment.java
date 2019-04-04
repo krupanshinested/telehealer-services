@@ -57,9 +57,10 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
     private VitalReportApiViewModel vitalReportApiViewModel;
 
     private VitalReportApiReponseModel vitalReportApiReponseModel;
-    private AlertDialog filterAlertDialog;
     private VitalReportUserListAdapter vitalReportUserListAdapter;
-    private String selectedFilter, startDate = null, endDate = null;
+    private static String selectedFilter;
+    private String startDate = null;
+    private String endDate = null;
     private List<CommonUserApiResponseModel> searchList = new ArrayList<>();
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
@@ -103,6 +104,7 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         selectedFilter = VitalReportApiViewModel.LAST_WEEK;
     }
 
@@ -211,7 +213,7 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
 
         patientListCrv.setErrorModel(this, vitalReportApiViewModel.getErrorModelLiveData());
 
-        getUsersList(VitalReportApiViewModel.LAST_WEEK, startDate, endDate);
+        getUsersList(selectedFilter, startDate, endDate);
 
     }
 
@@ -238,7 +240,7 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
                     startDate = bundle.getString(ArgumentKeys.START_DATE);
                     endDate = bundle.getString(ArgumentKeys.END_DATE);
 
-                    String title = EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_VITAL_FROM_TO);
+                    String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
 
                     patientListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
                 }

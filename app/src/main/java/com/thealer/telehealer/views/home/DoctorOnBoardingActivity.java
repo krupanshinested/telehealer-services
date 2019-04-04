@@ -106,7 +106,7 @@ public class DoctorOnBoardingActivity extends BaseActivity {
         videoLinkTv = (TextView) findViewById(R.id.video_link_tv);
 
         userNameTv.setText("Hi " + UserDetailPreferenceManager.getFirst_name() + "!");
-        Utils.setImageWithGlide(getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
 
         videoLinkTv.setOnClickListener(new View.OnClickListener() {
             @Override

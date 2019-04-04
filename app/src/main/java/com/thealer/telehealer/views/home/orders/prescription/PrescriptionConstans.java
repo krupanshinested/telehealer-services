@@ -5,9 +5,9 @@ package com.thealer.telehealer.views.home.orders.prescription;
  */
 public class PrescriptionConstans {
 
-    public static String [] prescription_forms = {"Tablet", "Capsule", "Drops", "Suppository", "Ointment", "Injection", "Inhaler", "Cream", "Lozenge", "Syrup", "Powder", "Spray", "Gel", "Lotion", "Mouthwash", "Shampoo", "Solution", "Suspension", "Sachet"};
-    public static String [] prescription_metrics = {"mg", "mcg", "gm"};
-    public static String [] prescription_direction_one = {"PO", "PR", "PC", "SQ", "Inhalation"};
-    public static String [] prescription_direction_two = {"QD", "BID", "TID", "QID", "QHS", "QAC", "PRN", "QOD"};
+    public static String[] prescription_forms = {"Tablet", "Capsule", "Drops", "Suppository", "Ointment", "Injection", "Inhaler", "Cream", "Lozenge", "Syrup", "Powder", "Spray", "Gel", "Lotion", "Mouthwash", "Shampoo", "Solution", "Suspension", "Sachet"};
+    public static String[] prescription_metrics = {"mg", "mcg", "gm"};
+    public static String[] prescription_direction_one = {"PO", "PR", "PC", "SQ", "Inhalation"};
+    public static String[] prescription_direction_two = {"QD", "BID", "TID", "QID", "QHS", "QAC", "PRN", "QOD"};
 
 }

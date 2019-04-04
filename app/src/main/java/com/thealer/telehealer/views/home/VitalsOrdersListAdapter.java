@@ -20,7 +20,6 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrdersDetailListFragment;
 import com.thealer.telehealer.views.home.orders.document.DocumentListFragment;
@@ -36,19 +35,23 @@ import java.util.List;
 public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersListAdapter.ViewHolder> {
 
     private FragmentActivity fragmentActivity;
-    private List<String> titleList;
+    private List<String> titleList, typeList;
     private List<Integer> imageList;
     private String[] vitalMeasurementTypes;
     private String viewType;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private Bundle bundle;
 
-    public VitalsOrdersListAdapter(FragmentActivity fragmentActivity, List<String> titleList, List<Integer> imageList, String viewType, Bundle bundle) {
+    public VitalsOrdersListAdapter(FragmentActivity fragmentActivity, List<String> typeList, List<Integer> imageList, String viewType, Bundle bundle) {
         this.fragmentActivity = fragmentActivity;
-        this.titleList = titleList;
+        this.typeList = typeList;
         this.imageList = imageList;
         this.viewType = viewType;
         this.bundle = bundle;
+        titleList = new ArrayList<>();
+        for (String type : typeList) {
+            titleList.add(OrderConstant.getDislpayTitle(fragmentActivity, type));
+        }
         showSubFragmentInterface = (ShowSubFragmentInterface) fragmentActivity;
     }
 
@@ -93,13 +96,14 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
                     bundle.putString(ArgumentKeys.MEASUREMENT_TYPE, vitalMeasurementTypes[i]);
                     fragment = new VitalsDetailListFragment();
                 } else if (viewType.equals(Constants.VIEW_ORDERS)) {
-                    bundle.putString(Constants.SELECTED_ITEM, titleList.get(i));
-                    if (titleList.get(i).equals(OrderConstant.ORDER_FORM)) {
+                    bundle.putString(Constants.SELECTED_ITEM, typeList.get(i));
+                    if (typeList.get(i).equals(OrderConstant.ORDER_FORM)) {
 
                         if (UserType.isUserDoctor()) {
                             if (UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature() != null) {
-                                fragmentActivity.startActivity(new Intent(fragmentActivity, CreateOrderActivity.class)
-                                        .putExtras(bundle));
+//                                fragmentActivity.startActivity(new Intent(fragmentActivity, CreateOrderActivity.class)
+//                                        .putExtras(bundle));
+                                fragment = new OrdersDetailListFragment();
                             } else {
                                 bundle.putBoolean(ArgumentKeys.SHOW_SIGNATURE_PROPOSER, true);
                                 fragmentActivity.startActivity(new Intent(fragmentActivity, SignatureActivity.class).putExtras(bundle));
@@ -108,7 +112,7 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
                             fragment = new OrdersDetailListFragment();
                         }
 
-                    } else if (titleList.get(i).equals(OrderConstant.ORDER_DOCUMENTS)) {
+                    } else if (typeList.get(i).equals(OrderConstant.ORDER_DOCUMENTS)) {
                         fragment = new DocumentListFragment();
                     } else {
                         fragment = new OrdersDetailListFragment();

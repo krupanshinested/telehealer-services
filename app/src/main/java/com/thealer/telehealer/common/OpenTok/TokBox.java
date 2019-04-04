@@ -1,47 +1,31 @@
 package com.thealer.telehealer.common.OpenTok;
 
-import android.annotation.SuppressLint;
-import android.app.Application;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.media.AudioAttributes;
 import android.media.AudioDeviceInfo;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintSet;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.CardView;
-import android.telecom.Call;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import com.google.gson.reflect.TypeToken;
 import com.opentok.android.AudioDeviceManager;
-import com.opentok.android.BaseAudioDevice;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.Connection;
 import com.opentok.android.OpentokError;
@@ -52,15 +36,11 @@ import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.TeleHealerApplication;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
-import com.thealer.telehealer.common.Animation.ConstrainSetUtil;
-import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.LocationTracker;
@@ -72,45 +52,33 @@ import com.thealer.telehealer.common.OpenTok.openTokInterfaces.TokBoxUIInterface
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.common.ResultFetcher;
+import com.thealer.telehealer.common.UserDetailFetcher;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.Util.TimerInterface;
-import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubNubResult;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
-import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
-import com.thealer.telehealer.common.UserDetailFetcher;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.call.CallActivity;
-import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
-import com.thealer.telehealer.views.home.HomeActivity;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.webrtc.VideoRenderer;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
-import static android.media.AudioManager.GET_DEVICES_ALL;
 import static android.media.AudioManager.GET_DEVICES_OUTPUTS;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
-import static java.util.Arrays.asList;
 import static org.webrtc.ContextUtils.getApplicationContext;
 
 /**
@@ -129,7 +97,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         SubscriberKit.VideoStatsListener,
         SubscriberKit.AudioStatsListener,
         SubscriberKit.VideoListener,
-        AudioInterface,AudioManager.OnAudioFocusChangeListener,
+        AudioInterface, AudioManager.OnAudioFocusChangeListener,
         OnDSListener {
 
     public static TokBox shared = new TokBox();
@@ -157,10 +125,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private Boolean isPatientDisclaimerDismissed = false;
 
     @Nullable
-    private String doctor_guid,scheduleId;
+    private String doctor_guid, scheduleId;
 
     private int callState = OpenTokConstants.idle;
-    private Boolean isSubscriberAudioMuted = false,isSubscriberVideoMuted = false,isSubscriberQualityDegraded = false;
+    private Boolean isSubscriberAudioMuted = false, isSubscriberVideoMuted = false, isSubscriberQualityDegraded = false;
 
     @Nullable
     private CommonUserApiResponseModel otherPersonDetail;
@@ -178,7 +146,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private TokBoxUIInterface tokBoxUIInterface;
 
     @Nullable
-    private MediaPlayer incomingPlayer,outgoingPlayer;
+    private MediaPlayer incomingPlayer, outgoingPlayer;
     @Nullable
     private Vibrator vibrator;
 
@@ -197,7 +165,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private LocationTracker patientLocationTracker;
 
     @Nullable
-    private TimerRunnable outGoingCallTimer,callCapTimer;
+    private TimerRunnable outGoingCallTimer, callCapTimer;
 
     private final OpenTokViewModel openTokViewModel = new OpenTokViewModel(application);
 
@@ -221,13 +189,13 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                     return;
                 }
 
-                CallInitiateModel callInitiateModel = new CallInitiateModel(apnsPayload.getFrom(),null,apnsPayload.getDoctor_guid(),apnsPayload.getFrom_name(),null,apnsPayload.getType());
+                CallInitiateModel callInitiateModel = new CallInitiateModel(apnsPayload.getFrom(), null, apnsPayload.getDoctor_guid(), apnsPayload.getFrom_name(), null, apnsPayload.getType());
 
                 callInitiateModel.setSessionId(apnsPayload.getSessionId());
                 callInitiateModel.setTokBoxApiKey(tokenFetchModel.getApiKey());
                 callInitiateModel.setToken(tokenFetchModel.getToken());
 
-                initialSetUp(callInitiateModel,false,apnsPayload.getUuid());
+                initialSetUp(callInitiateModel, false, apnsPayload.getUuid());
 
                 GetUsersApiViewModel getUsersApiViewModel = new GetUsersApiViewModel(application);
                 getUsersApiViewModel.getUserDetail(apnsPayload.getFrom(), new UserDetailFetcher() {
@@ -254,14 +222,14 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                                     public void run() {
                                         application.startActivity(intent);
                                     }
-                                },100);
+                                }, 100);
 
                                 try {
                                     Log.d("TokBox", "startIncomingTone");
                                     MediaPlayer player = new MediaPlayer();
 
                                     Uri notification = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + application.getPackageName() + "/raw/music");
-                                    player.setDataSource(application,notification);
+                                    player.setDataSource(application, notification);
                                     player.setLooping(true);
 
                                     AudioAttributes audioAttributes = new AudioAttributes.Builder()
@@ -272,7 +240,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                                     player.setAudioAttributes(audioAttributes);
 
 
-                                    new AsyncTask<Void,Void,Boolean>() {
+                                    new AsyncTask<Void, Void, Boolean>() {
                                         @Override
                                         protected Boolean doInBackground(Void... voids) {
                                             try {
@@ -298,7 +266,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                                     vibrator.vibrate(20000);
 
                                 } catch (Exception e) {
-                                    Log.d("TokBox", "startIncomingTone error "+e.getLocalizedMessage());
+                                    Log.d("TokBox", "startIncomingTone error " + e.getLocalizedMessage());
                                     e.printStackTrace();
                                 }
 
@@ -316,20 +284,20 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     //Setup methods
 
     public TokBox() {
-        CustomAudioDevice customAudioDevice = new CustomAudioDevice(application,this);
+        CustomAudioDevice customAudioDevice = new CustomAudioDevice(application, this);
         AudioDeviceManager.setAudioDevice(customAudioDevice);
         this.customAudioDevice = customAudioDevice;
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                     @Override
-                                                     public void run() {
-                                                         googleSpeechRecognizer = new GoogleSpeechRecognizer(application);
-                                                         googleSpeechRecognizer.setOnDroidSpeechListener(TokBox.this);
-                                                     }
-                                                 });
+            @Override
+            public void run() {
+                googleSpeechRecognizer = new GoogleSpeechRecognizer(application);
+                googleSpeechRecognizer.setOnDroidSpeechListener(TokBox.this);
+            }
+        });
     }
 
-    public void initialSetUp(CallInitiateModel callInitiateModel,Boolean isCalling,String uuidString) {
+    public void initialSetUp(CallInitiateModel callInitiateModel, Boolean isCalling, String uuidString) {
 
         EventRecorder.recordLastUpdate("last_call_date");
         currentTranscript = "";
@@ -555,7 +523,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
             Boolean isExternalInputAvailable = false;
             int inEarPieceIndex = -1;
-            for (int i = 0;i<deviceInfos.length;i++) {
+            for (int i = 0; i < deviceInfos.length; i++) {
                 AudioDeviceInfo deviceInfo = deviceInfos[i];
                 if (deviceInfo.getType() == AudioDeviceInfo.TYPE_BUILTIN_EARPIECE) {
                     inEarPieceIndex = i;
@@ -716,7 +684,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             MediaPlayer player = new MediaPlayer();
 
             Uri notification = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/raw/music");
-            player.setDataSource(application,notification);
+            player.setDataSource(application, notification);
             player.setLooping(true);
 
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
@@ -727,7 +695,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             player.setAudioAttributes(audioAttributes);
 
 
-            new AsyncTask<Void,Void,Boolean>() {
+            new AsyncTask<Void, Void, Boolean>() {
                 @Override
                 protected Boolean doInBackground(Void... voids) {
                     try {
@@ -815,24 +783,24 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         sendTranscript();
 
-       if (!TextUtils.isEmpty(sessionId)) {
-           if (isCalling) {
-               if (connectedDate == null) {
-                   HashMap<String ,String > map = new HashMap<>();
-                   map.put("no_answer","true");
-                   updateCallStatus(sessionId,map);
-                   EventRecorder.recordCallUpdates("no_answer", null);
-               } else {
-                   HashMap<String ,String > map = new HashMap<>();
-                   map.put("end","true");
-                   updateCallStatus(sessionId,map);
-               }
-           }
-       }
+        if (!TextUtils.isEmpty(sessionId)) {
+            if (isCalling) {
+                if (connectedDate == null) {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("no_answer", "true");
+                    updateCallStatus(sessionId, map);
+                    EventRecorder.recordCallUpdates("no_answer", null);
+                } else {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("end", "true");
+                    updateCallStatus(sessionId, map);
+                }
+            }
+        }
 
-       if (tempToken != null) {
-           appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN,tempToken);
-       }
+        if (tempToken != null) {
+            appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, tempToken);
+        }
 
         final Class<? extends Service> service = CallMinimizeService.class;
         final Intent intent = new Intent(application, service);
@@ -884,9 +852,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             return;
         }
 
-        Log.d("TokBox","Google search sendTranscript : "+currentTranscript);
+        Log.d("TokBox", "Google search sendTranscript : " + currentTranscript);
         googleSpeechRecognizer.closeDroidSpeechOperations();
-        openTokViewModel.postTranscript(sessionId,currentTranscript,isCalling);
+        openTokViewModel.postTranscript(sessionId, currentTranscript, isCalling);
         isTranscriptSent = true;
     }
 
@@ -918,24 +886,24 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         if (otherPersonDetail != null) {
             Log.d("openTok", "endCall");
-            PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForEndCall(UserDetailPreferenceManager.getUserDisplayName(),UserDetailPreferenceManager.getUser_guid(), otherPersonDetail.getUser_guid(), currentUUIDString, callRejectionReason);
-            PubnubUtil.shared.publishVoipMessage(pushPayLoad,null);
+            PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForEndCall(UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), otherPersonDetail.getUser_guid(), currentUUIDString, callRejectionReason);
+            PubnubUtil.shared.publishVoipMessage(pushPayLoad, null);
             EventRecorder.recordNotification("DECLINE_CALL");
         }
     }
 
 
     private void sendMessage(String type, String message) {
-        Log.d("TokBox","Message : "+message+" for type : "+type);
+        Log.d("TokBox", "Message : " + message + " for type : " + type);
         if (mSession != null && connection != null) {
             mSession.sendSignal(type, message, connection);
         }
     }
 
-    public void sendMessage(String type,HashMap<String,Object> message) {
+    public void sendMessage(String type, HashMap<String, Object> message) {
         try {
             String value = Utils.serialize(message);
-            sendMessage(type,value);
+            sendMessage(type, value);
         } catch (Exception e) {
             Log.d("TokBox","sendMessage : "+e.getLocalizedMessage());
             e.printStackTrace();
@@ -995,21 +963,21 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     //Api methods
 
-    private void sendNotification(String sessionId,String toGuid) {
+    private void sendNotification(String sessionId, String toGuid) {
         if (callType.equals(OpenTokConstants.oneWay)) {
             return;
         }
 
         PushPayLoad pushPayLoad = PubNubNotificationPayload.getCallInvitePayload(
                 UserDetailPreferenceManager.getUserDisplayName()
-                ,UserDetailPreferenceManager.getUser_guid(), toGuid,
-                currentUUIDString,callType,sessionId,doctor_guid);
+                , UserDetailPreferenceManager.getUser_guid(), toGuid,
+                currentUUIDString, callType, sessionId, doctor_guid);
         PubnubUtil.shared.publishVoipMessage(pushPayLoad, new PubNubResult() {
             @Override
             public void didSend(Boolean isSuccess) {
 
                 if (tokBoxUIInterface != null) {
-                    Log.d("TokBox","ringing");
+                    Log.d("TokBox", "ringing");
                     tokBoxUIInterface.updateCallInfo(application.getString(R.string.ringing));
                     startOutgoingTone();
                 }
@@ -1019,7 +987,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     private void updateCallStatus(String sessionId, HashMap<String, String> params) {
-        openTokViewModel.updateCallStatus(sessionId,params);
+        openTokViewModel.updateCallStatus(sessionId, params);
     }
 
     private void startArchive(String sessionId) {
@@ -1053,12 +1021,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     private void sendLocation(String state) {
-        HashMap<String,String> message = new HashMap<>();
-        message.put("sessionId",sessionId);
-        message.put("state",state);
+        HashMap<String, String> message = new HashMap<>();
+        message.put("sessionId", sessionId);
+        message.put("state", state);
         try {
             String value = Utils.serialize(message);
-            sendMessage(OpenTokConstants.patient_location,value);
+            sendMessage(OpenTokConstants.patient_location, value);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1066,7 +1034,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     //Signal Message related methods
     private void validateUserLocation(String message) {
-        Type type = new TypeToken<HashMap<String, String>>() {}.getType();
+        Type type = new TypeToken<HashMap<String, String>>() {
+        }.getType();
 
         try {
             HashMap<String, String> map = Utils.deserialize(message, type);
@@ -1084,11 +1053,11 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     /*Trigger when user requested for video call,Send a request message to other end user for confirming of switching*/
     public void requestForVideoSwap() {
-        HashMap<String,String> message = new HashMap<>();
-        message.put("sessionId",sessionId);
+        HashMap<String, String> message = new HashMap<>();
+        message.put("sessionId", sessionId);
         try {
             String value = Utils.serialize(message);
-            sendMessage(OpenTokConstants.requestForVideoSwap,value);
+            sendMessage(OpenTokConstants.requestForVideoSwap, value);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1102,7 +1071,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     private Boolean isVideoSwapAccepted(String message) {
-        Type type = new TypeToken<HashMap<String, String>>() {}.getType();
+        Type type = new TypeToken<HashMap<String, String>>() {
+        }.getType();
 
         try {
             HashMap<String, String> map = Utils.deserialize(message, type);
@@ -1116,17 +1086,17 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void updateVideoSwapRequest(Boolean isAccepted) {
-        HashMap<String,String> message = new HashMap<>();
+        HashMap<String, String> message = new HashMap<>();
 
         if (isAccepted) {
-            message.put(OpenTokConstants.isVideoSwapAccepted,OpenTokConstants.videoSwapAccepted);
+            message.put(OpenTokConstants.isVideoSwapAccepted, OpenTokConstants.videoSwapAccepted);
         } else {
-            message.put(OpenTokConstants.isVideoSwapAccepted,OpenTokConstants.videoSwapRejected);
+            message.put(OpenTokConstants.isVideoSwapAccepted, OpenTokConstants.videoSwapRejected);
         }
 
         try {
             String value = Utils.serialize(message);
-            sendMessage(OpenTokConstants.responseForVideoSwap,value);
+            sendMessage(OpenTokConstants.responseForVideoSwap, value);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1136,9 +1106,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private void updateAudioToVideoCall() {
         EventRecorder.recordCallUpdates("audio_to_video_call", null);
 
-        HashMap<String ,String> params = new HashMap<>();
-        params.put("type",OpenTokConstants.video);
-        openTokViewModel.updateCallStatus(sessionId,params);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("type", OpenTokConstants.video);
+        openTokViewModel.updateCallStatus(sessionId, params);
     }
 
     private void sendSubscriberStat(Double audioScore, Double videoScore) {
@@ -1215,36 +1185,37 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             }
         }
 
-        sendSubscriberStat(subscriberAudioQualityScore,subscriberVideoQualityScore);
+        sendSubscriberStat(subscriberAudioQualityScore, subscriberVideoQualityScore);
     }
 
     public void sendAudioMuteStatus(Boolean isMuted) {
-        HashMap<String,Boolean> message = new HashMap<>();
-        message.put("isAudioMuted",isMuted);
+        HashMap<String, Boolean> message = new HashMap<>();
+        message.put("isAudioMuted", isMuted);
         try {
             String value = Utils.serialize(message);
-            sendMessage(OpenTokConstants.audioMuteStatus,value);
+            sendMessage(OpenTokConstants.audioMuteStatus, value);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void audioMuteStatusReceived(String message) {
-        Type type = new TypeToken<HashMap<String, Boolean>>() {}.getType();
+        Type type = new TypeToken<HashMap<String, Boolean>>() {
+        }.getType();
 
         try {
             HashMap<String, Boolean> map = Utils.deserialize(message, type);
             Boolean isMuted = map.get("isAudioMuted");
 
             if (isMuted != null && isMuted) {
-                if (!isSubscriberAudioMuted)  {
+                if (!isSubscriberAudioMuted) {
                     isSubscriberAudioMuted = true;
 
                     if (tokBoxUIInterface != null)
                         tokBoxUIInterface.didSubscribeAudioDisabled();
                 }
             } else {
-                if (isSubscriberAudioMuted)  {
+                if (isSubscriberAudioMuted) {
                     isSubscriberAudioMuted = false;
                     if (tokBoxUIInterface != null)
                         tokBoxUIInterface.didSubscribeAudioEnabled();
@@ -1285,19 +1256,19 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     public void onError(PublisherKit publisherKit, OpentokError opentokError) {
         Log.d("TokBox", "onError " + opentokError.getMessage());
 
-        HashMap<String,String> detail = new HashMap<>();
-        detail.put("status","fail");
-        detail.put("reason",opentokError.getErrorCode().getErrorCode()+"-"+opentokError.getMessage());
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "fail");
+        detail.put("reason", opentokError.getErrorCode().getErrorCode() + "-" + opentokError.getMessage());
 
         switch (opentokError.getErrorDomain()) {
             case SessionErrorDomain:
-                detail.put("event","SessionErrorDomain");
+                detail.put("event", "SessionErrorDomain");
                 break;
             case SubscriberErrorDomain:
-                detail.put("event","SubscriberErrorDomain");
+                detail.put("event", "SubscriberErrorDomain");
                 break;
             case PublisherErrorDomain:
-                detail.put("event","PublisherErrorDomain");
+                detail.put("event", "PublisherErrorDomain");
                 break;
         }
 
@@ -1308,9 +1279,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     public void onConnected(Session session) {
         Log.d("TokBox", "onConnected session");
 
-        HashMap<String,String> detail = new HashMap<>();
-        detail.put("status","success");
-        detail.put("event","onConnected");
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "success");
+        detail.put("event", "onConnected");
         TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
 
         if (this.isCalling) {
@@ -1349,9 +1320,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     public void onDisconnected(Session session) {
         Log.d("TokBox", "onDisconnected");
 
-        HashMap<String,String> detail = new HashMap<>();
-        detail.put("status","success");
-        detail.put("event","disconnect");
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "success");
+        detail.put("event", "disconnect");
 
         TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
     }
@@ -1385,19 +1356,19 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     public void onError(Session session, OpentokError opentokError) {
         Log.d("TokBox", "onError" + opentokError.getMessage());
 
-        HashMap<String,String> detail = new HashMap<>();
-        detail.put("status","fail");
-        detail.put("reason",opentokError.getErrorCode().getErrorCode()+"-"+opentokError.getMessage());
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "fail");
+        detail.put("reason", opentokError.getErrorCode().getErrorCode() + "-" + opentokError.getMessage());
 
         switch (opentokError.getErrorDomain()) {
             case SessionErrorDomain:
-                detail.put("event","SessionErrorDomain");
+                detail.put("event", "SessionErrorDomain");
                 break;
             case SubscriberErrorDomain:
-                detail.put("event","SubscriberErrorDomain");
+                detail.put("event", "SubscriberErrorDomain");
                 break;
             case PublisherErrorDomain:
-                detail.put("event","PublisherErrorDomain");
+                detail.put("event", "PublisherErrorDomain");
                 break;
         }
 
@@ -1441,20 +1412,20 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         speechRunnable = new TimerRunnable(new TimerInterface() {
             @Override
             public void run() {
-                Log.d("TokBox","Google search sendTranscript trigger from timer");
+                Log.d("TokBox", "Google search sendTranscript trigger from timer");
                 sendTranscript();
             }
         });
-        new Handler().postDelayed(speechRunnable,60000);
+        new Handler().postDelayed(speechRunnable, 60000);
     }
 
     @Override
     public void onDisconnected(SubscriberKit subscriberKit) {
         Log.d("TokBox", "onDisconnected subscriber");
 
-        HashMap<String,String> detail = new HashMap<>();
-        detail.put("status","success");
-        detail.put("event","disconnect-subscriber");
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "success");
+        detail.put("event", "disconnect-subscriber");
 
         TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
     }
@@ -1463,19 +1434,19 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
         Log.d("TokBox", "onError subscriber " + opentokError.getMessage());
 
-        HashMap<String,String> detail = new HashMap<>();
-        detail.put("status","fail");
-        detail.put("reason",opentokError.getErrorCode().getErrorCode()+"-"+opentokError.getMessage());
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "fail");
+        detail.put("reason", opentokError.getErrorCode().getErrorCode() + "-" + opentokError.getMessage());
 
         switch (opentokError.getErrorDomain()) {
             case SessionErrorDomain:
-                detail.put("event","SessionErrorDomain");
+                detail.put("event", "SessionErrorDomain");
                 break;
             case SubscriberErrorDomain:
-                detail.put("event","SubscriberErrorDomain");
+                detail.put("event", "SubscriberErrorDomain");
                 break;
             case PublisherErrorDomain:
-                detail.put("event","PublisherErrorDomain");
+                detail.put("event", "PublisherErrorDomain");
                 break;
         }
 
@@ -1579,8 +1550,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             return;
         }
 
-        PublisherKit.PublisherAudioStats previousStat = publisherAudioStats[publisherAudioStats.length-2];
-        PublisherKit.PublisherAudioStats currentStat = publisherAudioStats[publisherAudioStats.length-1];
+        PublisherKit.PublisherAudioStats previousStat = publisherAudioStats[publisherAudioStats.length - 2];
+        PublisherKit.PublisherAudioStats currentStat = publisherAudioStats[publisherAudioStats.length - 1];
 
         long totalAudioPackets =
                 (currentStat.audioPacketsLost - previousStat.audioPacketsLost) +
@@ -1621,8 +1592,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             return;
         }
 
-        PublisherKit.PublisherVideoStats previousStat = publisherVideoStats[publisherVideoStats.length-2];
-        PublisherKit.PublisherVideoStats currentStat = publisherVideoStats[publisherVideoStats.length-1];
+        PublisherKit.PublisherVideoStats previousStat = publisherVideoStats[publisherVideoStats.length - 2];
+        PublisherKit.PublisherVideoStats currentStat = publisherVideoStats[publisherVideoStats.length - 1];
 
         double interval = currentStat.timeStamp - previousStat.timeStamp;
         double bytesIn = currentStat.videoBytesSent - previousStat.videoBytesSent;
@@ -1722,7 +1693,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                         Math.log(targetBitrate / 30000)) * 4 + 1;
 
 
-
         lastSubscriberVideoStat = subscriberVideoStats;
         statUpdate();
 
@@ -1738,90 +1708,90 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     public void onVideoDisabled(SubscriberKit subscriberKit, String reason) {
 
         switch (reason) {
-        case SubscriberKit.VIDEO_REASON_QUALITY:
-            if (isVideoCall()) {
-                isSubscriberQualityDegraded = true;
-                isSubscriberVideoMuted = true;
-                Log.d("TokBox", "subscribe video disabled because of quality changed ");
-                didVideoDisabledOrEnabledForSubscriberDueToQuality(false);
-            }
-
-            EventRecorder.recordCallUpdates("subscriber_video_disabled", "quality_changed");
-
-            break;
-        case SubscriberKit.VIDEO_REASON_PUBLISH_VIDEO:
-
-            if (!isSubscriberVideoMuted) {
-                isSubscriberVideoMuted = true;
-
-                if (tokBoxUIInterface != null) {
-                    tokBoxUIInterface.didSubscribeVideoDisabled();
+            case SubscriberKit.VIDEO_REASON_QUALITY:
+                if (isVideoCall()) {
+                    isSubscriberQualityDegraded = true;
+                    isSubscriberVideoMuted = true;
+                    Log.d("TokBox", "subscribe video disabled because of quality changed ");
+                    didVideoDisabledOrEnabledForSubscriberDueToQuality(false);
                 }
-            }
 
-            EventRecorder.recordCallUpdates("subscriber_video_disabled", "publisher_property_changed");
+                EventRecorder.recordCallUpdates("subscriber_video_disabled", "quality_changed");
 
-            Log.d("TokBox", "subscribe video disabled because of publisher property");
-            break;
-        case SubscriberKit.VIDEO_REASON_SUBSCRIBE_TO_VIDEO:
+                break;
+            case SubscriberKit.VIDEO_REASON_PUBLISH_VIDEO:
 
-            if (!isSubscriberVideoMuted) {
-                isSubscriberVideoMuted = true;
+                if (!isSubscriberVideoMuted) {
+                    isSubscriberVideoMuted = true;
 
-                if (tokBoxUIInterface != null) {
-                    tokBoxUIInterface.didSubscribeVideoDisabled();
+                    if (tokBoxUIInterface != null) {
+                        tokBoxUIInterface.didSubscribeVideoDisabled();
+                    }
                 }
-            }
 
-            EventRecorder.recordCallUpdates("subscriber_video_disabled", "subscriber_property_changed");
+                EventRecorder.recordCallUpdates("subscriber_video_disabled", "publisher_property_changed");
 
-            Log.d("TokBox", "subscribe video disabled because of subscriber property");
-            break;
+                Log.d("TokBox", "subscribe video disabled because of publisher property");
+                break;
+            case SubscriberKit.VIDEO_REASON_SUBSCRIBE_TO_VIDEO:
+
+                if (!isSubscriberVideoMuted) {
+                    isSubscriberVideoMuted = true;
+
+                    if (tokBoxUIInterface != null) {
+                        tokBoxUIInterface.didSubscribeVideoDisabled();
+                    }
+                }
+
+                EventRecorder.recordCallUpdates("subscriber_video_disabled", "subscriber_property_changed");
+
+                Log.d("TokBox", "subscribe video disabled because of subscriber property");
+                break;
         }
     }
 
     @Override
     public void onVideoEnabled(SubscriberKit subscriberKit, String reason) {
         switch (reason) {
-        case SubscriberKit.VIDEO_REASON_QUALITY:
-            isSubscriberQualityDegraded = false;
-            isSubscriberVideoMuted = false;
-
-            Log.d("TokBox", "subscribe video enabled because of quality changed");
-
-            didVideoDisabledOrEnabledForSubscriberDueToQuality(true);
-
-            EventRecorder.recordCallUpdates("subscriber_video_enabled", "quality_changed");
-
-            break;
-        case SubscriberKit.VIDEO_REASON_PUBLISH_VIDEO:
-            if (isSubscriberVideoMuted) {
+            case SubscriberKit.VIDEO_REASON_QUALITY:
+                isSubscriberQualityDegraded = false;
                 isSubscriberVideoMuted = false;
 
-                if (tokBoxUIInterface != null) {
-                    tokBoxUIInterface.didSubscribeVideoEnabled();
+                Log.d("TokBox", "subscribe video enabled because of quality changed");
+
+                didVideoDisabledOrEnabledForSubscriberDueToQuality(true);
+
+                EventRecorder.recordCallUpdates("subscriber_video_enabled", "quality_changed");
+
+                break;
+            case SubscriberKit.VIDEO_REASON_PUBLISH_VIDEO:
+                if (isSubscriberVideoMuted) {
+                    isSubscriberVideoMuted = false;
+
+                    if (tokBoxUIInterface != null) {
+                        tokBoxUIInterface.didSubscribeVideoEnabled();
+                    }
                 }
-            }
 
-            EventRecorder.recordCallUpdates("subscriber_video_enabled", "publisher_property_changed");
+                EventRecorder.recordCallUpdates("subscriber_video_enabled", "publisher_property_changed");
 
-            Log.d("TokBox", "subscribe video enabled because of publisher property");
+                Log.d("TokBox", "subscribe video enabled because of publisher property");
 
-            break;
-        case SubscriberKit.VIDEO_REASON_SUBSCRIBE_TO_VIDEO:
-            if (isSubscriberVideoMuted) {
-                isSubscriberVideoMuted = false;
+                break;
+            case SubscriberKit.VIDEO_REASON_SUBSCRIBE_TO_VIDEO:
+                if (isSubscriberVideoMuted) {
+                    isSubscriberVideoMuted = false;
 
-                if (tokBoxUIInterface != null) {
-                    tokBoxUIInterface.didSubscribeVideoEnabled();
+                    if (tokBoxUIInterface != null) {
+                        tokBoxUIInterface.didSubscribeVideoEnabled();
+                    }
                 }
-            }
 
-            EventRecorder.recordCallUpdates("subscriber_video_enabled", "subscriber_property_changed");
+                EventRecorder.recordCallUpdates("subscriber_video_enabled", "subscriber_property_changed");
 
-            Log.d("TokBox", "subscribe video enabled because of subscriber property");
+                Log.d("TokBox", "subscribe video enabled because of subscriber property");
 
-            break;
+                break;
         }
     }
 
@@ -1893,9 +1863,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                 if (outgoingPlayer != null && outgoingPlayer.isPlaying()) {
-                    outgoingPlayer.setVolume(0.1f,0.1f);
+                    outgoingPlayer.setVolume(0.1f, 0.1f);
                 } else if (incomingPlayer != null && incomingPlayer.isPlaying()) {
-                    incomingPlayer.setVolume(0.1f,0.1f);
+                    incomingPlayer.setVolume(0.1f, 0.1f);
                 }
                 break;
 
@@ -2018,22 +1988,22 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     @Override
     public void onDroidSpeechLiveResult(String liveSpeechResult) {
-        Log.d("TokBox","Google search onDroidSpeechLiveResult : "+liveSpeechResult);
+        Log.d("TokBox", "Google search onDroidSpeechLiveResult : " + liveSpeechResult);
     }
 
     @Override
     public void onDroidSpeechFinalResult(String finalSpeechResult) {
         currentTranscript += finalSpeechResult + "\n";
-        Log.d("TokBox","Google search onDroidSpeechFinalResult : "+finalSpeechResult);
+        Log.d("TokBox", "Google search onDroidSpeechFinalResult : " + finalSpeechResult);
     }
 
     @Override
     public void onDroidSpeechClosedByUser() {
-        Log.d("TokBox","Google search onDroidSpeechClosedByUser");
+        Log.d("TokBox", "Google search onDroidSpeechClosedByUser");
     }
 
     @Override
     public void onDroidSpeechError(String errorMsg) {
-        Log.d("TokBox","Google search onDroidSpeechError : "+errorMsg);
+        Log.d("TokBox", "Google search onDroidSpeechError : " + errorMsg);
     }
 }

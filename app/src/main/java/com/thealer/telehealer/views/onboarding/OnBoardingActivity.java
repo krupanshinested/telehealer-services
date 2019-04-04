@@ -9,7 +9,7 @@ import com.thealer.telehealer.views.base.BaseActivity;
 /**
  * Created by Aswin on 10,October,2018
  */
-public class OnBoardingActivity extends BaseActivity{
+public class OnBoardingActivity extends BaseActivity {
     private OnBoardingActionFragment onBoardingActionFragment;
     private OnBoardingViewPagerFragment onBoardingViewPagerFragment;
 

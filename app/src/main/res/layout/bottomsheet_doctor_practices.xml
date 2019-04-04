@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/parent_view"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <LinearLayout
@@ -19,14 +19,14 @@
             <TextView
                 android:id="@+id/delete_tv"
                 style="@style/text_sub_title_app_color"
-                android:textColor="@color/red"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:padding="@dimen/padding_default"
-                android:layout_marginLeft="10dp"
                 android:text="@string/delete"
-                android:visibility="gone"/>
+                android:textColor="@color/red"
+                android:visibility="gone" />
 
             <TextView
                 style="@style/text_title_bold"
@@ -40,10 +40,10 @@
                 style="@style/text_sub_title_app_color"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:padding="@dimen/padding_default"
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:padding="@dimen/padding_default"
                 android:text="@string/done"
                 android:textAllCaps="true" />
         </RelativeLayout>
@@ -72,8 +72,8 @@
                         android:id="@+id/practice_et"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
                         android:hint="@string/practice"
+                        android:imeOptions="actionDone"
                         android:inputType="text"
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>
@@ -87,8 +87,8 @@
                         android:id="@+id/street_et"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
                         android:hint="@string/street"
+                        android:imeOptions="actionDone"
                         android:inputType="text"
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>
@@ -102,8 +102,8 @@
                         android:id="@+id/street2_et"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
                         android:hint="@string/street2"
+                        android:imeOptions="actionDone"
                         android:inputType="text"
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>
@@ -116,9 +116,9 @@
                     <EditText
                         android:id="@+id/city_et"
                         android:layout_width="match_parent"
-                        android:imeOptions="actionDone"
                         android:layout_height="wrap_content"
                         android:hint="@string/city"
+                        android:imeOptions="actionDone"
                         android:inputType="text"
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>
@@ -132,8 +132,8 @@
                         android:id="@+id/state_et"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
                         android:hint="@string/state"
+                        android:imeOptions="actionDone"
                         android:inputType="text"
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>
@@ -147,10 +147,10 @@
                         android:id="@+id/zip_et"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/zip"
-                        android:inputType="number"
                         android:digits="@string/digitsNumeric"
+                        android:hint="@string/zip"
                         android:imeOptions="actionDone"
+                        android:inputType="number"
                         android:maxLength="5"
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>

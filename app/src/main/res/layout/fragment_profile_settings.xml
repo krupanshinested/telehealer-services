@@ -48,9 +48,9 @@
                     android:id="@+id/documents"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     app:icon="@drawable/ic_orders_documents"
-                    app:title="@string/documents"
-                    android:visibility="gone"/>
+                    app:title="@string/documents" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/medical_history"

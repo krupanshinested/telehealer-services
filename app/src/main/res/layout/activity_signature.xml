@@ -17,8 +17,8 @@
             <TextView
                 android:id="@+id/cancel_tv"
                 style="@style/text_sub_title_app_color"
-                android:padding="8dp"
                 android:layout_width="wrap_content"
+                android:padding="8dp"
                 android:text="@string/Cancel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Signature Capture"
+                android:text="@string/signature_capture"
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp"
                 android:textStyle="bold"

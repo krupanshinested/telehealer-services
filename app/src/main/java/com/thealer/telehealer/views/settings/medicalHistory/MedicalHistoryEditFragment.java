@@ -168,12 +168,12 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
                 }
             });
 
-            toolbarTitle.setText(type);
+            toolbarTitle.setText(MedicalHistoryConstants.getDisplayTitle(getActivity(), type));
 
             toolbar.setVisibility(View.VISIBLE);
 
             if (type != null) {
-                viewTitle.setText(MedicalHistoryConstants.getTitle(type));
+                viewTitle.setText(getString(MedicalHistoryConstants.getTitle(type)));
                 medicalHistoryViewModel.setOtherInformation(null);
                 switch (type) {
                     case MH_MEDICATION:

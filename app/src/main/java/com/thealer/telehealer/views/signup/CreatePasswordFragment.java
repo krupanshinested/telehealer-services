@@ -291,8 +291,8 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
         String password = passwordEt.getText().toString();
         if (!password.isEmpty()) {
             onViewChangeInterface.enableNext(false);
+            String error = passwordValidator.isValidPassword(getActivity(), password);
             enableNext(false);
-            String error = passwordValidator.isValidPassword(password);
 
             if (error != null) {
                 passwordTil.setError(error);

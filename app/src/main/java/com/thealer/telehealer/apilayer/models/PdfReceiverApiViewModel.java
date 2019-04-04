@@ -56,12 +56,11 @@ public class PdfReceiverApiViewModel extends BaseApiViewModel {
 
                                     @Override
                                     public void onNext(Response<ResponseBody> response) {
-                                        String header = response.headers().get("Content-Disposition");
-                                        String fileName = header.replace("attachment; filename=", "");
-
                                         try {
                                             BufferedSink sink = Okio.buffer(Okio.sink(file));
-                                            sink.writeAll(response.body().source());
+                                            if (response.body() != null) {
+                                                sink.writeAll(response.body().source());
+                                            }
                                             sink.close();
                                         } catch (IOException e) {
                                             e.printStackTrace();

@@ -1,15 +1,8 @@
 package com.thealer.telehealer.common.OpenTok;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,18 +11,11 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OnDSListener;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.R;
-
-import java.util.List;
 
 /**
  * Created by rsekar on 1/30/19.
@@ -52,7 +38,7 @@ public class GoogleSpeechRecognizer {
     /**
      * Droid Speech Constructor
      *
-     * @param context         The application context instance
+     * @param context The application context instance
      */
     public GoogleSpeechRecognizer(Context context) {
         this.context = context;
@@ -174,7 +160,7 @@ public class GoogleSpeechRecognizer {
                 // If audio beep was muted, enabling it again
                 muteAudio(false);
             }
-        },5000);
+        }, 5000);
     }
 
     // MARK: Droid Speech Public Methods
@@ -266,7 +252,6 @@ public class GoogleSpeechRecognizer {
     }
 
 
-
     /**
      * Starts the droid speech recognition
      * <p>
@@ -278,209 +263,209 @@ public class GoogleSpeechRecognizer {
 
         if (Utils.isInternetEnabled(context) || dsProperties.offlineSpeechRecognition) {
 
-                dsProperties.startListeningTime = System.currentTimeMillis();
-                dsProperties.pauseAndSpeakTime = dsProperties.startListeningTime;
-                dsProperties.speechResultFound = false;
+            dsProperties.startListeningTime = System.currentTimeMillis();
+            dsProperties.pauseAndSpeakTime = dsProperties.startListeningTime;
+            dsProperties.speechResultFound = false;
 
-                if (droidSpeechRecognizer == null || speechIntent == null || audioManager == null) {
-                    // Initializing the droid speech properties if found not initialized
-                    initDroidSpeechProperties();
+            if (droidSpeechRecognizer == null || speechIntent == null || audioManager == null) {
+                // Initializing the droid speech properties if found not initialized
+                initDroidSpeechProperties();
+            }
+
+            // Setting the droid speech recognizer listener
+            droidSpeechRecognizer.setRecognitionListener(new RecognitionListener() {
+
+                @Override
+                public void onReadyForSpeech(Bundle bundle) {
+                    // If audio beep was muted, enabling it again
+                    muteAudio(true);
+
+                    dsProperties.onReadyForSpeech = true;
                 }
 
-                // Setting the droid speech recognizer listener
-                droidSpeechRecognizer.setRecognitionListener(new RecognitionListener() {
+                @Override
+                public void onBeginningOfSpeech() {
+                    // NA
+                }
 
-                    @Override
-                    public void onReadyForSpeech(Bundle bundle) {
+                @Override
+                public void onRmsChanged(float rmsdB) {
+
+                }
+
+                @Override
+                public void onBufferReceived(byte[] bytes) {
+                    // NA
+                }
+
+                @Override
+                public void onEndOfSpeech() {
+                    // NA
+                }
+
+                @Override
+                public void onError(int error) {
+                    if (dsProperties.closedByUser) {
+                        dsProperties.closedByUser = false;
+
+                        return;
+                    }
+
+                    long duration = System.currentTimeMillis() - dsProperties.startListeningTime;
+
+                    // If duration is less than the "error timeout" as the system didn't try listening to the user speech so ignoring
+                    if (duration < Constants.ERROR_TIMEOUT && error == SpeechRecognizer.ERROR_NO_MATCH && !dsProperties.onReadyForSpeech)
+                        return;
+
+                    if (dsProperties.onReadyForSpeech && duration < Constants.AUDIO_BEEP_DISABLED_TIMEOUT) {
+                        // Disabling audio beep if less than "audio beep disabled timeout", as it will be
+                        // irritating for the user to hear the beep sound again and again
+                        muteAudio(true);
+                    } else {
                         // If audio beep was muted, enabling it again
                         muteAudio(true);
-
-                        dsProperties.onReadyForSpeech = true;
                     }
 
-                    @Override
-                    public void onBeginningOfSpeech() {
-                        // NA
-                    }
-
-                    @Override
-                    public void onRmsChanged(float rmsdB) {
-
-                    }
-
-                    @Override
-                    public void onBufferReceived(byte[] bytes) {
-                        // NA
-                    }
-
-                    @Override
-                    public void onEndOfSpeech() {
-                        // NA
-                    }
-
-                    @Override
-                    public void onError(int error) {
-                        if (dsProperties.closedByUser) {
-                            dsProperties.closedByUser = false;
-
-                            return;
-                        }
-
-                        long duration = System.currentTimeMillis() - dsProperties.startListeningTime;
-
-                        // If duration is less than the "error timeout" as the system didn't try listening to the user speech so ignoring
-                        if (duration < Constants.ERROR_TIMEOUT && error == SpeechRecognizer.ERROR_NO_MATCH && !dsProperties.onReadyForSpeech)
-                            return;
-
-                        if (dsProperties.onReadyForSpeech && duration < Constants.AUDIO_BEEP_DISABLED_TIMEOUT) {
-                            // Disabling audio beep if less than "audio beep disabled timeout", as it will be
-                            // irritating for the user to hear the beep sound again and again
-                            muteAudio(true);
+                    if (error == SpeechRecognizer.ERROR_NO_MATCH || error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT || error == SpeechRecognizer.ERROR_AUDIO) {
+                        // Restart droid speech recognition
+                        restartDroidSpeechRecognition();
+                    } else if (droidSpeechListener == null) {
+                        Log.e(TAG, "Droid speech error, code = " + error);
+                    } else {
+                        if (error <= context.getResources().getStringArray(R.array.speech_errors).length) {
+                            // Sending an update with the droid speech error
+                            droidSpeechListener.onDroidSpeechError(context.getResources().getStringArray(R.array.speech_errors)[error - 1]);
                         } else {
-                            // If audio beep was muted, enabling it again
-                            muteAudio(true);
-                        }
-
-                        if (error == SpeechRecognizer.ERROR_NO_MATCH || error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT || error == SpeechRecognizer.ERROR_AUDIO) {
-                            // Restart droid speech recognition
-                            restartDroidSpeechRecognition();
-                        } else if (droidSpeechListener == null) {
-                            Log.e(TAG, "Droid speech error, code = " + error);
-                        } else {
-                            if (error <= context.getResources().getStringArray(R.array.speech_errors).length) {
-                                // Sending an update with the droid speech error
-                                droidSpeechListener.onDroidSpeechError(context.getResources().getStringArray(R.array.speech_errors)[error - 1]);
-                            } else {
-                                // Sending an update that there was an unknown error
-                                droidSpeechListener.onDroidSpeechError(context.getResources().getString(R.string.speech_unknown_error));
-                            }
+                            // Sending an update that there was an unknown error
+                            droidSpeechListener.onDroidSpeechError(context.getResources().getString(R.string.speech_unknown_error));
                         }
                     }
+                }
 
-                    @SuppressWarnings("ConstantConditions")
-                    @Override
-                    public void onResults(Bundle results) {
-                        if (dsProperties.speechResultFound) return;
+                @SuppressWarnings("ConstantConditions")
+                @Override
+                public void onResults(Bundle results) {
+                    if (dsProperties.speechResultFound) return;
 
-                        dsProperties.speechResultFound = true;
+                    dsProperties.speechResultFound = true;
 
-                        // If audio beep was muted, enabling it again
-                        muteAudio(true);
+                    // If audio beep was muted, enabling it again
+                    muteAudio(true);
 
-                        Boolean valid = (results != null && results.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
-                                results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
-                                results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
-                                !results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).trim().isEmpty());
+                    Boolean valid = (results != null && results.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
+                            results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
+                            results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
+                            !results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).trim().isEmpty());
 
-                        if (valid) {
-                            // Getting the droid speech final result
-                            String droidSpeechFinalResult = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
-                            if (dsProperties.showRecognitionProgressView && dsProperties.oneStepResultVerify) {
-                                // Saving the speech result
-                                dsProperties.oneStepVerifySpeechResult = droidSpeechFinalResult;
+                    if (valid) {
+                        // Getting the droid speech final result
+                        String droidSpeechFinalResult = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
+                        if (dsProperties.showRecognitionProgressView && dsProperties.oneStepResultVerify) {
+                            // Saving the speech result
+                            dsProperties.oneStepVerifySpeechResult = droidSpeechFinalResult;
 
-                                // Closing droid speech operations, will be restarted when user clicks
-                                // cancel or confirm if applicable
-                                closeDroidSpeech();
-                            } else {
-                                if (droidSpeechListener == null) {
-                                    Log.i(TAG, "Droid speech final result = " + droidSpeechFinalResult);
-                                } else {
-                                    // Sending an update with the droid speech final result
-                                    droidSpeechListener.onDroidSpeechFinalResult(droidSpeechFinalResult);
-                                }
-
-                                if (dsProperties.continuousSpeechRecognition) {
-                                    // Start droid speech recognition again
-                                    startDroidSpeechRecognition();
-                                } else {
-                                    // Closing the droid speech operations
-                                    closeDroidSpeechOperations();
-                                }
-                            }
+                            // Closing droid speech operations, will be restarted when user clicks
+                            // cancel or confirm if applicable
+                            closeDroidSpeech();
                         } else {
-                            // No match found, restart droid speech recognition
-                            restartDroidSpeechRecognition();
-                        }
-                    }
-
-                    @SuppressWarnings("ConstantConditions")
-                    @Override
-                    public void onPartialResults(Bundle partialResults) {
-                        if (dsProperties.speechResultFound) return;
-
-                        Boolean valid = (partialResults != null && partialResults.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
-                                partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
-                                partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
-                                !partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).trim().isEmpty());
-
-                        if (valid) {
-                            final String droidLiveSpeechResult = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
-
                             if (droidSpeechListener == null) {
-                                Log.i(TAG, "Droid speech live result = " + droidLiveSpeechResult);
+                                Log.i(TAG, "Droid speech final result = " + droidSpeechFinalResult);
                             } else {
-                                // Sending an update with the droid speech live result
-                                droidSpeechListener.onDroidSpeechLiveResult(droidLiveSpeechResult);
+                                // Sending an update with the droid speech final result
+                                droidSpeechListener.onDroidSpeechFinalResult(droidSpeechFinalResult);
                             }
 
-                            if ((System.currentTimeMillis() - dsProperties.pauseAndSpeakTime) > Constants.MAX_PAUSE_TIME) {
-                                dsProperties.speechResultFound = true;
+                            if (dsProperties.continuousSpeechRecognition) {
+                                // Start droid speech recognition again
+                                startDroidSpeechRecognition();
+                            } else {
+                                // Closing the droid speech operations
+                                closeDroidSpeechOperations();
+                            }
+                        }
+                    } else {
+                        // No match found, restart droid speech recognition
+                        restartDroidSpeechRecognition();
+                    }
+                }
 
-                                droidSpeechPartialResult.postDelayed(new Runnable() {
+                @SuppressWarnings("ConstantConditions")
+                @Override
+                public void onPartialResults(Bundle partialResults) {
+                    if (dsProperties.speechResultFound) return;
 
-                                    @Override
-                                    public void run() {
+                    Boolean valid = (partialResults != null && partialResults.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
+                            partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
+                            partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
+                            !partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).trim().isEmpty());
 
-                                        // Closing droid speech operations
+                    if (valid) {
+                        final String droidLiveSpeechResult = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
+
+                        if (droidSpeechListener == null) {
+                            Log.i(TAG, "Droid speech live result = " + droidLiveSpeechResult);
+                        } else {
+                            // Sending an update with the droid speech live result
+                            droidSpeechListener.onDroidSpeechLiveResult(droidLiveSpeechResult);
+                        }
+
+                        if ((System.currentTimeMillis() - dsProperties.pauseAndSpeakTime) > Constants.MAX_PAUSE_TIME) {
+                            dsProperties.speechResultFound = true;
+
+                            droidSpeechPartialResult.postDelayed(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    // Closing droid speech operations
+                                    closeDroidSpeech();
+
+                                    if (dsProperties.showRecognitionProgressView && dsProperties.oneStepResultVerify) {
+                                        // Saving the speech result
+                                        dsProperties.oneStepVerifySpeechResult = droidLiveSpeechResult;
+
+                                        // Closing droid speech operations, will be restarted when user clicks
+                                        // cancel or confirm if applicable
                                         closeDroidSpeech();
-
-                                        if (dsProperties.showRecognitionProgressView && dsProperties.oneStepResultVerify) {
-                                            // Saving the speech result
-                                            dsProperties.oneStepVerifySpeechResult = droidLiveSpeechResult;
-
-                                            // Closing droid speech operations, will be restarted when user clicks
-                                            // cancel or confirm if applicable
-                                            closeDroidSpeech();
+                                    } else {
+                                        if (droidSpeechListener == null) {
+                                            Log.i(TAG, "Droid speech final result = " + droidLiveSpeechResult);
                                         } else {
-                                            if (droidSpeechListener == null) {
-                                                Log.i(TAG, "Droid speech final result = " + droidLiveSpeechResult);
-                                            } else {
-                                                // Sending an update with the droid speech final result (Partial live result
-                                                // is taken as the final result in this case)
-                                                droidSpeechListener.onDroidSpeechFinalResult(droidLiveSpeechResult);
+                                            // Sending an update with the droid speech final result (Partial live result
+                                            // is taken as the final result in this case)
+                                            droidSpeechListener.onDroidSpeechFinalResult(droidLiveSpeechResult);
 
-                                                if (dsProperties.continuousSpeechRecognition) {
-                                                    // Start droid speech recognition again
-                                                    startDroidSpeechRecognition();
-                                                } else {
-                                                    // Closing the droid speech operations
-                                                    closeDroidSpeechOperations();
-                                                }
+                                            if (dsProperties.continuousSpeechRecognition) {
+                                                // Start droid speech recognition again
+                                                startDroidSpeechRecognition();
+                                            } else {
+                                                // Closing the droid speech operations
+                                                closeDroidSpeechOperations();
                                             }
                                         }
                                     }
+                                }
 
-                                }, Constants.PARTIAL_DELAY_TIME);
-                            } else {
-                                dsProperties.pauseAndSpeakTime = System.currentTimeMillis();
-                            }
+                            }, Constants.PARTIAL_DELAY_TIME);
                         } else {
                             dsProperties.pauseAndSpeakTime = System.currentTimeMillis();
                         }
+                    } else {
+                        dsProperties.pauseAndSpeakTime = System.currentTimeMillis();
                     }
+                }
 
-                    @Override
-                    public void onEvent(int i, Bundle bundle) {
-                        // NA
-                    }
-                });
+                @Override
+                public void onEvent(int i, Bundle bundle) {
+                    // NA
+                }
+            });
 
-                // Canceling any running droid speech operations, before listening
-                cancelDroidSpeechOperations();
+            // Canceling any running droid speech operations, before listening
+            cancelDroidSpeechOperations();
 
-                // Start Listening
-                droidSpeechRecognizer.startListening(speechIntent);
+            // Start Listening
+            droidSpeechRecognizer.startListening(speechIntent);
 
         } else {
 

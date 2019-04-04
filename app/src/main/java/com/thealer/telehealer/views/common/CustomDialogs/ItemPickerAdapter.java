@@ -39,7 +39,7 @@ public class ItemPickerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        ItemPickerAdapter.DataHolder dataHolder = (ItemPickerAdapter.DataHolder)viewHolder;
+        ItemPickerAdapter.DataHolder dataHolder = (ItemPickerAdapter.DataHolder) viewHolder;
 
         dataHolder.titleTv.setText(items.get(i));
 
@@ -79,7 +79,7 @@ public class ItemPickerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private DataHolder(@NonNull View itemView) {
             super(itemView);
             titleTv = (TextView) itemView.findViewById(R.id.title_tv);
-            radioButton =  itemView.findViewById(R.id.radio);
+            radioButton = itemView.findViewById(R.id.radio);
             mainContainer = (ConstraintLayout) itemView.findViewById(R.id.main_container);
         }
     }

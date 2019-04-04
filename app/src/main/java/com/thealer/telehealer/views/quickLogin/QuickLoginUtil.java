@@ -23,6 +23,6 @@ public class QuickLoginUtil {
 
     public static Boolean isQuickLoginEnable(Context context) {
         int type = TeleHealerApplication.appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
-        return  type == Constants.QUICK_LOGIN_TYPE_PIN || type == Constants.QUICK_LOGIN_TYPE_TOUCH;
+        return type == Constants.QUICK_LOGIN_TYPE_PIN || type == Constants.QUICK_LOGIN_TYPE_TOUCH;
     }
 }

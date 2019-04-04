@@ -26,7 +26,7 @@ public class LandscapeImageView extends BaseActivity {
         imageView = (ImageView) findViewById(R.id.imageView);
         if (getIntent() != null) {
             String image = getIntent().getStringExtra(ArgumentKeys.SHARED_IMAGE);
-            Utils.setImageWithGlide(getApplicationContext(), imageView, image, null, true);
+            Utils.setImageWithGlide(getApplicationContext(), imageView, image, null, true, true);
         }
     }
 }

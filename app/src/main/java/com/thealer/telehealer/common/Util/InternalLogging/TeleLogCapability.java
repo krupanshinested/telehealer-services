@@ -48,20 +48,20 @@ public class TeleLogCapability {
         }
     }
 
-    public void assignValue(String type,@Nullable Boolean enabled){
+    public void assignValue(String type, @Nullable Boolean enabled) {
         String key = getKey(type);
         if (enabled != null) {
-            appPreference.setInt(key,enabled ? 1 : 0);
+            appPreference.setInt(key, enabled ? 1 : 0);
         } else {
-            appPreference.setInt(key,-1);
+            appPreference.setInt(key, -1);
         }
     }
 
     public void reset() {
-        assignValue(camera,null);
-        assignValue(mic,null);
-        assignValue(photo,null);
-        assignValue(location,null);
+        assignValue(camera, null);
+        assignValue(mic, null);
+        assignValue(photo, null);
+        assignValue(location, null);
     }
 
 }

@@ -143,13 +143,13 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                     commonUserApiResponseModel = userDetailHashMap.get(childList.get(headerList.get(groupPosition)).get(childPosition).getCommonResultResponseModel().getDoctor().getUser_guid());
                     if (commonUserApiResponseModel != null) {
                         itemTitleTv.setText(commonUserApiResponseModel.getDoctorDisplayName());
-                        Utils.setImageWithGlide(context, itemCiv, commonUserApiResponseModel.getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
+                        Utils.setImageWithGlide(context, itemCiv, commonUserApiResponseModel.getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
                     }
                 } else {
                     commonUserApiResponseModel = userDetailHashMap.get(childList.get(headerList.get(groupPosition)).get(childPosition).getCommonResultResponseModel().getPatient().getUser_guid());
                     if (commonUserApiResponseModel != null) {
                         itemTitleTv.setText(commonUserApiResponseModel.getUserDisplay_name());
-                        Utils.setImageWithGlide(context, itemCiv, commonUserApiResponseModel.getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
+                        Utils.setImageWithGlide(context, itemCiv, commonUserApiResponseModel.getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
                     }
                 }
 
@@ -215,7 +215,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
             }
             if (key != null && userDetailHashMap.containsKey(key)) {
                 itemTitleTv.setText(userDetailHashMap.get(key).getUserDisplay_name());
-                Utils.setImageWithGlide(context, itemCiv, userDetailHashMap.get(key).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
+                Utils.setImageWithGlide(context, itemCiv, userDetailHashMap.get(key).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
             }
 
             fragment = new PdfViewerFragment();

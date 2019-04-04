@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class ItemPickerDialog extends AlertDialog implements View.OnClickListener {
 
     private RecyclerView recyclerView;
-    private Button cancel,done;
+    private Button cancel, done;
     private TextView title_tv;
 
     private PickerListener pickerListener;
@@ -32,7 +32,7 @@ public class ItemPickerDialog extends AlertDialog implements View.OnClickListene
     private String title;
     private int defaultSelectedPosition = 0;
 
-    public ItemPickerDialog(@NonNull Context context,String title,ArrayList<String> items,PickerListener pickerListener) {
+    public ItemPickerDialog(@NonNull Context context, String title, ArrayList<String> items, PickerListener pickerListener) {
         super(context);
 
         this.items = items;
@@ -40,8 +40,8 @@ public class ItemPickerDialog extends AlertDialog implements View.OnClickListene
         this.title = title;
     }
 
-    public ItemPickerDialog(@NonNull Context context,String title,ArrayList<String> items,PickerListener pickerListener,int defaultSelectedPosition) {
-        this(context,title,items,pickerListener);
+    public ItemPickerDialog(@NonNull Context context, String title, ArrayList<String> items, PickerListener pickerListener, int defaultSelectedPosition) {
+        this(context, title, items, pickerListener);
 
         this.defaultSelectedPosition = defaultSelectedPosition;
     }

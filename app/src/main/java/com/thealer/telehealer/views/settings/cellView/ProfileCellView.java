@@ -23,8 +23,8 @@ import com.thealer.telehealer.R;
 
 public class ProfileCellView extends ConstraintLayout {
 
-    private TextView titleTextView,valueTextView;
-    private ImageView iconImageView,rightArrowImageView;
+    private TextView titleTextView, valueTextView;
+    private ImageView iconImageView, rightArrowImageView;
     private Spinner spinner;
     private View splitter;
 
@@ -44,10 +44,10 @@ public class ProfileCellView extends ConstraintLayout {
             String title = a.getString(R.styleable.ProfileCellView_title);
             Drawable iconDrawable = a.getDrawable(R.styleable.ProfileCellView_icon);
 
-            Boolean isSpinnerType = a.getBoolean(R.styleable.ProfileCellView_isSpinnerType,false);
-            Boolean hideSplitter = a.getBoolean(R.styleable.ProfileCellView_hideSpiltter,false);
+            Boolean isSpinnerType = a.getBoolean(R.styleable.ProfileCellView_isSpinnerType, false);
+            Boolean hideSplitter = a.getBoolean(R.styleable.ProfileCellView_hideSpiltter, false);
 
-            update(title,"",iconDrawable,isSpinnerType,hideSplitter);
+            update(title, "", iconDrawable, isSpinnerType, hideSplitter);
         }
 
     }
@@ -69,7 +69,7 @@ public class ProfileCellView extends ConstraintLayout {
         updateUI(false);
     }
 
-    private void update(String title,String value,Drawable drawable,Boolean isSpinnerType,Boolean hideSplitter) {
+    private void update(String title, String value, Drawable drawable, Boolean isSpinnerType, Boolean hideSplitter) {
         titleTextView.setText(title);
 
         if (drawable == null) {
@@ -122,7 +122,7 @@ public class ProfileCellView extends ConstraintLayout {
         }
     }
 
-    public void updateAdapter(ArrayAdapter arrayAdapter,AdapterView.OnItemSelectedListener listener) {
+    public void updateAdapter(ArrayAdapter arrayAdapter, AdapterView.OnItemSelectedListener listener) {
         spinner.setAdapter(arrayAdapter);
         spinner.setOnItemSelectedListener(listener);
     }

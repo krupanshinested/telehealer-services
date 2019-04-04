@@ -111,6 +111,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private TextView itemSubTitleTv;
     private ImageView infoIv;
     private CustomSwipeRefreshLayout swipeLayout;
+    private ArrayList<String> vitalPrintOptions;
 
 
     @Override
@@ -132,7 +133,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                     if (UserType.isUserPatient() && vitalsApiResponseModelArrayList.size() == 0) {
                         if (!appPreference.getBoolean(selectedItem)) {
                             boolean isShow = true;
-                            String message = "";
+                            int message = 0;
                             switch (selectedItem) {
                                 case SupportedMeasurementType.bp:
                                     message = OverlayViewConstants.OVERLAY_NO_BP;
@@ -213,7 +214,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private void setUserDetailView() {
         itemTitleTv.setText(commonUserApiResponseModel.getUserDisplay_name());
         itemSubTitleTv.setText(commonUserApiResponseModel.getDisplayInfo());
-        Utils.setImageWithGlide(getActivity().getApplicationContext(), itemCiv, commonUserApiResponseModel.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), itemCiv, commonUserApiResponseModel.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
         infoIv.setOnClickListener(this);
         userDetailCl.setVisibility(View.VISIBLE);
     }
@@ -275,25 +276,26 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
                 String type = vitalsApiResponseModelArrayList.get(i).getType();
 
-                if (selectedItem.equals(SupportedMeasurementType.bp)) {
+                if (!value.isEmpty()) {
+                    if (selectedItem.equals(SupportedMeasurementType.bp)) {
 
-                    switch (type) {
-                        case SupportedMeasurementType.bp:
-                            String[] values = value.split("/");
+                        switch (type) {
+                            case SupportedMeasurementType.bp:
+                                String[] values = value.split("/");
 
-                            if (Float.parseFloat(values[0]) > maxVlaue) {
-                                maxVlaue = Float.parseFloat(values[0]);
-                            }
-                            if (i == 1) {
-                                minValue = Float.parseFloat(values[1]);
-                            } else {
-                                if (Float.parseFloat(values[0]) < minValue) {
+                                if (Float.parseFloat(values[0]) > maxVlaue) {
                                     maxVlaue = Float.parseFloat(values[0]);
                                 }
-                                if (Float.parseFloat(values[1]) < minValue) {
-                                    maxVlaue = Float.parseFloat(values[1]);
+                                if (i == 1) {
+                                    minValue = Float.parseFloat(values[1]);
+                                } else {
+                                    if (Float.parseFloat(values[0]) < minValue) {
+                                        maxVlaue = Float.parseFloat(values[0]);
+                                    }
+                                    if (Float.parseFloat(values[1]) < minValue) {
+                                        maxVlaue = Float.parseFloat(values[1]);
+                                    }
                                 }
-                            }
 
                             line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0]), vitalsApiResponseModelArrayList.get(i).getMode()));
                             line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1]), vitalsApiResponseModelArrayList.get(i).getMode()));
@@ -328,7 +330,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                     line1Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
                 }
 
-                xaxisLables.put(Float.valueOf(i + 1), vitalsApiResponseModelArrayList.get(i).getCreated_at());
+                    xaxisLables.put(Float.valueOf(i + 1), vitalsApiResponseModelArrayList.get(i).getCreated_at());
+                }
             }
 
             yAxis.calculate(maxVlaue, minValue);
@@ -425,6 +428,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        vitalPrintOptions = VitalsConstant.getVitalPrintOptions(getActivity());
     }
 
     @Nullable
@@ -457,10 +461,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 switch (menuItem.getItemId()) {
                     case R.id.print_menu:
                         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_time_period),
-                                VitalsConstant.vitalPrintOptions, new PickerListener() {
+                                vitalPrintOptions, new PickerListener() {
                             @Override
                             public void didSelectedItem(int position) {
-                                generatePdfListItems(VitalsConstant.vitalPrintOptions.get(position));
+                                generatePdfListItems(vitalPrintOptions.get(position));
                             }
 
                             @Override
@@ -560,20 +564,17 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         List<VitalsApiResponseModel> pdfList = new ArrayList<>();
 
-        if (timePeriod.equals(VitalsConstant.PRINT_ALL)) {
+        if (timePeriod.equals(getString(R.string.VITAL_PRINT_ALL))) {
             pdfList.addAll(vitalsApiResponseModelArrayList);
         } else {
-            switch (timePeriod) {
-                case VitalsConstant.PRINT_1_WEEK:
-                    calendar.add(Calendar.DAY_OF_MONTH, -7);
-                    break;
-                case VitalsConstant.PRINT_2_WEEK:
-                    calendar.add(Calendar.DAY_OF_MONTH, -14);
-                    break;
-                case VitalsConstant.PRINT_1_MONTH:
-                    calendar.add(Calendar.MONTH, -1);
-                    break;
+            if (timePeriod.equals(getString(R.string.PRINT_1_WEEK))) {
+                calendar.add(Calendar.DAY_OF_MONTH, -7);
+            } else if (timePeriod.equals(getString(R.string.PRINT_2_WEEK))) {
+                calendar.add(Calendar.DAY_OF_MONTH, -14);
+            } else if (timePeriod.equals(getString(R.string.PRINT_1_MONTH))) {
+                calendar.add(Calendar.MONTH, -1);
             }
+
             for (int i = 0; i < vitalsApiResponseModelArrayList.size(); i++) {
                 if (Utils.getDateFromString(vitalsApiResponseModelArrayList.get(i).getCreated_at()).compareTo(calendar.getTime()) >= 0) {
                     pdfList.add(vitalsApiResponseModelArrayList.get(i));
@@ -597,7 +598,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             pdfViewerFragment.setArguments(bundle);
             showSubFragmentInterface.onShowFragment(pdfViewerFragment);
         } else {
-            Utils.showAlertDialog(getActivity(), getString(R.string.alert), "No data available for " + timePeriod, getString(R.string.ok), null,
+            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + timePeriod, getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -822,13 +823,13 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 if (line1Entry.contains(e) || line2Entry.contains(e)) {
                     for (int i = 0; i < line1Entry.size(); i++) {
                         if (line1Entry.get(i).equalTo(e)) {
-                            systole = "Systole : " + (int) line1Entry.get(i).getY() + " " + unit;
+                            systole = VitalsConstant.SYSTOLE + " : " + (int) line1Entry.get(i).getY() + " " + unit;
                             break;
                         }
                     }
                     for (int i = 0; i < line2Entry.size(); i++) {
                         if (line2Entry.get(i).equalTo(e)) {
-                            diastole = "Diastole : " + (int) line2Entry.get(i).getY() + " " + unit;
+                            diastole = VitalsConstant.DIASTOLE + " : " + (int) line2Entry.get(i).getY() + " " + unit;
                             break;
                         }
                     }

@@ -1,5 +1,8 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
+import android.support.v4.app.FragmentActivity;
+
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -23,11 +26,15 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     private String user_avatar;
     private String role;
     private String dob;
+    private String status;
+    private String phone;
+    private String gender;
+    private String name;
 
     public UserBean() {
     }
 
-    public UserBean(int user_id, String user_guid, String first_name, String last_name, String email, String user_avatar, String role, String dob) {
+    public UserBean(int user_id, String user_guid, String first_name, String last_name, String email, String user_avatar, String role, String dob, String status, String phone, String gender, String name) {
         this.user_id = user_id;
         this.user_guid = user_guid;
         this.first_name = first_name;
@@ -36,6 +43,10 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
         this.user_avatar = user_avatar;
         this.role = role;
         this.dob = dob;
+        this.status = status;
+        this.phone = phone;
+        this.gender = gender;
+        this.name = name;
     }
 
     public int getUser_id() {
@@ -126,10 +137,10 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
         return age;
     }
 
-    public String getUserName() {
+    public String getUserName(FragmentActivity activity) {
 
         if (UserDetailPreferenceManager.getWhoAmIResponse().getUser_id() == getUser_id()) {
-            return "Myself";
+            return activity.getString(R.string.myself);
         }
 
         StringBuilder name = new StringBuilder();
@@ -143,11 +154,74 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     }
 
 
-    public String getDisplayName(){
-        if (getRole().equals(Constants.ROLE_DOCTOR)){
+    public String getDisplayName() {
+        if (getRole().equals(Constants.ROLE_DOCTOR)) {
             return "Dr. " + getFirst_name() + " " + getLast_name();
-        }else {
+        } else {
             return getFirst_name() + " " + getLast_name();
         }
     }
+
+
+    public String getStatus() {
+        return status;
+    }
+
+    public Boolean isAvailable() {
+        return status.equals(Constants.AVAILABLE);
+    }
+
+    public int getStatusColorCode() {
+        switch (status) {
+            case Constants.AVAILABLE:
+                return R.drawable.ic_status_12dp;
+            case Constants.BUSY:
+                return R.drawable.ic_busy_status;
+            case Constants.OFFLINE:
+                return R.drawable.ic_offline_status;
+            default:
+                return R.drawable.ic_offline_status;
+        }
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getGender() {
+        if (gender != null && !gender.isEmpty()) {
+            return gender.replace(String.valueOf(gender.charAt(0)), String.valueOf(gender.charAt(0)).toUpperCase());
+        } else {
+            return gender;
+        }
+    }
+
+    public String getGenderKey() {
+        if (gender != null && !gender.isEmpty()) {
+            return gender.replace(String.valueOf(gender.charAt(0)), String.valueOf(gender.charAt(0)).toUpperCase());
+        } else {
+            return gender;
+        }
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

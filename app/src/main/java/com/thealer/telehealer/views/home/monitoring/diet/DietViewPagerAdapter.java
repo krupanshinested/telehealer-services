@@ -14,6 +14,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 
 import java.text.DateFormat;
@@ -210,10 +211,10 @@ public class DietViewPagerAdapter extends PagerAdapter {
     }
 
     private String getUtcDate(String formatedDate) {
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat inputFormat = new SimpleDateFormat(Utils.yyyy_mm_dd);
         inputFormat.setTimeZone(TimeZone.getDefault());
-        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat outputFormat = new SimpleDateFormat(Utils.UTCFormat);
+        outputFormat.setTimeZone(Utils.UtcTimezone);
         try {
             Date date = inputFormat.parse(formatedDate);
             Calendar calendar = Calendar.getInstance();

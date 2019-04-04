@@ -19,11 +19,11 @@ import android.widget.EditText;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +53,7 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         labTestDataViewModel = ViewModelProviders.of(getActivity()).get(LabTestDataViewModel.class);
         selectedTitle = labTestDataViewModel.getTestTitle();
-        if (selectedTitle != null){
+        if (selectedTitle != null) {
             isEditMode = true;
         }
     }
@@ -89,9 +89,9 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().isEmpty()){
+                if (s.toString().isEmpty()) {
                     selectLabTestAdapter.setTestList(testList);
-                }else {
+                } else {
                     selectLabTestAdapter.setTestList(getFilteredList(s.toString()));
                 }
             }
@@ -103,12 +103,12 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
                 testList,
                 selectedTitle,
                 new OnListItemSelectInterface() {
-            @Override
-            public void onListItemSelected(int position, Bundle bundle) {
-                selectedTitle = testList.get(position);
-                enableOrDisableNext();
-            }
-        });
+                    @Override
+                    public void onListItemSelected(int position, Bundle bundle) {
+                        selectedTitle = testList.get(position);
+                        enableOrDisableNext();
+                    }
+                });
 
         testListRv.setAdapter(selectLabTestAdapter);
 
@@ -116,10 +116,10 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
     }
 
     private List<String> getFilteredList(String s) {
-        List<String > resultList = new ArrayList<>();
+        List<String> resultList = new ArrayList<>();
 
-        for (String test: testList) {
-            if (test.contains(s)){
+        for (String test : testList) {
+            if (test.contains(s)) {
                 resultList.add(test);
             }
         }
@@ -129,7 +129,7 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
     private void enableOrDisableNext() {
         boolean enable = false;
 
-        if (selectedTitle != null){
+        if (selectedTitle != null) {
             enable = true;
         }
 
@@ -138,12 +138,12 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.next_btn:
                 labTestDataViewModel.setTestTitle(selectedTitle);
-                if (isEditMode){
+                if (isEditMode) {
                     onCloseActionInterface.onClose(false);
-                }else {
+                } else {
                     SelectIcdCodeFragment selectIcdCodeFragment = new SelectIcdCodeFragment();
                     selectIcdCodeFragment.setTargetFragment(this, RequestID.REQ_SELECT_ICD_CODE);
                     showSubFragmentInterface.onShowFragment(selectIcdCodeFragment);
@@ -155,7 +155,7 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == RequestID.REQ_SELECT_ICD_CODE){
+        if (resultCode == Activity.RESULT_OK && requestCode == RequestID.REQ_SELECT_ICD_CODE) {
             onCloseActionInterface.onClose(false);
             showLabOrderPreview();
         }

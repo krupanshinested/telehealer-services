@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.braintreepayments.api.dropin.DropInActivity;
 import com.braintreepayments.api.dropin.DropInRequest;
 import com.braintreepayments.api.dropin.DropInResult;
 import com.thealer.telehealer.R;
@@ -186,7 +185,7 @@ public class CardInformationFragment extends BaseFragment {
                             }
 
                             card_tv.setText(brainTreeCard.getFormattedCardNumber());
-                            Utils.setImageWithGlide(getContext(), card_iv, brainTreeCard.getImageUrl(), getResources().getDrawable(R.drawable.placeholder_insurance), false);
+                            Utils.setImageWithGlide(getContext(), card_iv, brainTreeCard.getImageUrl(), getResources().getDrawable(R.drawable.placeholder_insurance), false, true);
                             expiration_tv.setText(getResources().getString(R.string.expiration_date) + " : " + brainTreeCard.getExpirationDate());
                             setTopButtonType(false);
                             main_container.setVisibility(View.VISIBLE);
@@ -231,8 +230,8 @@ public class CardInformationFragment extends BaseFragment {
         main_container.setVisibility(View.GONE);
         recyclerEmptyStateView.setVisibility(View.VISIBLE);
 
-        String title = EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_CARDS);
-        String message = EmptyStateUtil.getMessage(EmptyViewConstants.EMPTY_CARDS);
+        String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_CARDS);
+        String message = EmptyStateUtil.getMessage(getActivity(), EmptyViewConstants.EMPTY_CARDS);
         int image = EmptyStateUtil.getImage(EmptyViewConstants.EMPTY_CARDS);
 
         emptyTitleTv.setText(title);

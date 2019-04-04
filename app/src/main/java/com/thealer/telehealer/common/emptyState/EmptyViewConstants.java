@@ -35,7 +35,7 @@ public class EmptyViewConstants {
     public static final String EMPTY_LABS_WITH_BTN = "empty_labs_with_btn";
     public static final String EMPTY_SPECIALIST = "empty_specialist";
     public static final String EMPTY_SPECIALIST_WITH_BTN = "empty_specialist_with_btn";
-    public static final String EMPTY_MISC= "empty_misc";
+    public static final String EMPTY_MISC = "empty_misc";
     public static final String EMPTY_MISC_WITH_BTN = "empty_misc_with_btn";
     public static final String EMPTY_SEARCH = "empty_search";
     public static final String EMPTY_XRAY = "empty_xray";

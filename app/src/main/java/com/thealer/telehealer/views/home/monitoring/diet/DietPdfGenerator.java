@@ -1,12 +1,11 @@
 package com.thealer.telehealer.views.home.monitoring.diet;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -169,13 +168,13 @@ class DietPdfGenerator {
         this.context = context;
     }
 
-    public String getPdfHtmlContent(Map<String, ArrayList<DietApiResponseModel>> pdfList, CommonUserApiResponseModel commonUserApiResponseModel) {
+    public String getPdfHtmlContent(Map<String, ArrayList<DietApiResponseModel>> pdfList, UserBean userBean) {
         String body = getBody(pdfList);
-        String pdfHtml = getHtml(pdfList, commonUserApiResponseModel);
+        String pdfHtml = getHtml(pdfList, userBean);
         return pdfHtml.replace(PDF_BODY, body);
     }
 
-    private String getHtml(Map<String, ArrayList<DietApiResponseModel>> pdfList, CommonUserApiResponseModel commonUserApiResponseModel) {
+    private String getHtml(Map<String, ArrayList<DietApiResponseModel>> pdfList, UserBean userBean) {
         String nameLable = context.getString(R.string.pdf_label_name);
         String dobLable = context.getString(R.string.pdf_label_dob);
         String genderLable = context.getString(R.string.pdf_label_gender);
@@ -196,10 +195,10 @@ class DietPdfGenerator {
 
         String name, dob, gender;
         String period = calculatePeriod(pdfList.keySet());
-        if (commonUserApiResponseModel != null) {
-            name = commonUserApiResponseModel.getUserDisplay_name();
-            dob = commonUserApiResponseModel.getDob().replace("DoB : ", "");
-            gender = commonUserApiResponseModel.getGender();
+        if (userBean != null) {
+            name = userBean.getName();
+            dob = userBean.getDob().replace("DoB : ", "");
+            gender = userBean.getGender();
         } else {
             name = UserDetailPreferenceManager.getUserDisplayName();
             dob = UserDetailPreferenceManager.getDob().replace("DoB : ", "");
