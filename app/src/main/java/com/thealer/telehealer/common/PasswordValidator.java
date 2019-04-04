@@ -1,5 +1,9 @@
 package com.thealer.telehealer.common;
 
+import android.content.Context;
+
+import com.thealer.telehealer.R;
+
 import java.util.regex.Pattern;
 
 /**
@@ -7,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public class PasswordValidator {
 
-    public boolean isLengthMatch(String password){
+    public boolean isLengthMatch(String password) {
         return password.length() > 7 && password.length() < 21;
     }
 
@@ -31,24 +35,24 @@ public class PasswordValidator {
         return repeatedPattern.matcher(password).matches();
     }
 
-    public boolean isContainSymbol(String password){
+    public boolean isContainSymbol(String password) {
         Pattern symbolPattern = Pattern.compile("[A-Za-z0-9]*");
         return !symbolPattern.matcher(password).matches();
     }
 
-    public String isValidPassword(String password){
+    public String isValidPassword(Context context, String password) {
         if (!isLengthMatch(password)) {
-            return "Password length should be 8 to 20";
+            return context.getString(R.string.password_length_error);
         } else if (!isContainLowerCase(password)) {
-            return "Password must contain atleast 1 lower case character";
+            return context.getString(R.string.password_lower_case_error);
         } else if (!isContainUpperCase(password)) {
-            return "Password must contain atleast 1 upper case character";
+            return context.getString(R.string.password_upper_case_error);
         } else if (!isContainNumber(password)) {
-            return "Password must contain atleast 1 number";
+            return context.getString(R.string.password_number_error);
         } else if (!isContainSymbol(password)) {
-            return "Password must contain atleast 1 special character";
+            return context.getString(R.string.password_special_char_error);
         } else if (isContainRepeatedCharacter(password)) {
-            return "Password must not contain repeated character";
+            return context.getString(R.string.password_repeated_content_error);
         } else
             return null;
     }

@@ -56,8 +56,8 @@
         android:id="@+id/invite_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="false"
         android:background="@drawable/button_enable_disable_selector"
+        android:enabled="false"
         android:text="@string/invite"
         android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent" />

@@ -49,9 +49,9 @@
         android:id="@+id/close_iv"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:clickable="true"
         android:padding="8dp"
         android:rotation="45"
-        android:clickable="true"
         android:src="@drawable/ic_add_circle_black_24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

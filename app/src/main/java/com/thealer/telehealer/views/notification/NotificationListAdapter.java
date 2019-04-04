@@ -41,11 +41,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class NotificationListAdapter extends BaseExpandableListAdapter {
 
-    private final String APPOINTMENT_REQUEST = "APPOINTMENT REQUEST";
-    private final String CONNECTION_REQUEST = "CONNECTION REQUEST";
-    private final String NOT_ANSWERED = "NOT ANSWERED";
-    private final String MISSED_CALL = "MISSED CALL";
-
     public static final String REQUEST_TYPE_CONNECTION = "connection";
     public static final String REQUEST_TYPE_APPOINTMENT = "appointment";
     private final String REQUEST_TYPE_MISSED_CALL = "missed_call";
@@ -211,7 +206,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
 
         switch (resultModel.getType()) {
             case REQUEST_TYPE_APPOINTMENT:
-                title = APPOINTMENT_REQUEST;
+                title = activity.getString(R.string.appointment_request);
                 childViewHolder.descriptionTv.setVisibility(View.VISIBLE);
                 if (resultModel.getDetail() != null) {
                     description = resultModel.getDetail().getReason();
@@ -235,7 +230,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                 }
                 break;
             case REQUEST_TYPE_CONNECTION:
-                title = CONNECTION_REQUEST;
+                title = activity.getString(R.string.connection_request);
                 childViewHolder.descriptionTv.setVisibility(View.VISIBLE);
                 if (resultModel.getDetail() != null) {
                     description = resultModel.getDetail().getReason();
@@ -261,9 +256,9 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                 break;
             case REQUEST_TYPE_MISSED_CALL:
                 if (UserType.isUserPatient()) {
-                    title = MISSED_CALL;
+                    title = activity.getString(R.string.missed_call);
                 } else {
-                    title = NOT_ANSWERED;
+                    title = activity.getString(R.string.not_answered);
                 }
                 childViewHolder.titleTv.setTextColor(activity.getColor(R.color.red));
                 childViewHolder.bottomView.setVisibility(View.GONE);
@@ -275,26 +270,26 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
             switch (resultModel.getStatus()) {
                 case REQUEST_STATUS_OPEN:
                     childViewHolder.titleTv.setTextColor(activity.getColor(android.R.color.holo_orange_dark));
-                    title = title.concat(" ").concat(PENDING);
+                    title = title.concat(" ").concat(activity.getString(R.string.pending).toUpperCase());
                     break;
                 case REQUEST_STATUS_ACCEPTED:
                     childViewHolder.titleTv.setTextColor(activity.getColor(R.color.color_green_light));
-                    title = title.concat(" ").concat(ACCEPTED);
+                    title = title.concat(" ").concat(activity.getString(R.string.accepted).toUpperCase());
                     break;
                 case REQUEST_STATUS_CANCELED:
                     childViewHolder.titleTv.setTextColor(activity.getColor(R.color.red));
-                    title = title.concat(" ").concat(CANCELED);
+                    title = title.concat(" ").concat(activity.getString(R.string.canceled).toUpperCase());
                     break;
                 case REQUEST_STATUS_REJECTED:
                     childViewHolder.titleTv.setTextColor(activity.getColor(R.color.red));
-                    title = title.concat(" ").concat(REJECTED);
+                    title = title.concat(" ").concat(activity.getString(R.string.rejected).toUpperCase());
                     break;
             }
         }
 
         if (UserType.isUserAssistant() && doctorModel != null) {
             childViewHolder.doctorDetailCl.setVisibility(View.VISIBLE);
-            title = title.concat(" FOR");
+            title = title.concat(" " + activity.getString(R.string.For));
             childViewHolder.doctorNameTv.setText(doctorModel.getUserDisplay_name());
 
             if (resultModel.getType().equals(REQUEST_TYPE_CONNECTION) &&
@@ -309,7 +304,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
 
         if (UserType.isUserDoctor()) {
             if (patientModel != null) {
-                Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, patientModel.getUser_avatar(), null, true);
+                Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, patientModel.getUser_avatar(), null, true, true);
                 childViewHolder.nameTv.setText(patientModel.getUserDisplay_name());
                 if (patientModel.getRole().equals(Constants.ROLE_PATIENT)) {
                     childViewHolder.userDetailTv.setText(patientModel.getDob());
@@ -328,20 +323,20 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                 name = MaModel.getUserDisplay_name();
                 info = MaModel.getDisplayInfo();
             }
-            Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, userAvatar, activity.getDrawable(R.drawable.profile_placeholder), true);
+            Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, userAvatar, activity.getDrawable(R.drawable.profile_placeholder), true, true);
             childViewHolder.nameTv.setText(name);
             childViewHolder.userDetailTv.setText(info);
         } else if (UserType.isUserAssistant()) {
 
             if (resultModel.isOwnNotification() && resultModel.getType().equals(REQUEST_TYPE_CONNECTION) && patientModel != null) {
                 if (doctorModel != null) {
-                    Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, doctorModel.getUser_avatar(), null, true);
+                    Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, doctorModel.getUser_avatar(), null, true, true);
                     childViewHolder.nameTv.setText(doctorModel.getUserDisplay_name());
                     childViewHolder.userDetailTv.setText(doctorModel.getDisplayInfo());
                 }
             } else {
                 if (patientModel != null) {
-                    Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, patientModel.getUser_avatar(), null, true);
+                    Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, patientModel.getUser_avatar(), null, true, true);
                     childViewHolder.nameTv.setText(patientModel.getUserDisplay_name());
                     if (patientModel.getRole().equals(Constants.ROLE_PATIENT)) {
                         childViewHolder.userDetailTv.setText(patientModel.getDob());

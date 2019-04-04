@@ -6,6 +6,8 @@ package com.thealer.telehealer.views.call.Interfaces;
 
 public interface CallVitalPagerInterFace {
     void didInitiateMeasure(String type);
+
     void closeVitalController();
+
     void updateState(int state);
 }

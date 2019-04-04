@@ -1,14 +1,11 @@
 package com.thealer.telehealer.views.settings.cellView;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -37,9 +34,9 @@ public class SettingsCellView extends ConstraintLayout {
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SettingsCellView);
             String title = a.getString(R.styleable.SettingsCellView_settings_title);
-            Boolean isSwitchNeeded = a.getBoolean(R.styleable.SettingsCellView_isSwitchNeed,false);
+            Boolean isSwitchNeeded = a.getBoolean(R.styleable.SettingsCellView_isSwitchNeed, false);
 
-            update(title,isSwitchNeeded);
+            update(title, isSwitchNeeded);
         }
 
     }
@@ -56,7 +53,7 @@ public class SettingsCellView extends ConstraintLayout {
         settingSwitch.setClickable(false);
     }
 
-    private void update(String title,Boolean isSwitchNeeded) {
+    private void update(String title, Boolean isSwitchNeeded) {
         titleTextView.setText(title);
 
         if (isSwitchNeeded) {
@@ -70,8 +67,12 @@ public class SettingsCellView extends ConstraintLayout {
         settingSwitch.setChecked(isSelected);
     }
 
-    public void toggleSwitch() {settingSwitch.setChecked(!settingSwitch.isChecked());}
+    public void toggleSwitch() {
+        settingSwitch.setChecked(!settingSwitch.isChecked());
+    }
 
-    public Boolean getSwitchStatus() { return settingSwitch.isChecked(); }
+    public Boolean getSwitchStatus() {
+        return settingSwitch.isChecked();
+    }
 
 }

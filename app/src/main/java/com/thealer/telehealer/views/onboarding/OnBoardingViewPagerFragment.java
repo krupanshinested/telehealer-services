@@ -3,7 +3,6 @@ package com.thealer.telehealer.views.onboarding;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +12,7 @@ import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentFive;
-import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentFour;
-import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentOne;
 import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentPagerAdapter;
-import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentThree;
-import com.thealer.telehealer.views.onboarding.onboardingFragments.OnboardingFragmentTwo;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Aswin on 10,October,2018

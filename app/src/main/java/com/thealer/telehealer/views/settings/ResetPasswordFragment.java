@@ -20,7 +20,6 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
-import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -68,7 +67,7 @@ public class ResetPasswordFragment extends BaseFragment implements View.OnClickL
 
         toolbarTitle.setText(getString(R.string.reset_password));
 
-        Utils.setImageWithGlide(getActivity().getApplicationContext(), profileView, UserDetailPreferenceManager.getWhoAmIResponse().getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), profileView, UserDetailPreferenceManager.getWhoAmIResponse().getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
 
         profileTitle.setText(getString(R.string.hi) + " " + UserDetailPreferenceManager.getUserDisplayName());
 

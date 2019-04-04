@@ -1,8 +1,7 @@
 package com.thealer.telehealer.common;
 
-import android.content.Intent;
-import android.os.Bundle;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,7 +40,7 @@ public class Constants {
     public static final String AVAILABLE = "AVAILABLE";
     public static final String ACTIVATED = "ACTIVATED";
     public static final String BUSY = "BUSY";
-
+    public static final String NO_DATA = "NO_DATA";
     //Gender
     public static final String GENDER_MALE = "male";
     public static final String GENDER_FEMALE = "female";
@@ -146,6 +145,7 @@ public class Constants {
     public static final String CONNECTION_STATUS_RECEIVER = "connectionStatusReceiver";
     public static String male = "male";
     public static String female = "female";
+    public static String others = "others";
 
     //share intent bundle
     public static List<String> sharedPath;
@@ -161,5 +161,7 @@ public class Constants {
     //Vital States
     public static final int idle = 1;
     public static final int measuring = 2;
+
+    public static final List<String> genderList = new ArrayList<>(Arrays.asList(male, female, others));
 
 }

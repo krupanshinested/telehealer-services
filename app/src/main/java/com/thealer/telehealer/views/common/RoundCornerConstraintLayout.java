@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.GradientDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
 
 import com.thealer.telehealer.R;
 
@@ -16,9 +15,9 @@ import com.thealer.telehealer.R;
 public class RoundCornerConstraintLayout extends ConstraintLayout {
 
 
-    private int backgroundColor,strokeColor;
+    private int backgroundColor, strokeColor;
 
-    private float topLeft,topRight,bottomRight,bottomLeft,cornerRadius;
+    private float topLeft, topRight, bottomRight, bottomLeft, cornerRadius;
 
     private GradientDrawable roundCorner = new GradientDrawable();
 
@@ -57,7 +56,7 @@ public class RoundCornerConstraintLayout extends ConstraintLayout {
 
         setStrokeColor();
 
-        if (backgroundColor != 0){
+        if (backgroundColor != 0) {
             setBackgroundColor();
         }
     }
@@ -65,17 +64,17 @@ public class RoundCornerConstraintLayout extends ConstraintLayout {
     private void setCorners() {
         if (cornerRadius > 0) {
             roundCorner.setCornerRadii(new float[]{
-                    cornerRadius,cornerRadius,
-                    cornerRadius,cornerRadius,
-                    cornerRadius,cornerRadius,
-                    cornerRadius,cornerRadius
+                    cornerRadius, cornerRadius,
+                    cornerRadius, cornerRadius,
+                    cornerRadius, cornerRadius,
+                    cornerRadius, cornerRadius
             });
         } else {
             roundCorner.setCornerRadii(new float[]{
-                    topLeft,topLeft,
-                    topRight,topRight,
-                    bottomRight,bottomRight,
-                    bottomLeft,bottomLeft
+                    topLeft, topLeft,
+                    topRight, topRight,
+                    bottomRight, bottomRight,
+                    bottomLeft, bottomLeft
             });
         }
     }
@@ -92,7 +91,7 @@ public class RoundCornerConstraintLayout extends ConstraintLayout {
         setCorners();
     }
 
-    public void assignBackgroundColor(int color)  {
+    public void assignBackgroundColor(int color) {
         this.backgroundColor = getResources().getColor(color);
         setBackgroundColor();
     }
@@ -103,7 +102,7 @@ public class RoundCornerConstraintLayout extends ConstraintLayout {
     }
 
     public void setStrokeColor() {
-        roundCorner.setStroke(2,strokeColor);
+        roundCorner.setStroke(2, strokeColor);
     }
 
     public void setBackgroundColor() {

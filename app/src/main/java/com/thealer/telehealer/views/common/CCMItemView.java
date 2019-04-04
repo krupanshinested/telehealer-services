@@ -1,13 +1,11 @@
 package com.thealer.telehealer.views.common;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -19,7 +17,7 @@ import com.thealer.telehealer.R;
 public class CCMItemView extends ConstraintLayout {
 
     private TextView title_tv;
-    private ImageView selection_iv,info_iv;
+    private ImageView selection_iv, info_iv;
 
     public CCMItemView(Context context) {
         super(context);
@@ -45,7 +43,7 @@ public class CCMItemView extends ConstraintLayout {
         info_iv = view.findViewById(R.id.info_iv);
     }
 
-    public void update(String title,Boolean isSelected) {
+    public void update(String title, Boolean isSelected) {
         title_tv.setText(title);
         update(isSelected);
     }

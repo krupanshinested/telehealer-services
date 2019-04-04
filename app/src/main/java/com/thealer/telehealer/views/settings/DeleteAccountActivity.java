@@ -7,26 +7,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.DeleteAccount.DeleteAccountViewModel;
-import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
-import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
-import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
-import com.thealer.telehealer.common.Logs;
 import com.thealer.telehealer.views.base.BaseActivity;
-import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.signin.SigninActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -37,7 +27,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
 
-    private EditText dEditText,e1EditText,e2EditText,e3EditText,lEditText,tEdiText;
+    private EditText dEditText, e1EditText, e2EditText, e3EditText, lEditText, tEdiText;
     private ImageView closeImageView;
 
     private EditText[] editTexts;
@@ -60,9 +50,9 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
     }
 
     /*
-    *
-    *Private methods
-    *
+     *
+     *Private methods
+     *
      */
     private void initView() {
         dEditText = findViewById(R.id.d_editText);
@@ -74,7 +64,7 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
 
         dEditText.requestFocus();
 
-        editTexts = new EditText[]{dEditText,e1EditText,lEditText,e2EditText,tEdiText,e3EditText};
+        editTexts = new EditText[]{dEditText, e1EditText, lEditText, e2EditText, tEdiText, e3EditText};
 
         for (EditText editText : editTexts) {
             editText.addTextChangedListener(this);
@@ -96,7 +86,7 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
         deleteAccountViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null){
+                if (baseApiResponseModel != null) {
                     appPreference.deletePreference();
                     startActivity(new Intent(DeleteAccountActivity.this, SigninActivity.class));
                     finish();
@@ -118,7 +108,7 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
 
     }
 
-    private Boolean isValidToDelete()  {
+    private Boolean isValidToDelete() {
         String string = "";
 
         for (EditText editText : editTexts) {
@@ -128,7 +118,7 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
         return string.equals("DELETE");
     }
 
-    private int getIndex(EditText editText)  {
+    private int getIndex(EditText editText) {
         if (editText == dEditText) {
             return 0;
         } else if (editText == e1EditText) {
@@ -162,7 +152,7 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
-                if(keyCode == KeyEvent.KEYCODE_DEL) {
+                if (keyCode == KeyEvent.KEYCODE_DEL) {
 
                     EditText et = (EditText) v;
                     if (et.getText().toString().isEmpty()) {
@@ -179,7 +169,7 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
     }
 
     private void deleteAccount() {
-        if (!isDeleteCalled)   {
+        if (!isDeleteCalled) {
             isDeleteCalled = true;
             EventRecorder.recordUserSession("account_deleted");
             deleteAccountViewModel.deleteAccount();
@@ -187,10 +177,10 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
     }
 
     /*
-    *
-    * Listeners
-    *
-    * */
+     *
+     * Listeners
+     *
+     * */
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 

@@ -36,7 +36,9 @@ import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.WeightMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -47,12 +49,9 @@ import com.thealer.telehealer.views.call.Interfaces.CallVitalPagerInterFace;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.home.vitals.VitalsSendBaseFragment;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.WeightMeasureInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -62,7 +61,7 @@ import java.util.HashMap;
 public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
         View.OnClickListener, WeightMeasureInterface {
 
-    private TextView value_tv, unit_tv, message_tv,title_tv;
+    private TextView value_tv, unit_tv, message_tv, title_tv;
     private CustomButton close_bt, save_bt;
     private Button remeasure_bt;
     private ConstraintLayout result_lay,main_container;
@@ -187,7 +186,7 @@ public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
             case R.id.close_bt:
                 if (isPresentedInsideCallActivity()) {
                     if (vitalManagerInstance != null) {
-                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
+                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
                         setCurrentState(MeasureState.notStarted);
                     }
                     if (callVitalPagerInterFace != null) {
@@ -242,7 +241,7 @@ public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
 
     //WeightMeasureInterface methods
     @Override
-    public void updateWeightMessage(String deviceType,String message) {
+    public void updateWeightMessage(String deviceType, String message) {
         message_tv.setText(message);
         result_lay.setVisibility(View.GONE);
     }
@@ -255,7 +254,7 @@ public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
 
         message_tv.setText("");
 
-        value_tv.setText(value+ "");
+        value_tv.setText(value + "");
 
         if (currentState != MeasureState.startedToReceieveValues) {
             setCurrentState(MeasureState.startedToReceieveValues);
@@ -268,10 +267,10 @@ public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
     }
 
     @Override
-    public void didFinishWeightMeasure(String deviceType,Float weight, String id) {
+    public void didFinishWeightMeasure(String deviceType, Float weight, String id) {
         message_tv.setText("");
 
-        finalWeightValue = weight+ "";
+        finalWeightValue = weight + "";
         setCurrentState(MeasureState.ended);
 
         if (isPresentedInsideCallActivity()) {
@@ -283,7 +282,7 @@ public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
     }
 
     @Override
-    public void didFinishWeightMesureWithFailure(String deviceType,String error) {
+    public void didFinishWeightMesureWithFailure(String deviceType, String error) {
         message_tv.setText(error);
 
         setCurrentState(MeasureState.failed);
@@ -292,7 +291,7 @@ public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
     //Call Events methods
     @Override
     public void didReceiveData(String data) {
-        Log.d("WeightMeasureFragment","received data");
+        Log.d("WeightMeasureFragment", "received data");
         if (value_tv == null) {
             action = new Action() {
                 @Override
@@ -344,13 +343,13 @@ public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
                         result = (Float) map.get(VitalsConstant.VitalCallMapKeys.data);
                     }
 
-                    updateWeightValue(vitalDevice.getType(),result);
+                    updateWeightValue(vitalDevice.getType(), result);
 
                     break;
                 case VitalsConstant.VitalCallMapKeys.errorInMeasure:
 
                     String errorMessage = (String) map.get(VitalsConstant.VitalCallMapKeys.message);
-                    didFinishWeightMesureWithFailure(vitalDevice.getType(),errorMessage);
+                    didFinishWeightMesureWithFailure(vitalDevice.getType(), errorMessage);
 
                     break;
                 case VitalsConstant.VitalCallMapKeys.finishedMeasure:
@@ -365,7 +364,7 @@ public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
                         finalResult = (Float) map.get(VitalsConstant.VitalCallMapKeys.data);
                     }
 
-                    didFinishWeightMeasure(vitalDevice.getType(),finalResult,"");
+                    didFinishWeightMeasure(vitalDevice.getType(), finalResult, "");
 
                     break;
             }

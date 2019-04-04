@@ -29,10 +29,10 @@
 
             <Switch
                 android:id="@+id/stat_switch"
+                style="@style/text_sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                style="@style/text_sub_title"
                 android:text="@string/stat"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -68,6 +68,7 @@
                     android:id="@+id/icd_list_rv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/action_iv"
                     app:layout_constraintStart_toStartOf="parent" />
 

@@ -304,7 +304,7 @@ public class PubNubNotificationPayload {
         return pushPayLoad;
     }
 
-    public static PushPayLoad getPayloadForEndCall(String displayName,String from, String to, String uuid, String callRejectionReason) {
+    public static PushPayLoad getPayloadForEndCall(String displayName, String from, String to, String uuid, String callRejectionReason) {
 
         PushPayLoad pushPayLoad = new PushPayLoad();
         APNSPayload apnsPayload = new APNSPayload();
@@ -359,7 +359,7 @@ public class PubNubNotificationPayload {
         return pushPayLoad;
     }
 
-    public static PushPayLoad getCallDismissedPermissionLocalPayload(String otherPersonAvatar,String title,String description) {
+    public static PushPayLoad getCallDismissedPermissionLocalPayload(String otherPersonAvatar, String title, String description) {
 
         PushPayLoad pushPayLoad = new PushPayLoad();
         APNSPayload apnsPayload = new APNSPayload();

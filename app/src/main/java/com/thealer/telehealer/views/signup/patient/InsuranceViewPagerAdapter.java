@@ -69,7 +69,7 @@ public class InsuranceViewPagerAdapter extends PagerAdapter {
             if (imageList.get(position).contains(Environment.getExternalStorageDirectory().getAbsolutePath())) {
                 insuranceIv.setImageBitmap(BitmapFactory.decodeFile(imageList.get(position)));
             } else {
-                Utils.setImageWithGlide(activity.getApplicationContext(), insuranceIv, imageList.get(position), activity.getDrawable(R.drawable.insurance_placeholder), true);
+                Utils.setImageWithGlide(activity.getApplicationContext(), insuranceIv, imageList.get(position), activity.getDrawable(R.drawable.insurance_placeholder), true, true);
             }
         }
 

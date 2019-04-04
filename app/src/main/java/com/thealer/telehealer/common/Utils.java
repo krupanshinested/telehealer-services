@@ -106,10 +106,10 @@ public class Utils {
 
     private static FancyShowCaseView fancyShowCaseView;
 
-    public static void showOverlay(FragmentActivity fragmentActivity, View view, String message, DismissListener dismissListener) {
+    public static void showOverlay(FragmentActivity fragmentActivity, View view, int message, DismissListener dismissListener) {
         fancyShowCaseView = new FancyShowCaseView.Builder(fragmentActivity)
                 .focusOn(view)
-                .title(message)
+                .title(fragmentActivity.getString(message))
                 .closeOnTouch(true)
                 .enableAutoTextPosition()
                 .titleSize(16, TypedValue.COMPLEX_UNIT_SP)
@@ -160,7 +160,7 @@ public class Utils {
                 datePickerDialog = new DatePickerDialog(activity, onDateSetListener, 2000, month, day);
                 break;
             case Constants.TYPE_EXPIRATION:
-                calendar.set(year, month, day + 1);
+                calendar.set(year, month, day + 1, 0, 0, 0);
                 datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
                 break;
             case Constants.TILL_CURRENT_DAY:
@@ -304,11 +304,11 @@ public class Utils {
         return -1;
     }
 
-    public static void setImageWithGlide(Context context, ImageView imageView, String path, Drawable placeHolder, boolean isUrlAuthNeeded) {
+    public static void setImageWithGlide(Context context, ImageView imageView, String path, Drawable placeHolder, boolean isUrlAuthNeeded, boolean decrypt) {
         if (path != null && !path.isEmpty()) {
             GlideUrl glideUrl;
             if (isUrlAuthNeeded) {
-                glideUrl = getGlideUrlWithAuth(context, path);
+                glideUrl = getGlideUrlWithAuth(context, path, decrypt);
             } else {
                 glideUrl = new GlideUrl(path);
             }
@@ -325,8 +325,8 @@ public class Utils {
         }
     }
 
-    public static GlideUrl getGlideUrlWithAuth(Context context, String path) {
-        path = context.getString(R.string.api_base_url) + context.getString(R.string.get_image_url) + path;
+    public static GlideUrl getGlideUrlWithAuth(Context context, String path, boolean decrypt) {
+        path = context.getString(R.string.api_base_url) + context.getString(R.string.get_image_url) + path+"&decrypt="+decrypt;
 
         return new GlideUrl(path, new Headers() {
             @Override
@@ -937,7 +937,7 @@ public class Utils {
         DateFormat inputFormat = new SimpleDateFormat(UTCFormat);
         inputFormat.setTimeZone(UtcTimezone);
 
-        DateFormat timeFormat = new SimpleDateFormat("hh:mm aa, EE");
+        DateFormat timeFormat = new SimpleDateFormat("hh:mm aa, EE", Locale.ENGLISH);
         timeFormat.setTimeZone(TimeZone.getDefault());
         DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
         dateFormat.setTimeZone(TimeZone.getDefault());
@@ -1006,7 +1006,7 @@ public class Utils {
                 public void run() {
                     try {
 
-                        GlideUrl glideUrl = Utils.getGlideUrlWithAuth(application, imageUrl);
+                        GlideUrl glideUrl = Utils.getGlideUrlWithAuth(application, imageUrl, true);
 
                         FutureTarget<Bitmap> futureTarget = Glide.with(application).asBitmap().load(glideUrl).submit();
 

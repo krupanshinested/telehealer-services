@@ -123,7 +123,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NotificationListAdapter.ACCEPTED.toLowerCase(), null, null,
-                                    null, true,adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
+                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
                         }
                     });
 
@@ -135,7 +135,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NotificationListAdapter.REJECTED.toLowerCase(), null, null,
-                                    null, true,adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
+                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
                         }
                     });
 
@@ -146,7 +146,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                     subTitle = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayInfo();
                 }
 
-                Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.avatarCiv, avatarUrl, activity.getDrawable(R.drawable.profile_placeholder), true);
+                Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.avatarCiv, avatarUrl, activity.getDrawable(R.drawable.profile_placeholder), true, true);
                 viewHolder.titleTv.setText(title);
                 viewHolder.subTitleTv.setText(subTitle);
 
@@ -164,6 +164,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
 
                 viewHolder.titleTv.setText(mode);
                 viewHolder.subTitleTv.setText(date);
+                viewHolder.actionCl.setVisibility(View.GONE);
                 break;
         }
     }

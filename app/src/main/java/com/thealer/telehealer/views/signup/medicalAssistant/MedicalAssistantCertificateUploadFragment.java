@@ -53,12 +53,12 @@ public class MedicalAssistantCertificateUploadFragment extends BaseFragment impl
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.take_photo_btn:
-                CameraUtil.openCamera(getActivity());
+                CameraUtil.showImageSelectionAlert(getActivity());
                 break;
             case R.id.add_document_btn:
-                CameraUtil.openGallery(getActivity());
+                CameraUtil.showImageSelectionAlert(getActivity());
                 break;
         }
     }
@@ -78,7 +78,7 @@ public class MedicalAssistantCertificateUploadFragment extends BaseFragment impl
     public void onImageReceived(String imagePath) {
         certificate_path = imagePath;
 
-        if (certificate_path != null && !certificate_path.isEmpty()){
+        if (certificate_path != null && !certificate_path.isEmpty()) {
             Bundle bundle = new Bundle();
             bundle.putString(getString(R.string.image_path), certificate_path);
 

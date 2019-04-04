@@ -12,9 +12,9 @@ import com.thealer.telehealer.R;
  */
 
 public class RoundCornerButton extends android.support.v7.widget.AppCompatButton {
-    private int backgroundColor,strokeColor;
+    private int backgroundColor, strokeColor;
 
-    private int topLeft,topRight,bottomRight,bottomLeft,cornerRadius;
+    private int topLeft, topRight, bottomRight, bottomLeft, cornerRadius;
 
     private GradientDrawable roundCorner = new GradientDrawable();
 
@@ -50,7 +50,7 @@ public class RoundCornerButton extends android.support.v7.widget.AppCompatButton
 
         setStrokeColor();
 
-        if (backgroundColor != 0){
+        if (backgroundColor != 0) {
             setBackgroundColor();
         }
     }
@@ -58,22 +58,22 @@ public class RoundCornerButton extends android.support.v7.widget.AppCompatButton
     public void setCorners() {
         if (cornerRadius > 0) {
             roundCorner.setCornerRadii(new float[]{
-                    cornerRadius,cornerRadius,
-                    cornerRadius,cornerRadius,
-                    cornerRadius,cornerRadius,
-                    cornerRadius,cornerRadius
+                    cornerRadius, cornerRadius,
+                    cornerRadius, cornerRadius,
+                    cornerRadius, cornerRadius,
+                    cornerRadius, cornerRadius
             });
         } else {
             roundCorner.setCornerRadii(new float[]{
-                    topLeft,topLeft,
-                    topRight,topRight,
-                    bottomRight,bottomRight,
-                    bottomLeft,bottomLeft
+                    topLeft, topLeft,
+                    topRight, topRight,
+                    bottomRight, bottomRight,
+                    bottomLeft, bottomLeft
             });
         }
     }
 
-    public void assignBackgroundColor(int color)  {
+    public void assignBackgroundColor(int color) {
         this.backgroundColor = getResources().getColor(color);
         setBackgroundColor();
     }
@@ -84,7 +84,7 @@ public class RoundCornerButton extends android.support.v7.widget.AppCompatButton
     }
 
     public void setStrokeColor() {
-        roundCorner.setStroke(2,strokeColor);
+        roundCorner.setStroke(2, strokeColor);
     }
 
     public void setBackgroundColor() {

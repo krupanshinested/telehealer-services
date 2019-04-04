@@ -40,9 +40,9 @@
             <TextView
                 android:id="@+id/last_two_week_tv"
                 android:layout_width="match_parent"
-                android:gravity="center"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
+                android:gravity="center"
                 android:padding="8dp"
                 android:text="@string/last_two_week"
                 android:textColor="@color/color_blue" />
@@ -70,9 +70,9 @@
             <TextView
                 android:id="@+id/all_tv"
                 android:layout_width="match_parent"
-                android:gravity="center"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
+                android:gravity="center"
                 android:padding="8dp"
                 android:text="@string/all"
                 android:textColor="@color/color_blue" />

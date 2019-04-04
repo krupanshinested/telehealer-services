@@ -45,7 +45,6 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
-import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.recents.VisitDetailConstants;
 
 import java.util.ArrayList;
@@ -87,7 +86,6 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
     private String orderId;
     private int mode = Constants.VIEW_MODE;
     private ArrayList<Integer> selectedList = new ArrayList<>();
-    private TextView cancelTv;
     private TextView nextTv;
     private ImageView closeIv;
     private HashMap<Integer, DocumentsApiResponseModel.ResultBean> selectedDocumentMap = new HashMap<>();
@@ -192,7 +190,6 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
         documentsCrv = (CustomRecyclerView) view.findViewById(R.id.documents_crv);
-        cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
         nextTv = (TextView) view.findViewById(R.id.next_tv);
         closeIv = (ImageView) view.findViewById(R.id.close_iv);
 
@@ -200,10 +197,9 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
 
         backIv.setOnClickListener(this);
         addFab.setOnClickListener(this);
-        cancelTv.setOnClickListener(this);
         nextTv.setOnClickListener(this);
 
-        toolbarTitle.setText(OrderConstant.ORDER_DOCUMENTS);
+        toolbarTitle.setText(getString(R.string.documents));
 
         if (getArguments() != null) {
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
@@ -300,16 +296,12 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
     private void updateToolbarOptions() {
         switch (mode) {
             case Constants.VIEW_MODE:
-                backIv.setVisibility(View.VISIBLE);
                 nextTv.setVisibility(View.GONE);
-                cancelTv.setVisibility(View.GONE);
                 inflateToolbarMenu();
                 break;
             case Constants.EDIT_MODE:
                 toolbar.getMenu().clear();
-                backIv.setVisibility(View.GONE);
                 nextTv.setVisibility(View.VISIBLE);
-                cancelTv.setVisibility(View.VISIBLE);
                 nextTv.setText(getString(R.string.Save));
                 enableOrDisableNext();
                 break;
@@ -357,11 +349,9 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
 
     private void enableOrDisableNext() {
         if (selectedList.isEmpty()) {
-            nextTv.setEnabled(false);
-            nextTv.setAlpha(0.5f);
+            nextTv.setVisibility(View.GONE);
         } else {
-            nextTv.setEnabled(true);
-            nextTv.setAlpha(1);
+            nextTv.setVisibility(View.VISIBLE);
         }
     }
 

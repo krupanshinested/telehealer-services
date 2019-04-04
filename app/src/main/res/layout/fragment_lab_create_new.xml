@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/bottom_view"
                 app:sub_title_visible="false"
-                app:view_label="Date Requested" />
+                app:view_label="@string/date_requested" />
 
             <com.thealer.telehealer.views.home.orders.OrdersCustomView
                 android:id="@+id/copy_ocv"
@@ -80,7 +80,7 @@
                 app:arrow_visible="true"
                 app:layout_constraintTop_toBottomOf="@+id/date_ocv"
                 app:sub_title_visible="false"
-                app:view_label="Copy Results To" />
+                app:view_label="@string/copy_result_to" />
 
             <com.thealer.telehealer.views.home.orders.OrdersCustomView
                 android:id="@+id/visit_ocv"

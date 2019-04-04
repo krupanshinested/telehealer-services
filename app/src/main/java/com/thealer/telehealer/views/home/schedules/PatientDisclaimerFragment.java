@@ -50,14 +50,30 @@ public class PatientDisclaimerFragment extends BaseFragment {
             }
         });
 
-        disclaimerTv.setText(Html.fromHtml("<!DOCTYPE html>\n" +
+        String disclaimerHtml = "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "<body>\n" +
-                "<h3><font color=\"red\">DISCLAIMER:</font></h3>\n" +
-                "<P><font color=\"red\">DO NOT USE THIS FORM IF YOU ARE SEEKING URGENT OR EMERGENCY MEDICAL ATTENTION.</font></p>\n" +
-                "<p><font color=\"black\">If you are experiencing chest pain, sudden or serious pain, bleeding or other serious complications, call</font> <font color=\"red\">911</font><font color=\"black\"> or go to the nearest emergency room.<br> If you have feelings of wanting to harm yourself or someone else, call</font> <font color=\"red\">911</font><font color=\"black\"> or the Suicide Prevention Crisis Line at <b>1-800-784-2433</b>.<br>By scheduling this appointment you acknowledge that you are not experiencing an emergency.</font></p>\n" +
-                "<p><b><font color=\"black\">By clicking the Continue button I acknowledge that I have read and understand the above disclaimer</font></b></p>\n" +
+                "<h3><font color=\"red\">%s</font></h3>\n" +
+                "<P><font color=\"red\">%s</font></p>\n" +
+                "<p><font color=\"black\">%s</font>" +
+                "<font color=\"red\">%s</font>" +
+                "<font color=\"black\"> %s<br> %s</font>" +
+                "<font color=\"red\">%s</font>" +
+                "<font color=\"black\"> %s <b>%s</b>.<br>%s</font></p>\n" +
+                "<p><b><font color=\"black\">%s</font></b></p>\n" +
                 "</body>\n" +
-                "</html>\n"));
+                "</html>\n";
+
+        disclaimerTv.setText(Html.fromHtml(String.format(disclaimerHtml, getString(R.string.html_disclaimer),
+                getString(R.string.html_do_not_use),
+                getString(R.string.html_experiencing_chest_pain),
+                getString(R.string.html_911),
+                getString(R.string.html_go_to_nearest_emergency_room),
+                getString(R.string.html_feelings),
+                getString(R.string.html_911),
+                getString(R.string.html_suicide_crisis),
+                getString(R.string.html_helpline_number),
+                getString(R.string.html_by_scheduling),
+                getString(R.string.html_by_clicking))));
     }
 }

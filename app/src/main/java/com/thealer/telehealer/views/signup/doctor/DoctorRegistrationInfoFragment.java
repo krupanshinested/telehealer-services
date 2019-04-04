@@ -93,6 +93,6 @@ public class DoctorRegistrationInfoFragment extends BaseFragment implements DoCu
 
     @Override
     public void doCurrentTransaction() {
-        
+
     }
 }

@@ -4,12 +4,8 @@ import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -48,7 +44,9 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.PulseMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -60,8 +58,6 @@ import com.thealer.telehealer.views.call.Interfaces.CallVitalPagerInterFace;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.home.vitals.VitalsSendBaseFragment;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.PulseMeasureInterface;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.lang.reflect.Type;
@@ -76,10 +72,10 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
         View.OnClickListener,PulseMeasureInterface {
 
     private LineChart graph;
-    private TextView pulse_value,pulse,spo2_value,spo2,message_tv,title_tv;
-    private CustomButton save_bt,close_bt;
+    private TextView pulse_value, pulse, spo2_value, spo2, message_tv, title_tv;
+    private CustomButton save_bt, close_bt;
     private Button remeasure_bt;
-    private ConstraintLayout result_lay,main_container;
+    private ConstraintLayout result_lay, main_container;
 
     private String finalPulseValue = "",finalHeartRate = "";
     private ArrayList<Entry> entries = new ArrayList<>();
@@ -133,7 +129,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
                 return 100;
             }
         };
-        graph.animateX(1000,easingFunction);
+        graph.animateX(1000, easingFunction);
 
         if (isNeedToTrigger && currentState == MeasureState.notStarted) {
             startMeasure();
@@ -295,7 +291,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
                     case MeasureState.started:
                     case MeasureState.startedToReceieveValues:
                         if (vitalManagerInstance != null)
-                            vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
+                            vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
                         setCurrentState(MeasureState.notStarted);
                         break;
                     case MeasureState.ended:
@@ -310,7 +306,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
             case R.id.close_bt:
                 if (isPresentedInsideCallActivity()) {
                     if (vitalManagerInstance != null) {
-                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
+                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
                         setCurrentState(MeasureState.notStarted);
                     }
 
@@ -331,13 +327,13 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
 
     //PulseMeasureInterface methods
     @Override
-    public void updatePulseMessage(String deviceType,String message) {
+    public void updatePulseMessage(String deviceType, String message) {
         message_tv.setText(message);
         result_lay.setVisibility(View.GONE);
     }
 
     @Override
-    public void updatePulseValue(String deviceType,int spo2, int bpm, int wave, float pi) {
+    public void updatePulseValue(String deviceType, int spo2, int bpm, int wave, float pi) {
         spo2_value.setText(spo2 + "%");
         pulse_value.setText(bpm + "");
 
@@ -349,7 +345,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
     }
 
     @Override
-    public void didFinishMeasure(String deviceType,int spo2, int bpm, int wave, float pi) {
+    public void didFinishMeasure(String deviceType, int spo2, int bpm, int wave, float pi) {
 
         finalPulseValue = spo2 + "";
         finalHeartRate = bpm + "";
@@ -370,7 +366,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
     }
 
     @Override
-    public void didPulseFinishMesureWithFailure(String deviceType,String error) {
+    public void didPulseFinishMesureWithFailure(String deviceType, String error) {
 
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
             EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
@@ -397,7 +393,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
     //Call Events methods
     @Override
     public void didReceiveData(String data) {
-        Log.d("PulseMeasureFragment","received data");
+        Log.d("PulseMeasureFragment", "received data");
         if (pulse_value == null) {
             action = new Action() {
                 @Override
@@ -409,6 +405,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
             processSignalMessagesForPulse(data);
         }
     }
+
     @Override
     public void assignVitalListener() {
         if (vitalManagerInstance != null) {
@@ -421,7 +418,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
     }
 
     private void processSignalMessagesForPulse(String data) {
-        Log.d("PulseMeasureFragment","processSignalMessagesForPulse");
+        Log.d("PulseMeasureFragment", "processSignalMessagesForPulse");
 
         Type type = new TypeToken<HashMap<String, Object>>() {}.getType();
 
@@ -436,14 +433,14 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
                     break;
                 case VitalsConstant.VitalCallMapKeys.measuring:
 
-                    HashMap<String,Double> value = (HashMap<String,Double>) map.get(VitalsConstant.VitalCallMapKeys.data);
+                    HashMap<String, Double> value = (HashMap<String, Double>) map.get(VitalsConstant.VitalCallMapKeys.data);
 
-                    HashMap<String,Integer> intValue = new HashMap<>();
+                    HashMap<String, Integer> intValue = new HashMap<>();
                     if (value == null) {
-                        intValue = (HashMap<String,Integer>) map.get(VitalsConstant.VitalCallMapKeys.data);
+                        intValue = (HashMap<String, Integer>) map.get(VitalsConstant.VitalCallMapKeys.data);
                     } else {
                         for (String key : value.keySet()) {
-                            intValue.put(key,value.get(key).intValue());
+                            intValue.put(key, value.get(key).intValue());
                         }
                     }
 
@@ -453,7 +450,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
                     Integer pi = intValue.get(VitalsConstant.VitalCallMapKeys.pi);
 
                     if (spo2 != null && bpm != null && wave != null && pi != null) {
-                        updatePulseValue(vitalDevice.getType(),spo2,bpm,wave,pi);
+                        updatePulseValue(vitalDevice.getType(), spo2, bpm, wave, pi);
                     }
 
 
@@ -461,19 +458,19 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
                 case VitalsConstant.VitalCallMapKeys.errorInMeasure:
 
                     String errorMessage = (String) map.get(VitalsConstant.VitalCallMapKeys.message);
-                    didPulseFinishMesureWithFailure(vitalDevice.getType(),errorMessage);
+                    didPulseFinishMesureWithFailure(vitalDevice.getType(), errorMessage);
 
                     break;
                 case VitalsConstant.VitalCallMapKeys.finishedMeasure:
 
-                    HashMap<String,Double> resultValue = (HashMap<String,Double>) map.get(VitalsConstant.VitalCallMapKeys.data);
+                    HashMap<String, Double> resultValue = (HashMap<String, Double>) map.get(VitalsConstant.VitalCallMapKeys.data);
 
-                    HashMap<String,Integer> resultIntValue = new HashMap<>();
+                    HashMap<String, Integer> resultIntValue = new HashMap<>();
                     if (resultValue == null) {
-                        resultIntValue = (HashMap<String,Integer>) map.get(VitalsConstant.VitalCallMapKeys.data);
+                        resultIntValue = (HashMap<String, Integer>) map.get(VitalsConstant.VitalCallMapKeys.data);
                     } else {
                         for (String key : resultValue.keySet()) {
-                            resultIntValue.put(key,resultValue.get(key).intValue());
+                            resultIntValue.put(key, resultValue.get(key).intValue());
                         }
                     }
 
@@ -483,7 +480,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
                     Integer result_pi = resultIntValue.get(VitalsConstant.VitalCallMapKeys.pi);
 
                     if (result_spo2 != null && result_bpm != null && result_wave != null && result_pi != null) {
-                        updatePulseValue(vitalDevice.getType(),result_spo2,result_bpm,result_wave,result_pi);
+                        updatePulseValue(vitalDevice.getType(), result_spo2, result_bpm, result_wave, result_pi);
                     }
 
                     break;

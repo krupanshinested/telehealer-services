@@ -25,12 +25,12 @@
     </android.support.design.widget.TextInputLayout>
 
     <ImageView
+        android:id="@+id/delete_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:src="@drawable/ic_remove_circle_white_24dp"
         android:tint="@color/red"
-        android:id="@+id/delete_iv"
         app:layout_constraintBottom_toBottomOf="@+id/drug_name_til"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/drug_name_til" />
@@ -73,7 +73,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/strength_til"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/strength_til"
-        app:spinner_label_text="metric" />
+        app:spinner_label_text="@string/metric" />
 
 
     <android.support.design.widget.TextInputLayout

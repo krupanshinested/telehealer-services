@@ -1,6 +1,5 @@
 package com.thealer.telehealer.views.settings.Interface;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 /**

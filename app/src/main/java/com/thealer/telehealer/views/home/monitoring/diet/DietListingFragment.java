@@ -23,6 +23,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.DietApiViewModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
@@ -83,9 +84,11 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
     private ArrayList<Integer> selectedList = new ArrayList<>();
     private List<Integer> unSelectedList = new ArrayList<>();
     private String userGuid, doctorGuid;
-    private CommonUserApiResponseModel userModel, doctorModel;
+    private UserBean userModel;
+    private CommonUserApiResponseModel doctorModel;
     private String orderId, filter = null, startDate = null, endDate = null;
     private HashMap<Integer, DietApiResponseModel> selectedDietMap = new HashMap<>();
+    private boolean isDisableCancel = false;
 
     @Override
     public void onAttach(Context context) {
@@ -197,7 +200,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
                                     startDate = bundle.getString(ArgumentKeys.START_DATE);
                                     endDate = bundle.getString(ArgumentKeys.END_DATE);
 
-                                    String title = EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_DIET_FROM_TO);
+                                    String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_DIET_FROM_TO);
 
                                     dietListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
                                 }
@@ -306,7 +309,8 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
         });
 
         if (getArguments() != null) {
-            userModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            isDisableCancel = getArguments().getBoolean(ArgumentKeys.DISABLE_CANCEL, false);
+            userModel = (UserBean) getArguments().getSerializable(Constants.USER_DETAIL);
             if (userModel != null) {
                 userGuid = userModel.getUser_guid();
             }
@@ -318,10 +322,6 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
             if (orderId != null) {
                 mode = Constants.EDIT_MODE;
                 dietSelectionListAdapter.setMode(mode);
-            }
-
-            if (getArguments().getBoolean(ArgumentKeys.IS_SHOW_FILTER)) {
-                toolbar.getMenu().findItem(R.id.menu_filter).setVisible(true);
             }
 
             filter = getArguments().getString(ArgumentKeys.SEARCH_TYPE);
@@ -366,8 +366,12 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
     private void enableOrDisableNext() {
         if (selectedList.isEmpty()) {
             setNextTitle(getString(R.string.cancel));
+            if (isDisableCancel) {
+                nextTv.setVisible(false);
+            }
         } else {
             setNextTitle(getString(R.string.next));
+            nextTv.setVisible(true);
         }
     }
 
@@ -471,7 +475,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
 
     private void showDietPrintOptions() {
         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_time_period),
-                DietConstant.dietPrintOptions,
+                DietConstant.getDietPrintOptions(getActivity()),
                 new PickerListener() {
                     @Override
                     public void didSelectedItem(int position) {
@@ -517,23 +521,23 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
 
         Set<String> dates = listMap.keySet();
 
-        if (DietConstant.dietPrintOptions.get(position).equals(DietConstant.DIET_PRINT_ALL)) {
+        ArrayList<String> printOptions = DietConstant.getDietPrintOptions(getActivity());
+        String selectedOption = printOptions.get(position);
+        if (selectedOption.equals(getString(R.string.DIET_PRINT_ALL))) {
             for (String date : dates) {
                 String utcdate = Utils.getUTCFormat(date, Utils.yyyy_mm_dd);
                 pdfList.put(utcdate, listMap.get(date));
             }
 
         } else {
-            switch (DietConstant.dietPrintOptions.get(position)) {
-                case DietConstant.PRINT_1_WEEK:
-                    calendar.add(Calendar.DAY_OF_MONTH, -7);
-                    break;
-                case DietConstant.PRINT_2_WEEK:
-                    calendar.add(Calendar.DAY_OF_MONTH, -14);
-                    break;
-                case DietConstant.PRINT_1_MONTH:
-                    calendar.add(Calendar.MONTH, -1);
-                    break;
+            if (selectedOption.equals(getString(R.string.PRINT_1_WEEK))) {
+                calendar.add(Calendar.DAY_OF_MONTH, -7);
+
+            } else if (selectedOption.equals(getString(R.string.PRINT_2_WEEK))) {
+                calendar.add(Calendar.DAY_OF_MONTH, -14);
+
+            } else if (selectedOption.equals(getString(R.string.PRINT_1_MONTH))) {
+                calendar.add(Calendar.MONTH, -1);
             }
 
             for (String date : dates) {
@@ -557,7 +561,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
             showSubFragmentInterface.onShowFragment(pdfViewerFragment);
 
         } else {
-            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + DietConstant.dietPrintOptions.get(position),
+            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + selectedOption,
                     getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         @Override

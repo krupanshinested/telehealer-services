@@ -38,9 +38,9 @@
 
             <View
                 android:id="@+id/view"
+                style="@style/text_title_bold"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                style="@style/text_title_bold"
                 android:layout_below="@+id/done_tv"
                 android:background="@color/colorGrey" />
 

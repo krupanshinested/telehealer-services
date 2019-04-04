@@ -4,37 +4,25 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
 import com.thealer.telehealer.common.BaseAdapter;
 import com.thealer.telehealer.common.BaseAdapterObjectModel;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
-import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-
-    public class TrackBPAdapter  extends BaseAdapter {
+public class TrackBPAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<BPTrack> bpTracks;
@@ -78,9 +66,9 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
                     BPTrack bpTrack = (BPTrack) baseAdapterModel.actualValue;
                     DataHolder dataHolder = ((DataHolder) viewHolder);
-                    dataHolder.value_tv.setText(bpTrack.getSys()+"/"+bpTrack.getDia());
+                    dataHolder.value_tv.setText(bpTrack.getSys() + "/" + bpTrack.getDia());
                     dataHolder.unit_tv.setText(SupportedMeasurementType.getVitalUnit(SupportedMeasurementType.bp));
-                    dataHolder.time_tv.setText(Utils.getStringFromDate(bpTrack.getDate(),"hh:mm a"));
+                    dataHolder.time_tv.setText(Utils.getStringFromDate(bpTrack.getDate(), "hh:mm a"));
                     dataHolder.check_box.setChecked(isSelected(bpTrack));
 
                     if (presentInsideCall) {
@@ -149,7 +137,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
     private class DataHolder extends RecyclerView.ViewHolder {
 
-        private TextView value_tv, unit_tv,time_tv;
+        private TextView value_tv, unit_tv, time_tv;
         private CheckBox check_box;
         private ConstraintLayout main_container;
 

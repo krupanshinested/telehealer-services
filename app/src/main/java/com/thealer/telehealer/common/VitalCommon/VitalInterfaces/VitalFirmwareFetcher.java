@@ -5,6 +5,7 @@ package com.thealer.telehealer.common.VitalCommon.VitalInterfaces;
  */
 
 public interface VitalFirmwareFetcher {
-    void didFetchedLocalInfo(String hardwareVersion,String firmwareVersion);
-    void didFetchedServerInfo(String hardwareVersion,String firmwareVersion);
+    void didFetchedLocalInfo(String hardwareVersion, String firmwareVersion);
+
+    void didFetchedServerInfo(String hardwareVersion, String firmwareVersion);
 }

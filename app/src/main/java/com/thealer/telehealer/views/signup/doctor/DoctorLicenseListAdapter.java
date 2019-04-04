@@ -63,27 +63,27 @@ class DoctorLicenseListAdapter extends RecyclerView.Adapter<DoctorLicenseListAda
             viewHolder.licenseNumberTv.setText(licensesBeanList.get(i).getNumber());
             showError(viewHolder, viewHolder.licenseNumberTv, false, null, i);
         } else {
-            viewHolder.licenseNumberTv.setText("License no : N/A");
+            viewHolder.licenseNumberTv.setText(fragmentActivity.getString(R.string.license_no) + " : N/A");
             showError(viewHolder, viewHolder.licenseNumberTv, true, fragmentActivity.getString(R.string.license_number_empty_error), i);
         }
 
         if (isValidData(licensesBeanList.get(i).getState())) {
-            viewHolder.stateTv.setText("State : " + licensesBeanList.get(i).getState());
+            viewHolder.stateTv.setText(fragmentActivity.getString(R.string.state) + " : " + licensesBeanList.get(i).getState());
             showError(viewHolder, viewHolder.stateTv, false, null, i);
         } else {
-            viewHolder.stateTv.setText("State : N/A");
+            viewHolder.stateTv.setText(fragmentActivity.getString(R.string.state) + " : N/A");
             showError(viewHolder, viewHolder.stateTv, true, fragmentActivity.getString(R.string.state_empty_error), i);
         }
 
         if (isValidData(licensesBeanList.get(i).getEnd_date())) {
-            viewHolder.expirationTv.setText("Exp : " + Utils.getDayMonthYear(licensesBeanList.get(i).getEnd_date()));
+            viewHolder.expirationTv.setText(fragmentActivity.getString(R.string.exp) + " : " + Utils.getDayMonthYear(licensesBeanList.get(i).getEnd_date()));
             if (!Utils.isDateExpired(licensesBeanList.get(i).getEnd_date())) {
                 showError(viewHolder, viewHolder.expirationTv, true, fragmentActivity.getString(R.string.expired_date_error), i);
             } else {
                 showError(viewHolder, viewHolder.expirationTv, false, null, i);
             }
         } else {
-            viewHolder.expirationTv.setText("Exp : N/A");
+            viewHolder.expirationTv.setText(fragmentActivity.getString(R.string.exp) + " : N/A");
             showError(viewHolder, viewHolder.expirationTv, true, fragmentActivity.getString(R.string.expiration_empty_error), i);
         }
 

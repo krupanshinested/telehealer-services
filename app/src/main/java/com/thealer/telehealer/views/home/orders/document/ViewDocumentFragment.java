@@ -153,7 +153,7 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
 
     private void setPositionCount(int i, int size) {
         countTv.setText((i + 1) + " of " + size);
-        Utils.setImageWithGlide(getActivity().getApplicationContext(), backgroundIv, documentsApiResponseModel.getResult().get(i).getPath(), getActivity().getDrawable(R.drawable.document_placeholder_drawable), true);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), backgroundIv, documentsApiResponseModel.getResult().get(i).getPath(), getActivity().getDrawable(R.drawable.document_placeholder_drawable), true, true);
     }
 
     private void setToolbarTitle(String name) {

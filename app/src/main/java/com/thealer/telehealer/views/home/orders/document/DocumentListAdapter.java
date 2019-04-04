@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -89,9 +88,9 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
             viewHolder.recentHeaderTv.setVisibility(View.GONE);
         }
 
-        Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.documentIv, resultBeanList.get(i).getPath(), activity.getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.documentIv, resultBeanList.get(i).getPath(), activity.getDrawable(R.drawable.profile_placeholder), true, true);
 
-        GlideUrl glideUrl = Utils.getGlideUrlWithAuth(activity.getApplicationContext(), resultBeanList.get(i).getPath());
+        GlideUrl glideUrl = Utils.getGlideUrlWithAuth(activity.getApplicationContext(), resultBeanList.get(i).getPath(), true);
 
         Glide.with(activity.getApplicationContext()).asFile().load(glideUrl).addListener(new RequestListener<File>() {
             @Override
@@ -112,7 +111,7 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
                 } else {
                     size = String.format("%.2f %s", ((float) resource.length() / kb), " KB");
                 }
-                viewHolder.sizeTv.setText(resultBeanList.get(i).getCreator().getUserName() + " - " + size);
+                viewHolder.sizeTv.setText(resultBeanList.get(i).getCreator().getUserName(activity) + " - " + size);
 
                 return false;
             }
@@ -120,7 +119,7 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
 
         viewHolder.titleTv.setText(resultBeanList.get(i).getName());
 
-        viewHolder.sizeTv.setText(resultBeanList.get(i).getCreator().getUserName());
+        viewHolder.sizeTv.setText(resultBeanList.get(i).getCreator().getUserName(activity));
 
         viewHolder.documentRootLl.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -66,7 +66,7 @@ public class AssociationListAdapter extends RecyclerView.Adapter<AssociationList
             } else {
                 viewHolder.subTitleTv.setText(commonUserApiResponseModelList.get(i).getDoctorSpecialist());
             }
-            Utils.setImageWithGlide(context, viewHolder.avatarCiv, commonUserApiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
+            Utils.setImageWithGlide(context, viewHolder.avatarCiv, commonUserApiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
             bundle.putSerializable(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL, commonUserApiResponseModelList.get(i));
         }
 
@@ -74,7 +74,7 @@ public class AssociationListAdapter extends RecyclerView.Adapter<AssociationList
 
             viewHolder.titleTv.setText(doctorsApiResponseModel.get(i).getDoctorDisplayName());
             viewHolder.subTitleTv.setText(doctorsApiResponseModel.get(i).getDoctorAddress());
-            Utils.setImageWithGlide(context, viewHolder.avatarCiv, doctorsApiResponseModel.get(i).getProfile().getImage_url(), context.getDrawable(R.drawable.profile_placeholder), false);
+            Utils.setImageWithGlide(context, viewHolder.avatarCiv, doctorsApiResponseModel.get(i).getProfile().getImage_url(), context.getDrawable(R.drawable.profile_placeholder), false, true);
 
             bundle.putSerializable(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL, doctorsApiResponseModel.get(i));
 

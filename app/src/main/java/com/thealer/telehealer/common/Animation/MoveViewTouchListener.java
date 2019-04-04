@@ -1,6 +1,5 @@
 package com.thealer.telehealer.common.Animation;
 
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -60,11 +59,11 @@ public class MoveViewTouchListener
             float actualX = mView.getX() - mView.getTranslationX();
             float actualY = mView.getY() - mView.getTranslationY();
 
-            if (actualX + transformX  >= minX && actualX + transformX <= (maxX - mView.getWidth())) {
+            if (actualX + transformX >= minX && actualX + transformX <= (maxX - mView.getWidth())) {
                 mView.setTranslationX(transformX);
             }
 
-            if (actualY + transformY >= minY && actualY + transformY  <= (maxY - mView.getHeight())) {
+            if (actualY + transformY >= minY && actualY + transformY <= (maxY - mView.getHeight())) {
                 mView.setTranslationY(transformY);
             }
 

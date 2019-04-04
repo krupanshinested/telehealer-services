@@ -10,7 +10,7 @@ public class BatteryResult {
     private String deviceId;
     private int battery;
 
-    public BatteryResult(String deviceType,String deviceId,int battery) {
+    public BatteryResult(String deviceType, String deviceId, int battery) {
         this.deviceId = deviceId;
         this.battery = battery;
         this.deviceType = deviceType;

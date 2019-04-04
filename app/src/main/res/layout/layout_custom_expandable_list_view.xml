@@ -26,6 +26,7 @@
                 android:id="@+id/expandable_lv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:background="@color/card_view_background"
                 android:childIndicator="@null"
                 android:divider="@null"
                 android:dividerHeight="0dp"
@@ -38,7 +39,6 @@
                 android:nestedScrollingEnabled="true"
                 android:scrollbars="none"
                 android:visibility="visible"
-                android:background="@color/card_view_background"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -47,10 +47,10 @@
     </android.support.constraint.ConstraintLayout>
 
     <LinearLayout
+        android:id="@+id/empty_ll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clickable="true"
-        android:id="@+id/empty_ll"
         android:nestedScrollingEnabled="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent"
