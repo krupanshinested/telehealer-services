@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    app:contentInsetStart="0dp"
+    android:layout_height="?android:attr/actionBarSize"
     android:background="@drawable/app_background_gradient"
-    android:layout_height="?android:attr/actionBarSize">
+    app:contentInsetStart="0dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -26,32 +26,33 @@
 
         <TextView
             android:id="@+id/toolbar_title"
-            android:layout_height="wrap_content"
             android:layout_width="0dp"
-            android:textStyle="bold"
+            android:layout_height="wrap_content"
             android:lines="1"
+            android:text="@string/dummy_text"
+            android:textAlignment="center"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/toolbar_title"
-            android:textAlignment="center"
-            android:text="@string/dummy_text"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/toolbar_subtitle"
             app:layout_constraintLeft_toRightOf="@+id/back_iv"
             app:layout_constraintRight_toLeftOf="@+id/next_tv"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/toolbar_subtitle"/>
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/toolbar_subtitle"
-            android:layout_height="wrap_content"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:lines="1"
-            android:visibility="gone"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/toolbar_subtitle"
             android:textAlignment="center"
             android:text=""
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/back_iv"
             app:layout_constraintRight_toLeftOf="@+id/next_tv"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_title"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_title" />
 
         <TextView
             android:id="@+id/next_tv"
@@ -59,25 +60,25 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:textColor="@color/colorWhite"
             android:layout_marginBottom="8dp"
-            android:text="@string/next"
             android:padding="5dp"
-            android:visibility="gone"
+            android:text="@string/next"
+            android:textColor="@color/colorWhite"
             android:textStyle="bold"
-            app:layout_constraintLeft_toRightOf="@+id/toolbar_title"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/toolbar_title"
             app:layout_constraintRight_toLeftOf="@+id/batter_view"
             app:layout_constraintTop_toTopOf="parent" />
 
         <iHealth.pairing.CustomViews.BatteryView
+            android:id="@+id/batter_view"
             android:layout_width="40dp"
             android:layout_height="20dp"
-            android:id="@+id/batter_view"
-            android:visibility="gone"
             android:layout_marginRight="5dp"
-            app:layout_constraintLeft_toRightOf="@+id/next_tv"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/next_tv"
             app:layout_constraintRight_toLeftOf="@+id/close_iv"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,12 +89,12 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:padding="5dp"
             android:src="@drawable/ic_close_white_40dp"
             android:tint="@color/colorWhite"
             android:visibility="visible"
-            android:padding="5dp"
-            app:layout_constraintLeft_toRightOf="@+id/batter_view"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/batter_view"
             app:layout_constraintRight_toLeftOf="@+id/other_option"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -108,8 +109,8 @@
             android:src="@drawable/info"
             android:tint="@color/colorWhite"
             android:visibility="gone"
-            app:layout_constraintLeft_toRightOf="@+id/close_iv"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/close_iv"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

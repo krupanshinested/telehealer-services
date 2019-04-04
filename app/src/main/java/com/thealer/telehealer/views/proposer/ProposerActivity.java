@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
@@ -58,7 +57,7 @@ public class ProposerActivity extends BaseActivity {
 
             isPermissionDenied = PermissionChecker.with(this).isPermissionDenied(permissionFor);
 
-            if (isPermissionDenied){
+            if (isPermissionDenied) {
                 allowBtn.setText(getString(R.string.go_to_settings));
             }
         }
@@ -66,9 +65,9 @@ public class ProposerActivity extends BaseActivity {
         allowBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isPermissionDenied){
+                if (isPermissionDenied) {
                     goToSettings();
-                }else {
+                } else {
                     requestPermission();
                 }
             }
@@ -116,9 +115,9 @@ public class ProposerActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        for (String permission:
-             permissions) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission)){
+        for (String permission :
+                permissions) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
                 appPreference.setBoolean(permission, true);
             }
         }

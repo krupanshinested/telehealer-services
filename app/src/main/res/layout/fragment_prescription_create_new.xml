@@ -42,7 +42,7 @@
                     android:id="@+id/drug_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="DRUG"
+                    android:hint="@string/drug"
                     android:imeOptions="actionDone"
                     android:inputType="text"
                     android:maxLines="1" />
@@ -167,7 +167,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/padding_default"
-                android:text="0 time"
+                android:text="@string/_0_time"
                 android:textColor="@color/colorBlack"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"

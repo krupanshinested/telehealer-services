@@ -2,11 +2,9 @@ package com.thealer.telehealer.common;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -16,7 +14,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 
 public class BaseAdapter extends RecyclerView.Adapter {
@@ -51,14 +48,14 @@ public class BaseAdapter extends RecyclerView.Adapter {
     }
 
     protected void generateModel(ArrayList<BaseAdapterObjectModel> modelList) {
-        HashMap<String,ArrayList<BaseAdapterObjectModel>> map = new HashMap<>();
+        HashMap<String, ArrayList<BaseAdapterObjectModel>> map = new HashMap<>();
 
         items = new ArrayList<>();
 
         Collections.sort(modelList, new Comparator<BaseAdapterObjectModel>() {
             public int compare(BaseAdapterObjectModel obj1, BaseAdapterObjectModel obj2) {
 
-                BaseAdapterObjectModel first,second;
+                BaseAdapterObjectModel first, second;
                 if (sortByAscending) {
                     first = obj1;
                     second = obj2;
@@ -73,7 +70,7 @@ public class BaseAdapter extends RecyclerView.Adapter {
                     return (((Date) first.getComparableObject()).compareTo((Date) second.getComparableObject()));
                 } else if ((obj1.getComparableObject() instanceof Integer)) {
                     return (((Integer) first.getComparableObject()).compareTo((Integer) second.getComparableObject()));
-                }  else if ((obj1.getComparableObject() instanceof Double)) {
+                } else if ((obj1.getComparableObject() instanceof Double)) {
                     return (((Double) first.getComparableObject()).compareTo((Double) second.getComparableObject()));
                 } else if ((obj1.getComparableObject() instanceof String)) {
                     return (((String) first.getComparableObject()).compareTo((String) second.getComparableObject()));
@@ -94,7 +91,7 @@ public class BaseAdapter extends RecyclerView.Adapter {
                 values = new ArrayList<>();
             }
             values.add(model);
-            map.put(model.getAdapterTitle(),values);
+            map.put(model.getAdapterTitle(), values);
             items.add(new BaseAdapterModel(model));
         }
     }

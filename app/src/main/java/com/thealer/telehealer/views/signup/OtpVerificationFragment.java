@@ -323,7 +323,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                         resetPasswordRequestModel.setEmail(UserDetailPreferenceManager.getWhoAmIResponse().getEmail());
 
                     onViewChangeInterface.hideOrShowBackIv(true);
-                    titleTv.setText(getString(R.string.enter_the_authorization_code_sent_to) + " your phone number");
+                    titleTv.setText(getString(R.string.enter_the_authorization_code_sent_to) + " " + getString(R.string.your_phone_number));
                     break;
             }
 

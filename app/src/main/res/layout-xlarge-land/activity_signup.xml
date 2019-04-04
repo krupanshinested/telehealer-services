@@ -8,23 +8,23 @@
         android:id="@+id/info_ll"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:background="@color/app_gradient_start"
+        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/views_ll"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/app_gradient_start"
-        android:gravity="center">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/view_info_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorWhite"
-            android:text="@string/dummy_text"
-            android:gravity="center"
-            android:textSize="40sp"
             android:layout_margin="10dp"
-            android:id="@+id/view_info_tv" />
+            android:gravity="center"
+            android:text="@string/dummy_text"
+            android:textColor="@color/colorWhite"
+            android:textSize="40sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -39,7 +39,7 @@
 
         <include
             android:id="@+id/appbar"
-            layout="@layout/appbar_common"/>
+            layout="@layout/appbar_common" />
 
         <LinearLayout
             android:id="@+id/signup_fragment_container"

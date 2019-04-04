@@ -1,12 +1,12 @@
 package com.thealer.telehealer.common;
 
-import java.util.Date;
-
 public class BaseAdapterObjectModel {
 
     public String getAdapterTitle() {
         return "";
     }
 
-    public Object getComparableObject() { return null; };
+    public Object getComparableObject() {
+        return null;
+    }
 }

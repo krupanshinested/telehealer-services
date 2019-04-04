@@ -7,6 +7,7 @@ import com.thealer.telehealer.common.VitalCommon.BatteryResult;
  */
 
 public interface VitalBatteryFetcher {
-    public void updateBatteryDetails(BatteryResult batteryResult);
-    public void notConnected(String deviceType,String deviceMac);
+    void updateBatteryDetails(BatteryResult batteryResult);
+
+    void notConnected(String deviceType, String deviceMac);
 }

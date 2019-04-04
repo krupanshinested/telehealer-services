@@ -180,24 +180,24 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
             }
             if (resultBean != null) {
 
-                String statusInfo = "Patient %s has been updated";
+                String statusInfo = getString(R.string.patient_has_been_updated);
                 String detail = "";
                 if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isChange_demographic() && resultBean.getDetail().isInsurance_to_date()) {
-                    detail = "demographic,history and insurance";
+                    detail = getString(R.string.demographic_history_insurance);
                 } else if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isChange_demographic()) {
-                    detail = "demographic and history ";
+                    detail = getString(R.string.demographic_history);
                 } else if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isInsurance_to_date()) {
-                    detail = "history and insurance";
+                    detail = getString(R.string.history_insurance);
                 } else if (resultBean.getDetail().isChange_demographic() && resultBean.getDetail().isInsurance_to_date()) {
-                    detail = "demographic and insurance";
+                    detail = getString(R.string.demographic_insurance);
                 } else if (resultBean.getDetail().isChange_medical_info()) {
-                    detail = "history";
+                    detail = getString(R.string.history);
                 } else if (resultBean.getDetail().isChange_demographic()) {
-                    detail = "demographic";
+                    detail = getString(R.string.demographic);
                 } else if (resultBean.getDetail().isInsurance_to_date()) {
-                    detail = "insurance";
+                    detail = getString(R.string.insurance);
                 } else {
-                    detail = "detail";
+                    detail = getString(R.string.detail);
                 }
 
                 if (!detail.isEmpty()) {

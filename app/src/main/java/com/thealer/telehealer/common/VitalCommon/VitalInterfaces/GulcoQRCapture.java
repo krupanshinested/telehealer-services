@@ -5,5 +5,5 @@ package com.thealer.telehealer.common.VitalCommon.VitalInterfaces;
  */
 
 public interface GulcoQRCapture {
-    public void didCapture(String result);
+    void didCapture(String result);
 }

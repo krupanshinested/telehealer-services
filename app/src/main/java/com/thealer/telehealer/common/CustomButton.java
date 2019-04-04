@@ -52,13 +52,13 @@ public class CustomButton extends AppCompatButton {
         if (backgroundColor != 0)
             setCustomBackground();
         else {
-            if (backgroundDrawable != null){
+            if (backgroundDrawable != null) {
                 this.setBackground(backgroundDrawable);
                 gradientDrawable = (GradientDrawable) this.getBackground();
             }
         }
 
-        if (isAppGradient){
+        if (isAppGradient) {
             setAppGradient();
         }
 
@@ -74,7 +74,7 @@ public class CustomButton extends AppCompatButton {
 
     private void setAppGradient() {
         @SuppressLint("ResourceType")
-        int[] colors = {Color.parseColor(getContext().getString(R.color.app_gradient_start)),Color.parseColor(getContext().getString(R.color.app_gradient_end))};
+        int[] colors = {Color.parseColor(getContext().getString(R.color.app_gradient_start)), Color.parseColor(getContext().getString(R.color.app_gradient_end))};
         gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
         setBackground(gradientDrawable);
     }
@@ -83,7 +83,7 @@ public class CustomButton extends AppCompatButton {
         gradientDrawable.setStroke(strokeWidth, strokeColor);
     }
 
-    public void setStrokeColor(int color){
+    public void setStrokeColor(int color) {
         gradientDrawable.setStroke(strokeWidth, color);
     }
 

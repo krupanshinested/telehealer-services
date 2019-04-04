@@ -5,8 +5,11 @@ package com.thealer.telehealer.common.VitalCommon.VitalInterfaces;
  */
 
 public interface ThermoMeasureInterface {
-    public void  updateThermoMessage(String deviceType,String message);
-    public void  updateThermoValue(String deviceType,Double value);
-    public void didThermoStartMeasure(String deviceType);
-    public void didThermoFinishMesureWithFailure(String deviceType,String error);
+    void updateThermoMessage(String deviceType, String message);
+
+    void updateThermoValue(String deviceType, Double value);
+
+    void didThermoStartMeasure(String deviceType);
+
+    void didThermoFinishMesureWithFailure(String deviceType, String error);
 }

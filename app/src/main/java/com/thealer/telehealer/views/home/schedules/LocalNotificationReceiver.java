@@ -60,7 +60,7 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
                         public void run() {
                             try {
 
-                                GlideUrl glideUrl = Utils.getGlideUrlWithAuth(context, imageUrl);
+                                GlideUrl glideUrl = Utils.getGlideUrlWithAuth(context, imageUrl, true);
 
                                 FutureTarget<Bitmap> futureTarget = Glide.with(context).asBitmap().load(glideUrl).submit();
                                 imageBitmap = futureTarget.get();

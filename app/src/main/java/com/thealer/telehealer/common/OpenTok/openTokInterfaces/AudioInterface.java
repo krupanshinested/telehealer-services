@@ -6,5 +6,6 @@ package com.thealer.telehealer.common.OpenTok.openTokInterfaces;
 
 public interface AudioInterface {
     void didChangeState(int state);
+
     void didPressedBluetoothButton();
 }

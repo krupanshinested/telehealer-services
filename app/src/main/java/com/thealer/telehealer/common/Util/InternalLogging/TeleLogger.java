@@ -33,7 +33,7 @@ public class TeleLogger {
         String deviceId = appPreference.getString(PreferenceConstants.DEVICE_ID);
         if (TextUtils.isEmpty(deviceId)) {
             deviceId = UUID.randomUUID().toString();
-            appPreference.setString(PreferenceConstants.DEVICE_ID,deviceId);
+            appPreference.setString(PreferenceConstants.DEVICE_ID, deviceId);
         }
 
         return deviceId;
@@ -41,9 +41,9 @@ public class TeleLogger {
 
     public String getBuildType() {
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
-            return  Constants.BUILD_PATIENT;
+            return Constants.BUILD_PATIENT;
         } else {
-            return  Constants.BUILD_MEDICAL;
+            return Constants.BUILD_MEDICAL;
         }
     }
 
@@ -55,19 +55,19 @@ public class TeleLogger {
                 updateToLogServer();
             }
         } else {
-            TeleLogCapability.shared.assignValue(capability,enabled);
+            TeleLogCapability.shared.assignValue(capability, enabled);
             updateToLogServer();
         }
     }
 
-    public void log(String externalApi, HashMap<String,String> detail) {
+    public void log(String externalApi, HashMap<String, String> detail) {
         if (TextUtils.isEmpty(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN))) {
             return;
         }
 
-        HashMap<String,Object> payload = new HashMap<>();
-        payload.put("type",externalApi);
-        payload.put("detail",detail);
+        HashMap<String, Object> payload = new HashMap<>();
+        payload.put("type", externalApi);
+        payload.put("detail", detail);
 
         loggingViewModel.postExternalApi(payload);
     }
@@ -91,23 +91,23 @@ public class TeleLogger {
             return;
         }
 
-        HashMap<String,Object> payload = prepareCapabilityJson();
+        HashMap<String, Object> payload = prepareCapabilityJson();
         loggingViewModel.postCapability(payload);
     }
 
-    private HashMap<String,Object> prepareCapabilityJson() {
-        HashMap<String,Object> detail = new HashMap<>();
-        detail.put("user_type",getBuildType());
-        detail.put("device_id",getDeviceId());
+    private HashMap<String, Object> prepareCapabilityJson() {
+        HashMap<String, Object> detail = new HashMap<>();
+        detail.put("user_type", getBuildType());
+        detail.put("device_id", getDeviceId());
 
-        HashMap<String,Boolean> capability = new HashMap<>();
+        HashMap<String, Boolean> capability = new HashMap<>();
 
-        capability.put(TeleLogCapability.camera,TeleLogCapability.shared.getValue(TeleLogCapability.camera));
-        capability.put(TeleLogCapability.mic,TeleLogCapability.shared.getValue(TeleLogCapability.mic));
-        capability.put(TeleLogCapability.location,TeleLogCapability.shared.getValue(TeleLogCapability.location));
-        capability.put(TeleLogCapability.photo,TeleLogCapability.shared.getValue(TeleLogCapability.photo));
+        capability.put(TeleLogCapability.camera, TeleLogCapability.shared.getValue(TeleLogCapability.camera));
+        capability.put(TeleLogCapability.mic, TeleLogCapability.shared.getValue(TeleLogCapability.mic));
+        capability.put(TeleLogCapability.location, TeleLogCapability.shared.getValue(TeleLogCapability.location));
+        capability.put(TeleLogCapability.photo, TeleLogCapability.shared.getValue(TeleLogCapability.photo));
 
-        detail.put("capability",capability);
+        detail.put("capability", capability);
 
         return detail;
     }

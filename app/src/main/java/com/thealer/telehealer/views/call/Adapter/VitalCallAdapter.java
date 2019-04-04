@@ -1,48 +1,31 @@
 package com.thealer.telehealer.views.call.Adapter;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
-import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.views.call.Interfaces.CallVitalEvents;
 import com.thealer.telehealer.views.call.Interfaces.CallVitalPagerInterFace;
 import com.thealer.telehealer.views.call.Interfaces.LiveVitalCallBack;
-import com.thealer.telehealer.views.common.imagePreview.ImagePreviewDialogFragment;
-import com.thealer.telehealer.views.common.imagePreview.ImagePreviewViewModel;
 import com.thealer.telehealer.views.home.vitals.measure.BPMeasureFragment;
 import com.thealer.telehealer.views.home.vitals.measure.BPTrackMeasureFragment;
 import com.thealer.telehealer.views.home.vitals.measure.PulseMeasureFragment;
 import com.thealer.telehealer.views.home.vitals.measure.ThermoMeasureFragment;
 import com.thealer.telehealer.views.home.vitals.measure.WeightMeasureFragment;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by rsekar on 1/24/19.
@@ -51,11 +34,11 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallVitalPagerInterFace {
 
     private SparseArray<CallVitalEvents> deviceScreens = new SparseArray<CallVitalEvents>();
-    private HashMap<String,Integer> deviceScreenMap = new HashMap<>();
+    private HashMap<String, Integer> deviceScreenMap = new HashMap<>();
 
     private LiveVitalCallBack liveVitalCallBack;
 
-    public VitalCallAdapter(FragmentManager manager,ArrayList<VitalDevice> devices,LiveVitalCallBack liveVitalCallBack) {
+    public VitalCallAdapter(FragmentManager manager, ArrayList<VitalDevice> devices, LiveVitalCallBack liveVitalCallBack) {
         super(manager);
         assignFragments(devices);
         this.liveVitalCallBack = liveVitalCallBack;
@@ -63,7 +46,7 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
 
     @Override
     public Fragment getItem(int i) {
-        Log.d("VitalCallAdapter","getItem "+i);
+        Log.d("VitalCallAdapter", "getItem " + i);
         if (deviceScreens.get(i) != null) {
             return (Fragment) deviceScreens.get(i);
         } else {
@@ -74,7 +57,7 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
 
     @Override
     public int getItemPosition(Object object) {
-        Log.d("VitalCallAdapter","getItemPosition");
+        Log.d("VitalCallAdapter", "getItemPosition");
         // Causes adapter to reload all Fragments when
         // notifyDataSetChanged is called
         return POSITION_NONE;
@@ -89,7 +72,7 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
 
     @Override
     public void didInitiateMeasure(String type) {
-        Log.d("VitalCallAdapter","didInitiateMeasure");
+        Log.d("VitalCallAdapter", "didInitiateMeasure");
         liveVitalCallBack.didInitiateMeasure(type);
     }
 
@@ -103,19 +86,19 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
         liveVitalCallBack.didChangeStreamingState(state);
     }
 
-    public void didReceivedVitalData(@NonNull String type,@NonNull String message) {
-        Log.d("VitalCallAdapter","didReceiveVitalData "+type);
-        String deviceType = VitalDeviceType.shared.getVitalType(type.replaceAll("_"," "));
+    public void didReceivedVitalData(@NonNull String type, @NonNull String message) {
+        Log.d("VitalCallAdapter", "didReceiveVitalData " + type);
+        String deviceType = VitalDeviceType.shared.getVitalType(type.replaceAll("_", " "));
         Integer devicePosition = deviceScreenMap.get(deviceType);
         if (devicePosition != null) {
             CallVitalEvents callVitalEvents = deviceScreens.get(devicePosition);
             if (callVitalEvents != null) {
                 callVitalEvents.didReceiveData(message);
             } else {
-                openVitalMeasurementForNonPatient(deviceType,message);
+                openVitalMeasurementForNonPatient(deviceType, message);
             }
         } else {
-            openVitalMeasurementForNonPatient(deviceType,message);
+            openVitalMeasurementForNonPatient(deviceType, message);
         }
     }
 
@@ -127,7 +110,7 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
         }
     }
 
-    private void openVitalMeasurementForNonPatient(@NonNull String type,@NonNull String message) {
+    private void openVitalMeasurementForNonPatient(@NonNull String type, @NonNull String message) {
         if (!UserType.isUserPatient()) {
 
             ArrayList<VitalDevice> devices = new ArrayList<>();
@@ -147,11 +130,11 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
         deviceScreens = new SparseArray<CallVitalEvents>();
         deviceScreenMap = new HashMap<>();
 
-        for (int i = 0;i< devices.size();i++) {
+        for (int i = 0; i < devices.size(); i++) {
             VitalDevice device = devices.get(i);
             CallVitalEvents callVitalEvents = getVitalScreen(device);
-            deviceScreens.append(i,callVitalEvents);
-            deviceScreenMap.put(device.getType(),i);
+            deviceScreens.append(i, callVitalEvents);
+            deviceScreenMap.put(device.getType(), i);
         }
 
         if (devices.size() > 0) {
@@ -162,7 +145,7 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
     @Nullable
     private CallVitalEvents getVitalScreen(VitalDevice vitalDevice) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ArgumentKeys.VITAL_DEVICE,vitalDevice);
+        bundle.putSerializable(ArgumentKeys.VITAL_DEVICE, vitalDevice);
 
         @Nullable
         CallVitalEvents callVitalEvents;

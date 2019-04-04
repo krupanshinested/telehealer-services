@@ -43,7 +43,7 @@ public class SelectIcdCodeAdapter extends RecyclerView.Adapter<SelectIcdCodeAdap
         icdCodesDataViewModel.getSelectedIcdCodeList().observe(fragmentActivity, new Observer<List<String>>() {
             @Override
             public void onChanged(@Nullable List<String> list) {
-                if (list != null){
+                if (list != null) {
                     selectedIcdCodeList = list;
                     notifyDataSetChanged();
                 }
@@ -53,7 +53,7 @@ public class SelectIcdCodeAdapter extends RecyclerView.Adapter<SelectIcdCodeAdap
         icdCodesDataViewModel.getIcdCodeDetailHashMap().observe(fragmentActivity, new Observer<HashMap<String, IcdCodeApiResponseModel.ResultsBean>>() {
             @Override
             public void onChanged(@Nullable HashMap<String, IcdCodeApiResponseModel.ResultsBean> resultsBeanHashMap) {
-                if (resultsBeanHashMap != null){
+                if (resultsBeanHashMap != null) {
                     selectedListItems = resultsBeanHashMap;
                     notifyDataSetChanged();
                 }

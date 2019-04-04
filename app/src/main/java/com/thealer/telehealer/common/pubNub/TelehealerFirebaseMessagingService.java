@@ -1,33 +1,18 @@
 package com.thealer.telehealer.common.pubNub;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.model.GlideUrl;
-import com.bumptech.glide.request.FutureTarget;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
@@ -42,9 +27,6 @@ import com.thealer.telehealer.views.notification.NotificationDetailActivity;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-
-import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
 
 /**
  * Created by rsekar on 12/25/18.
@@ -65,7 +47,8 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            APNSPayload data = mapper.readValue(message.get("body"), new TypeReference<APNSPayload>() {});
+            APNSPayload data = mapper.readValue(message.get("body"), new TypeReference<APNSPayload>() {
+            });
             Log.e(TAG, "message " + data.getTo());
             extractMessage(data);
         } catch (IOException e) {
@@ -163,29 +146,29 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
 
         String endCallUUID = data.getUuid() != null ? data.getUuid() : data.getIdentifier();
 
-        Log.d("MessagingService", "currentUUID "+currentUUID);
-        Log.d("MessagingService", "endCallUUID "+endCallUUID);
+        Log.d("MessagingService", "currentUUID " + currentUUID);
+        Log.d("MessagingService", "endCallUUID " + endCallUUID);
         if (!currentUUID.equals(endCallUUID)) {
             return;
         }
 
         if (TokBox.shared.getConnectingDate() == null && TokBox.shared.getConnectedDate() == null && !TokBox.shared.getCalling()) {
             APNSPayload payload = new APNSPayload();
-            HashMap<String,String> aps = new HashMap<>();
+            HashMap<String, String> aps = new HashMap<>();
             if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
-                aps.put(PubNubNotificationPayload.ALERT,getString(R.string.video_missed_call));
+                aps.put(PubNubNotificationPayload.ALERT, getString(R.string.video_missed_call));
             } else {
-                aps.put(PubNubNotificationPayload.ALERT,getString(R.string.audio_missed_call));
+                aps.put(PubNubNotificationPayload.ALERT, getString(R.string.audio_missed_call));
             }
             if (TokBox.shared.getOtherPersonDetail() != null) {
-                aps.put(PubNubNotificationPayload.TITLE,TokBox.shared.getOtherPersonDetail().getDisplayName());
+                aps.put(PubNubNotificationPayload.TITLE, TokBox.shared.getOtherPersonDetail().getDisplayName());
             } else {
-                aps.put(PubNubNotificationPayload.TITLE,data.getFrom_name());
+                aps.put(PubNubNotificationPayload.TITLE, data.getFrom_name());
             }
 
-            aps.put(PubNubNotificationPayload.MEDIA_URL,data.getMedia_url());
+            aps.put(PubNubNotificationPayload.MEDIA_URL, data.getMedia_url());
             payload.setAps(aps);
-            Utils.createNotification(payload,getRecentIntent());
+            Utils.createNotification(payload, getRecentIntent());
         }
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -223,8 +206,8 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
 
     @Nullable
     private Intent getRecentIntent() {
-        Intent intent = new Intent(this,HomeActivity.class);
-        intent.putExtra(ArgumentKeys.SELECTED_MENU_ITEM,R.id.menu_recent);
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra(ArgumentKeys.SELECTED_MENU_ITEM, R.id.menu_recent);
         return intent;
     }
 }

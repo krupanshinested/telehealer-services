@@ -15,7 +15,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -205,7 +203,6 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
             mealType = getArguments().getString(ArgumentKeys.MEAL_TYPE);
             isManualEntry = getArguments().getBoolean(ArgumentKeys.IS_MANUAL_ENTRY, false);
 
-            Log.e(TAG, "initView: " + new Gson().toJson(hintsBean));
             if (!isManualEntry) {
                 setFoodDetail();
                 setUnits();
@@ -227,7 +224,7 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
                 foodIv.setImageDrawable(getActivity().getDrawable(R.drawable.diet_food_placeholder));
 
                 List<String> unitList = new ArrayList<>();
-                unitList.add("Servings");
+                unitList.add(getString(R.string.servings));
 
                 setUnitsAdapter(unitList);
 
@@ -380,7 +377,7 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
     }
 
     private void setFoodImage(String url) {
-        Utils.setImageWithGlide(getActivity().getApplicationContext(), foodIv, url, getActivity().getDrawable(R.drawable.diet_food_placeholder), false);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), foodIv, url, getActivity().getDrawable(R.drawable.diet_food_placeholder), false, true);
     }
 
     @Override

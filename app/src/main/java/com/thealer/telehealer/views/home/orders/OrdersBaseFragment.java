@@ -196,8 +196,8 @@ public class OrdersBaseFragment extends BaseFragment {
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
         public void onQuickLogin(int status) {
-            if (status == ArgumentKeys.AUTH_FAILED) {
-                Utils.showAlertDialog(getActivity(), "Validation Failed", "User validation failed cannot process the current order", "OK", null,
+            if (status == ArgumentKeys.AUTH_FAILED || status == ArgumentKeys.AUTH_CANCELLED) {
+                Utils.showAlertDialog(getActivity(), getString(R.string.validation_failed), getString(R.string.user_validation_failed_cannot_process_the_current_order), getString(R.string.ok), null,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -255,7 +255,7 @@ public class OrdersBaseFragment extends BaseFragment {
 
         bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
 
-        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, String.format("Posting your %s order.", currentOrder));
+        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.positing_your_order), currentOrder));
 
         showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
     }

@@ -10,7 +10,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
@@ -191,14 +189,14 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                     }
                 });
                 if (visitDetailAdapterModel.getCallSummaryModel().getScreenShot() != null) {
-                    Utils.setImageWithGlide(activity, viewHolder.transcriptVideoIv, visitDetailAdapterModel.getCallSummaryModel().getScreenShot(), null, true);
+                    Utils.setImageWithGlide(activity, viewHolder.transcriptVideoIv, visitDetailAdapterModel.getCallSummaryModel().getScreenShot(), null, true, false);
                 }
                 break;
             case VisitDetailConstants.TYPE_USER_INFO:
                 viewHolder.userListIv.setListTitleTv(visitDetailAdapterModel.getUserInfoModel().getDisplayName());
                 viewHolder.userListIv.setListSubTitleTv(visitDetailAdapterModel.getUserInfoModel().getDisplayInfo());
                 Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.userListIv.getAvatarCiv(),
-                        visitDetailAdapterModel.getUserInfoModel().getUser_avatar(), activity.getDrawable(R.drawable.profile_placeholder), true);
+                        visitDetailAdapterModel.getUserInfoModel().getUser_avatar(), activity.getDrawable(R.drawable.profile_placeholder), true, true);
 
                 if (visitDetailAdapterModel.getUserInfoModel().getRole().equals(Constants.ROLE_PATIENT)) {
                     Utils.setGenderImage(activity, viewHolder.userListIv.getActionIv(), visitDetailAdapterModel.getUserInfoModel().getGender());
@@ -277,7 +275,6 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
 
                 viewHolder.transcriptInfoEt.addTextChangedListener(transcriptTextWatcher);
 
-                Log.e("aswin", "onBindViewHolder: " + speakerLabelsBean.getTranscript());
                 viewHolder.transcriptInfoEt.setText(speakerLabelsBean.getTranscript());
 
                 switch (mode) {
@@ -335,7 +332,11 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                                     detailViewModel.setInstructionUpdated(true);
                             }
                         }
-                        detailViewModel.setInstruction(s.toString().trim());
+                        if (visitDetailAdapterModel.getCategory().equals(activity.getString(R.string.patient_instructions))) {
+                            detailViewModel.setInstruction(s.toString().trim());
+                        } else if (visitDetailAdapterModel.getCategory().equals(activity.getString(R.string.patient_diagnosis))) {
+                            detailViewModel.setDiagnosis(s.toString().trim());
+                        }
                     }
                 };
 
@@ -348,6 +349,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                     case Constants.EDIT_MODE:
                         viewHolder.inputEt.setEnabled(true);
                         viewHolder.inputEt.setClickable(true);
+                        viewHolder.inputEt.setVisibility(View.VISIBLE);
                         viewHolder.inputEt.addTextChangedListener(textWatcher);
                         break;
                 }
@@ -372,15 +374,13 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                 viewHolder.btAddCardView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        mode = Constants.VIEW_MODE;
-//                        onModeChangeListener.onModeChange(mode);
-//                        notifyDataSetChanged();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(Constants.USER_DETAIL, detailViewModel.getPatientDetailModel());
                         bundle.putSerializable(Constants.DOCTOR_DETAIL, detailViewModel.getDoctorDetailModel());
                         bundle.putString(ArgumentKeys.SEARCH_TYPE, VitalReportApiViewModel.LAST_WEEK);
                         bundle.putString(ArgumentKeys.DOCTOR_GUID, detailViewModel.getDoctorDetailModel().getUser_guid());
                         bundle.putString(ArgumentKeys.ORDER_ID, detailViewModel.getTranscriptionApiResponseModel().getOrder_id());
+                        bundle.putBoolean(ArgumentKeys.DISABLE_CANCEL, true);
 
                         switch (addNewModel.getType()) {
                             case VisitDetailConstants.ADD_VITAL:
@@ -420,7 +420,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                 VitalsApiResponseModel vitalsApiResponseModel = adapterModelList.get(i).getVitalsApiResponseModel();
 
                 viewHolder.vitalTimeTv.setText(Utils.getFormatedTime(vitalsApiResponseModel.getCreated_at()));
-                viewHolder.vitalDescriptionTv.setText(vitalsApiResponseModel.getCapturedBy());
+                viewHolder.vitalDescriptionTv.setText(vitalsApiResponseModel.getCapturedBy(activity));
 
                 if (!vitalsApiResponseModel.getType().equals(SupportedMeasurementType.stethoscope)) {
                     viewHolder.vitalValueTv.setText(vitalsApiResponseModel.getValue().toString());
@@ -477,6 +477,11 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                         }
                     }
                 });
+
+                if (!vitalsApiResponseModel.getType().equals(SupportedMeasurementType.stethoscope)) {
+                    viewHolder.vitalItemCv.setCardElevation(0);
+                    viewHolder.vitalItemCv.setRadius(0);
+                }
                 break;
             case VisitDetailConstants.TYPE_ORDER:
                 VisitOrdersAdapterModel visitOrdersAdapterModel = adapterModelList.get(i).getVisitOrdersAdapterModel();
@@ -593,9 +598,9 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
 
                 DocumentsApiResponseModel.ResultBean documentsApiResponseModel = adapterModelList.get(i).getDocumentModel();
 
-                Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.documentIv, documentsApiResponseModel.getPath(), activity.getDrawable(R.drawable.profile_placeholder), true);
+                Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.documentIv, documentsApiResponseModel.getPath(), activity.getDrawable(R.drawable.profile_placeholder), true, true);
 
-                GlideUrl glideUrl = Utils.getGlideUrlWithAuth(activity.getApplicationContext(), documentsApiResponseModel.getPath());
+                GlideUrl glideUrl = Utils.getGlideUrlWithAuth(activity.getApplicationContext(), documentsApiResponseModel.getPath(), true);
 
                 Glide.with(activity.getApplicationContext()).asFile().load(glideUrl).addListener(new RequestListener<File>() {
                     @Override
@@ -616,7 +621,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                         } else {
                             size = String.format("%.2f %s", ((float) resource.length() / kb), " KB");
                         }
-                        viewHolder.documentSizeTv.setText(documentsApiResponseModel.getCreator().getUserName() + " - " + size);
+                        viewHolder.documentSizeTv.setText(documentsApiResponseModel.getCreator().getUserName(activity) + " - " + size);
 
                         return false;
                     }
@@ -624,7 +629,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
 
                 viewHolder.documentTitleTv.setText(documentsApiResponseModel.getName());
 
-                viewHolder.documentSizeTv.setText(documentsApiResponseModel.getCreator().getUserName());
+                viewHolder.documentSizeTv.setText(documentsApiResponseModel.getCreator().getUserName(activity));
 
                 viewHolder.visitCb.setChecked(true);
                 viewHolder.visitCb.setClickable(false);
@@ -977,13 +982,10 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
             modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_LABEL_VALUE, labelValueModel));
 
             List<HistoryBean> historyBeanList = null;
-            if (scheduleModel.getPatient() != null) {
+            if (scheduleModel.getPatient() != null && scheduleModel.getPatient().getHistory() != null) {
                 historyBeanList = new ArrayList<>(scheduleModel.getPatient().getHistory());
             }
 
-            if (scheduleModel.getPatient_history() != null) {
-                historyBeanList = new ArrayList<>(scheduleModel.getPatient_history());
-            }
             if (historyBeanList != null && !historyBeanList.isEmpty()) {
                 for (int i = 0; i < historyBeanList.size(); i++) {
                     if (historyBeanList.get(i).isIsYes())
@@ -1010,15 +1012,17 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                     !downloadTranscriptResponseModel.getSpeakerLabels().isEmpty()) {
 
                 for (int i = 0; i < downloadTranscriptResponseModel.getSpeakerLabels().size(); i++) {
+                    if (downloadTranscriptResponseModel.getSpeakerLabels().get(i).getTranscript() != null &&
+                            !downloadTranscriptResponseModel.getSpeakerLabels().get(i).getTranscript().isEmpty()) {
+                        DownloadTranscriptResponseModel.SpeakerLabelsBean speakerLabelsBean = new DownloadTranscriptResponseModel.SpeakerLabelsBean(downloadTranscriptResponseModel.getSpeakerLabels().get(i).getStart_time(),
+                                downloadTranscriptResponseModel.getSpeakerLabels().get(i).getSpeaker_label(),
+                                downloadTranscriptResponseModel.getSpeakerLabels().get(i).getEnd_time(),
+                                downloadTranscriptResponseModel.getSpeakerLabels().get(i).getTranscript(),
+                                downloadTranscriptResponseModel.getSpeakerLabels().get(i).isRemoved());
+                        speakerLabelsBeans.add(speakerLabelsBean);
 
-                    DownloadTranscriptResponseModel.SpeakerLabelsBean speakerLabelsBean = new DownloadTranscriptResponseModel.SpeakerLabelsBean(downloadTranscriptResponseModel.getSpeakerLabels().get(i).getStart_time(),
-                            downloadTranscriptResponseModel.getSpeakerLabels().get(i).getSpeaker_label(),
-                            downloadTranscriptResponseModel.getSpeakerLabels().get(i).getEnd_time(),
-                            downloadTranscriptResponseModel.getSpeakerLabels().get(i).getTranscript(),
-                            downloadTranscriptResponseModel.getSpeakerLabels().get(i).isRemoved());
-                    speakerLabelsBeans.add(speakerLabelsBean);
-
-                    modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_TRANSCRIPT, downloadTranscriptResponseModel.getSpeakerLabels().get(i)));
+                        modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_TRANSCRIPT, downloadTranscriptResponseModel.getSpeakerLabels().get(i)));
+                    }
                 }
             }
             updateModel.setSpeakerLabels(speakerLabelsBeans);
@@ -1029,10 +1033,59 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
          * Patient instructions
          */
 
-        modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.patient_instructions)));
 
-        if (detailViewModel.getVisitsDetailApiResponseModel() != null && detailViewModel.getVisitsDetailApiResponseModel().getResult() != null) {
-            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_INPUT, detailViewModel.getVisitsDetailApiResponseModel().getResult().getInstructions()));
+        String category = activity.getString(R.string.patient_instructions);
+        String data = null;
+        boolean isAdd = false;
+
+        if (detailViewModel.getVisitsDetailApiResponseModel() != null
+                && detailViewModel.getVisitsDetailApiResponseModel().getResult() != null
+                && detailViewModel.getVisitsDetailApiResponseModel().getResult().getInstructions() != null
+                && !detailViewModel.getVisitsDetailApiResponseModel().getResult().getInstructions().isEmpty()) {
+            data = detailViewModel.getVisitsDetailApiResponseModel().getResult().getInstructions();
+        }
+
+        switch (mode) {
+            case Constants.EDIT_MODE:
+                isAdd = true;
+                break;
+            case Constants.VIEW_MODE:
+                if (data != null)
+                    isAdd = true;
+                break;
+        }
+
+        if (isAdd) {
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, category));
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_INPUT, data, category));
+        }
+
+        /**
+         * Patient Diagnosis
+         */
+        category = activity.getString(R.string.patient_diagnosis);
+        data = null;
+
+        if (detailViewModel.getVisitsDetailApiResponseModel() != null
+                && detailViewModel.getVisitsDetailApiResponseModel().getResult() != null
+                && detailViewModel.getVisitsDetailApiResponseModel().getResult().getDiagnosis() != null
+                && !detailViewModel.getVisitsDetailApiResponseModel().getResult().getDiagnosis().isEmpty()) {
+            data = detailViewModel.getVisitsDetailApiResponseModel().getResult().getDiagnosis();
+        }
+
+        switch (mode) {
+            case Constants.EDIT_MODE:
+                isAdd = true;
+                break;
+            case Constants.VIEW_MODE:
+                if (data != null)
+                    isAdd = true;
+                break;
+        }
+
+        if (isAdd) {
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, category));
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_INPUT, data, category));
         }
 
         /**

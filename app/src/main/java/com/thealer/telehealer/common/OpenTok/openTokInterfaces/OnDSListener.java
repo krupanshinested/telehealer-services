@@ -8,9 +8,14 @@ import java.util.List;
 
 public interface OnDSListener {
     void onDroidSpeechSupportedLanguages(String currentSpeechLanguage, List<String> supportedSpeechLanguages);
+
     void onDroidSpeechRmsChanged(float rmsChangedValue);
+
     void onDroidSpeechLiveResult(String liveSpeechResult);
+
     void onDroidSpeechFinalResult(String finalSpeechResult);
+
     void onDroidSpeechClosedByUser();
+
     void onDroidSpeechError(String errorMsg);
 }

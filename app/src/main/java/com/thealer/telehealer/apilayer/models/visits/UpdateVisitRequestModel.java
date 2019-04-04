@@ -13,6 +13,7 @@ public class UpdateVisitRequestModel {
     private List<Integer> add_associations;
     private List<Integer> remove_associations;
     private String instructions;
+    private String diagnosis;
     private DownloadTranscriptResponseModel updated_transcript;
 
     public String getAssociation_type() {
@@ -45,6 +46,14 @@ public class UpdateVisitRequestModel {
 
     public void setInstructions(String instructions) {
         this.instructions = instructions;
+    }
+
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
     }
 
     public DownloadTranscriptResponseModel getUpdated_transcript() {

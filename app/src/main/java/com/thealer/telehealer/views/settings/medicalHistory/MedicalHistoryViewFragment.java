@@ -168,8 +168,8 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
         if (show) {
             emptyLl.setVisibility(View.VISIBLE);
             emptyIv.setImageDrawable(getActivity().getDrawable(EmptyStateUtil.getImage(EmptyViewConstants.EMPTY_PATIENT_HISTORY)));
-            emptyTitleTv.setText(EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_PATIENT_HISTORY));
-            emptyMessageTv.setText(EmptyStateUtil.getMessage(EmptyViewConstants.EMPTY_PATIENT_HISTORY));
+            emptyTitleTv.setText(EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_PATIENT_HISTORY));
+            emptyMessageTv.setText(EmptyStateUtil.getMessage(getActivity(), EmptyViewConstants.EMPTY_PATIENT_HISTORY));
             toolbar.getMenu().findItem(R.id.menu_print).setVisible(false);
         } else {
             emptyLl.setVisibility(View.GONE);
@@ -222,7 +222,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
                 categoryTitle = (TextView) category.findViewById(R.id.category_title);
                 categoryDetailContainer = (LinearLayout) category.findViewById(R.id.category_detail_container);
 
-                categoryTitle.setText(MedicalHistoryConstants.MH_MEDICATION);
+                categoryTitle.setText(MedicalHistoryConstants.getDisplayTitle(getActivity(), MedicalHistoryConstants.MH_MEDICATION));
 
                 for (int i = 0; i < questionnaireBean.getMedication().getItems().size(); i++) {
                     View detailView = getLayoutInflater().inflate(R.layout.view_medical_history_category_detail, null);
@@ -256,7 +256,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
 
                 categoryTitle = (TextView) category.findViewById(R.id.category_title);
 
-                categoryTitle.setText(MedicalHistoryConstants.MH_PAST_MEDICAL_HISTORY);
+                categoryTitle.setText(MedicalHistoryConstants.getDisplayTitle(getActivity(), MedicalHistoryConstants.MH_PAST_MEDICAL_HISTORY));
 
                 if (questionnaireBean.getPastMedicalHistoryBean().getItems().size() > 0) {
 
@@ -327,7 +327,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
                 categoryTitle = (TextView) category.findViewById(R.id.category_title);
                 categoryDetailContainer = (LinearLayout) category.findViewById(R.id.category_detail_container);
 
-                categoryTitle.setText(MedicalHistoryConstants.MH_SURGERIES);
+                categoryTitle.setText(MedicalHistoryConstants.getDisplayTitle(getActivity(), MedicalHistoryConstants.MH_SURGERIES));
 
                 if (questionnaireBean.getSurgeries().getItems().size() > 0) {
 
@@ -396,7 +396,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
                 categoryTitle = (TextView) category.findViewById(R.id.category_title);
                 categoryDetailContainer = (LinearLayout) category.findViewById(R.id.category_detail_container);
 
-                categoryTitle.setText(MedicalHistoryConstants.MH_FAMILY_HISTORY);
+                categoryTitle.setText(MedicalHistoryConstants.getDisplayTitle(getActivity(), MedicalHistoryConstants.MH_FAMILY_HISTORY));
 
                 if (questionnaireBean.getFamilyHistoryBean().getItems().size() > 0) {
 
@@ -450,7 +450,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
                 categoryTitle = (TextView) category.findViewById(R.id.category_title);
                 categoryDetailContainer = (LinearLayout) category.findViewById(R.id.category_detail_container);
 
-                categoryTitle.setText(MedicalHistoryConstants.MH_RECENT_IMMUNIZATION);
+                categoryTitle.setText(MedicalHistoryConstants.getDisplayTitle(getActivity(), MedicalHistoryConstants.MH_RECENT_IMMUNIZATION));
 
                 if (questionnaireBean.getRecentImmunizationBean().getItems().size() > 0) {
 
@@ -502,7 +502,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
                 categoryTitle = (TextView) category.findViewById(R.id.category_title);
                 categoryDetailContainer = (LinearLayout) category.findViewById(R.id.category_detail_container);
 
-                categoryTitle.setText(MedicalHistoryConstants.MH_SEXUAL_HISTORY);
+                categoryTitle.setText(MedicalHistoryConstants.getDisplayTitle(getActivity(), MedicalHistoryConstants.MH_SEXUAL_HISTORY));
 
                 if (questionnaireBean.getSexualHistoryBean().getItems().size() > 0) {
 
@@ -548,7 +548,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
                 categoryTitle = (TextView) category.findViewById(R.id.category_title);
                 categoryDetailContainer = (LinearLayout) category.findViewById(R.id.category_detail_container);
 
-                categoryTitle.setText(MedicalHistoryConstants.MH_HEALTH_HABITS);
+                categoryTitle.setText(MedicalHistoryConstants.getDisplayTitle(getActivity(), MedicalHistoryConstants.MH_HEALTH_HABITS));
 
                 if (questionnaireBean.getHealthHabitBean().getItems().size() > 0) {
 
@@ -594,7 +594,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
                 categoryTitle = (TextView) category.findViewById(R.id.category_title);
                 categoryDetailContainer = (LinearLayout) category.findViewById(R.id.category_detail_container);
 
-                categoryTitle.setText(MedicalHistoryConstants.MH_PERSONAL_HISTORY);
+                categoryTitle.setText(MedicalHistoryConstants.getDisplayTitle(getActivity(), MedicalHistoryConstants.MH_PERSONAL_HISTORY));
 
                 if (questionnaireBean.getPersonalHistoryBean().getItems().size() > 0) {
 

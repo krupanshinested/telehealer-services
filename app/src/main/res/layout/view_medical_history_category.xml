@@ -9,8 +9,8 @@
     <TextView
         android:id="@+id/category_title"
         style="@style/text_sub_title_app_color"
-        android:padding="@dimen/padding_default"
         android:layout_marginStart="8dp"
+        android:padding="@dimen/padding_default"
         android:textAllCaps="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

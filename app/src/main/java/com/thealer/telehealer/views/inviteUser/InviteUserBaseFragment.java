@@ -66,7 +66,7 @@ public class InviteUserBaseFragment extends BaseFragment {
                                     }
                                 }
 
-                                message = String.format("Out of %s, %s invites has failed due to following reasons, %s", inviteByEmailPhoneApiResponseModel.getResultData().size(),
+                                message = String.format(getString(R.string.invite_contact_error), inviteByEmailPhoneApiResponseModel.getResultData().size(),
                                         inviteByEmailPhoneApiResponseModel.getFailureCount(), stringSet.toString().substring(1, stringSet.toString().length() - 1));
                             }
                         }

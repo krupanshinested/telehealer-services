@@ -20,7 +20,6 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.home.monitoring.diet.DietDetailFragment;
 import com.thealer.telehealer.views.home.monitoring.diet.DietListingFragment;
 
 import java.util.ArrayList;
@@ -96,7 +95,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
     }
 
     private void loadAvatar(ImageView imageView, String user_avatar) {
-        Utils.setImageWithGlide(fragmentActivity.getApplicationContext(), imageView, user_avatar, fragmentActivity.getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(fragmentActivity.getApplicationContext(), imageView, user_avatar, fragmentActivity.getDrawable(R.drawable.profile_placeholder), true, true);
     }
 
     @Override

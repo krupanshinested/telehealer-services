@@ -80,7 +80,7 @@ public class DietListAdapter extends RecyclerView.Adapter<DietListAdapter.ViewHo
                     authRequired = true;
                 }
 
-                Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.foodIv, imageUrl, activity.getDrawable(R.drawable.diet_food_placeholder), authRequired);
+                Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.foodIv, imageUrl, activity.getDrawable(R.drawable.diet_food_placeholder), authRequired, true);
 
 
                 break;
