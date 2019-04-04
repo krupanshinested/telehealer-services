@@ -416,7 +416,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void showNotificationFragment() {
         startActivity(new Intent(this, NotificationActivity.class));
-        finish();
     }
 
     private void showHelpContent() {

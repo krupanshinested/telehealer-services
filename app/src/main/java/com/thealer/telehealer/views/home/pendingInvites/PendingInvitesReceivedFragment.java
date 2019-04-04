@@ -62,6 +62,8 @@ public class PendingInvitesReceivedFragment extends BaseFragment {
                     }
                 });
 
+        pendingInvitesCrv.setErrorModel(this, pendingInvitesApiViewModel.getErrorModelLiveData());
+
     }
 
     @Nullable
@@ -97,6 +99,12 @@ public class PendingInvitesReceivedFragment extends BaseFragment {
             }
         });
 
+        pendingInvitesCrv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getReceivedPendingInvites(page, true);
+            }
+        });
     }
 
     private void getReceivedPendingInvites(int page, boolean isShowProgress) {
