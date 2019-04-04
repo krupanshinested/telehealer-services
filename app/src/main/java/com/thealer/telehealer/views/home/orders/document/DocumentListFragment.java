@@ -218,6 +218,15 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             }
         });
 
+        documentsCrv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDocuments(true);
+            }
+        });
+
+        documentsCrv.setErrorModel(this, ordersApiViewModel.getErrorModelLiveData());
+
         setGridSpan(1);
     }
 

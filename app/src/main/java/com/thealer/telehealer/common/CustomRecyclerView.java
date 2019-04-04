@@ -1,10 +1,15 @@
 package com.thealer.telehealer.common;
 
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,7 +17,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.manager.helper.NetworkUtil;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
+import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 
 /**
  * Created by Aswin on 20,November,2018
@@ -82,6 +91,52 @@ public class CustomRecyclerView extends ConstraintLayout {
         });
     }
 
+    public void setActionClickListener(OnClickListener onClickListener) {
+        emptyActionBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickListener.onClick(v);
+                setEmptyState(emptyState);
+            }
+        });
+    }
+
+    public void setErrorModel(LifecycleOwner owner, MutableLiveData<ErrorModel> errorModelMutableLiveData) {
+        errorModelMutableLiveData.observe(owner,
+                new Observer<ErrorModel>() {
+                    @Override
+                    public void onChanged(@Nullable ErrorModel errorModel) {
+                        Log.e("aswin crv", "onChanged: ");
+                        swipeLayout.setRefreshing(false);
+                        if (errorModel != null) {
+                            showNetworkEmptyState(errorModel.getCode());
+                        }
+                    }
+                });
+    }
+
+    public void showNetworkEmptyState(int code) {
+        String emptyState = this.emptyState;
+        boolean actionVisible = false;
+        switch (code) {
+            case BaseApiViewModel
+                    .NETWORK_ERROR_CODE:
+                emptyState = EmptyViewConstants.EMPTY_NO_NETWORK;
+                actionVisible = true;
+                break;
+            case 500:
+                //handle server down here
+                break;
+        }
+        showEmptyState(emptyState);
+
+        if (actionVisible) {
+            showOrhideEmptyState(true);
+            emptyActionBtn.setVisibility(VISIBLE);
+            emptyActionBtn.setText(context.getString(R.string.retry));
+        }
+    }
+
     public CustomSwipeRefreshLayout getSwipeLayout() {
         return swipeLayout;
     }
@@ -103,7 +158,7 @@ public class CustomRecyclerView extends ConstraintLayout {
         return recyclerView;
     }
 
-    public ConstraintLayout getEmptyStateView(){
+    public ConstraintLayout getEmptyStateView() {
         return recyclerEmptyStateView;
     }
 
@@ -144,6 +199,12 @@ public class CustomRecyclerView extends ConstraintLayout {
         emptyTitleTv.setText(title);
         emptyMessageTv.setText(message);
         emptyIv.setImageDrawable(context.getDrawable(image));
+
+        emptyActionBtn.setVisibility(GONE);
+
+        if (!emptyState.equals(EmptyViewConstants.EMPTY_NO_NETWORK) && !NetworkUtil.isOnline(context)) {
+            showNetworkEmptyState(BaseApiViewModel.NETWORK_ERROR_CODE);
+        }
     }
 
     public void hideEmptyState() {

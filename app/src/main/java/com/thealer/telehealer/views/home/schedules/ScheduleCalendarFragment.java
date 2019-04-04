@@ -14,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,12 +45,15 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
@@ -108,6 +110,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
     private boolean isWeekScrollEnabled = false;
     private Set<String> notificationCreatedId = new HashSet<>();
     private LocalNotificationReceiver localNotificationReceiver = null;
+    private CustomButton emptyActionBtn;
 
     @Override
     public void onAttach(Context context) {
@@ -123,6 +126,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
             @Override
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
                 if (baseApiResponseModels != null) {
+                    setEmptyState();
                     responseModelArrayList = (ArrayList<SchedulesApiResponseModel.ResultBean>) (Object) baseApiResponseModels;
                     updateCalendar();
                     if (responseModelArrayList.size() == 0 && !appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_SCHEDULE)) {
@@ -144,12 +148,26 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
                 }
             }
         });
+
+        schedulesApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null) {
+                    switch (errorModel.getCode()) {
+                        case BaseApiViewModel
+                                .NETWORK_ERROR_CODE:
+                            setNoNetworkEmptyState();
+                            break;
+                    }
+                }
+            }
+        });
     }
 
     private void updateCalendar() {
         calendarDayHashSet = new HashSet<>();
         calendarDayHashSet.clear();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Utils.UTCFormat);
 
         weekViewEventList.clear();
 
@@ -283,6 +301,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         emptyTitleTv = (TextView) view.findViewById(R.id.empty_title_tv);
         emptyMessageTv = (TextView) view.findViewById(R.id.empty_message_tv);
         parent = (LinearLayout) view.findViewById(R.id.parent);
+        emptyActionBtn = (CustomButton) view.findViewById(R.id.empty_action_btn);
 
         notificationCreatedId = appPreference.getStringSet(PreferenceConstants.NOTIFICATIONS_IDS);
 
@@ -338,6 +357,14 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
             }
         });
 
+        emptyActionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getAllSchedules();
+            }
+        });
+
+        emptyActionBtn.setText(getString(R.string.retry));
     }
 
     private void setCalendarMode(CalendarMode mode) {
@@ -366,6 +393,17 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         emptyIv.setImageDrawable(getActivity().getDrawable(EmptyStateUtil.getImage(EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN)));
         emptyTitleTv.setText(EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN));
         emptyMessageTv.setText(EmptyStateUtil.getMessage(EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN));
+
+        emptyActionBtn.setVisibility(View.GONE);
+
+    }
+
+    private void setNoNetworkEmptyState() {
+        emptyIv.setImageDrawable(getActivity().getDrawable(EmptyStateUtil.getImage(EmptyViewConstants.EMPTY_NO_NETWORK)));
+        emptyTitleTv.setText(EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_NO_NETWORK));
+        emptyMessageTv.setText(EmptyStateUtil.getMessage(EmptyViewConstants.EMPTY_NO_NETWORK));
+
+        emptyActionBtn.setVisibility(View.VISIBLE);
     }
 
     private void updateEvents(CalendarDay calendarDay) {

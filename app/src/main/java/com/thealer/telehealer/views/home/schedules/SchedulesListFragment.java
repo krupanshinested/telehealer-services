@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -171,6 +170,15 @@ public class SchedulesListFragment extends BaseFragment {
                 getSchedulesList(page, false);
             }
         });
+
+        schedulesElv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSchedulesList(page, true);
+            }
+        });
+
+        schedulesElv.setErrorModel(this, schedulesApiViewModel.getErrorModelLiveData());
     }
 
     private void getSchedulesList(int page, boolean isShowProgress) {

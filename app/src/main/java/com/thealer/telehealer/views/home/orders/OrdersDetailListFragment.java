@@ -513,6 +513,15 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 makeApiCall(false);
             }
         });
+
+        orderDetailCelv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeApiCall(true);
+            }
+        });
+
+        orderDetailCelv.setErrorModel(this, ordersApiViewModel.getErrorModelLiveData());
     }
 
     @Override

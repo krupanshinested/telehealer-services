@@ -168,6 +168,15 @@ public class VitalUserReportListFragment extends BaseFragment {
 
         vitalsListCelv.getExpandableView().setAdapter(vitalsDetailListAdapter);
 
+        vitalsListCelv.setErrorModel(this, vitalsApiViewModel.getErrorModelLiveData());
+
+        vitalsListCelv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getUserVitals();
+            }
+        });
+
         if (getArguments() != null) {
             commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(ArgumentKeys.USER_DETAIL);
             filter = getArguments().getString(ArgumentKeys.SEARCH_TYPE);

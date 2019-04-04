@@ -97,6 +97,15 @@ public class MedicalAssistantListFragment extends BaseFragment {
                 getMAList(false);
             }
         });
+
+        medicalAssistantCrv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getMAList(true);
+            }
+        });
+
+        medicalAssistantCrv.setErrorModel(this, associationApiViewModel.getErrorModelLiveData());
     }
 
     private void getMAList(boolean isShowProgress) {
