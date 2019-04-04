@@ -195,8 +195,8 @@ public class CustomRecyclerView extends ConstraintLayout {
     }
 
     public void showEmptyState(String emptyState) {
-        String title = EmptyStateUtil.getTitle(emptyState);
-        String message = EmptyStateUtil.getMessage(emptyState);
+        String title = EmptyStateUtil.getTitle(context, emptyState);
+        String message = EmptyStateUtil.getMessage(context, emptyState);
         int image = EmptyStateUtil.getImage(emptyState);
 
         emptyTitleTv.setText(title);

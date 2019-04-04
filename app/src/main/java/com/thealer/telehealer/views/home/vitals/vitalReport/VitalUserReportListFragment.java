@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -51,7 +49,6 @@ import com.thealer.telehealer.views.home.vitals.VitalsDetailListAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Aswin on 04,February,2019
@@ -83,6 +80,7 @@ public class VitalUserReportListFragment extends BaseFragment {
     private VisitsApiViewModel visitsApiViewModel;
     private String doctorGuid, orderId;
     private HashMap<Integer, VitalsApiResponseModel> vitalsApiResponseModelMap = new HashMap<>();
+    private boolean isDisableCancel = false;
 
     @Override
     public void onAttach(Context context) {
@@ -222,7 +220,7 @@ public class VitalUserReportListFragment extends BaseFragment {
                                     startDate = bundle.getString(ArgumentKeys.START_DATE);
                                     endDate = bundle.getString(ArgumentKeys.END_DATE);
 
-                                    String title = EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_VITAL_FROM_TO);
+                                    String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
 
                                     vitalsListCelv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
                                 }
@@ -248,8 +246,8 @@ public class VitalUserReportListFragment extends BaseFragment {
                                             getTargetFragment().onActivityResult(RequestID.REQ_VISIT_UPDATE, Activity.RESULT_OK,
                                                     new Intent()
                                                             .putExtra(ArgumentKeys.UPDATE_TYPE, VisitDetailConstants.VISIT_TYPE_VITALS)
-                                            .putExtra(ArgumentKeys.SELECTED_VITALS, vitalsApiResponseModelMap)
-                                            .putExtra(ArgumentKeys.SELECTED_LIST_ID, selectedList));
+                                                            .putExtra(ArgumentKeys.SELECTED_VITALS, vitalsApiResponseModelMap)
+                                                            .putExtra(ArgumentKeys.SELECTED_LIST_ID, selectedList));
                                         onCloseActionInterface.onClose(false);
                                     }
                                 }
@@ -270,6 +268,7 @@ public class VitalUserReportListFragment extends BaseFragment {
         });
 
         if (getArguments() != null) {
+            isDisableCancel = getArguments().getBoolean(ArgumentKeys.DISABLE_CANCEL, false);
             commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             filter = getArguments().getString(ArgumentKeys.SEARCH_TYPE);
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
@@ -391,8 +390,11 @@ public class VitalUserReportListFragment extends BaseFragment {
     private void enableOrDisableNext() {
         if (selectedList.isEmpty()) {
             setNextTitle(getString(R.string.cancel));
+            if (isDisableCancel)
+                nextMenu.setVisible(false);
         } else {
             setNextTitle(getString(R.string.next));
+            nextMenu.setVisible(true);
         }
     }
 

@@ -4,29 +4,29 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:gravity="center"
-            android:hint="@string/please_select_your_option" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:gravity="center"
+        android:hint="@string/please_select_your_option" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorGrey" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGrey" />
 
-        <TextView
-            android:id="@+id/camera_tv"
-            style="@style/text_app_color"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:text="@string/camera" />
+    <TextView
+        android:id="@+id/camera_tv"
+        style="@style/text_app_color"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:text="@string/camera" />
 
-        <TextView
-            android:id="@+id/gallery_tv"
-            style="@style/text_app_color"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:text="@string/gallery" />
+    <TextView
+        android:id="@+id/gallery_tv"
+        style="@style/text_app_color"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:text="@string/gallery" />
 
 </LinearLayout>

@@ -7,6 +7,7 @@ import com.thealer.telehealer.common.VitalCommon.VitalsManager;
  */
 
 public interface VitalManagerInstance {
-    public VitalsManager getInstance();
-    public void updateBatteryView(int visibility,int battery);
+    VitalsManager getInstance();
+
+    void updateBatteryView(int visibility, int battery);
 }

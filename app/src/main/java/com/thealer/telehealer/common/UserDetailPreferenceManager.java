@@ -237,5 +237,7 @@ public class UserDetailPreferenceManager {
         appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, null);
         appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, null);
         appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
+        appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
+        appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
     }
 }

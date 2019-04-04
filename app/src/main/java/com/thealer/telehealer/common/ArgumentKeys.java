@@ -112,6 +112,7 @@ public class ArgumentKeys {
     public static final String SELECTED_DIET = "selectedDiet";
     public static final String SELECTED_FILES = "selectedFiles";
     public static final String SELECTED_LIST_ID = "selectedListId";
+    public static final String DISABLE_CANCEL = "disableCancel";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;

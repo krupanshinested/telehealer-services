@@ -15,6 +15,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.DataBean;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
+import com.thealer.telehealer.apilayer.models.diet.DietUserListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.food.FoodDetailApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.food.FoodListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.food.NutrientsDetailRequestModel;
@@ -489,6 +490,9 @@ public interface ApiInterface {
 
     @GET("api/user-diet")
     Observable<ArrayList<DietApiResponseModel>> getDietDetails(@Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
+
+    @GET("api/user-diet/users")
+    Observable<DietUserListApiResponseModel> getDietUserFilter(@Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
     @POST("api/user-diet")

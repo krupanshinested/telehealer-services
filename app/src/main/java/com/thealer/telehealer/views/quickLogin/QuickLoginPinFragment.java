@@ -165,7 +165,7 @@ public class QuickLoginPinFragment extends BaseFragment {
 
         if (!UserDetailPreferenceManager.getFirst_name().isEmpty()) {
             doctorNameTv.setText(UserDetailPreferenceManager.getFirst_name());
-            Utils.setImageWithGlide(getActivity().getApplicationContext(), doctorCiv, UserDetailPreferenceManager.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
+            Utils.setImageWithGlide(getActivity().getApplicationContext(), doctorCiv, UserDetailPreferenceManager.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
         }
 
         if (isNewUser) {

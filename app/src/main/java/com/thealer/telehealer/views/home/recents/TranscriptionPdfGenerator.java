@@ -1,7 +1,6 @@
 package com.thealer.telehealer.views.home.recents;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
@@ -233,7 +232,7 @@ public class TranscriptionPdfGenerator {
     }
 
     private String getDuration(String order_start_time, String order_end_time) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat dateFormat = new SimpleDateFormat(Utils.UTCFormat);
 
         long secondsInMilli = 1000;
         long minutesInMilli = secondsInMilli * 60;

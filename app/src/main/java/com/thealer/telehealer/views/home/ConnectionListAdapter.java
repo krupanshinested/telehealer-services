@@ -95,7 +95,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             viewHolder.actionIv.setVisibility(View.GONE);
         }
 
-        Utils.setImageWithGlide(context, viewHolder.avatarCiv, apiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(context, viewHolder.avatarCiv, apiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
 
         viewHolder.titleTv.setText(apiResponseModelList.get(i).getDisplayName());
         viewHolder.subTitleTv.setText(apiResponseModelList.get(i).getDisplayInfo());
@@ -127,7 +127,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             }
         });
 
-        Utils.setImageWithGlide(context, viewHolder.avatarCiv, apiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(context, viewHolder.avatarCiv, apiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
 
         viewHolder.titleTv.setText(apiResponseModelList.get(i).getDisplayName());
         viewHolder.subTitleTv.setText(apiResponseModelList.get(i).getDisplayInfo());

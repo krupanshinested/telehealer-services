@@ -489,7 +489,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         userDataBean.setFirst_name(firstnameEt.getText().toString());
         userDataBean.setLast_name(lastnameEt.getText().toString());
         userDataBean.setDob(dobEt.getText().toString());
-        userDataBean.setGender(genderSp.getSelectedItem().toString());
+        userDataBean.setGender(Constants.genderList.get(genderSp.getSelectedItemPosition()));
 
         createUserRequestModel.setUser_data(userDataBean);
         createUserRequestModel.setUser_avatar_path(profileImgPath);
@@ -497,7 +497,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
     public void setProfileCiv() {
         if (createUserRequestModel.getUser_data().getUser_avatar() != null || profileImgPath != null) {
-            Utils.setImageWithGlide(getContext(), profileCiv, createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true);
+            Utils.setImageWithGlide(getContext(), profileCiv, createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true, true);
             if (profileImgPath != null && !profileImgPath.isEmpty()) {
                 profileImg = getBitmpaFromPath(profileImgPath);
                 if (profileImg != null)
@@ -505,7 +505,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             }
         } else {
             if (whoAmi != null)
-                Utils.setImageWithGlide(getContext(), profileCiv, whoAmi.getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true);
+                Utils.setImageWithGlide(getContext(), profileCiv, whoAmi.getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true, true);
         }
     }
 

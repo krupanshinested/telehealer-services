@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class OrdersListFragment extends BaseFragment {
     private RecyclerView listRv;
-    private List<String> titleList = new ArrayList<>();
+    private List<String> typesList = new ArrayList<>();
     private List<Integer> imageList = new ArrayList<>();
     private RecyclerView vitalsOrdersListRv;
     private FloatingActionButton addFab;
@@ -46,26 +46,26 @@ public class OrdersListFragment extends BaseFragment {
 
         if (getArguments() != null) {
 
-            titleList.clear();
+            typesList.clear();
             imageList.clear();
 
-            String[] ordersTitles = {OrderConstant.ORDER_PRESCRIPTIONS, OrderConstant.ORDER_REFERRALS, OrderConstant.ORDER_LABS, OrderConstant.ORDER_RADIOLOGY, OrderConstant.ORDER_FORM, OrderConstant.ORDER_MISC};
+            String[] ordersTypes = {OrderConstant.ORDER_PRESCRIPTIONS, OrderConstant.ORDER_REFERRALS, OrderConstant.ORDER_LABS, OrderConstant.ORDER_RADIOLOGY, OrderConstant.ORDER_FORM, OrderConstant.ORDER_MISC};
             Integer[] ordersImages = {R.drawable.ic_orders_prescriptions, R.drawable.ic_orders_referrals, R.drawable.ic_orders_labs, R.drawable.ic_orders_radiology, R.drawable.ic_orders_forms, R.drawable.ic_orders_documents};
 
-            titleList.addAll(Arrays.asList(ordersTitles));
+            typesList.addAll(Arrays.asList(ordersTypes));
             imageList.addAll(Arrays.asList(ordersImages));
 
             boolean isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 
             if (!isFromHome && UserType.isUserPatient()) {
-                titleList.remove(OrderConstant.ORDER_DOCUMENTS);
+                typesList.remove(OrderConstant.ORDER_DOCUMENTS);
             }
 
             if (isFromHome && !UserType.isUserPatient()) {
-                titleList.remove(OrderConstant.ORDER_DOCUMENTS);
+                typesList.remove(OrderConstant.ORDER_DOCUMENTS);
             }
 
-            VitalsOrdersListAdapter ordersListAdapter = new VitalsOrdersListAdapter(getActivity(), titleList, imageList, Constants.VIEW_ORDERS, getArguments());
+            VitalsOrdersListAdapter ordersListAdapter = new VitalsOrdersListAdapter(getActivity(), typesList, imageList, Constants.VIEW_ORDERS, getArguments());
             listRv.setAdapter(ordersListAdapter);
         }
     }

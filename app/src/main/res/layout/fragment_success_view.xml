@@ -54,7 +54,6 @@
             android:layout_marginBottom="@dimen/margin_default"
             android:padding="4dp"
             android:textSize="24sp"
-            android:gravity="center"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -39,9 +39,9 @@ public class SelectLabTestAdapter extends RecyclerView.Adapter<SelectLabTestAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        if (testList.get(i).equals(selectedTitle)){
+        if (testList.get(i).equals(selectedTitle)) {
             viewHolder.statusIv.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             viewHolder.statusIv.setVisibility(View.GONE);
         }
 

@@ -77,7 +77,7 @@ public class StethoscopeSegmentDetailFragment extends BaseFragment {
             String date = getArguments().getString(ArgumentKeys.SELECTED_DATE);
             int segment = getArguments().getInt(ArgumentKeys.SEGMENT);
 
-            Utils.setImageWithGlide(getActivity().getApplicationContext(), phonogramIv, segmentsBean.getPhonogram_file(), getActivity().getDrawable(R.drawable.placeholder_steth_io_graph), true);
+            Utils.setImageWithGlide(getActivity().getApplicationContext(), phonogramIv, segmentsBean.getPhonogram_file(), getActivity().getDrawable(R.drawable.placeholder_steth_io_graph), true, true);
 
             phonogramIv.setOnClickListener(new View.OnClickListener() {
                 @Override

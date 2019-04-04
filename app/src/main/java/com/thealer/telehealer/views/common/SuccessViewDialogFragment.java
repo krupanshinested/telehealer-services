@@ -82,8 +82,8 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         if (getArguments() != null) {
             onDataUpdated(getArguments());
         } else {
-            titleTv.setText("Loading");
-            messageTv.setText("Please wait...");
+            titleTv.setText(getString(R.string.loading));
+            messageTv.setText(getString(R.string.please_wait));
         }
 
         doneBtn.setVisibility(View.GONE);

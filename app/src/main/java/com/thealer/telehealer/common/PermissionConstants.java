@@ -33,8 +33,8 @@ public class PermissionConstants {
     public static int CAM_GALLERY_REQUEST_CODE = 302;
     public static int LOC_STORAGE_REQUEST_CODE = 303;
     public static int LOC_REQUEST_CODE = 304;
-    public static int STORAGE_REQUEST_CODE =305;
-    public static int CONTACTS_REQUEST_CODE =306;
+    public static int STORAGE_REQUEST_CODE = 305;
+    public static int CONTACTS_REQUEST_CODE = 306;
 
 
 }

@@ -50,7 +50,7 @@ public class VitalReportUserListAdapter extends RecyclerView.Adapter<VitalReport
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        Utils.setImageWithGlide(fragmentActivity.getApplicationContext(), viewHolder.avatarCiv, commonUserApiResponseModelList.get(i).getUser_avatar(), fragmentActivity.getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(fragmentActivity.getApplicationContext(), viewHolder.avatarCiv, commonUserApiResponseModelList.get(i).getUser_avatar(), fragmentActivity.getDrawable(R.drawable.profile_placeholder), true, true);
 
         viewHolder.titleTv.setText(commonUserApiResponseModelList.get(i).getUserDisplay_name());
         viewHolder.subTitleTv.setText(commonUserApiResponseModelList.get(i).getDisplayInfo());

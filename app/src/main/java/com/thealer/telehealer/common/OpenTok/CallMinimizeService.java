@@ -6,22 +6,17 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -39,7 +34,7 @@ import static com.thealer.telehealer.TeleHealerApplication.application;
  * Created by rsekar on 2/5/19.
  */
 
-public class CallMinimizeService extends Service implements FloatingViewListener,TokBoxUIInterface {
+public class CallMinimizeService extends Service implements FloatingViewListener, TokBoxUIInterface {
 
     private static final String TAG = "ChatHeadService";
     public static final String EXTRA_CUTOUT_SAFE_AREA = "cutout_safe_area";
@@ -56,9 +51,9 @@ public class CallMinimizeService extends Service implements FloatingViewListener
      */
     private FloatingViewManager mFloatingViewManager;
 
-     @Override
+    @Override
     public void onCreate() {
-         startForeground(NOTIFICATION_ID, createNotification(this));
+        startForeground(NOTIFICATION_ID, createNotification(this));
     }
 
     /**
@@ -81,7 +76,7 @@ public class CallMinimizeService extends Service implements FloatingViewListener
 
         if (TokBox.shared.getCallType().equals(OpenTokConstants.audio)) {
             if (TokBox.shared.getOtherPersonDetail() != null) {
-                Utils.setImageWithGlide(getApplicationContext(), profile_iv, TokBox.shared.getOtherPersonDetail().getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true);
+                Utils.setImageWithGlide(getApplicationContext(), profile_iv, TokBox.shared.getOtherPersonDetail().getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
             } else {
                 profile_iv.setImageResource(R.drawable.profile_placeholder);
             }
@@ -232,15 +227,15 @@ public class CallMinimizeService extends Service implements FloatingViewListener
     @Override
     public void receivedRequestForVideoSwap() {
         Intent intent = getCallIntent();
-        intent.putExtra(ArgumentKeys.CALL_REQUEST_ACTION,OpenTokConstants.receivedRequestForVideoSwap);
+        intent.putExtra(ArgumentKeys.CALL_REQUEST_ACTION, OpenTokConstants.receivedRequestForVideoSwap);
         openCallScreen(intent);
     }
 
     @Override
     public void receivedResponseForVideoSwap(Boolean isAccepted) {
         Intent intent = getCallIntent();
-        intent.putExtra(ArgumentKeys.CALL_REQUEST_ACTION,OpenTokConstants.receivedResponseForVideoSwap);
-        intent.putExtra(ArgumentKeys.CALL_REQUEST_DATA,isAccepted);
+        intent.putExtra(ArgumentKeys.CALL_REQUEST_ACTION, OpenTokConstants.receivedResponseForVideoSwap);
+        intent.putExtra(ArgumentKeys.CALL_REQUEST_DATA, isAccepted);
         openCallScreen(intent);
     }
 
@@ -277,9 +272,9 @@ public class CallMinimizeService extends Service implements FloatingViewListener
     @Override
     public void didReceiveVitalData(String data, String type) {
         Intent intent = getCallIntent();
-        intent.putExtra(ArgumentKeys.CALL_REQUEST_ACTION,OpenTokConstants.didReceiveVitalData);
-        intent.putExtra(ArgumentKeys.CALL_REQUEST_DATA,data);
-        intent.putExtra(ArgumentKeys.CALL_REQUEST_DATA_1,type);
+        intent.putExtra(ArgumentKeys.CALL_REQUEST_ACTION, OpenTokConstants.didReceiveVitalData);
+        intent.putExtra(ArgumentKeys.CALL_REQUEST_DATA, data);
+        intent.putExtra(ArgumentKeys.CALL_REQUEST_DATA_1, type);
         openCallScreen(intent);
     }
 

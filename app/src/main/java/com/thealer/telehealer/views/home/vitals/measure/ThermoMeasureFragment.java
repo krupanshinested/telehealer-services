@@ -35,7 +35,9 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.ThermoMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -47,8 +49,6 @@ import com.thealer.telehealer.views.call.Interfaces.CallVitalPagerInterFace;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.home.vitals.VitalsSendBaseFragment;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.ThermoMeasureInterface;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.lang.reflect.Type;
@@ -61,8 +61,8 @@ import java.util.HashMap;
 public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
         View.OnClickListener,ThermoMeasureInterface {
 
-    private TextView value_tv,unit_tv,message_tv,title_tv;
-    private CustomButton close_bt,save_bt;
+    private TextView value_tv, unit_tv, message_tv, title_tv;
+    private CustomButton close_bt, save_bt;
     private Button remeasure_bt;
     private ConstraintLayout result_lay,main_container;
     private String finalThermoValue = "0";
@@ -189,7 +189,7 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
             case R.id.close_bt:
                 if (isPresentedInsideCallActivity()) {
                     if (vitalManagerInstance != null) {
-                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
+                        vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
                         setCurrentState(MeasureState.notStarted);
                     }
 
@@ -210,7 +210,7 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
                     case MeasureState.started:
                     case MeasureState.startedToReceieveValues:
                         if (vitalManagerInstance != null)
-                            vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
+                            vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
                         setCurrentState(MeasureState.notStarted);
                         break;
                     case MeasureState.ended:
@@ -240,16 +240,16 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
     }
 
     @Override
-    public void updateThermoMessage(String deviceType,String message) {
+    public void updateThermoMessage(String deviceType, String message) {
         message_tv.setText(message);
         result_lay.setVisibility(View.GONE);
     }
 
     @Override
-    public void updateThermoValue(String deviceType,Double value) {
+    public void updateThermoValue(String deviceType, Double value) {
         message_tv.setText("");
 
-        finalThermoValue = value+"";
+        finalThermoValue = value + "";
         setCurrentState(MeasureState.ended);
 
         if (isPresentedInsideCallActivity()) {
@@ -265,7 +265,7 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
     }
 
     @Override
-    public void didThermoFinishMesureWithFailure(String deviceType,String error) {
+    public void didThermoFinishMesureWithFailure(String deviceType, String error) {
 
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
             EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
@@ -280,7 +280,7 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
     //Call Events methods
     @Override
     public void didReceiveData(String data) {
-        Log.d("ThermoMeasureFragmetn","received data");
+        Log.d("ThermoMeasureFragmetn", "received data");
         if (value_tv == null) {
             action = new Action() {
                 @Override
@@ -330,7 +330,7 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
                 case VitalsConstant.VitalCallMapKeys.errorInMeasure:
 
                     String errorMessage = (String) map.get(VitalsConstant.VitalCallMapKeys.message);
-                    didThermoFinishMesureWithFailure(vitalDevice.getType(),errorMessage);
+                    didThermoFinishMesureWithFailure(vitalDevice.getType(), errorMessage);
 
                     break;
             }

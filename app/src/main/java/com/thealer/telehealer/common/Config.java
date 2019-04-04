@@ -1,7 +1,5 @@
 package com.thealer.telehealer.common;
 
-import android.util.Log;
-
 import com.thealer.telehealer.BuildConfig;
 
 /**

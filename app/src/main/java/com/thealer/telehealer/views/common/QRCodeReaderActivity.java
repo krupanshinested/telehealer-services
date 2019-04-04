@@ -8,7 +8,6 @@ import android.os.Bundle;
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.base.BaseActivity;
 
 /**
@@ -39,8 +38,8 @@ public class QRCodeReaderActivity extends BaseActivity implements QRCodeReaderVi
     @Override
     public void onQRCodeRead(String text, PointF[] points) {
         Intent data = new Intent();
-        data.putExtra(ArgumentKeys.RESULT,text);
-        setResult(Activity.RESULT_OK,data);
+        data.putExtra(ArgumentKeys.RESULT, text);
+        setResult(Activity.RESULT_OK, data);
         finish();
     }
 

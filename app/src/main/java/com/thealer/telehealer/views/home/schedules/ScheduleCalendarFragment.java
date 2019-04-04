@@ -427,8 +427,9 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
 
     private void setEmptyState() {
         emptyIv.setImageDrawable(getActivity().getDrawable(EmptyStateUtil.getImage(EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN)));
-        emptyTitleTv.setText(EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN));
-        emptyMessageTv.setText(EmptyStateUtil.getMessage(EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN));
+        emptyTitleTv.setText(EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN));
+        emptyMessageTv.setText(EmptyStateUtil.getMessage(getActivity(), EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN));
+
 
         emptyActionBtn.setVisibility(View.GONE);
 
@@ -436,8 +437,8 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
 
     private void setNoNetworkEmptyState() {
         emptyIv.setImageDrawable(getActivity().getDrawable(EmptyStateUtil.getImage(EmptyViewConstants.EMPTY_NO_NETWORK)));
-        emptyTitleTv.setText(EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_NO_NETWORK));
-        emptyMessageTv.setText(EmptyStateUtil.getMessage(EmptyViewConstants.EMPTY_NO_NETWORK));
+        emptyTitleTv.setText(EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_NO_NETWORK));
+        emptyMessageTv.setText(EmptyStateUtil.getMessage(getActivity(), EmptyViewConstants.EMPTY_NO_NETWORK));
 
         emptyActionBtn.setVisibility(View.VISIBLE);
     }
@@ -454,7 +455,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
     private Calendar getCalendarFromCalendarDay(CalendarDay calendarDay) {
         Calendar calendar = Calendar.getInstance();
         try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(calendarDay.getYear() + "-" + calendarDay.getMonth() + "-" + calendarDay.getDay());
+            Date date = new SimpleDateFormat(Utils.yyyy_mm_dd).parse(calendarDay.getYear() + "-" + calendarDay.getMonth() + "-" + calendarDay.getDay());
             calendar.setTime(date);
         } catch (ParseException e) {
             e.printStackTrace();

@@ -3,23 +3,21 @@ package com.thealer.telehealer.common.VitalCommon;
 import android.app.Application;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
-
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.BPMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.GulcoMeasureInterface;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.PulseMeasureInterface;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.ThermoMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalFirmwareFetcher;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.BPMeasureInterface;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.PulseMeasureInterface;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.ThermoMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.WeightMeasureInterface;
 
 import java.util.ArrayList;
@@ -211,15 +209,15 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     //WeightMeasureInterface methods
     @Override
-    public void updateWeightMessage(String deviceType,String message) {
+    public void updateWeightMessage(String deviceType, String message) {
         if (weightMeasureInterface != null)
-            weightMeasureInterface.updateWeightMessage(deviceType,message);
+            weightMeasureInterface.updateWeightMessage(deviceType, message);
     }
 
     @Override
-    public void updateWeightValue(String deviceType,Float value) {
+    public void updateWeightValue(String deviceType, Float value) {
         if (weightMeasureInterface != null)
-            weightMeasureInterface.updateWeightValue(deviceType,value);
+            weightMeasureInterface.updateWeightValue(deviceType, value);
     }
 
     @Override
@@ -230,22 +228,22 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
     }
 
     @Override
-    public void didFinishWeightMeasure(String deviceType,Float weight, String id) {
+    public void didFinishWeightMeasure(String deviceType, Float weight, String id) {
         if (weightMeasureInterface != null)
-            weightMeasureInterface.didFinishWeightMeasure(deviceType,weight, id);
+            weightMeasureInterface.didFinishWeightMeasure(deviceType, weight, id);
     }
 
     @Override
-    public void didFinishWeightMesureWithFailure(String deviceType,String error) {
+    public void didFinishWeightMesureWithFailure(String deviceType, String error) {
         if (weightMeasureInterface != null)
-            weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType,error);
+            weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType, error);
     }
 
     //BPMeasureInterface methods
     @Override
-    public void updateBPMessage(String deviceType,String message) {
+    public void updateBPMessage(String deviceType, String message) {
         if (bpMeasureInterface != null)
-            bpMeasureInterface.updateBPMessage(deviceType,message);
+            bpMeasureInterface.updateBPMessage(deviceType, message);
     }
 
     @Override
@@ -256,20 +254,20 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
     }
 
     @Override
-    public void didUpdateBPMesure(String deviceType,ArrayList<Double> value) {
+    public void didUpdateBPMesure(String deviceType, ArrayList<Double> value) {
         if (bpMeasureInterface != null)
-            bpMeasureInterface.didUpdateBPMesure(deviceType,value);
+            bpMeasureInterface.didUpdateBPMesure(deviceType, value);
 
     }
 
     @Override
-    public void didUpdateBPM(String deviceType,ArrayList<Double> value) {
+    public void didUpdateBPM(String deviceType, ArrayList<Double> value) {
         if (bpMeasureInterface != null)
-            bpMeasureInterface.didUpdateBPMesure(deviceType,value);
+            bpMeasureInterface.didUpdateBPMesure(deviceType, value);
     }
 
     @Override
-    public void didFinishBPMesure(String deviceType,Double systolicValue, Double diastolicValue, Double heartRate) {
+    public void didFinishBPMesure(String deviceType, Double systolicValue, Double diastolicValue, Double heartRate) {
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
@@ -280,11 +278,11 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         }
 
         if (bpMeasureInterface != null)
-            bpMeasureInterface.didFinishBPMesure(deviceType,systolicValue, diastolicValue, heartRate);
+            bpMeasureInterface.didFinishBPMesure(deviceType, systolicValue, diastolicValue, heartRate);
     }
 
     @Override
-    public void didFailBPMesure(String deviceType,String error) {
+    public void didFailBPMesure(String deviceType, String error) {
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
@@ -296,7 +294,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         }
 
         if (bpMeasureInterface != null)
-            bpMeasureInterface.didFailBPMesure(deviceType,error);
+            bpMeasureInterface.didFailBPMesure(deviceType, error);
     }
 
     @Override
@@ -332,15 +330,15 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     //ThermoMeasureInterface methods
     @Override
-    public void updateThermoMessage(String deviceType,String message) {
+    public void updateThermoMessage(String deviceType, String message) {
         if (thermoMeasureInterface != null)
-            thermoMeasureInterface.updateThermoMessage(deviceType,message);
+            thermoMeasureInterface.updateThermoMessage(deviceType, message);
     }
 
     @Override
-    public void updateThermoValue(String deviceType,Double value) {
+    public void updateThermoValue(String deviceType, Double value) {
         if (thermoMeasureInterface != null)
-            thermoMeasureInterface.updateThermoValue(deviceType,value);
+            thermoMeasureInterface.updateThermoValue(deviceType, value);
     }
 
     @Override
@@ -350,7 +348,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
     }
 
     @Override
-    public void didThermoFinishMesureWithFailure(String deviceType,String error) {
+    public void didThermoFinishMesureWithFailure(String deviceType, String error) {
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
@@ -362,24 +360,24 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         }
 
         if (thermoMeasureInterface != null)
-            thermoMeasureInterface.didThermoFinishMesureWithFailure(deviceType,error);
+            thermoMeasureInterface.didThermoFinishMesureWithFailure(deviceType, error);
     }
 
     //PulseMeasureInterface  methods
     @Override
-    public void updatePulseMessage(String deviceType,String message) {
+    public void updatePulseMessage(String deviceType, String message) {
         if (pulseMeasureInterface != null)
-            pulseMeasureInterface.updatePulseMessage(deviceType,message);
+            pulseMeasureInterface.updatePulseMessage(deviceType, message);
     }
 
     @Override
-    public void updatePulseValue(String deviceType,int spo2, int bpm, int wave, float pi) {
+    public void updatePulseValue(String deviceType, int spo2, int bpm, int wave, float pi) {
         if (pulseMeasureInterface != null)
-            pulseMeasureInterface.updatePulseValue(deviceType,spo2, bpm, wave, pi);
+            pulseMeasureInterface.updatePulseValue(deviceType, spo2, bpm, wave, pi);
     }
 
     @Override
-    public void didFinishMeasure(String deviceType,int spo2, int bpm, int wave, float pi) {
+    public void didFinishMeasure(String deviceType, int spo2, int bpm, int wave, float pi) {
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
@@ -390,7 +388,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         }
 
         if (pulseMeasureInterface != null)
-            pulseMeasureInterface.didFinishMeasure(deviceType,spo2, bpm, wave, pi);
+            pulseMeasureInterface.didFinishMeasure(deviceType, spo2, bpm, wave, pi);
     }
 
     @Override
@@ -401,7 +399,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
     }
 
     @Override
-    public void didPulseFinishMesureWithFailure(String deviceType,String error) {
+    public void didPulseFinishMesureWithFailure(String deviceType, String error) {
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
@@ -413,20 +411,20 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         }
 
         if (pulseMeasureInterface != null)
-            pulseMeasureInterface.didPulseFinishMesureWithFailure(deviceType,error);
+            pulseMeasureInterface.didPulseFinishMesureWithFailure(deviceType, error);
     }
 
     //GulcoMeasureInterface methods
     @Override
-    public void updateGulcoMessage(String deviceType,String message) {
+    public void updateGulcoMessage(String deviceType, String message) {
         if (gulcoMeasureInterface != null)
-            gulcoMeasureInterface.updateGulcoMessage(deviceType,message);
+            gulcoMeasureInterface.updateGulcoMessage(deviceType, message);
     }
 
     @Override
-    public void updateGulcoValue(String deviceType,int value) {
+    public void updateGulcoValue(String deviceType, int value) {
         if (gulcoMeasureInterface != null)
-            gulcoMeasureInterface.updateGulcoValue(deviceType,value);
+            gulcoMeasureInterface.updateGulcoValue(deviceType, value);
     }
 
     @Override
@@ -436,7 +434,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
     }
 
     @Override
-    public void didFinishGulcoMesureWithFailure(String deviceType,String error) {
+    public void didFinishGulcoMesureWithFailure(String deviceType, String error) {
 
         if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
 
@@ -449,7 +447,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         }
 
         if (gulcoMeasureInterface != null)
-            gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType,error);
+            gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType, error);
     }
 
     @Override

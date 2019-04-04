@@ -1,7 +1,5 @@
 package com.thealer.telehealer.views.call.Interfaces;
 
-import android.support.annotation.Nullable;
-
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 
 /**
@@ -10,7 +8,10 @@ import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 
 public interface CallVitalEvents {
     void didReceiveData(String data);
+
     void assignVitalListener();
+
     void assignVitalDevice(VitalDevice vitalDevice);
+
     String getVitalDeviceType();
 }

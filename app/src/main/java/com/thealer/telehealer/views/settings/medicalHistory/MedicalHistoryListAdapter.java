@@ -18,12 +18,16 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Aswin on 21,January,2019
  */
 public class MedicalHistoryListAdapter extends RecyclerView.Adapter<MedicalHistoryListAdapter.ViewHolder> {
     private FragmentActivity fragmentActivity;
-    private String[] listItem;
+    private String[] typeList;
+    private List<String> listItem = new ArrayList<>();
     private Bundle bundle = new Bundle();
     private Fragment fragment;
 
@@ -34,7 +38,10 @@ public class MedicalHistoryListAdapter extends RecyclerView.Adapter<MedicalHisto
         this.fragmentActivity = activity;
         changeTitleInterface = (ChangeTitleInterface) activity;
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
-        listItem = MedicalHistoryConstants.itemList;
+        typeList = MedicalHistoryConstants.itemList;
+        for (String type : typeList) {
+            listItem.add(MedicalHistoryConstants.getDisplayTitle(activity, type));
+        }
         this.fragment = medicalHistoryList;
         if (arguments != null) {
             this.bundle = arguments;
@@ -50,15 +57,15 @@ public class MedicalHistoryListAdapter extends RecyclerView.Adapter<MedicalHisto
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.itemTitleTv.setText(listItem[i]);
-        viewHolder.leftIv.setImageDrawable(fragmentActivity.getDrawable(MedicalHistoryConstants.getIcon(listItem[i])));
+        viewHolder.itemTitleTv.setText(listItem.get(i));
+        viewHolder.leftIv.setImageDrawable(fragmentActivity.getDrawable(MedicalHistoryConstants.getIcon(typeList[i])));
         viewHolder.itemCl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                changeTitleInterface.onTitleChange(listItem[i]);
 
                 MedicalHistoryEditFragment medicalHistoryEditFragment = new MedicalHistoryEditFragment();
-                bundle.putString(ArgumentKeys.HISTORY_TYPE, listItem[i]);
+                bundle.putString(ArgumentKeys.HISTORY_TYPE, typeList[i]);
                 medicalHistoryEditFragment.setArguments(bundle);
                 medicalHistoryEditFragment.setTargetFragment(fragment, RequestID.REQ_HISTORY_UPDATE);
                 showSubFragmentInterface.onShowFragment(medicalHistoryEditFragment);
@@ -68,7 +75,7 @@ public class MedicalHistoryListAdapter extends RecyclerView.Adapter<MedicalHisto
 
     @Override
     public int getItemCount() {
-        return listItem.length;
+        return listItem.size();
     }
 
     public void updateBundle(Bundle arguments) {

@@ -81,7 +81,7 @@ public class LabDescriptionListAdapter extends RecyclerView.Adapter<LabDescripti
 
         viewHolder.testTitleTv.setText(labsBeanList.get(i).getTest_description());
 
-        for (String icdCode: labsBeanList.get(i).getICD10_codes()) {
+        for (String icdCode : labsBeanList.get(i).getICD10_codes()) {
 
             View view = LayoutInflater.from(activity).inflate(R.layout.adapter_lab_icd_code_list, null);
 
@@ -103,7 +103,7 @@ public class LabDescriptionListAdapter extends RecyclerView.Adapter<LabDescripti
         return labsBeanList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView removeIv;
         private TextView testTitleTv;
         private LinearLayout viewHolder;

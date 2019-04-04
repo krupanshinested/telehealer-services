@@ -30,6 +30,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.DietApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -89,6 +90,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
     private double calories = 0, carbs = 0, fat = 0, protien = 0;
     private Map<String, ArrayList<DietApiResponseModel>> listMap = new HashMap<>();
     private boolean isPdfGeneration = false;
+    private ArrayList<String> dietPrintOptions;
 
     private OnCloseActionInterface onCloseActionInterface;
     private AttachObserverInterface attachObserverInterface;
@@ -116,7 +118,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
     private DietApiViewModel dietApiViewModel;
     private DietViewPagerAdapter dietViewPagerAdapter;
     private ShowSubFragmentInterface showSubFragmentInterface;
-    private CommonUserApiResponseModel commonUserApiResponseModel;
+    private UserBean commonUserApiResponseModel;
     private CustomRecyclerView dietListCrv;
 
     @Override
@@ -210,7 +212,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
 
     private void setToolbarTitle() {
         if (selectedDate.equals(getFormatedDate(Utils.getCurrentFomatedDate())))
-            toolbarTitle.setText("Today");
+            toolbarTitle.setText(getString(R.string.today));
         else
             toolbarTitle.setText(displayDate);
     }
@@ -333,6 +335,8 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
             }
         });
 
+        dietPrintOptions = DietConstant.getDietPrintOptions(getActivity());
+
         calendarview.state().edit()
                 .setMaximumDate(CalendarDay.today())
                 .setMinimumDate(CalendarDay.from(2019, 1, 1))
@@ -412,7 +416,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
 
     private void showDietPrintOptions() {
         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_time_period),
-                DietConstant.dietPrintOptions,
+                dietPrintOptions,
                 new PickerListener() {
                     @Override
                     public void didSelectedItem(int position) {
@@ -435,23 +439,19 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
 
         Set<String> dates = listMap.keySet();
 
-        if (DietConstant.dietPrintOptions.get(position).equals(DietConstant.DIET_PRINT_ALL)) {
+        if (dietPrintOptions.get(position).equals(getString(R.string.DIET_PRINT_ALL))) {
             for (String date : dates) {
                 String utcdate = Utils.getUTCFormat(date, "yyyy-MM-dd");
                 pdfList.put(utcdate, listMap.get(date));
             }
 
         } else {
-            switch (DietConstant.dietPrintOptions.get(position)) {
-                case DietConstant.PRINT_1_WEEK:
-                    calendar.add(Calendar.DAY_OF_MONTH, -7);
-                    break;
-                case DietConstant.PRINT_2_WEEK:
-                    calendar.add(Calendar.DAY_OF_MONTH, -14);
-                    break;
-                case DietConstant.PRINT_1_MONTH:
-                    calendar.add(Calendar.MONTH, -1);
-                    break;
+            if (dietPrintOptions.get(position).equals(getString(R.string.PRINT_1_WEEK))) {
+                calendar.add(Calendar.DAY_OF_MONTH, -7);
+            } else if (dietPrintOptions.get(position).equals(getString(R.string.PRINT_2_WEEK))) {
+                calendar.add(Calendar.DAY_OF_MONTH, -14);
+            } else if (dietPrintOptions.get(position).equals(getString(R.string.PRINT_1_MONTH))) {
+                calendar.add(Calendar.MONTH, -1);
             }
 
             for (String date : dates) {
@@ -461,6 +461,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
                     pdfList.put(utcdate, listMap.get(date));
                 }
             }
+
         }
 
         if (pdfList.size() > 0) {
@@ -475,7 +476,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
             showSubFragmentInterface.onShowFragment(pdfViewerFragment);
 
         } else {
-            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + DietConstant.dietPrintOptions.get(position),
+            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + dietPrintOptions.get(position),
                     getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         @Override

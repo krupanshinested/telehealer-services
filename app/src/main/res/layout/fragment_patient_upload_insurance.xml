@@ -89,7 +89,7 @@
                 android:drawableTint="@color/app_gradient_start"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
-                android:text="Add Another Insurance"
+                android:text="@string/add_another_insurance"
                 app:corner_radius="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

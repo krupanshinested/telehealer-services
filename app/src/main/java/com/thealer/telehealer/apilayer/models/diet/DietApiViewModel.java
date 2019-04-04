@@ -67,6 +67,24 @@ public class DietApiViewModel extends BaseApiViewModel {
         });
     }
 
+    public void getDietUserList(String filter, String startDate, String endDate, String userGuid, String doctorGuid, boolean showProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getDietUserFilter(filter, startDate, endDate, userGuid, doctorGuid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<DietUserListApiResponseModel>(getProgress(showProgress)) {
+                                @Override
+                                public void onSuccess(DietUserListApiResponseModel dietUserListApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(dietUserListApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
     public void addDiet(AddDietRequestModel addDietRequestModel, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override

@@ -60,7 +60,7 @@ public class CustomSpinnerView extends ConstraintLayout {
         return spinner;
     }
 
-    public void setSpinnerAdapter(SpinnerAdapter spinnerAdapter){
+    public void setSpinnerAdapter(SpinnerAdapter spinnerAdapter) {
         spinner.setAdapter(spinnerAdapter);
     }
 }

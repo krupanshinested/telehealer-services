@@ -1,10 +1,11 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/app_gradient_start</item>
         <item name="android:statusBarColor">@color/app_status_bar_color1</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:screenOrientation">portrait</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="p">shortEdges</item>
     </style>
 
     <style name="AppTheme.Transparent" parent="AppTheme">

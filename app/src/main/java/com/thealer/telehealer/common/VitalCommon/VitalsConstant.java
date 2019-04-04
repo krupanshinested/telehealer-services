@@ -1,5 +1,9 @@
 package com.thealer.telehealer.common.VitalCommon;
 
+import android.content.Context;
+
+import com.thealer.telehealer.R;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -25,17 +29,12 @@ public class VitalsConstant {
     public static final String VITAL_MODE_PATIENT = "patient";
     public static final String VITAL_MODE_DEVICE = "automated";
 
-    public static final String LABLE_DOCTOR = "Doctor";
-    public static final String LABLE_PATIENT = "Patient";
-    public static final String LABLE_DEVICE = "Device";
-    public static final String LABLE_AUTOMATED = "Automatic";
-    public static final String LABLE_MANUAL = "Manual";
+    public static final int LABLE_DOCTOR = R.string.doctor;
+    public static final int LABLE_PATIENT = R.string.patient;
+    public static final int LABLE_DEVICE = R.string.device;
+    public static final int LABLE_AUTOMATED = R.string.automatic;
+    public static final int LABLE_MANUAL = R.string.manual;
 
-    public static final String PRINT_1_WEEK = "Last 1 weeks";
-    public static final String PRINT_2_WEEK = "Last 2 weeks";
-    public static final String PRINT_1_MONTH = "Last 1 Month";
-    public static final String PRINT_ALL = "All Vital History";
-    public static final ArrayList<String> vitalPrintOptions = new ArrayList<>(Arrays.asList(PRINT_1_WEEK, PRINT_2_WEEK, PRINT_1_MONTH, PRINT_ALL));
     public static final int locationService = 2;
 
     public static final String TYPE_BP3M = "BP3M";
@@ -126,9 +125,9 @@ public class VitalsConstant {
         }
     }
 
-    public static CharSequence getInputError(String inputType) {
-        String value = " value should be in range of ";
-        return inputType + value + getMinRange(inputType) + "-" + getMaxRange(inputType);
+    public static CharSequence getInputError(Context context, String inputType) {
+        String value = context.getString(R.string.vital_input_error);
+        return String.format(value, inputType, getMinRange(inputType), getMaxRange(inputType));
     }
 
 
@@ -155,5 +154,9 @@ public class VitalsConstant {
         public static final String diastolicValue = "diastolicValue";
         public static final String heartRate = "heartRate";
 
+    }
+
+    public static ArrayList<String> getVitalPrintOptions(Context context) {
+        return new ArrayList<>(Arrays.asList(context.getString(R.string.PRINT_1_WEEK), context.getString(R.string.PRINT_2_WEEK), context.getString(R.string.PRINT_1_MONTH), context.getString(R.string.VITAL_PRINT_ALL)));
     }
 }

@@ -8,7 +8,6 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.view.ContextThemeWrapper;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +44,7 @@ public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
         });
     }
 
-    public void setBottomSheetHeight(View view){
+    public void setBottomSheetHeight(View view) {
         Point point = new Point();
         Display display = getActivity().getWindow().getWindowManager().getDefaultDisplay();
         display.getSize(point);
@@ -53,8 +52,9 @@ public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (point.y * 0.5));
         view.setLayoutParams(layoutParams);
     }
-    public void setBottomSheetHeight(View view, double percentage){
-        double value = percentage/100;
+
+    public void setBottomSheetHeight(View view, double percentage) {
+        double value = percentage / 100;
         Point point = new Point();
         Display display = getActivity().getWindow().getWindowManager().getDefaultDisplay();
         display.getSize(point);

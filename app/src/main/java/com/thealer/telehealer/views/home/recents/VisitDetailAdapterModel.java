@@ -21,6 +21,7 @@ import java.util.List;
 public class VisitDetailAdapterModel {
     private int viewType;
     private String categoryTitle;
+    private String category;
     private boolean isShow = true;
     private CallSummaryModel callSummaryModel;
     private CommonUserApiResponseModel userInfoModel;
@@ -39,6 +40,13 @@ public class VisitDetailAdapterModel {
         this.viewType = viewType;
         this.categoryTitle = categoryTitle;
     }
+
+    public VisitDetailAdapterModel(int viewType, String categoryTitle, String category) {
+        this.viewType = viewType;
+        this.categoryTitle = categoryTitle;
+        this.category = category;
+    }
+
     public VisitDetailAdapterModel(int viewType, String categoryTitle, boolean isShow) {
         this.viewType = viewType;
         this.categoryTitle = categoryTitle;
@@ -118,6 +126,14 @@ public class VisitDetailAdapterModel {
 
     public void setCategoryTitle(String categoryTitle) {
         this.categoryTitle = categoryTitle;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public CallSummaryModel getCallSummaryModel() {
