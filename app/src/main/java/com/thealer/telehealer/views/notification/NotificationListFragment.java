@@ -153,6 +153,14 @@ public class NotificationListFragment extends BaseFragment {
 
         notificationListAdapter = new NotificationListAdapter(getActivity());
         notificationCelv.getExpandableView().setAdapter(notificationListAdapter);
+
+        notificationCelv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNotification(true);
+            }
+        });
+        notificationCelv.setErrorModel(this, notificationApiViewModel.getErrorModelLiveData());
     }
 
     private void getNotification(boolean isShowProgress) {

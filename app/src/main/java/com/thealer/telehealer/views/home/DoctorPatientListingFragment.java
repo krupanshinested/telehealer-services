@@ -156,7 +156,6 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 doctorPatientListCrv.hideProgressBar();
             }
         });
-
     }
 
     private void showProposer() {
@@ -269,7 +268,6 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         getAssociationsList(null, true);
 
-
         doctorPatientListCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -277,6 +275,14 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             }
         });
 
+        doctorPatientListCrv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getAssociationsList(null, true);
+            }
+        });
+
+        doctorPatientListCrv.setErrorModel(this, associationApiViewModel.getErrorModelLiveData());
     }
 
     private void showSearchList(String search) {

@@ -78,6 +78,13 @@ public class PendingInvitesSentFragment extends BaseFragment {
             }
         });
 
+        pendingInvitesCrv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeApiCall();
+            }
+        });
+
     }
 
     private void getReceivedPendingInvites(int page, boolean isShowProgress) {
@@ -98,10 +105,14 @@ public class PendingInvitesSentFragment extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && isResume) {
-            if (pendingInvitesApiViewModel == null) {
-                attachObserver();
-                getReceivedPendingInvites(page, true);
-            }
+            makeApiCall();
+        }
+    }
+
+    private void makeApiCall() {
+        if (pendingInvitesApiViewModel == null) {
+            attachObserver();
+            getReceivedPendingInvites(page, true);
         }
     }
 
@@ -172,6 +183,9 @@ public class PendingInvitesSentFragment extends BaseFragment {
                         }
                     }
                 });
+
+        pendingInvitesCrv.setErrorModel(this, pendingInvitesApiViewModel.getErrorModelLiveData());
+
     }
 
 }
