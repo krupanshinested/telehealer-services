@@ -117,6 +117,8 @@ public class RecentFragment extends BaseFragment {
 
         recentsCelv.setEmptyState(EmptyViewConstants.EMPTY_CALLS);
 
+        recentsCelv.hideEmptyState();
+
         recentsElv = recentsCelv.getExpandableView();
 
         boolean isShowInfoAction = false;
@@ -155,6 +157,14 @@ public class RecentFragment extends BaseFragment {
             }
         });
 
+        recentsCelv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeApiCall(true);
+            }
+        });
+
+        recentsCelv.setErrorModel(this, recentsApiViewModel.getErrorModelLiveData());
     }
 
     private void updateList() {
@@ -270,9 +280,6 @@ public class RecentFragment extends BaseFragment {
     }
 
     private void makeApiCall(boolean isShowProgress) {
-        if (recentsCelv != null) {
-            recentsCelv.hideEmptyState();
-        }
         if (!isApiRequested) {
             if (recentsApiViewModel != null) {
                 if (getArguments() != null) {

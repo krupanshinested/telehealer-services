@@ -180,6 +180,15 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
 
         patientListCrv.getSwipeLayout().setEnabled(false);
 
+        patientListCrv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getUsersList(selectedFilter);
+            }
+        });
+
+        patientListCrv.setErrorModel(this, vitalReportApiViewModel.getErrorModelLiveData());
+
         getUsersList(selectedFilter);
 
         if (getArguments() != null) {

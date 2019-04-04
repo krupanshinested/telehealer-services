@@ -5,16 +5,13 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.MutableLiveData;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.auth0.android.jwt.JWT;
 import com.google.gson.Gson;
@@ -28,7 +25,6 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.common.AppUpdateActivity;
@@ -59,7 +55,6 @@ import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-import static com.thealer.telehealer.TeleHealerApplication.application;
 
 /**
  * Created by Aswin on 08,October,2018
@@ -67,6 +62,7 @@ import static com.thealer.telehealer.TeleHealerApplication.application;
 public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner {
 
     protected final String TAG = getClass().getSimpleName();
+    public static final int NETWORK_ERROR_CODE = -10;
 
     private static List<BaseViewInterface> baseViewInterfaceList = new ArrayList<>();
     private static boolean isRefreshToken = false;
@@ -166,6 +162,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                             baseViewInterface.onStatus(true);
                         }
                     }
+                    Log.e(TAG, "run: list size " + baseViewInterfaceList.size());
+
                 }
             }
         };
@@ -265,6 +263,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     public ApiInterface getPublicApiService() {
         return RetrofitManager.getInstance(getApplication()).getPublicApiService();
     }
+
     public ApiInterface getFoodApiService() {
         return RetrofitManager.getInstance(getApplication()).getFoodApiService();
     }
@@ -368,10 +367,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     public void handleError(Throwable e) {
         Log.e(TAG, "onError: " + e.getMessage());
         if (e instanceof NoConnectivityException) {
-            Toast.makeText(getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
             isLoadingLiveData.setValue(false);
-            errorModelLiveData.setValue(new ErrorModel(-1, e.getMessage(), e.getMessage()));
-
+            errorModelLiveData.setValue(new ErrorModel(NETWORK_ERROR_CODE, e.getMessage(), e.getMessage()));
         } else if (e instanceof HttpException) {
             try {
                 HttpException httpException = (HttpException) e;
@@ -398,7 +395,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         break;
                     case 403:
                         errorModelLiveData.setValue(errorModel);
-                        if (isRefreshToken){
+                        if (isRefreshToken) {
                             goToSigninActivity();
                         }
                         break;
@@ -428,11 +425,12 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             }
         } else if (e instanceof UnknownHostException) {
             isLoadingLiveData.setValue(false);
-            errorModelLiveData.setValue(new ErrorModel(-1, "Network Error", "Please check your network connection"));
+            errorModelLiveData.setValue(new ErrorModel(NETWORK_ERROR_CODE, "Network Error", "Please check your network connection"));
         } else {
             isLoadingLiveData.setValue(false);
             errorModelLiveData.setValue(new ErrorModel(-1, e.getMessage(), e.getMessage()));
         }
+
         isRefreshToken = false;
         isQuickLoginReceiverEnabled = false;
 
