@@ -143,7 +143,9 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
     }
 
     private void gotoHomeActivity() {
-        startActivity(new Intent(this, HomeActivity.class));
+        if (!isPreviousActivityAvailable()) {
+            startActivity(new Intent(this, HomeActivity.class));
+        }
         finish();
     }
 
