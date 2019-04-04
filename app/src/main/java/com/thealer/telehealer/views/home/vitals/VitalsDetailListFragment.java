@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -476,6 +475,15 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 makeApiCall(false);
             }
         });
+
+        vitalDetailCelv.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeApiCall(true);
+            }
+        });
+
+        vitalDetailCelv.setErrorModel(this, vitalsApiViewModel.getErrorModelLiveData());
 
         if (getArguments() != null) {
 

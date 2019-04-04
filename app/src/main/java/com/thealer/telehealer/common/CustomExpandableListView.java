@@ -1,8 +1,13 @@
 package com.thealer.telehealer.common;
 
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -13,7 +18,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.manager.helper.NetworkUtil;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
+import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 
 /**
  * Created by Aswin on 20,November,2018
@@ -34,7 +43,7 @@ public class CustomExpandableListView extends ConstraintLayout {
     private OnPaginateInterface onPaginateInterface;
     private CustomSwipeRefreshLayout swipeLayout;
     private LinearLayout emptyLl;
-    
+
     public CustomExpandableListView(Context context) {
         super(context);
     }
@@ -93,6 +102,51 @@ public class CustomExpandableListView extends ConstraintLayout {
         });
     }
 
+    public void setActionClickListener(OnClickListener onClickListener) {
+        emptyActionBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickListener.onClick(v);
+                setEmptyState(emptyState);
+            }
+        });
+    }
+
+    public void setErrorModel(LifecycleOwner owner, MutableLiveData<ErrorModel> errorModelMutableLiveData) {
+        errorModelMutableLiveData.observe(owner,
+                new Observer<ErrorModel>() {
+                    @Override
+                    public void onChanged(@Nullable ErrorModel errorModel) {
+                        swipeLayout.setRefreshing(false);
+                        if (errorModel != null) {
+                            showNetworkEmptyState(errorModel.getCode());
+                        }
+                    }
+                });
+    }
+
+    public void showNetworkEmptyState(int code) {
+        String emptyState = this.emptyState;
+        boolean actionVisible = false;
+        switch (code) {
+            case BaseApiViewModel
+                    .NETWORK_ERROR_CODE:
+                emptyState = EmptyViewConstants.EMPTY_NO_NETWORK;
+                actionVisible = true;
+                break;
+            case 500:
+                //handle server down here
+                break;
+        }
+        showEmptyState(emptyState);
+
+        if (actionVisible) {
+            showOrhideEmptyState(true);
+            emptyActionBtn.setVisibility(VISIBLE);
+            emptyActionBtn.setText(context.getString(R.string.retry));
+        }
+    }
+
     public void setEmptyState(String emptyState) {
         this.emptyState = emptyState;
         showEmptyState(emptyState);
@@ -126,6 +180,15 @@ public class CustomExpandableListView extends ConstraintLayout {
         }
     }
 
+    public void showOrhideEmptyState(boolean show) {
+        if (show) {
+            expandableListView.setVisibility(GONE);
+            recyclerEmptyStateView.setVisibility(VISIBLE);
+        } else {
+            expandableListView.setVisibility(VISIBLE);
+            recyclerEmptyStateView.setVisibility(GONE);
+        }
+    }
     public void showEmptyState() {
         expandableListView.setVisibility(GONE);
         recyclerEmptyStateView.setVisibility(VISIBLE);
@@ -149,6 +212,12 @@ public class CustomExpandableListView extends ConstraintLayout {
             emptyTitleTv.setText(title);
             emptyMessageTv.setText(message);
             emptyIv.setImageDrawable(context.getDrawable(image));
+
+            emptyActionBtn.setVisibility(GONE);
+
+            if (!emptyState.equals(EmptyViewConstants.EMPTY_NO_NETWORK) && !NetworkUtil.isOnline(context)) {
+                showNetworkEmptyState(BaseApiViewModel.NETWORK_ERROR_CODE);
+            }
         }
     }
 
