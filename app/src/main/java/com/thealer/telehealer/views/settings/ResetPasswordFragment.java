@@ -4,9 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -16,6 +19,7 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -29,9 +33,20 @@ public class ResetPasswordFragment extends BaseFragment implements View.OnClickL
     private CircleImageView profileView;
     private TextView profileTitle, description;
     private CustomButton okButton;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
 
     private OnActionCompleteInterface actionCompleteInterface;
-    private OnViewChangeInterface viewChangeInterface;
+    private OnCloseActionInterface onCloseActionInterface;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        actionCompleteInterface = (OnActionCompleteInterface) getActivity();
+        onCloseActionInterface = (OnCloseActionInterface) getActivity();
+    }
 
     @Nullable
     @Override
@@ -41,18 +56,26 @@ public class ResetPasswordFragment extends BaseFragment implements View.OnClickL
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void initView(View view) {
+        profileView = view.findViewById(R.id.profile_iv);
+        profileTitle = view.findViewById(R.id.profile_title);
+        description = view.findViewById(R.id.description_tv);
+        okButton = view.findViewById(R.id.ok_btn);
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
 
-        viewChangeInterface.hideOrShowNext(false);
-    }
+        toolbarTitle.setText(getString(R.string.reset_password));
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        actionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        viewChangeInterface = (OnViewChangeInterface) getActivity();
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), profileView, UserDetailPreferenceManager.getWhoAmIResponse().getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
+
+        profileTitle.setText(getString(R.string.hi) + " " + UserDetailPreferenceManager.getUserDisplayName());
+
+        description.setText(getString(R.string.reset_password_string) + " ( " + UserDetailPreferenceManager.getWhoAmIResponse().getPhone() + " )");
+
+        okButton.setOnClickListener(this);
+        backIv.setOnClickListener(this);
     }
 
     @Override
@@ -62,21 +85,10 @@ public class ResetPasswordFragment extends BaseFragment implements View.OnClickL
                 if (actionCompleteInterface != null)
                     actionCompleteInterface.onCompletionResult(RequestID.REQ_PASSWORD_RESET_OTP, true, null);
                 break;
+            case R.id.back_iv:
+                onCloseActionInterface.onClose(false);
+                break;
         }
     }
 
-    private void initView(View view) {
-        profileView = view.findViewById(R.id.profile_iv);
-        profileTitle = view.findViewById(R.id.profile_title);
-        description = view.findViewById(R.id.description_tv);
-        okButton = view.findViewById(R.id.ok_btn);
-
-        Utils.setImageWithGlide(getActivity().getApplicationContext(), profileView, UserDetailPreferenceManager.getWhoAmIResponse().getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
-
-        profileTitle.setText(getString(R.string.hi) + " " + UserDetailPreferenceManager.getUserDisplayName());
-
-        description.setText(getString(R.string.reset_password_string) + " ( " + UserDetailPreferenceManager.getWhoAmIResponse().getPhone() + " )");
-
-        okButton.setOnClickListener(this);
-    }
 }

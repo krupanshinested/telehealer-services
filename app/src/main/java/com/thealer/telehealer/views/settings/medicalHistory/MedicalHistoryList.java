@@ -11,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,7 +20,6 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 
 /**
@@ -30,7 +28,6 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 public class MedicalHistoryList extends BaseFragment {
     private RecyclerView medicalHistoryRv;
 
-    private ChangeTitleInterface changeTitleInterface;
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
@@ -42,7 +39,6 @@ public class MedicalHistoryList extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        changeTitleInterface = (ChangeTitleInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
     }
 
@@ -59,21 +55,17 @@ public class MedicalHistoryList extends BaseFragment {
         appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
-        if (getArguments() != null) {
-            backIv = (ImageView) view.findViewById(R.id.back_iv);
-            toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
-            toolbarTitle.setText(getString(R.string.health_profile));
-            backIv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onCloseActionInterface.onClose(false);
-                }
-            });
-            toolbar.setVisibility(View.VISIBLE);
-        } else {
-            toolbar.setVisibility(View.GONE);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        toolbarTitle.setText(getString(R.string.health_profile));
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCloseActionInterface.onClose(false);
+            }
+        });
+        toolbar.setVisibility(View.VISIBLE);
 
-        }
         medicalHistoryRv.setLayoutManager(new LinearLayoutManager(getActivity()));
         medicalHistoryListAdapter = new MedicalHistoryListAdapter(getActivity(), getArguments(), this);
         medicalHistoryRv.setAdapter(medicalHistoryListAdapter);
@@ -84,21 +76,15 @@ public class MedicalHistoryList extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RequestID.REQ_HISTORY_UPDATE && resultCode == Activity.RESULT_OK){
-            if (data != null && data.getExtras() != null){
+        if (requestCode == RequestID.REQ_HISTORY_UPDATE && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.getExtras() != null) {
                 if (getArguments() != null) {
                     getArguments().putSerializable(Constants.USER_DETAIL, data.getSerializableExtra(Constants.USER_DETAIL));
-                    if (medicalHistoryListAdapter != null){
+                    if (medicalHistoryListAdapter != null) {
                         medicalHistoryListAdapter.updateBundle(getArguments());
                     }
                 }
             }
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        changeTitleInterface.onTitleChange(getString(R.string.health_profile));
     }
 }

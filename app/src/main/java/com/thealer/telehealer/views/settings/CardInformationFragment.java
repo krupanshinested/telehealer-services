@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,17 +21,13 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCard;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeViewModel;
-import com.thealer.telehealer.apilayer.models.Payments.Transaction;
-import com.thealer.telehealer.apilayer.models.Payments.TransactionApiViewModel;
-import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.settings.Adapters.PaymentAdapter;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 /**
@@ -39,7 +36,7 @@ import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 public class CardInformationFragment extends BaseFragment {
 
-    private TextView card_tv,expiration_tv;
+    private TextView card_tv, expiration_tv;
     private ImageView card_iv;
     private ConstraintLayout main_container;
     private ConstraintLayout recyclerEmptyStateView;
@@ -51,6 +48,12 @@ public class CardInformationFragment extends BaseFragment {
     private OnViewChangeInterface onViewChangeInterface;
 
     private BrainTreeViewModel brainTreeViewModel;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextView nextTv;
+    private ImageView closeIv;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,11 +88,16 @@ public class CardInformationFragment extends BaseFragment {
     }
 
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
         card_tv = view.findViewById(R.id.card_tv);
         expiration_tv = view.findViewById(R.id.expiration_tv);
         card_iv = view.findViewById(R.id.card_iv);
         main_container = view.findViewById(R.id.main_container);
-
         recyclerEmptyStateView = (ConstraintLayout) view.findViewById(R.id.recycler_empty_state_view);
         emptyIv = (ImageView) view.findViewById(R.id.empty_iv);
         emptyTitleTv = (TextView) view.findViewById(R.id.empty_title_tv);
@@ -98,6 +106,20 @@ public class CardInformationFragment extends BaseFragment {
         recyclerEmptyStateView.setVisibility(View.GONE);
         main_container.setVisibility(View.GONE);
         brainTreeViewModel.getBrainTreeCustomer();
+
+        if (getArguments() != null) {
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                nextTv.setVisibility(View.GONE);
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((OnCloseActionInterface) getActivity()).onClose(false);
+                    }
+                });
+                toolbarTitle.setText(getString(R.string.card_information));
+            }
+        }
     }
 
     private void addObserver() {
@@ -124,8 +146,8 @@ public class CardInformationFragment extends BaseFragment {
                             }
 
                             card_tv.setText(brainTreeCard.getFormattedCardNumber());
-                            Utils.setImageWithGlide(getContext(),card_iv,brainTreeCard.getImageUrl(),getResources().getDrawable(R.drawable.placeholder_insurance),false);
-                            expiration_tv.setText(getResources().getString(R.string.expiration_date)+" : "+brainTreeCard.getExpirationDate());
+                            Utils.setImageWithGlide(getContext(), card_iv, brainTreeCard.getImageUrl(), getResources().getDrawable(R.drawable.placeholder_insurance), false);
+                            expiration_tv.setText(getResources().getString(R.string.expiration_date) + " : " + brainTreeCard.getExpirationDate());
 
                         } else {
                             loadEmptyView();

@@ -3,7 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/appbar_app_color_title_back_next"
+        android:visibility="gone" />
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -111,9 +119,9 @@
                     android:id="@+id/specialist_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
                     android:paddingStart="4dp"
                     android:textColor="@color/colorBlack"
+                    android:textSize="18sp"
                     android:visibility="gone"
                     tools:text="@string/dummy_text" />
 
@@ -190,9 +198,9 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="4dp"
                     android:textColor="@color/colorBlack"
-                    tools:text="@string/dummy_text"
                     android:textSize="18sp"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:text="@string/dummy_text" />
 
                 <View
                     android:id="@+id/gender_view"

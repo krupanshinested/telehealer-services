@@ -24,8 +24,6 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiViewModel;
-import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
@@ -120,204 +118,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(profileListener);
-    }
-
-    /*
-     *
-     * Listener from Settings Fragment
-     * */
-    @Override
-    public void didSelecteItem(int id) {
-        switch (id) {
-            case R.id.profile:
-                showUserProfile();
-                break;
-            case R.id.documents:
-                updateDetailTitle(getString(R.string.documents));
-
-                DocumentListFragment documentListFragment = new DocumentListFragment();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(Constants.IS_FROM_HOME, true);
-                bundle.putString(Constants.SELECTED_ITEM, OrderConstant.ORDER_DOCUMENTS);
-                documentListFragment.setArguments(bundle);
-
-                setFragment(documentListFragment, false, true, true);
-
-                hideOrShowToolbarTile(true);
-                break;
-            case R.id.medical_history:
-                if (whoAmIApiViewModel == null) {
-                    whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
-                }
-                if (!whoAmIApiViewModel.baseApiResponseModelMutableLiveData.hasActiveObservers()) {
-                    whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-                        @Override
-                        public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                            if (baseApiResponseModel != null) {
-                                WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                                UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
-                                whoAmIApiViewModel.baseApiResponseModelMutableLiveData.removeObservers(ProfileSettingsActivity.this);
-                                showMedicalHistory();
-                            }
-                        }
-                    });
-                }
-                whoAmIApiViewModel.checkWhoAmI();
-                break;
-            case R.id.settings:
-                GeneralSettingsFragment generalSettingsFragment = new GeneralSettingsFragment();
-                setFragment(generalSettingsFragment, false, true, true);
-                break;
-            case R.id.email_id:
-                break;
-            case R.id.phone_number:
-                break;
-            case R.id.change_password:
-
-                ResetPasswordRequestModel resetPasswordRequestModel = ViewModelProviders.of(this).get(ResetPasswordRequestModel.class);
-                resetPasswordRequestModel.setEmail(UserDetailPreferenceManager.getEmail());
-                resetPasswordRequestModel.setApp_type(Utils.getAppType());
-
-                CreateUserApiViewModel createUserApiViewModel = ViewModelProviders.of(this).get(CreateUserApiViewModel.class);
-
-                updateDetailTitle(getString(R.string.change_password));
-                ResetPasswordFragment resetPasswordFragment = new ResetPasswordFragment();
-                setFragment(resetPasswordFragment, false, true, true);
-                break;
-            case R.id.appointment_slots:
-                break;
-            case R.id.feedback:
-                updateDetailTitle(getString(R.string.feedback));
-                WebViewFragment feedBackFragment = new WebViewFragment();
-                feedBackFragment.urlToLoad = getString(R.string.feedback_url);
-                feedBackFragment.title = getString(R.string.feedback);
-                hideOrShowNext(false);
-                setFragment(feedBackFragment, false, true, true);
-                break;
-            case R.id.terms_and_condition:
-                updateDetailTitle(getString(R.string.terms_and_conditions));
-                WebViewFragment termsFragment = new WebViewFragment();
-                termsFragment.urlToLoad = getString(R.string.terms_and_conditions_url);
-                termsFragment.title = getString(R.string.terms_and_conditions);
-                hideOrShowNext(false);
-                setFragment(termsFragment, false, true, true);
-                break;
-            case R.id.privacy_policy:
-                updateDetailTitle(getString(R.string.privacy_policy));
-                WebViewFragment privacyFragment = new WebViewFragment();
-                privacyFragment.urlToLoad = getString(R.string.privacy_url);
-                privacyFragment.title = getString(R.string.privacy_policy);
-                hideOrShowNext(false);
-                setFragment(privacyFragment, false, true, true);
-                break;
-            case R.id.signOut:
-                EventRecorder.recordUserSession("logout");
-                appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
-                PubnubUtil.shared.unsubscribe();
-                startActivity(new Intent(this, SigninActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                finish();
-                break;
-            case R.id.payments_billings:
-                updateDetailTitle(getString(R.string.call_charges));
-                PaymentsListingFragment paymentsListingFragment = new PaymentsListingFragment();
-                hideOrShowNext(false);
-                setFragment(paymentsListingFragment, false, true, true);
-                break;
-            case R.id.medical_assistant_ll:
-                updateDetailTitle(getString(R.string.medical_assistant));
-                showMedicalAssistantList();
-                break;
-        }
-    }
-
-    private void showUserProfile() {
-        Bundle profile = new Bundle();
-        profile.putInt(ArgumentKeys.VIEW_TYPE, Constants.VIEW_MODE);
-        switch (appPreference.getInt(Constants.USER_TYPE)) {
-            case Constants.TYPE_MEDICAL_ASSISTANT:
-                MedicalAssistantDetailFragment medicalAssistantDetailFragment = new MedicalAssistantDetailFragment();
-                medicalAssistantDetailFragment.setArguments(profile);
-                setFragment(medicalAssistantDetailFragment, false, true, true);
-                break;
-            case Constants.TYPE_DOCTOR:
-                CreateDoctorDetailFragment doctorDetailFragment = new CreateDoctorDetailFragment();
-                doctorDetailFragment.setArguments(profile);
-                setFragment(doctorDetailFragment, false, true, true);
-                break;
-            case Constants.TYPE_PATIENT:
-                PatientRegistrationDetailFragment patientRegistrationDetailFragment = new PatientRegistrationDetailFragment();
-                patientRegistrationDetailFragment.setArguments(profile);
-                setFragment(patientRegistrationDetailFragment, false, true, true);
-                break;
-        }
-    }
-
-    private void showMedicalAssistantList() {
-        MedicalAssistantListFragment medicalAssistantListFragment = new MedicalAssistantListFragment();
-        setFragment(medicalAssistantListFragment, false, true, true);
-        hideOrShowNext(false);
-    }
-
-    private void showMedicalHistory() {
-        Fragment fragment;
-
-        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
-
-        if (whoAmIApiResponseModel.getQuestionnaire() != null && whoAmIApiResponseModel.getQuestionnaire().isQuestionariesEmpty()) {
-            fragment = new MedicalHistoryViewFragment();
-        } else {
-            fragment = new MedicalHistoryList();
-        }
-        setFragment(fragment, false, true, false);
-
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        if (!isBackDisabled) {
-            if (getIntent() != null && getIntent().getExtras() != null &&
-                    getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == Constants.SCHEDULE_CREATION_MODE) {
-                finish();
-            } else {
-
-                int maxCount = isSplitModeNeeded() ? 1 : 0;
-                int currentBackStackCount = getSupportFragmentManager().getBackStackEntryCount();
-
-                if (currentBackStackCount > maxCount) {
-                    getSupportFragmentManager().popBackStack();
-
-                    if (currentBackStackCount == 1) {
-                        updateDetailTitle(UserDetailPreferenceManager.getUserDisplayName());
-                        setExpandEnabled(true);
-                        hideOrShowNext(false);
-                        hideOrShowToolbarTile(false);
-                    }
-
-                } else {
-                    finish();
-                }
-            }
-        }
-    }
-
-
-    /*
-     *
-     * Initializing the views
-     * */
     private void initView() {
         mainContainer = findViewById(R.id.main_container);
 
@@ -338,9 +138,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         setSupportActionBar(toolbar);
 
         updateProfile();
-
-        //For appointment slot update
-        AppointmentSlotUpdate appointmentSlotUpdate = ViewModelProviders.of(this).get(AppointmentSlotUpdate.class);
 
         appbarLayout.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {
             @Override
@@ -380,14 +177,180 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == Constants.SCHEDULE_CREATION_MODE) {
                 PatientRegistrationDetailFragment patientRegistrationDetailFragment = new PatientRegistrationDetailFragment();
                 Bundle bundle = new Bundle();
+                bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
                 bundle.putInt(ArgumentKeys.VIEW_TYPE, Constants.SCHEDULE_CREATION_MODE);
                 patientRegistrationDetailFragment.setArguments(bundle);
-                setFragment(patientRegistrationDetailFragment, false, true, true);
+                showSubFragment(patientRegistrationDetailFragment);
 
             } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.HISTORY_UPDATE) {
                 showMedicalHistory();
             } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.LICENCE_UPDATE) {
                 showUserProfile();
+            }
+        }
+    }
+
+    /*
+     *
+     * Listener from Settings Fragment
+     * */
+    @Override
+    public void didSelecteItem(int id) {
+        Bundle bundle;
+        switch (id) {
+            case R.id.profile:
+                showUserProfile();
+                break;
+            case R.id.documents:
+                DocumentListFragment documentListFragment = new DocumentListFragment();
+                bundle = new Bundle();
+                bundle.putBoolean(Constants.IS_FROM_HOME, true);
+                bundle.putString(Constants.SELECTED_ITEM, OrderConstant.ORDER_DOCUMENTS);
+                documentListFragment.setArguments(bundle);
+
+                showSubFragment(documentListFragment);
+                break;
+            case R.id.medical_history:
+                if (whoAmIApiViewModel == null) {
+                    whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+                }
+                if (!whoAmIApiViewModel.baseApiResponseModelMutableLiveData.hasActiveObservers()) {
+                    whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+                        @Override
+                        public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                            if (baseApiResponseModel != null) {
+                                WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                                UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                                whoAmIApiViewModel.baseApiResponseModelMutableLiveData.removeObservers(ProfileSettingsActivity.this);
+                                showMedicalHistory();
+                            }
+                        }
+                    });
+                }
+                whoAmIApiViewModel.checkWhoAmI();
+                break;
+            case R.id.settings:
+                GeneralSettingsFragment generalSettingsFragment = new GeneralSettingsFragment();
+                showSubFragment(generalSettingsFragment);
+                break;
+            case R.id.email_id:
+                break;
+            case R.id.phone_number:
+                break;
+            case R.id.change_password:
+
+                ResetPasswordRequestModel resetPasswordRequestModel = ViewModelProviders.of(this).get(ResetPasswordRequestModel.class);
+                resetPasswordRequestModel.setEmail(UserDetailPreferenceManager.getEmail());
+                resetPasswordRequestModel.setApp_type(Utils.getAppType());
+
+                ResetPasswordFragment resetPasswordFragment = new ResetPasswordFragment();
+
+                showSubFragment(resetPasswordFragment);
+
+                break;
+            case R.id.appointment_slots:
+                break;
+            case R.id.feedback:
+                bundle = new Bundle();
+                bundle.putString(ArgumentKeys.VIEW_TITLE, getString(R.string.feedback));
+                bundle.putString(ArgumentKeys.WEB_VIEW_URL, getString(R.string.feedback_url));
+                WebViewFragment feedBackFragment = new WebViewFragment();
+                feedBackFragment.setArguments(bundle);
+
+                showSubFragment(feedBackFragment);
+                break;
+            case R.id.terms_and_condition:
+                bundle = new Bundle();
+                bundle.putString(ArgumentKeys.VIEW_TITLE, getString(R.string.terms_and_conditions));
+                bundle.putString(ArgumentKeys.WEB_VIEW_URL, getString(R.string.terms_and_conditions_url));
+
+                WebViewFragment termsFragment = new WebViewFragment();
+                termsFragment.setArguments(bundle);
+                showSubFragment(termsFragment);
+                break;
+            case R.id.privacy_policy:
+                bundle = new Bundle();
+                bundle.putString(ArgumentKeys.VIEW_TITLE, getString(R.string.privacy_policy));
+                bundle.putString(ArgumentKeys.WEB_VIEW_URL, getString(R.string.privacy_url));
+
+                WebViewFragment privacyFragment = new WebViewFragment();
+                privacyFragment.setArguments(bundle);
+                showSubFragment(privacyFragment);
+                break;
+            case R.id.signOut:
+                EventRecorder.recordUserSession("logout");
+                appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
+                PubnubUtil.shared.unsubscribe();
+                startActivity(new Intent(this, SigninActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                finish();
+                break;
+            case R.id.payments_billings:
+                PaymentsListingFragment paymentsListingFragment = new PaymentsListingFragment();
+                showSubFragment(paymentsListingFragment);
+                break;
+            case R.id.medical_assistant_ll:
+                showMedicalAssistantList();
+                break;
+        }
+    }
+
+    private void showUserProfile() {
+        Bundle profile = new Bundle();
+        profile.putInt(ArgumentKeys.VIEW_TYPE, Constants.VIEW_MODE);
+        profile.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
+        switch (appPreference.getInt(Constants.USER_TYPE)) {
+            case Constants.TYPE_MEDICAL_ASSISTANT:
+                MedicalAssistantDetailFragment medicalAssistantDetailFragment = new MedicalAssistantDetailFragment();
+                medicalAssistantDetailFragment.setArguments(profile);
+                showSubFragment(medicalAssistantDetailFragment);
+                break;
+            case Constants.TYPE_DOCTOR:
+                CreateDoctorDetailFragment doctorDetailFragment = new CreateDoctorDetailFragment();
+                doctorDetailFragment.setArguments(profile);
+                showSubFragment(doctorDetailFragment);
+                break;
+            case Constants.TYPE_PATIENT:
+                PatientRegistrationDetailFragment patientRegistrationDetailFragment = new PatientRegistrationDetailFragment();
+                patientRegistrationDetailFragment.setArguments(profile);
+                showSubFragment(patientRegistrationDetailFragment);
+                break;
+        }
+    }
+
+    private void showMedicalAssistantList() {
+        MedicalAssistantListFragment medicalAssistantListFragment = new MedicalAssistantListFragment();
+        showSubFragment(medicalAssistantListFragment);
+    }
+
+    private void showMedicalHistory() {
+        Fragment fragment;
+
+        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+
+        if (whoAmIApiResponseModel.getQuestionnaire() != null && whoAmIApiResponseModel.getQuestionnaire().isQuestionariesEmpty()) {
+            fragment = new MedicalHistoryViewFragment();
+        } else {
+            fragment = new MedicalHistoryList();
+        }
+        showSubFragment(fragment);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (!isBackDisabled) {
+            if (getIntent() != null && getIntent().getExtras() != null &&
+                    getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == Constants.SCHEDULE_CREATION_MODE) {
+                finish();
+            } else {
+
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                } else {
+                    finish();
+                }
             }
         }
     }
@@ -438,7 +401,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     private Fragment getCurrentFragment() {
         return getSupportFragmentManager()
-                .findFragmentById(R.id.main_container);
+                .findFragmentById(R.id.sub_fragment_holder);
     }
 
     private void setFragment(Fragment fragment, Boolean toBase, Boolean needToAddBackTrace, Boolean needToClearBackTrace) {
@@ -497,8 +460,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                     otpBundle = new Bundle();
                 }
                 otpBundle.putInt(ArgumentKeys.OTP_TYPE, OtpVerificationFragment.reset_password);
+                otpBundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
                 otpVerificationFragment.setArguments(otpBundle);
-                setFragment(otpVerificationFragment, false, true, false);
+
+                showSubFragment(otpVerificationFragment);
                 break;
             case RequestID.REQ_RESET_PASSWORD:
                 String title = getString(R.string.password);
@@ -512,8 +477,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 }
                 passwordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
                 passwordBundle.putString(ArgumentKeys.TITLE, title);
+                passwordBundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
                 createPasswordFragment.setArguments(passwordBundle);
-                setFragment(createPasswordFragment, false, true, false);
+
+                showSubFragment(createPasswordFragment);
 
                 break;
             case RequestID.RESET_PASSWORD_OTP_VALIDATED:
@@ -528,13 +495,14 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 }
                 repasswordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
                 repasswordBundle.putString(ArgumentKeys.TITLE, re_title);
+                repasswordBundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
                 reEnterPassword.setArguments(repasswordBundle);
-                setFragment(reEnterPassword, false, true, false);
+                showSubFragment(reEnterPassword);
 
                 break;
             case RequestID.REQ_QUICK_LOGIN_PIN:
                 QuickLoginPinFragment quickLoginPinFragment = new QuickLoginPinFragment();
-                setFragment(quickLoginPinFragment, false, true, false);
+                showSubFragment(quickLoginPinFragment);
                 break;
             case RequestID.QUICK_LOGIN_PIN_CREATED:
                 didSelecteItem(R.id.settings);
@@ -544,9 +512,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (bundle == null) {
                     bundle = new Bundle();
                 }
+                bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
                 bundle.putInt(ArgumentKeys.SCREEN_TYPE, Constants.forProfileUpdate);
                 patientChoosePaymentFragment.setArguments(bundle);
-                setFragment(patientChoosePaymentFragment, false, true, false);
+                showSubFragment(patientChoosePaymentFragment);
 
                 break;
             case RequestID.INSURANCE_REQUEST_IMAGE:
@@ -556,14 +525,16 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (bundle == null) {
                     bundle = new Bundle();
                 }
+                bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
                 bundle.putInt(ArgumentKeys.SCREEN_TYPE, Constants.forProfileUpdate);
                 patientUploadInsuranceFragment.setArguments(bundle);
-                setFragment(patientUploadInsuranceFragment, false, true, false);
+                showSubFragment(patientUploadInsuranceFragment);
 
                 break;
             case RequestID.INSURANCE_CHANGE_RESULT:
 
                 Bundle finalBundle = bundle;
+
                 getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
                     @Override
                     public void onBackStackChanged() {
@@ -572,7 +543,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                             ((BundleReceiver) getCurrentFragment()).didReceiveIntent(finalBundle, RequestID.INSURANCE_CHANGE_RESULT);
                             getSupportFragmentManager().removeOnBackStackChangedListener(this);
                         }
-
                     }
                 });
 
@@ -580,20 +550,17 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
                 break;
             case RequestID.CARD_INFORMATION_VIEW:
-                updateDetailTitle(getString(R.string.card_information));
                 CardInformationFragment cardInformationFragment = new CardInformationFragment();
-                hideOrShowNext(false);
-                setFragment(cardInformationFragment, false, true, false);
-
+                bundle = new Bundle();
+                bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
+                cardInformationFragment.setArguments(bundle);
+                showSubFragment(cardInformationFragment);
                 break;
 
             case RequestID.TRANSACTION_DETAIL:
-                updateDetailTitle("");
                 PaymentDetailFragment paymentDetailFragment = new PaymentDetailFragment();
                 paymentDetailFragment.setArguments(bundle);
-                hideOrShowNext(false);
-                setFragment(paymentDetailFragment, false, true, false);
-
+                showSubFragment(paymentDetailFragment);
                 break;
             case RequestID.REQ_SHOW_DETAIL_VIEW:
                 bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_CONNECTION);
@@ -653,22 +620,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     @Override
     public void enableNext(boolean enabled) {
-        nextTv.setEnabled(enabled);
-        if (enabled) {
-            nextTv.setAlpha(1);
-        } else {
-            nextTv.setAlpha(0.5f);
-        }
     }
 
     @Override
     public void hideOrShowNext(boolean hideOrShow) {
-        if (hideOrShow) {
-            other_option_iv.setVisibility(View.GONE);
-            nextTv.setVisibility(View.VISIBLE);
-        } else {
-            nextTv.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -678,25 +633,14 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     @Override
     public void hideOrShowToolbarTile(boolean hideOrShow) {
-        if (hideOrShow) {
-            collapsingToolbarLayout.setVisibility(View.GONE);
-        } else {
-            collapsingToolbarLayout.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
     public void hideOrShowBackIv(boolean hideOrShow) {
-        if (hideOrShow) {
-            backIv.setVisibility(View.VISIBLE);
-        } else {
-            backIv.setVisibility(View.GONE);
-        }
     }
 
     @Override
     public void updateNextTitle(String nextTitle) {
-        nextTv.setText(nextTitle);
     }
 
     @Override
@@ -706,11 +650,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     @Override
     public void hideOrShowOtherOption(boolean hideOrShow) {
-        if (hideOrShow) {
-            other_option_iv.setVisibility(View.VISIBLE);
-        } else {
-            other_option_iv.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -743,7 +682,13 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     @Override
     public void onShowFragment(Fragment fragment) {
-        setFragment(fragment, false, true, false);
+        showSubFragment(fragment);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(profileListener);
     }
 
 }
