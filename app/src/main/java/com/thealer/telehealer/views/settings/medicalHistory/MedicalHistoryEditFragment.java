@@ -155,22 +155,18 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             }
 
-            if (commonUserApiResponseModel != null) {
-                backIv = (ImageView) view.findViewById(R.id.back_iv);
-                toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
-                backIv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onCloseActionInterface.onClose(false);
-                    }
-                });
+            backIv = (ImageView) view.findViewById(R.id.back_iv);
+            toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+            backIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onCloseActionInterface.onClose(false);
+                }
+            });
 
-                toolbarTitle.setText(type);
+            toolbarTitle.setText(type);
 
-                toolbar.setVisibility(View.VISIBLE);
-            } else {
-                toolbar.setVisibility(View.GONE);
-            }
+            toolbar.setVisibility(View.VISIBLE);
 
             if (type != null) {
                 viewTitle.setText(MedicalHistoryConstants.getTitle(type));
@@ -669,7 +665,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
                         if (baseApiResponseModel.isSuccess()) {
                             if (getTargetFragment() != null) {
                                 Bundle bundle = new Bundle();
-                                if (commonUserApiResponseModel.getQuestionnaire() == null){
+                                if (commonUserApiResponseModel.getQuestionnaire() == null) {
                                     commonUserApiResponseModel.setQuestionnaire(new QuestionnaireBean());
                                 }
                                 switch (type) {

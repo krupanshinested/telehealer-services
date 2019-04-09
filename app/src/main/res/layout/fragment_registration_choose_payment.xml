@@ -1,64 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:padding="@dimen/padding_default">
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView3"
-        style="@style/text_title_bold_app_color"
-        android:gravity="center"
-        android:padding="@dimen/padding_default"
-        android:text="@string/choose_your_payment_method"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <include
+        layout="@layout/appbar_app_color_title_back_next"
+        android:visibility="gone" />
 
-    <com.thealer.telehealer.common.CustomButton
-        android:id="@+id/choose_payment_insurance_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="10dp"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp"
-        android:text="@string/insurance"
-        app:background_color="@color/colorWhite"
-        app:corner_radius="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        app:layout_constraintWidth_max="@dimen/max_width"
-        app:stroke_color="@color/app_gradient_start"
-        app:stroke_width="2" />
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <com.thealer.telehealer.common.CustomButton
-        android:id="@+id/choose_payment_cash_btn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/cash"
-        app:background_color="@color/colorWhite"
-        app:corner_radius="20dp"
-        app:layout_constraintEnd_toEndOf="@id/choose_payment_insurance_btn"
-        app:layout_constraintStart_toStartOf="@id/choose_payment_insurance_btn"
-        app:layout_constraintTop_toBottomOf="@+id/choose_payment_insurance_btn"
-        app:layout_constraintWidth_max="@dimen/max_width"
-        app:stroke_color="@color/app_gradient_start"
-        app:stroke_width="2" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_default">
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center|left"
-        android:padding="8dp"
-        android:text="@string/payment_info"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/choose_payment_cash_btn"
-        app:layout_constraintWidth_max="@dimen/max_width" />
-</android.support.constraint.ConstraintLayout>
+            <TextView
+                android:id="@+id/textView3"
+                style="@style/text_title_bold_app_color"
+                android:gravity="center"
+                android:padding="@dimen/padding_default"
+                android:text="@string/choose_your_payment_method"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.thealer.telehealer.common.CustomButton
+                android:id="@+id/choose_payment_insurance_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="@string/insurance"
+                app:background_color="@color/colorWhite"
+                app:corner_radius="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView3"
+                app:layout_constraintWidth_max="@dimen/max_width"
+                app:stroke_color="@color/app_gradient_start"
+                app:stroke_width="2" />
+
+            <com.thealer.telehealer.common.CustomButton
+                android:id="@+id/choose_payment_cash_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/cash"
+                app:background_color="@color/colorWhite"
+                app:corner_radius="20dp"
+                app:layout_constraintEnd_toEndOf="@id/choose_payment_insurance_btn"
+                app:layout_constraintStart_toStartOf="@id/choose_payment_insurance_btn"
+                app:layout_constraintTop_toBottomOf="@+id/choose_payment_insurance_btn"
+                app:layout_constraintWidth_max="@dimen/max_width"
+                app:stroke_color="@color/app_gradient_start"
+                app:stroke_width="2" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center|left"
+                android:padding="8dp"
+                android:text="@string/payment_info"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/choose_payment_cash_btn"
+                app:layout_constraintWidth_max="@dimen/max_width" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>

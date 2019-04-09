@@ -8,9 +8,11 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.DataBean;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
@@ -42,6 +45,7 @@ import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.Arrays;
@@ -52,7 +56,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Aswin on 15,October,2018
  */
-public class MedicalAssistantDetailFragment extends BaseFragment implements View.OnClickListener, DoCurrentTransactionInterface, CameraInterface {
+public class MedicalAssistantDetailFragment extends BaseFragment implements View.OnClickListener, DoCurrentTransactionInterface,
+        CameraInterface, OnViewChangeInterface {
 
     private CircleImageView profileCiv;
     private ImageView cameraIv;
@@ -84,9 +89,15 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     private CreateUserRequestModel createUserRequestModel;
     private UpdateProfileModel updateProfileModel;
     private WhoAmIApiViewModel whoAmIApiViewModel;
+    private OnCloseActionInterface onCloseActionInterface;
 
     private WhoAmIApiResponseModel whoAmi;
     private int currentDisplayType = Constants.CREATE_MODE;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextView nextTv;
 
     @Nullable
     @Override
@@ -98,10 +109,11 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             certificateImagePath = savedInstanceState.getString("certificateImagePath");
         }
 
-        onViewChangeInterface.hideOrShowNext(true);
         createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
 
         initView(view);
+        onViewChangeInterface.hideOrShowNext(true);
+        hideOrShowNext(true);
 
         if (currentDisplayType != Constants.CREATE_MODE) {
             if (whoAmi == null) {
@@ -144,8 +156,10 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
 
         if (currentDisplayType == Constants.CREATE_MODE) {
             onViewChangeInterface.updateTitle(getString(R.string.profile));
+            updateTitle(getString(R.string.profile));
         } else {
             onViewChangeInterface.updateTitle(UserDetailPreferenceManager.getUserDisplayName());
+            updateTitle(UserDetailPreferenceManager.getUserDisplayName());
         }
 
         reloadUI();
@@ -166,6 +180,11 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     }
 
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
         profileCiv = (CircleImageView) view.findViewById(R.id.profile_civ);
         cameraIv = (ImageView) view.findViewById(R.id.camera_iv);
         firstnameTil = (TextInputLayout) view.findViewById(R.id.firstname_til);
@@ -207,6 +226,21 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         titleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         titleSpinner.setAdapter(titleAdapter);
 
+        if (getArguments() != null && getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
+            appbarLayout.setVisibility(View.VISIBLE);
+            backIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onCloseActionInterface.onClose(false);
+                }
+            });
+            nextTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    doCurrentTransaction();
+                }
+            });
+        }
         updateView();
     }
 
@@ -222,6 +256,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
                     whoAmIApiViewModel.checkWhoAmI();
 
                     onViewChangeInterface.enableNext(true);
+                    enableNext(true);
                     currentDisplayType = Constants.VIEW_MODE;
                     reloadUI();
 
@@ -248,6 +283,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
                             }
 
                             onViewChangeInterface.updateTitle(UserDetailPreferenceManager.getUserDisplayName());
+                            updateTitle(UserDetailPreferenceManager.getUserDisplayName());
                         }
                     }
                 });
@@ -321,14 +357,17 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             case Constants.EDIT_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.Save));
+                updateNextTitle(getString(R.string.Save));
                 break;
             case Constants.CREATE_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.next));
+                updateNextTitle(getString(R.string.next));
                 break;
             case Constants.VIEW_MODE:
                 updateAllViews(false);
                 onViewChangeInterface.updateNextTitle(getString(R.string.edit));
+                updateNextTitle(getString(R.string.edit));
                 Utils.hideKeyboardFrom(getActivity(), this.getView());
                 break;
         }
@@ -362,6 +401,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         super.onAttach(context);
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
+        onCloseActionInterface = (OnCloseActionInterface) getActivity();
     }
 
     private void addTextWatcher(EditText editText) {
@@ -388,12 +428,16 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     private void checkAllFields() {
         if (currentDisplayType == Constants.VIEW_MODE) {
             onViewChangeInterface.enableNext(true);
+            enableNext(true);
         } else if (!firstnameEt.getText().toString().isEmpty()
                 && !lastnameEt.getText().toString().isEmpty()
                 && !degreeEt.getText().toString().isEmpty()) {
             onViewChangeInterface.enableNext(true);
-        } else
+            enableNext(true);
+        } else{
+            enableNext(false);
             onViewChangeInterface.enableNext(false);
+        }
     }
 
     @Override
@@ -439,6 +483,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         switch (currentDisplayType) {
             case Constants.EDIT_MODE:
                 onViewChangeInterface.enableNext(false);
+                enableNext(false);
                 updateProfileModel.updateMedicalAssistant(createUserRequestModel());
                 break;
             case Constants.VIEW_MODE:
@@ -492,5 +537,60 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
                 break;
         }
 
+    }
+
+    @Override
+    public void hideOrShowNext(boolean show) {
+        if (show) {
+            nextTv.setVisibility(View.VISIBLE);
+        } else {
+            nextTv.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void hideOrShowClose(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowToolbarTile(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowBackIv(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void attachObserver(BaseApiViewModel baseApiViewModel) {
+
+    }
+
+    @Override
+    public void enableNext(boolean enable) {
+        nextTv.setEnabled(enable);
+
+        if (enable) {
+            nextTv.setAlpha(1);
+        } else {
+            nextTv.setAlpha(0.5f);
+        }
+    }
+
+    @Override
+    public void updateTitle(String title) {
+        toolbarTitle.setText(title);
+    }
+
+    @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void updateNextTitle(String nextTitle) {
+        nextTv.setText(nextTitle);
     }
 }

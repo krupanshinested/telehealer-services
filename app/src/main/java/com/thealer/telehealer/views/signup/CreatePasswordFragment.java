@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -15,10 +17,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiViewModel;
@@ -34,6 +38,7 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -41,7 +46,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 /**
  * Created by Aswin on 15,October,2018
  */
-public class CreatePasswordFragment extends BaseFragment implements DoCurrentTransactionInterface {
+public class CreatePasswordFragment extends BaseFragment implements DoCurrentTransactionInterface, OnViewChangeInterface {
 
     public static final int signup = 0;
     public static final int reset_password = 1;
@@ -59,6 +64,12 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
     private ResetPasswordRequestModel resetPasswordRequestModel;
     private int type;
     private CreateUserRequestModel createUserRequestModel;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextView nextTv;
+    private ImageView closeIv;
 
     @Nullable
     @Override
@@ -169,6 +180,12 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
 
         passwordValidator = new PasswordValidator();
 
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
         passwordEt = (EditText) view.findViewById(R.id.password_et);
         passwordRequirementTv = (TextView) view.findViewById(R.id.password_requirement_tv);
         passwordTil = (TextInputLayout) view.findViewById(R.id.password_til);
@@ -221,6 +238,24 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
                     onViewChangeInterface.updateNextTitle(getString(R.string.next));
                     break;
             }
+
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
+
+                appbarLayout.setVisibility(View.VISIBLE);
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((OnCloseActionInterface) getActivity()).onClose(false);
+                    }
+                });
+
+                nextTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doCurrentTransaction();
+                    }
+                });
+            }
         }
     }
 
@@ -253,16 +288,19 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
         String password = passwordEt.getText().toString();
         if (!password.isEmpty()) {
             onViewChangeInterface.enableNext(false);
+            enableNext(false);
             String error = passwordValidator.isValidPassword(password);
 
             if (error != null) {
                 passwordTil.setError(error);
             } else {
                 onViewChangeInterface.enableNext(true);
+                enableNext(true);
             }
 
         } else {
             onViewChangeInterface.enableNext(false);
+            enableNext(false);
         }
     }
 
@@ -275,11 +313,14 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
             onViewChangeInterface.hideOrShowBackIv(true);
             onViewChangeInterface.updateNextTitle(getString(R.string.next));
             onViewChangeInterface.updateTitle(getString(R.string.password));
+            updateTitle(getString(R.string.password));
         } else {
             if (getArguments() != null && !TextUtils.isEmpty(getArguments().getString(ArgumentKeys.TITLE))) {
                 onViewChangeInterface.updateTitle(getArguments().getString(ArgumentKeys.TITLE));
+                updateTitle(getArguments().getString(ArgumentKeys.TITLE));
             } else {
                 onViewChangeInterface.updateTitle(getString(R.string.reenter_password));
+                updateTitle(getString(R.string.reenter_password));
             }
         }
 
@@ -301,7 +342,7 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
                     } else {
                         Bundle bundle = new Bundle();
                         resetPasswordRequestModel.setPassword(passwordEt.getText().toString());
-                        bundle.putBoolean(ArgumentKeys.IS_PASSWORD_ENTERED,true);
+                        bundle.putBoolean(ArgumentKeys.IS_PASSWORD_ENTERED, true);
                         onActionCompleteInterface.onCompletionResult(RequestID.RESET_PASSWORD_OTP_VALIDATED, true, bundle);
                     }
                 }
@@ -327,5 +368,55 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
 
     private void makeResetPasswordApiCall() {
         createUserApiViewModel.resetPassword(resetPasswordRequestModel);
+    }
+
+    @Override
+    public void enableNext(boolean enabled) {
+        nextTv.setEnabled(enabled);
+        if (enabled) {
+            nextTv.setAlpha(1);
+        } else {
+            nextTv.setAlpha(0.5f);
+        }
+    }
+
+    @Override
+    public void hideOrShowNext(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowClose(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowToolbarTile(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowBackIv(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void attachObserver(BaseApiViewModel baseApiViewModel) {
+
+    }
+
+    @Override
+    public void updateNextTitle(String nextTitle) {
+
+    }
+
+    @Override
+    public void updateTitle(String title) {
+        toolbarTitle.setText(title);
+    }
+
+    @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+
     }
 }
