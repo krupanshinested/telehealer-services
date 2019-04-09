@@ -5,11 +5,19 @@
     android:layout_height="match_parent"
     android:background="@color/card_view_background">
 
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/appbar_back_with_title_app_color" />
+
     <android.support.v4.widget.NestedScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@color/card_view_background"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
 
         <LinearLayout
             android:id="@+id/container_view"

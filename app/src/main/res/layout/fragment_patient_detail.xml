@@ -1,202 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout
+    <include
+        layout="@layout/appbar_app_color_title_back_next"
+        android:visibility="gone" />
+
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="50dp">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/title_tv"
-            style="@style/text_title_app_color"
-            android:gravity="center"
-            android:padding="@dimen/padding_default"
-            android:text="@string/registration"
-            app:layout_constraintBottom_toTopOf="@+id/circular_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/circular_layout"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title_tv">
-
-            <include layout="@layout/layout_circular_profile" />
-        </LinearLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/firstname_til"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/circular_layout"
-            app:layout_constraintWidth_max="@dimen/max_width">
-
-            <EditText
-                android:id="@+id/firstname_et"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/first_name"
-                android:inputType="text"
-                android:maxLines="1" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/lastname_til"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/firstname_til"
-            app:layout_constraintWidth_max="@dimen/max_width">
-
-            <EditText
-                android:id="@+id/lastname_et"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/last_name"
-                android:inputType="text"
-                android:maxLines="1" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/dob_til"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lastname_til"
-            app:layout_constraintWidth_max="@dimen/max_width">
-
-            <EditText
-                android:id="@+id/dob_et"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_arrow_drop_down_white_24dp"
-                android:drawableTint="@color/app_gradient_start"
-                android:hint="@string/date_of_birth"
-                android:inputType="text"
-                android:maxLines="1"
-                android:paddingRight="13dp" />
-        </android.support.design.widget.TextInputLayout>
-
-
-        <TextView
-            android:id="@+id/gender_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:alpha="0.8"
-            android:gravity="left"
-            android:padding="6dp"
-            android:text="@string/gender"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dob_til"
-            app:layout_constraintWidth_max="@dimen/max_width" />
-
-        <Spinner
-            android:id="@+id/gender_sp"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/app_gradient_start"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="0dp"
-            android:popupElevation="@dimen/spinner_dropdown_elevation"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gender_tv"
-            app:layout_constraintWidth_max="@dimen/max_width" />
-
-        <TextView
-            android:id="@+id/gender_value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:padding="8dp"
-            android:textColor="@color/colorBlack"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gender_sp"
-            app:layout_constraintWidth_max="@dimen/max_width" />
-
-
-        <View
-            android:id="@+id/gender_splitter"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="2dp"
-            android:background="@color/colorGrey"
-            app:layout_constraintEnd_toEndOf="@+id/gender_tv"
-            app:layout_constraintStart_toStartOf="@+id/gender_tv"
-            app:layout_constraintTop_toBottomOf="@+id/gender_value" />
-
-        <LinearLayout
-            android:id="@+id/insurance_lay"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@+id/gender_tv"
-            app:layout_constraintRight_toRightOf="@id/gender_tv"
-            app:layout_constraintTop_toBottomOf="@+id/gender_splitter">
+            android:layout_height="match_parent"
+            android:paddingBottom="50dp">
 
             <TextView
-                android:id="@+id/insurance_tv"
+                android:id="@+id/title_tv"
+                style="@style/text_title_app_color"
+                android:gravity="center"
+                android:padding="@dimen/padding_default"
+                android:text="@string/registration"
+                app:layout_constraintBottom_toTopOf="@+id/circular_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/circular_layout"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_tv">
+
+                <include layout="@layout/layout_circular_profile" />
+            </LinearLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/firstname_til"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/circular_layout"
+                app:layout_constraintWidth_max="@dimen/max_width">
+
+                <EditText
+                    android:id="@+id/firstname_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/first_name"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/lastname_til"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/firstname_til"
+                app:layout_constraintWidth_max="@dimen/max_width">
+
+                <EditText
+                    android:id="@+id/lastname_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/last_name"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/dob_til"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lastname_til"
+                app:layout_constraintWidth_max="@dimen/max_width">
+
+                <EditText
+                    android:id="@+id/dob_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_arrow_drop_down_white_24dp"
+                    android:drawableTint="@color/app_gradient_start"
+                    android:hint="@string/date_of_birth"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:paddingRight="13dp" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <TextView
+                android:id="@+id/gender_tv"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:alpha="0.8"
                 android:gravity="left"
                 android:padding="6dp"
-                android:text="@string/insurance_sentenceCase"
+                android:text="@string/gender"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dob_til"
                 app:layout_constraintWidth_max="@dimen/max_width" />
 
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/insurance_viewPager"
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:id="@+id/pager_indicator"
-                android:layout_width="match_parent"
+            <Spinner
+                android:id="@+id/gender_sp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:visibility="gone" />
+                android:backgroundTint="@color/app_gradient_start"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="0dp"
+                android:popupElevation="@dimen/spinner_dropdown_elevation"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gender_tv"
+                app:layout_constraintWidth_max="@dimen/max_width" />
 
             <TextView
-                android:id="@+id/cash_tv"
-                android:layout_width="fill_parent"
+                android:id="@+id/gender_value"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:clickable="false"
+                android:gravity="left"
                 android:padding="8dp"
-                android:text="@string/cash"
-                android:textColor="@color/colorBlack" />
-        </LinearLayout>
+                android:textColor="@color/colorBlack"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gender_sp"
+                app:layout_constraintWidth_max="@dimen/max_width" />
 
 
-    </android.support.constraint.ConstraintLayout>
+            <View
+                android:id="@+id/gender_splitter"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="2dp"
+                android:background="@color/colorGrey"
+                app:layout_constraintEnd_toEndOf="@+id/gender_tv"
+                app:layout_constraintStart_toStartOf="@+id/gender_tv"
+                app:layout_constraintTop_toBottomOf="@+id/gender_value" />
 
-</android.support.v4.widget.NestedScrollView>
+            <LinearLayout
+                android:id="@+id/insurance_lay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/gender_tv"
+                app:layout_constraintRight_toRightOf="@id/gender_tv"
+                app:layout_constraintTop_toBottomOf="@+id/gender_splitter">
+
+                <TextView
+                    android:id="@+id/insurance_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.8"
+                    android:gravity="left"
+                    android:padding="6dp"
+                    android:text="@string/insurance_sentenceCase"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dob_til"
+                    app:layout_constraintWidth_max="@dimen/max_width" />
+
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/insurance_viewPager"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/pager_indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/cash_tv"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:padding="8dp"
+                    android:text="@string/cash"
+                    android:textColor="@color/colorBlack" />
+            </LinearLayout>
+
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>

@@ -25,6 +25,7 @@ import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
@@ -53,7 +54,7 @@ import static com.thealer.telehealer.common.UserType.isUserPatient;
  * Created by Aswin on 11,October,2018
  */
 public class SignUpActivity extends BaseActivity implements View.OnClickListener, OnViewChangeInterface, OnActionCompleteInterface,
-        SuccessViewInterface, AttachObserverInterface {
+        SuccessViewInterface, AttachObserverInterface, OnCloseActionInterface {
 
     private static final java.lang.String CURRENT_STEP = "current_step";
     private int currentStep = 1;
@@ -511,6 +512,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             }
         }
+    }
+
+    @Override
+    public void onClose(boolean isRefreshRequired) {
+
     }
 }
 
