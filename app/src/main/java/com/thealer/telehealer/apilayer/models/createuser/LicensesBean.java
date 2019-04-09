@@ -1,9 +1,6 @@
 package com.thealer.telehealer.apilayer.models.createuser;
 
-import com.thealer.telehealer.common.Utils;
-
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Created by Aswin on 25,October,2018
@@ -48,6 +45,6 @@ public class LicensesBean implements Serializable {
     }
 
     public boolean isEqual(LicensesBean licensesBean) {
-        return licensesBean.getState().equals(getState()) && licensesBean.getNumber().equals(getNumber()) && Utils.getDateFromPossibleFormat(getEnd_date()).equals(Utils.getDateFromPossibleFormat(licensesBean.getEnd_date()));
+        return licensesBean.getState().equals(getState()) && licensesBean.getNumber().equals(getNumber()) && licensesBean.getEnd_date().equals(getEnd_date());
     }
 }

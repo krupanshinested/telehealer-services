@@ -10,8 +10,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,15 +42,19 @@ public class SignatureViewFragment extends BaseFragment {
     private ImageView signatureIv;
     private Button editBtn;
 
-    private ChangeTitleInterface changeTitleInterface;
     private OnCloseActionInterface onCloseActionInterface;
     private SignatureApiViewModel signatureApiViewModel;
     private AttachObserverInterface attachObserverInterface;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextView nextTv;
+    private ImageView closeIv;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        changeTitleInterface = (ChangeTitleInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         signatureApiViewModel = ViewModelProviders.of(this).get(SignatureApiViewModel.class);
@@ -74,13 +80,18 @@ public class SignatureViewFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        changeTitleInterface.onTitleChange(getString(R.string.preview));
         View view = inflater.inflate(R.layout.fragment_signature_view, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
         signatureIv = (ImageView) view.findViewById(R.id.signature_iv);
         editBtn = (Button) view.findViewById(R.id.edit_btn);
 
@@ -140,6 +151,16 @@ public class SignatureViewFragment extends BaseFragment {
         } else {
             setSignature();
         }
+
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCloseActionInterface.onClose(false);
+            }
+        });
+
+        toolbarTitle.setText(getString(R.string.preview));
+        nextTv.setVisibility(View.GONE);
     }
 
     private void showNewSignature() {

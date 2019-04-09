@@ -4,7 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="visible">
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:focusable="true">
+
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/appbar_app_color_title_back_next"
+        android:visibility="gone" />
 
     <include
         layout="@layout/layout_empty_state_view"
@@ -15,21 +22,25 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar"
         app:layout_constraintWidth_max="@dimen/max_width" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/main_container"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
 
         <TextView
             android:id="@+id/card_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/title_size"
             app:layout_constraintBottom_toTopOf="@+id/splitter"
@@ -63,8 +74,8 @@
             android:id="@+id/expiration_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/title_size"
             app:layout_constraintLeft_toLeftOf="@+id/card_tv"
