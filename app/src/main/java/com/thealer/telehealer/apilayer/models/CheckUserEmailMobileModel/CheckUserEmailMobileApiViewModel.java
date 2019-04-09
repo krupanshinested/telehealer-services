@@ -3,7 +3,7 @@ package com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel;
 import android.app.Application;
 import android.support.annotation.NonNull;
 
-import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
@@ -27,7 +27,7 @@ public class CheckUserEmailMobileApiViewModel extends BaseApiViewModel {
     public void checkUserEmail(String email) {
         String app_type;
 
-        if (TeleHealerApplication.appPreference.getInt(Constants.USER_TYPE) == Constants.TYPE_PATIENT) {
+        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
             app_type = Constants.BUILD_PATIENT;
         } else {
             app_type = Constants.BUILD_MEDICAL;
@@ -60,7 +60,7 @@ public class CheckUserEmailMobileApiViewModel extends BaseApiViewModel {
 
         String app_type;
 
-        if (TeleHealerApplication.appPreference.getInt(Constants.USER_TYPE) == Constants.TYPE_PATIENT) {
+        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
             app_type = Constants.BUILD_PATIENT;
         } else {
             app_type = Constants.BUILD_MEDICAL;

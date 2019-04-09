@@ -4,7 +4,6 @@
     <item
         android:id="@+id/next_event"
         android:title="@string/next"
-        app:showAsAction="always"
         android:visible="true"
-        />
+        app:showAsAction="always" />
 </menu>

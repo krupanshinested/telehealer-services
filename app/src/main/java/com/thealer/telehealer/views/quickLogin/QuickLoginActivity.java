@@ -1,14 +1,13 @@
 package com.thealer.telehealer.views.quickLogin;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.LinearLayout;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -37,6 +36,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     private LinearLayout fragmentHolder;
     private boolean isViewShown = false;
     private static final java.lang.String IS_VIEW_SHOWN = "isViewShown";
+    boolean isCreateQuickLogin = false;
 
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
@@ -93,8 +93,11 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
         int loginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
 
         boolean isFromSignup = false;
-        if (getIntent() != null && getIntent().getExtras() != null) {
-            isFromSignup = getIntent().getExtras().getBoolean(ArgumentKeys.IS_FROM_SIGNUP);
+        if (getIntent() != null) {
+            if (getIntent().getExtras() != null)
+                isFromSignup = getIntent().getExtras().getBoolean(ArgumentKeys.IS_FROM_SIGNUP);
+
+            isCreateQuickLogin = getIntent().getBooleanExtra(ArgumentKeys.IS_CREATE_PIN, false);
         }
 
         switch (loginType) {
@@ -186,7 +189,11 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     @Override
     public void onSuccessViewCompletion(boolean success) {
         if (success) {
-            goToMainActivity();
+            if (isCreateQuickLogin) {
+                setResult(Activity.RESULT_OK);
+                finish();
+            } else
+                goToMainActivity();
         }
     }
 

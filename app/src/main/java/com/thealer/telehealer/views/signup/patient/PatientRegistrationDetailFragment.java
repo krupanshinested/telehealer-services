@@ -10,8 +10,10 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
@@ -46,6 +49,7 @@ import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.DateBroadcastReceiver;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.settings.Interface.BundleReceiver;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
@@ -55,7 +59,6 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.thealer.telehealer.common.Constants.TILL_CURRENT_DAY;
 import static com.thealer.telehealer.common.Constants.TYPE_DOB;
 
 /**
@@ -64,7 +67,7 @@ import static com.thealer.telehealer.common.Constants.TYPE_DOB;
 
 public class PatientRegistrationDetailFragment extends BaseFragment implements
         View.OnFocusChangeListener, View.OnClickListener,
-        DoCurrentTransactionInterface, CameraInterface, BundleReceiver {
+        DoCurrentTransactionInterface, CameraInterface, BundleReceiver, OnViewChangeInterface {
 
     private CircleImageView profileCiv;
     private EditText firstnameEt;
@@ -82,6 +85,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private String profileImgPath;
     private OnViewChangeInterface onViewChangeInterface;
     private OnActionCompleteInterface onActionCompleteInterface;
+    private OnCloseActionInterface onCloseActionInterface;
 
     private DateBroadcastReceiver dateBroadcastReceiver = new DateBroadcastReceiver() {
         @Override
@@ -104,6 +108,11 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private AttachObserverInterface attachObserverInterface;
     private boolean isPrimaryDeleted = false, isSecondaryDeleted = false, updateProfile = false;
     private LinearLayout pagerIndicator;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextView nextTv;
 
     @Override
     public void onAttach(Context context) {
@@ -111,6 +120,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
+        onCloseActionInterface = (OnCloseActionInterface) getActivity();
 
         createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
         updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
@@ -137,6 +147,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                         whoAmIApiViewModel.checkWhoAmI();
 
                         onViewChangeInterface.enableNext(true);
+                        enableNext(true);
                         currentDisplayType = Constants.VIEW_MODE;
                         reloadUI();
 
@@ -164,6 +175,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                             }
 
                             onViewChangeInterface.updateTitle(UserDetailPreferenceManager.getUserDisplayName());
+                            updateTitle(UserDetailPreferenceManager.getUserDisplayName());
                         }
                     }
                 });
@@ -175,13 +187,15 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_patient_detail, container, false);
 
+        initView(view);
+
         onViewChangeInterface.hideOrShowNext(true);
         onViewChangeInterface.enableNext(false);
 
-        initView(view);
+        hideOrShowNext(true);
+        enableNext(false);
 
         checkAllFields();
-
 
         switch (currentDisplayType) {
             case Constants.VIEW_MODE:
@@ -206,6 +220,11 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     }
 
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
         profileCiv = (CircleImageView) view.findViewById(R.id.profile_civ);
         firstnameEt = (EditText) view.findViewById(R.id.firstname_et);
         lastnameEt = (EditText) view.findViewById(R.id.lastname_et);
@@ -239,10 +258,27 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
         if (getArguments() != null) {
             currentDisplayType = getArguments().getInt(ArgumentKeys.VIEW_TYPE);
+
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onCloseActionInterface.onClose(false);
+                    }
+                });
+                nextTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doCurrentTransaction();
+                    }
+                });
+            }
         }
 
         updateUI();
     }
+
 
     private void setupViewPagerAdapter() {
         insuranceViewPagerAdapter = new InsuranceViewPagerAdapter(getActivity(),
@@ -301,18 +337,22 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             case Constants.SCHEDULE_CREATION_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.Save));
+                updateNextTitle(getString(R.string.Save));
                 break;
             case Constants.EDIT_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.Save));
+                updateNextTitle(getString(R.string.Save));
                 break;
             case Constants.CREATE_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.next));
+                updateNextTitle(getString(R.string.next));
                 break;
             case Constants.VIEW_MODE:
                 updateAllViews(false);
                 onViewChangeInterface.updateNextTitle(getString(R.string.edit));
+                updateNextTitle(getString(R.string.edit));
                 Utils.hideKeyboardFrom(getActivity(), this.getView());
                 break;
         }
@@ -489,12 +529,16 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private void checkAllFields() {
         if (currentDisplayType == Constants.VIEW_MODE) {
             onViewChangeInterface.enableNext(true);
+            enableNext(true);
         } else if (!firstnameEt.getText().toString().isEmpty()
                 && !lastnameEt.getText().toString().isEmpty()
                 && !dobEt.getText().toString().isEmpty()) {
             onViewChangeInterface.enableNext(true);
-        } else
+            enableNext(true);
+        } else {
             onViewChangeInterface.enableNext(false);
+            enableNext(false);
+        }
     }
 
     @Override
@@ -533,7 +577,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             case R.id.insurance_lay:
             case R.id.insurance_viewPager:
             case R.id.cash_tv:
-                Bundle bundle = null;
+                Bundle bundle = new Bundle();
                 String primaryFront = null, primaryBack = null, secondaryFront = null, secondaryBack = null;
 
                 if (createUserRequestModel.isInsurancePresent()) {
@@ -552,14 +596,16 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                     secondaryBack = createUserRequestModel.getUser_detail().getData().getSecondary_insurance_back();
                 }
 
-                if (bundle != null) {
-                    bundle.putString(ArgumentKeys.INSURANCE_FRONT, primaryFront);
-                    bundle.putString(ArgumentKeys.INSURANCE_BACK, primaryBack);
-                    bundle.putString(ArgumentKeys.SECONDARY_INSURANCE_FRONT, secondaryFront);
-                    bundle.putString(ArgumentKeys.SECONDARY_INSURANCE_BACK, secondaryBack);
-                }
+                bundle.putString(ArgumentKeys.INSURANCE_FRONT, primaryFront);
+                bundle.putString(ArgumentKeys.INSURANCE_BACK, primaryBack);
+                bundle.putString(ArgumentKeys.SECONDARY_INSURANCE_FRONT, secondaryFront);
+                bundle.putString(ArgumentKeys.SECONDARY_INSURANCE_BACK, secondaryBack);
+                bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
 
                 onActionCompleteInterface.onCompletionResult(RequestID.REQUEST_INSURANCE_CHANGE, true, bundle);
+//                PatientChoosePaymentFragment patientChoosePaymentFragment = new PatientChoosePaymentFragment();
+//                patientChoosePaymentFragment.setArguments(bundle);
+//                ((ShowSubFragmentInterface) getActivity()).onShowFragment(patientChoosePaymentFragment);
                 break;
         }
     }
@@ -570,6 +616,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             case Constants.SCHEDULE_CREATION_MODE:
             case Constants.EDIT_MODE:
                 onViewChangeInterface.enableNext(false);
+                enableNext(false);
                 updateUserRequestModel();
 
                 if (isPrimaryDeleted || isSecondaryDeleted) {
@@ -606,7 +653,10 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                 break;
             case Constants.VIEW_MODE:
                 currentDisplayType = Constants.EDIT_MODE;
-                Bundle bundle = new Bundle();
+                Bundle bundle = getArguments();
+                if (bundle == null) {
+                    bundle = new Bundle();
+                }
                 bundle.putInt(ArgumentKeys.VIEW_TYPE, Constants.EDIT_MODE);
                 setArguments(bundle);
                 reloadUI();
@@ -671,7 +721,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     @Override
     public void onStop() {
         super.onStop();
-
         updateUserRequestModel();
     }
 
@@ -682,11 +731,14 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
         if (currentDisplayType == Constants.CREATE_MODE) {
             onViewChangeInterface.updateTitle(getString(R.string.profile));
+            updateTitle(getString(R.string.profile));
         } else {
             onViewChangeInterface.updateTitle(UserDetailPreferenceManager.getUserDisplayName());
+            updateTitle(UserDetailPreferenceManager.getUserDisplayName());
         }
 
         onViewChangeInterface.hideOrShowNext(true);
+        hideOrShowNext(true);
 
         reloadUI();
     }
@@ -703,4 +755,59 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(dateBroadcastReceiver);
     }
 
+
+    @Override
+    public void hideOrShowNext(boolean show) {
+        if (show) {
+            nextTv.setVisibility(View.VISIBLE);
+        } else {
+            nextTv.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void hideOrShowClose(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowToolbarTile(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowBackIv(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void attachObserver(BaseApiViewModel baseApiViewModel) {
+
+    }
+
+    @Override
+    public void enableNext(boolean enable) {
+        nextTv.setEnabled(enable);
+
+        if (enable) {
+            nextTv.setAlpha(1);
+        } else {
+            nextTv.setAlpha(0.5f);
+        }
+    }
+
+    @Override
+    public void updateTitle(String title) {
+        toolbarTitle.setText(title);
+    }
+
+    @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void updateNextTitle(String nextTitle) {
+        nextTv.setText(nextTitle);
+    }
 }

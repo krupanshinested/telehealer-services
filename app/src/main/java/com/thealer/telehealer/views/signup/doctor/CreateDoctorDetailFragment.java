@@ -9,11 +9,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -28,9 +30,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.ClinicBean;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
@@ -52,6 +54,7 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CurrentModeInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.DoctorOnBoardingActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
@@ -64,7 +67,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Aswin on 25,February,2019
  */
-public class CreateDoctorDetailFragment extends BaseFragment implements View.OnClickListener, CurrentModeInterface, CameraInterface, DoCurrentTransactionInterface {
+public class CreateDoctorDetailFragment extends BaseFragment implements View.OnClickListener, CurrentModeInterface, CameraInterface,
+        DoCurrentTransactionInterface, OnViewChangeInterface {
 
     private CircleImageView profileCiv;
     private ImageView cameraIv;
@@ -108,8 +112,13 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     private TextView certificateTv;
     private CardView certificateCard;
     private ImageView certificateIv;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
 
     private OnActionCompleteInterface onActionCompleteInterface;
+    private OnCloseActionInterface onCloseActionInterface;
     private OnViewChangeInterface onViewChangeInterface;
     private GetDoctorsApiResponseModel.DataBean doctorDetailModel;
     private CreateUserRequestModel createUserRequestModel;
@@ -129,6 +138,8 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     private String[] genderArray;
     private String[] specialityArray;
     private int currentGalleryCallingId;
+    private TextView nextTv;
+
 
     @Override
     public void onAttach(Context context) {
@@ -136,6 +147,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
+        onCloseActionInterface = (OnCloseActionInterface) getActivity();
         createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
         updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
         whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
@@ -174,6 +186,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                     whoAmIApiViewModel.checkWhoAmI();
 
                     onViewChangeInterface.enableNext(true);
+                    enableNext(true);
                     currentDisplayType = Constants.VIEW_MODE;
                     reloadUI();
 
@@ -228,10 +241,17 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
 
         initView(view);
 
+        enableNext(false);
+
         return view;
     }
 
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
         profileCiv = (CircleImageView) view.findViewById(R.id.profile_civ);
         cameraIv = (ImageView) view.findViewById(R.id.camera_iv);
         firstnameTil = (TextInputLayout) view.findViewById(R.id.firstname_til);
@@ -320,6 +340,22 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
 
         if (getArguments() != null) {
             isCreateManually = getArguments().getBoolean(Constants.IS_CREATE_MANUALLY);
+
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onCloseActionInterface.onClose(false);
+                    }
+                });
+                nextTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doCurrentTransaction();
+                    }
+                });
+            }
 
             if (isCreateManually) {
 
@@ -412,14 +448,17 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
             case Constants.EDIT_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.Save));
+                updateNextTitle(getString(R.string.Save));
                 break;
             case Constants.CREATE_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.next));
+                updateNextTitle(getString(R.string.next));
                 break;
             case Constants.VIEW_MODE:
                 updateAllViews(false);
                 onViewChangeInterface.updateNextTitle(getString(R.string.edit));
+                updateNextTitle(getString(R.string.edit));
                 Utils.hideKeyboardFrom(getActivity(), this.getView());
                 break;
         }
@@ -502,12 +541,6 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                         doctorDetailModel.getPractices().get(i).getPhones()));
             }
             createUserRequestModel.getUser_detail().getData().setPractices(practicesBeanList);
-        } else {
-//            List<PracticesBean> practicesBeanList = new ArrayList<>();
-//            practicesBeanList.add(new PracticesBean(null, null,
-//                    null,
-//                    new ArrayList<>()));
-//            createUserRequestModel.getUser_detail().getData().setPractices(practicesBeanList);
         }
 
         setData();
@@ -720,6 +753,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     public void validateDetails() {
         if (currentDisplayType == Constants.VIEW_MODE) {
             onViewChangeInterface.enableNext(true);
+            enableNext(true);
         } else if (!firstnameEt.getText().toString().isEmpty() &&
                 !lastnameEt.getText().toString().isEmpty() &&
                 !titleEt.getText().toString().isEmpty() &&
@@ -731,8 +765,10 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                 !liabilityEt.getText().toString().isEmpty()) {
 
             onViewChangeInterface.enableNext(true);
+            enableNext(true);
         } else {
             onViewChangeInterface.enableNext(false);
+            enableNext(false);
         }
     }
 
@@ -847,8 +883,10 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
 
         if (currentDisplayType == Constants.CREATE_MODE) {
             onViewChangeInterface.updateTitle(getString(R.string.profile));
+            updateTitle(getString(R.string.profile));
         } else {
             onViewChangeInterface.updateTitle(UserDetailPreferenceManager.getUserDisplayName());
+            updateTitle(UserDetailPreferenceManager.getUserDisplayName());
         }
 
         reloadUI();
@@ -931,14 +969,12 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         } else if (UserDetailPreferenceManager.getLicenses().size() != createUserRequestModel.getUser_detail().getData().getLicenses().size()) {
             return true;
         } else {
-            Boolean needToPost = false;
+            boolean needToPost = false;
 
-            for (LicensesBean license : createUserRequestModel.getUser_detail().getData().getLicenses()) {
-                for (LicensesBean currentLicense : UserDetailPreferenceManager.getLicenses()) {
-                    if (!license.isEqual(currentLicense)) {
-                        needToPost = true;
-                        break;
-                    }
+            for (int i = 0; i < UserDetailPreferenceManager.getLicenses().size(); i++) {
+                if (!UserDetailPreferenceManager.getLicenses().get(i).isEqual(createUserRequestModel.getUser_detail().getData().getLicenses().get(i))) {
+                    needToPost = true;
+                    break;
                 }
             }
 
@@ -970,5 +1006,60 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         clinicBean.setState(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getState());
 
         createUserRequestModel.getUser_detail().getData().setClinic(clinicBean);
+    }
+
+    @Override
+    public void hideOrShowNext(boolean show) {
+        if (show) {
+            nextTv.setVisibility(View.VISIBLE);
+        } else {
+            nextTv.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void hideOrShowClose(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowToolbarTile(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowBackIv(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void attachObserver(BaseApiViewModel baseApiViewModel) {
+
+    }
+
+    @Override
+    public void enableNext(boolean enable) {
+        nextTv.setEnabled(enable);
+
+        if (enable) {
+            nextTv.setAlpha(1);
+        } else {
+            nextTv.setAlpha(0.5f);
+        }
+    }
+
+    @Override
+    public void updateTitle(String title) {
+        toolbarTitle.setText(title);
+    }
+
+    @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void updateNextTitle(String nextTitle) {
+        nextTv.setText(nextTitle);
     }
 }

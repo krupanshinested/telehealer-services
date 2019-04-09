@@ -88,6 +88,8 @@ public class ArgumentKeys {
     public static final String CIRCULAR_AVATAR = "circularAvatar";
     public static final String IS_AUTH_REQUIRED = "isAuthRequrired";
     public static final String DISABLE_BACk = "disableBack";
+    public static final String WEB_VIEW_URL = "webViewUrl";
+    public static final String IS_CREATE_PIN = "isCreatePin";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
