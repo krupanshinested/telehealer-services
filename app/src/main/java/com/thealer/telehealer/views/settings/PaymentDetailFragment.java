@@ -1,16 +1,16 @@
 package com.thealer.telehealer.views.settings;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
 import android.transition.TransitionManager;
@@ -18,10 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.AnticipateOvershootInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -32,19 +30,16 @@ import com.thealer.telehealer.apilayer.models.Payments.TransactionApiViewModel;
 import com.thealer.telehealer.apilayer.models.Payments.VitalVisit;
 import com.thealer.telehealer.apilayer.models.Payments.VitalVisitResponse;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.recents.RecentsApiViewModel;
 import com.thealer.telehealer.common.Animation.ConstrainSetUtil;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.RoundCornerButton;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.settings.Adapters.PaymentDetailAdapter;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
@@ -61,8 +56,8 @@ public class PaymentDetailFragment extends BaseFragment {
 
     private CustomRecyclerView recyclerContainer;
     private ConstraintLayout detail_view;
-    private TextView call_charges_tv,amount_tv,bill_tv,bill_value_tv;
-    private RoundCornerButton call_history,vital_history;
+    private TextView call_charges_tv, amount_tv, bill_tv, bill_value_tv;
+    private RoundCornerButton call_history, vital_history;
     private ConstraintLayout mainLay;
 
     private OnViewChangeInterface onViewChangeInterface;
@@ -80,6 +75,11 @@ public class PaymentDetailFragment extends BaseFragment {
 
     @Nullable
     private Transition detailTransition;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextView nextTv;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +115,11 @@ public class PaymentDetailFragment extends BaseFragment {
     }
 
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
         recyclerContainer = view.findViewById(R.id.recyclerContainer);
         recyclerContainer.setScrollable(false);
         loadEmptyViewIfNeeded();
@@ -130,8 +135,15 @@ public class PaymentDetailFragment extends BaseFragment {
         call_history = view.findViewById(R.id.call_history);
         vital_history = view.findViewById(R.id.vital_history);
 
-        call_charges_tv.setText(getString(R.string.call_charges_for)+" "+transaction.getCreatedMonthYear());
-        amount_tv.setText("$"+transaction.getAmount());
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((OnCloseActionInterface) getActivity()).onClose(false);
+            }
+        });
+        nextTv.setVisibility(View.GONE);
+        call_charges_tv.setText(getString(R.string.call_charges_for) + " " + transaction.getCreatedMonthYear());
+        amount_tv.setText("$" + transaction.getAmount());
         bill_value_tv.setText(transaction.getId());
 
         call_history.setOnClickListener(new View.OnClickListener() {
@@ -168,7 +180,6 @@ public class PaymentDetailFragment extends BaseFragment {
             }
         });
 
-
         recyclerContainer.getRecyclerView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -192,7 +203,6 @@ public class PaymentDetailFragment extends BaseFragment {
 
             }
         });
-
 
         transactionApiViewModel.getCallLogs(transaction.getCreatedMonthYearWithDash());
         transactionApiViewModel.getVitalVisit(transaction.getCreatedMonthYearWithDash());
@@ -222,16 +232,16 @@ public class PaymentDetailFragment extends BaseFragment {
 
                 ArrayList<RecentsApiResponseModel.ResultBean> callObjects = (ArrayList<RecentsApiResponseModel.ResultBean>) (Object) baseApiResponseModels;
 
-                 calls = new ArrayList<>();
+                calls = new ArrayList<>();
 
-                 if (callObjects != null) {
-                     for (RecentsApiResponseModel.ResultBean call : callObjects) {
-                         if (call.getDurationInSecs() > 0) {
-                             if (call.getStartMonthYear().equals(transaction.getCreatedMonthYear()))
+                if (callObjects != null) {
+                    for (RecentsApiResponseModel.ResultBean call : callObjects) {
+                        if (call.getDurationInSecs() > 0) {
+                            if (call.getStartMonthYear().equals(transaction.getCreatedMonthYear()))
                                 calls.add(call);
-                         }
-                     }
-                 }
+                        }
+                    }
+                }
 
                 if (isInCallsTab) {
                     updateRecyclerView();
@@ -341,10 +351,10 @@ public class PaymentDetailFragment extends BaseFragment {
 
         if (show) {
             onViewChangeInterface.updateTitle("");
-            constraintSet.connect(detail_view.getId(),ConstraintSet.TOP,mainLay.getId(),ConstraintSet.TOP);
+            constraintSet.connect(detail_view.getId(), ConstraintSet.TOP, mainLay.getId(), ConstraintSet.TOP);
         } else {
             onViewChangeInterface.updateTitle(call_charges_tv.getText().toString());
-            constraintSet.connect(detail_view.getId(),ConstraintSet.BOTTOM,mainLay.getId(),ConstraintSet.TOP);
+            constraintSet.connect(detail_view.getId(), ConstraintSet.BOTTOM, mainLay.getId(), ConstraintSet.TOP);
         }
 
         constraintSet.applyTo(mainLay);

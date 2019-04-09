@@ -6,10 +6,13 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
+import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -19,6 +22,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import com.thealer.telehealer.views.signup.SignUpActivity;
 
@@ -34,6 +38,12 @@ public class PatientChoosePaymentFragment extends BaseFragment implements View.O
     private Dialog dialog;
 
     private int currentScreenType = Constants.forRegistration;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextView nextTv;
+    private ImageView closeIv;
 
     @Nullable
     @Override
@@ -68,11 +78,33 @@ public class PatientChoosePaymentFragment extends BaseFragment implements View.O
     }
 
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
         choosePaymentInsuranceBtn = (CustomButton) view.findViewById(R.id.choose_payment_insurance_btn);
         choosePaymentCashBtn = (CustomButton) view.findViewById(R.id.choose_payment_cash_btn);
 
         choosePaymentInsuranceBtn.setOnClickListener(this);
         choosePaymentCashBtn.setOnClickListener(this);
+
+        if (getArguments() != null) {
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                backIv.setVisibility(View.GONE);
+                nextTv.setVisibility(View.GONE);
+                closeIv.setVisibility(View.VISIBLE);
+                closeIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((OnCloseActionInterface) getActivity()).onClose(false);
+                    }
+                });
+                toolbarTitle.setText(getString(R.string.payment_methods));
+            }
+        }
     }
 
     @Override

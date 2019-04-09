@@ -6,9 +6,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -25,8 +29,8 @@ import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.settings.Adapters.PaymentAdapter;
-import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
 
@@ -39,12 +43,17 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
     private CustomRecyclerView recyclerContainer;
 
-    private OnViewChangeInterface onViewChangeInterface;
     private OnActionCompleteInterface onActionCompleteInterface;
 
     private TransactionApiViewModel transactionApiViewModel;
 
     private PaymentAdapter paymentAdapter;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextView nextTv;
+    private ImageView closeIv;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,25 +72,37 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        onViewChangeInterface = (OnViewChangeInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        onViewChangeInterface.updateTitle(getString(R.string.call_charges));
-        onViewChangeInterface.hideOrShowNext(false);
-        onViewChangeInterface.hideOrShowClose(false);
-        onViewChangeInterface.hideOrShowOtherOption(true);
-    }
-
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
         recyclerContainer = view.findViewById(R.id.recyclerContainer);
         recyclerContainer.setScrollable(false);
         recyclerContainer.setEmptyState(EmptyViewConstants.EMPTY_PAYMENTS);
         recyclerContainer.hideEmptyState();
+
+        toolbarTitle.setText(getString(R.string.call_charges));
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((OnCloseActionInterface) getActivity()).onClose(false);
+            }
+        });
+        nextTv.setVisibility(View.GONE);
+        closeIv.setVisibility(View.VISIBLE);
+        closeIv.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info_24dp));
+        closeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doCurrentTransaction();
+            }
+        });
 
         paymentAdapter = new PaymentAdapter(getActivity(), new ArrayList<>());
         recyclerContainer.getRecyclerView().setAdapter(paymentAdapter);

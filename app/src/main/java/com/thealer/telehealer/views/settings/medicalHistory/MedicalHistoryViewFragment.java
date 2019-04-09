@@ -24,6 +24,7 @@ import com.thealer.telehealer.apilayer.models.medicalHistory.MedicalHistoryCommo
 import com.thealer.telehealer.apilayer.models.medicalHistory.MedicationModel;
 import com.thealer.telehealer.apilayer.models.medicalHistory.SexualHistoryModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
@@ -32,6 +33,7 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
@@ -49,6 +51,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
     private ChangeTitleInterface changeTitleInterface;
     private LinearLayout medicalHistoryContainer;
     private OnViewChangeInterface onViewChangeInterface;
+    private CommonUserApiResponseModel commonUserApiResponseModel;
 
     @Override
     public void onAttach(Context context) {
@@ -78,33 +81,44 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
 
-        if (getArguments() != null) {
-            backIv = (ImageView) view.findViewById(R.id.back_iv);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
 
-            backIv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onCloseActionInterface.onClose(false);
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCloseActionInterface.onClose(false);
+            }
+        });
+
+        toolbar.inflateMenu(R.menu.menu_history);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_edit:
+                        showHistoryList();
+                        break;
+                    case R.id.menu_print:
+                        generatePdf();
+                        break;
                 }
-            });
-
-            toolbar.inflateMenu(R.menu.menu_history);
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
-                    showHistoryList();
-                    return true;
-                }
-            });
-
-            toolbar.setVisibility(View.VISIBLE);
-        } else {
-            toolbar.setVisibility(View.GONE);
-        }
+                return true;
+            }
+        });
 
         medicalHistoryContainer = (LinearLayout) view.findViewById(R.id.medical_history_container);
+    }
 
+    private void generatePdf() {
+        MedicalHistoryPdfGenerator pdfGenerator = new MedicalHistoryPdfGenerator(getActivity());
+        String pdfHtml = pdfGenerator.getPdfHtml(commonUserApiResponseModel);
 
+        PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(ArgumentKeys.HTML_FILE, pdfHtml);
+        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.diet_report));
+        pdfViewerFragment.setArguments(bundle);
+        showSubFragmentInterface.onShowFragment(pdfViewerFragment);
     }
 
     private void showHistoryList() {
@@ -134,9 +148,10 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
         if (UserType.isUserPatient()) {
             WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
             questionnaireBean = whoAmIApiResponseModel.getQuestionnaire();
+            commonUserApiResponseModel = whoAmIApiResponseModel;
         } else {
             if (getArguments() != null) {
-                CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+                commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 if (commonUserApiResponseModel != null) {
                     questionnaireBean = commonUserApiResponseModel.getQuestionnaire();
                 }

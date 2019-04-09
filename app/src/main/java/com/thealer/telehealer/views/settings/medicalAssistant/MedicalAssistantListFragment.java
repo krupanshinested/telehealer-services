@@ -7,10 +7,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -22,8 +26,7 @@ import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
-import com.thealer.telehealer.views.common.ChangeTitleInterface;
-import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.AddConnectionActivity;
 import com.thealer.telehealer.views.home.DoctorPatientListAdapter;
 
@@ -33,6 +36,10 @@ import com.thealer.telehealer.views.home.DoctorPatientListAdapter;
 public class MedicalAssistantListFragment extends BaseFragment {
     private CustomRecyclerView medicalAssistantCrv;
     private FloatingActionButton addFab;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
 
     private DoctorPatientListAdapter doctorPatientListAdapter;
     private int page = 1, totalCount = 0;
@@ -40,16 +47,14 @@ public class MedicalAssistantListFragment extends BaseFragment {
 
     private AssociationApiViewModel associationApiViewModel;
     private AttachObserverInterface attachObserverInterface;
-    private ShowSubFragmentInterface showSubFragmentInterface;
     private AssociationApiResponseModel associationApiResponseModel;
-    private ChangeTitleInterface changeTitleInterface;
+    private OnCloseActionInterface onCloseActionInterface;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
-        changeTitleInterface = (ChangeTitleInterface) getActivity();
 
         associationApiViewModel = ViewModelProviders.of(this).get(AssociationApiViewModel.class);
         attachObserverInterface.attachObserver(associationApiViewModel);
@@ -73,8 +78,21 @@ public class MedicalAssistantListFragment extends BaseFragment {
     }
 
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         medicalAssistantCrv = (CustomRecyclerView) view.findViewById(R.id.medical_assistant_crv);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
+
+        toolbarTitle.setText(getString(R.string.medical_assistant));
+
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCloseActionInterface.onClose(false);
+            }
+        });
 
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +124,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
         });
 
         medicalAssistantCrv.setErrorModel(this, associationApiViewModel.getErrorModelLiveData());
+
     }
 
     private void getMAList(boolean isShowProgress) {

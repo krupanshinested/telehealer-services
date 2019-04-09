@@ -9,9 +9,12 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +43,7 @@ import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -71,6 +75,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
     private long remainingSeconds = 0;
     private OnViewChangeInterface onViewChangeInterface;
     private OnActionCompleteInterface onActionCompleteInterface;
+    private OnCloseActionInterface onCloseActionInterface;
     private CountDownTimer countDownTimer;
     private boolean isRequestWithEmail;
     private static final int Max_timer = 30;
@@ -82,11 +87,18 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
     private int otpType = signup;
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private OtpVerificationResponseModel otpVerificationResponseModel;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextView nextTv;
+    private ImageView closeIv;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_otp_verification, container, false);
+        initView(view);
         this.view = view;
         return view;
     }
@@ -110,6 +122,36 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+//        initView(view);
+    }
+
+    private void sendSuccessBroadcast() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, otpVerificationResponseModel.isSuccess());
+        String description;
+
+        if (otpType == signup) {
+            description = getString(R.string.registration_success);
+        } else {
+            description = getString(R.string.reset_password_success);
+        }
+
+        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, description);
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver)).putExtras(bundle));
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onViewChangeInterface = (OnViewChangeInterface) getActivity();
+        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
+        onCloseActionInterface = (OnCloseActionInterface) getActivity();
+
+        resetPasswordRequestModel = ViewModelProviders.of(getActivity()).get(ResetPasswordRequestModel.class);
 
         requestOtpApiViewModel = ViewModelProviders.of(getActivity()).get(RequestOtpApiViewModel.class);
         whoAmIApiViewModel = ViewModelProviders.of(getActivity()).get(WhoAmIApiViewModel.class);
@@ -203,35 +245,15 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
             }
         });
 
-        initView(view);
-    }
-
-    private void sendSuccessBroadcast() {
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, otpVerificationResponseModel.isSuccess());
-        String description;
-
-        if (otpType == signup) {
-            description = getString(R.string.registration_success);
-        } else {
-            description = getString(R.string.reset_password_success);
-        }
-
-        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, description);
-        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-
-        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver)).putExtras(bundle));
-
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        onViewChangeInterface = (OnViewChangeInterface) getActivity();
-        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
     }
 
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
         titleTv = (TextView) view.findViewById(R.id.title_tv);
         otpEt = (EditText) view.findViewById(R.id.otp_et);
         circleIv1 = (ImageView) view.findViewById(R.id.circle_iv1);
@@ -285,10 +307,22 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                 case OtpVerificationFragment.forgot_password:
                 case OtpVerificationFragment.reset_password:
                     isRequestWithEmail = true;
-                    resetPasswordRequestModel = ViewModelProviders.of(getActivity()).get(ResetPasswordRequestModel.class);
+                    resetPasswordRequestModel.setEmail(UserDetailPreferenceManager.getWhoAmIResponse().getEmail());
                     onViewChangeInterface.hideOrShowBackIv(true);
                     titleTv.setText(getString(R.string.enter_the_authorization_code_sent_to) + " your phone number");
                     break;
+            }
+
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                toolbarTitle.setText(getString(R.string.otp));
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onCloseActionInterface.onClose(false);
+                    }
+                });
+                nextTv.setVisibility(View.INVISIBLE);
             }
         }
 
@@ -320,7 +354,6 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
         otpEt.requestFocus();
         showOrHideSoftInputWindow(true);
-
     }
 
     private void requestOtpValidation() {
@@ -353,7 +386,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
     private void requestOtp() {
         if (isRequestWithEmail) {
 
-            resetPasswordRequestModel = ViewModelProviders.of(getActivity()).get(ResetPasswordRequestModel.class);
+            Log.e(TAG, "requestOtp: " + UserDetailPreferenceManager.getWhoAmIResponse().getEmail());
             requestOtpApiViewModel.requestOtpUsingEmail(resetPasswordRequestModel.getEmail());
 
         } else {

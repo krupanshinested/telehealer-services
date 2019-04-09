@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
@@ -59,6 +62,12 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements DoCu
     private OnActionCompleteInterface onActionCompleteInterface;
     private boolean isPrimaryDeleted, isSecondaryDeleted;
     private CreateUserRequestModel createUserRequestModel;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextView nextTv;
+    private ImageView closeIv;
 
     @Override
     public void onAttach(Context context) {
@@ -76,6 +85,12 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements DoCu
     }
 
     private void initView(View view) {
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
         titleTv = view.findViewById(R.id.textView5);
         firstInsuranceLl = (LinearLayout) view.findViewById(R.id.first_insurance_ll);
         firstInsuranceViewPager = (ViewPager) view.findViewById(R.id.first_insurance_viewPager);
@@ -94,9 +109,25 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements DoCu
         setUpSecondaryInsuranceViewPager();
 
         if (getArguments() != null) {
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((OnCloseActionInterface) getActivity()).onClose(false);
+                    }
+                });
+                nextTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doCurrentTransaction();
+                    }
+                });
+
+                toolbarTitle.setText(getString(R.string.insurance_details));
+            }
+
             currentScreenType = getArguments().getInt(ArgumentKeys.SCREEN_TYPE, Constants.forRegistration);
-
-
             primaryFrontImgPath = getArguments().getString(ArgumentKeys.INSURANCE_FRONT);
             primaryBackImgPath = getArguments().getString(ArgumentKeys.INSURANCE_BACK);
             secondaryFrontImgPath = getArguments().getString(ArgumentKeys.SECONDARY_INSURANCE_FRONT);
@@ -130,7 +161,6 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements DoCu
         } else {
             titleTv.setVisibility(View.VISIBLE);
         }
-
     }
 
     private void setUpSecondaryInsuranceViewPager() {

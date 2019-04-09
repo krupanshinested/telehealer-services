@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main_container">
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:focusable="true">
+
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/appbar_app_color_title_back_next" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/detail_view"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/app_gradient_start"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
 
         <TextView
             android:id="@+id/call_charges_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="10dp"
+            android:layout_marginRight="16dp"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/sub_title_size"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -62,26 +68,25 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:maxLines="5"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/sub_title_size"
-            android:maxLines="5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/call_charges_tv"
             app:layout_constraintRight_toRightOf="@+id/call_charges_tv"
-            app:layout_constraintTop_toBottomOf="@+id/bill_tv"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/bill_tv" />
 
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/selector_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/colorWhite"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerContainer"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detail_view"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerContainer">
+        app:layout_constraintTop_toBottomOf="@+id/detail_view">
 
         <View
             android:id="@+id/center_view"
@@ -95,17 +100,17 @@
             android:id="@+id/call_history"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
-            android:padding="10dp"
-            android:textSize="12sp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:padding="10dp"
             android:text="@string/call_history"
             android:textColor="@color/colorWhite"
+            android:textSize="12sp"
             app:btn_bottom_left_corner="5dp"
             app:btn_top_left_corner="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="@+id/center_view"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.thealer.telehealer.common.RoundCornerButton
             android:id="@+id/vital_history"
@@ -114,21 +119,21 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:padding="10dp"
-            android:textSize="12sp"
             android:text="@string/vital_history"
             android:textColor="@color/app_gradient_start"
+            android:textSize="12sp"
             app:btn_background_color="@color/colorWhite"
             app:btn_bottom_right_corner="5dp"
             app:btn_stroke_color="@color/app_gradient_start"
             app:btn_top_right_corner="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/center_view"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
     <com.thealer.telehealer.common.CustomRecyclerView
         android:id="@+id/recyclerContainer"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
