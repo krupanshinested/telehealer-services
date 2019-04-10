@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/transcript_root_cl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/checkbox_ll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@+id/caller_name_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.1">
+
+        <include layout="@layout/visit_select_unselect_layout" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/caller_name_tv"
+        style="@style/text_sub_title_bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:ems="3"
+        android:gravity="start|center"
+        android:maxLines="1"
+        android:padding="@dimen/padding_default"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintEnd_toStartOf="@id/transcript_info_et"
+        app:layout_constraintStart_toEndOf="@id/checkbox_ll"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.3"
+        tools:text="you" />
+
+    <com.thealer.telehealer.common.CustomEditText
+        android:id="@+id/transcript_info_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/open_sans"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/sub_title_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/caller_name_tv"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.6"
+        tools:text="@string/dummy_text" />
+
+</android.support.constraint.ConstraintLayout>

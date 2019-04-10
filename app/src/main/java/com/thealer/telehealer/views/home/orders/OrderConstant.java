@@ -13,6 +13,14 @@ public class OrderConstant {
     public static final String ORDER_DOCUMENTS = "Documents";
     public static final String ORDER_MISC = "Miscellaneous";
 
+    public static String CALL_STATUS_STARTED = "STARTED";
+    public static String CALL_STATUS_NO_ANSWER = "NOANSWER";
+    public static String CALL_STATUS_ENDED = "ENDED";
+    public static String CALL_STATUS_INPROGRESS = "INPROGRESS";
+
+    public static final String RECENT_TYPE_CHAT = "chat";
+    public static final String RECENT_TYPE_AUDIO = "audio";
+
     public static final String[] labTestList = {"Amylase",
             "BMP",
             "B-Natriureitic peptide",

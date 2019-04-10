@@ -59,7 +59,6 @@ public class ArgumentKeys {
     public static final String SHARED_IMAGES = "shared_images";
     public static final String IS_SHARED_INTENT = "isShareIntent";
     public static final String SHOW_SIGNATURE_PROPOSER = "show_signature_proposer";
-    public static final String USER_DETAIL = "user_detail";
 
     public static final int HISTORY_UPDATE = 0;
     public static final int LICENCE_UPDATE = 1;
@@ -93,7 +92,26 @@ public class ArgumentKeys {
     public static final String IS_REFRESH_TOKEN = "isRefreshToken";
     public static final String WEB_VIEW_URL = "webViewUrl";
     public static final String IS_CREATE_PIN = "isCreatePin";
+    public static final String SELECTED_TRANSCRIPTION_ID = "selectedTranscription";
+    public static final String DIET_ITEM = "dietItem";
+    public static final String GROUP_POSITION = "group_position";
+    public static final String CHILD_POSITION = "child_position";
     public static final String CONNECT_USER = "connectUser";
+    public static final String UPDATE_TYPE = "updateType";
+    public static final String SELECTED_DOCUMENT = "selected_document";
+    public static final String ORDER_DETAIL = "orderDetail";
+    public static final String START_DATE = "startDate";
+    public static final String END_DATE = "endDate";
+    public static final String IS_SHOW_FILTER = "isShowFilter";
+    public static final String SELECTED_VITALS = "selectedVitals";
+    public static final String SELECTED_PRESCRIPTION = "selectedPrescription";
+    public static final String SELECTED_SPECIALIST = "selectedSpecialist";
+    public static final String SELECTED_XRAYS = "selectedXrays";
+    public static final String SELECTED_MISCELLANEOUS = "selectedMiscellaneous";
+    public static final String SELECTED_LABS = "selectedLabs";
+    public static final String SELECTED_DIET = "selectedDiet";
+    public static final String SELECTED_FILES = "selectedFiles";
+    public static final String SELECTED_LIST_ID = "selectedListId";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;

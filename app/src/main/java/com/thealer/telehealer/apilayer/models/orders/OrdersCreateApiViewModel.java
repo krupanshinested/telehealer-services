@@ -68,15 +68,20 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
     }
 
 
-    public void uploadDocument(@Nullable String userGuid, String doctorGuid, String name, String image_path, boolean isProgressVisible) {
+    public void uploadDocument(@Nullable String userGuid, String doctorGuid, String name, String image_path, String vistOrderId, boolean isProgressVisible) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     MultipartBody.Part file = getMultipartFile("file", image_path);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), name);
+
+                    RequestBody orderId = null;
+                    if (vistOrderId != null) {
+                        orderId = RequestBody.create(MediaType.parse("multipart/form-data"), vistOrderId);
+                    }
                     getAuthApiService()
-                            .uploadDocument(requestBody, file, userGuid, doctorGuid)
+                            .uploadDocument(requestBody, orderId, file, userGuid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisible)) {
                                 @Override

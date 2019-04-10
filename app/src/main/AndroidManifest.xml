@@ -170,6 +170,9 @@
             android:name=".views.home.vitals.LandscapeImageView"
             android:screenOrientation="landscape" />
 
+        <activity android:name=".views.common.RecentsSelectionActivity"
+            android:screenOrientation="portrait"/>
+
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
             android:enabled="true">

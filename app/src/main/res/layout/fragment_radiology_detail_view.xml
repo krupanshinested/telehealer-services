@@ -32,27 +32,27 @@
                 app:title_text="@string/Click_here_to_select_patient"
                 app:view_label="@string/patient_name" />
 
-<com.thealer.telehealer.views.home.orders.OrdersCustomView
-                                android:id="@+id/fax_number_ocv"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:visibility="gone"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/patient_ocv"
-                                app:sub_title_visible="false"
-                                app:view_label="@string/fax_number" />
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/fax_number_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/patient_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/fax_number" />
 
-                            <com.thealer.telehealer.views.home.orders.OrdersCustomView
-                                android:id="@+id/fax_status_ocv"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:visibility="gone"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/fax_number_ocv"
-                                app:sub_title_visible="false"
-                                app:view_label="@string/fax_status" />
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/fax_status_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fax_number_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/fax_status" />
 
             <com.thealer.telehealer.views.home.orders.OrdersCustomView
                 android:id="@+id/copy_result_ocv"
@@ -122,9 +122,9 @@
                 android:id="@+id/stat_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="false"
                 android:padding="8dp"
                 android:text="@string/stat"
-                android:clickable="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/list_bottom_view" />

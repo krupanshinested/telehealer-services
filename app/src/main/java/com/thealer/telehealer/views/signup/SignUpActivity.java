@@ -140,7 +140,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         if (isUserPatient()) {
             switch (currentStep) {
                 case 1:
-                    viewInfoStack.push(getResources().getString(R.string.patient_info));
+                    viewInfoStack.push(getResources().getString(R.string.reg_patient_info));
                     return new PatientRegistrationDetailFragment();
                 case 2:
                     viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));

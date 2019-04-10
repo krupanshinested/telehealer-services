@@ -12,6 +12,7 @@ public class CreateTestApiRequestModel extends ViewModel implements Serializable
     private String user_guid;
     private String name;
     private LabsDetailBean detail = new LabsDetailBean();
+    private String order_id;
 
     public String getUser_guid() {
         return user_guid;
@@ -35,5 +36,13 @@ public class CreateTestApiRequestModel extends ViewModel implements Serializable
 
     public void setDetail(LabsDetailBean detail) {
         this.detail = detail;
+    }
+
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
     }
 }

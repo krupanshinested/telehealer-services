@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/appbar_back_with_title_app_color" />
+
+    <com.thealer.telehealer.common.CustomRecyclerView
+        android:id="@+id/diet_list_crv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

@@ -740,7 +740,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     public void showRecentView() {
         helpContent = HelpContent.HELP_RECENTS;
-        setToolbarTitle(getString(R.string.recents));
+        setToolbarTitle(getString(R.string.visits));
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.IS_FROM_HOME, true);
         RecentFragment recentFragment = new RecentFragment();

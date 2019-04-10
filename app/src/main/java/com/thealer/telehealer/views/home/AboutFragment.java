@@ -153,7 +153,6 @@ public class AboutFragment extends BaseFragment {
             userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
 
-            Log.e(TAG, "initView: " + new Gson().toJson(doctorDetail));
 
             if (doctorDetail != null) {
                 doctorGuid = doctorDetail.getUser_guid();
@@ -171,7 +170,6 @@ public class AboutFragment extends BaseFragment {
                 disconnectTv.setVisibility(View.VISIBLE);
             }
 
-            Log.e(TAG, "initView: " + new Gson().toJson(userDetail));
 
             if (userDetail != null) {
                 switch (userDetail.getRole()) {
@@ -296,7 +294,6 @@ public class AboutFragment extends BaseFragment {
                             insuranceImageLl.setVisibility(View.GONE);
                             insuranceCashTv.setVisibility(View.VISIBLE);
                         } else {
-                            Log.e(TAG, "initView: " + insuranceImageList.toString());
                             ImagePreviewViewModel imagePreviewViewModel = ViewModelProviders.of(getActivity()).get(ImagePreviewViewModel.class);
                             imagePreviewViewModel.setImageList(insuranceImageList);
 

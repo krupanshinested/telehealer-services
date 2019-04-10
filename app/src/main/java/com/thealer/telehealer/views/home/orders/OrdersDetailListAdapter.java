@@ -22,7 +22,6 @@ import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseMod
 import com.thealer.telehealer.apilayer.models.orders.miscellaneous.MiscellaneousApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserType;
@@ -160,7 +159,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                 ordersCommonResultResponseModel.setUserDetailMap(detailMap);
             }
 
-            bundle.putSerializable(Constants.USER_DETAIL, ordersCommonResultResponseModel);
+            bundle.putSerializable(ArgumentKeys.ORDER_DETAIL, ordersCommonResultResponseModel);
 
             int statusImage = 0;
 
@@ -206,13 +205,15 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
         } else {
 
-            String key;
+            String key = null;
             if (UserType.isUserAssistant()) {
                 key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getPatient().getUser_guid();
             } else {
-                key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getDoctor().getUser_guid();
+                if (ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getDoctor() != null) {
+                    key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getDoctor().getUser_guid();
+                }
             }
-            if (userDetailHashMap.containsKey(key)) {
+            if (key != null && userDetailHashMap.containsKey(key)) {
                 itemTitleTv.setText(userDetailHashMap.get(key).getUserDisplay_name());
                 Utils.setImageWithGlide(context, itemCiv, userDetailHashMap.get(key).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true);
             }

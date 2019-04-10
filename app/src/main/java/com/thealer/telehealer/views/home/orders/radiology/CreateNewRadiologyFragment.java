@@ -50,7 +50,7 @@ import java.util.List;
  * Created by Aswin on 10,December,2018
  */
 public class CreateNewRadiologyFragment extends OrdersBaseFragment implements View.OnClickListener {
-    private OrdersCustomView patientOcv;
+    private OrdersCustomView patientOcv, visitOcv;
     private OrdersCustomView copyResultOcv;
     private ConstraintLayout radiologyLl;
     private RecyclerView radiologyListRv;
@@ -136,6 +136,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
 
     private void initView(View view) {
         patientOcv = (OrdersCustomView) view.findViewById(R.id.patient_ocv);
+        visitOcv = (OrdersCustomView) view.findViewById(R.id.visit_ocv);
         copyResultOcv = (OrdersCustomView) view.findViewById(R.id.copy_result_ocv);
         radiologyLl = (ConstraintLayout) view.findViewById(R.id.radiology_ll);
         radiologyListRv = (RecyclerView) view.findViewById(R.id.radiology_list_rv);
@@ -231,6 +232,8 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
             patientOcv.setTitleTv(userModel.getUserDisplay_name());
             patientOcv.setSubtitleTv(userModel.getDob());
             patientOcv.setSub_title_visible(true);
+            setVisitsView(visitOcv, userModel.getUser_guid(), doctorGuid);
+            getPatientsRecentsList(userModel.getUser_guid(), doctorGuid);
         }
     }
 
@@ -291,7 +294,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
                     copyToModel.getNpi());
         }
 
-        return new CreateRadiologyRequestModel(userModel.getUser_guid(),
+        return new CreateRadiologyRequestModel(userModel.getUser_guid(), getVistOrderId(),
                 new CreateRadiologyRequestModel.DetailBean(commentsEt.getText().toString().trim(),
                         dateOcv.getTitleText(),
                         copyToBean,

@@ -17,9 +17,10 @@ public class OrdersCommonResultResponseModel implements Serializable {
     private String name;
     private String path;
     private String status;
+    private String order_id;
     private String created_at;
     private String updated_at;
-    private HashMap<String , CommonUserApiResponseModel> userDetailMap = new HashMap<>();
+    private HashMap<String, CommonUserApiResponseModel> userDetailMap = new HashMap<>();
     private DoctorBean doctor;
     private PatientBean patient;
     private MedicalAssistantBean medical_assistant;
@@ -33,6 +34,13 @@ public class OrdersCommonResultResponseModel implements Serializable {
         this.faxes = faxes;
     }
 
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
+    }
 
     public int getReferral_id() {
         return referral_id;
@@ -121,7 +129,7 @@ public class OrdersCommonResultResponseModel implements Serializable {
     public void setMedical_assistant(MedicalAssistantBean medical_assistant) {
         this.medical_assistant = medical_assistant;
     }
-    
+
     public HashMap<String, CommonUserApiResponseModel> getUserDetailMap() {
         return userDetailMap;
     }
@@ -130,7 +138,7 @@ public class OrdersCommonResultResponseModel implements Serializable {
         this.userDetailMap = userDetailMap;
     }
 
-    public static class DoctorBean implements Serializable{
+    public static class DoctorBean implements Serializable {
 
         private int user_id;
         private String user_guid;
@@ -161,7 +169,7 @@ public class OrdersCommonResultResponseModel implements Serializable {
         }
     }
 
-    public static class PatientBean implements Serializable{
+    public static class PatientBean implements Serializable {
 
         private int user_id;
         private String user_guid;
@@ -192,7 +200,7 @@ public class OrdersCommonResultResponseModel implements Serializable {
         }
     }
 
-    public static class MedicalAssistantBean implements Serializable{
+    public static class MedicalAssistantBean implements Serializable {
 
         private int user_id;
         private String user_guid;

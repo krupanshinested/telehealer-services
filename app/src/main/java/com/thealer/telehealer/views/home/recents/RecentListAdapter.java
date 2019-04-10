@@ -21,6 +21,7 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,12 +38,6 @@ public class RecentListAdapter extends BaseExpandableListAdapter {
     private HashMap<String, List<RecentsApiResponseModel.ResultBean>> listChild;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private boolean isShowInfoAction;
-
-    private String CALL_STATUS_STARTED = "STARTED";
-    private String CALL_STATUS_NO_ANSWER = "NOANSWER";
-    private String CALL_STATUS_ENDED = "ENDED";
-    private String CALL_STATUS_INPROGRESS = "INPROGRESS";
-
 
     public RecentListAdapter(FragmentActivity context, List<String> listHeader,
                              HashMap<String, List<RecentsApiResponseModel.ResultBean>> listChild, boolean isShowInfoAction) {
@@ -124,10 +119,10 @@ public class RecentListAdapter extends BaseExpandableListAdapter {
         }
 
         RecentsApiResponseModel.ResultBean resultBean = getChild(groupPosition, childPosition);
-        boolean isChat = resultBean.getCorr_type().equals(context.getString(R.string.chat));
+        boolean isChat = resultBean.getCorr_type().equals(OrderConstant.RECENT_TYPE_CHAT);
 
         if (!isChat) {
-            if (resultBean.getType().equals(context.getString(R.string.audio))) {
+            if (resultBean.getType().equals(OrderConstant.RECENT_TYPE_AUDIO)) {
                 if (UserType.isUserPatient()) {
                     timeTv.setCompoundDrawablesRelativeWithIntrinsicBounds(context.getDrawable(R.drawable.ic_call_incoming), null, null, null);
                 } else {
@@ -155,11 +150,11 @@ public class RecentListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 if (!isChat && resultBean.getDurationInSecs() > 0) {
-                    RecentDetailView recentDetailView = new RecentDetailView();
+                    VisitsDetailFragment visitsDetailFragment = new VisitsDetailFragment();
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL, resultBean);
-                    recentDetailView.setArguments(bundle);
-                    showSubFragmentInterface.onShowFragment(recentDetailView);
+                    visitsDetailFragment.setArguments(bundle);
+                    showSubFragmentInterface.onShowFragment(visitsDetailFragment);
                 }
             }
         });
@@ -172,6 +167,10 @@ public class RecentListAdapter extends BaseExpandableListAdapter {
                 String userGuid;
                 if (UserType.isUserPatient()) {
                     userGuid = resultBean.getDoctor().getUser_guid();
+
+                    if (resultBean.getMedical_assistant() != null) {
+                        userGuid = resultBean.getMedical_assistant().getUser_guid();
+                    }
                 } else {
                     userGuid = resultBean.getPatient().getUser_guid();
 
@@ -222,14 +221,10 @@ public class RecentListAdapter extends BaseExpandableListAdapter {
             durationTv.setVisibility(View.GONE);
             timeTv.setCompoundDrawablesWithIntrinsicBounds(context.getDrawable(R.drawable.ic_chat_bubble_outline_black_24dp), null, null, null);
         } else {
-            int seconds = resultBean.getDurationInSecs();
-            if (seconds < 60) {
-                durationTv.setText(resultBean.getDurationInSecs() + " sec");
-            } else {
-                durationTv.setText((seconds / 60) + " min " + (seconds % 60) + " sec");
-            }
 
-            if (resultBean.getStatus().equals(CALL_STATUS_NO_ANSWER) && UserType.isUserPatient()) {
+            durationTv.setText(Utils.getDisplayDuration(resultBean.getDurationInSecs()));
+
+            if (resultBean.getStatus().equals(OrderConstant.CALL_STATUS_NO_ANSWER) && UserType.isUserPatient()) {
                 timeTv.setCompoundDrawablesRelativeWithIntrinsicBounds(context.getDrawable(R.drawable.ic_call_missed_24dp), null, null, null);
                 durationTv.setText(context.getString(R.string.missed));
                 userNameTv.setTextColor(ColorStateList.valueOf(context.getColor(R.color.red)));

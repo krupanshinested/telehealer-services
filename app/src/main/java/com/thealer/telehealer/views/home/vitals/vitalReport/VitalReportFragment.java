@@ -3,8 +3,6 @@ package com.thealer.telehealer.views.home.vitals.vitalReport;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,8 +12,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +29,13 @@ import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewMode
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +59,7 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
     private VitalReportApiReponseModel vitalReportApiReponseModel;
     private AlertDialog filterAlertDialog;
     private VitalReportUserListAdapter vitalReportUserListAdapter;
-    private String selectedFilter;
+    private String selectedFilter, startDate = null, endDate = null;
     private List<CommonUserApiResponseModel> searchList = new ArrayList<>();
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
@@ -83,9 +82,9 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
                     vitalReportApiReponseModel = (VitalReportApiReponseModel) baseApiResponseModel;
                     if (vitalReportApiReponseModel.getResult().size() > 0) {
                         vitalReportUserListAdapter.setData(vitalReportApiReponseModel.getResult(), selectedFilter);
-                        patientListCrv.hideEmptyState();
+                        patientListCrv.showOrhideEmptyState(false);
                     } else {
-                        patientListCrv.showEmptyState();
+                        patientListCrv.showOrhideEmptyState(true);
                     }
                 }
             }
@@ -178,13 +177,13 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
 
         patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
 
-        if (getArguments() != null){
+        if (getArguments() != null) {
             CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
             if (doctorModel != null) {
                 doctorGuid = doctorModel.getUser_guid();
             }
 
-            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)){
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
                 toolbarTitle.setText(getString(R.string.vitals));
                 onCloseActionInterface = (OnCloseActionInterface) getActivity();
@@ -206,50 +205,50 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
         patientListCrv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getUsersList(selectedFilter);
+                getUsersList(selectedFilter, startDate, endDate);
             }
         });
 
         patientListCrv.setErrorModel(this, vitalReportApiViewModel.getErrorModelLiveData());
 
-        getUsersList(VitalReportApiViewModel.LAST_WEEK);
+        getUsersList(VitalReportApiViewModel.LAST_WEEK, startDate, endDate);
 
     }
 
     private void showFilterDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_filter, null);
 
-        builder.setView(view);
-        filterAlertDialog = builder.create();
+        Utils.showMonitoringFilter(getActivity(), new OnListItemSelectInterface() {
+            @Override
+            public void onListItemSelected(int position, Bundle bundle) {
+                String selectedItem = bundle.getString(Constants.SELECTED_ITEM);
+                startDate = null;
+                endDate = null;
 
-        TextView lastWeekTv;
-        TextView lastTwoWeekTv;
-        TextView lastMonthTv;
-        TextView allTv;
-        CardView cancelCv;
+                if (selectedItem != null) {
+                    if (selectedItem.equals(getString(R.string.last_week))) {
+                        patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
+                        selectedFilter = VitalReportApiViewModel.LAST_WEEK;
+                    } else if (selectedItem.equals(getString(R.string.all))) {
+                        patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH);
+                        selectedFilter = VitalReportApiViewModel.ALL;
+                    }
 
-        lastWeekTv = (TextView) view.findViewById(R.id.last_week_tv);
-        lastTwoWeekTv = (TextView) view.findViewById(R.id.last_two_week_tv);
-        lastMonthTv = (TextView) view.findViewById(R.id.last_month_tv);
-        allTv = (TextView) view.findViewById(R.id.all_tv);
-        cancelCv = (CardView) view.findViewById(R.id.cancel_cv);
+                } else {
+                    selectedFilter = null;
+                    startDate = bundle.getString(ArgumentKeys.START_DATE);
+                    endDate = bundle.getString(ArgumentKeys.END_DATE);
 
-        lastWeekTv.setOnClickListener(this);
-        lastTwoWeekTv.setOnClickListener(this);
-        lastMonthTv.setOnClickListener(this);
-        allTv.setOnClickListener(this);
-        cancelCv.setOnClickListener(this);
+                    String title = EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_VITAL_FROM_TO);
 
-        if (filterAlertDialog.getWindow() != null) {
-            filterAlertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            filterAlertDialog.getWindow().setGravity(Gravity.BOTTOM);
-        }
-        filterAlertDialog.show();
+                    patientListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
+                }
+                getUsersList(selectedFilter, startDate, endDate);
+            }
+        });
     }
 
-    private void getUsersList(String filter) {
-        vitalReportApiViewModel.getVitalUsers(filter, doctorGuid, true);
+    private void getUsersList(String filter, String startDate, String endDate) {
+        vitalReportApiViewModel.getVitalUsers(filter, startDate, endDate, doctorGuid, true);
     }
 
     @Override
@@ -258,34 +257,6 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
             case R.id.filter_iv:
                 showFilterDialog();
                 break;
-            case R.id.last_week_tv:
-                patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
-                selectedFilter = VitalReportApiViewModel.LAST_WEEK;
-                getUsersList(VitalReportApiViewModel.LAST_WEEK);
-                filterAlertDialog.dismiss();
-                break;
-            case R.id.last_two_week_tv:
-                patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_TWO_WEEK);
-                selectedFilter = VitalReportApiViewModel.LAST_TWO_WEEK;
-                getUsersList(VitalReportApiViewModel.LAST_TWO_WEEK);
-                filterAlertDialog.dismiss();
-                break;
-            case R.id.last_month_tv:
-                patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH);
-                selectedFilter = VitalReportApiViewModel.LAST_MONTH;
-                getUsersList(VitalReportApiViewModel.LAST_MONTH);
-                filterAlertDialog.dismiss();
-                break;
-            case R.id.all_tv:
-                patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH);
-                selectedFilter = VitalReportApiViewModel.ALL;
-                getUsersList(VitalReportApiViewModel.ALL);
-                filterAlertDialog.dismiss();
-                break;
-            case R.id.cancel_cv:
-                filterAlertDialog.dismiss();
-                break;
-
         }
     }
 }

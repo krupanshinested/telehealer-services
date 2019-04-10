@@ -14,7 +14,6 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -66,18 +65,11 @@ public class RecentFragment extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.e(TAG, "onAttach: " + (recentsApiViewModel == null));
         attachObserverInterface = (AttachObserverInterface) getActivity();
 
         onOrientationChangeInterface = (OnOrientationChangeInterface) getActivity();
 
         recentsApiViewModel = ViewModelProviders.of(this).get(RecentsApiViewModel.class);
-
-        if (recentsApiViewModel.baseApiResponseModelMutableLiveData.hasActiveObservers()) {
-            Log.e(TAG, "onAttach: has observer");
-        } else {
-            Log.e(TAG, "onAttach: no observer");
-        }
 
         attachObserverInterface.attachObserver(recentsApiViewModel);
 
@@ -93,7 +85,6 @@ public class RecentFragment extends BaseFragment {
 
                     totalCount = recentsApiResponseModel.getCount();
 
-                    Log.e(TAG, "onChanged: ");
                     updateList();
 
                     if (!recentsApiResponseModel.getResult().isEmpty()) {
@@ -103,8 +94,6 @@ public class RecentFragment extends BaseFragment {
                         onOrientationChangeInterface.onDataReceived(bundle);
                         recentsCelv.hideEmptyState();
                     }
-                } else {
-                    Log.e(TAG, "onChanged: null");
                 }
                 isApiRequested = false;
                 recentsCelv.setScrollable(true);
@@ -185,10 +174,7 @@ public class RecentFragment extends BaseFragment {
             listHeader.clear();
             listChild.clear();
         }
-        Log.e(TAG, "updateList: 1");
         if (recentsApiResponseModel != null && recentsApiResponseModel.getResult().size() > 0) {
-            Log.e(TAG, "updateList: 2");
-
             chatList.clear();
             chatListHeader.clear();
             videoList.clear();
@@ -234,24 +220,18 @@ public class RecentFragment extends BaseFragment {
             recentsCelv.setTotalCount(totalCount + listHeader.size());
 
             if (recentListAdapter != null) {
-                Log.e(TAG, "updateList: 3");
                 recentListAdapter.setData(listHeader, listChild, page);
                 expandListView();
             }
 
-            Log.e(TAG, "updateList: " + new Gson().toJson(listChild));
             if (listHeader.isEmpty()) {
                 recentsCelv.showEmptyState();
             } else {
                 recentsCelv.hideEmptyState();
             }
         } else {
-            Log.e(TAG, "updateList: 4");
             recentsCelv.showEmptyState();
         }
-
-        Log.e(TAG, "updateList: 5");
-
     }
 
     private void expandListView() {
@@ -320,6 +300,7 @@ public class RecentFragment extends BaseFragment {
                         String userGuid = null;
                         if (userDetail != null) {
                             userGuid = userDetail.getUser_guid();
+                            recentsApiViewModel.getUserCorrespondentList(userDetail.getUser_guid(), null, null, page, false, isShowProgress);
                         }
                         CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
                         String doctorGuid = null;
@@ -327,7 +308,7 @@ public class RecentFragment extends BaseFragment {
                             doctorGuid = doctorDetail.getUser_guid();
                             isCalls = true;
                         }
-                        recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, page, isCalls, isShowProgress);
+                        recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
                     }
                 }
             }
@@ -338,13 +319,11 @@ public class RecentFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         isResumed = true;
-        Log.e(TAG, "onResume: ");
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        Log.e(TAG, "setUserVisibleHint: " + isVisibleToUser + " " + isResumed);
 
         isApiRequested = false;
 

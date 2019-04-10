@@ -20,6 +20,7 @@ public class LabelValueCustomView extends ConstraintLayout {
     private TextView labelTv;
     private TextView valueTv;
     private View bottomView;
+    private int labelTvColor = 0, valueTvColor = 0;
 
     boolean isLabelVisible = true, isValueVisible = true, isBottomViewVisible = true;
     String labelText, valueText;
@@ -49,6 +50,8 @@ public class LabelValueCustomView extends ConstraintLayout {
             isBottomViewVisible = typedArray.getBoolean(R.styleable.LabelValueCustomView_lbcv_bottom_view_visible, true);
             labelText = typedArray.getString(R.styleable.LabelValueCustomView_lbcv_label_text);
             valueText = typedArray.getString(R.styleable.LabelValueCustomView_lbcv_value_text);
+            labelTvColor = typedArray.getColor(R.styleable.LabelValueCustomView_lbcv_label_text_color, 0);
+            valueTvColor = typedArray.getColor(R.styleable.LabelValueCustomView_lbcv_value_text_color, 0);
 
             labelTv = (TextView) view.findViewById(R.id.label_tv);
             valueTv = (TextView) view.findViewById(R.id.value_tv);
@@ -60,6 +63,12 @@ public class LabelValueCustomView extends ConstraintLayout {
             setLabelText(labelText);
             setValueText(valueText);
 
+            if (labelTvColor != 0) {
+                labelTv.setTextColor(labelTvColor);
+            }
+            if (valueTvColor != 0) {
+                valueTv.setTextColor(valueTvColor);
+            }
 
             typedArray.recycle();
         }
