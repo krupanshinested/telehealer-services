@@ -21,6 +21,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.monitoring.diet.DietDetailFragment;
+import com.thealer.telehealer.views.home.monitoring.diet.DietListingFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,9 +89,9 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
             onActionCompleteInterface.onCompletionResult(RequestID.REQ_SHOW_DETAIL_VIEW, true, bundle);
         } else {
             ShowSubFragmentInterface showSubFragmentInterface = (ShowSubFragmentInterface) fragmentActivity;
-            DietDetailFragment dietDetailFragment = new DietDetailFragment();
-            dietDetailFragment.setArguments(bundle);
-            showSubFragmentInterface.onShowFragment(dietDetailFragment);
+            DietListingFragment dietListingFragment = new DietListingFragment();
+            dietListingFragment.setArguments(bundle);
+            showSubFragmentInterface.onShowFragment(dietListingFragment);
         }
     }
 

@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -72,24 +72,24 @@ public class SelectIcdCodeAdapter extends RecyclerView.Adapter<SelectIcdCodeAdap
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
 
         if (selectedIcdCodeList.contains(resultsBeanList.get(i).getCode())) {
-            viewHolder.icdCodeRb.setChecked(true);
+            viewHolder.icdCodeCb.setChecked(true);
         } else {
-            viewHolder.icdCodeRb.setChecked(false);
+            viewHolder.icdCodeCb.setChecked(false);
         }
 
-        viewHolder.icdCodeRb.setText(resultsBeanList.get(i).getCode());
+        viewHolder.icdCodeCb.setText(resultsBeanList.get(i).getCode());
         viewHolder.icdDetailTv.setText(resultsBeanList.get(i).getDescription());
 
         viewHolder.listItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!viewHolder.icdCodeRb.isChecked()) {
-                    viewHolder.icdCodeRb.setChecked(true);
+                if (!viewHolder.icdCodeCb.isChecked()) {
+                    viewHolder.icdCodeCb.setChecked(true);
 
                     selectedIcdCodeList.add(resultsBeanList.get(i).getCode());
                     selectedListItems.put(resultsBeanList.get(i).getCode(), resultsBeanList.get(i));
                 } else {
-                    viewHolder.icdCodeRb.setChecked(false);
+                    viewHolder.icdCodeCb.setChecked(false);
 
                     selectedIcdCodeList.remove(resultsBeanList.get(i).getCode());
                 }
@@ -107,14 +107,14 @@ public class SelectIcdCodeAdapter extends RecyclerView.Adapter<SelectIcdCodeAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ConstraintLayout listItem;
-        private RadioButton icdCodeRb;
+        private CheckBox icdCodeCb;
         private TextView icdDetailTv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             listItem = (ConstraintLayout) itemView.findViewById(R.id.list_item);
-            icdCodeRb = (RadioButton) itemView.findViewById(R.id.icd_code_rb);
+            icdCodeCb = (CheckBox) itemView.findViewById(R.id.icd_code_cb);
             icdDetailTv = (TextView) itemView.findViewById(R.id.icd_detail_tv);
         }
     }

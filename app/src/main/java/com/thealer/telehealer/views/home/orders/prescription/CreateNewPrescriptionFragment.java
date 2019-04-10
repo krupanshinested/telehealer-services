@@ -68,6 +68,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
     private boolean isFromHome;
     private int refillCount = 0;
     private String doctorGuid;
+    private OrdersCustomView visitOcv;
 
 
     @Override
@@ -107,6 +108,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
         labelCb = (CheckBox) view.findViewById(R.id.label_cb);
         saveBtn = (Button) view.findViewById(R.id.save_btn);
         saveFaxBtn = (Button) view.findViewById(R.id.save_fax_btn);
+        visitOcv = (OrdersCustomView) view.findViewById(R.id.visit_ocv);
 
         loadForms();
         loadMetrics();
@@ -156,6 +158,8 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
             patientOcv.setTitleTv(commonUserApiResponseModel.getUserDisplay_name());
             patientOcv.setSubtitleTv(commonUserApiResponseModel.getDob());
             patientOcv.setSub_title_visible(true);
+            setVisitsView(visitOcv, commonUserApiResponseModel.getUser_guid(), doctorGuid);
+            getPatientsRecentsList(commonUserApiResponseModel.getUser_guid(), doctorGuid);
         }
     }
 
@@ -393,6 +397,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
 
     private CreatePrescriptionRequestModel getPrescriptionModel() {
         return new CreatePrescriptionRequestModel(commonUserApiResponseModel.getUser_guid(), commonUserApiResponseModel.getUserDisplay_name(),
+                getVistOrderId(),
                 new CreatePrescriptionRequestModel.DetailBean(drugEt.getText().toString(),
                         strengthEt.getText().toString(),
                         metricCsv.getSpinner().getSelectedItem().toString(),

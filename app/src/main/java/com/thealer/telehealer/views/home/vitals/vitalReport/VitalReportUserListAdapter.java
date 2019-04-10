@@ -15,6 +15,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
@@ -60,7 +61,7 @@ public class VitalReportUserListAdapter extends RecyclerView.Adapter<VitalReport
             public void onClick(View v) {
                 VitalUserReportListFragment vitalUserReportListFragment = new VitalUserReportListFragment();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(ArgumentKeys.USER_DETAIL, commonUserApiResponseModelList.get(i));
+                bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModelList.get(i));
                 bundle.putString(ArgumentKeys.SEARCH_TYPE, filter);
                 bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                 vitalUserReportListFragment.setArguments(bundle);

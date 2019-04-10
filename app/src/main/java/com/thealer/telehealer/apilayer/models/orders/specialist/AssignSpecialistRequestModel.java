@@ -11,10 +11,12 @@ public class AssignSpecialistRequestModel extends BaseApiResponseModel {
 
     private String user_guid;
     private String name = "Test Specialist Referral";
+    private String order_id;
     private DetailBean detail;
 
-    public AssignSpecialistRequestModel(String user_guid, DetailBean detail) {
+    public AssignSpecialistRequestModel(String user_guid, String vistOrderId, DetailBean detail) {
         this.user_guid = user_guid;
+        this.order_id = vistOrderId;
         this.detail = detail;
     }
 
@@ -40,6 +42,14 @@ public class AssignSpecialistRequestModel extends BaseApiResponseModel {
 
     public void setDetail(DetailBean detail) {
         this.detail = detail;
+    }
+
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
     }
 
     public static class DetailBean implements Serializable {

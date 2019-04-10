@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersFormsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.common.Constants;
@@ -14,6 +15,7 @@ import com.thealer.telehealer.views.home.orders.OrderConstant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Aswin on 22,November,2018
@@ -398,6 +400,71 @@ public class OrdersApiViewModel extends BaseApiViewModel {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getOrderdsDetail(String userGuid, String doctorGuid, List<Integer> idList, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    String ids = null;
+                    if (idList != null)
+                        ids = idList.toString().replace("[", "").replace("]", "");
+                    getAuthApiService().getOrderDetails(userGuid, doctorGuid, ids)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<OrdersIdListApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(OrdersIdListApiResponseModel ordersIdListApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(ordersIdListApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getDocumentsDetail(String userGuid, String doctorGuid, List<Integer> idList, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    String ids = idList.toString().replace("[", "").replace("]", "");
+                    getAuthApiService().getDocumentDetails(userGuid, doctorGuid, ids)
+                            .compose(applySchedulers())
+                            .subscribe(new RAListObserver<DocumentsApiResponseModel.ResultBean>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(ArrayList<DocumentsApiResponseModel.ResultBean> data) {
+                                    ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(data);
+
+                                    baseApiArrayListMutableLiveData.setValue(apiResponseModels);
+
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getFormsDetail(String userGuid, String doctorGuid, List<Integer> idList, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    String ids = idList.toString().replace("[", "").replace("]", "");
+                    getAuthApiService().getFormDetails(userGuid, doctorGuid, ids)
+                            .compose(applySchedulers())
+                            .subscribe(new RAListObserver<OrdersUserFormsApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(ArrayList<OrdersUserFormsApiResponseModel> data) {
+                                    ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(data);
+
+                                    baseApiArrayListMutableLiveData.setValue(apiResponseModels);
+
                                 }
                             });
                 }

@@ -149,6 +149,14 @@ public class CustomUserListItemView extends ConstraintLayout {
         return listSubTitleTv;
     }
 
+    public void setListTitleTv(String title) {
+        listTitleTv.setText(title);
+    }
+
+    public void setListSubTitleTv(String subTitle) {
+        listSubTitleTv.setText(subTitle);
+    }
+
     public ImageView getActionIv() {
         return actionIv;
     }

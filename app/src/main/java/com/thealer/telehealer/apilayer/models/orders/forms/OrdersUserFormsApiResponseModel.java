@@ -17,9 +17,18 @@ public class OrdersUserFormsApiResponseModel extends BaseApiResponseModel {
     private Object doctor_id;
     private String created_at;
     private String updated_at;
+    private String order_id;
     private OrdersCommonResultResponseModel.PatientBean patient;
     private OrdersCommonResultResponseModel.DoctorBean doctor;
     private OrdersCommonResultResponseModel.MedicalAssistantBean medical_assistant;
+
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
+    }
 
     public int getUser_form_id() {
         return user_form_id;

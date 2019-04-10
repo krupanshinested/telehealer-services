@@ -34,10 +34,12 @@ import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.DietApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.DatePickerDialogFragment;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
@@ -53,6 +55,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -114,6 +117,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
     private DietViewPagerAdapter dietViewPagerAdapter;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private CommonUserApiResponseModel commonUserApiResponseModel;
+    private CustomRecyclerView dietListCrv;
 
     @Override
     public void onAttach(Context context) {
@@ -217,15 +221,15 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
             energyCountTv.setText("-");
             energyUnitTv.setVisibility(View.GONE);
         } else {
-            String value;
-
-            if (calories >= 1000) {
-                value = String.format("%.1f", (float) calories / 1000);
-            } else {
-                value = String.valueOf((int) calories);
-            }
-            energyCountTv.setText(value);
-            energyUnitTv.setText((calories > 1000) ? getString(R.string.k_cals) : getString(R.string.cals));
+//            String value;
+//
+//            if (calories >= 1000) {
+//                value = String.format("%.1f", (float) calories / 1000);
+//            } else {
+//                value = String.valueOf((int) calories);
+//            }
+            energyCountTv.setText(String.valueOf((int) calories));
+            energyUnitTv.setText(getString(R.string.cal));
             energyUnitTv.setVisibility(View.VISIBLE);
         }
 
@@ -313,6 +317,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
         proteinUnitTv = (TextView) view.findViewById(R.id.protein_unit_tv);
         calendarview = (MaterialCalendarView) view.findViewById(R.id.calendarview);
         dietListVp = (ViewPager) view.findViewById(R.id.diet_list_vp);
+        dietListCrv = (CustomRecyclerView) view.findViewById(R.id.diet_list_crv);
 
         toolbar.inflateMenu(R.menu.orders_detail_menu);
         toolbar.getMenu().removeItem(R.id.send_fax_menu);
@@ -346,8 +351,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
         selectedDate = getFormatedDate(Utils.getCurrentFomatedDate());
         setToolbarTitle();
 
-        toolbarTitle.setOnClickListener(this);
-        backIv.setOnClickListener(this);
+        boolean isViewMode = false;
 
         if (!UserType.isUserPatient()) {
             if (getArguments() != null) {
@@ -357,11 +361,53 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
                         userGuid = commonUserApiResponseModel.getUser_guid();
                     }
                 }
+
+                if (getArguments().getSerializable(ArgumentKeys.DIET_ITEM) != null) {
+                    isViewMode = true;
+
+                    toolbar.getMenu().clear();
+                    toolbarTitle.setCompoundDrawables(null, null, null, null);
+
+                    DietDetailModel dietDetailModel = (DietDetailModel) getArguments().getSerializable(ArgumentKeys.DIET_ITEM);
+
+                    String date = dietDetailModel.getDate();
+                    selectedDate = getFormatedDate(date);
+                    toolbarTitle.setText(date);
+
+                    calendarview.setVisibility(View.GONE);
+                    dietListVp.setVisibility(View.GONE);
+
+
+                    dietApiResponseModelArrayList = new ArrayList<>();
+                    dietApiResponseModelArrayList.addAll(dietDetailModel.getDietApiResponseModelList());
+                    calculateCalories();
+
+                    dietListCrv.setVisibility(View.VISIBLE);
+                    dietListCrv.setEmptyState(EmptyViewConstants.EMPTY_DIET);
+                    dietListCrv.getSwipeLayout().setEnabled(false);
+
+                    DietListAdapter dietListAdapter = new DietListAdapter(getActivity(), this);
+                    dietListCrv.getRecyclerView().setAdapter(dietListAdapter);
+
+                    List<DietListAdapterModel> adapterModelList = DietViewPagerAdapter.createList(dietApiResponseModelArrayList);
+                    if (!adapterModelList.isEmpty()) {
+                        dietListAdapter.setData(adapterModelList, Utils.getUTCFormat(selectedDate, Utils.yyyy_mm_dd));
+                        dietListCrv.showOrhideEmptyState(false);
+                    } else {
+                        dietListCrv.showOrhideEmptyState(true);
+                    }
+                }
             }
         }
 
-        setUpViewPager();
-        getDietList();
+
+        backIv.setOnClickListener(this);
+        if (!isViewMode) {
+            toolbarTitle.setOnClickListener(this);
+            setUpViewPager();
+            getDietList();
+        }
+
     }
 
     private void showDietPrintOptions() {
@@ -482,12 +528,12 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
     }
 
     private void getDietList() {
-        dietApiViewModel.getUserDietDetails(selectedDate, userGuid, true);
+        dietApiViewModel.getUserDietDetails(selectedDate, userGuid, null, null, true);
     }
 
     private void getAllDietList() {
         isPdfGeneration = true;
-        dietApiViewModel.getUserDietDetails(null, userGuid, true);
+        dietApiViewModel.getUserDietDetails(null, userGuid, null, null, true);
     }
 
     @Override
