@@ -15,6 +15,7 @@ import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
@@ -62,6 +63,7 @@ public class DoctorOnBoardingActivity extends BaseActivity {
 
                             if (appPreference.getBoolean(PreferenceConstants.IS_USER_ACTIVATED)) {
                                 signinApiViewModel.refreshToken();
+                                EventRecorder.recordRegistrationWithDate("REGISTRATION_COMPLETED");
                             }
                         }
                     }
