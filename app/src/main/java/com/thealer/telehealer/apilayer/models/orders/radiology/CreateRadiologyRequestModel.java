@@ -12,13 +12,15 @@ public class CreateRadiologyRequestModel implements Serializable {
 
     private String user_guid;
     private String name = "X-Ray Referral";
+    private String order_id;
     private DetailBean detail;
 
     public CreateRadiologyRequestModel() {
     }
 
-    public CreateRadiologyRequestModel(String user_guid, DetailBean detail) {
+    public CreateRadiologyRequestModel(String user_guid, String order_id, DetailBean detail) {
         this.user_guid = user_guid;
+        this.order_id = order_id;
         this.detail = detail;
     }
 
@@ -44,6 +46,14 @@ public class CreateRadiologyRequestModel implements Serializable {
 
     public void setDetail(DetailBean detail) {
         this.detail = detail;
+    }
+
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
     }
 
     public static class DetailBean implements Serializable{

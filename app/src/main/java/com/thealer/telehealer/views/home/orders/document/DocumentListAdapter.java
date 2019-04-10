@@ -3,13 +3,16 @@ package com.thealer.telehealer.views.home.orders.document;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -20,8 +23,11 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
 import java.io.File;
@@ -40,13 +46,17 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
     private DocumentsApiResponseModel documentsApiResponseModel;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private boolean isFromHome;
-    private int spanCount = 1;
+    private int spanCount = 1, mode;
+    private OnListItemSelectInterface onListItemSelectInterface;
 
-    public DocumentListAdapter(FragmentActivity activity, boolean isFromHome, int spanCount) {
+    public DocumentListAdapter(FragmentActivity activity, boolean isFromHome, int spanCount, int mode,
+                               OnListItemSelectInterface onListItemSelectInterface) {
         this.activity = activity;
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
         this.isFromHome = isFromHome;
         this.spanCount = spanCount;
+        this.mode = mode;
+        this.onListItemSelectInterface = onListItemSelectInterface;
     }
 
     @NonNull
@@ -112,7 +122,7 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
 
         viewHolder.sizeTv.setText(resultBeanList.get(i).getCreator().getUserName());
 
-        viewHolder.documentCv.setOnClickListener(new View.OnClickListener() {
+        viewHolder.documentRootLl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 documentsApiResponseModel = new DocumentsApiResponseModel();
@@ -129,6 +139,33 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
 
             }
         });
+
+        if (!UserType.isUserPatient()) {
+            switch (mode) {
+                case Constants.VIEW_MODE:
+                    viewHolder.visitCb.setVisibility(View.GONE);
+                    break;
+                case Constants.EDIT_MODE:
+                    if (resultBeanList.get(i).getOrder_id() == null) {
+                        viewHolder.visitCb.setVisibility(View.VISIBLE);
+                        viewHolder.documentCv.setCardBackgroundColor(activity.getColor(R.color.colorWhite));
+                    } else {
+                        viewHolder.visitCb.setVisibility(View.GONE);
+                        viewHolder.documentCv.setCardBackgroundColor(activity.getColor(R.color.colorGrey_light));
+                    }
+
+                    viewHolder.documentRootLl.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            viewHolder.visitCb.setChecked(!viewHolder.visitCb.isChecked());
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(ArgumentKeys.SELECTED_DOCUMENT, resultBeanList.get(i));
+                            onListItemSelectInterface.onListItemSelected(i, bundle);
+                        }
+                    });
+                    break;
+            }
+        }
     }
 
     @Override
@@ -155,9 +192,9 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
         notifyDataSetChanged();
     }
 
-    public void setSpanCount(int spanCount) {
-        this.spanCount = spanCount;
-        notifyItemRangeChanged(0, resultBeanList.size());
+    public void setMode(int mode) {
+        this.mode = mode;
+        notifyDataSetChanged();
     }
 
     public List<DocumentsApiResponseModel.ResultBean> getDataList() {
@@ -170,9 +207,13 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
         private ImageView documentIv;
         private TextView titleTv;
         private TextView sizeTv;
+        private CheckBox visitCb;
+        private ConstraintLayout documentRootLl;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            documentRootLl = (ConstraintLayout) itemView.findViewById(R.id.document_root_cl);
+            visitCb = (CheckBox) itemView.findViewById(R.id.visit_cb);
             recentHeaderTv = (TextView) itemView.findViewById(R.id.recent_header_tv);
             documentCv = (CardView) itemView.findViewById(R.id.document_cv);
             documentIv = (ImageView) itemView.findViewById(R.id.document_iv);

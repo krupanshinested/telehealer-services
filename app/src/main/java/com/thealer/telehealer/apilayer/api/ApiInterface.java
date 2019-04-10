@@ -27,6 +27,7 @@ import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBo
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersBaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
@@ -48,6 +49,7 @@ import com.thealer.telehealer.apilayer.models.pendingInvites.PendingInvitesNonRe
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseModel;
 import com.thealer.telehealer.apilayer.models.requestotp.OtpVerificationResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestModel;
@@ -55,6 +57,7 @@ import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseMode
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
+import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
@@ -120,6 +123,10 @@ public interface ApiInterface {
     String MEDICAL_ASSISTANT = "medical_assistant";
     String STATUS = "status";
     String ACCEPTED = "accepted";
+    String ORDER_ID = "order_id";
+    String FILTER_ID_IN = "filter_id_in";
+    String START_DATE = "start_date";
+    String END_DATE = "end_date";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -206,8 +213,11 @@ public interface ApiInterface {
     @GET("api/associations")
     Observable<ArrayList<CommonUserApiResponseModel>> getAssociations(@Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String doctorGuid);
 
+    @GET("api/associations")
+    Observable<ArrayList<CommonUserApiResponseModel>> getUserAssociationDetail(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
+
     @GET("api/correspondence-history")
-    Observable<RecentsApiResponseModel> getUserCorrespondentHistory(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(CALLS) boolean calls, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<RecentsApiResponseModel> getUserCorrespondentHistory(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(MONTH) String month, @Query(CALLS) boolean calls, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/correspondence-history")
     Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
@@ -226,6 +236,9 @@ public interface ApiInterface {
 
     @GET("api/vitals")
     Observable<ArrayList<VitalsApiResponseModel>> getVitals(@Query(TYPE) String type);
+
+    @GET("api/vitals")
+    Observable<ArrayList<VitalsApiResponseModel>> getVitalDetail(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
 
     @GET("api/referrals/labs")
     Observable<OrdersLabApiResponseModel> getUserLabOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
@@ -301,7 +314,7 @@ public interface ApiInterface {
 
     @Multipart
     @POST("api/users/files")
-    Observable<BaseApiResponseModel> uploadDocument(@Part(NAME) RequestBody name, @Part MultipartBody.Part file, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<BaseApiResponseModel> uploadDocument(@Part(NAME) RequestBody name, @Part(ORDER_ID) RequestBody vistOrderId, @Part MultipartBody.Part file, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/users/files")
     Observable<DocumentsApiResponseModel> getDocuments(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
@@ -348,6 +361,15 @@ public interface ApiInterface {
     @POST("api/referrals/miscellaneous")
     Observable<BaseApiResponseModel> createMiscellaneous(@Body CreateMiscellaneousRequestModel createMiscellaneousRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
+    @GET("api/referrals")
+    Observable<OrdersIdListApiResponseModel> getOrderDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
+
+    @GET("api/users/files")
+    Observable<ArrayList<DocumentsApiResponseModel.ResultBean>> getDocumentDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
+
+    @GET("api/forms")
+    Observable<ArrayList<OrdersUserFormsApiResponseModel>> getFormDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
+
     @GET("api/schedule")
     Observable<SchedulesApiResponseModel> getSchedules(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuidList);
 
@@ -360,6 +382,8 @@ public interface ApiInterface {
     @DELETE("api/schedule")
     Observable<BaseApiResponseModel> deleteSchedule(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);
 
+    @GET("api/schedule")
+    Observable<SchedulesApiResponseModel.ResultBean> getScheduleDetail(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);
 
     @POST("api/setup/invite")
     Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);
@@ -445,10 +469,10 @@ public interface ApiInterface {
     Observable<ArrayList<RecentsApiResponseModel.ResultBean>> getCallLogs(@Query(CALLS) boolean calls);
 
     @GET("api/vitals/users")
-    Observable<VitalReportApiReponseModel> getVitalUsers(@Query(FILTER) String filter, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<VitalReportApiReponseModel> getVitalUsers(@Query(FILTER) String filter, @Query(DOCTOR_GUID) String doctorGuid, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate);
 
     @GET("api/vitals")
-    Observable<ArrayList<VitalsApiResponseModel>> getUserFilteredVitals(@Query(FILTER) String type, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<ArrayList<VitalsApiResponseModel>> getUserFilteredVitals(@Query(FILTER) String type, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @PUT("api/available")
     Observable<BaseApiResponseModel> updateUserStatus(@Query(STATUS) boolean status);
@@ -461,7 +485,10 @@ public interface ApiInterface {
     Observable<ConnectionStatusApiResponseModel> getUserConnectionStatus(@Path(ID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/user-diet")
-    Observable<ArrayList<DietApiResponseModel>> getDietDetails(@Query(DATE) String date, @Query(USER_GUID) String userGuid);
+    Observable<ArrayList<DietApiResponseModel>> getDietDetails(@Query(DATE) String date, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
+
+    @GET("api/user-diet")
+    Observable<ArrayList<DietApiResponseModel>> getDietDetails(@Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
     @POST("api/user-diet")
@@ -478,4 +505,11 @@ public interface ApiInterface {
 
     @GET("api/invites")
     Observable<PendingInvitesNonRegisterdApiResponseModel> getNonRegisteredUserInvites(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(ACCEPTED) boolean accepted);
+
+    @PATCH("api/call/{id}")
+    Observable<BaseApiResponseModel> updateVisit(@Path(ID) String orderId, @Body UpdateVisitRequestModel requestModel, @Query(DOCTOR_GUID) String doctorGuid);
+
+    @GET("api/call/{id}")
+    Observable<VisitsDetailApiResponseModel> getOrderDetail(@Path(ID) String orderId, @Query(DOCTOR_GUID) String doctorGuid);
+
 }

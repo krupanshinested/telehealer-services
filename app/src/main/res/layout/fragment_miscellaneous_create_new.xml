@@ -43,6 +43,19 @@
         app:layout_constraintTop_toBottomOf="@+id/notes_label"
         tools:text="@string/dummy_text" />
 
+    <com.thealer.telehealer.views.home.orders.OrdersCustomView
+        android:id="@+id/visit_ocv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:arrow_visible="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notes_et"
+        app:sub_title_visible="false"
+        app:title_text="Click here to select last visit"
+        app:view_label="visit" />
+
     <Button
         android:id="@+id/send_btn"
         style="@style/button_app_background_white_text"

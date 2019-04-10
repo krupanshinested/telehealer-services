@@ -6,11 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RadioButton
-        android:id="@+id/icd_code_rb"
+    <CheckBox
+        android:id="@+id/icd_code_cb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_default"
+        android:buttonTint="@color/app_gradient_start"
         app:layout_constraintBottom_toBottomOf="@+id/icd_detail_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/icd_detail_tv"
@@ -26,7 +27,7 @@
         android:padding="@dimen/padding_default"
         android:textColor="@color/colorBlack"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/icd_code_rb"
+        app:layout_constraintStart_toEndOf="@id/icd_code_cb"
         app:layout_constraintTop_toTopOf="parent"
         tool:text="@string/dummy_text" />
 

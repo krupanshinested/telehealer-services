@@ -1,8 +1,16 @@
 package com.thealer.telehealer.apilayer.models.diet;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.food.NutrientsDetailBean;
+import com.thealer.telehealer.views.home.monitoring.diet.FoodConstant;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +28,7 @@ public class DietApiResponseModel extends BaseApiResponseModel {
     private int user_id;
     private String created_at;
     private String updated_at;
+    private String order_id;
 
     public int getUser_diet_id() {
         return user_diet_id;
@@ -101,6 +110,14 @@ public class DietApiResponseModel extends BaseApiResponseModel {
         this.updated_at = updated_at;
     }
 
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
+    }
+
     public static class FoodBean {
 
         private String image_url;
@@ -141,4 +158,60 @@ public class DietApiResponseModel extends BaseApiResponseModel {
         }
     }
 
+    public static Map<String, Double> getDisplayDiets(@NonNull List<DietApiResponseModel> dietApiResponseModelList) {
+        Map<String, Double> dietMap = new HashMap<>();
+        double calories = 0, carbs = 0, fat = 0, protien = 0;
+
+        for (int j = 0; j < dietApiResponseModelList.size(); j++) {
+
+            if (dietApiResponseModelList.get(j).getFood() != null &&
+                    dietApiResponseModelList.get(j).getFood().getTotalNutrients() != null) {
+                if (dietApiResponseModelList.get(j).getFood().getTotalNutrients().get(FoodConstant.FOOD_ENERGY) != null)
+                    calories = calories + dietApiResponseModelList.get(j).getFood().getTotalNutrients().get(FoodConstant.FOOD_ENERGY).getQuantity();
+
+                if (dietApiResponseModelList.get(j).getFood().getTotalNutrients().get(FoodConstant.FOOD_CARBS) != null)
+                    carbs = carbs + dietApiResponseModelList.get(j).getFood().getTotalNutrients().get(FoodConstant.FOOD_CARBS).getQuantity();
+
+                if (dietApiResponseModelList.get(j).getFood().getTotalNutrients().get(FoodConstant.FOOD_FAT) != null)
+                    fat = fat + dietApiResponseModelList.get(j).getFood().getTotalNutrients().get(FoodConstant.FOOD_FAT).getQuantity();
+
+                if (dietApiResponseModelList.get(j).getFood().getTotalNutrients().get(FoodConstant.FOOD_PROTEIN) != null)
+                    protien = protien + dietApiResponseModelList.get(j).getFood().getTotalNutrients().get(FoodConstant.FOOD_PROTEIN).getQuantity();
+            }
+        }
+
+        dietMap.put(FoodConstant.FOOD_ENERGY, calories);
+        dietMap.put(FoodConstant.FOOD_CARBS, carbs);
+        dietMap.put(FoodConstant.FOOD_FAT, fat);
+        dietMap.put(FoodConstant.FOOD_PROTEIN, protien);
+        return dietMap;
+    }
+
+    public static String getDisplayValue(double value) {
+        if (value == 0)
+            return "-";
+
+        if (value >= 1000) {
+            return String.format("%.1f", (float) value / 1000);
+        } else {
+            return String.valueOf((int) value);
+        }
+
+    }
+
+    public static String getDisplayUnit(Context context, double value) {
+        return value > 1000 ? context.getString(R.string.kg) : context.getString(R.string.g);
+    }
+
+    public static String getCalorieValue(double calories) {
+        if (calories == 0)
+            return "-";
+
+        return String.valueOf((int) calories);
+    }
+
+
+    public static String getCalorieUnit(FragmentActivity activity) {
+        return activity.getString(R.string.cal);
+    }
 }

@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.recents;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
 import com.thealer.telehealer.common.Utils;
 
 import java.io.Serializable;
@@ -50,9 +51,9 @@ public class RecentsApiResponseModel extends BaseApiResponseModel implements Ser
 
     public static class ResultBean extends BaseApiResponseModel implements Serializable{
 
-        private RecentsUserDetailModel patient;
-        private RecentsUserDetailModel doctor;
-        private RecentsUserDetailModel medical_assistant;
+        private UserBean patient;
+        private UserBean doctor;
+        private UserBean medical_assistant;
         private String corr_type;
         private int caller_id;
         private int callee_id;
@@ -171,27 +172,27 @@ public class RecentsApiResponseModel extends BaseApiResponseModel implements Ser
             this.durationInSecs = durationInSecs;
         }
 
-        public RecentsUserDetailModel getPatient() {
+        public UserBean getPatient() {
             return patient;
         }
 
-        public void setPatient(RecentsUserDetailModel patient) {
+        public void setPatient(UserBean patient) {
             this.patient = patient;
         }
 
-        public RecentsUserDetailModel getDoctor() {
+        public UserBean getDoctor() {
             return doctor;
         }
 
-        public void setDoctor(RecentsUserDetailModel doctor) {
+        public void setDoctor(UserBean doctor) {
             this.doctor = doctor;
         }
 
-        public RecentsUserDetailModel getMedical_assistant() {
+        public UserBean getMedical_assistant() {
             return medical_assistant;
         }
 
-        public void setMedical_assistant(RecentsUserDetailModel medical_assistant) {
+        public void setMedical_assistant(UserBean medical_assistant) {
             this.medical_assistant = medical_assistant;
         }
 

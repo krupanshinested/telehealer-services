@@ -7,7 +7,6 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -189,6 +188,7 @@ public class CustomExpandableListView extends ConstraintLayout {
             recyclerEmptyStateView.setVisibility(GONE);
         }
     }
+
     public void showEmptyState() {
         expandableListView.setVisibility(GONE);
         recyclerEmptyStateView.setVisibility(VISIBLE);
@@ -239,5 +239,9 @@ public class CustomExpandableListView extends ConstraintLayout {
 
     public CustomSwipeRefreshLayout getSwipeLayout() {
         return swipeLayout;
+    }
+
+    public void setEmptyStateTitle(String title) {
+        emptyTitleTv.setText(title);
     }
 }

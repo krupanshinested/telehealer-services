@@ -46,6 +46,7 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
+import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.onboarding.OnBoardingViewPagerAdapter;
 
 import java.util.ArrayList;
@@ -82,6 +83,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     private int next = 1;
     private ConstraintLayout parent;
     private String patientGuid = null, doctorGuid = null;
+    private OrdersCustomView visitOcv;
 
 
     @Override
@@ -172,6 +174,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
         viewPagerCl = (ConstraintLayout) view.findViewById(R.id.viewPager_cl);
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         pagerIndicator = (LinearLayout) view.findViewById(R.id.pager_indicator);
+        visitOcv = (OrdersCustomView) view.findViewById(R.id.visit_ocv);
 
         addBtn.setOnClickListener(this);
         documentIv.setOnClickListener(this);
@@ -231,6 +234,9 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
             CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             if (patientDetail != null) {
                 patientGuid = patientDetail.getUser_guid();
+                visitOcv.setVisibility(View.VISIBLE);
+                setVisitsView(visitOcv, patientGuid, doctorGuid);
+                getPatientsRecentsList(patientDetail.getUser_guid(), doctorGuid);
             }
 
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
@@ -362,7 +368,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
     }
 
     private void uploadMultipleDocument() {
-        ordersCreateApiViewModel.uploadDocument(null, null, documentNameEt.getText().toString().concat("_" + next), imagePathList.get(0), false);
+        ordersCreateApiViewModel.uploadDocument(null, null, documentNameEt.getText().toString().concat("_" + next), imagePathList.get(0), null, false);
     }
 
     private void updateDocument() {
@@ -371,7 +377,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
 
     private void uploadDocument() {
 
-        ordersCreateApiViewModel.uploadDocument(patientGuid, doctorGuid, documentNameEt.getText().toString(), image_path, false);
+        ordersCreateApiViewModel.uploadDocument(patientGuid, doctorGuid, documentNameEt.getText().toString(), image_path, getVistOrderId() , false);
         showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
     }
 

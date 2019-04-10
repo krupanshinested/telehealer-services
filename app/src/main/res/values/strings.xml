@@ -25,7 +25,7 @@
     //Registration page informations
     <string name="email_info">Your Email address will be used to log you into your Telehealer account.</string>
     <string name="phone_info">Your phone number will be used to validate your identity via an authorization code. You agree that you are responsible for paying any of your carrier\'s charges related to SMS messages received from Telehealer.</string>
-    <string name="patient_info">Enter your first name,last name,gender and Date of birth.</string>
+    <string name="reg_patient_info">Enter your first name,last name,gender and Date of birth.</string>
     <string name="password_info">Enter the password for your account.</string>
     <string name="baa_info">"Your signature will be used to sign the BAA and will be automatically emailed to you after successfully completing registration and onboarding."</string>
     <string name="country_info">Select the country code.</string>
@@ -796,6 +796,7 @@
     <string name="start_your_measurement_from_device">Start your measurement from Device.</string>
     <string name="medication">Medication</string>
     <string name="diet">Diet</string>
+    <string name="diets">Diets</string>
     <string name="monitoring">Monitoring</string>
     <string name="protein">Protein</string>
     <string name="fat">Fat</string>
@@ -918,6 +919,7 @@
     <string name="license_expired_message">Your license has expired.Please update your licensing details inorder to continue using the platform.</string>
     <string name="video_missed_call">Missed video call</string>
     <string name="audio_missed_call">Missed voice call</string>
+    <string name="click_here_to_select_last_visit">Click here to select last visit</string>
     <string name="local_notification_title">%s Appointment</string>
     <string name="local_notification_message">You have an appointment with %s at %s</string>
     <string name="ma_signature_required_title">Signature Required!!</string>
@@ -929,4 +931,33 @@
     <string name="call_pop_up_title">Your appointment with %s is now in progress.</string>
     <string name="manual">Manual</string>
     <string name="device_disconnected_message">Device got disconnected!</string>
+    <string name="associate_this_order_to_a_visit">Associate this order to a visit</string>
+    <string name="add_visit">Add Visit</string>
+    <string name="associate_order_success">Selected %s successfully associated.</string>
+    <string name="associate_order_failure">Selected %s association failed.</string>
+    <string name="visits">Visits</string>
+    <string name="call_summary">Call Summary</string>
+    <string name="call_duration">Call Duration</string>
+    <string name="start_time">Start time</string>
+    <string name="end_time">End time</string>
+    <string name="call_type">Call type</string>
+    <string name="call_transcript">Call Transcript</string>
+    <string name="patient_info">Patient info</string>
+    <string name="show_video">Show Video</string>
+    <string name="patient_instructions">Patient instructions</string>
+    <string name="visit_detail">Visit Detail</string>
+    <string name="user_info">User info</string>
+    <string name="doctor_info">Doctor info</string>
+    <string name="details">Details</string>
+    <string name="patient_history_has_been_updated">Patient history has been updated</string>
+    <string name="patient_demographic_changed">Patient demographics changed</string>
+    <string name="patient_insurance_changed">Patient insurance changed</string>
+    <string name="add_vitals">Add vitals</string>
+    <string name="add_order">Add order</string>
+    <string name="add_diet">Add diet</string>
+    <string name="posting_your_visit_association_request">Posting your %s association request</string>
+    <string name="updating_your_visit_please_wait">Updating your visit please wait...</string>
+    <string name="visit_updated_successfully">Visit updated successfully</string>
+    <string name="visit_update_failed">Visit updated failed</string>
+    <string name="enter_patient_instruction_here">Enter patient instruction here</string>
 </resources>

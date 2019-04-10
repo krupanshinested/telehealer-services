@@ -318,11 +318,19 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                 }
             }
         } else if (UserType.isUserPatient()) {
+            String userAvatar = null, name = null, info = null;
             if (doctorModel != null) {
-                Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, doctorModel.getUser_avatar(), null, true);
-                childViewHolder.nameTv.setText(doctorModel.getUserDisplay_name());
-                childViewHolder.userDetailTv.setText(doctorModel.getDisplayInfo());
+                userAvatar = doctorModel.getUser_avatar();
+                name = doctorModel.getUserDisplay_name();
+                info = doctorModel.getDisplayInfo();
+            } else if (MaModel != null) {
+                userAvatar = MaModel.getUser_avatar();
+                name = MaModel.getUserDisplay_name();
+                info = MaModel.getDisplayInfo();
             }
+            Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, userAvatar, activity.getDrawable(R.drawable.profile_placeholder), true);
+            childViewHolder.nameTv.setText(name);
+            childViewHolder.userDetailTv.setText(info);
         } else if (UserType.isUserAssistant()) {
 
             if (resultModel.isOwnNotification() && resultModel.getType().equals(REQUEST_TYPE_CONNECTION) && patientModel != null) {

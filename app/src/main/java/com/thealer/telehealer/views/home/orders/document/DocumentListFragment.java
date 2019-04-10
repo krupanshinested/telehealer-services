@@ -22,9 +22,12 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
+import com.thealer.telehealer.apilayer.models.visits.VisitsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
@@ -34,13 +37,16 @@ import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.VisitConstants;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
+import com.thealer.telehealer.views.home.recents.VisitDetailConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,6 +68,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
     private OrdersApiViewModel ordersApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private DocumentsApiResponseModel documentsApiResponseModel;
+    private VisitsApiViewModel visitsApiViewModel;
 
     private List<String> headerList = new ArrayList<>();
     private HashMap<String, List<DocumentsApiResponseModel.ResultBean>> childList = new HashMap<>();
@@ -77,6 +84,13 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
     private Toolbar toolbar;
     private GridLayoutManager gridLayoutManager;
     private String doctorGuid = null, userGuid = null;
+    private String orderId;
+    private int mode = Constants.VIEW_MODE;
+    private ArrayList<Integer> selectedList = new ArrayList<>();
+    private TextView cancelTv;
+    private TextView nextTv;
+    private ImageView closeIv;
+    private HashMap<Integer, DocumentsApiResponseModel.ResultBean> selectedDocumentMap = new HashMap<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,6 +136,29 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
                 }
             }
         });
+
+        visitsApiViewModel = ViewModelProviders.of(this).get(VisitsApiViewModel.class);
+        attachObserverInterface.attachObserver(visitsApiViewModel);
+
+        visitsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel.isSuccess()) {
+                        sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), String.format(getString(R.string.associate_order_success), getString(R.string.documents)));
+                    }
+                }
+            }
+        });
+
+        visitsApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null) {
+                    sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.associate_order_failure), getString(R.string.documents)));
+                }
+            }
+        });
     }
 
     private void setData() {
@@ -155,29 +192,16 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
         documentsCrv = (CustomRecyclerView) view.findViewById(R.id.documents_crv);
+        cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
 
-        toolbar.inflateMenu(R.menu.menu_documents);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.menu_list:
-                        toolbar.getMenu().findItem(R.id.menu_list).setVisible(false);
-                        toolbar.getMenu().findItem(R.id.menu_grid).setVisible(true);
-                        setGridSpan(1);
-                        break;
-                    case R.id.menu_grid:
-                        setGridSpan(2);
-                        toolbar.getMenu().findItem(R.id.menu_list).setVisible(true);
-                        toolbar.getMenu().findItem(R.id.menu_grid).setVisible(false);
-                        break;
-                }
-                return false;
-            }
-        });
+        inflateToolbarMenu();
 
         backIv.setOnClickListener(this);
         addFab.setOnClickListener(this);
+        cancelTv.setOnClickListener(this);
+        nextTv.setOnClickListener(this);
 
         toolbarTitle.setText(OrderConstant.ORDER_DOCUMENTS);
 
@@ -194,6 +218,12 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
             if (doctorDetail != null)
                 doctorGuid = doctorDetail.getUser_guid();
+
+            orderId = getArguments().getString(ArgumentKeys.ORDER_ID);
+
+            if (orderId != null) {
+                mode = Constants.EDIT_MODE;
+            }
 
             if (!isFromHome) {
                 addFab.hide();
@@ -237,6 +267,53 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         documentsCrv.setErrorModel(this, ordersApiViewModel.getErrorModelLiveData());
 
         setGridSpan(1);
+
+        updateToolbarOptions();
+    }
+
+    private void inflateToolbarMenu() {
+        if (toolbar.getMenu() != null) {
+            toolbar.getMenu().clear();
+        }
+        toolbar.inflateMenu(R.menu.menu_documents);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_list:
+                        toolbar.getMenu().findItem(R.id.menu_list).setVisible(false);
+                        toolbar.getMenu().findItem(R.id.menu_grid).setVisible(true);
+                        setGridSpan(1);
+                        break;
+                    case R.id.menu_grid:
+                        setGridSpan(2);
+                        toolbar.getMenu().findItem(R.id.menu_list).setVisible(true);
+                        toolbar.getMenu().findItem(R.id.menu_grid).setVisible(false);
+                        break;
+                }
+                return false;
+            }
+        });
+
+    }
+
+    private void updateToolbarOptions() {
+        switch (mode) {
+            case Constants.VIEW_MODE:
+                backIv.setVisibility(View.VISIBLE);
+                nextTv.setVisibility(View.GONE);
+                cancelTv.setVisibility(View.GONE);
+                inflateToolbarMenu();
+                break;
+            case Constants.EDIT_MODE:
+                toolbar.getMenu().clear();
+                backIv.setVisibility(View.GONE);
+                nextTv.setVisibility(View.VISIBLE);
+                cancelTv.setVisibility(View.VISIBLE);
+                nextTv.setText(getString(R.string.Save));
+                enableOrDisableNext();
+                break;
+        }
     }
 
     private void setGridSpan(int spanCount) {
@@ -249,10 +326,43 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         gridLayoutManager = new GridLayoutManager(getActivity(), spanCount, LinearLayoutManager.VERTICAL, false);
         documentsCrv.setLayoutManager(gridLayoutManager);
 
-        documentListAdapter = new DocumentListAdapter(getActivity(), isFromHome, spanCount);
+        documentListAdapter = new DocumentListAdapter(getActivity(), isFromHome, spanCount, mode, new OnListItemSelectInterface() {
+            @Override
+            public void onListItemSelected(int position, Bundle bundle) {
+                if (bundle != null) {
+                    DocumentsApiResponseModel.ResultBean selectedDocument = (DocumentsApiResponseModel.ResultBean) bundle.getSerializable(ArgumentKeys.SELECTED_DOCUMENT);
+                    if (selectedDocument != null) {
+                        int id = selectedDocument.getUser_file_id();
+                        if (selectedList.contains(id)) {
+                            selectedList.remove((Object) id);
+                        } else {
+                            selectedList.add(id);
+                        }
+                        if (orderId != null) {
+                            if (selectedDocumentMap.containsKey(id)) {
+                                selectedDocumentMap.remove((Object) id);
+                            } else {
+                                selectedDocumentMap.put(id, selectedDocument);
+                            }
+                        }
+                        enableOrDisableNext();
+                    }
+                }
+            }
+        });
         documentsCrv.getRecyclerView().setAdapter(documentListAdapter);
 
         documentListAdapter.setData(beanList, 1);
+    }
+
+    private void enableOrDisableNext() {
+        if (selectedList.isEmpty()) {
+            nextTv.setEnabled(false);
+            nextTv.setAlpha(0.5f);
+        } else {
+            nextTv.setEnabled(true);
+            nextTv.setAlpha(1);
+        }
     }
 
     private void getDocuments(boolean isShowProgress) {
@@ -277,7 +387,35 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
                 addFab.setClickable(false);
                 startActivityForResult(new Intent(getActivity(), CreateOrderActivity.class).putExtras(getArguments()), RequestID.REQ_UPDATE_DOCUMENT);
                 break;
+            case R.id.cancel_tv:
+                onCloseActionInterface.onClose(false);
+                break;
+            case R.id.next_tv:
+                if (getTargetFragment() != null) {
+                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,
+                            new Intent()
+                                    .putExtra(ArgumentKeys.UPDATE_TYPE, VisitDetailConstants.VISIT_TYPE_FILES)
+                                    .putExtra(ArgumentKeys.SELECTED_FILES, selectedDocumentMap)
+                                    .putExtra(ArgumentKeys.SELECTED_LIST_ID, selectedList));
+                }
+                onCloseActionInterface.onClose(false);
+//                associateVisitDocuments(orderId);
+                break;
         }
+    }
+
+    private void associateVisitDocuments(String orderId) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.posting_your_visit_association_request), getString(R.string.documents)));
+
+        showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
+
+        UpdateVisitRequestModel updateVisitRequestModel = new UpdateVisitRequestModel();
+        updateVisitRequestModel.setAssociation_type(VisitConstants.TYPE_FILES);
+        updateVisitRequestModel.setAdd_associations(selectedList);
+
+        visitsApiViewModel.updateOrder(orderId, updateVisitRequestModel, doctorGuid, false);
     }
 
     @Override
@@ -291,8 +429,19 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RequestID.REQ_UPDATE_DOCUMENT && resultCode == Activity.RESULT_OK) {
-            getDocuments(true);
+
+        switch (requestCode) {
+            case RequestID.REQ_UPDATE_DOCUMENT:
+                if (resultCode == Activity.RESULT_OK) {
+                    getDocuments(true);
+                }
+                break;
+            case RequestID.REQ_SHOW_SUCCESS_VIEW:
+                if (getTargetFragment() != null) {
+                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent().putExtra(ArgumentKeys.UPDATE_TYPE, VisitDetailConstants.VISIT_TYPE_FILES));
+                }
+                onCloseActionInterface.onClose(false);
+                break;
         }
     }
 

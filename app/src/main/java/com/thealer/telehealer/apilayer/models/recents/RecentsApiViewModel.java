@@ -3,7 +3,6 @@ package com.thealer.telehealer.apilayer.models.recents;
 import android.app.Application;
 import android.support.annotation.NonNull;
 
-import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
@@ -21,13 +20,13 @@ public class RecentsApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getUserCorrespondentList(String user_guid, String doctorGuid, int page, boolean isCalls, boolean isShowProgress) {
+    public void getUserCorrespondentList(String user_guid, String doctorGuid, String month, int page, boolean isCalls, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService()
-                            .getUserCorrespondentHistory(user_guid, doctorGuid, isCalls, paginate, page, page_size)
+                            .getUserCorrespondentHistory(user_guid, doctorGuid, month, isCalls, paginate, page, page_size)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

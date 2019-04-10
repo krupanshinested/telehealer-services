@@ -13,6 +13,14 @@ public class DownloadTranscriptResponseModel extends BaseApiResponseModel {
     private String transcripts;
     private List<SpeakerLabelsBean> speakerLabels;
 
+    public DownloadTranscriptResponseModel() {
+    }
+
+    public DownloadTranscriptResponseModel(String transcripts, List<SpeakerLabelsBean> speakerLabels) {
+        this.transcripts = transcripts;
+        this.speakerLabels = speakerLabels;
+    }
+
     public String getTranscripts() {
         return transcripts;
     }
@@ -36,6 +44,26 @@ public class DownloadTranscriptResponseModel extends BaseApiResponseModel {
         private String end_time;
         private String transcript;
         private List<ItemsBean> items;
+        private boolean isRemoved;
+
+        public SpeakerLabelsBean() {
+        }
+
+        public SpeakerLabelsBean(String start_time, String speaker_label, String end_time, String transcript, boolean isRemoved) {
+            this.start_time = start_time;
+            this.speaker_label = speaker_label;
+            this.end_time = end_time;
+            this.transcript = transcript;
+            this.isRemoved = isRemoved;
+        }
+
+        public boolean isRemoved() {
+            return isRemoved;
+        }
+
+        public void setRemoved(boolean removed) {
+            isRemoved = removed;
+        }
 
         public String getStart_time() {
             return start_time;
@@ -94,6 +122,11 @@ public class DownloadTranscriptResponseModel extends BaseApiResponseModel {
             return name;
         }
 
+        public boolean isModelEqual(SpeakerLabelsBean speakerLabelsBean) {
+            return speakerLabelsBean.getStart_time().equals(getStart_time()) && speakerLabelsBean.getEnd_time().equals(getEnd_time())
+                    && speakerLabelsBean.getTranscript().equals(getTranscript());
+        }
+
         public static class ItemsBean implements Serializable {
 
             private String start_time;
@@ -133,5 +166,16 @@ public class DownloadTranscriptResponseModel extends BaseApiResponseModel {
                 this.transcript = transcript;
             }
         }
+    }
+
+    public boolean isUpdated() {
+        boolean isUpdated = false;
+        for (int i = 0; i < getSpeakerLabels().size(); i++) {
+            if (getSpeakerLabels().get(i).isRemoved()) {
+                isUpdated = true;
+                break;
+            }
+        }
+        return isUpdated;
     }
 }
