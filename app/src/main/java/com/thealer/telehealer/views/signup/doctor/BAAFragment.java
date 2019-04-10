@@ -83,6 +83,9 @@ public class BAAFragment extends BaseFragment implements DoCurrentTransactionInt
                             EventRecorder.recordRegistration("SIGNUP_DOCTOR_NOT_VERIFIED", createUserApiResponseModel.getData().getUser_guid());
                         }
 
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ArgumentKeys.ROLE,createUserRequestModel.getUser_data().getRole());
+
                         onActionCompleteInterface.onCompletionResult(null, true, null);
                     }
                 }

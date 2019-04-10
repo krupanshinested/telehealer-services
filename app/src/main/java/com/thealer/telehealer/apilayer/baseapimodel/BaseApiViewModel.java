@@ -181,7 +181,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         Log.e(TAG, "makeRefreshTokenApiCall: api called");
         isRefreshToken = true;
         getAuthApiService()
-                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN))
+                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN),false)
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                     @Override
@@ -192,6 +192,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
                             updateListnerStatus();
                         }
+                        EventRecorder.updateVersion();
                     }
                 });
     }

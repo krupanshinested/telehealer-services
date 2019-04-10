@@ -209,6 +209,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private CustomAudioDevice customAudioDevice;
 
     public void didRecieveIncoming(APNSPayload apnsPayload) {
+        EventRecorder.recordCallUpdates("CALL_RECEIVED",null);
         this.sessionId = apnsPayload.getSessionId();
 
         openTokViewModel.getTokenForSession(apnsPayload.getSessionId(), new OpenTokTokenFetcher() {

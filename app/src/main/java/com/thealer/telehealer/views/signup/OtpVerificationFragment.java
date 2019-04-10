@@ -187,6 +187,19 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
                         EventRecorder.recordRegistration("OTP_VERIFIED", UserDetailPreferenceManager.getUser_guid());
 
+                        if (getArguments() != null && getArguments().getString(ArgumentKeys.ROLE) != null) {
+                            switch (getArguments().getString(ArgumentKeys.ROLE)) {
+                                case Constants.ROLE_PATIENT:
+                                    EventRecorder.recordRegistrationWithDate("REGISTRATION_COMPLETED");
+                                    break;
+                                case Constants.ROLE_DOCTOR:
+                                    break;
+                                case Constants.ROLE_ASSISTANT:
+                                    EventRecorder.recordRegistrationWithDate("REGISTRATION_COMPLETED");
+                                    break;
+                            }
+                        }
+
                         otpVerificationResponseModel = (OtpVerificationResponseModel) baseApiResponseModel;
 
                         String email = appPreference.getString(PreferenceConstants.USER_EMAIL);

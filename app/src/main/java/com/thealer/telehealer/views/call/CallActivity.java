@@ -802,6 +802,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             case R.id.answer_iv:
                 if (TokBox.shared.getCallState() == OpenTokConstants.waitingForUserAction) {
 
+                    EventRecorder.recordCallUpdates("CALL_ACCEPTED",null);
+
                     if (TokBox.shared.isVideoCall()) {
                         EventRecorder.recordCallUpdates("opening_video_call", null);
                     } else {

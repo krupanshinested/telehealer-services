@@ -160,6 +160,11 @@ public class CallPlacingActivity extends BaseActivity {
 
                         if (is_cc_captured != null && !is_cc_captured) {
                             openTrialContentScreen(UserType.isUserDoctor(), callInitiateModel.getDoctorName());
+
+                            if (UserType.isUserDoctor()) {
+                                EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
+                            }
+
                         } else {
                             errorMessage = errorModel.getMessage();
                         }
