@@ -20,11 +20,11 @@ import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiRespo
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
@@ -32,7 +32,7 @@ import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
  * Created by Aswin on 29,November,2018
  */
 public class CreateNewSpecialistFragment extends OrdersBaseFragment implements View.OnClickListener {
-    private OrdersCustomView patientOcv;
+    private OrdersCustomView patientOcv, visitOcv;
     private OrdersCustomView specialistOcv;
     private TextInputLayout instructionTil;
     private EditText instructionEt;
@@ -69,6 +69,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
 
     private void initView(View view) {
         patientOcv = (OrdersCustomView) view.findViewById(R.id.patient_ocv);
+        visitOcv = (OrdersCustomView) view.findViewById(R.id.visit_ocv);
         specialistOcv = (OrdersCustomView) view.findViewById(R.id.specialist_ocv);
         instructionTil = (TextInputLayout) view.findViewById(R.id.instruction_til);
         instructionEt = (EditText) view.findViewById(R.id.instruction_et);
@@ -133,6 +134,8 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
             patientOcv.setTitleTv(patientModel.getUserDisplay_name());
             patientOcv.setSubtitleTv(patientModel.getDob());
             patientOcv.setSub_title_visible(true);
+            setVisitsView(visitOcv, patientModel.getUser_guid(), doctorGuid);
+            getPatientsRecentsList(patientModel.getUser_guid(), doctorGuid);
         } else {
             patientOcv.setTitleTv(getString(R.string.Click_here_to_select_patient));
             patientOcv.setSub_title_visible(false);
@@ -202,7 +205,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
         AssignSpecialistRequestModel.DetailBean detailBean = new AssignSpecialistRequestModel.DetailBean(instructionEt.getText().toString(),
                 specialistModel.getDoctorDisplayName(),
                 copyToBean);
-        return new AssignSpecialistRequestModel(patientModel.getUser_guid(), detailBean);
+        return new AssignSpecialistRequestModel(patientModel.getUser_guid(), getVistOrderId(), detailBean);
     }
 
     private void showAssociationSelection(int requestCode, String searchType) {

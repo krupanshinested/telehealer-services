@@ -6,5 +6,7 @@
         <attr name="lbcv_bottom_view_visible" format="boolean" />
         <attr name="lbcv_label_text" format="string" />
         <attr name="lbcv_value_text" format="string" />
+        <attr name="lbcv_label_text_color" format="color" />
+        <attr name="lbcv_value_text_color" format="color" />
     </declare-styleable>
 </resources>

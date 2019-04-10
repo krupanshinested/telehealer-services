@@ -94,6 +94,10 @@ public class EmptyStateUtil {
                 return "No Medical Assistant";
             case EmptyViewConstants.EMPTY_DIET:
                 return "No Diet";
+            case EmptyViewConstants.EMPTY_DIET_LAST_WEEK:
+                return "No Diet Measurements for last week";
+            case EmptyViewConstants.EMPTY_DIET_FROM_TO:
+                return "No Diet Measurement from %s to %s";
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH:
                 return "No Vital Measurements";
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK:
@@ -112,6 +116,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_STETHOSCOPE:
             case EmptyViewConstants.EMPTY_STETHOSCOPE_WITH_BTN:
                 return "No Stethoscope";
+            case EmptyViewConstants.EMPTY_VITAL_FROM_TO:
+                return "No Vital Measurement from %s to %s";
             default:
                 return null;
         }
@@ -227,6 +233,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_DOCTOR_VITAL_MONTH:
                 return "Patients who measured their vitals will eventually show up here";
             case EmptyViewConstants.EMPTY_DIET:
+            case EmptyViewConstants.EMPTY_DIET_LAST_WEEK:
+            case EmptyViewConstants.EMPTY_DIET_FROM_TO:
                 return "Patient's diet will eventually show up here";
             case EmptyViewConstants.EMPTY_FOOD_ITEMS:
                 return "Type your food item and press search from your keyboard";
@@ -334,6 +342,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN:
                 return R.drawable.emptystate_no_medical_assistant;
             case EmptyViewConstants.EMPTY_DIET:
+            case EmptyViewConstants.EMPTY_DIET_LAST_WEEK:
+            case EmptyViewConstants.EMPTY_DIET_FROM_TO:
             case EmptyViewConstants.EMPTY_FOOD_ITEMS:
                 return R.drawable.emptystate_diet;
             case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:

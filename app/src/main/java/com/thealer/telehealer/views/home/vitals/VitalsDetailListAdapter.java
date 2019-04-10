@@ -1,8 +1,9 @@
 package com.thealer.telehealer.views.home.vitals;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,9 +20,10 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.StethBean;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
-import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
 import java.util.HashMap;
@@ -35,6 +38,8 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
     private HashMap<String, List<VitalsApiResponseModel>> childList;
     private String measurementType;
     private boolean imageVisible;
+    private int mode;
+    private OnListItemSelectInterface onListItemSelectInterface;
 
     public VitalsDetailListAdapter(Context context, List<String> headerList, HashMap<String, List<VitalsApiResponseModel>> childList, String measurementType) {
         this.context = context;
@@ -43,11 +48,14 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
         this.measurementType = measurementType;
     }
 
-    public VitalsDetailListAdapter(FragmentActivity activity, List<String> headerList, HashMap<String, List<VitalsApiResponseModel>> childList, boolean imageVisible) {
+    public VitalsDetailListAdapter(FragmentActivity activity, List<String> headerList, HashMap<String, List<VitalsApiResponseModel>> childList,
+                                   boolean imageVisible, int mode, OnListItemSelectInterface onListItemSelectInterface) {
         this.context = activity;
         this.headerList = headerList;
         this.childList = childList;
         this.imageVisible = imageVisible;
+        this.mode = mode;
+        this.onListItemSelectInterface = onListItemSelectInterface;
     }
 
     @Override
@@ -107,8 +115,11 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
         ImageView vitalIv;
         ConstraintLayout abnormalIndicatorCl;
         CardView itemCv;
+        CheckBox visitCb;
+        ConstraintLayout vitalRootCl;
 
-
+        vitalRootCl = (ConstraintLayout) convertView.findViewById(R.id.vital_root_cl);
+        visitCb = (CheckBox) convertView.findViewById(R.id.visit_cb);
         abnormalIndicatorCl = (ConstraintLayout) convertView.findViewById(R.id.abnormal_indicator_cl);
         itemCv = (CardView) convertView.findViewById(R.id.item_cv);
         vitalIv = (ImageView) convertView.findViewById(R.id.vital_iv);
@@ -133,30 +144,7 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
 
             unitTv.setText(stethBean.getSegments().size() + " - Segment");
 
-            boolean isContainsHeart = false, isContainsLung = false;
-
-            for (int i = 0; i < stethBean.getSegments().size(); i++) {
-                if (stethBean.getSegments().get(i).getFilter_type().equals(VitalsConstant.heart)) {
-                    isContainsHeart = true;
-                }
-                if (stethBean.getSegments().get(i).getFilter_type().equals(VitalsConstant.lung)) {
-                    isContainsLung = true;
-                }
-
-                if (isContainsHeart && isContainsLung) {
-                    break;
-                }
-            }
-
-            int drawable = R.drawable.steth_heart_lung;
-
-            if (isContainsHeart && !isContainsLung) {
-                drawable = R.drawable.steth_heart;
-            } else if (!isContainsHeart && isContainsLung) {
-                drawable = R.drawable.steth_lung;
-            }
-
-            vitalIv.setImageDrawable(context.getDrawable(drawable));
+            vitalIv.setImageDrawable(context.getDrawable(vitalsApiResponseModel.getStethIoImage()));
             vitalIv.setVisibility(View.VISIBLE);
 
             ShowSubFragmentInterface showSubFragmentInterface = (ShowSubFragmentInterface) context;
@@ -186,6 +174,37 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
                 vitalIv.setImageDrawable(context.getDrawable(drawable));
             }
         }
+
+        switch (mode) {
+            case Constants.VIEW_MODE:
+                visitCb.setVisibility(View.GONE);
+                break;
+            case Constants.EDIT_MODE:
+                if (vitalsApiResponseModel.getOrder_id() == null) {
+                    visitCb.setVisibility(View.VISIBLE);
+                    vitalRootCl.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            visitCb.setChecked(!visitCb.isChecked());
+
+                            Bundle bundle = new Bundle();
+                            bundle.putInt(ArgumentKeys.GROUP_POSITION, groupPosition);
+                            bundle.putInt(ArgumentKeys.CHILD_POSITION, childPosition);
+
+                            onListItemSelectInterface.onListItemSelected(-1, bundle);
+                        }
+                    });
+                    itemCv.setCardBackgroundColor(context.getColor(R.color.colorWhite));
+                    vitalIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.app_gradient_start)));
+                } else {
+                    visitCb.setVisibility(View.GONE);
+                    itemCv.setCardBackgroundColor(context.getColor(R.color.colorGrey_light));
+                    vitalIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.colorGrey)));
+                }
+                break;
+        }
+
         return convertView;
     }
 
@@ -200,4 +219,8 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
+    public void setMode(int mode) {
+        this.mode = mode;
+        notifyDataSetChanged();
+    }
 }

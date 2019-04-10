@@ -36,6 +36,7 @@ public class DietViewPagerAdapter extends PagerAdapter {
     private Fragment fragment;
     private Map<String, ArrayList<DietApiResponseModel>> listMap = new HashMap<>();
     private String selectedDate;
+    private int count = 3;
 
     private CustomRecyclerView primaryCrv;
     private DietListAdapter dietListAdapter;
@@ -58,6 +59,8 @@ public class DietViewPagerAdapter extends PagerAdapter {
         dietListCrv.setEmptyState(EmptyViewConstants.EMPTY_DIET);
         dietListCrv.showOrhideEmptyState(true);
         dietListCrv.getSwipeLayout().setEnabled(false);
+
+        Log.e("aswin", "instantiateItem: " + count);
 
         if (position == 1) {
             primaryCrv = dietListCrv;
@@ -94,14 +97,13 @@ public class DietViewPagerAdapter extends PagerAdapter {
         this.listMap = listMap;
         this.selectedDate = selectedDate;
 
-
         if (UserType.isUserPatient()) {
             setAdapter();
         } else {
-            if (listMap.containsKey(selectedDate) && listMap.get(selectedDate).size() > 0) {
+            if (listMap.containsKey(selectedDate) && !listMap.get(selectedDate).isEmpty()) {
                 setAdapter();
             } else {
-                if (dietListAdapter != null){
+                if (dietListAdapter != null) {
                     dietListAdapter.clearData();
                     primaryCrv.showOrhideEmptyState(true);
                 }
@@ -111,6 +113,7 @@ public class DietViewPagerAdapter extends PagerAdapter {
 
     private void setAdapter() {
         List<DietListAdapterModel> finalList = createList(listMap.get(selectedDate));
+        Log.e("aswin", "setAdapter: " + new Gson().toJson(finalList));
         if (!finalList.isEmpty()) {
             dietListAdapter.setData(finalList, getUtcDate(selectedDate));
             primaryCrv.showOrhideEmptyState(false);
@@ -119,7 +122,7 @@ public class DietViewPagerAdapter extends PagerAdapter {
         }
     }
 
-    private List<DietListAdapterModel> createList(ArrayList<DietApiResponseModel> dietApiResponseModelArrayList) {
+    public static List<DietListAdapterModel> createList(ArrayList<DietApiResponseModel> dietApiResponseModelArrayList) {
         List<DietListAdapterModel> finalList = new ArrayList<>();
 
         List<DietListAdapterModel> breakFastList = new ArrayList<>();
