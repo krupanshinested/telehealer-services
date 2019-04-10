@@ -161,5 +161,7 @@ public class ArgumentKeys {
     public static final String IS_DATA_FETCHED = "IS_DATA_FETCHED";
     public static final String IS_OPENING_DIRECTLY_FROM_PAIRING = "IS_OPENING_DIRECTLY_FROM_PAIRING";
 
+    public static final String ROLE = "ROLE";
+    public static final String BRAIN_TREE_CUSTOMER = "BRAIN_TREE_CUSTOMER";
 
 }

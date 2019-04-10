@@ -471,7 +471,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                         doctorGuid = resultModel.getDoctorModel().getUser_guid();
                     }
                 }
-                updateRequest(resultModel.getType(), false, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), REJECTED.toLowerCase(), startDate, endDate, doctorGuid, true);
+                updateRequest(resultModel.getType(), false, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), REJECTED.toLowerCase(), startDate, endDate, doctorGuid, true,resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
             }
         });
 
@@ -494,7 +494,7 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                         doctorGuid = resultModel.getDoctorModel().getUser_guid();
                     }
                 }
-                updateRequest(resultModel.getType(), true, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), ACCEPTED.toLowerCase(), startDate, endDate, doctorGuid, true);
+                updateRequest(resultModel.getType(), true, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), ACCEPTED.toLowerCase(), startDate, endDate, doctorGuid, true,resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
             }
         });
 
@@ -513,8 +513,8 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
     }
 
     private void updateRequest(String type, boolean isAccept, String toGuid, @NonNull int id, @NonNull String status, @Nullable String startDate, @Nullable String endDate,
-                               @Nullable String doctorGuid, boolean isShowProgress) {
-        notificationApiViewModel.updateNotification(type, isAccept, toGuid, id, status, startDate, endDate, doctorGuid, isShowProgress);
+                               @Nullable String doctorGuid, boolean isShowProgress,boolean isRequestorMA) {
+        notificationApiViewModel.updateNotification(type, isAccept, toGuid, id, status, startDate, endDate, doctorGuid, isShowProgress,isRequestorMA);
     }
 
 

@@ -19,6 +19,7 @@ import com.thealer.telehealer.apilayer.models.notification.NotificationApiRespon
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
 import com.thealer.telehealer.apilayer.models.pendingInvites.PendingInvitesNonRegisterdApiResponseModel;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -122,7 +123,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NotificationListAdapter.ACCEPTED.toLowerCase(), null, null,
-                                    null, true);
+                                    null, true,adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
                         }
                     });
 
@@ -134,7 +135,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NotificationListAdapter.REJECTED.toLowerCase(), null, null,
-                                    null, true);
+                                    null, true,adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
                         }
                     });
 

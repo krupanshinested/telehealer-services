@@ -8,6 +8,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
@@ -63,7 +64,7 @@ public class NotificationApiViewModel extends BaseApiViewModel {
     }
 
     public void updateNotification(String type, boolean isAccept, String toGuid, @NonNull int id, @NonNull String requestStatus, @Nullable String startDate, @Nullable String endDate,
-                                   @Nullable String doctorGuid, boolean isShowProgress) {
+                                   @Nullable String doctorGuid, boolean isShowProgress,boolean isRequestorMA) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -97,6 +98,11 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                                             if (isAccept){
                                                 EventRecorder.recordNotification("CONNECTION_ACCEPTED");
                                                 EventRecorder.recordConnection("CONNECTION_ACCEPTED");
+
+                                                if (UserType.isUserDoctor() && isRequestorMA) {
+                                                    EventRecorder.recordConnection("MA_CONNECTION_ACCEPTED");
+                                                }
+
                                                 PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionAcceptPayload(toGuid), null);
                                             }else {
                                                 EventRecorder.recordNotification("CONNECTION_REJECTED");
