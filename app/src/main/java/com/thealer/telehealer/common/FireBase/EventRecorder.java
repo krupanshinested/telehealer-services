@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 
@@ -44,6 +45,10 @@ public class EventRecorder {
         analytics.setUserId(userGuid);
     }
 
+    public static void updateVersion() {
+        analytics.setUserProperty("APP_VERSION", BuildConfig.VERSION_NAME);
+    }
+
     public static void recordAppUpgrade() {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID,"id-app_upgrade");
@@ -52,6 +57,7 @@ public class EventRecorder {
 
         analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT,bundle);
     }
+
 
     public static void recordLastUpdate(String eventType) {
         Bundle bundle = new Bundle();
@@ -78,6 +84,13 @@ public class EventRecorder {
     public static void recordRegistration(String event,@Nullable String userGuid){
         Bundle bundle = new Bundle();
         bundle.putString("event", event);
+        analytics.logEvent("REGISTRATION_ACTION",bundle);
+    }
+
+    public static void recordRegistrationWithDate(String event){
+        Bundle bundle = new Bundle();
+        bundle.putString("event", event);
+        bundle.putString("date",Utils.getStringFromDate( new Date(),"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
         analytics.logEvent("REGISTRATION_ACTION",bundle);
     }
 
@@ -141,4 +154,10 @@ public class EventRecorder {
         analytics.logEvent("meals_event",bundle);
     }
 
+    public static void recordTrialExpired(String event) {
+        Bundle bundle = new Bundle();
+        bundle.putString("event", event);
+        bundle.putString("DATE", Utils.getStringFromDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+        analytics.logEvent("trial_expired", bundle);
+    }
 }

@@ -37,18 +37,20 @@ public class SigninApiViewModel extends BaseApiViewModel {
                         EventRecorder.recordUserSession("login_username");
 
                         baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                        EventRecorder.updateVersion();
                     }
                 });
     }
 
     public void refreshToken() {
         String refreshToken = TeleHealerApplication.appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN);
-        getAuthApiService().refreshToken(refreshToken)
+        getAuthApiService().refreshToken(refreshToken,false)
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                     @Override
                     public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                         baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                        EventRecorder.updateVersion();
                     }
                 });
     }

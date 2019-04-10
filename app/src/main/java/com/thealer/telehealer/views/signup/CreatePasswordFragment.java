@@ -128,7 +128,10 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
 
                             createUserApiViewModel.baseApiResponseModelMutableLiveData.setValue(null);
 
-                            onActionCompleteInterface.onCompletionResult(null, true, null);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(ArgumentKeys.ROLE,createUserRequestModel.getUser_data().getRole());
+
+                            onActionCompleteInterface.onCompletionResult(null, true, bundle);
 
                             if (getActivity() != null) {
 
