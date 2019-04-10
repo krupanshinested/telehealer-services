@@ -143,4 +143,11 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     }
 
 
+    public String getDisplayName(){
+        if (getRole().equals(Constants.ROLE_DOCTOR)){
+            return "Dr. " + getFirst_name() + " " + getLast_name();
+        }else {
+            return getFirst_name() + " " + getLast_name();
+        }
+    }
 }

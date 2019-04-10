@@ -219,4 +219,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/diet_detail_cl" />
 
+    <com.thealer.telehealer.common.CustomRecyclerView
+        android:id="@+id/diet_list_crv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/diet_detail_cl" />
+
 </android.support.constraint.ConstraintLayout>

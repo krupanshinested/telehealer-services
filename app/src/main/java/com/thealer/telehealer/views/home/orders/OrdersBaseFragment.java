@@ -10,6 +10,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+import android.view.View;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -21,15 +23,20 @@ import com.thealer.telehealer.apilayer.models.orders.miscellaneous.CreateMiscell
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
+import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.RecentsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
+import com.thealer.telehealer.views.common.RecentsSelectionActivity;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 
 /**
@@ -41,18 +48,27 @@ public class OrdersBaseFragment extends BaseFragment {
     public OrdersCreateApiViewModel ordersCreateApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private OnCloseActionInterface onCloseActionInterface;
+    private RecentsApiViewModel recentsApiViewModel;
+    private ShowSubFragmentInterface showSubFragmentInterface;
 
     private String currentOrder = "";
     private String patientName = "";
+    private String userGuid = "", doctorGuid = "";
     private boolean isSendFax = false;
     public boolean onFaxSent = false;
     public boolean isShowSuccess = false;
     private static boolean onAuthenticated = false;
+    private int selectedRecent = -1;
+    private String vistOrderId = null;
+    private OrdersCustomView visitOcv;
+    private RecentsApiResponseModel recentsApiResponseModel;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(quickLoginBroadcastReceiver, new IntentFilter(getString(R.string.quick_login_broadcast_receiver)));
+
+        showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
 
@@ -144,6 +160,27 @@ public class OrdersBaseFragment extends BaseFragment {
                 }
             }
         });
+
+        recentsApiViewModel = ViewModelProviders.of(this).get(RecentsApiViewModel.class);
+
+        attachObserverInterface.attachObserver(recentsApiViewModel);
+
+        recentsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    recentsApiResponseModel = (RecentsApiResponseModel) baseApiResponseModel;
+                    onRecentsListReceived(getRecentCall(recentsApiResponseModel));
+                }
+            }
+        });
+
+        recentsApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+
+            }
+        });
     }
 
     @Override
@@ -184,14 +221,6 @@ public class OrdersBaseFragment extends BaseFragment {
             onAuthenticated = false;
             onAuthenticated();
         }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW && resultCode == Activity.RESULT_OK) {
-            onCloseActionInterface.onClose(false);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -282,4 +311,95 @@ public class OrdersBaseFragment extends BaseFragment {
 
         ordersCreateApiViewModel.createMiscellaneousOrder(miscellaneousOrderRequest, doctorGuid);
     }
+
+    public void getPatientsRecentsList(String userGuid, String doctorGuid) {
+        boolean isApiCallNeeded = true;
+        if (this.userGuid.equals(userGuid) && recentsApiResponseModel != null) {
+            isApiCallNeeded = false;
+            if (UserType.isUserAssistant() && !this.doctorGuid.equals(doctorGuid)) {
+                isApiCallNeeded = true;
+            }
+        }
+
+        if (isApiCallNeeded) {
+            this.userGuid = userGuid;
+            this.doctorGuid = doctorGuid;
+            String month = Utils.getCurrentFomatedDate(Utils.yyyy_mm);
+            recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, month, 1, true, false);
+        } else {
+            onRecentsListReceived(getRecentCall(recentsApiResponseModel));
+        }
+    }
+
+    private RecentsApiResponseModel.ResultBean getRecentCall(RecentsApiResponseModel recentsApiResponseModel) {
+        if (!recentsApiResponseModel.getResult().isEmpty()) {
+            for (int i = 0; i < recentsApiResponseModel.getResult().size(); i++) {
+                if (recentsApiResponseModel.getResult().get(i).getDurationInSecs() > 0 &&
+                        !Utils.isOneDayBefore(recentsApiResponseModel.getResult().get(i).getUpdated_at())) {
+                    return recentsApiResponseModel.getResult().get(i);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public void setVisitsView(OrdersCustomView visitOcv, String user_guid, String doctorGuid) {
+        this.visitOcv = visitOcv;
+        vistOrderId = null;
+        visitOcv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(getActivity(), RecentsSelectionActivity.class)
+                                .putExtra(ArgumentKeys.USER_GUID, user_guid)
+                                .putExtra(ArgumentKeys.DOCTOR_GUID, doctorGuid)
+                                .putExtra(ArgumentKeys.SELECTED_TRANSCRIPTION_ID, selectedRecent)
+                        , RequestID.REQ_VISIT_RECENT);
+            }
+        });
+
+    }
+
+    public void onRecentsListReceived(RecentsApiResponseModel.ResultBean recentData) {
+        Log.e(TAG, "onRecentsListReceived: " + (recentData == null));
+        if (visitOcv != null) {
+            if (recentData != null) {
+                visitOcv.setTitleTv(Utils.getDayMonthYearTime(recentData.getUpdated_at()));
+            } else {
+                visitOcv.setTitleTv(getString(R.string.associate_this_order_to_a_visit));
+            }
+        }
+        if (recentData != null) {
+            vistOrderId = recentData.getOrder_id();
+            selectedRecent = recentData.getTranscription_id();
+        } else {
+            vistOrderId = null;
+            selectedRecent = -1;
+        }
+    }
+
+    public String getVistOrderId() {
+        return vistOrderId;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case RequestID.REQ_SHOW_SUCCESS_VIEW:
+                if (resultCode == Activity.RESULT_OK) {
+                    onCloseActionInterface.onClose(false);
+                }
+                break;
+            case RequestID.REQ_VISIT_RECENT:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null && data.getExtras() != null) {
+                        RecentsApiResponseModel.ResultBean recentModel = (RecentsApiResponseModel.ResultBean) data.getExtras().getSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL);
+                        onRecentsListReceived(recentModel);
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 }

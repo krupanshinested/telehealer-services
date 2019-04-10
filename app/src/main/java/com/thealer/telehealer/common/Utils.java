@@ -35,6 +35,7 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.util.Base64;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -59,6 +60,7 @@ import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
 import com.thealer.telehealer.views.common.CustomDialogs.OptionSelectionDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OptionsSelectionAdapter;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
@@ -71,6 +73,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -97,6 +100,10 @@ public class Utils {
     public static final String UTCFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final TimeZone UtcTimezone = TimeZone.getTimeZone("UTC");
     public static final String defaultDateFormat = "dd MMM, yyyy";
+    public static final String yyyy_mm = "yyyy-MM";
+    public static final String yyyy_mm_dd = "yyyy-MM-dd";
+    public static String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
     private static FancyShowCaseView fancyShowCaseView;
 
     public static void showOverlay(FragmentActivity fragmentActivity, View view, String message, DismissListener dismissListener) {
@@ -204,7 +211,6 @@ public class Utils {
     }
 
     public static String getFormatedDate(int year, int month, int dayOfMonth) {
-        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         return String.valueOf(dayOfMonth) + " " + months[month] + ", " + year;
     }
 
@@ -245,6 +251,24 @@ public class Utils {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static boolean isOneDayBefore(String date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR_OF_DAY, -24);
+
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
+        dateFormat.setTimeZone(UtcTimezone);
+        Calendar input = Calendar.getInstance();
+        try {
+            Date inputDate = dateFormat.parse(date);
+            input.setTime(inputDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Log.e("aswin", "isOneDayBefore: " + calendar.getTime());
+        Log.e("aswin", "isOneDayBefore: " + input.getTime());
+        return input.before(calendar);
     }
 
     public static boolean isDateTimeExpired(String date) {
@@ -455,6 +479,20 @@ public class Utils {
         return "";
     }
 
+    public static String getDayMonthYearTime(String date) {
+
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+        dateFormat.setTimeZone(UtcTimezone);
+        DateFormat returnFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm aa", Locale.ENGLISH);
+        returnFormat.setTimeZone(TimeZone.getDefault());
+        try {
+            return returnFormat.format(dateFormat.parse(date));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     public static String getDoctorDisplayName(String first_name, String last_name, String title) {
         return "Dr. " + first_name + " " + last_name + " " + ((title != null) ? title : "");
     }
@@ -510,6 +548,18 @@ public class Utils {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.sss");
         DateFormat outDateFormat = new SimpleDateFormat(defaultDateFormat, Locale.ENGLISH);
+        try {
+            return outDateFormat.format(dateFormat.parse(new Timestamp(System.currentTimeMillis()).toString()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String getCurrentFomatedDate(String outputFormat) {
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.sss");
+        DateFormat outDateFormat = new SimpleDateFormat(outputFormat, Locale.ENGLISH);
         try {
             return outDateFormat.format(dateFormat.parse(new Timestamp(System.currentTimeMillis()).toString()));
         } catch (ParseException e) {
@@ -1091,6 +1141,16 @@ public class Utils {
         optionSelectionDialog.show();
     }
 
+    public static String getDisplayDuration(int durationInSecs) {
+        String displayDuration;
+        if (durationInSecs < 60) {
+            displayDuration = durationInSecs + " sec";
+        } else {
+            displayDuration = (durationInSecs / 60) + " min " + (durationInSecs % 60) + " sec";
+        }
+        return displayDuration;
+    }
+
     public static void showInviteAlert(FragmentActivity context, Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View alertView = LayoutInflater.from(context).inflate(R.layout.view_invite_alert, null);
@@ -1144,4 +1204,52 @@ public class Utils {
         alertDialog.show();
     }
 
+    public static void showMonitoringFilter(FragmentActivity activity, OnListItemSelectInterface onListItemSelectInterface) {
+
+
+        Calendar currentMonth = Calendar.getInstance();
+
+        Calendar previousMonth = Calendar.getInstance();
+        previousMonth.add(Calendar.MONTH, -1);
+
+        String current = currentMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
+        String previous = previousMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
+
+        List<String> monitoringFilterList = new ArrayList<>(Arrays.asList(activity.getString(R.string.last_week), current, previous, activity.getString(R.string.all)));
+
+        showOptionsSelectionAlert(activity, monitoringFilterList, new PickerListener() {
+            @Override
+            public void didSelectedItem(int position) {
+                String selectedItem = monitoringFilterList.get(position);
+
+                Bundle bundle = new Bundle();
+
+                if (selectedItem.equals(activity.getString(R.string.last_week)) || selectedItem.equals(activity.getString(R.string.all))) {
+                    bundle.putString(Constants.SELECTED_ITEM, selectedItem);
+                } else {
+                    String startDate, endDate;
+                    Calendar calendar = (Calendar) currentMonth.clone();
+
+                    if (selectedItem.equals(previous)) {
+                        calendar = (Calendar) previousMonth.clone();
+                    }
+
+                    calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+                    startDate = getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+                    calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    endDate = getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+
+                    bundle.putString(ArgumentKeys.START_DATE, startDate);
+                    bundle.putString(ArgumentKeys.END_DATE, endDate);
+                }
+
+                onListItemSelectInterface.onListItemSelected(position, bundle);
+            }
+
+            @Override
+            public void didCancelled() {
+
+            }
+        });
+    }
 }

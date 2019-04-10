@@ -36,7 +36,7 @@
         <item
             android:id="@+id/menu_recent"
             android:icon="@drawable/recent_drawable_selector"
-            android:title="@string/recents" />
+            android:title="@string/visits" />
 
     </group>
     <item

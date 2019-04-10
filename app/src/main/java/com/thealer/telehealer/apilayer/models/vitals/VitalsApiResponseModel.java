@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
 import com.google.gson.Gson;
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
@@ -20,6 +21,7 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
     private String created_at;
     private String updated_at;
     private boolean abnormal;
+    private String order_id;
 
     public boolean isAbnormal() {
         return abnormal;
@@ -97,6 +99,14 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
         this.updated_at = updated_at;
     }
 
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
+    }
+
     public String getCapturedBy() {
         String prefix = "Captured by ";
         if (getMode().equals(VitalsConstant.VITAL_MODE_DEVICE)) {
@@ -124,4 +134,31 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
         }
     }
 
+    public int getStethIoImage() {
+        boolean isContainsHeart = false, isContainsLung = false;
+
+        if (stethBean != null && stethBean.getSegments() != null) {
+            for (int j = 0; j < stethBean.getSegments().size(); j++) {
+                if (stethBean.getSegments().get(j).getFilter_type().equals(VitalsConstant.heart)) {
+                    isContainsHeart = true;
+                }
+                if (stethBean.getSegments().get(j).getFilter_type().equals(VitalsConstant.lung)) {
+                    isContainsLung = true;
+                }
+
+                if (isContainsHeart && isContainsLung) {
+                    break;
+                }
+            }
+        }
+        int drawable = R.drawable.steth_heart_lung;
+
+        if (isContainsHeart && !isContainsLung) {
+            drawable = R.drawable.steth_heart;
+        } else if (!isContainsHeart && isContainsLung) {
+            drawable = R.drawable.steth_lung;
+        }
+
+        return drawable;
+    }
 }

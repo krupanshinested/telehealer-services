@@ -38,7 +38,7 @@ import com.thealer.telehealer.views.home.orders.OrdersCustomView;
  * Created by Aswin on 05,March,2019
  */
 public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implements View.OnClickListener {
-    private OrdersCustomView patientOcv;
+    private OrdersCustomView patientOcv, visitOcv;
     private TextView notesLabel;
     private EditText notesEt;
     private Button sendBtn;
@@ -108,6 +108,7 @@ public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implement
 
     private void initView(View view) {
         patientOcv = (OrdersCustomView) view.findViewById(R.id.patient_ocv);
+        visitOcv = (OrdersCustomView) view.findViewById(R.id.visit_ocv);
         notesLabel = (TextView) view.findViewById(R.id.notes_label);
         notesEt = (EditText) view.findViewById(R.id.notes_et);
         sendBtn = (Button) view.findViewById(R.id.send_btn);
@@ -167,6 +168,8 @@ public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implement
             patientOcv.setTitleTv(patientModel.getUserDisplay_name());
             patientOcv.setSubtitleTv(patientModel.getDob());
             patientOcv.setSub_title_visible(true);
+            setVisitsView(visitOcv, patientModel.getUser_guid(), doctorGuid);
+            getPatientsRecentsList(patientModel.getUser_guid(), doctorGuid);
         } else {
             patientOcv.setTitleTv(getString(R.string.Click_here_to_select_patient));
             patientOcv.setSub_title_visible(false);
@@ -198,6 +201,7 @@ public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implement
         CreateMiscellaneousRequestModel requestModel = new CreateMiscellaneousRequestModel();
         requestModel.setDetail(miscellaneousDetailBean);
         requestModel.setUser_guid(patientModel.getUser_guid());
+        requestModel.setOrder_id(getVistOrderId());
         requestModel.setName("Miscellaneous Referral");
 
         return requestModel;

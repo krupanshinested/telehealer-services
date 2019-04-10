@@ -35,6 +35,8 @@ import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
+import java.util.HashMap;
+
 /**
  * Created by Aswin on 13,March,2019
  */
@@ -140,8 +142,25 @@ public class MiscellaneousDetailViewFragment extends BaseFragment implements Vie
         }
 
         if (getArguments() != null) {
-            resultBean = (MiscellaneousApiResponseModel.ResultBean) getArguments().getSerializable(Constants.USER_DETAIL);
+            resultBean = (MiscellaneousApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.ORDER_DETAIL);
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+
+            CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+
+            HashMap<String, CommonUserApiResponseModel> userDetailMap = new HashMap<>();
+            if (patientDetail != null) {
+                userDetailMap.put(patientDetail.getUser_guid(), patientDetail);
+            }
+
+            if (doctorDetail != null) {
+                doctorGuid = doctorDetail.getUser_guid();
+                userDetailMap.put(doctorGuid, doctorDetail);
+            }
+
+            if (!userDetailMap.isEmpty()) {
+                resultBean.setUserDetailMap(userDetailMap);
+            }
 
             if (resultBean != null) {
                 if (resultBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
@@ -151,13 +170,13 @@ public class MiscellaneousDetailViewFragment extends BaseFragment implements Vie
                 }
                 notesOcv.setTitleTv(resultBean.getDetail().getNotes());
 
-                CommonUserApiResponseModel patientDetail = resultBean.getUserDetailMap().get(resultBean.getPatient().getUser_guid());
+                patientDetail = resultBean.getUserDetailMap().get(resultBean.getPatient().getUser_guid());
                 if (patientDetail != null) {
                     patientOcv.setTitleTv(patientDetail.getDisplayName());
                     patientOcv.setSubtitleTv(patientDetail.getDisplayInfo());
                 }
 
-                CommonUserApiResponseModel doctorDetail = resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid());
+                doctorDetail = resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid());
                 if (doctorDetail != null) {
                     doctorOcv.setTitleTv(doctorDetail.getDisplayName());
                     doctorOcv.setSubtitleTv(doctorDetail.getDisplayInfo());

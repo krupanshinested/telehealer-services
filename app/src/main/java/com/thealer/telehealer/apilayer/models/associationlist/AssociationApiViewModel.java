@@ -58,4 +58,23 @@ public class AssociationApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+    public void getUserAssociationDetail(String userGuid, String doctorGuid, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getUserAssociationDetail(userGuid, doctorGuid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAListObserver<CommonUserApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(ArrayList<CommonUserApiResponseModel> data) {
+                                    ArrayList<BaseApiResponseModel> responseModels = new ArrayList<>(data);
+                                    baseApiArrayListMutableLiveData.setValue(responseModels);
+                                }
+                            });
+                }
+            }
+        });
+    }
 }

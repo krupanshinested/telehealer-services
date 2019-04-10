@@ -224,11 +224,22 @@
                 android:layout_marginBottom="16dp"
                 android:text="@string/label"
                 android:textAllCaps="true"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/do_not_disturb_cb" />
 
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/visit_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:arrow_visible="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_cb"
+                app:sub_title_visible="false"
+                app:title_text="@string/click_here_to_select_last_visit"
+                app:view_label="visit" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
 

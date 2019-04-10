@@ -98,4 +98,22 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+    public void getScheduleDetail(int scheduleId, String doctorGuid, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getScheduleDetail(scheduleId, doctorGuid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
 }

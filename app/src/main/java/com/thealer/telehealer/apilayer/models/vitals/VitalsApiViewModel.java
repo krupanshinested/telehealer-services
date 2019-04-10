@@ -9,6 +9,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Aswin on 21,November,2018
@@ -41,12 +42,12 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getUserFilteredVitals(String type, String user_guid, String doctorGuid) {
+    public void getUserFilteredVitals(String type, String startDate, String endDate, String user_guid, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserFilteredVitals(type, user_guid, doctorGuid)
+                    getAuthApiService().getUserFilteredVitals(type, startDate, endDate, user_guid, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAListObserver<VitalsApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -96,6 +97,28 @@ public class VitalsApiViewModel extends BaseApiViewModel {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getVitalDetail(String userGuid, String doctorGuid, List<Integer> idList, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    String ids = idList.toString().replace("[", "").replace("]", "");
+                    getAuthApiService().getVitalDetail(userGuid, doctorGuid, ids)
+                            .compose(applySchedulers())
+                            .subscribe(new RAListObserver<VitalsApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(ArrayList<VitalsApiResponseModel> data) {
+
+                                    ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(data);
+
+                                    baseApiArrayListMutableLiveData.setValue(apiResponseModels);
                                 }
                             });
                 }

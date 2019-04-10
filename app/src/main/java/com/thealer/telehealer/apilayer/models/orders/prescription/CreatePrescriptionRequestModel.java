@@ -9,11 +9,14 @@ public class CreatePrescriptionRequestModel implements Serializable {
 
     private String user_guid;
     private String name;
+    private String order_id;
     private DetailBean detail;
 
-    public CreatePrescriptionRequestModel(String user_guid, String name, DetailBean detail) {
+
+    public CreatePrescriptionRequestModel(String user_guid, String name, String order_id, DetailBean detail) {
         this.user_guid = user_guid;
         this.name = name;
+        this.order_id = order_id;
         this.detail = detail;
     }
 
@@ -41,7 +44,15 @@ public class CreatePrescriptionRequestModel implements Serializable {
         this.detail = detail;
     }
 
-    public static class DetailBean implements Serializable{
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
+    }
+
+    public static class DetailBean implements Serializable {
 
         private String rx_drug_name;
         private int rx_strength;
