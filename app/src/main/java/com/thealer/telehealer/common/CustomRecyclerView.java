@@ -210,6 +210,10 @@ public class CustomRecyclerView extends ConstraintLayout {
         }
     }
 
+    public void setEmptyStateTitle(String title) {
+        emptyTitleTv.setText(title);
+    }
+
     public void hideEmptyState() {
         recyclerEmptyStateView.setVisibility(GONE);
     }

@@ -36,13 +36,14 @@ import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 /**
  * Created by Aswin on 07,January,2019
  */
 public class NotificationActivity extends BaseActivity implements AttachObserverInterface,
         OnActionCompleteInterface, OnOrientationChangeInterface, OnCloseActionInterface, ShowSubFragmentInterface,
-        SuccessViewInterface, ChangeTitleInterface, ToolBarInterface {
+        SuccessViewInterface, ChangeTitleInterface, ToolBarInterface, OnViewChangeInterface {
 
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
@@ -201,7 +202,42 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
     }
 
     @Override
+    public void enableNext(boolean enabled) {
+
+    }
+
+    @Override
+    public void hideOrShowNext(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowClose(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowToolbarTile(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowBackIv(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void updateNextTitle(String nextTitle) {
+
+    }
+
+    @Override
     public void updateTitle(String title) {
+
+    }
+
+    @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
 
     }
 

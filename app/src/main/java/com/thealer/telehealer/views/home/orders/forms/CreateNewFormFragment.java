@@ -44,7 +44,7 @@ import java.util.List;
  * Created by Aswin on 28,November,2018
  */
 public class CreateNewFormFragment extends OrdersBaseFragment implements View.OnClickListener, OnListItemSelectInterface {
-    private OrdersCustomView patientOcv;
+    private OrdersCustomView patientOcv, visitOcv;
     private LinearLayout formsLl;
     private RecyclerView formsRv;
     private Button sendBtn;
@@ -139,6 +139,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
 
     private void initView(View view) {
         patientOcv = (OrdersCustomView) view.findViewById(R.id.patient_ocv);
+        visitOcv = (OrdersCustomView) view.findViewById(R.id.visit_ocv);
         formsLl = (LinearLayout) view.findViewById(R.id.forms_ll);
         formsRv = (RecyclerView) view.findViewById(R.id.forms_rv);
         sendBtn = (Button) view.findViewById(R.id.send_btn);
@@ -182,6 +183,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
             isSubtitleVisible = true;
 
             userGuid = selectedPatientDetail.getUser_guid();
+
         }
 
 
@@ -191,6 +193,8 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
 
         if (userGuid != null) {
             getAllForms();
+            setVisitsView(visitOcv, userGuid, doctorGuid);
+            getPatientsRecentsList(userGuid, doctorGuid);
         }
 
     }
@@ -229,7 +233,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
     }
 
     private void assignForms() {
-        ordersCreateApiViewModel.createForm(new CreateFormRequestModel(selectedFormIds.get(0), userGuid), doctorGuid, false);
+        ordersCreateApiViewModel.createForm(new CreateFormRequestModel(selectedFormIds.get(0), userGuid, getVistOrderId()), doctorGuid, false);
         selectedFormIds.remove(0);
     }
 

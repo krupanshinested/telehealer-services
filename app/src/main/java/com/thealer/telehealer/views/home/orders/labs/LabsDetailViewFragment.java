@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiViewModel;
@@ -178,8 +179,25 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
         }
 
         if (getArguments() != null) {
-            labsResponseBean = (OrdersLabApiResponseModel.LabsResponseBean) getArguments().getSerializable(Constants.USER_DETAIL);
+            labsResponseBean = (OrdersLabApiResponseModel.LabsResponseBean) getArguments().getSerializable(ArgumentKeys.ORDER_DETAIL);
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+
+            CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+
+            HashMap<String, CommonUserApiResponseModel> userDetailMap = new HashMap<>();
+            if (patientDetail != null) {
+                userDetailMap.put(patientDetail.getUser_guid(), patientDetail);
+            }
+
+            if (doctorDetail != null) {
+                doctorGuid = doctorDetail.getUser_guid();
+                userDetailMap.put(doctorGuid, doctorDetail);
+            }
+
+            if (!userDetailMap.isEmpty()) {
+                labsResponseBean.setUserDetailMap(userDetailMap);
+            }
 
             if (labsResponseBean != null) {
 

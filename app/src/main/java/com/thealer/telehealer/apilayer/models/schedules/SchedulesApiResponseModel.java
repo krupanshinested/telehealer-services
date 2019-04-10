@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.schedules;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.PaginationCommonResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 
@@ -24,7 +25,7 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
         this.result = result;
     }
 
-    public static class ResultBean extends BaseApiResponseModel{
+    public static class ResultBean extends BaseApiResponseModel {
 
         private int schedule_id;
         private Object response_id;
@@ -36,6 +37,7 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
         private CommonUserApiResponseModel scheduled_with_user;
         private CommonUserApiResponseModel scheduled_by_user;
         private Object order_id;
+        private List<HistoryBean> patient_history;
 
         public int getSchedule_id() {
             return schedule_id;
@@ -117,22 +119,31 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
             this.scheduled_by_user = scheduled_by_user;
         }
 
+        public List<HistoryBean> getPatient_history() {
+            return patient_history;
+        }
+
+        public void setPatient_history(List<HistoryBean> patient_history) {
+            this.patient_history = patient_history;
+        }
+
         public CommonUserApiResponseModel getPatient() {
             if (scheduled_by_user.getRole().equals(Constants.ROLE_PATIENT)) {
                 return scheduled_by_user;
             } else {
                 return scheduled_with_user;
             }
-         }
+        }
+
         public CommonUserApiResponseModel getDoctor() {
             if (scheduled_by_user.getRole().equals(Constants.ROLE_DOCTOR)) {
                 return scheduled_by_user;
             } else {
                 return scheduled_with_user;
             }
-         }
+        }
 
-        public static class DetailBean implements Serializable{
+        public static class DetailBean implements Serializable {
 
             private boolean change_demographic;
             private String reason;
@@ -180,7 +191,7 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
                 this.dates = dates;
             }
 
-            public static class DatesBean implements Serializable{
+            public static class DatesBean implements Serializable {
 
                 private String start;
                 private String end;
@@ -203,26 +214,26 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
             }
         }
 
-        public CommonUserApiResponseModel getScheduledToUser(){
+        public CommonUserApiResponseModel getScheduledToUser() {
 
             CommonUserApiResponseModel patientModel = null;
             CommonUserApiResponseModel doctorModel = null;
 
-            if (getScheduled_by_user().getRole().equals(Constants.ROLE_PATIENT)){
+            if (getScheduled_by_user().getRole().equals(Constants.ROLE_PATIENT)) {
                 patientModel = getScheduled_by_user();
-            }else {
+            } else {
                 doctorModel = getScheduled_by_user();
             }
 
-            if (getScheduled_with_user().getRole().equals(Constants.ROLE_PATIENT)){
+            if (getScheduled_with_user().getRole().equals(Constants.ROLE_PATIENT)) {
                 patientModel = getScheduled_with_user();
-            }else {
+            } else {
                 doctorModel = getScheduled_with_user();
             }
 
-            if (UserType.isUserDoctor()){
+            if (UserType.isUserDoctor()) {
                 return patientModel;
-            }else {
+            } else {
                 return doctorModel;
             }
 

@@ -24,7 +24,9 @@ public class RequestID {
     public static final int REQ_SELECT_DIET = 8000;
     public static final int REQ_CONNECT_VITAL_CONTENT_VIEW = 5010;
     public static final int REQ_LICENSE_EXPIRED = 8001;
+    public static final int REQ_VISIT_RECENT = 8002;
     public static final int REQ_CREATE_QUICK_LOGIN = 6001;
+    public static final int REQ_VISIT_UPDATE = 6003;
 
     public static final String REQ_PASSWORD_RESET_OTP = "REQ_RESET_OTP";
     public static final String REQ_RESET_PASSWORD = "REQ_RESET_PASSWORD";

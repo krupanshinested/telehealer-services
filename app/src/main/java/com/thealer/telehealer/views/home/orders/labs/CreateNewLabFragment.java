@@ -29,11 +29,11 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.DatePickerDialogFragment;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.DateBroadcastReceiver;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
@@ -44,7 +44,7 @@ import java.util.List;
  * Created by Aswin on 30,November,2018
  */
 public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnClickListener {
-    private OrdersCustomView patientOcv;
+    private OrdersCustomView patientOcv, visitOcv;
     private TextView labLabel;
     private RecyclerView labDescriptionRv;
     private TextView addTestTv;
@@ -106,6 +106,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
 
     private void initView(View view) {
         patientOcv = (OrdersCustomView) view.findViewById(R.id.patient_ocv);
+        visitOcv = (OrdersCustomView) view.findViewById(R.id.visit_ocv);
         labLabel = (TextView) view.findViewById(R.id.lab_label);
         labDescriptionRv = (RecyclerView) view.findViewById(R.id.lab_description_rv);
         addTestTv = (TextView) view.findViewById(R.id.add_test_tv);
@@ -168,6 +169,8 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
             patientOcv.setTitleTv(commonUserApiResponseModel.getUserDisplay_name());
             patientOcv.setSubtitleTv(commonUserApiResponseModel.getDob());
             patientOcv.setSub_title_visible(true);
+            setVisitsView(visitOcv, commonUserApiResponseModel.getUser_guid(), doctorGuid);
+            getPatientsRecentsList(commonUserApiResponseModel.getUser_guid(), doctorGuid);
         } else {
             patientOcv.setTitleTv(getString(R.string.Click_here_to_select_patient));
             patientOcv.setSub_title_visible(false);
@@ -237,6 +240,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
 
         createTestApiRequestModel.setName(commonUserApiResponseModel.getUserDisplay_name());
         createTestApiRequestModel.setUser_guid(commonUserApiResponseModel.getUser_guid());
+        createTestApiRequestModel.setOrder_id(getVistOrderId());
 
         if (specialistModel != null) {
             LabsDetailBean.CopyToBean copyToBean = new LabsDetailBean.CopyToBean(specialistModel.getDoctorDisplayName(),

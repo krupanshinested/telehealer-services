@@ -11,6 +11,7 @@ import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.FormBody;
@@ -26,14 +27,36 @@ public class DietApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getUserDietDetails(String date, String userGuid, boolean isShowProgress) {
+    public void getUserDietDetails(String date, String userGuid, String doctorGuid, List<Integer> dietIdList, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                String ids = null;
+                if (dietIdList != null) {
+                    ids = dietIdList.toString().replace("[", "").replace("]", "");
+                }
+                if (status) {
+                    getAuthApiService().getDietDetails(date, userGuid, doctorGuid, ids)
+                            .compose(applySchedulers())
+                            .subscribe(new RAListObserver<DietApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(ArrayList<DietApiResponseModel> data) {
+                                    baseApiArrayListMutableLiveData.setValue(new ArrayList<>(data));
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getUserDietDetails(String filter, String startDate, String endDate, String userGuid, String doctorGuid, boolean showProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getDietDetails(date, userGuid)
+                    getAuthApiService().getDietDetails(filter, startDate, endDate, userGuid, doctorGuid)
                             .compose(applySchedulers())
-                            .subscribe(new RAListObserver<DietApiResponseModel>(getProgress(isShowProgress)) {
+                            .subscribe(new RAListObserver<DietApiResponseModel>(getProgress(showProgress)) {
                                 @Override
                                 public void onSuccess(ArrayList<DietApiResponseModel> data) {
                                     baseApiArrayListMutableLiveData.setValue(new ArrayList<>(data));
@@ -76,11 +99,12 @@ public class DietApiViewModel extends BaseApiViewModel {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
-                                    EventRecorder.recordMeals(addDietRequestModel.getFoodBean().getName(),addDietRequestModel.getMeal_type());
+                                    EventRecorder.recordMeals(addDietRequestModel.getFoodBean().getName(), addDietRequestModel.getMeal_type());
                                 }
                             });
                 }
             }
         });
     }
+
 }

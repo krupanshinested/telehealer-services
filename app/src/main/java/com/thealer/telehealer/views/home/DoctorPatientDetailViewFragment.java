@@ -30,17 +30,17 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
+import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.RequestID;
@@ -64,6 +64,7 @@ import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -93,10 +94,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private OnCloseActionInterface onCloseActionInterface;
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private OnActionCompleteInterface onActionCompleteInterface;
-    private GetUsersApiViewModel getUsersApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private ConnectionStatusApiViewModel connectionStatusApiViewModel;
     private ConnectionStatusApiResponseModel connectionStatusApiResponseModel;
+    private AssociationApiViewModel associationApiViewModel;
 
     private List<Fragment> fragmentList;
     private List<String> titleList;
@@ -106,6 +107,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private BottomNavigationView userDetailBnv;
     private String view_type;
     private String doctorGuid = null, userGuid = null;
+    private boolean isConnectionStatusChecked = false;
     boolean checkStatus, isStatusChecked = false;
 
     @Override
@@ -115,17 +117,16 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
 
-        getUsersApiViewModel = ViewModelProviders.of(this).get(GetUsersApiViewModel.class);
         addConnectionApiViewModel = ViewModelProviders.of(getActivity()).get(AddConnectionApiViewModel.class);
         connectionStatusApiViewModel = ViewModelProviders.of(this).get(ConnectionStatusApiViewModel.class);
 
-        attachObserverInterface.attachObserver(getUsersApiViewModel);
         attachObserverInterface.attachObserver(connectionStatusApiViewModel);
 
         connectionStatusApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
+                    isConnectionStatusChecked = true;
                     connectionStatusApiResponseModel = (ConnectionStatusApiResponseModel) baseApiResponseModel;
                     isStatusChecked = true;
                     if (connectionStatusApiResponseModel.getConnection_status() == null || !connectionStatusApiResponseModel.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
@@ -154,44 +155,24 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             }
         });
 
-        getUsersApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+        associationApiViewModel = ViewModelProviders.of(this).get(AssociationApiViewModel.class);
+        associationApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
                 if (baseApiResponseModels != null) {
-                    ArrayList<CommonUserApiResponseModel> commonUserApiResponseModels = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
-
-                    if (commonUserApiResponseModels.size() > 0) {
-
-                        for (int i = 0; i < commonUserApiResponseModels.size(); i++) {
-                            switch (commonUserApiResponseModels.get(i).getRole()) {
-                                case Constants.ROLE_DOCTOR:
-                                    doctorModel = commonUserApiResponseModels.get(i);
-                                    if (UserType.isUserPatient() && resultBean == null) {
-                                        resultBean = doctorModel;
-                                    }
-                                    break;
-                                case Constants.ROLE_PATIENT:
-                                case Constants.ROLE_ASSISTANT:
-                                    resultBean = commonUserApiResponseModels.get(i);
-                                    break;
-                            }
-                        }
-                        updateView(resultBean);
-                        updateUserStatus(resultBean);
-
-                        if (checkStatus) {
-                            checkConnectionStatus();
+                    ArrayList<CommonUserApiResponseModel> responseModelArrayList = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
+                    for (CommonUserApiResponseModel model : responseModelArrayList) {
+                        if (model.getRole().equals(Constants.ROLE_PATIENT)) {
+                            resultBean = model;
                         }
                     }
 
+                    updateView(resultBean);
+                    updateUserStatus(resultBean);
+                    updateDateConnectionStatus(resultBean.getConnection_status());
                 }
             }
         });
-    }
-
-    private void checkConnectionStatus() {
-        if (!isStatusChecked)
-            connectionStatusApiViewModel.getConnectionStatus(userGuid, doctorGuid, true);
     }
 
     @Nullable
@@ -378,9 +359,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 resultBean = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
 
-                updateView(resultBean);
-
                 Log.e(TAG, "initView: " + view_type + " " + resultBean.getRole());
+
+                updateView(resultBean);
 
                 if (checkStatus) {
                     checkConnectionStatus();
@@ -388,22 +369,22 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
                         Set<String> set = new HashSet<>();
                         set.add(resultBean.getUser_guid());
-                        getUsersApiViewModel.getUserByGuid(set);
+                        getUserDetail(set);
                     } else {
                         updateUserStatus(resultBean);
                     }
                 }
 
             } else {
-                String userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
-                String doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+                userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
+                doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
 
                 Set<String> set = new HashSet<>();
                 if (doctorGuid != null) {
                     set.add(doctorGuid);
                 }
                 set.add(userGuid);
-                getUsersApiViewModel.getUserByGuid(set);
+                getUserDetail(set);
             }
         }
 
@@ -415,6 +396,53 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 onCloseActionInterface.onClose(false);
             }
         });
+    }
+
+    private void getUserDetail(Set<String> guidSet) {
+        GetUserDetails
+                .getInstance(getActivity())
+                .getDetails(guidSet)
+                .getHashMapMutableLiveData().observe(this, new Observer<HashMap<String, CommonUserApiResponseModel>>() {
+            @Override
+            public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> userDetailHashMap) {
+                if (userDetailHashMap != null) {
+
+                    for (String guid : guidSet) {
+                        CommonUserApiResponseModel model = userDetailHashMap.get(guid);
+                        if (model != null) {
+                            switch (model.getRole()) {
+                                case Constants.ROLE_DOCTOR:
+                                    doctorModel = model;
+                                    if (UserType.isUserPatient() && resultBean == null) {
+                                        resultBean = doctorModel;
+                                    }
+                                    break;
+                                case Constants.ROLE_PATIENT:
+                                case Constants.ROLE_ASSISTANT:
+                                    resultBean = model;
+                                    break;
+                            }
+                        }
+                    }
+                    if (checkStatus) {
+                        if (!UserType.isUserPatient()) {
+                            associationApiViewModel.getUserAssociationDetail(userGuid, doctorGuid, true);
+                        } else {
+                            checkConnectionStatus();
+                        }
+                    } else {
+                        updateView(resultBean);
+                        updateUserStatus(resultBean);
+                    }
+                }
+            }
+        });
+    }
+
+    private void checkConnectionStatus() {
+        if (!isConnectionStatusChecked) {
+            connectionStatusApiViewModel.getConnectionStatus(userGuid, doctorGuid, true);
+        }
     }
 
     private BroadcastReceiver callStartReceiver = new BroadcastReceiver() {
@@ -464,111 +492,115 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             userGuid = resultBean.getUser_guid();
             toolbarTitle.setText(resultBean.getUserDisplay_name());
             userNameTv.setText(resultBean.getUserDisplay_name());
+            userDobTv.setText(resultBean.getDisplayInfo());
+            Utils.setGenderImage(getActivity(), genderIv, resultBean.getGender());
+            Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
 
-            if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
-                userDetailBnv.getMenu().findItem(R.id.menu_upload).setVisible(true);
-                userDetailBnv.setVisibility(View.VISIBLE);
-            }
-        }
-
-        if (doctorModel != null) {
-            doctorGuid = doctorModel.getUser_guid();
-        }
-
-
-        if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-            genderIv.setVisibility(View.GONE);
-        }
-        userDobTv.setText(resultBean.getDisplayInfo());
-
-        Utils.setGenderImage(getActivity(), genderIv, resultBean.getGender());
-        Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
-
-        fragmentList = new ArrayList<>();
-        titleList = new ArrayList<String>();
-
-        AboutFragment aboutFragment = new AboutFragment();
-        addFragment(getString(R.string.about), aboutFragment);
-
-        if (view_type != null) {
-            if (view_type.equals(Constants.VIEW_CONNECTION)) {
-
-                updateDateConnectionStatus(resultBean.getConnection_status());
-
-            } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
-                Bundle bundle;
-
-                if (!UserType.isUserPatient()) {
-                    VitalsListFragment vitalsFragment = new VitalsListFragment();
-                    addFragment(getString(R.string.vitals), vitalsFragment);
-                }
-
-                if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-                    fragmentList.clear();
-                    titleList.clear();
-
-                    bundle = new Bundle();
-                    bundle.putBoolean(ArgumentKeys.HIDE_ADD, true);
-
-                    SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
-                    schedulesListFragment.setArguments(bundle);
-                    addFragment(getString(R.string.schedules), schedulesListFragment);
-
-                    bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
-
-                    DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
-                    doctorPatientListingFragment.setArguments(bundle);
-                    addFragment(getString(R.string.patients), doctorPatientListingFragment);
-                }
-
-                if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
-                    DocumentListFragment documentListFragment = new DocumentListFragment();
-                    bundle = new Bundle();
-                    bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
-                    documentListFragment.setArguments(bundle);
-                    addFragment(getString(R.string.documents), documentListFragment);
-                }
-
-                RecentFragment recentFragment = new RecentFragment();
-                addFragment(getString(R.string.recents), recentFragment);
-
-                OrdersListFragment ordersFragment = new OrdersListFragment();
-                addFragment(getString(R.string.orders), ordersFragment);
-
-                if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-                    MonitoringFragment monitoringFragment = new MonitoringFragment();
-                    addFragment(getString(R.string.monitoring), monitoringFragment);
-                }
-
-                if (resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
-                    userDetailTab.setVisibility(View.GONE);
+            switch (resultBean.getRole()) {
+                case Constants.ROLE_PATIENT:
+                    userDetailBnv.getMenu().findItem(R.id.menu_upload).setVisible(true);
+                    userDetailBnv.setVisibility(View.VISIBLE);
+                    break;
+                case Constants.ROLE_DOCTOR:
+                    genderIv.setVisibility(View.GONE);
+                    break;
+                case Constants.ROLE_ASSISTANT:
                     userDetailBnv.setVisibility(View.GONE);
-                    fragmentList.clear();
-                    titleList.clear();
-                    addFragment(getString(R.string.about), aboutFragment);
-                }
+                    userDetailTab.setVisibility(View.GONE);
+                    break;
             }
 
-            viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);
-            viewPager.setAdapter(viewPagerAdapter);
-            userDetailTab.setupWithViewPager(viewPager);
-            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int i, float v, int i1) {
+            if (doctorModel != null) {
+                doctorGuid = doctorModel.getUser_guid();
+            }
 
+
+            fragmentList = new ArrayList<>();
+            titleList = new ArrayList<String>();
+
+            AboutFragment aboutFragment = new AboutFragment();
+            addFragment(getString(R.string.about), aboutFragment);
+
+            if (view_type != null) {
+                if (view_type.equals(Constants.VIEW_CONNECTION)) {
+
+                    updateDateConnectionStatus(resultBean.getConnection_status());
+
+                } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
+                    Bundle bundle;
+
+                    if (!UserType.isUserPatient()) {
+                        VitalsListFragment vitalsFragment = new VitalsListFragment();
+                        addFragment(getString(R.string.vitals), vitalsFragment);
+                    }
+
+                    if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+                        fragmentList.clear();
+                        titleList.clear();
+
+                        bundle = new Bundle();
+                        bundle.putBoolean(ArgumentKeys.HIDE_ADD, true);
+
+                        SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
+                        schedulesListFragment.setArguments(bundle);
+                        addFragment(getString(R.string.schedules), schedulesListFragment);
+
+                        bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
+
+                        DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
+                        doctorPatientListingFragment.setArguments(bundle);
+                        addFragment(getString(R.string.patients), doctorPatientListingFragment);
+                    }
+
+                    if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
+                        DocumentListFragment documentListFragment = new DocumentListFragment();
+                        bundle = new Bundle();
+                        bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
+                        documentListFragment.setArguments(bundle);
+                        addFragment(getString(R.string.documents), documentListFragment);
+                    }
+
+                    RecentFragment recentFragment = new RecentFragment();
+                    addFragment(getString(R.string.visits), recentFragment);
+
+                    OrdersListFragment ordersFragment = new OrdersListFragment();
+                    addFragment(getString(R.string.orders), ordersFragment);
+
+                    if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+                        MonitoringFragment monitoringFragment = new MonitoringFragment();
+                        addFragment(getString(R.string.monitoring), monitoringFragment);
+                    }
+
+                    if (resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                        userDetailTab.setVisibility(View.GONE);
+                        userDetailBnv.setVisibility(View.GONE);
+                        fragmentList.clear();
+                        titleList.clear();
+                        addFragment(getString(R.string.about), aboutFragment);
+                    }
                 }
 
-                @Override
-                public void onPageSelected(int i) {
-                    viewPager.setCurrentItem(i);
-                }
+                viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);
+                viewPager.setAdapter(viewPagerAdapter);
+                userDetailTab.setupWithViewPager(viewPager);
+                viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int i, float v, int i1) {
 
-                @Override
-                public void onPageScrollStateChanged(int i) {
+                    }
 
-                }
-            });
+                    @Override
+                    public void onPageSelected(int i) {
+                        viewPager.setCurrentItem(i);
+                    }
 
+                    @Override
+                    public void onPageScrollStateChanged(int i) {
+
+                    }
+                });
+
+            }
         }
     }
 
@@ -605,7 +637,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     Utils.vibrate(getActivity());
-                    Log.e(TAG, "onClick: " + new Gson().toJson(resultBean));
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.ADD_CONNECTION_ID, resultBean.getUser_id());
                     bundle.putString(ArgumentKeys.USER_GUID, resultBean.getUser_guid());

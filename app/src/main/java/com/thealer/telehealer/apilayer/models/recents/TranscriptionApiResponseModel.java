@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.recents;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
 
 /**
  * Created by Aswin on 25,December,2018
@@ -23,11 +24,11 @@ public class TranscriptionApiResponseModel extends BaseApiResponseModel {
     private String audio_stream;
     private String archive_id;
     private Object tuser;
-    private RecentsUserDetailModel patient;
-    private RecentsUserDetailModel doctor;
-    private RecentsUserDetailModel medical_assistant;
-    private RecentsUserDetailModel callee;
-    private RecentsUserDetailModel caller;
+    private UserBean patient;
+    private UserBean doctor;
+    private UserBean medical_assistant;
+    private UserBean callee;
+    private UserBean caller;
 
     public int getTranscription_id() {
         return transcription_id;
@@ -141,43 +142,43 @@ public class TranscriptionApiResponseModel extends BaseApiResponseModel {
         this.tuser = tuser;
     }
 
-    public RecentsUserDetailModel getPatient() {
+    public UserBean getPatient() {
         return patient;
     }
 
-    public void setPatient(RecentsUserDetailModel patient) {
+    public void setPatient(UserBean patient) {
         this.patient = patient;
     }
 
-    public RecentsUserDetailModel getDoctor() {
+    public UserBean getDoctor() {
         return doctor;
     }
 
-    public void setDoctor(RecentsUserDetailModel doctor) {
+    public void setDoctor(UserBean doctor) {
         this.doctor = doctor;
     }
 
-    public RecentsUserDetailModel getMedical_assistant() {
+    public UserBean getMedical_assistant() {
         return medical_assistant;
     }
 
-    public void setMedical_assistant(RecentsUserDetailModel medical_assistant) {
+    public void setMedical_assistant(UserBean medical_assistant) {
         this.medical_assistant = medical_assistant;
     }
 
-    public RecentsUserDetailModel getCallee() {
+    public UserBean getCallee() {
         return callee;
     }
 
-    public void setCallee(RecentsUserDetailModel callee) {
+    public void setCallee(UserBean callee) {
         this.callee = callee;
     }
 
-    public RecentsUserDetailModel getCaller() {
+    public UserBean getCaller() {
         return caller;
     }
 
-    public void setCaller(RecentsUserDetailModel caller) {
+    public void setCaller(UserBean caller) {
         this.caller = caller;
     }
 }
