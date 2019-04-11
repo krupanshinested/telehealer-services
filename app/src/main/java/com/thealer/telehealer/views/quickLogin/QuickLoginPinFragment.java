@@ -51,6 +51,7 @@ public class QuickLoginPinFragment extends BaseFragment {
     private String pin;
     private final String IS_CREATE_PIN = "isCreatePin";
     private final String PIN = "pin";
+    boolean isRefreshToken = false;
 
     @Nullable
     @Override
@@ -95,6 +96,9 @@ public class QuickLoginPinFragment extends BaseFragment {
                     appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_NONE);
                     sendQuickLoginBroadCast(ArgumentKeys.QUICK_LOGIN_CREATED);
                 } else {
+                    if (isRefreshToken) {
+                        getActivity().startActivity(new Intent(getActivity(), SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    }
                     getActivity().finish();
                 }
             }
@@ -135,8 +139,10 @@ public class QuickLoginPinFragment extends BaseFragment {
         forgetPasswordTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isNewUser) {
+                if (isNewUser || isRefreshToken) {
+                    String email = UserDetailPreferenceManager.getEmail();
                     appPreference.deletePreference();
+                    UserDetailPreferenceManager.setEmail(email);
                     getActivity().startActivity(new Intent(getActivity(), SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                     getActivity().finish();
                 } else {
@@ -149,6 +155,10 @@ public class QuickLoginPinFragment extends BaseFragment {
         quickLoginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
 
         isNewUser = appPreference.getString(Constants.QUICK_LOGIN_PIN).isEmpty();
+
+        if (getArguments() != null && getArguments().getBoolean(ArgumentKeys.IS_REFRESH_TOKEN)) {
+            isRefreshToken = true;
+        }
 
         if (!UserDetailPreferenceManager.getFirst_name().isEmpty()) {
             doctorNameTv.setText(UserDetailPreferenceManager.getFirst_name());
@@ -165,9 +175,6 @@ public class QuickLoginPinFragment extends BaseFragment {
         } else {
             showValidatePin();
         }
-
-        pinEt.requestFocus();
-        showOrHideSoftInputWindow(true);
     }
 
     private void validatePin() {
@@ -248,9 +255,14 @@ public class QuickLoginPinFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        pinEt.setShowSoftInputOnFocus(true);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
-        pinEt.clearFocus();
         Utils.hideKeyboard(getActivity());
     }
 
