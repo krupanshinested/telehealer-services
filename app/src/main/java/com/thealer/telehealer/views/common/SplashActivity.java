@@ -4,11 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
+import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
@@ -56,6 +61,17 @@ public class SplashActivity extends BaseActivity {
                             startActivity(new Intent(SplashActivity.this, HomeActivity.class));
                         }
                     }
+
+                    FirebaseInstanceId.getInstance().getInstanceId()
+                            .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                                @Override
+                                public void onSuccess(InstanceIdResult instanceIdResult) {
+                                    String token = instanceIdResult.getToken();
+                                    Log.d("TeleHealerApplication", "received token " + token);
+                                    TelehealerFirebaseMessagingService.assignToken(token);
+                                }
+                            });
+
                     finish();
                 }
             }, 3000);
