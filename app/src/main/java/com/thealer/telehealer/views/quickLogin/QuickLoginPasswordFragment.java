@@ -75,6 +75,7 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
                     signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
                     if (signinApiResponseModel.isSuccess()) {
                         appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
+                        appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, signinApiResponseModel.getRefresh_token());
                         sendQuickLoginBroadCast(ArgumentKeys.AUTH_SUCCESS);
                         getActivity().finish();
                     }

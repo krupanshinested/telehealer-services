@@ -93,20 +93,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         }
     };
 
-    private void updateListnerStatus() {
-        Log.e(TAG, "updateListnerStatus: list size " + baseViewInterfaceList.size());
-        for (int i = 0; i < baseViewInterfaceList.size(); i++) {
-            baseViewInterfaceList.get(i).onStatus(true);
-            Log.e(TAG, "updateListnerStatus: list " + i);
-            if (i == baseViewInterfaceList.size()) {
-                baseViewInterfaceList.clear();
-                Log.e(TAG, "updateListnerStatus: cleared");
-            }
-        }
-        isRefreshToken = false;
-        isQuickLoginReceiverEnabled = false;
-    }
-
 
     /**
      * This method will trigger an asyn task to check the auth validation in back and return the response through interface
@@ -145,11 +131,19 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     if (isAuthExpired()) {
                         Log.e(TAG, "run: auth expired");
                         baseViewInterfaceList.add(baseViewInterface);
-                        if (!isRefreshToken) {
-                            Log.e(TAG, "run: show quick login");
+                        if (!isQuickLoginReceiverEnabled) {
+                            Log.e(TAG, "run: show quick login " + appPreference.getInt(Constants.QUICK_LOGIN_TYPE));
                             isQuickLoginReceiverEnabled = true;
-                            getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), QuickLoginActivity.class)
-                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                            if (appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == Constants.QUICK_LOGIN_TYPE_NONE ||
+                                    appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == Constants.QUICK_LOGIN_TYPE_PASSWORD) {
+                                isQuickLoginReceiverEnabled = false;
+                                goToSigninActivity();
+                            } else {
+                                getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(),
+                                        QuickLoginActivity.class)
+                                        .putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true)
+                                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                            }
                         }
                     } else {
                         if (jwt.isExpired(30 * 60)) {
@@ -200,6 +194,18 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         }
                     }
                 });
+    }
+
+    private void updateListnerStatus() {
+        Log.e(TAG, "updateListnerStatus: list size " + baseViewInterfaceList.size());
+        for (int i = 0; i < baseViewInterfaceList.size(); i++) {
+            Log.e(TAG, "updateListnerStatus: list " + i);
+            baseViewInterfaceList.get(i).onStatus(true);
+        }
+        baseViewInterfaceList.clear();
+        Log.e(TAG, "updateListnerStatus: cleared");
+        isRefreshToken = false;
+        isQuickLoginReceiverEnabled = false;
     }
 
     final ObservableTransformer schedulersTransformer =
