@@ -108,7 +108,18 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 }
                 break;
             case Constants.QUICK_LOGIN_TYPE_PIN:
-                getSupportFragmentManager().beginTransaction().replace(fragmentHolder.getId(), new QuickLoginPinFragment()).commit();
+
+                boolean isRefreshToken = false;
+                if (getIntent() != null)
+                    isRefreshToken = getIntent().getBooleanExtra(ArgumentKeys.IS_REFRESH_TOKEN, false);
+
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(ArgumentKeys.IS_REFRESH_TOKEN, isRefreshToken);
+
+                QuickLoginPinFragment quickLoginPinFragment = new QuickLoginPinFragment();
+                quickLoginPinFragment.setArguments(bundle);
+
+                getSupportFragmentManager().beginTransaction().replace(fragmentHolder.getId(), quickLoginPinFragment).commit();
                 break;
             case Constants.QUICK_LOGIN_TYPE_NONE:
                 if (isFromSignup) {
