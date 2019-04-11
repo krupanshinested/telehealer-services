@@ -26,6 +26,85 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+    <compatible-screens>
+        <!-- all small size screens -->
+        <screen
+            android:screenDensity="ldpi"
+            android:screenSize="small" />
+        <screen
+            android:screenDensity="mdpi"
+            android:screenSize="small" />
+        <screen
+            android:screenDensity="hdpi"
+            android:screenSize="small" />
+        <screen
+            android:screenDensity="xhdpi"
+            android:screenSize="small" />
+        <screen
+            android:screenDensity="xxhdpi"
+            android:screenSize="small" />
+        <screen
+            android:screenDensity="xxxhdpi"
+            android:screenSize="small" />
+        <!-- all normal size screens -->
+        <screen
+            android:screenDensity="ldpi"
+            android:screenSize="normal" />
+        <screen
+            android:screenDensity="mdpi"
+            android:screenSize="normal" />
+        <screen
+            android:screenDensity="hdpi"
+            android:screenSize="normal" />
+        <screen
+            android:screenDensity="xhdpi"
+            android:screenSize="normal" />
+        <screen
+            android:screenDensity="xxhdpi"
+            android:screenSize="normal" />
+        <screen
+            android:screenDensity="xxxhdpi"
+            android:screenSize="normal" />
+        <!-- all large size screens -->
+        <screen
+            android:screenDensity="ldpi"
+            android:screenSize="large" />
+        <screen
+            android:screenDensity="mdpi"
+            android:screenSize="large" />
+        <screen
+            android:screenDensity="hdpi"
+            android:screenSize="large" />
+        <screen
+            android:screenDensity="xhdpi"
+            android:screenSize="large" />
+        <screen
+            android:screenDensity="xxhdpi"
+            android:screenSize="large" />
+        <screen
+            android:screenDensity="xxxhdpi"
+            android:screenSize="large" />
+        <!-- all xlarge size screens -->
+        <screen
+            android:screenDensity="ldpi"
+            android:screenSize="xlarge" />
+        <screen
+            android:screenDensity="mdpi"
+            android:screenSize="xlarge" />
+        <screen
+            android:screenDensity="hdpi"
+            android:screenSize="xlarge" />
+        <screen
+            android:screenDensity="xhdpi"
+            android:screenSize="xlarge" />
+        <screen
+            android:screenDensity="xxhdpi"
+            android:screenSize="xlarge" />
+        <screen
+            android:screenDensity="xxxhdpi"
+            android:screenSize="xlarge" />
+    </compatible-screens>
+
     <application
         android:name=".TeleHealerApplication"
         android:allowBackup="true"
@@ -36,7 +115,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".views.common.SplashActivity">
+        <activity
+            android:name=".views.common.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,43 +125,88 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".views.home.HomeActivity" />
-        <activity android:name=".views.onboarding.OnBoardingActivity" />
-        <activity android:name=".views.signup.SignUpActivity" />
-        <activity android:name=".views.signup.PasswordRequirementActivity" />
-        <activity android:name=".views.quickLogin.QuickLoginActivity" />
-        <activity android:name=".views.signin.SigninActivity" />
-        <activity android:name=".views.signin.ForgotPassword" />
-        <activity android:name=".views.common.QRCodeReaderActivity" />
-        <activity android:name=".views.proposer.ProposerActivity" />
-        <activity android:name=".views.home.AddConnectionActivity" />
-        <activity android:name=".views.settings.ProfileSettingsActivity" />
-        <activity android:name=".views.settings.DeleteAccountActivity" />
-        <activity android:name=".views.home.orders.CreateOrderActivity" />
-        <activity android:name=".views.home.DoctorOnBoardingActivity" />
-        <activity android:name="iHealth.pairing.VitalCreationActivity" />
-        <activity android:name=".views.home.vitals.BluetoothEnableActivity" />
-        <activity android:name=".views.home.schedules.CreateNewScheduleActivity" />
-        <activity android:name=".views.inviteUser.InviteUserActivity" />
-        <activity android:name=".views.common.ContentActivity" />
-        <activity android:name=".views.call.CallFeedBackActivity" />
-        <activity android:name=".views.home.EmailVerificationActivity" />
+        <activity
+            android:name=".views.home.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.onboarding.OnBoardingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.signup.SignUpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.signup.PasswordRequirementActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.quickLogin.QuickLoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.signin.SigninActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.signin.ForgotPassword"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.common.QRCodeReaderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.proposer.ProposerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.home.AddConnectionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.settings.ProfileSettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.settings.DeleteAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.home.orders.CreateOrderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.home.DoctorOnBoardingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="iHealth.pairing.VitalCreationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.home.vitals.BluetoothEnableActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.home.schedules.CreateNewScheduleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.inviteUser.InviteUserActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.common.ContentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.call.CallFeedBackActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.home.EmailVerificationActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.common.AppUpdateActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.call.CallActivity"
-            android:launchMode="singleTop" />
-
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.settings.SignatureActivity"
             android:screenOrientation="userLandscape" />
         <activity
             android:name=".views.common.CallPlacingActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent" />
         <activity
             android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -91,13 +217,37 @@
             </intent-filter>
         </activity>
 
-
         <activity
             android:name=".views.notification.NotificationActivity"
-            android:parentActivityName=".views.home.HomeActivity" />
+            android:parentActivityName=".views.home.HomeActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".views.notification.NotificationDetailActivity" />
-        <activity android:name=".views.call.CallNetworkTestActivity" />
+        <activity
+            android:name=".views.notification.NotificationDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.call.CallNetworkTestActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".views.home.monitoring.diet.SelectDietActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".views.inviteUser.InviteContactUserActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".views.home.pendingInvites.PendingInvitesActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".views.quickLogin.QuickLoginAgreementActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".views.home.vitals.LandscapeImageView"
+            android:screenOrientation="landscape" />
 
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
@@ -106,20 +256,6 @@
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
             </intent-filter>
         </receiver>
-
-        <service android:name=".common.pubNub.TelehealerFirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".common.OpenTok.CallMinimizeService"
-            android:exported="false" />
-
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
 
         <receiver
             android:name=".views.home.schedules.LocalNotificationReceiver"
@@ -135,21 +271,23 @@
 
         <receiver android:name=".views.notification.NotificationCancelAppointmentReceiver" />
 
-        <activity android:name=".views.home.monitoring.diet.SelectDietActivity" />
+        <service android:name=".common.pubNub.TelehealerFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
-        <activity android:name=".views.inviteUser.InviteContactUserActivity" />
+        <service
+            android:name=".common.OpenTok.CallMinimizeService"
+            android:exported="false" />
 
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_key}" />
 
-        <activity android:name=".views.home.pendingInvites.PendingInvitesActivity" />
-
-        <activity android:name=".views.quickLogin.QuickLoginAgreementActivity" />
-
-        <activity
-            android:name=".views.home.vitals.LandscapeImageView"
-            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

@@ -53,17 +53,6 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Fabric.with(this, new Crashlytics());
 
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-                    @Override
-                    public void onSuccess(InstanceIdResult instanceIdResult) {
-                        String token = instanceIdResult.getToken();
-                        Log.d("TeleHealerApplication", "received token " + token);
-                        TelehealerFirebaseMessagingService.assignToken(token);
-                    }
-                });
-
-
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
 
         createNotificationChannel();
