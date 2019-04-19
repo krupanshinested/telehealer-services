@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Animatable2;
 import android.graphics.drawable.Drawable;
@@ -42,6 +43,11 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
     private Animatable2 animatable2;
     private ImageView preloaderIv;
     private boolean isDataReceived = false;
+
+    @Nullable
+    private Integer successReplaceDrawableId = null;
+    @Nullable
+    private Integer successReplaceTintColor = null;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -104,6 +110,19 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         if (bundle != null) {
             title = bundle.getString(Constants.SUCCESS_VIEW_TITLE);
             message = bundle.getString(Constants.SUCCESS_VIEW_DESCRIPTION);
+            int drawableId = bundle.getInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE,0);
+            if (drawableId != 0) {
+                successReplaceDrawableId = drawableId;
+            } else {
+                successReplaceDrawableId = null;
+            }
+
+            int colorId = bundle.getInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE_TINT,0);
+            if (drawableId != 0) {
+                successReplaceTintColor = colorId;
+            } else {
+                successReplaceTintColor = null;
+            }
 
             if (bundle.containsKey(Constants.SUCCESS_VIEW_STATUS)) {
                 status = bundle.getBoolean(Constants.SUCCESS_VIEW_STATUS);
@@ -191,11 +210,20 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
 
     private void stopLoaderAnimation(boolean status) {
         if (status) {
-            loaderIv.setImageDrawable(getActivity().getDrawable(R.drawable.success_animation_drawable));
+            if (successReplaceDrawableId != null) {
+                loaderIv.setImageResource(successReplaceDrawableId);
+                if (successReplaceTintColor != null) {
+                    loaderIv.setImageTintList(ColorStateList.valueOf(getResources().getColor(successReplaceTintColor, null)));
+                }
+            } else {
+                loaderIv.setImageDrawable(getActivity().getDrawable(R.drawable.success_animation_drawable));
+                ((Animatable) loaderIv.getDrawable()).start();
+            }
         } else {
             loaderIv.setImageDrawable(getActivity().getDrawable(R.drawable.failure_animation_drawable));
+            ((Animatable) loaderIv.getDrawable()).start();
         }
-        ((Animatable) loaderIv.getDrawable()).start();
+
         titleTv.setText(title);
         messageTv.setText(message);
 

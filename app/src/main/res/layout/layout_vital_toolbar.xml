@@ -47,7 +47,7 @@
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/toolbar_subtitle"
             android:textAlignment="center"
-            android:text="@string/dummy_text"
+            android:text=""
             app:layout_constraintLeft_toRightOf="@+id/back_iv"
             app:layout_constraintRight_toLeftOf="@+id/next_tv"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_title"

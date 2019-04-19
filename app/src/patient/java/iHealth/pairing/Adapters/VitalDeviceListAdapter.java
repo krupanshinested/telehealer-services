@@ -1,6 +1,7 @@
 package iHealth.pairing.Adapters;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -8,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -108,8 +110,9 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             case data:
                 DataHolder dataHolder = ((DataHolder) viewHolder);
                 dataHolder.titleTv.setText(VitalDeviceType.shared.getTitle(dataSource.device.getType()));
-                dataHolder.subTitleTv.setText(VitalDeviceType.shared.getDescription(dataSource.device.getType()));
+                dataHolder.subTitleTv.setText(dataSource.device.getDeviceId());
                 dataHolder.subTitleTv.setVisibility(View.VISIBLE);
+                dataHolder.icon.setImageResource(VitalDeviceType.shared.getImage(dataSource.device.getType()));
                 baseView = dataHolder.mainContainer;
                 break;
             case sectionHeader:
@@ -147,12 +150,14 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         private TextView titleTv,subTitleTv;
         private ConstraintLayout mainContainer;
+        private ImageView icon;
 
         private DataHolder(@NonNull View itemView) {
             super(itemView);
             titleTv = (TextView) itemView.findViewById(R.id.title_tv);
             subTitleTv = (TextView) itemView.findViewById(R.id.subtitle_tv);
             mainContainer = itemView.findViewById(R.id.main_container);
+            icon = itemView.findViewById(R.id.icon);
         }
     }
 

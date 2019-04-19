@@ -41,6 +41,7 @@ public class WeightControl {
     public void onDeviceNotify(String mac, String deviceType, String action, String message) {
         Log.d("WeightControl - action",action);
         Log.d("WeightControl - message",message);
+        Log.d("WeightControl - Type",deviceType);
 
         JSONTokener jsonTokener = new JSONTokener(message);
         switch (action) {
@@ -98,7 +99,9 @@ public class WeightControl {
                     Message error = new Message();
                     error.what = 1;
                     error.obj = "err:" + err;
-                    weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType,description);
+                    if (err != 14) {
+                        weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType, description);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                     weightMeasureInterface.didFinishWeightMesureWithFailure(deviceType,e.getLocalizedMessage());
@@ -111,6 +114,7 @@ public class WeightControl {
     }
 
     public void startMeasure(String type,String deviceMac) {
+        Log.d("WeightControl","startMeasure");
         switch (type) {
             case iHealthDevicesManager.TYPE_HS4S:
                 startHS4Measure(type,deviceMac);
@@ -162,6 +166,25 @@ public class WeightControl {
                 return iHealthDevicesManager.getInstance().getHs2Control(deviceMac);
             default:
                 return null;
+        }
+    }
+
+    public void disconnect(String deviceType,String deviceMac) {
+        if (getInstance(deviceType,deviceMac) == null) {
+            return;
+        }
+
+        switch (deviceType) {
+            case iHealthDevicesManager.TYPE_HS4S:
+                iHealthDevicesManager.getInstance().getHs4sControl(deviceMac).disconnect();
+                break;
+            case iHealthDevicesManager.TYPE_HS6:
+                break;
+            case iHealthDevicesManager.TYPE_HS2:
+                iHealthDevicesManager.getInstance().getHs2Control(deviceMac).disconnect();
+                break;
+            default:
+                break;
         }
     }
 

@@ -178,6 +178,22 @@ public class ThermoControl {
         }
     }
 
+    public void disconnect(String deviceType, String deviceMac) {
+        if (getInstance(deviceType, deviceMac) == null) {
+            return;
+        }
+        switch (deviceType) {
+            case iHealthDevicesManager.TYPE_TS28B:
+                iHealthDevicesManager.getInstance().getTS28BControl(deviceMac).disconnect();
+                break;
+            case iHealthDevicesManager.TYPE_FDIR_V3:
+                iHealthDevicesManager.getInstance().getBtmControl(deviceMac).disconnect();
+                break;
+            default:
+                break;
+        }
+    }
+
     public void fetchBatteryInformation(String type,String deviceMac) {
         switch (type) {
             case iHealthDevicesManager.TYPE_TS28B:

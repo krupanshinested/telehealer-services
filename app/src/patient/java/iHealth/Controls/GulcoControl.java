@@ -145,6 +145,19 @@ public class GulcoControl {
         }
     }
 
+    public void disconnect(String deviceType, String deviceMac) {
+        if (getInstance(deviceType, deviceMac) == null) {
+            return;
+        }
+        switch (deviceType) {
+            case iHealthDevicesManager.TYPE_BG5:
+                iHealthDevicesManager.getInstance().getBg5Control(deviceMac).disconnect();
+                break;
+            default:
+                break;
+        }
+    }
+
     public void updateStripBottleId(String deviceType,String mac,String result) {
         Object object = getInstance(deviceType,mac);
         if (object != null) {
