@@ -1,6 +1,7 @@
 package com.thealer.telehealer.common.emptyState;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.UserType;
 
 /**
  * Created by Aswin on 20,November,2018
@@ -243,7 +244,11 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
                 return "Invites which you created and waiting for other person's action will eventually show up here";
             case EmptyViewConstants.EMPTY_BP_TRACK_VALUE:
-                return "No prior readings available to upload. Please measure your vitals on the device before attempting to sync and upload.";
+                if (UserType.isUserPatient()) {
+                    return "No prior readings available to upload. Please measure your vitals on the device before attempting to sync and upload.";
+                } else {
+                    return "";
+                }
             case EmptyViewConstants.EMPTY_STETHOSCOPE:
                 return "Stethoscope results will eventually show up here";
             case EmptyViewConstants.EMPTY_STETHOSCOPE_WITH_BTN:

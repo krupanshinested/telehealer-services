@@ -1,5 +1,6 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.thealer.telehealer.common.BaseAdapterObjectModel;
 import com.thealer.telehealer.common.Utils;
 
@@ -8,16 +9,29 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class BPTrack extends BaseAdapterObjectModel implements Serializable {
-    double dia = 0.0;
-    double sys = 0.0;
-    double heartRate = 0.0;
+    int dia = 0;
+    int sys = 0;
+    int heartRate = 0;
     Date date = new Date();
     String dataID = "";
 
     public BPTrack(HashMap<String,String> map) {
-        dia = Double.parseDouble(map.get("dia"));
-        sys = Double.parseDouble(map.get("sys"));
-        heartRate = Double.parseDouble(map.get("heartRate"));
+        dia = (int) Double.parseDouble(map.get("dia"));
+        sys = (int) Double.parseDouble(map.get("sys"));
+        heartRate = (int) Double.parseDouble(map.get("heartRate"));
+
+        Date date = Utils.getDateFromPossibleFormat(map.get("date"));
+        if (date != null) {
+            this.date = date;
+        }
+
+        dataID = map.get("dataID");
+    }
+
+    public BPTrack(LinkedTreeMap<String,String> map) {
+        dia = (int) Double.parseDouble(map.get("dia"));
+        sys = (int) Double.parseDouble(map.get("sys"));
+        heartRate = (int) Double.parseDouble(map.get("heartRate"));
 
         Date date = Utils.getDateFromPossibleFormat(map.get("date"));
         if (date != null) {
@@ -32,9 +46,9 @@ public class BPTrack extends BaseAdapterObjectModel implements Serializable {
     }
 
     public BPTrack(double sys,double dia,double heartRate,Date date,String dataID) {
-        this.sys = sys;
-        this.dia = dia;
-        this.heartRate = heartRate;
+        this.sys = (int) sys;
+        this.dia = (int) dia;
+        this.heartRate = (int) heartRate;
         this.date = date;
         this.dataID = dataID;
     }
@@ -57,15 +71,15 @@ public class BPTrack extends BaseAdapterObjectModel implements Serializable {
     @Override
     public Object getComparableObject() { return date;  }
 
-    public double getDia() {
+    public int getDia() {
         return dia;
     }
 
-    public double getSys() {
+    public int getSys() {
         return sys;
     }
 
-    public double getHeartRate() {
+    public int getHeartRate() {
         return heartRate;
     }
 
