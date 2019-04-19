@@ -79,6 +79,7 @@ import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubNubResult;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
@@ -149,7 +150,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private ViewGroup remoteView;
     @Nullable
     private ViewGroup localView;
-    private String token = "", sessionId = "", apiKey = "";
+    private String token = "", sessionId = "", apiKey = "",otherPersonUserGuid = "";
     private String callType;
     private Boolean isCalling;
     private Boolean isBadConnection = false;
@@ -341,7 +342,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         this.isCalling = isCalling;
         this.currentUUIDString = uuidString;
         this.scheduleId = callInitiateModel.getScheduleId();
-        this.isPatientDisclaimerDismissed = true;
+        this.isPatientDisclaimerDismissed = false;
+        this.otherPersonUserGuid = callInitiateModel.getToUserGuid();
 
         if (AudioDeviceManager.getAudioDevice() != null && AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -355,8 +357,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         if (isCalling) {
             this.callState = OpenTokConstants.outGoingCallGoingOn;
             connectToSession();
-
-            sendNotification(sessionId,callInitiateModel.getToUserGuid());
 
             GetUsersApiViewModel getUsersApiViewModel = new GetUsersApiViewModel(application);
             getUsersApiViewModel.getUserDetail(callInitiateModel.getToUserGuid(), new UserDetailFetcher() {
@@ -808,6 +808,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             mSession.disconnect();
         }
 
+        VitalsManager.getInstance().disconnectAll();
+        VitalsManager.getInstance().resetAll();
+
         sendEndCallNotification(callRejectionReason);
 
         sendTranscript();
@@ -934,6 +937,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             String value = Utils.serialize(message);
             sendMessage(type,value);
         } catch (Exception e) {
+            Log.d("TokBox","sendMessage : "+e.getLocalizedMessage());
             e.printStackTrace();
         }
     }
@@ -1330,6 +1334,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             handler.postDelayed(runnable, interval);
 
             //startOutgoingTone();
+
+            sendNotification(sessionId,otherPersonUserGuid);
         }
 
         doPublish();

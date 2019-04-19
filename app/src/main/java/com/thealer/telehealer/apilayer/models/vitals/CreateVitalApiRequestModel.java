@@ -3,7 +3,7 @@ package com.thealer.telehealer.apilayer.models.vitals;
 /**
  * Created by Aswin on 27,November,2018
  */
-public class CreateVitalApiRequestModel {
+public class CreateVitalApiRequestModel implements Cloneable {
 
     private String type;
     private String value;
@@ -61,5 +61,9 @@ public class CreateVitalApiRequestModel {
 
     public void setUser_guid(String user_guid) {
         this.user_guid = user_guid;
+    }
+
+    public Object clone() throws CloneNotSupportedException{
+        return (CreateVitalApiRequestModel)super.clone();
     }
 }

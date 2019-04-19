@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -31,6 +32,7 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.VitalsOrdersListAdapter;
 
 import iHealth.pairing.VitalCreationActivity;
@@ -87,7 +89,7 @@ public class VitalsListFragment extends BaseFragment {
                         }
 
                         Intent intent = new Intent(getActivity(), VitalCreationActivity.class);
-                        getActivity().startActivity(intent);
+                        startActivityForResult(intent,RequestID.REQ_CREATE_NEW_VITAL);
                     }
                 }
             });
@@ -171,10 +173,28 @@ public class VitalsListFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RequestID.REQ_CONNECT_VITAL_CONTENT_VIEW && resultCode == Activity.RESULT_OK) {
-            isContentViewProceed = true;
-            isInForeGround = false;
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vital_devices_url))));
+
+        switch (requestCode) {
+            case RequestID.REQ_CONNECT_VITAL_CONTENT_VIEW:
+                if (resultCode == Activity.RESULT_OK) {
+                    isContentViewProceed = true;
+                    isInForeGround = false;
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vital_devices_url))));
+                }
+                break;
+            case RequestID.REQ_CREATE_NEW_VITAL:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null && data.getStringExtra(ArgumentKeys.MEASUREMENT_TYPE) != null) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ArgumentKeys.MEASUREMENT_TYPE, data.getStringExtra(ArgumentKeys.MEASUREMENT_TYPE));
+                        bundle.putBoolean(Constants.IS_FROM_HOME,true);
+                        Fragment fragment = new VitalsDetailListFragment();
+                        fragment.setArguments(bundle);
+                        if (getActivity() instanceof ShowSubFragmentInterface)
+                            ((ShowSubFragmentInterface) getActivity()).onShowFragment(fragment);
+                    }
+                }
         }
+
     }
 }

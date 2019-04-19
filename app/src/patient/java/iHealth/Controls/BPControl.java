@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+
 /**
  * Created by rsekar on 11/28/18.
  */
@@ -326,6 +328,7 @@ public class BPControl {
         return getInstance(deviceType, mac) != null;
     }
 
+    @Nullable
     private Object getInstance(String deviceType, String mac) {
         switch (deviceType) {
             case iHealthDevicesManager.TYPE_BP3L:
@@ -345,6 +348,33 @@ public class BPControl {
         }
     }
 
+    public void disconnect(String deviceType, String mac) {
+        if (getInstance(deviceType,mac) == null) {
+            return;
+        }
+
+        switch (deviceType) {
+            case iHealthDevicesManager.TYPE_BP3L:
+                iHealthDevicesManager.getInstance().getBp3lControl(mac).disconnect();
+                break;
+            case iHealthDevicesManager.TYPE_550BT:
+                iHealthDevicesManager.getInstance().getBp550BTControl(mac).disconnect();
+                break;
+            case iHealthDevicesManager.TYPE_BP5:
+                iHealthDevicesManager.getInstance().getBPControl(mac).disconnect();
+                break;
+            case iHealthDevicesManager.TYPE_BP7:
+                iHealthDevicesManager.getInstance().getBp7Control(mac).disconnect();
+                break;
+            case iHealthDevicesManager.TYPE_BPM1:
+                break;
+            case iHealthDevicesManager.TYPE_BP7S:
+                iHealthDevicesManager.getInstance().getBp7sControl(mac).disconnect();
+                break;
+            default:
+                break;
+        }
+    }
 
     private void startBP3LMeasure(String deviceType, String deviceMac) {
         Object object = getInstance(deviceType, deviceMac);

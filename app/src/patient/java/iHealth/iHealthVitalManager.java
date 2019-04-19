@@ -62,8 +62,7 @@ public class iHealthVitalManager extends VitalsManager {
     private final PulseControl pulseControl;
     private final GulcoControl gulcoControl;
 
-    private HashMap<String,Integer> deviceConnectionMap = new HashMap<String, Integer>();
-    private CreateVitalApiRequestModel vitalApiRequestModel;
+    private static HashMap<String,Integer> deviceConnectionMap = new HashMap<String, Integer>();
 
     public iHealthVitalManager(@NonNull Application application) {
         super(application);
@@ -169,7 +168,8 @@ public class iHealthVitalManager extends VitalsManager {
 
         @Override
         public void onDeviceConnectionStateChange(String mac, String deviceType, int status, int errorID) {
-            Log.v("vitalmanager","onDeviceConnectionStateChange "+deviceType+" status "+status);
+            Log.v("vitalmanager","onDeviceConnectionStateChange "+deviceType+" status "+status+" errorID "+errorID);
+
 
             deviceConnectionMap.put(deviceType+"_"+mac,status);
 
@@ -242,6 +242,9 @@ public class iHealthVitalManager extends VitalsManager {
         VitalPairedDevices vitalPairedDevices = VitalPairedDevices.getAllPairedDevices(appPreference);
         for (VitalDevice device : vitalPairedDevices.getDevices()) {
             iHealthDevicesManager.getInstance().disconnectDevice(device.getDeviceId(),device.getType());
+            if (VitalDeviceType.shared.getMeasurementType(device.getType()).equals(SupportedMeasurementType.bp)) {
+                bpControl.disconnect(device.getType(), device.getDeviceId());
+            }
         }
     }
 
@@ -299,12 +302,26 @@ public class iHealthVitalManager extends VitalsManager {
     }
 
     @Override
-    public void startMeasure(String deviceType,String deviceMac) {
+    public boolean startMeasure(String deviceType,String deviceMac) {
+        Log.d("VitalManager","startMeasure "+deviceMac+" "+deviceType);
         addFilter(deviceType);
 
-        if (!isConnected(deviceType,deviceMac)) {
-            connectDevice(deviceType,deviceMac);
-            return;
+        int connectingStatus = getConnectionStatus(deviceType,deviceMac,true);
+        if (connectingStatus != iHealthDevicesManager.DEVICE_STATE_CONNECTED) {
+            switch (connectingStatus) {
+                case iHealthDevicesManager.DEVICE_STATE_CONNECTING:
+                    Log.d("VitalManager","DEVICE_STATE_CONNECTING");
+                    break;
+                case iHealthDevicesManager.DEVICE_STATE_RECONNECTING:
+                    Log.d("VitalManager","DEVICE_STATE_RECONNECTING");
+                    break;
+                case iHealthDevicesManager.DEVICE_STATE_CONNECTIONFAIL:
+                case iHealthDevicesManager.DEVICE_STATE_DISCONNECTED:
+                    Log.d("VitalManager","not connected");
+                    connectDevice(deviceType,deviceMac);
+                    break;
+            }
+            return false;
         }
 
         switch (VitalDeviceType.shared.getMeasurementType(deviceType)) {
@@ -328,6 +345,8 @@ public class iHealthVitalManager extends VitalsManager {
             default:
                 break;
         }
+
+        return true;
     }
 
     @Override
@@ -424,11 +443,23 @@ public class iHealthVitalManager extends VitalsManager {
     public Boolean isConnected(String deviceType,String mac) {
         addFilter(deviceType);
 
-        int connectionType = -1;
+        int connectionType = getConnectionStatus(deviceType,mac,false);
+        return connectionType == iHealthDevicesManager.DEVICE_STATE_CONNECTED;
+    }
+
+    private int getConnectionStatus(String deviceType,String mac,boolean needDisconnect) {
+        addFilter(deviceType);
+
+        int connectionType = iHealthDevicesManager.DEVICE_STATE_CONNECTIONFAIL;
         try {
-            Object connection = deviceConnectionMap.get(deviceType+"_"+mac);
+            Object connection = deviceConnectionMap.get(deviceType + "_" + mac);
             if (connection != null) {
                 connectionType = (int) connection;
+            }
+
+            if (connectionType != iHealthDevicesManager.DEVICE_STATE_CONNECTED && needDisconnect) {
+                disconnect(deviceType,mac);
+                connectionType = iHealthDevicesManager.DEVICE_STATE_DISCONNECTED;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -437,19 +468,7 @@ public class iHealthVitalManager extends VitalsManager {
 
         Logs.V("vitalmanager","connectionType "+connectionType);
 
-        return connectionType != -1 && connectionType == iHealthDevicesManager.DEVICE_STATE_CONNECTED;
-    }
-
-    @Override
-    public void saveVitals(String measurementType,String value,VitalsApiViewModel vitalsApiViewModel) {
-        CreateVitalApiRequestModel vitalApiRequestModel = new CreateVitalApiRequestModel();
-
-        vitalApiRequestModel.setType(measurementType);
-        vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DEVICE);
-        vitalApiRequestModel.setValue(value);
-
-        vitalsApiViewModel.createVital(vitalApiRequestModel, null);
-        this.vitalApiRequestModel = vitalApiRequestModel;
+        return connectionType;
     }
 
     private void addFilter(String deviceType) {
@@ -521,6 +540,7 @@ public class iHealthVitalManager extends VitalsManager {
 
                 String deviceType = VitalDeviceType.shared.getKeyValue(type);
                 TokBox.shared.sendMessage(deviceType.replaceAll(" ","_"), message);
+                Log.d("VitalManager","publishMessage "+type+" - "+message.toString());
             }
         }
     }
@@ -642,7 +662,7 @@ public class iHealthVitalManager extends VitalsManager {
 
         HashMap<String,Object> message = new HashMap<>();
         message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.finishedMeasure);
-        message.put(VitalsConstant.VitalCallMapKeys.data, tracks);
+        message.put(VitalsConstant.VitalCallMapKeys.data, items);
         publishMessage(VitalsConstant.TYPE_550BT,message);
 
     }

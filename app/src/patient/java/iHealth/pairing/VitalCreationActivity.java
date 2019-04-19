@@ -81,6 +81,7 @@ public class VitalCreationActivity extends BaseActivity implements
     @Nullable
     private String measurementType;
 
+    @Nullable
     private VitalsManager vitalsManager;
     private String detailTitle = "";
 
@@ -99,19 +100,8 @@ public class VitalCreationActivity extends BaseActivity implements
         } else {
             hideOrShowBackIv(false);
             updateDetailTitle(getString(R.string.new_vital));
-
-            VitalDeviceListFragment vitalDeviceListFragment = new VitalDeviceListFragment();
-            Bundle bundle = new Bundle();
-
-            if (measurementType != null && !TextUtils.isEmpty(measurementType)) {
-                bundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE,measurementType);
-            }
-
-            vitalDeviceListFragment.setArguments(bundle);
-
-            setFragment(vitalDeviceListFragment,false);
+            openRootFragment();
         }
-
 
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) {
@@ -120,6 +110,19 @@ public class VitalCreationActivity extends BaseActivity implements
 
        // registerReceiver(new BTStateChangedBroadcastReceiver(),new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
 
+    }
+
+    private void openRootFragment() {
+        VitalDeviceListFragment vitalDeviceListFragment = new VitalDeviceListFragment();
+        Bundle bundle = new Bundle();
+
+        if (measurementType != null && !TextUtils.isEmpty(measurementType)) {
+            bundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE,measurementType);
+        }
+
+        vitalDeviceListFragment.setArguments(bundle);
+
+        setFragment(vitalDeviceListFragment,false);
     }
 
     @Override
@@ -149,20 +152,24 @@ public class VitalCreationActivity extends BaseActivity implements
 
     @Override
     public void onBackPressed() {
-        int maxCount = isSplitModeNeeded() ? 1 : 0;
-        int currentBackStackCount = getSupportFragmentManager().getBackStackEntryCount();
+        try {
+            int maxCount = isSplitModeNeeded() ? 1 : 0;
+            int currentBackStackCount = getSupportFragmentManager().getBackStackEntryCount();
 
-        if (currentBackStackCount > maxCount) {
-            getSupportFragmentManager().popBackStack();
+            if (currentBackStackCount > maxCount) {
+                getSupportFragmentManager().popBackStack();
 
-            if ((currentBackStackCount - 1) <= maxCount) {
-                updateDetailTitle(getString(R.string.new_vital));
-                hideOrShowNext(false);
-                hideOrShowBackIv(false);
+                if ((currentBackStackCount - 1) <= maxCount) {
+                    updateDetailTitle(getString(R.string.new_vital));
+                    hideOrShowNext(false);
+                    hideOrShowBackIv(false);
+                }
+
+            } else {
+                finish();
             }
-
-        } else {
-            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -214,7 +221,7 @@ public class VitalCreationActivity extends BaseActivity implements
 
                 switch (measurementType) {
                     case SupportedMeasurementType.bp:
-                        if (type.equals(VitalsConstant.TYPE_550BT)) {
+                        if (type != null && type.equals(VitalsConstant.TYPE_550BT)) {
                             BPTrackMeasureFragment bpMeasureFragment = new BPTrackMeasureFragment();
                             bpMeasureFragment.setArguments(bundle);
                             setFragment(bpMeasureFragment,true);
@@ -271,6 +278,9 @@ public class VitalCreationActivity extends BaseActivity implements
             case RequestID.OPEN_QR_READER:
                 Intent intent = new Intent(VitalCreationActivity.this, QRCodeReaderActivity.class);
                 startActivityForResult(intent,QRCodeReaderActivity.RequestID);
+                break;
+            case RequestID.OPEN_INITIAL_FRAGMENT:
+                openRootFragment();
                 break;
         }
     }
@@ -419,18 +429,16 @@ public class VitalCreationActivity extends BaseActivity implements
 
     @Override
     public VitalsManager getInstance() {
-        if (VitalsManager.instance == null) {
+        if (vitalsManager == null) {
             if (BuildConfig.FLAVOR.equals(Constants.BUILD_DOCTOR)) {
-                VitalsManager.instance = new VitalsManager(getApplication());
-            } else{
-                VitalsManager.instance = new iHealthVitalManager(getApplication());
+
+            } else {
+                checkVitalPermission();
             }
-            checkVitalPermission();
+            vitalsManager = VitalsManager.getInstance();
         }
 
-        vitalsManager = VitalsManager.instance;
-
-        return VitalsManager.instance;
+        return vitalsManager;
     }
 
     @Override
@@ -471,5 +479,6 @@ public class VitalCreationActivity extends BaseActivity implements
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
     }
+
 
 }
