@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -122,7 +121,6 @@
             android:screenOrientation="userLandscape" />
         <activity
             android:name=".views.common.CallPlacingActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent" />
         <activity
             android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"

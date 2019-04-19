@@ -135,6 +135,20 @@ public class PulseControl {
         }
     }
 
+    public void disconnect(String deviceType,String deviceMac) {
+        if (getInstance(deviceType, deviceMac) == null) {
+            return;
+        }
+
+        switch (deviceType) {
+            case iHealthDevicesManager.TYPE_PO3:
+                iHealthDevicesManager.getInstance().getPo3Control(deviceMac).disconnect();
+                break;
+            default:
+                break;
+        }
+    }
+
     private Object getInstance(String deviceType,String deviceMac) {
         switch (deviceType) {
             case iHealthDevicesManager.TYPE_PO3:

@@ -8,11 +8,17 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 public class VitalsCreateApiResponseModel extends BaseApiResponseModel {
     private boolean abnormal;
 
+    private String description;
+
     public boolean isAbnormal() {
         return abnormal;
     }
 
     public void setAbnormal(boolean abnormal) {
         this.abnormal = abnormal;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
