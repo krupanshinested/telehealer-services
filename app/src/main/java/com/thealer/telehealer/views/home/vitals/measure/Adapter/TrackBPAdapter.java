@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.vitals.measure.Adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
@@ -21,6 +22,7 @@ import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDe
 import com.thealer.telehealer.common.BaseAdapter;
 import com.thealer.telehealer.common.BaseAdapterObjectModel;
 import com.thealer.telehealer.common.ClickListener;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
@@ -37,12 +39,14 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
     private Context context;
     private ArrayList<BPTrack> bpTracks;
     private ArrayList<BPTrack> selectedTracks;
+    private boolean presentInsideCall = false;
 
-    public TrackBPAdapter(Context context, ArrayList<BPTrack> bpTracks,ArrayList<BPTrack> selectedTracks) {
+    public TrackBPAdapter(Context context, ArrayList<BPTrack> bpTracks,ArrayList<BPTrack> selectedTracks,boolean presentInsideCall) {
         this.context = context;
         this.bpTracks = bpTracks;
         this.selectedTracks = selectedTracks;
         this.generateModel(new ArrayList<BaseAdapterObjectModel>(bpTracks));
+        this.presentInsideCall = presentInsideCall;
     }
 
     @NonNull
@@ -79,6 +83,20 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
                     dataHolder.time_tv.setText(Utils.getStringFromDate(bpTrack.getDate(),"hh:mm a"));
                     dataHolder.check_box.setChecked(isSelected(bpTrack));
 
+                    if (presentInsideCall) {
+                        dataHolder.time_tv.setTextColor(context.getResources().getColor(R.color.colorBlack,null));
+                        dataHolder.check_box.setButtonTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.colorBlack,null)));
+                    } else {
+                        dataHolder.time_tv.setTextColor(context.getResources().getColor(R.color.app_gradient_start,null));
+                        dataHolder.check_box.setButtonTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.app_gradient_start,null)));
+                    }
+
+                    if (UserType.isUserPatient()) {
+                        dataHolder.check_box.setVisibility(View.VISIBLE);
+                    } else {
+                        dataHolder.check_box.setVisibility(View.GONE);
+                    }
+
                     dataHolder.main_container.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -108,6 +126,13 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
     public void onViewRecycled(RecyclerView.ViewHolder holder) {
         super.onViewRecycled(holder);
 
+    }
+
+    public void reload(ArrayList<BPTrack> bpTracks,ArrayList<BPTrack> selectedTracks) {
+        this.bpTracks = bpTracks;
+        this.selectedTracks = selectedTracks;
+        this.generateModel(new ArrayList<BaseAdapterObjectModel>(bpTracks));
+        this.notifyDataSetChanged();
     }
 
     private boolean isSelected(BPTrack bpTrack) {

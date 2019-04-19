@@ -27,6 +27,7 @@ public class RequestID {
     public static final int REQ_VISIT_RECENT = 8002;
     public static final int REQ_CREATE_QUICK_LOGIN = 6001;
     public static final int REQ_VISIT_UPDATE = 6003;
+    public static final int REQ_CREATE_NEW_VITAL = 9003;
 
     public static final String REQ_PASSWORD_RESET_OTP = "REQ_RESET_OTP";
     public static final String REQ_RESET_PASSWORD = "REQ_RESET_PASSWORD";
@@ -43,6 +44,7 @@ public class RequestID {
     public static final String VITAL_DEVICES = "VITAL_DEVICES";
     public static final String OPEN_NOT_CONNECTED_DEVICE = "OPEN_NOT_CONNECTED_DEVICE";
     public static final String OPEN_CONNECTED_DEVICE = "OPEN_CONNECTED_DEVICE";
+    public static final String OPEN_INITIAL_FRAGMENT = "OPEN_INITIAL_FRAGMENT";
     public static final String OPEN_VITAL_SETUP = "OPEN_VITAL_SETUP";
     public static final String TRIGGER_DEVICE_CONNECTION = "TRIGGER_DEVICE_CONNECTION";
     public static final String VITAL_READY_FOR_MEASURE = "VITAL_READY_FOR_MEASURE";

@@ -1,13 +1,16 @@
 package com.thealer.telehealer.views.home.vitals.measure;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +45,7 @@ import com.thealer.telehealer.views.call.Interfaces.Action;
 import com.thealer.telehealer.views.call.Interfaces.CallVitalEvents;
 import com.thealer.telehealer.views.call.Interfaces.CallVitalPagerInterFace;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.home.vitals.VitalsSendBaseFragment;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.ThermoMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
@@ -54,59 +58,17 @@ import java.util.HashMap;
  * Created by rsekar on 12/3/18.
  */
 
-public class ThermoMeasureFragment extends BaseFragment implements VitalPairInterface,
-        View.OnClickListener,ThermoMeasureInterface,VitalBatteryFetcher,CallVitalEvents {
+public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
+        View.OnClickListener,ThermoMeasureInterface {
 
     private TextView value_tv,unit_tv,message_tv,title_tv;
     private CustomButton close_bt,save_bt;
     private Button remeasure_bt;
     private ConstraintLayout result_lay,main_container;
-    private ImageView otherOptionView;
-
-    @Nullable
-    private OnActionCompleteInterface onActionCompleteInterface;
-    @Nullable
-    private OnViewChangeInterface onViewChangeInterface;
-    @Nullable
-    private VitalManagerInstance vitalManagerInstance;
-    @Nullable
-    private ToolBarInterface toolBarInterface;
-
-    @Nullable
-    private Action action;
-
-    private VitalDevice vitalDevice;
-    private int currentState;
     private String finalThermoValue = "0";
-    private VitalsApiViewModel vitalsApiViewModel;
-    private Boolean isNeedToTrigger = false;
-    private Boolean isOpeningDirectlyFromPairing = false;
 
     @Nullable
     public CallVitalPagerInterFace callVitalPagerInterFace;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
-
-        if (getArguments() != null) {
-            vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
-            isNeedToTrigger = getArguments().getBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY);
-            isOpeningDirectlyFromPairing = getArguments().getBoolean(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING);
-        }
-
-        if (savedInstanceState != null) {
-            currentState = savedInstanceState.getInt(ArgumentKeys.CURRENT_VITAL_STATE, MeasureState.notStarted);
-        } else {
-            currentState = MeasureState.notStarted;
-        }
-
-        if (getActivity() instanceof BaseActivity) {
-            ((BaseActivity) getActivity()).attachObserver(vitalsApiViewModel);
-        }
-    }
 
     @Nullable
     @Override
@@ -115,85 +77,6 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
 
         initView(view);
         return view;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle saveInstnace) {
-        super.onSaveInstanceState(saveInstnace);
-
-        saveInstnace.putInt(ArgumentKeys.CURRENT_VITAL_STATE,currentState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        assignVitalListener();
-
-        if (toolBarInterface != null)
-            toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
-
-        if (currentState == MeasureState.notStarted && vitalManagerInstance != null) {
-            vitalManagerInstance.getInstance().connectDevice(vitalDevice.getType(),vitalDevice.getDeviceId());
-        }
-
-        if (onViewChangeInterface != null) {
-            onViewChangeInterface.hideOrShowClose(false);
-            onViewChangeInterface.hideOrShowBackIv(true);
-        }
-
-        if (toolBarInterface != null) {
-            otherOptionView = toolBarInterface.getExtraOption();
-            toolBarInterface.updateSubTitle("",View.GONE);
-        }
-
-        if (otherOptionView != null) {
-            otherOptionView.setVisibility(View.VISIBLE);
-            otherOptionView.setOnClickListener(this);
-
-            otherOptionView.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
-            otherOptionView.setImageResource(R.drawable.info);
-        }
-
-        connectDeviceIfNeedeed();
-
-        if (vitalManagerInstance != null) {
-            vitalManagerInstance.updateBatteryView(View.GONE, 0);
-            vitalManagerInstance.getInstance().setBatteryFetcherListener(this);
-        }
-
-        fetchBattery();
-
-        if (toolBarInterface != null)
-            toolBarInterface.updateSubTitle("",View.GONE);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (getActivity() instanceof OnViewChangeInterface) {
-            onViewChangeInterface = (OnViewChangeInterface) getActivity();
-        }
-
-        if (getActivity() instanceof OnActionCompleteInterface) {
-            onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        }
-
-        if (getActivity() instanceof ToolBarInterface) {
-            toolBarInterface = (ToolBarInterface) getActivity();
-        }
-
-        if (getActivity() instanceof VitalManagerInstance) {
-            vitalManagerInstance = (VitalManagerInstance) getActivity();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (vitalManagerInstance != null)
-            vitalManagerInstance.getInstance().reset(this);
     }
 
     private void initView(View baseView) {
@@ -214,7 +97,7 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
         if (isNeedToTrigger && currentState == MeasureState.notStarted) {
             startMeasure();
         } else {
-            updateView(currentState);
+            setCurrentState(currentState);
         }
 
         String measurementType = VitalDeviceType.shared.getMeasurementType(vitalDevice.getType());
@@ -222,7 +105,11 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
 
         if (isPresentedInsideCallActivity()) {
             title_tv.setVisibility(View.VISIBLE);
-            title_tv.setText(VitalDeviceType.shared.getTitle(vitalDevice.getType()));
+            String title = getString(VitalDeviceType.shared.getTitle(vitalDevice.getType()));
+            if (!TextUtils.isEmpty(vitalDevice.getDeviceId())) {
+                title += " ("+vitalDevice.getDeviceId()+")";
+            }
+            title_tv.setText(title);
             main_container.setBackgroundColor(getResources().getColor(R.color.colorWhiteWithLessAlpha));
         }
 
@@ -232,22 +119,8 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
         }
     }
 
-    private void connectDeviceIfNeedeed() {
-        if (vitalManagerInstance != null && !vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(),vitalDevice.getDeviceId())) {
-            vitalManagerInstance.getInstance().connectDevice(vitalDevice.getType(),vitalDevice.getDeviceId());
-        }
-    }
-
-    private Boolean isPresentedInsideCallActivity() {
-        return getActivity() instanceof CallActivity;
-    }
-
-    private void fetchBattery() {
-        if (vitalManagerInstance != null)
-            vitalManagerInstance.getInstance().fetchBattery(vitalDevice.getType(),vitalDevice.getDeviceId());
-    }
-
-    private void updateView(int state){
+    @Override
+    protected void updateView(int state){
         remeasure_bt.setVisibility(View.GONE);
         close_bt.setVisibility(View.GONE);
 
@@ -310,18 +183,6 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
         }
     }
 
-    private void setCurrentState(int state) {
-        Log.d("Thermo measure", "state changed "+state);
-        currentState = state;
-        updateView(currentState);
-    }
-
-    private void startMeasure() {
-        setCurrentState(MeasureState.started);
-        if (vitalManagerInstance != null)
-            vitalManagerInstance.getInstance().startMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -330,11 +191,12 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
                     if (vitalManagerInstance != null) {
                         vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
                         setCurrentState(MeasureState.notStarted);
-
-                        if (callVitalPagerInterFace != null) {
-                            callVitalPagerInterFace.closeVitalController();
-                        }
                     }
+
+                    if (callVitalPagerInterFace != null) {
+                        callVitalPagerInterFace.closeVitalController();
+                    }
+
                 } else {
                     getActivity().finish();
                 }
@@ -353,30 +215,16 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
                         break;
                     case MeasureState.ended:
                         if (!isPresentedInsideCallActivity()) {
-                            if (vitalManagerInstance != null)
-                                vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.temperature, finalThermoValue, vitalsApiViewModel);
+                            sendVitals(SupportedMeasurementType.temperature, finalThermoValue,null,null);
+                        } else {
+                            onClick(close_bt);
                         }
-                        onClick(close_bt);
                 }
                 break;
             case R.id.remeasure_bt:
                 startMeasure();
                 break;
-            case R.id.other_option:
-                if (onActionCompleteInterface != null)
-                    onActionCompleteInterface.onCompletionResult(RequestID.OPEN_VITAL_INFO,true,getArguments());
-                break;
         }
-    }
-
-    @Override
-    public void didScanFinish() {
-        //nothing to do
-    }
-
-    @Override
-    public void didScanFailed(String error) {
-        //nothing to do
     }
 
     @Override
@@ -386,60 +234,9 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
     }
 
     @Override
-    public void didDiscoverDevice(String type, String serailNumber) {
-            //nothing to do here
-    }
-
-    @Override
     public void didConnected(String type, String serailNumber) {
-        fetchBattery();
-        if (isNeedToTrigger && currentState == MeasureState.notStarted) {
-            startMeasure();
-        }
-    }
-
-    @Override
-    public void didDisConnected(String type, String serailNumber) {
-        if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
-
-            if (!isPresentedInsideCallActivity()) {
-                if (currentState == MeasureState.failed) {
-                    Utils.showAlertDialog(getActivity(), getString(R.string.error),getResources().getString(R.string.device_disconnected_message), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (getActivity() != null) {
-                                if (isOpeningDirectlyFromPairing) {
-                                    getActivity().finish();
-                                } else {
-                                    getActivity().onBackPressed();
-                                }
-                            }
-                        }
-                    }, null);
-                } else {
-                    if (getActivity() != null) {
-                        if (isOpeningDirectlyFromPairing) {
-                            getActivity().finish();
-                        } else {
-                            getActivity().onBackPressed();
-                        }
-                    }
-                }
-            } else {
-                setCurrentState(MeasureState.notStarted);
-            }
-
-        }
-    }
-
-    @Override
-    public void didFailConnectDevice(String type, String serailNumber, String errorMessage) {
-        Utils.showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        }, null);
+        Log.d("Thermo measure", "state changed " + serailNumber +" "+ type);
+        super.didConnected(type,serailNumber);
     }
 
     @Override
@@ -457,7 +254,7 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
 
         if (isPresentedInsideCallActivity()) {
             if (UserType.isUserPatient() && vitalManagerInstance != null) {
-                vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.temperature, finalThermoValue, vitalsApiViewModel);
+                sendVitals(SupportedMeasurementType.temperature, finalThermoValue,null,null);
             }
         }
     }
@@ -480,24 +277,6 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
         setCurrentState(MeasureState.failed);
     }
 
-    //VitalBatteryFetcher methods
-    @Override
-    public void updateBatteryDetails(BatteryResult batteryResult) {
-        if (vitalManagerInstance != null) {
-            if (batteryResult.getBattery() != -1) {
-                vitalManagerInstance.updateBatteryView(View.VISIBLE, batteryResult.getBattery());
-            } else {
-                vitalManagerInstance.updateBatteryView(View.GONE, 0);
-            }
-        }
-    }
-
-    @Override
-    public void notConnected(String deviceType, String deviceMac) {
-        connectDeviceIfNeedeed();
-    }
-
-
     //Call Events methods
     @Override
     public void didReceiveData(String data) {
@@ -519,27 +298,34 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
         if (vitalManagerInstance != null) {
             vitalManagerInstance.getInstance().setListener(this);
             vitalManagerInstance.getInstance().setThermoListener(this);
+            needToAssignIHealthListener = false;
+        } else {
+            needToAssignIHealthListener = true;
         }
     }
 
-    @Override
-    public String getVitalDeviceType() {
-        return vitalDevice.getType();
-    }
-
     private void processSignalMessagesForThermo(String data) {
-        Type type = new TypeToken<HashMap<String, String>>() {}.getType();
+        Type type = new TypeToken<HashMap<String, Object>>() {}.getType();
 
         try {
             HashMap<String, Object> map = Utils.deserialize(data, type);
 
             switch ((String) map.get(VitalsConstant.VitalCallMapKeys.status)) {
                 case VitalsConstant.VitalCallMapKeys.startedToMeasure:
+                    if (currentState != MeasureState.started) {
+                        setCurrentState(MeasureState.started);
+                    }
                     break;
                 case VitalsConstant.VitalCallMapKeys.finishedMeasure:
                 case VitalsConstant.VitalCallMapKeys.measuring:
-                    Double value =  Double.parseDouble((String) map.get(VitalsConstant.VitalCallMapKeys.data));
-                    updateThermoValue(vitalDevice.getType(),value);
+                    double result;
+                    try {
+                        result = (Double) map.get(VitalsConstant.VitalCallMapKeys.data);
+                    } catch (Exception e) {
+                        result = (Float) map.get(VitalsConstant.VitalCallMapKeys.data);
+                    }
+
+                    updateThermoValue(vitalDevice.getType(),result);
                     break;
                 case VitalsConstant.VitalCallMapKeys.errorInMeasure:
 
@@ -564,10 +350,5 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
         if (callVitalPagerInterFace != null)
             callVitalPagerInterFace.didInitiateMeasure(vitalDevice.getType());
 
-    }
-
-    @Override
-    public void assignVitalDevice(VitalDevice vitalDevice) {
-        this.vitalDevice = vitalDevice;
     }
 }

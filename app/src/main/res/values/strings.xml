@@ -960,4 +960,10 @@
     <string name="visit_updated_successfully">Visit updated successfully</string>
     <string name="visit_update_failed">Visit updated failed</string>
     <string name="enter_patient_instruction_here">Enter patient instruction here</string>
+    <string name="and">and</string>
+    <string name="vitals_has_been_posted">Vitals has been posted successfully.</string>
+    <string name="captured">captured</string>
+
+    <string name="doctor_extender">Doctor / Extender</string>
+    <string name="office_assistant">Office Assistant</string>
 </resources>

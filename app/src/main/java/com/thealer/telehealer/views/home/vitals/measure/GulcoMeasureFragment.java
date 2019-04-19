@@ -1,8 +1,10 @@
 package com.thealer.telehealer.views.home.vitals.measure;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,6 +42,7 @@ import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterf
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
+import com.thealer.telehealer.views.home.vitals.VitalsSendBaseFragment;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
@@ -47,17 +50,8 @@ import com.thealer.telehealer.views.signup.OnViewChangeInterface;
  * Created by rsekar on 12/3/18.
  */
 
-public class GulcoMeasureFragment extends BaseFragment implements VitalPairInterface,View.OnClickListener,
-        GulcoQRCapture,GulcoMeasureInterface,VitalBatteryFetcher {
-
-    private OnActionCompleteInterface onActionCompleteInterface;
-    private OnViewChangeInterface onViewChangeInterface;
-    private VitalManagerInstance vitalManagerInstance;
-    private ToolBarInterface toolBarInterface;
-
-    private ImageView otherOptionView;
-
-    private VitalDevice vitalDevice;
+public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements View.OnClickListener,
+        GulcoQRCapture,GulcoMeasureInterface {
 
     private ImageView device_iv;
     private LinearLayout state_lay,bottom_lay;
@@ -66,21 +60,12 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
     private TextView gulco_value,gulco;
     private CustomButton save_bt,close_bt;
 
-    private int currentState;
-
     private String lastError;
     private String finalGulcoValue = "";
-    private VitalsApiViewModel vitalsApiViewModel;
-    private Boolean isOpeningDirectlyFromPairing = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
-            isOpeningDirectlyFromPairing = getArguments().getBoolean(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING);
-        }
 
         if (savedInstanceState != null) {
             currentState = savedInstanceState.getInt(ArgumentKeys.CURRENT_VITAL_STATE, MeasureState.notStarted);
@@ -98,64 +83,13 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gulcose_measure, container, false);
 
-        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
-
         initView(view);
         return view;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle saveInstnace) {
-        super.onSaveInstanceState(saveInstnace);
-
-        saveInstnace.putInt(ArgumentKeys.CURRENT_VITAL_STATE,currentState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
+    public void assignVitalListener() {
         vitalManagerInstance.getInstance().setListener(this);
         vitalManagerInstance.getInstance().setGulcoListener(this);
-
-        onViewChangeInterface.hideOrShowClose(false);
-        onViewChangeInterface.hideOrShowBackIv(true);
-
-        otherOptionView = toolBarInterface.getExtraOption();
-        if (otherOptionView != null) {
-            otherOptionView.setVisibility(View.VISIBLE);
-            otherOptionView.setOnClickListener(this);
-
-            otherOptionView.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
-            otherOptionView.setImageResource(R.drawable.info);
-        }
-
-        connectDeviceIfNeedeed();
-
-        vitalManagerInstance.updateBatteryView(View.GONE,0);
-        vitalManagerInstance.getInstance().setBatteryFetcherListener(this);
-        fetchBattery();
-
-        if (toolBarInterface != null) {
-            toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
-            toolBarInterface.updateSubTitle("", View.GONE);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        toolBarInterface = (ToolBarInterface) getActivity();
-        vitalManagerInstance = (VitalManagerInstance) getActivity();
-        onViewChangeInterface = (OnViewChangeInterface) getActivity();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        vitalManagerInstance.getInstance().reset(this);
     }
 
     private void initView(View baseView) {
@@ -185,22 +119,8 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
 
     }
 
-    private void connectDeviceIfNeedeed() {
-        if (!vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(),vitalDevice.getDeviceId())) {
-            vitalManagerInstance.getInstance().connectDevice(vitalDevice.getType(),vitalDevice.getDeviceId());
-        }
-    }
-
-    private void fetchBattery() {
-        vitalManagerInstance.getInstance().fetchBattery(vitalDevice.getType(),vitalDevice.getDeviceId());
-    }
-
-    private void startMeasure() {
-        setCurrentState(MeasureState.started);
-        vitalManagerInstance.getInstance().startMeasure(vitalDevice.getType(),vitalDevice.getDeviceId());
-    }
-
-    private void updateView(int currentState) {
+    @Override
+    protected void updateView(int currentState) {
         switch (currentState) {
             case MeasureState.notStarted:
                 result_lay.setVisibility(View.GONE);
@@ -291,31 +211,28 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
         button.setCompoundDrawableTintList(ColorStateList.valueOf(getResources().getColor(color)));
     }
 
-    private void setCurrentState(int state) {
-        Log.e("Gulco measure", "state changed "+state);
-        currentState = state;
-        updateView(currentState);
+    @Override
+    public void didFinishPost() {
+        Intent data = new Intent();
+        data.putExtra(ArgumentKeys.MEASUREMENT_TYPE,VitalDeviceType.shared.getMeasurementType(vitalDevice.getType()));
+        finish(data);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.other_option:
-                onActionCompleteInterface.onCompletionResult(RequestID.OPEN_VITAL_INFO,true,getArguments());
-                break;
             case R.id.save_bt:
                 switch (currentState) {
                     case MeasureState.failed:
                         startMeasure();
                         break;
                     case MeasureState.ended:
-                        vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.gulcose,finalGulcoValue,vitalsApiViewModel);
-                        getActivity().finish();
+                        sendVitals(SupportedMeasurementType.gulcose,finalGulcoValue,null,null);
                         break;
                 }
                 break;
             case R.id.close_bt:
-                getActivity().finish();
+                finish(null);
                 break;
             case R.id.scan_bt:
                 if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_CAMERA)) {
@@ -326,6 +243,12 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
                 break;
 
         }
+    }
+
+    private void finish(@Nullable Intent data) {
+        if (data != null)
+            getActivity().setResult(Activity.RESULT_OK,data);
+        getActivity().finish();
     }
 
     //GulcoQRCapture methods
@@ -413,60 +336,5 @@ public class GulcoMeasureFragment extends BaseFragment implements VitalPairInter
     public void didConnected(String type, String serailNumber) {
         fetchBattery();
         setCurrentState(MeasureState.started);
-    }
-
-    @Override
-    public void didDisConnected(String type, String serailNumber) {
-        if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
-            if (currentState == MeasureState.failed) {
-                Utils.showAlertDialog(getActivity(), getString(R.string.error), lastError, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (getActivity() != null) {
-                            if (isOpeningDirectlyFromPairing) {
-                                getActivity().finish();
-                            } else {
-                                getActivity().onBackPressed();
-                            }
-                        }
-                    }
-                }, null);
-
-
-            } else {
-                if (getActivity() != null) {
-                    if (isOpeningDirectlyFromPairing) {
-                        getActivity().finish();
-                    } else {
-                        getActivity().onBackPressed();
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void didFailConnectDevice(String type, String serailNumber, String errorMessage) {
-        Utils.showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        }, null);
-    }
-
-    //VitalBatteryFetcher methods
-    @Override
-    public void updateBatteryDetails(BatteryResult batteryResult) {
-        if (batteryResult.getBattery() != -1) {
-            vitalManagerInstance.updateBatteryView(View.VISIBLE,batteryResult.getBattery());
-        } else {
-            vitalManagerInstance.updateBatteryView(View.GONE,0);
-        }
-    }
-
-    @Override
-    public void notConnected(String deviceType, String deviceMac) {
-        connectDeviceIfNeedeed();
     }
 }

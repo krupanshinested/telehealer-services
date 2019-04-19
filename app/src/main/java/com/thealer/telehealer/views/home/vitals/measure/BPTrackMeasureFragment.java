@@ -1,14 +1,17 @@
 package com.thealer.telehealer.views.home.vitals.measure;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,19 +19,25 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
+import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.BaseAdapterObjectModel;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
@@ -46,48 +55,31 @@ import com.thealer.telehealer.views.call.Interfaces.Action;
 import com.thealer.telehealer.views.call.Interfaces.CallVitalEvents;
 import com.thealer.telehealer.views.call.Interfaces.CallVitalPagerInterFace;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.home.vitals.VitalsSendBaseFragment;
 import com.thealer.telehealer.views.home.vitals.measure.Adapter.TrackBPAdapter;
+import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
-public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInterface,
-        View.OnClickListener, BPMeasureInterface, VitalBatteryFetcher, CallVitalEvents {
-
-    @Nullable
-    private OnActionCompleteInterface onActionCompleteInterface;
-    @Nullable
-    private OnViewChangeInterface onViewChangeInterface;
-    @Nullable
-    private VitalManagerInstance vitalManagerInstance;
-    @Nullable
-    private ToolBarInterface toolBarInterface;
-
-    @Nullable
-    private Action action;
-
-    private VitalDevice vitalDevice;
+public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
+        View.OnClickListener, BPMeasureInterface {
 
     private CustomRecyclerView recyclerView;
-    private ImageView otherOptionView;
     private TextView message_tv, title_tv;
     private CustomButton sync_bt;
     private ConstraintLayout main_container;
-
-    private VitalsApiViewModel vitalsApiViewModel;
-
-    private Boolean isNeedToTrigger = false;
-
     private String finalBPValue = "", finalHeartRateValue = "";
 
     @Nullable
     public CallVitalPagerInterFace callVitalPagerInterFace;
 
     private boolean isModelLoadInitially, isDataFetched;
-    private Boolean isOpeningDirectlyFromPairing = false;
-
     private ArrayList<BPTrack> selectedList = new ArrayList<>();
     private ArrayList<BPTrack> tracks = new ArrayList<>();
 
@@ -98,14 +90,6 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
-
-        if (getArguments() != null) {
-            vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
-            isNeedToTrigger = getArguments().getBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY);
-            isOpeningDirectlyFromPairing = getArguments().getBoolean(ArgumentKeys.IS_OPENING_DIRECTLY_FROM_PAIRING);
-        }
-
         if (savedInstanceState != null) {
             isModelLoadInitially = savedInstanceState.getBoolean(ArgumentKeys.IS_MODEL_LOAD_INITIALLY);
             isDataFetched = savedInstanceState.getBoolean(ArgumentKeys.IS_DATA_FETCHED);
@@ -114,9 +98,6 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
             isDataFetched = false;
         }
 
-        if (getActivity() instanceof BaseActivity) {
-            ((BaseActivity) getActivity()).attachObserver(vitalsApiViewModel);
-        }
     }
 
     @Nullable
@@ -138,69 +119,54 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void didFinishPost() {
+        Log.d("BPTrack","didFinishPost");
+        ArrayList<BPTrack> unselectedItems = new ArrayList<>();
+        ArrayList<String> selectedIds = new ArrayList<>();
 
-        assignVitalListener();
-
-        if (toolBarInterface != null)
-            toolBarInterface.updateTitle(getString(VitalDeviceType.shared.getTitle(vitalDevice.getType())));
-
-        if (onViewChangeInterface != null) {
-            onViewChangeInterface.hideOrShowClose(false);
-            onViewChangeInterface.hideOrShowBackIv(true);
+        for (BPTrack bpTrack : selectedList) {
+            selectedIds.add(bpTrack.getDataID());
         }
 
-        if (toolBarInterface != null) {
-            otherOptionView = toolBarInterface.getExtraOption();
-            toolBarInterface.updateSubTitle("", View.GONE);
+        for (BPTrack bpTrack : tracks) {
+            if (!selectedIds.contains(bpTrack.getDataID())) {
+                unselectedItems.add(bpTrack);
+            }
         }
 
-        if (otherOptionView != null) {
-            otherOptionView.setVisibility(View.VISIBLE);
-            otherOptionView.setOnClickListener(this);
+        tracks.clear();
+        tracks.addAll(unselectedItems);
 
-            otherOptionView.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
-            otherOptionView.setImageResource(R.drawable.info);
+        if (isPresentedInsideCallActivity()) {
+            if (vitalManagerInstance != null) {
+                vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
+            }
+
+            selectedList.clear();
+
+            if (adapter != null) {
+                adapter.reload(tracks, selectedList);
+                Log.d("BPTrack", "adapter.reload");
+            } else {
+                Log.d("BPTrack", "adapter null");
+            }
+
+            if (tracks.size() == 0) {
+                isDataFetched = false;
+                updateSyncButtonTitle();
+                setCurrentState(MeasureState.notStarted);
+            }
+
+            if (callVitalPagerInterFace != null) {
+                callVitalPagerInterFace.closeVitalController();
+            }
+
+        } else {
+            Intent data = new Intent();
+            data.putExtra(ArgumentKeys.MEASUREMENT_TYPE,VitalDeviceType.shared.getMeasurementType(vitalDevice.getType()));
+            getActivity().setResult(Activity.RESULT_OK,data);
+            getActivity().finish();
         }
-
-        connectDeviceIfNeedeed();
-
-        if (vitalManagerInstance != null) {
-            vitalManagerInstance.updateBatteryView(View.GONE, 0);
-            vitalManagerInstance.getInstance().setBatteryFetcherListener(this);
-        }
-        fetchBattery();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (getActivity() instanceof OnViewChangeInterface) {
-            onViewChangeInterface = (OnViewChangeInterface) getActivity();
-        }
-
-
-        if (getActivity() instanceof OnActionCompleteInterface) {
-            onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        }
-
-        if (getActivity() instanceof ToolBarInterface) {
-            toolBarInterface = (ToolBarInterface) getActivity();
-        }
-
-        if (getActivity() instanceof VitalManagerInstance) {
-            vitalManagerInstance = (VitalManagerInstance) getActivity();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if (vitalManagerInstance != null)
-            vitalManagerInstance.getInstance().reset(this);
     }
 
     private void initView(View baseView) {
@@ -216,9 +182,19 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
             startMeasure();
         }
 
+        if (UserType.isUserPatient()) {
+            sync_bt.setVisibility(View.VISIBLE);
+        } else {
+            sync_bt.setVisibility(View.GONE);
+        }
+
         if (isPresentedInsideCallActivity()) {
             title_tv.setVisibility(View.VISIBLE);
-            title_tv.setText(VitalDeviceType.shared.getTitle(vitalDevice.getType()));
+            String title = getString(VitalDeviceType.shared.getTitle(vitalDevice.getType()));
+            if (!TextUtils.isEmpty(vitalDevice.getDeviceId())) {
+                title += " ("+vitalDevice.getDeviceId()+")";
+            }
+            title_tv.setText(title);
             main_container.setBackgroundColor(getResources().getColor(R.color.colorWhiteWithLessAlpha));
         }
 
@@ -228,6 +204,7 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
             action = null;
         }
 
+        recyclerView.setScrollable(false);
     }
 
     private void updateSyncButtonTitle() {
@@ -238,69 +215,51 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
         }
     }
 
-    private void startMeasure() {
-        if (vitalManagerInstance != null)
-            vitalManagerInstance.getInstance().startMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
+    @Override
+    public boolean needToAddViewModelObserver() {
+        return true;
     }
-
-    private Boolean isPresentedInsideCallActivity() {
-        return getActivity() instanceof CallActivity;
-    }
-
-
-    private void connectDeviceIfNeedeed() {
-        if (vitalManagerInstance != null && !vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(), vitalDevice.getDeviceId())) {
-            vitalManagerInstance.getInstance().connectDevice(vitalDevice.getType(), vitalDevice.getDeviceId());
-        }
-    }
-
-    private void fetchBattery() {
-        if (vitalManagerInstance != null)
-            vitalManagerInstance.getInstance().fetchBattery(vitalDevice.getType(), vitalDevice.getDeviceId());
-    }
-
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.other_option:
-                if (onActionCompleteInterface != null)
-                    onActionCompleteInterface.onCompletionResult(RequestID.OPEN_VITAL_INFO, true, getArguments());
-                break;
             case R.id.sync_bt:
                 if (!isDataFetched) {
                     startMeasure();
                 } else {
 
                     if (vitalManagerInstance != null) {
-                        for (BPTrack track : selectedList) {
-                            vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), vitalsApiViewModel);
-                            vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.heartRate, track.getHeartRate() + "", vitalsApiViewModel);
-                        }
-                    }
 
-                    selectedList.clear();
+                        Collections.sort(selectedList, new Comparator<BPTrack>() {
+                            public int compare(BPTrack obj1, BPTrack obj2) {
+                                return obj2.getDate().compareTo(obj1.getDate());
+                            }
+                        });
 
-                    if (adapter != null) {
-                        adapter.notifyDataSetChanged();
-                    }
 
-                    if (isPresentedInsideCallActivity()) {
-                        if (vitalManagerInstance != null) {
-                            vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
+                        for (int i = 0; i < selectedList.size(); i++) {
 
-                            if (callVitalPagerInterFace != null) {
-                                callVitalPagerInterFace.closeVitalController();
+                            BPTrack track = selectedList.get(i);
+
+                            if (i == 0) {
+                                sendVitals(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), SupportedMeasurementType.heartRate, track.getHeartRate() + "");
+                            } else {
+                                VitalsCreateApiModel vitalsCreateApiModel = new VitalsCreateApiModel(TeleHealerApplication.application);
+
+                                CreateVitalApiRequestModel bpRequest = new CreateVitalApiRequestModel(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), VitalsConstant.VITAL_MODE_DEVICE, null, null);
+                                vitalsCreateApiModel.createVital(bpRequest, null);
+
+                                CreateVitalApiRequestModel hrRequest = new CreateVitalApiRequestModel(SupportedMeasurementType.heartRate, track.getHeartRate() + "", VitalsConstant.VITAL_MODE_DEVICE, null, null);
+                                vitalsCreateApiModel.createVital(hrRequest, null);
                             }
                         }
-                    } else {
-                        getActivity().finish();
                     }
 
                 }
                 break;
         }
     }
+
 
     //BPMeasureInterface methods
     @Override
@@ -336,7 +295,7 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
     @Override
     public void didFinishBpMeasure(Object object) {
 
-        Log.d("BPTrackMeasureFragment","didFinishBpMeasure");
+        Log.d("BPTrackMeasureFragment", "didFinishBpMeasure");
 
         if (callVitalPagerInterFace != null)
             callVitalPagerInterFace.updateState(Constants.idle);
@@ -355,28 +314,18 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
 
             isDataFetched = modifedTracks.size() > 0;
 
-            this.adapter = new TrackBPAdapter(getActivity(),modifedTracks,selectedList);
+            this.adapter = new TrackBPAdapter(getActivity(), modifedTracks, selectedList,isPresentedInsideCallActivity());
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             recyclerView.getRecyclerView().setAdapter(adapter);
             recyclerView.setEmptyState(EmptyViewConstants.EMPTY_BP_TRACK_VALUE);
             recyclerView.updateView();
 
-            Log.d("BPTrackMeasureFragment","tracks not null");
+            Log.d("BPTrackMeasureFragment", "tracks not null");
         } else {
-            Log.d("BPTrackMeasureFragment","tracks null");
+            Log.d("BPTrackMeasureFragment", "tracks null");
         }
 
         updateSyncButtonTitle();
-    }
-
-    @Override
-    public void didScanFinish() {
-        //nothing to do
-    }
-
-    @Override
-    public void didScanFailed(String error) {
-        //nothing to do
     }
 
     @Override
@@ -386,20 +335,15 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
 
     //VitalPairInterface methods
     @Override
-    public void didDiscoverDevice(String type, String serailNumber) {
-        //nothing to do
-    }
-
-    @Override
     public void didConnected(String type, String serailNumber) {
-        Log.e("bp measure", "state changed " + serailNumber);
+        Log.e("bptrack measure", "state changed " + serailNumber);
         fetchBattery();
         startMeasure();
     }
 
     @Override
     public void didDisConnected(String type, String serailNumber) {
-        if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
+        /*if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
             if (!isPresentedInsideCallActivity()) {
                 Utils.showAlertDialog(getActivity(), getString(R.string.error), getResources().getString(R.string.device_disconnected_message), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                     @Override
@@ -408,41 +352,8 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
                     }
                 }, null);
             }
-        }
+        }*/
     }
-
-    @Override
-    public void didFailConnectDevice(String type, String serailNumber, String errorMessage) {
-
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
-            EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
-        }
-
-        Utils.showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        }, null);
-    }
-
-    //VitalBatteryFetcher methods
-    @Override
-    public void updateBatteryDetails(BatteryResult batteryResult) {
-        if (vitalManagerInstance != null) {
-            if (batteryResult.getBattery() != -1) {
-                vitalManagerInstance.updateBatteryView(View.VISIBLE, batteryResult.getBattery());
-            } else {
-                vitalManagerInstance.updateBatteryView(View.GONE, 0);
-            }
-        }
-    }
-
-    @Override
-    public void notConnected(String deviceType, String deviceMac) {
-        connectDeviceIfNeedeed();
-    }
-
 
     //Call Events methods
     @Override
@@ -464,25 +375,29 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
     @Override
     public void assignVitalListener() {
         if (vitalManagerInstance != null) {
+            Log.d("BPTrackMeasureFragment","assignVitalListener");
             vitalManagerInstance.getInstance().setListener(this);
             vitalManagerInstance.getInstance().setBPListener(this);
+            needToAssignIHealthListener = false;
+        } else {
+            needToAssignIHealthListener = true;
         }
     }
 
-    @Override
-    public String getVitalDeviceType() {
-        return vitalDevice.getType();
-    }
-
     private void processSignalMessagesForBP(String data) {
-        Type type = new TypeToken<HashMap<String, String>>() {
+        Log.d("BPTrackMeasureFragment","processSignalMessagesForBP");
+        Type type = new TypeToken<HashMap<String, Object>>() {
         }.getType();
 
         try {
             HashMap<String, Object> map = Utils.deserialize(data, type);
+            Log.d("BPTrackMeasureFragment","processSignalMessagesForBP "+map.toString());
 
             switch ((String) map.get(VitalsConstant.VitalCallMapKeys.status)) {
                 case VitalsConstant.VitalCallMapKeys.startedToMeasure:
+                    if (currentState != MeasureState.started) {
+                        setCurrentState(MeasureState.started);
+                    }
                     break;
                 case VitalsConstant.VitalCallMapKeys.errorInMeasure:
 
@@ -492,11 +407,11 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
                     break;
                 case VitalsConstant.VitalCallMapKeys.finishedMeasure:
 
-                    ArrayList<HashMap<String, String>> items = (ArrayList<HashMap<String, String>>) map.get(VitalsConstant.VitalCallMapKeys.data);
+                    ArrayList<LinkedTreeMap<String, String>> items = (ArrayList<LinkedTreeMap<String, String>>) map.get(VitalsConstant.VitalCallMapKeys.data);
 
                     ArrayList<BPTrack> tracks = new ArrayList<>();
 
-                    for (HashMap<String, String> item : items) {
+                    for (LinkedTreeMap<String, String> item : items) {
                         tracks.add(new BPTrack(item));
                     }
 
@@ -508,6 +423,7 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
             openInDetail();
 
         } catch (Exception e) {
+            Log.d("BPTrackMeasureFragment","processSignalMessagesForBP "+e.getLocalizedMessage());
             e.printStackTrace();
         }
     }
@@ -518,10 +434,5 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
         if (callVitalPagerInterFace != null)
             callVitalPagerInterFace.didInitiateMeasure(vitalDevice.getType());
 
-    }
-
-    @Override
-    public void assignVitalDevice(VitalDevice vitalDevice) {
-        this.vitalDevice = vitalDevice;
     }
 }

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.thealer.telehealer.BuildConfig;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 
@@ -24,6 +25,8 @@ import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.WeightMeasureIn
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import iHealth.iHealthVitalManager;
+
 /**
  * Created by rsekar on 11/27/18.
  */
@@ -35,7 +38,8 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         GulcoMeasureInterface,
         VitalBatteryFetcher {
 
-    public static VitalsManager instance;
+    @Nullable
+    private static VitalsManager instance;
 
     protected @Nullable
     VitalPairInterface vitalPairInterface;
@@ -58,6 +62,19 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         super(application);
 
         init();
+    }
+
+    public static VitalsManager getInstance() {
+        if (VitalsManager.instance != null) {
+            return VitalsManager.instance;
+        } else {
+            if (BuildConfig.FLAVOR.equals(Constants.BUILD_DOCTOR)) {
+                VitalsManager.instance = new VitalsManager(TeleHealerApplication.application);
+            } else {
+                VitalsManager.instance = new iHealthVitalManager(TeleHealerApplication.application);
+            }
+            return VitalsManager.instance;
+        }
     }
 
     private void init() {
@@ -142,6 +159,17 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         }
     }
 
+    public void resetAll() {
+        vitalPairInterface = null;
+        bpMeasureInterface = null;
+        weightMeasureInterface = null;
+        pulseMeasureInterface = null;
+        thermoMeasureInterface = null;
+        gulcoMeasureInterface = null;
+        vitalBatteryFetcher = null;
+        vitalFirmwareFetcher = null;
+    }
+
     public void startScan(String deviceType) {
 
     }
@@ -150,8 +178,8 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     }
 
-    public void startMeasure(String deviceType, String deviceMac) {
-
+    public boolean startMeasure(String deviceType, String deviceMac) {
+        return false;
     }
 
     public void updateStripBottleId(String deviceType, String mac, String result) {
@@ -179,10 +207,6 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     public Boolean isConnected(String deviceType, String mac) {
         return hasValidController(deviceType, mac);
-    }
-
-    public void saveVitals(String measurementType, String value, VitalsApiViewModel vitalsApiViewModel) {
-
     }
 
     //WeightMeasureInterface methods
