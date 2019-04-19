@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.Dialog;
 import android.app.Service;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.Observer;
 import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
@@ -69,6 +70,7 @@ import com.opentok.android.BaseAudioDevice;
 import com.skyfishjy.library.RippleBackground;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
@@ -107,6 +109,7 @@ import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.call.Adapter.VitalCallAdapter;
 import com.thealer.telehealer.views.call.Interfaces.LiveVitalCallBack;
+import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
@@ -144,7 +147,8 @@ import static org.webrtc.ContextUtils.getApplicationContext;
 public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         View.OnClickListener,
         VitalManagerInstance,
-        LiveVitalCallBack {
+        LiveVitalCallBack,
+        AttachObserverInterface {
 
     private LinearLayout remoteView;
     private FrameLayout localView;
@@ -170,6 +174,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     public Dialog currentShowingDialog;
 
     @Nullable
+    private VitalsManager vitalsManager;
+
+    @Nullable
     private CommonUserApiResponseModel otherPersonDetail;
 
     @Nullable
@@ -185,21 +192,12 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
     private String currentCallQuality = OpenTokConstants.none;
 
-    @Nullable
-    PowerManager.WakeLock wakeLock;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         requestFullScreenMode();
-
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        if (pm != null) {
-            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Telehealer");
-            if (wakeLock != null && !wakeLock.isHeld())
-                wakeLock.acquire(Constants.callCapTime);
-        }
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN |
                         WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
@@ -296,10 +294,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             TokBox.shared.getOpenTokViewModel().getErrorModelLiveData().removeObserver(errorModelObserver);
         }
 
-        if (wakeLock != null) {
-            wakeLock.release();
-            wakeLock = null;
-        }
+        getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -376,41 +371,15 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
             }
             public void onSwipeRight() {
-                animate(false);
+                dismissPatientDisclaimer(false);
             }
             public void onSwipeLeft() {
-                animate(true);
+                dismissPatientDisclaimer(true);
             }
             public void onSwipeBottom() {
 
             }
-
-            void animate(Boolean toLeft) {
-                TokBox.shared.setPatientDisclaimerDismissed(true);
-                Transition transition = new ChangeBounds();
-                transition.setDuration(800);
-                transition.setInterpolator(new AnticipateOvershootInterpolator(1.0f));
-
-                TransitionManager.beginDelayedTransition(mainLay, transition);
-
-                ConstraintSet constraintSet = new ConstraintSet();
-                constraintSet.clone(mainLay);
-                ConstrainSetUtil.clearAllConstraint(constraintSet, patient_disclaimer.getId());
-
-                if (toLeft) {
-                    constraintSet.connect(patient_disclaimer.getId(), ConstraintSet.RIGHT, mainLay.getId(), ConstraintSet.LEFT);
-                } else {
-                    constraintSet.connect(patient_disclaimer.getId(), ConstraintSet.LEFT, vitalsView.getId(), ConstraintSet.RIGHT);
-                }
-
-                constraintSet.connect(patient_disclaimer.getId(), ConstraintSet.BOTTOM, mainLay.getId(), ConstraintSet.BOTTOM);
-                constraintSet.connect(patient_disclaimer.getId(), ConstraintSet.TOP, mainLay.getId(), ConstraintSet.TOP);
-
-
-                constraintSet.applyTo(mainLay);
-            }
         });
-
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -442,6 +411,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
             }
         });
+
     }
 
     private void updateMinimizeButton(int state) {
@@ -456,6 +426,31 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             }
 
         }
+    }
+
+    private void dismissPatientDisclaimer(Boolean toLeft) {
+        TokBox.shared.setPatientDisclaimerDismissed(true);
+        Transition transition = new ChangeBounds();
+        transition.setDuration(800);
+        transition.setInterpolator(new AnticipateOvershootInterpolator(1.0f));
+
+        TransitionManager.beginDelayedTransition(mainLay, transition);
+
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(mainLay);
+        ConstrainSetUtil.clearAllConstraint(constraintSet, patient_disclaimer.getId());
+
+        if (toLeft) {
+            constraintSet.connect(patient_disclaimer.getId(), ConstraintSet.RIGHT, mainLay.getId(), ConstraintSet.LEFT);
+        } else {
+            constraintSet.connect(patient_disclaimer.getId(), ConstraintSet.LEFT, vitalsView.getId(), ConstraintSet.RIGHT);
+        }
+
+        constraintSet.connect(patient_disclaimer.getId(), ConstraintSet.BOTTOM, mainLay.getId(), ConstraintSet.BOTTOM);
+        constraintSet.connect(patient_disclaimer.getId(), ConstraintSet.TOP, mainLay.getId(), ConstraintSet.TOP);
+
+
+        constraintSet.applyTo(mainLay);
     }
 
     private void createIndicator(int count) {
@@ -1095,6 +1090,28 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         setToggleTimer();
 
         TokBox.shared.setZOrderTopForLocalView();
+
+        if (UserType.isUserPatient()) {
+            final int interval = 15000; // 15 Seconds
+            Handler handler = new Handler();
+            TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                @Override
+                public void run() {
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!TokBox.shared.getPatientDisclaimerDismissed()) {
+                                dismissPatientDisclaimer(true);
+                            }
+                        }
+                    });
+
+                }
+            });
+
+            handler.postDelayed(runnable, interval);
+        }
     }
 
     private void showVitalHeader() {
@@ -1520,15 +1537,25 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
     @Override
     public VitalsManager getInstance() {
-        if (VitalsManager.instance == null) {
+        if (vitalsManager == null) {
             if (BuildConfig.FLAVOR.equals(Constants.BUILD_DOCTOR)) {
-                VitalsManager.instance = new VitalsManager(getApplication());
+
             } else{
-                VitalsManager.instance = new iHealthVitalManager(getApplication());
+                checkVitalPermission();
             }
+            vitalsManager = VitalsManager.getInstance();
         }
 
-        return VitalsManager.instance;
+        return vitalsManager;
+    }
+
+    private void checkVitalPermission() {
+        PermissionChecker permissionChecker = PermissionChecker.with(this);
+        if (permissionChecker.isGranted(PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS)) {
+            //nothing to do
+        } else if (getLifecycle().getCurrentState() != Lifecycle.State.RESUMED || getLifecycle().getCurrentState() != Lifecycle.State.STARTED) {
+            permissionChecker.checkPermission(PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS);
+        }
     }
 
     @Override
@@ -1574,4 +1601,5 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     public void didChangeStreamingState(int state) {
         updateMinimizeButton(state);
     }
+
 }

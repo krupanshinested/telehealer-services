@@ -468,16 +468,15 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW) {
-
             switch (resultCode) {
                 case Activity.RESULT_OK:
+                    onActionCompleteInterface.onCompletionResult(RequestID.OPEN_INITIAL_FRAGMENT,true,null);
                     onActionCompleteInterface.onCompletionResult(RequestID.OPEN_CONNECTED_DEVICE, true, getResultBundle());
+                    toolBarInterface.updateSubTitle("",View.GONE);
                     break;
                 default:
                     break;
             }
-
-
         }
     }
 }

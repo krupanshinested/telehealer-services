@@ -54,7 +54,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="@string/doctor"
+        android:textAllCaps="true"
+        android:text="@string/doctor_extender"
         app:layout_constraintEnd_toEndOf="@+id/doctor_iv"
         app:layout_constraintStart_toStartOf="@+id/doctor_iv"
         app:layout_constraintTop_toBottomOf="@+id/doctor_iv" />
@@ -65,7 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="@string/medical_assistant"
+        android:text="@string/office_assistant"
         android:textAllCaps="true"
         app:layout_constraintEnd_toEndOf="@+id/medical_assistant_iv"
         app:layout_constraintStart_toStartOf="@+id/medical_assistant_iv"

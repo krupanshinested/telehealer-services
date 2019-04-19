@@ -26,6 +26,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -48,7 +49,7 @@ import static com.thealer.telehealer.common.VitalCommon.VitalsConstant.getMinRan
 /**
  * Created by Aswin on 27,November,2018
  */
-public class VitalCreateNewFragment extends BaseFragment implements View.OnClickListener {
+public class VitalCreateNewFragment extends VitalsSendBaseFragment implements View.OnClickListener {
     private OrdersCustomView dateOcv;
     private OrdersCustomView timeOcv;
     private TextInputLayout vital1Til;
@@ -58,66 +59,26 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
     private Button submitBtn;
     private Toolbar toolbar;
     private AppBarLayout appBarLayout;
+    private boolean isInputValid;
     private AppBarLayout appbarLayout;
     private ImageView backIv;
     private TextView toolbarTitle;
     private TextInputLayout vital3Til;
     private EditText vital3Et;
-
     private OnCloseActionInterface onCloseActionInterface;
     private VitalsApiViewModel vitalsApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private OnViewChangeInterface onViewChangeInterface;
     private ToolBarInterface toolBarInterface;
-
     private String selectedItem = SupportedMeasurementType.bp, inputType, firstInputUnit, thirdInputUnit, hint1 = "";
-    private boolean isInputValid;
     private boolean isFirstValid = false, isSecondValid = false, isThirdValid = false;
-    private int apiCount = 0;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        attachObserverInterface = (AttachObserverInterface) getActivity();
-        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
-        attachObserverInterface.attachObserver(vitalsApiViewModel);
-
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         toolBarInterface = (ToolBarInterface) getActivity();
-
-        vitalsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-
-                    VitalsCreateApiResponseModel createApiResponseModel = (VitalsCreateApiResponseModel) baseApiResponseModel;
-
-                    if (createApiResponseModel.isSuccess()) {
-
-                        if (UserType.isUserPatient() && createApiResponseModel.isAbnormal()) {
-                            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.abnormal_vital_alert_message),
-                                    getString(R.string.ok), null,
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                            exit();
-                                        }
-                                    }, null);
-                        } else {
-                            exit();
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    private void exit() {
-        apiCount -= 1;
-        if (apiCount == 0)
-            onCloseActionInterface.onClose(false);
     }
 
     @Nullable
@@ -458,6 +419,11 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
     }
 
     @Override
+    public void didFinishPost() {
+        onCloseActionInterface.onClose(false);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
@@ -466,88 +432,82 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                 break;
             case R.id.submit_btn:
                 Utils.hideKeyboard(getActivity());
+                CreateVitalApiRequestModel vitalApiRequestModel = new CreateVitalApiRequestModel();
+
+                if (getArguments() != null && getArguments().getSerializable(Constants.USER_DETAIL) != null) {
+
+                    CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+                    if (commonUserApiResponseModel != null) {
+                        vitalApiRequestModel.setUser_guid(commonUserApiResponseModel.getUser_guid());
+                    }
+                }
+
+                if (UserType.isUserDoctor()) {
+                    vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DOCTOR);
+                    vitalApiRequestModel.setDisplay_name(UserDetailPreferenceManager.getUserDisplayName());
+                } else if (UserType.isUserPatient()) {
+                    vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_PATIENT);
+                    vitalApiRequestModel.setDisplay_name(UserDetailPreferenceManager.getUserDisplayName());
+                } else {
+                    vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DEVICE);
+                    vitalApiRequestModel.setDisplay_name(VitalsConstant.VITAL_MODE_DEVICE);
+                }
+
+                @Nullable
+                CreateVitalApiRequestModel secondary = null;
+                double vital1Value = Double.parseDouble(vital1Et.getText().toString().split(" ")[0]);
 
                 if (selectedItem.equals(SupportedMeasurementType.bp)) {
-                    if (isFirstValid && isSecondValid) {
-                        addVital(SupportedMeasurementType.bp);
-                    }
-                    if (isThirdValid) {
-                        addVital(SupportedMeasurementType.heartRate);
+
+                    if (isFirstValid && isSecondValid && !isThirdValid) {
+                        double vital2Value = Double.parseDouble(vital2Et.getText().toString().split(" ")[0]);
+                        String value = (int) vital1Value + "/" + (int) vital2Value;
+                        vitalApiRequestModel.setType(SupportedMeasurementType.bp);
+                        vitalApiRequestModel.setValue(value);
+                    } else if (isThirdValid && !(isFirstValid && isSecondValid)) {
+                        double vital3Value = Double.parseDouble(vital3Et.getText().toString().split(" ")[0]);
+                        vitalApiRequestModel.setType(SupportedMeasurementType.heartRate);
+                        vitalApiRequestModel.setValue(String.valueOf((int) vital3Value));
+                    } else if (isFirstValid && isSecondValid && isThirdValid) {
+                        double vital2Value = Double.parseDouble(vital2Et.getText().toString().split(" ")[0]);
+                        String value = (int) vital1Value + "/" + (int) vital2Value;
+                        vitalApiRequestModel.setType(SupportedMeasurementType.bp);
+                        vitalApiRequestModel.setValue(value);
+
+                        try {
+                            double vital3Value = Double.parseDouble(vital3Et.getText().toString().split(" ")[0]);
+                            secondary = (CreateVitalApiRequestModel) vitalApiRequestModel.clone();
+                            secondary.setValue(String.valueOf((int) vital3Value));
+                            secondary.setType(SupportedMeasurementType.heartRate);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
 
                 } else {
-                    addVital(selectedItem);
+                    String value;
+                    switch (selectedItem) {
+                        case SupportedMeasurementType.temperature:
+                        case SupportedMeasurementType.weight:
+                            value = String.format("%.1f", vital1Value);
+                            break;
+                        default:
+                            value = String.valueOf((int) vital1Value);
+                    }
+                    vitalApiRequestModel.setType(selectedItem);
+                    vitalApiRequestModel.setValue(value);
                 }
 
+                String doctorGuid = null;
+                CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                if (doctorModel != null) {
+                    doctorGuid = doctorModel.getUser_guid();
+                }
+
+                sendVitals(vitalApiRequestModel, secondary, doctorGuid);
 
                 break;
         }
     }
 
-    private void addVital(String type) {
-        apiCount += 1;
-
-        String doctorGuid = null;
-        CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
-        if (doctorModel != null) {
-            doctorGuid = doctorModel.getUser_guid();
-        }
-
-        vitalsApiViewModel.createVital(getRequestModel(type), doctorGuid);
-    }
-
-    private CreateVitalApiRequestModel getRequestModel(String type) {
-
-        CreateVitalApiRequestModel vitalApiRequestModel = new CreateVitalApiRequestModel();
-
-        vitalApiRequestModel.setType(type);
-
-        if (getArguments() != null && getArguments().getSerializable(Constants.USER_DETAIL) != null) {
-
-            CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
-            if (commonUserApiResponseModel != null) {
-                vitalApiRequestModel.setUser_guid(commonUserApiResponseModel.getUser_guid());
-            }
-        }
-
-        if (UserType.isUserDoctor()) {
-            vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DOCTOR);
-            vitalApiRequestModel.setDisplay_name(UserDetailPreferenceManager.getUserDisplayName());
-        } else if (UserType.isUserPatient()) {
-            vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_PATIENT);
-            vitalApiRequestModel.setDisplay_name(UserDetailPreferenceManager.getUserDisplayName());
-        } else {
-            vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DEVICE);
-            vitalApiRequestModel.setDisplay_name(VitalsConstant.VITAL_MODE_DEVICE);
-        }
-
-
-        String value;
-
-        double vital1Value = !vital1Et.getText().toString().isEmpty() ? Double.parseDouble(vital1Et.getText().toString().split(" ")[0]) : 0;
-
-        if (type.equals(SupportedMeasurementType.bp)) {
-            double vital2Value = !vital2Et.getText().toString().isEmpty() ? Double.parseDouble(vital2Et.getText().toString().split(" ")[0]) : 0;
-
-            value = (int) vital1Value + "/" + (int) vital2Value;
-
-        } else if (type.equals(SupportedMeasurementType.heartRate)) {
-
-            value = String.valueOf(!vital3Et.getText().toString().isEmpty() ? (int) Double.parseDouble(vital3Et.getText().toString().split(" ")[0]) : " ");
-
-        } else {
-            switch (type) {
-                case SupportedMeasurementType.temperature:
-                case SupportedMeasurementType.weight:
-                    value = String.format("%.1f", vital1Value);
-                    break;
-                default:
-                    value = String.valueOf((int) vital1Value);
-            }
-        }
-
-        vitalApiRequestModel.setValue(value);
-
-        return vitalApiRequestModel;
-    }
 }

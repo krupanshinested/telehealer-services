@@ -7,6 +7,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -66,6 +68,10 @@ public class CallPlacingActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
         super.onCreate(savedInstanceState);
 
         if (getIntent().getSerializableExtra(ArgumentKeys.CALL_INITIATE_MODEL) != null) {

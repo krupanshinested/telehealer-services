@@ -120,8 +120,10 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
     }
 
     public void didScrolled(int currentPosition) {
-        if (deviceScreens.get(currentPosition) != null) {
-            //deviceScreens.get(currentPosition).assignVitalListener();
+        Log.v("VitalCallAdapter","didScrolled "+currentPosition);
+        if (deviceScreens.size() > currentPosition && deviceScreens.get(currentPosition) != null) {
+            deviceScreens.get(currentPosition).assignVitalListener();
+            Log.v("VitalCallAdapter","scrolled");
         }
     }
 
@@ -150,6 +152,10 @@ public class VitalCallAdapter extends FragmentStatePagerAdapter implements CallV
             CallVitalEvents callVitalEvents = getVitalScreen(device);
             deviceScreens.append(i,callVitalEvents);
             deviceScreenMap.put(device.getType(),i);
+        }
+
+        if (devices.size() > 0) {
+            didScrolled(0);
         }
     }
 

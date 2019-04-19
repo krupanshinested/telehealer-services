@@ -115,8 +115,8 @@ public class TeleHealerApplication extends Application implements LifecycleObser
             isVitalDeviceConnectionShown = false;
         }
 
-        if (VitalsManager.instance != null) {
-            VitalsManager.instance.disconnectAll();
+        if (!TokBox.shared.isActiveCallPreset()) {
+            VitalsManager.getInstance().disconnectAll();
         }
     }
 }
