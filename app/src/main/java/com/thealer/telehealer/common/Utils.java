@@ -35,7 +35,6 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.util.Base64;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1092,7 +1091,7 @@ public class Utils {
         optionSelectionDialog.show();
     }
 
-    public static void showInviteAlert(Context context, Bundle bundle) {
+    public static void showInviteAlert(FragmentActivity context, Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View alertView = LayoutInflater.from(context).inflate(R.layout.view_invite_alert, null);
         builder.setView(alertView);
@@ -1111,7 +1110,11 @@ public class Utils {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
-                context.startActivity(new Intent(context, InviteUserActivity.class).putExtras(bundle));
+                Intent intent = new Intent(context, InviteUserActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
+                context.startActivity(intent);
             }
         });
 
@@ -1119,7 +1122,11 @@ public class Utils {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
-                context.startActivity(new Intent(context, InviteContactUserActivity.class).putExtras(bundle));
+                Intent intent = new Intent(context, InviteContactUserActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
+                context.startActivity(intent);
             }
         });
 

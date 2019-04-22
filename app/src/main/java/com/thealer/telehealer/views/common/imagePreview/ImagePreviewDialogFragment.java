@@ -61,7 +61,7 @@ public class ImagePreviewDialogFragment extends BaseDialogFragment {
         onBoardingViewPagerAdapter = new OnBoardingViewPagerAdapter(getActivity(), imagePreviewViewModel.getImageList(), false);
         imagePreviewVp.setAdapter(onBoardingViewPagerAdapter);
         imagePreviewVp.setCurrentItem(0);
-        Utils.setImageWithGlide(getActivity(), backgroundIv, imagePreviewViewModel.getImageList().get(0), null, true);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), backgroundIv, imagePreviewViewModel.getImageList().get(0), null, true);
         setCountTv(0);
         imagePreviewVp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

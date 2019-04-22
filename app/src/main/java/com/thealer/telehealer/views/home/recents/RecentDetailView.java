@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.NestedScrollView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,7 +103,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                             if (baseApiResponseModel instanceof TranscriptionApiResponseModel) {
                                 transcriptionApiResponseModel = (TranscriptionApiResponseModel) baseApiResponseModel;
 
-                                if (transcriptionApiResponseModel.getStatus().equals(transcriptionApiResponseModel.STATUS_READY)) {
+                                if (transcriptionApiResponseModel.getStatus() != null && transcriptionApiResponseModel.getStatus().equals(transcriptionApiResponseModel.STATUS_READY)) {
                                     String username = null;
                                     if (UserType.isUserPatient()) {
                                         username = transcriptionApiResponseModel.getDoctor().getDisplayName();

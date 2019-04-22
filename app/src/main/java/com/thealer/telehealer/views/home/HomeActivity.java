@@ -30,8 +30,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.manager.SupportRequestManagerFragment;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
@@ -54,6 +58,7 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
 import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
@@ -109,6 +114,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             showOrHideNotificationCount(true, notificationCount);
         }
     };
+    private CommonUserApiResponseModel commonUserApiResponseModel;
+    private AddConnectionApiViewModel addConnectionApiViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,10 +131,49 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (checkIsUserActivated()) {
             initView();
+            initViewModels();
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(profileListener, new IntentFilter(getString(R.string.profile_picture_updated)));
         LocalBroadcastManager.getInstance(this).registerReceiver(NotificationCountReceiver, new IntentFilter(Constants.NOTIFICATION_COUNT_RECEIVER));
+    }
+
+    private void initViewModels() {
+        addConnectionApiViewModel = ViewModelProviders.of(this).get(AddConnectionApiViewModel.class);
+
+        attachObserver(addConnectionApiViewModel);
+
+        addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                    intent.putExtra(Constants.SUCCESS_VIEW_STATUS, baseApiResponseModel.isSuccess());
+                    if (baseApiResponseModel.isSuccess()) {
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_success), commonUserApiResponseModel.getFirst_name()));
+                    } else {
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_failure), commonUserApiResponseModel.getFirst_name()));
+                    }
+                    LocalBroadcastManager.getInstance(HomeActivity.this).sendBroadcast(intent);
+                }
+            }
+        });
+
+        addConnectionApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null) {
+                    Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                    intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
+                    intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                    intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                    LocalBroadcastManager.getInstance(HomeActivity.this).sendBroadcast(intent);
+                }
+            }
+        });
+
     }
 
     private void checkNotification() {
@@ -261,7 +307,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             navigationView.getMenu().removeItem(R.id.menu_monitoring);
             navigationView.getMenu().findItem(R.id.menu_schedules).setChecked(true);
             selecteMenuItem = R.id.menu_schedules;
-            showScheduleToolbarOptions(true, scheduleTypeCalendar);
+//            showScheduleToolbarOptions(true, scheduleTypeCalendar);
         }
 
         if (PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC))
@@ -363,6 +409,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (UserType.isUserAssistant()) {
             optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
             optionsMenu.findItem(R.id.menu_schedules).setVisible(true);
+        } else {
+            optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
         }
 
         MenuItem menuItem = menu.findItem(R.id.menu_notification);
@@ -476,6 +524,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 finish();
             } else {
                 getSupportFragmentManager().popBackStack();
+                if (getSupportFragmentManager().getFragments().get(0) instanceof SupportRequestManagerFragment) {
+                    getSupportFragmentManager().getFragments().remove(0);
+                }
+                updateToolbarOptions(getSupportFragmentManager().getFragments().get(0));
             }
         } else {
             finish();
@@ -484,7 +536,26 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
-        showDetailView(bundle);
+        if (bundle.getBoolean(ArgumentKeys.CONNECT_USER, false)) {
+
+            Bundle succesBundle = new Bundle();
+            succesBundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+            succesBundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_requesting));
+
+            SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+            successViewDialogFragment.setArguments(succesBundle);
+            successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+
+            int selectedId = bundle.getInt(Constants.ADD_CONNECTION_ID);
+            String userGuid = bundle.getString(ArgumentKeys.USER_GUID);
+            String doctorGuid = bundle.getString(ArgumentKeys.DOCTOR_GUID);
+            commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
+
+            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId));
+
+        } else {
+            showDetailView(bundle);
+        }
     }
 
     private void showDetailView(Bundle bundle) {
@@ -500,6 +571,23 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 .beginTransaction()
                 .replace(fragmentHolder.getId(), fragment)
                 .commit();
+        updateToolbarOptions(fragment);
+    }
+
+    private void updateToolbarOptions(Fragment fragment) {
+
+        if (optionsMenu != null) {
+            if (fragment instanceof ScheduleCalendarFragment) {
+                optionsMenu.findItem(R.id.menu_schedules).setVisible(true);
+                optionsMenu.findItem(R.id.menu_event).setVisible(false);
+            } else if (fragment instanceof SchedulesListFragment) {
+                optionsMenu.findItem(R.id.menu_schedules).setVisible(false);
+                optionsMenu.findItem(R.id.menu_event).setVisible(true);
+            } else {
+                optionsMenu.findItem(R.id.menu_schedules).setVisible(false);
+                optionsMenu.findItem(R.id.menu_event).setVisible(false);
+            }
+        }
     }
 
     private void removeAllFragments() {
@@ -523,7 +611,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Log.e(TAG, "onNavigationItemSelected: ");
-        showScheduleToolbarOptions(false, 0);
+//        showScheduleToolbarOptions(false, 0);
         if (menuItem.getItemId() != R.id.menu_profile_settings) {
             showPendingInvitesOption(false);
         }
@@ -578,6 +666,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showScheduleToolbarOptions(boolean visible, int scheduleType) {
+        Log.e(TAG, "showScheduleToolbarOptions: " + visible + " " + scheduleType);
         if (optionsMenu != null) {
             if (visible) {
                 if (scheduleType == scheduleTypeCalendar) {
@@ -596,7 +685,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void showPendingInvitesOption(boolean visible) {
-        if (!UserType.isUserPatient() && optionsMenu != null) {
+        if (optionsMenu != null) {
             if (visible) {
                 optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
             } else {
@@ -607,7 +696,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void showSchedulesFragment(int scheduleType) {
         helpContent = HelpContent.HELP_SCHEDULES;
-        showScheduleToolbarOptions(true, scheduleType);
+//        showScheduleToolbarOptions(true, scheduleType);
         setToolbarTitle(getString(R.string.schedules));
         Fragment fragment = null;
         switch (scheduleType) {

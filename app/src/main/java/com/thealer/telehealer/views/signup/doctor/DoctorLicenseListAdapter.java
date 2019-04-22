@@ -4,16 +4,15 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
@@ -33,9 +32,11 @@ class DoctorLicenseListAdapter extends RecyclerView.Adapter<DoctorLicenseListAda
     private CreateUserRequestModel createUserRequestModel;
     private CurrentModeInterface currentModeInterface;
     private List<LicensesBean> licensesBeanList = new ArrayList<>();
+    private Fragment targetFragment;
 
-    public DoctorLicenseListAdapter(FragmentActivity activity, CurrentModeInterface currentModeInterface) {
+    public DoctorLicenseListAdapter(FragmentActivity activity, Fragment targetFragment, CurrentModeInterface currentModeInterface) {
         fragmentActivity = activity;
+        this.targetFragment = targetFragment;
         this.currentModeInterface = currentModeInterface;
     }
 
@@ -106,7 +107,7 @@ class DoctorLicenseListAdapter extends RecyclerView.Adapter<DoctorLicenseListAda
                     bundle.putInt(Constants.LICENSE_ID, i);
                     doctorLicenseBottomSheetFragment.setArguments(bundle);
 
-                    doctorLicenseBottomSheetFragment.setTargetFragment(fragmentActivity.getSupportFragmentManager().getFragments().get(0), RequestID.REQ_LICENSE);
+                    doctorLicenseBottomSheetFragment.setTargetFragment(targetFragment, RequestID.REQ_LICENSE);
                     doctorLicenseBottomSheetFragment.show(fragmentActivity.getSupportFragmentManager(), doctorLicenseBottomSheetFragment.getClass().getSimpleName());
                 }
             }

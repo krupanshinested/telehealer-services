@@ -19,7 +19,7 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void connectUser(String toGuid, String userId) {
+    public void connectUser(String toGuid, String doctorGuid, String userId) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -29,17 +29,18 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
                     addConnectionRequestModel.setType(Constants.ADD_CONNECTION_REQ_TYPE);
                     addConnectionRequestModel.setMessage(Constants.ADD_CONNECTION_REQ_MSG);
 
-                    getAuthApiService().addConnection(addConnectionRequestModel)
+                    getAuthApiService().addConnection(addConnectionRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+
                                     PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionPayload(toGuid), null);
 
                                     EventRecorder.recordNotification("CONNECTION_REQUEST");
                                     EventRecorder.recordConnection("CONNECTION_REQUESTED");
 
-                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
                 }

@@ -214,7 +214,7 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
 
                     image_path = resultBean.getPath();
 
-                    Utils.setImageWithGlide(getActivity(), documentIv, image_path, getActivity().getDrawable(R.drawable.ic_orders_documents), true);
+                    Utils.setImageWithGlide(getActivity().getApplicationContext(), documentIv, image_path, getActivity().getDrawable(R.drawable.ic_orders_documents), true);
 
                 }
 

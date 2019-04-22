@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -26,9 +27,12 @@ import com.thealer.telehealer.apilayer.models.medicalHistory.SexualHistoryModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
+import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
@@ -52,6 +56,12 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
     private LinearLayout medicalHistoryContainer;
     private OnViewChangeInterface onViewChangeInterface;
     private CommonUserApiResponseModel commonUserApiResponseModel;
+    private LinearLayout emptyLl;
+    private ConstraintLayout recyclerEmptyStateView;
+    private ImageView emptyIv;
+    private TextView emptyTitleTv;
+    private TextView emptyMessageTv;
+    private CustomButton emptyActionBtn;
 
     @Override
     public void onAttach(Context context) {
@@ -80,8 +90,12 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
         appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
-
+        emptyLl = (LinearLayout) view.findViewById(R.id.empty_ll);
+        emptyIv = (ImageView) view.findViewById(R.id.empty_iv);
+        emptyTitleTv = (TextView) view.findViewById(R.id.empty_title_tv);
+        emptyMessageTv = (TextView) view.findViewById(R.id.empty_message_tv);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
+        medicalHistoryContainer = (LinearLayout) view.findViewById(R.id.medical_history_container);
 
         backIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,25 +104,26 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
             }
         });
 
-        if (!UserType.isUserAssistant()) {
-            toolbar.inflateMenu(R.menu.menu_history);
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
-                    switch (menuItem.getItemId()) {
-                        case R.id.menu_edit:
-                            showHistoryList();
-                            break;
-                        case R.id.menu_print:
-                            generatePdf();
-                            break;
-                    }
-                    return true;
-                }
-            });
+        toolbar.inflateMenu(R.menu.menu_history);
+        if (UserType.isUserAssistant()) {
+            toolbar.getMenu().findItem(R.id.menu_edit).setVisible(false);
         }
 
-        medicalHistoryContainer = (LinearLayout) view.findViewById(R.id.medical_history_container);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_edit:
+                        showHistoryList();
+                        break;
+                    case R.id.menu_print:
+                        generatePdf();
+                        break;
+                }
+                return true;
+            }
+        });
+
     }
 
     private void generatePdf() {
@@ -118,7 +133,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
         PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
         Bundle bundle = new Bundle();
         bundle.putString(ArgumentKeys.HTML_FILE, pdfHtml);
-        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.diet_report));
+        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.health_profile));
         pdfViewerFragment.setArguments(bundle);
         showSubFragmentInterface.onShowFragment(pdfViewerFragment);
     }
@@ -141,12 +156,25 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
             onViewChangeInterface.hideOrShowNext(true);
             onViewChangeInterface.updateNextTitle(getString(R.string.edit));
 
-        }else if (UserType.isUserAssistant()) {
+        } else if (UserType.isUserAssistant()) {
             onViewChangeInterface.hideOrShowNext(false);
         }
         toolbarTitle.setText(getString(R.string.health_profile));
 
         showMedicalHistory();
+    }
+
+    private void showOrhideEmptyState(boolean show) {
+        if (show) {
+            emptyLl.setVisibility(View.VISIBLE);
+            emptyIv.setImageDrawable(getActivity().getDrawable(EmptyStateUtil.getImage(EmptyViewConstants.EMPTY_PATIENT_HISTORY)));
+            emptyTitleTv.setText(EmptyStateUtil.getTitle(EmptyViewConstants.EMPTY_PATIENT_HISTORY));
+            emptyMessageTv.setText(EmptyStateUtil.getMessage(EmptyViewConstants.EMPTY_PATIENT_HISTORY));
+            toolbar.getMenu().findItem(R.id.menu_print).setVisible(false);
+        } else {
+            emptyLl.setVisibility(View.GONE);
+            toolbar.getMenu().findItem(R.id.menu_print).setVisible(true);
+        }
     }
 
     private void showMedicalHistory() {
@@ -161,9 +189,17 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 if (commonUserApiResponseModel != null) {
                     questionnaireBean = commonUserApiResponseModel.getQuestionnaire();
+
+                    if (questionnaireBean == null || questionnaireBean.isHistoryEmpty()) {
+                        showOrhideEmptyState(true);
+                    } else {
+                        showOrhideEmptyState(false);
+                    }
                 }
             }
         }
+
+        medicalHistoryContainer.removeAllViews();
 
         if (questionnaireBean != null && questionnaireBean.isQuestionariesEmpty()) {
 
@@ -591,7 +627,8 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
             }
 
         } else {
-            onCloseActionInterface.onClose(false);
+            if (!UserType.isUserAssistant())
+                onCloseActionInterface.onClose(false);
         }
     }
 

@@ -52,6 +52,17 @@ public class QuestionnaireBean implements Serializable {
                 getPersonalHistoryBean() != null;
     }
 
+    public boolean isHistoryEmpty() {
+        return getMedication() == null &&
+                getPastMedicalHistoryBean() == null &&
+                getSurgeries() == null &&
+                getFamilyHistoryBean() == null &&
+                getRecentImmunizationBean() == null &&
+                getSexualHistoryBean() == null &&
+                getHealthHabitBean() == null &&
+                getPersonalHistoryBean() == null;
+    }
+
     //getter setters
     public MedicationBean getMedication() {
         return Medication;
