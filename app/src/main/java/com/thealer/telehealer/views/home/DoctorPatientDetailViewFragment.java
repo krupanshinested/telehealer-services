@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
@@ -104,6 +105,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private BottomNavigationView userDetailBnv;
     private String view_type;
     private String doctorGuid = null, userGuid = null;
+    boolean checkStatus;
 
     @Override
     public void onAttach(Context context) {
@@ -124,8 +126,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     connectionStatusApiResponseModel = (ConnectionStatusApiResponseModel) baseApiResponseModel;
-                    if (connectionStatusApiResponseModel.getConnection_status() == null) {
+                    if (!connectionStatusApiResponseModel.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
                         view_type = Constants.VIEW_CONNECTION;
+                    } else {
+                        view_type = Constants.VIEW_ASSOCIATION_DETAIL;
                     }
                     updateView(resultBean);
                     updateDateConnectionStatus(connectionStatusApiResponseModel.getConnection_status());
@@ -155,12 +159,27 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     ArrayList<CommonUserApiResponseModel> commonUserApiResponseModels = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
 
                     if (commonUserApiResponseModels.size() > 0) {
-                        if (resultBean == null) {
-                            resultBean = commonUserApiResponseModels.get(0);
-                            updateView(resultBean);
-                        }
 
-                        updateUserStatus(commonUserApiResponseModels.get(0));
+                        for (int i = 0; i < commonUserApiResponseModels.size(); i++) {
+                            switch (commonUserApiResponseModels.get(i).getRole()) {
+                                case Constants.ROLE_DOCTOR:
+                                    doctorModel = commonUserApiResponseModels.get(i);
+                                    if (UserType.isUserPatient() && resultBean == null) {
+                                        resultBean = doctorModel;
+                                    }
+                                    break;
+                                case Constants.ROLE_PATIENT:
+                                case Constants.ROLE_ASSISTANT:
+                                    resultBean = commonUserApiResponseModels.get(i);
+                                    break;
+                            }
+                        }
+                        updateView(resultBean);
+                        updateUserStatus(resultBean);
+
+                        if (checkStatus) {
+                            connectionStatusApiViewModel.getConnectionStatus(userGuid, doctorGuid, true);
+                        }
                     }
 
                 }
@@ -344,6 +363,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         if (getArguments() != null) {
 
             view_type = getArguments().getString(Constants.VIEW_TYPE);
+            checkStatus = getArguments().getBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, false);
 
             if (getArguments().getSerializable(Constants.USER_DETAIL) != null &&
                     getArguments().getSerializable(Constants.USER_DETAIL) instanceof CommonUserApiResponseModel) {
@@ -351,30 +371,13 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 resultBean = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
 
-                if (resultBean != null) {
-                    userGuid = resultBean.getUser_guid();
-                }
-
-                if (doctorModel != null) {
-                    doctorGuid = doctorModel.getUser_guid();
-                }
-
                 updateView(resultBean);
 
                 Log.e(TAG, "initView: " + view_type + " " + resultBean.getRole());
-                if (UserType.isUserAssistant() && !resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-                    addFab.hide();
-                }
 
-                if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
-                    userDetailBnv.getMenu().findItem(R.id.menu_upload).setVisible(true);
-                    userDetailBnv.setVisibility(View.VISIBLE);
-                }
-
-                if (getArguments().getBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, false)) {
+                if (checkStatus) {
                     connectionStatusApiViewModel.getConnectionStatus(userGuid, doctorGuid, true);
                 } else {
-
                     if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
                         Set<String> set = new HashSet<>();
                         set.add(resultBean.getUser_guid());
@@ -386,7 +389,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
             } else {
                 String userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
+                String doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+
                 Set<String> set = new HashSet<>();
+                if (doctorGuid != null) {
+                    set.add(doctorGuid);
+                }
                 set.add(userGuid);
                 getUsersApiViewModel.getUserByGuid(set);
             }
@@ -438,8 +446,28 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     }
 
     private void updateView(CommonUserApiResponseModel resultBean) {
-        toolbarTitle.setText(resultBean.getUserDisplay_name());
-        userNameTv.setText(resultBean.getUserDisplay_name());
+        if (UserType.isUserAssistant()) {
+            if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+                addFab.show();
+            } else {
+                addFab.hide();
+            }
+        }
+        if (resultBean != null) {
+            userGuid = resultBean.getUser_guid();
+            toolbarTitle.setText(resultBean.getUserDisplay_name());
+            userNameTv.setText(resultBean.getUserDisplay_name());
+
+            if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
+                userDetailBnv.getMenu().findItem(R.id.menu_upload).setVisible(true);
+                userDetailBnv.setVisibility(View.VISIBLE);
+            }
+        }
+
+        if (doctorModel != null) {
+            doctorGuid = doctorModel.getUser_guid();
+        }
+
 
         if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
             genderIv.setVisibility(View.GONE);
@@ -447,7 +475,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         userDobTv.setText(resultBean.getDisplayInfo());
 
         Utils.setGenderImage(getActivity(), genderIv, resultBean.getGender());
-        Utils.setImageWithGlide(getActivity().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
 
         fragmentList = new ArrayList<>();
         titleList = new ArrayList<String>();
@@ -458,28 +486,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         if (view_type != null) {
             if (view_type.equals(Constants.VIEW_CONNECTION)) {
 
-                userDetailTab.setVisibility(View.GONE);
-                actionBtn.setVisibility(View.VISIBLE);
-                userDetailBnv.setVisibility(View.GONE);
-                addFab.hide();
-
                 updateDateConnectionStatus(resultBean.getConnection_status());
-
-                actionBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Utils.vibrate(getActivity());
-                        Bundle bundle = new Bundle();
-                        bundle.putInt(Constants.ADD_CONNECTION_ID, resultBean.getUser_id());
-                        bundle.putString(ArgumentKeys.USER_GUID, resultBean.getUser_guid());
-                        bundle.putSerializable(Constants.USER_DETAIL, resultBean);
-
-                        onActionCompleteInterface.onCompletionResult(null, true, bundle);
-
-                    }
-                });
-
-                userDetailTab.setVisibility(View.GONE);
 
             } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
                 Bundle bundle;
@@ -558,22 +565,51 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     }
 
     private void updateDateConnectionStatus(String connection_status) {
+        Log.e(TAG, "updateDateConnectionStatus: " + connection_status + " " + view_type);
+
         if (connection_status == null) {
-            actionBtn.setText(getString(R.string.add_connection_connect));
-            actionBtn.setEnabled(true);
-            if (UserType.isUserPatient() && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+            connection_status = "";
+        }
+
+        switch (connection_status) {
+            case Constants.CONNECTION_STATUS_ACCEPTED:
                 actionBtn.setVisibility(View.GONE);
-            }
-        } else {
-            if (connection_status.equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
-                actionBtn.setVisibility(View.GONE);
-            } else if (connection_status.equals(Constants.CONNECTION_STATUS_OPEN)) {
+                break;
+            case Constants.CONNECTION_STATUS_OPEN:
                 actionBtn.setText(getString(R.string.add_connection_pending));
                 actionBtn.setEnabled(false);
-            } else {
+                break;
+            default:
                 actionBtn.setText(getString(R.string.add_connection_connect));
                 actionBtn.setEnabled(true);
-            }
+                if (UserType.isUserPatient() && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                    actionBtn.setVisibility(View.GONE);
+                }
+        }
+
+        if (view_type.equals(Constants.VIEW_CONNECTION)) {
+            userDetailTab.setVisibility(View.GONE);
+            actionBtn.setVisibility(View.VISIBLE);
+            userDetailBnv.setVisibility(View.GONE);
+            addFab.hide();
+
+            actionBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.vibrate(getActivity());
+                    Log.e(TAG, "onClick: " + new Gson().toJson(resultBean));
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(Constants.ADD_CONNECTION_ID, resultBean.getUser_id());
+                    bundle.putString(ArgumentKeys.USER_GUID, resultBean.getUser_guid());
+                    bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                    bundle.putSerializable(Constants.USER_DETAIL, resultBean);
+                    bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
+                    bundle.putBoolean(ArgumentKeys.CONNECT_USER, true);
+
+                    onActionCompleteInterface.onCompletionResult(null, true, bundle);
+
+                }
+            });
         }
     }
 
@@ -586,9 +622,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
             bundle.putSerializable(Constants.DOCTOR_DETAIL, resultBean);
         } else {
-            if (getArguments() != null) {
-                bundle.putSerializable(Constants.DOCTOR_DETAIL, getArguments().getSerializable(Constants.DOCTOR_DETAIL));
-            }
+            bundle.putSerializable(Constants.DOCTOR_DETAIL, doctorModel);
             bundle.putSerializable(Constants.USER_DETAIL, resultBean);
         }
 

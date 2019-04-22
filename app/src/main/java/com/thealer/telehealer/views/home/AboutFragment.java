@@ -357,7 +357,7 @@ public class AboutFragment extends BaseFragment {
                 public void onClick(View v) {
                     Fragment fragment;
 
-                    if (userDetail.getQuestionnaire() != null && userDetail.getQuestionnaire().isQuestionariesEmpty()) {
+                    if (UserType.isUserAssistant() || (userDetail.getQuestionnaire() != null && userDetail.getQuestionnaire().isQuestionariesEmpty())) {
                         fragment = new MedicalHistoryViewFragment();
                     } else {
                         fragment = new MedicalHistoryList();
