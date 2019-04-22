@@ -91,6 +91,8 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
     private MedicalHistoryCheckBoxListAdapter checkBoxListAdapter;
     private OnViewChangeInterface onViewChangeInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
+    private TextView nextTv;
+    private ImageView closeIv;
 
     @Override
     public void onAttach(Context context) {
@@ -119,6 +121,8 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
         othersLl = (LinearLayout) view.findViewById(R.id.others_ll);
         otherLabelTv = (TextView) view.findViewById(R.id.other_label_tv);
         otherEt = (EditText) view.findViewById(R.id.other_et);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+        nextTv.setVisibility(View.GONE);
 
         otherEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -194,12 +198,26 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
                         showSexualHistory();
                         break;
                     case MH_RECENT_IMMUNIZATION:
+                        if (UserType.isUserPatient()) {
+                            showAddDocument();
+                        }
                         showRecentImmunization();
                         break;
                 }
             }
 
         }
+    }
+
+    private void showAddDocument() {
+        nextTv.setText(getString(R.string.add));
+        nextTv.setVisibility(View.VISIBLE);
+        nextTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), CreateOrderActivity.class).putExtra(Constants.SELECTED_ITEM, OrderConstant.ORDER_DOCUMENTS));
+            }
+        });
     }
 
     private void showPersonalHistory() {

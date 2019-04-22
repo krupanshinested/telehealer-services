@@ -92,6 +92,7 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
                 if (errorModel != null) {
                     Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
                     intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                    intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                     intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
                     LocalBroadcastManager.getInstance(NotificationActivity.this).sendBroadcast(intent);
                 }
@@ -177,6 +178,7 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
         if (success) {
             int selectedId = bundle.getInt(Constants.ADD_CONNECTION_ID);
             String userGuid = bundle.getString(ArgumentKeys.USER_GUID);
+            String doctorGuid = bundle.getString(ArgumentKeys.DOCTOR_GUID);
             commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
 
             bundle = new Bundle();
@@ -188,7 +190,7 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
 
             successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
 
-            addConnectionApiViewModel.connectUser(userGuid, String.valueOf(selectedId));
+            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId));
 
         }
     }

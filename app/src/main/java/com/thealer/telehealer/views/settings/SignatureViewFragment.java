@@ -168,7 +168,7 @@ public class SignatureViewFragment extends BaseFragment {
     }
 
     private void setSignature() {
-        Utils.setImageWithGlide(getActivity(), signatureIv, UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature(), null, true);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), signatureIv, UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature(), null, true);
     }
 
     @Override

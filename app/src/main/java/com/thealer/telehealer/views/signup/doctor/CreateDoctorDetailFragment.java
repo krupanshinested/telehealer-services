@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -620,7 +621,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         }
 
         licenseRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        doctorLicenseListAdapter = new DoctorLicenseListAdapter(getActivity(), this);
+        doctorLicenseListAdapter = new DoctorLicenseListAdapter(getActivity(), this, this);
         licenseRv.setAdapter(doctorLicenseListAdapter);
     }
 
@@ -849,6 +850,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                 }
                 break;
             case RequestID.REQ_LICENSE:
+                Log.e(TAG, "setLicenseList: " + new Gson().toJson(createUserRequestModel.getUser_detail().getData().getLicenses()));
                 setLicenseList();
                 if (createUserRequestModel.getUser_detail().getData().getLicenses().size() == 0) {
                     addLicenseTil.setError(getString(R.string.license_empty_error));

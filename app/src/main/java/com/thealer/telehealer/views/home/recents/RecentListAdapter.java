@@ -5,7 +5,6 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
@@ -176,10 +174,15 @@ public class RecentListAdapter extends BaseExpandableListAdapter {
                     userGuid = resultBean.getDoctor().getUser_guid();
                 } else {
                     userGuid = resultBean.getPatient().getUser_guid();
+
+                    if (UserType.isUserAssistant()) {
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, resultBean.getDoctor().getUser_guid());
+                        bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
+                    }
                 }
                 bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
-
                 bundle.putString(ArgumentKeys.USER_GUID, userGuid);
+
                 doctorPatientDetailViewFragment.setArguments(bundle);
                 showSubFragmentInterface.onShowFragment(doctorPatientDetailViewFragment);
             }

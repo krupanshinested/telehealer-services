@@ -135,7 +135,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                             String message = "";
                             switch (selectedItem) {
                                 case SupportedMeasurementType.bp:
-                                case SupportedMeasurementType.bpHeart:
                                     message = OverlayViewConstants.OVERLAY_NO_BP;
                                     break;
                                 case SupportedMeasurementType.gulcose:
@@ -214,7 +213,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private void setUserDetailView() {
         itemTitleTv.setText(commonUserApiResponseModel.getUserDisplay_name());
         itemSubTitleTv.setText(commonUserApiResponseModel.getDisplayInfo());
-        Utils.setImageWithGlide(getActivity(), itemCiv, commonUserApiResponseModel.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), itemCiv, commonUserApiResponseModel.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true);
         infoIv.setOnClickListener(this);
         userDetailCl.setVisibility(View.VISIBLE);
     }
@@ -276,7 +275,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
                 String type = vitalsApiResponseModelArrayList.get(i).getType();
 
-                if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                if (selectedItem.equals(SupportedMeasurementType.bp)) {
 
                     switch (type) {
                         case SupportedMeasurementType.bp:
@@ -336,7 +335,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             int color1 = getContext().getColor(R.color.app_gradient_start);
 
-            if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+            if (selectedItem.equals(SupportedMeasurementType.bp)) {
                 dataSet1Name = VitalsConstant.SYSTOLE;
                 color1 = getContext().getColor(R.color.char_line_1);
             }
@@ -353,7 +352,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             lineDataSetList.add(lineDataSet1);
 
-            if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+            if (selectedItem.equals(SupportedMeasurementType.bp)) {
                 String dataSet2Name = VitalsConstant.DIASTOLE;
                 String dataSet3Name = getString(SupportedMeasurementType.getTitle(SupportedMeasurementType.heartRate));
 
@@ -586,7 +585,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             VitalPdfGenerator vitalPdfGenerator = new VitalPdfGenerator(getActivity());
 
             boolean isVitalReport = false;
-            if (selectedItem.equals(SupportedMeasurementType.bpHeart))
+            if (selectedItem.equals(SupportedMeasurementType.bp))
                 isVitalReport = true;
 
             String htmlContent = vitalPdfGenerator.generatePdfFor(pdfList, commonUserApiResponseModel, isVitalReport);
@@ -650,12 +649,15 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     }
 
     private void makeApiCall(boolean isShowProgress) {
-
         if (selectedItem != null) {
+            String type = selectedItem;
+            if (selectedItem.equals(SupportedMeasurementType.bp)) {
+                type = type + "," + SupportedMeasurementType.heartRate;
+            }
             if (!isFromHome) {
-                vitalsApiViewModel.getUserVitals(selectedItem, commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress);
+                vitalsApiViewModel.getUserVitals(type, commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress);
             } else {
-                vitalsApiViewModel.getVitals(selectedItem, isShowProgress);
+                vitalsApiViewModel.getVitals(type, isShowProgress);
             }
         }
 
@@ -667,7 +669,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         setTitle(getString(SupportedMeasurementType.getTitle(selectedItem)));
         switch (selectedItem) {
             case SupportedMeasurementType.bp:
-            case SupportedMeasurementType.bpHeart:
                 emptyStateType = EmptyViewConstants.EMPTY_BP;
                 break;
             case SupportedMeasurementType.gulcose:
@@ -712,39 +713,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 addFab.setClickable(false);
 
                 proceedAdd(selectedItem);
-//                if (!selectedItem.equals(SupportedMeasurementType.bpHeart)) {
-//                } else {
-//                    List<String> optionList = Arrays.asList(getString(SupportedMeasurementType.getTitle(SupportedMeasurementType.bp)),
-//                            getString(SupportedMeasurementType.getTitle(SupportedMeasurementType.heartRate)));
-//
-//                    Utils.showOptionSelectionAlert(getActivity(), optionList,
-//                            new PickerListener() {
-//                                @Override
-//                                public void didSelectedItem(int position) {
-//                                    addFab.setClickable(true);
-//                                    if (position == 0) {
-//                                        proceedAdd(SupportedMeasurementType.bp);
-//                                    } else {
-//                                        proceedAdd(SupportedMeasurementType.heartRate);
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void didCancelled() {
-//
-//                                }
-//                            },
-//                            null,
-//                            getString(R.string.Cancel),
-//                            null, new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    addFab.setClickable(true);
-//                                }
-//                            },
-//                            0,
-//                            R.color.red);
-//                }
                 break;
             case R.id.info_iv:
                 showUserDetailView();
@@ -845,7 +813,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             String value = "";
             String unit;
 
-            if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+            if (selectedItem.equals(SupportedMeasurementType.bp)) {
                 String systole = null;
                 String diastole = null;
                 String heartRate = null;
