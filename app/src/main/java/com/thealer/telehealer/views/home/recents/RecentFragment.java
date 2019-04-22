@@ -24,6 +24,9 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomExpandableListView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -33,6 +36,8 @@ import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 14,November,2018
@@ -302,7 +307,12 @@ public class RecentFragment extends BaseFragment {
                 if (getArguments() != null) {
                     if (getArguments().getBoolean(Constants.IS_FROM_HOME)) {
                         isApiRequested = true;
-                        recentsApiViewModel.getMyCorrespondentList(page, isShowProgress);
+                        String doctorGuid = null;
+                        if (UserType.isUserAssistant()) {
+                            doctorGuid = appPreference.getString(PreferenceConstants.ASSOCIATION_GUID_LIST);
+                            doctorGuid = doctorGuid.concat("," + UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
+                        }
+                        recentsApiViewModel.getMyCorrespondentList(page, doctorGuid, isShowProgress);
                     } else {
                         boolean isCalls = false;
 

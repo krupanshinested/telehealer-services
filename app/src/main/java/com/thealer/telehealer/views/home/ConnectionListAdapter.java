@@ -62,8 +62,10 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel.isSuccess()) {
                         Log.e("aswin", "onChanged: " + selected_position);
-                        apiResponseModelList.get(selected_position).setConnection_status(Constants.CONNECTION_STATUS_OPEN);
-                        notifyItemChanged(selected_position);
+                        if (selected_position >= 0) {
+                            apiResponseModelList.get(selected_position).setConnection_status(Constants.CONNECTION_STATUS_OPEN);
+                            notifyItemChanged(selected_position);
+                        }
                     }
                 }
             }
@@ -101,6 +103,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         viewHolder.itemCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selected_position = i;
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
                 onListItemSelectInterface.onListItemSelected(i, bundle);
@@ -128,16 +131,6 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         viewHolder.titleTv.setText(apiResponseModelList.get(i).getDisplayName());
         viewHolder.subTitleTv.setText(apiResponseModelList.get(i).getDisplayInfo());
 
-        viewHolder.itemCv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
-                onListItemSelectInterface.onListItemSelected(i, bundle);
-            }
-        });
-
-//        viewHolder.userListIv.setStatus(apiResponseModelList.get(i).getStatus());
     }
 
     @Override

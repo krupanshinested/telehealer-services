@@ -145,6 +145,18 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                         associationApiViewModel.baseApiResponseModelMutableLiveData.setValue(null);
 
                     }
+
+                    if (UserType.isUserAssistant() && !associationApiResponseModel.getResult().isEmpty()) {
+                        List<String> doctorGuidList = new ArrayList<>();
+                        for (int i = 0; i < associationApiResponseModel.getResult().size(); i++) {
+                            if (!doctorGuidList.contains(associationApiResponseModel.getResult().get(i).getUser_guid())) {
+                                doctorGuidList.add(associationApiResponseModel.getResult().get(i).getUser_guid());
+                            }
+                        }
+                        String doctorGuids = doctorGuidList.toString().replace("[", "").replace("]", "").trim();
+                        appPreference.setString(PreferenceConstants.ASSOCIATION_GUID_LIST, doctorGuids);
+
+                    }
                 }
                 isApiRequested = false;
                 doctorPatientListCrv.setScrollable(true);

@@ -96,7 +96,8 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     foodDetailApiResponseModel = (FoodDetailApiResponseModel) baseApiResponseModel;
-                    nutritionFactsAdapter.setData(foodDetailApiResponseModel.getTotalNutrients());
+                    if (foodDetailApiResponseModel.getTotalNutrients() != null && !foodDetailApiResponseModel.getTotalNutrients().isEmpty())
+                        nutritionFactsAdapter.setData(foodDetailApiResponseModel.getTotalNutrients());
                 }
             }
         });
@@ -240,7 +241,7 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
         setFoodImage(hintsBean.getFood().getImage());
         foodNameTv.setText(hintsBean.getFood().getLabel());
         if (hintsBean.getFood().getFoodContentsLabel() != null)
-            ingrediantsTv.setText(hintsBean.getFood().getFoodContentsLabel().replace(";", ",\n\n"));
+            ingrediantsTv.setText(hintsBean.getFood().getFoodContentsLabel().replace(";", "\n\n"));
         else
             ingrediantsTv.setText(getString(R.string.no_ingredients_present));
     }
@@ -250,7 +251,8 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
 
         if (hintsBean.getMeasures().size() > 0) {
             for (int i = 0; i < hintsBean.getMeasures().size(); i++) {
-                unitList.add(hintsBean.getMeasures().get(i).getLabel());
+                if (hintsBean.getMeasures().get(i).getLabel() != null)
+                    unitList.add(hintsBean.getMeasures().get(i).getLabel());
             }
         }
 
@@ -264,8 +266,6 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                noOfServesTv.setText(String.format((getString(R.string.number_of) + " %s"), unitList.get(position)));
-
                 if (!isManualEntry && !hintsBean.getMeasures().isEmpty()) {
                     measureUri = hintsBean.getMeasures().get(position).getUri();
                     getNutrientsDetail();
@@ -380,7 +380,7 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
     }
 
     private void setFoodImage(String url) {
-        Utils.setImageWithGlide(getActivity(), foodIv, url, getActivity().getDrawable(R.drawable.diet_food_placeholder), false);
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), foodIv, url, getActivity().getDrawable(R.drawable.diet_food_placeholder), false);
     }
 
     @Override

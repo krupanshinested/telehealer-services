@@ -304,12 +304,11 @@ public class EmptyStateUtil {
                 return R.drawable.emptystate_no_xray;
             case EmptyViewConstants.EMPTY_FORMS:
             case EmptyViewConstants.EMPTY_FORMS_WITH_BTN:
+            case EmptyViewConstants.EMPTY_PATIENT_HISTORY:
                 return R.drawable.emptystate_no_forms;
             case EmptyViewConstants.EMPTY_TRANSCRIPTS:
             case EmptyViewConstants.EMPTY_TRANSCRIPTS_WITH_BTN:
                 return R.drawable.emptystate_no_transcribe;
-            case EmptyViewConstants.EMPTY_PATIENT_HISTORY:
-                return R.drawable.emptystate_no_history;
             case EmptyViewConstants.EMPTY_HEART_RATE:
             case EmptyViewConstants.EMPTY_HEART_RATE_WITH_BTN:
             case EmptyViewConstants.EMPTY_STETHOSCOPE:

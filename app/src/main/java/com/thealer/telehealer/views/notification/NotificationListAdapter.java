@@ -307,9 +307,9 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
 
         childViewHolder.titleTv.setText(title);
 
-        if (!UserType.isUserPatient()) {
+        if (UserType.isUserDoctor()) {
             if (patientModel != null) {
-                Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, patientModel.getUser_avatar(), null, true);
+                Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, patientModel.getUser_avatar(), null, true);
                 childViewHolder.nameTv.setText(patientModel.getUserDisplay_name());
                 if (patientModel.getRole().equals(Constants.ROLE_PATIENT)) {
                     childViewHolder.userDetailTv.setText(patientModel.getDob());
@@ -317,28 +317,33 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                     childViewHolder.userDetailTv.setText(patientModel.getAssistantTitle());
                 }
             }
-
-            if (UserType.isUserAssistant() && resultModel.getType().equals(REQUEST_TYPE_CONNECTION) &&
-                    patientModel != null && patientModel.getUser_id() == UserDetailPreferenceManager.getWhoAmIResponse().getUser_id()) {
-                if (doctorModel != null) {
-                    Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, doctorModel.getUser_avatar(), null, true);
-                    childViewHolder.nameTv.setText(doctorModel.getUserDisplay_name());
-                    childViewHolder.userDetailTv.setText(doctorModel.getDisplayInfo());
-                }
-            }
-        } else {
+        } else if (UserType.isUserPatient()) {
             if (doctorModel != null) {
-                Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, doctorModel.getUser_avatar(), null, true);
+                Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, doctorModel.getUser_avatar(), null, true);
                 childViewHolder.nameTv.setText(doctorModel.getUserDisplay_name());
                 childViewHolder.userDetailTv.setText(doctorModel.getDisplayInfo());
             }
+        } else if (UserType.isUserAssistant()) {
 
-            if (MaModel != null) {
-                Utils.setImageWithGlide(activity, childViewHolder.avatarCiv, MaModel.getUser_avatar(), null, true);
-                childViewHolder.nameTv.setText(MaModel.getUserDisplay_name());
-                childViewHolder.userDetailTv.setText(MaModel.getDisplayInfo());
+            if (resultModel.isOwnNotification() && resultModel.getType().equals(REQUEST_TYPE_CONNECTION) && patientModel != null) {
+                if (doctorModel != null) {
+                    Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, doctorModel.getUser_avatar(), null, true);
+                    childViewHolder.nameTv.setText(doctorModel.getUserDisplay_name());
+                    childViewHolder.userDetailTv.setText(doctorModel.getDisplayInfo());
+                }
+            } else {
+                if (patientModel != null) {
+                    Utils.setImageWithGlide(activity.getApplicationContext(), childViewHolder.avatarCiv, patientModel.getUser_avatar(), null, true);
+                    childViewHolder.nameTv.setText(patientModel.getUserDisplay_name());
+                    if (patientModel.getRole().equals(Constants.ROLE_PATIENT)) {
+                        childViewHolder.userDetailTv.setText(patientModel.getDob());
+                    } else {
+                        childViewHolder.userDetailTv.setText(patientModel.getAssistantTitle());
+                    }
+                }
             }
         }
+
 
         if (description != null && !description.isEmpty()) {
             childViewHolder.descriptionTv.setText(description);
@@ -461,8 +466,10 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                         }
                         break;
                 }
-                if (UserType.isUserAssistant()) {
-                    doctorGuid = resultModel.getDoctorModel().getUser_guid();
+                if (!resultModel.isOwnNotification()) {
+                    if (UserType.isUserAssistant()) {
+                        doctorGuid = resultModel.getDoctorModel().getUser_guid();
+                    }
                 }
                 updateRequest(resultModel.getType(), false, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), REJECTED.toLowerCase(), startDate, endDate, doctorGuid, true);
             }
@@ -482,8 +489,10 @@ public class NotificationListAdapter extends BaseExpandableListAdapter {
                         }
                         break;
                 }
-                if (UserType.isUserAssistant()) {
-                    doctorGuid = resultModel.getDoctorModel().getUser_guid();
+                if (!resultModel.isOwnNotification()) {
+                    if (UserType.isUserAssistant()) {
+                        doctorGuid = resultModel.getDoctorModel().getUser_guid();
+                    }
                 }
                 updateRequest(resultModel.getType(), true, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), ACCEPTED.toLowerCase(), startDate, endDate, doctorGuid, true);
             }

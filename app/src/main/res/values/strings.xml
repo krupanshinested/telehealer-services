@@ -857,7 +857,7 @@
     <string name="SYNC">SYNC</string>
     <string name="scale_support_description">Stand on scale with your bare feet</string>
     <string name="enter_manually">Enter Manually</string>
-    <string name="number_of">Number of</string>
+    <string name="number_of_units">Number of units</string>
     <string name="ingrediants">Ingredients</string>
     <string name="no_ingredients_present">No Ingredients present</string>
     <string name="insurance_alert_error">Please select your primary insurance card images before selecting the secondary.</string>
