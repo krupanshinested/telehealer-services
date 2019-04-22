@@ -176,12 +176,6 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
             firstInputUnit = SupportedMeasurementType.getVitalUnit(selectedItem);
 
             switch (selectedItem) {
-                case SupportedMeasurementType.bp:
-                    vital2Til.setVisibility(View.VISIBLE);
-                    inputType = VitalsConstant.INPUT_SYSTOLE;
-                    vital1Til.setHint(VitalsConstant.INPUT_SYSTOLE_HINT);
-                    vital2Til.setHint(VitalsConstant.INPUT_DIASTOLE_HINT);
-                    break;
                 case SupportedMeasurementType.gulcose:
                     inputType = VitalsConstant.INPUT_GLUCOSE;
                     vital1Til.setHint(inputType);
@@ -202,7 +196,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                     inputType = VitalsConstant.INPUT_WEIGHT;
                     vital1Til.setHint(inputType);
                     break;
-                case SupportedMeasurementType.bpHeart:
+                case SupportedMeasurementType.bp:
                     vital2Til.setVisibility(View.VISIBLE);
                     vital3Til.setVisibility(View.VISIBLE);
 
@@ -230,7 +224,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                 public void afterTextChanged(Editable s) {
                     validateFirstVital();
 
-                    if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                    if (selectedItem.equals(SupportedMeasurementType.bp)) {
                         checkAllInput();
                     }
                 }
@@ -251,7 +245,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                 public void afterTextChanged(Editable s) {
                     validateSecondVital();
 
-                    if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                    if (selectedItem.equals(SupportedMeasurementType.bp)) {
                         checkAllInput();
                     }
                 }
@@ -272,7 +266,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                 public void afterTextChanged(Editable s) {
                     validateThirdVital();
 
-                    if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                    if (selectedItem.equals(SupportedMeasurementType.bp)) {
                         checkAllInput();
                     }
                 }
@@ -445,7 +439,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
             case R.id.submit_btn:
                 Utils.hideKeyboard(getActivity());
 
-                if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                if (selectedItem.equals(SupportedMeasurementType.bp)) {
                     if (isFirstValid && isSecondValid) {
                         addVital(SupportedMeasurementType.bp);
                     }

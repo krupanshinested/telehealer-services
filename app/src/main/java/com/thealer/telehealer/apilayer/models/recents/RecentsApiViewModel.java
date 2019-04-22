@@ -40,13 +40,13 @@ public class RecentsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getMyCorrespondentList(int page, boolean isShowProgress) {
+    public void getMyCorrespondentList(int page, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService()
-                            .getMyCorrespondentHistory(true, paginate, page, page_size)
+                            .getMyCorrespondentHistory(true, doctorGuid, paginate, page, page_size)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

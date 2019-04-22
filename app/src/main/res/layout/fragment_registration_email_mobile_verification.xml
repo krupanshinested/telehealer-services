@@ -29,6 +29,7 @@
                 android:gravity="center"
                 android:padding="@dimen/padding_default"
                 android:text="@string/confirm_your_mobile_number_and_email"
+                android:textSize="@dimen/title_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -43,12 +44,14 @@
                 android:padding="@dimen/padding_default"
                 android:text="@string/phone"
                 android:textAllCaps="true"
+                android:textSize="@dimen/text_title_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/title_tv" />
 
             <TextView
                 android:id="@+id/phone_tv"
+                style="@style/text_sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -69,12 +72,14 @@
                 android:padding="@dimen/padding_default"
                 android:text="@string/email"
                 android:textAllCaps="true"
+                android:textSize="@dimen/text_title_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/phone_tv" />
 
             <TextView
                 android:id="@+id/email_tv"
+                style="@style/text_sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
