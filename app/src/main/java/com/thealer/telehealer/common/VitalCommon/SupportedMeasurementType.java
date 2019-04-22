@@ -7,7 +7,6 @@ import com.thealer.telehealer.R;
  */
 
 public class SupportedMeasurementType {
-    public static final String bpHeart = "bp,heartRate";
     public static final String bp = "bp";
     public static final String weight = "weight";
     public static final String temperature = "temperature";
@@ -19,10 +18,8 @@ public class SupportedMeasurementType {
 
     public static int getTitle(String type) {
         switch (type) {
-            case bpHeart:
-                return R.string.blood_pressure_heart_rate;
             case bp:
-                return R.string.blood_pressure;
+                return R.string.blood_pressure_heart_rate;
             case weight:
                 return R.string.weight;
             case temperature:
@@ -43,7 +40,6 @@ public class SupportedMeasurementType {
     public static int getDrawable(String type) {
         switch (type) {
             case bp:
-            case bpHeart:
                 return R.drawable.ic_vitals_bp;
             case weight:
                 return R.drawable.ic_vitals_weight;
@@ -65,7 +61,6 @@ public class SupportedMeasurementType {
     public static String getVitalUnit(String supportedMeasurementType) {
         switch (supportedMeasurementType) {
             case bp:
-            case bpHeart:
                 return "mmHg";
             case gulcose:
                 return "mg/dL";
@@ -82,6 +77,6 @@ public class SupportedMeasurementType {
         }
     }
 
-    public static final String[] items = new String[]{bpHeart, weight, temperature, gulcose, pulseOximeter};
+    public static final String[] items = new String[]{bp, weight, temperature, gulcose, pulseOximeter};
 
 }

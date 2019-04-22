@@ -112,6 +112,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                 if (errorModel != null) {
                     Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
                     intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                    intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                     intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
                     LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
                 }
@@ -164,7 +165,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
             successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
 
-            addConnectionApiViewModel.connectUser(userGuid, String.valueOf(selectedId));
+            addConnectionApiViewModel.connectUser(userGuid, null, String.valueOf(selectedId));
 
         }
     }

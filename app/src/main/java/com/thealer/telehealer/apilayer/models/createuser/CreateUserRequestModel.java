@@ -151,6 +151,7 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
     public boolean isInsurancePresent() {
         return getInsurance_front_path() != null && getInsurance_back_path() != null;
     }
+
     public boolean isSecondaryInsurancePresent() {
         return getInsurance_front_path() != null && getInsurance_back_path() != null;
     }
@@ -216,7 +217,16 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
         }
 
         public void setFirst_name(String first_name) {
-            this.first_name = first_name;
+            this.first_name = getCasedName(first_name);
+        }
+
+        private String getCasedName(String name) {
+            if (name.length() > 0) {
+                char[] chars = name.toLowerCase().toCharArray();
+                chars[0] = Character.toUpperCase(name.charAt(0));
+                name = new String(chars);
+            }
+            return name;
         }
 
         public String getLast_name() {
@@ -224,7 +234,7 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
         }
 
         public void setLast_name(String last_name) {
-            this.last_name = last_name;
+            this.last_name = getCasedName(last_name);
         }
 
         public String getPassword() {

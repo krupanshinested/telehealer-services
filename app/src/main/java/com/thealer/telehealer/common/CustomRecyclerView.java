@@ -45,17 +45,20 @@ public class CustomRecyclerView extends ConstraintLayout {
 
     public CustomRecyclerView(Context context) {
         super(context);
+        this.context = context;
+        initView();
     }
 
     public CustomRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.layout_custom_recycler_view, this, true);
-        initView(view);
+        initView();
     }
 
-    private void initView(View view) {
+    private void initView() {
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.layout_custom_recycler_view, this, true);
+
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerEmptyStateView = (ConstraintLayout) view.findViewById(R.id.recycler_empty_state_view);
         emptyIv = (ImageView) view.findViewById(R.id.empty_iv);
