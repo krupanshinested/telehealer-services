@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,7 +63,6 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -298,8 +296,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                                 }
                             }
 
-                            line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0])));
-                            line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1])));
+                            line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0]), vitalsApiResponseModelArrayList.get(i).getMode()));
+                            line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1]), vitalsApiResponseModelArrayList.get(i).getMode()));
                             break;
                         case SupportedMeasurementType.heartRate:
 
@@ -313,7 +311,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                                     minValue = Float.parseFloat(value);
                                 }
                             }
-                            line3Entry.add(new Entry(i + 1, Float.parseFloat(value)));
+                            line3Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
 
                             break;
                     }
@@ -328,7 +326,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                             minValue = Float.parseFloat(value);
                         }
                     }
-                    line1Entry.add(new Entry(i + 1, Float.parseFloat(value)));
+                    line1Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
                 }
 
                 xaxisLables.put(Float.valueOf(i + 1), vitalsApiResponseModelArrayList.get(i).getCreated_at());
@@ -713,40 +711,40 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
                 addFab.setClickable(false);
 
-                if (!selectedItem.equals(SupportedMeasurementType.bpHeart)) {
-                    proceedAdd(selectedItem);
-                } else {
-                    List<String> optionList = Arrays.asList(getString(SupportedMeasurementType.getTitle(SupportedMeasurementType.bp)),
-                            getString(SupportedMeasurementType.getTitle(SupportedMeasurementType.heartRate)));
-
-                    Utils.showOptionSelectionAlert(getActivity(), optionList,
-                            new PickerListener() {
-                                @Override
-                                public void didSelectedItem(int position) {
-                                    addFab.setClickable(true);
-                                    if (position == 0) {
-                                        proceedAdd(SupportedMeasurementType.bp);
-                                    } else {
-                                        proceedAdd(SupportedMeasurementType.heartRate);
-                                    }
-                                }
-
-                                @Override
-                                public void didCancelled() {
-
-                                }
-                            },
-                            null,
-                            getString(R.string.Cancel),
-                            null, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    addFab.setClickable(true);
-                                }
-                            },
-                            0,
-                            R.color.red);
-                }
+                proceedAdd(selectedItem);
+//                if (!selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+//                } else {
+//                    List<String> optionList = Arrays.asList(getString(SupportedMeasurementType.getTitle(SupportedMeasurementType.bp)),
+//                            getString(SupportedMeasurementType.getTitle(SupportedMeasurementType.heartRate)));
+//
+//                    Utils.showOptionSelectionAlert(getActivity(), optionList,
+//                            new PickerListener() {
+//                                @Override
+//                                public void didSelectedItem(int position) {
+//                                    addFab.setClickable(true);
+//                                    if (position == 0) {
+//                                        proceedAdd(SupportedMeasurementType.bp);
+//                                    } else {
+//                                        proceedAdd(SupportedMeasurementType.heartRate);
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void didCancelled() {
+//
+//                                }
+//                            },
+//                            null,
+//                            getString(R.string.Cancel),
+//                            null, new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    addFab.setClickable(true);
+//                                }
+//                            },
+//                            0,
+//                            R.color.red);
+//                }
                 break;
             case R.id.info_iv:
                 showUserDetailView();
@@ -905,7 +903,15 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 }
             }
             valueTv.setText(value);
-            dateTv.setText(Utils.getDayMonthTime(xaxisLables.get(e.getX())));
+
+            String date = Utils.getDayMonthTime(xaxisLables.get(e.getX()));
+
+            if (!e.getData().toString().equals(VitalsConstant.VITAL_MODE_DEVICE)) {
+                dateTv.setText(date + "\n( " + getString(R.string.manual) + " )");
+            } else {
+                dateTv.setText(date);
+            }
+
 
             super.refreshContent(e, highlight);
         }

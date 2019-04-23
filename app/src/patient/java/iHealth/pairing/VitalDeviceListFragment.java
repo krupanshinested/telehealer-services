@@ -141,14 +141,14 @@ public class VitalDeviceListFragment extends BaseFragment {
                             onActionCompleteInterface.onCompletionResult(RequestID.TRIGGER_MANUAL_ENTRY, true, bundle);
                         } else {
                             ArrayList<String> titles = new ArrayList<>();
-                            for (String type : SupportedMeasurementType.vitalItems) {
+                            for (String type : SupportedMeasurementType.items) {
                                 titles.add(getString(SupportedMeasurementType.getTitle(type)));
                             }
                             ItemPickerDialog pickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_the_type), titles, new PickerListener() {
                                 @Override
                                 public void didSelectedItem(int position) {
                                     Bundle finalBundle = new Bundle();
-                                    finalBundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE, SupportedMeasurementType.vitalItems[position]);
+                                    finalBundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE, SupportedMeasurementType.items[position]);
                                     onActionCompleteInterface.onCompletionResult(RequestID.TRIGGER_MANUAL_ENTRY, true, finalBundle);
                                 }
 
