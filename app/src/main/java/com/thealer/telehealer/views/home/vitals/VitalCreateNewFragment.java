@@ -13,11 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -58,12 +60,19 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
     private AppBarLayout appBarLayout;
 
     private OnCloseActionInterface onCloseActionInterface;
-    private String selectedItem = SupportedMeasurementType.bp, inputType, inputUnit;
+    private String selectedItem = SupportedMeasurementType.bp, inputType, firstInputUnit, thirdInputUnit;
     private boolean isInputValid;
     private VitalsApiViewModel vitalsApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private OnViewChangeInterface onViewChangeInterface;
     private ToolBarInterface toolBarInterface;
+    private AppBarLayout appbarLayout;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private TextInputLayout vital3Til;
+    private EditText vital3Et;
+    private boolean isFirstValid = false, isSecondValid = false, isThirdValid = false;
+    private int apiCount = 0;
 
     @Override
     public void onAttach(Context context) {
@@ -92,16 +101,26 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
-                                            onCloseActionInterface.onClose(false);
+                                            exit();
                                         }
                                     }, null);
                         } else {
-                            onCloseActionInterface.onClose(false);
+                            exit();
                         }
                     }
                 }
             }
         });
+    }
+
+    private void exit() {
+        apiCount -= 1;
+
+        Log.e(TAG, "exit: " + apiCount);
+
+        if (apiCount == 0)
+            onCloseActionInterface.onClose(false);
+
     }
 
     @Nullable
@@ -138,6 +157,12 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
         vital2Et = (EditText) view.findViewById(R.id.vital_2_et);
         submitBtn = (Button) view.findViewById(R.id.submit_btn);
         appBarLayout = view.findViewById(R.id.appbar);
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        vital3Til = (TextInputLayout) view.findViewById(R.id.vital_3_til);
+        vital3Et = (EditText) view.findViewById(R.id.vital_3_et);
+
         submitBtn.setOnClickListener(this);
 
         enableOrDisableSubmit(false);
@@ -148,17 +173,14 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
         if (getArguments() != null) {
             selectedItem = getArguments().getString(ArgumentKeys.SELECTED_VITAL_TYPE);
 
-            inputUnit = SupportedMeasurementType.getVitalUnit(selectedItem);
-
-            vital1Et.setText("0 " + inputUnit);
-            vital2Et.setText("0 " + inputUnit);
+            firstInputUnit = SupportedMeasurementType.getVitalUnit(selectedItem);
 
             switch (selectedItem) {
                 case SupportedMeasurementType.bp:
                     vital2Til.setVisibility(View.VISIBLE);
                     inputType = VitalsConstant.INPUT_SYSTOLE;
-                    vital1Til.setHint(inputType);
-                    vital2Til.setHint(VitalsConstant.INPUT_DIASTOLE);
+                    vital1Til.setHint(VitalsConstant.INPUT_SYSTOLE_HINT);
+                    vital2Til.setHint(VitalsConstant.INPUT_DIASTOLE_HINT);
                     break;
                 case SupportedMeasurementType.gulcose:
                     inputType = VitalsConstant.INPUT_GLUCOSE;
@@ -180,6 +202,17 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                     inputType = VitalsConstant.INPUT_WEIGHT;
                     vital1Til.setHint(inputType);
                     break;
+                case SupportedMeasurementType.bpHeart:
+                    vital2Til.setVisibility(View.VISIBLE);
+                    vital3Til.setVisibility(View.VISIBLE);
+
+                    inputType = VitalsConstant.INPUT_SYSTOLE;
+                    vital1Til.setHint(VitalsConstant.INPUT_SYSTOLE_HINT);
+                    vital2Til.setHint(VitalsConstant.INPUT_DIASTOLE_HINT);
+                    vital3Til.setHint(VitalsConstant.INPUT_PULSE);
+
+                    thirdInputUnit = SupportedMeasurementType.getVitalUnit(SupportedMeasurementType.heartRate);
+                    break;
             }
 
             vital1Et.addTextChangedListener(new TextWatcher() {
@@ -195,7 +228,11 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    validateFirstVital(s.toString().split(" ")[0]);
+                    validateFirstVital();
+
+                    if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                        checkAllInput();
+                    }
                 }
             });
 
@@ -212,7 +249,32 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    validateSecondVital(s.toString().split(" ")[0]);
+                    validateSecondVital();
+
+                    if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                        checkAllInput();
+                    }
+                }
+            });
+
+            vital3Et.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    vital3Til.setErrorEnabled(false);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    validateThirdVital();
+
+                    if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                        checkAllInput();
+                    }
                 }
             });
 
@@ -220,29 +282,48 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
 
-                    updateEditText(vital1Et, hasFocus);
+                    updateEditText(vital1Et, hasFocus, firstInputUnit);
                 }
             });
 
             vital2Et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    updateEditText(vital2Et, hasFocus);
+                    updateEditText(vital2Et, hasFocus, firstInputUnit);
+                }
+            });
+
+            vital3Et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    updateEditText(vital3Et, hasFocus, thirdInputUnit);
                 }
             });
 
         }
+
     }
 
+    private void checkAllInput() {
+        if ((isFirstValid && isSecondValid && isThirdValid) ||
+                (isFirstValid && isSecondValid && !isThirdValid) ||
+                (!isFirstValid && !isSecondValid && isThirdValid)) {
+            enableOrDisableSubmit(true);
+        } else {
+            enableOrDisableSubmit(false);
+        }
+    }
 
-    private void updateEditText(EditText editText, boolean hasFocus) {
+    private void updateEditText(EditText editText, boolean hasFocus, String unit) {
 
         if (hasFocus) {
-            String value = editText.getText().toString().replace(inputUnit, "").trim();
-            if (value.equals("0")) {
-                editText.setText(null);
-            } else {
-                editText.setText(value);
+            String value = editText.getText().toString().replace(unit, "").trim();
+            if (!value.isEmpty()) {
+                if (value.equals("0")) {
+                    editText.setText("");
+                } else {
+                    editText.setText(value);
+                }
             }
 
             switch (selectedItem) {
@@ -255,68 +336,91 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                     break;
             }
 
+            editText.requestFocus();
+            editText.setShowSoftInputOnFocus(true);
+
         } else {
             editText.setInputType(InputType.TYPE_NULL);
 
-            if (editText.getText().toString().isEmpty()) {
-                editText.setText("0 " + inputUnit);
-            } else {
+            if (!editText.getText().toString().isEmpty()) {
                 String[] number = editText.getText().toString().split(" ");
-                if (number[0].isEmpty()) {
-                    number[0] = "0";
-                }
-                editText.setText(number[0] + " " + inputUnit);
+                editText.setText(number[0] + " " + unit);
             }
         }
     }
 
-    private void validateFirstVital(String data) {
+    private void validateFirstVital() {
+        String data = vital1Et.getText().toString().split(" ")[0];
 
-        if (!data.isEmpty() && !data.equals("0")) {
+        isFirstValid = false;
+        if (!data.isEmpty()) {
             isInputValid = false;
             if (!isValidInput(data, inputType)) {
                 vital1Til.setError(VitalsConstant.getInputError(inputType));
                 enableOrDisableSubmit(false);
             } else {
                 isInputValid = true;
+                isFirstValid = true;
                 enableOrDisableSubmit(true);
             }
         } else {
             isInputValid = false;
             enableOrDisableSubmit(false);
         }
-
-        if (vital2Til.getVisibility() == View.VISIBLE && !data.split(" ")[0].equals("0")) {
-            validateSecondVital(vital2Et.getText().toString().split(" ")[0]);
-        }
     }
 
-    private void validateSecondVital(String data) {
+    private void validateSecondVital() {
+        String data = vital2Et.getText().toString().split(" ")[0];
+        isSecondValid = false;
 
-        if (data.isEmpty()) {
-            enableOrDisableSubmit(false);
-        } else {
-            if (data.equals("0")) {
+        if (!data.isEmpty()) {
+            if (!isValidInput(data, VitalsConstant.INPUT_DIASTOLE)) {
+                vital2Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_DIASTOLE));
                 enableOrDisableSubmit(false);
-                if (vital2Et.isFocused()) {
-                    vital2Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_DIASTOLE));
-                }
             } else {
-                if (!isValidInput(data, VitalsConstant.INPUT_DIASTOLE)) {
-                    vital2Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_DIASTOLE));
-                    enableOrDisableSubmit(false);
-                } else {
-                    enableOrDisableSubmit(true);
-                }
+                isSecondValid = true;
+                enableOrDisableSubmit(true);
             }
+
+        } else {
+            enableOrDisableSubmit(false);
         }
+
 
         if (!isInputValid) {
             enableOrDisableSubmit(false);
         }
     }
 
+    private void validateThirdVital() {
+        String data = vital3Et.getText().toString().split(" ")[0];
+        isThirdValid = false;
+
+        if (data.isEmpty()) {
+            enableOrDisableSubmit(false);
+        } else {
+            if (data.equals("0")) {
+                enableOrDisableSubmit(false);
+                if (vital3Et.isFocused()) {
+                    vital3Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_PULSE));
+                }
+            } else {
+                if (!isValidInput(data, VitalsConstant.INPUT_PULSE)) {
+                    vital3Til.setError(VitalsConstant.getInputError(VitalsConstant.INPUT_PULSE));
+                    enableOrDisableSubmit(false);
+                } else {
+                    isThirdValid = true;
+                    enableOrDisableSubmit(true);
+                }
+            }
+        }
+    }
+
     private boolean isValidInput(String data, String inputType) {
+        if (data.isEmpty()) {
+            return false;
+        }
+
         if (data.length() == 1 && data.charAt(0) == '.') {
             return false;
         } else {
@@ -340,58 +444,87 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                 break;
             case R.id.submit_btn:
                 Utils.hideKeyboard(getActivity());
-                CreateVitalApiRequestModel vitalApiRequestModel = new CreateVitalApiRequestModel();
 
-                vitalApiRequestModel.setType(selectedItem);
-
-                if (getArguments() != null && getArguments().getSerializable(Constants.USER_DETAIL) != null) {
-
-                    CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
-                    if (commonUserApiResponseModel != null) {
-                        vitalApiRequestModel.setUser_guid(commonUserApiResponseModel.getUser_guid());
+                if (selectedItem.equals(SupportedMeasurementType.bpHeart)) {
+                    if (isFirstValid && isSecondValid) {
+                        addVital(SupportedMeasurementType.bp);
                     }
-                }
-
-                if (UserType.isUserDoctor()) {
-                    vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DOCTOR);
-                    vitalApiRequestModel.setDisplay_name(UserDetailPreferenceManager.getUserDisplayName());
-                } else if (UserType.isUserPatient()) {
-                    vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_PATIENT);
-                    vitalApiRequestModel.setDisplay_name(UserDetailPreferenceManager.getUserDisplayName());
-                } else {
-                    vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DEVICE);
-                    vitalApiRequestModel.setDisplay_name(VitalsConstant.VITAL_MODE_DEVICE);
-                }
-
-
-                String value;
-                double vital1Value = Double.parseDouble(vital1Et.getText().toString().split(" ")[0]);
-
-                if (selectedItem.equals(SupportedMeasurementType.bp)) {
-                    double vital2Value = Double.parseDouble(vital2Et.getText().toString().split(" ")[0]);
-
-                    value = (int) vital1Value + "/" + (int) vital2Value;
-                } else {
-                    switch (selectedItem) {
-                        case SupportedMeasurementType.temperature:
-                        case SupportedMeasurementType.weight:
-                            value = String.format("%.1f", vital1Value);
-                            break;
-                        default:
-                            value = String.valueOf((int) vital1Value);
+                    if (isThirdValid) {
+                        addVital(SupportedMeasurementType.heartRate);
                     }
+
+                } else {
+                    addVital(selectedItem);
                 }
 
-                vitalApiRequestModel.setValue(value);
 
-                String doctorGuid = null;
-                CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
-                if (doctorModel != null){
-                    doctorGuid = doctorModel.getUser_guid();
-                }
-
-                vitalsApiViewModel.createVital(vitalApiRequestModel, doctorGuid);
                 break;
         }
+    }
+
+    private void addVital(String type) {
+        apiCount += 1;
+
+        String doctorGuid = null;
+        CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+        if (doctorModel != null) {
+            doctorGuid = doctorModel.getUser_guid();
+        }
+
+        vitalsApiViewModel.createVital(getRequestModel(type), doctorGuid);
+    }
+
+    private CreateVitalApiRequestModel getRequestModel(String type) {
+
+        CreateVitalApiRequestModel vitalApiRequestModel = new CreateVitalApiRequestModel();
+
+        vitalApiRequestModel.setType(type);
+
+        if (getArguments() != null && getArguments().getSerializable(Constants.USER_DETAIL) != null) {
+
+            CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            if (commonUserApiResponseModel != null) {
+                vitalApiRequestModel.setUser_guid(commonUserApiResponseModel.getUser_guid());
+            }
+        }
+
+        if (UserType.isUserDoctor()) {
+            vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DOCTOR);
+            vitalApiRequestModel.setDisplay_name(UserDetailPreferenceManager.getUserDisplayName());
+        } else if (UserType.isUserPatient()) {
+            vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_PATIENT);
+            vitalApiRequestModel.setDisplay_name(UserDetailPreferenceManager.getUserDisplayName());
+        } else {
+            vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DEVICE);
+            vitalApiRequestModel.setDisplay_name(VitalsConstant.VITAL_MODE_DEVICE);
+        }
+
+
+        String value;
+        double vital1Value = Double.parseDouble(vital1Et.getText().toString().split(" ")[0]);
+
+        if (type.equals(SupportedMeasurementType.bp)) {
+            double vital2Value = Double.parseDouble(vital2Et.getText().toString().split(" ")[0]);
+
+            value = (int) vital1Value + "/" + (int) vital2Value;
+
+        } else if (type.equals(SupportedMeasurementType.heartRate)) {
+
+            value = String.valueOf((int) Double.parseDouble(vital3Et.getText().toString().split(" ")[0]));
+
+        } else {
+            switch (type) {
+                case SupportedMeasurementType.temperature:
+                case SupportedMeasurementType.weight:
+                    value = String.format("%.1f", vital1Value);
+                    break;
+                default:
+                    value = String.valueOf((int) vital1Value);
+            }
+        }
+
+        vitalApiRequestModel.setValue(value);
+
+        return vitalApiRequestModel;
     }
 }
