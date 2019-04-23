@@ -83,6 +83,5 @@ public class SupportedMeasurementType {
     }
 
     public static final String[] items = new String[]{bpHeart, weight, temperature, gulcose, pulseOximeter};
-    public static final String[] vitalItems = new String[]{bp, weight, temperature, gulcose, pulseOximeter, heartRate};
 
 }
