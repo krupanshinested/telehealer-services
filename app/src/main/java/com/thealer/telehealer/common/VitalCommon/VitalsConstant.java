@@ -10,6 +10,8 @@ public class VitalsConstant {
 
     public static final String INPUT_SYSTOLE = "SYSTOLE";
     public static final String INPUT_DIASTOLE = "DIASTOLE";
+    public static final String INPUT_SYSTOLE_HINT = "SYSTOLE (Top number)";
+    public static final String INPUT_DIASTOLE_HINT = "DIASTOLE (Bottom number)";
     public static final String INPUT_GLUCOSE = "BLOOD GLUCOSE";
     public static final String INPUT_PULSE = "PULSE";
     public static final String INPUT_SPO2 = "SPO2";
