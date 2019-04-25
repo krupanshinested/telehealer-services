@@ -90,6 +90,7 @@ public class BPControl {
             case BpProfile.ACTION_HISTORICAL_DATA_BP:
                 try {
                     JSONObject info = new JSONObject(message);
+                    Log.e("BPControl","data "+info.toString());
                     if (info.has(BpProfile.HISTORICAL_DATA_BP)) {
                         JSONArray array = info.getJSONArray(BpProfile.HISTORICAL_DATA_BP);
 
@@ -116,10 +117,11 @@ public class BPControl {
                         bpMeasureInterface.didFinishBpMeasure(tracks);
 
                     } else {
+                        Log.e("BPControl","error info does not data");
                         bpMeasureInterface.didFinishBpMeasure(new ArrayList<BPTrack>());
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e("BPControl","error "+e.getLocalizedMessage());
                     bpMeasureInterface.didFinishBpMeasure(new ArrayList<BPTrack>());
                 }
 
