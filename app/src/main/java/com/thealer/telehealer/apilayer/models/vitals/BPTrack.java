@@ -3,17 +3,18 @@ package com.thealer.telehealer.apilayer.models.vitals;
 import com.thealer.telehealer.common.BaseAdapterObjectModel;
 import com.thealer.telehealer.common.Utils;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 
-public class BPTrack extends BaseAdapterObjectModel {
+public class BPTrack extends BaseAdapterObjectModel implements Serializable {
     double dia = 0.0;
     double sys = 0.0;
     double heartRate = 0.0;
     Date date = new Date();
     String dataID = "";
 
-    public  BPTrack(HashMap<String,String> map) {
+    public BPTrack(HashMap<String,String> map) {
         dia = Double.parseDouble(map.get("dia"));
         sys = Double.parseDouble(map.get("sys"));
         heartRate = Double.parseDouble(map.get("heartRate"));
