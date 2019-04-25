@@ -97,6 +97,7 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
     private Boolean isOpeningDirectlyFromPairing = false;
 
     private ArrayList<BPTrack> selectedList = new ArrayList<>();
+    private ArrayList<BPTrack> tracks = new ArrayList<>();
 
     @Nullable
     private TrackBPAdapter adapter;
@@ -214,7 +215,7 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
         message_tv = baseView.findViewById(R.id.message_tv);
         main_container = baseView.findViewById(R.id.main_container);
         title_tv = baseView.findViewById(R.id.title_tv);
-        recyclerView = baseView.findViewById(R.id.recyclerView);
+        recyclerView = baseView.findViewById(R.id.rv);
 
         sync_bt = baseView.findViewById(R.id.sync_bt);
         sync_bt.setOnClickListener(this);
@@ -279,17 +280,17 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
                     startMeasure();
                 } else {
 
-                    selectedList.clear();
-
-                    if (adapter != null) {
-                        adapter.notifyDataSetChanged();
-                    }
-
                     if (vitalManagerInstance != null) {
                         for (BPTrack track : selectedList) {
                             vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.bp, track.getSys()+"/"+track.getDia(), vitalsApiViewModel);
                             vitalManagerInstance.getInstance().saveVitals(SupportedMeasurementType.heartRate, track.getHeartRate()+"", vitalsApiViewModel);
                         }
+                    }
+
+                    selectedList.clear();
+
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
                     }
 
                     if (isPresentedInsideCallActivity()) {
@@ -343,6 +344,8 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
     @Override
     public void didFinishBpMeasure(Object object) {
 
+        Log.d("BPTrackMeasureFragment","didFinishBpMeasure");
+
         if (callVitalPagerInterFace != null)
             callVitalPagerInterFace.updateState(Constants.idle);
 
@@ -350,17 +353,25 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
 
         ArrayList<BPTrack> tracks = (ArrayList<BPTrack>)object;
         if (tracks != null) {
+            ArrayList<BPTrack> modifedTracks = new ArrayList<>();
             if (tracks.size() > 0) {
-                isDataFetched = true;
+                this.tracks = tracks;
+                modifedTracks = tracks;
             } else {
-                isDataFetched = false;
+                modifedTracks = this.tracks;
             }
 
-            TrackBPAdapter adapter = new TrackBPAdapter(getActivity(),tracks,selectedList);
-            this.adapter = adapter;
-            recyclerView.getRecyclerView().setLayoutManager(new LinearLayoutManager(getActivity()));
+            isDataFetched = modifedTracks.size() > 0;
+
+            this.adapter = new TrackBPAdapter(getActivity(),modifedTracks,selectedList);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             recyclerView.getRecyclerView().setAdapter(adapter);
             recyclerView.setEmptyState(EmptyViewConstants.EMPTY_BP_TRACK_VALUE);
+            recyclerView.updateView();
+
+            Log.d("BPTrackMeasureFragment","tracks not null");
+        } else {
+            Log.d("BPTrackMeasureFragment","tracks null");
         }
 
         updateSyncButtonTitle();
@@ -398,16 +409,10 @@ public class BPTrackMeasureFragment extends BaseFragment implements VitalPairInt
     public void didDisConnected(String type, String serailNumber) {
         if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
             if (!isPresentedInsideCallActivity()) {
-                Utils.showAlertDialog(getActivity(), getString(R.string.error), message_tv.getText().toString(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                Utils.showAlertDialog(getActivity(), getString(R.string.error), getResources().getString(R.string.device_disconnected_message), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (getActivity() != null) {
-                            if (isOpeningDirectlyFromPairing) {
-                                getActivity().finish();
-                            } else {
-                                getActivity().onBackPressed();
-                            }
-                        }
+                        dialog.dismiss();
                     }
                 }, null);
             }

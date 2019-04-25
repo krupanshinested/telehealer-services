@@ -404,7 +404,7 @@ public class ThermoMeasureFragment extends BaseFragment implements VitalPairInte
 
             if (!isPresentedInsideCallActivity()) {
                 if (currentState == MeasureState.failed) {
-                    Utils.showAlertDialog(getActivity(), getString(R.string.error), message_tv.getText().toString(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    Utils.showAlertDialog(getActivity(), getString(R.string.error),getResources().getString(R.string.device_disconnected_message), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (getActivity() != null) {
