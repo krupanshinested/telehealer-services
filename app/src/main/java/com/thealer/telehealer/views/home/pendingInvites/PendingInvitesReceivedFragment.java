@@ -52,6 +52,7 @@ public class PendingInvitesReceivedFragment extends BaseFragment {
                                 } else {
                                     totalCount = invitesResponseModel.getCount();
                                     pendingInvitesCrv.setTotalCount(totalCount);
+                                    pendingInvitesCrv.showOrhideEmptyState(false);
                                     pendingInvitesListAdapter.setData(invitesResponseModel.getResult(), page);
                                 }
                                 isApiRequested = false;

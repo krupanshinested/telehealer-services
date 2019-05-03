@@ -1,12 +1,9 @@
 package com.thealer.telehealer.common;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.google.gson.reflect.TypeToken;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
-import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -22,7 +19,7 @@ public class UserDetailPreferenceManager {
     public static String getUserDisplayName() {
         if (UserType.isUserDoctor()) {
             return "Dr. " + getFirst_name() + " " + getLast_name() + " " + getTitle();
-        } else  {
+        } else {
             return getFirst_name() + " " + getLast_name();
         }
     }
@@ -48,19 +45,21 @@ public class UserDetailPreferenceManager {
     }
 
     public static void setUser_activated(String user_activated) {
-        switch (user_activated) {
-            case Constants.ACTIVATION_PENDING:
-                appPreference.setBoolean(PreferenceConstants.IS_USER_VALIDATED, false);
-                break;
-            case Constants.ONBOARDING_PENDING:
-                appPreference.setBoolean(PreferenceConstants.IS_USER_ACTIVATED, false);
-                break;
-            case Constants.OFFLINE:
-            case Constants.AVAILABLE:
-            case Constants.ACTIVATED:
-                appPreference.setBoolean(PreferenceConstants.IS_USER_ACTIVATED, true);
-                appPreference.setBoolean(PreferenceConstants.IS_USER_VALIDATED, true);
-                break;
+        if (user_activated != null) {
+            switch (user_activated) {
+                case Constants.ACTIVATION_PENDING:
+                    appPreference.setBoolean(PreferenceConstants.IS_USER_VALIDATED, false);
+                    break;
+                case Constants.ONBOARDING_PENDING:
+                    appPreference.setBoolean(PreferenceConstants.IS_USER_ACTIVATED, false);
+                    break;
+                case Constants.OFFLINE:
+                case Constants.AVAILABLE:
+                case Constants.ACTIVATED:
+                    appPreference.setBoolean(PreferenceConstants.IS_USER_ACTIVATED, true);
+                    appPreference.setBoolean(PreferenceConstants.IS_USER_VALIDATED, true);
+                    break;
+            }
         }
         appPreference.setString(PreferenceConstants.USER_ACTIVATED, user_activated);
     }
@@ -181,8 +180,9 @@ public class UserDetailPreferenceManager {
         String licenscesList = appPreference.getString(PreferenceConstants.USER_LICENSES);
         Gson gson = new Gson();
 
-        Type type = new TypeToken<List<LicensesBean >>(){}.getType();
-        List <LicensesBean > license = gson.fromJson(licenscesList,type);
+        Type type = new TypeToken<List<LicensesBean>>() {
+        }.getType();
+        List<LicensesBean> license = gson.fromJson(licenscesList, type);
 
         if (license != null) {
             return license;
@@ -197,7 +197,7 @@ public class UserDetailPreferenceManager {
         appPreference.setString(PreferenceConstants.USER_LICENSES, license);
     }
 
-    public static WhoAmIApiResponseModel getWhoAmIResponse(){
+    public static WhoAmIApiResponseModel getWhoAmIResponse() {
         return new Gson().fromJson(appPreference.getString(PreferenceConstants.WHO_AM_I_RESPONSE), WhoAmIApiResponseModel.class);
     }
 
@@ -230,6 +230,12 @@ public class UserDetailPreferenceManager {
                 setLicenses(whoAmIApiResponseModel.getUser_detail().getData().getLicenses());
             }
         }
+    }
 
+    public static void invalidateUser() {
+        appPreference.setString(PreferenceConstants.WHO_AM_I_RESPONSE, null);
+        appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, null);
+        appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, null);
+        appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
     }
 }

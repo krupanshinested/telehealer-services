@@ -233,12 +233,11 @@ public interface ApiInterface {
     @GET("api/referrals/labs")
     Observable<OrdersLabApiResponseModel> getLabOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/icd-codes")
+    @GET("icd-codes")
     Observable<IcdCodeApiResponseModel> getFilteredIcdCodes(@Query(FILTER_CODE_IN) String data);
 
-    @GET("api/icd-codes")
+    @GET("icd-codes")
     Observable<IcdCodeApiResponseModel> getAllIcdCodes(@Query(START_KEY) int key, @Query(SEARCH) String search);
-
 
     @GET("api/referrals/prescriptions")
     Observable<OrdersPrescriptionApiResponseModel> getUserPrescriptionsOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
@@ -316,7 +315,7 @@ public interface ApiInterface {
     @PUT("api/users/files/{id}")
     Observable<BaseApiResponseModel> updateDocument(@Path(ID) int id, @Body() Map<String, String> param);
 
-    @GET("api/pharmacies")
+    @GET("pharmacies")
     Observable<GetPharmaciesApiResponseModel> getPharmacies(@Query(SEARCH) String query, @Query("city") String city, @Query(START_KEY) int key);
 
     @POST("api/faxes")

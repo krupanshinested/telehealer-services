@@ -58,19 +58,20 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
     private Button submitBtn;
     private Toolbar toolbar;
     private AppBarLayout appBarLayout;
-
-    private OnCloseActionInterface onCloseActionInterface;
-    private String selectedItem = SupportedMeasurementType.bp, inputType, firstInputUnit, thirdInputUnit;
-    private boolean isInputValid;
-    private VitalsApiViewModel vitalsApiViewModel;
-    private AttachObserverInterface attachObserverInterface;
-    private OnViewChangeInterface onViewChangeInterface;
-    private ToolBarInterface toolBarInterface;
     private AppBarLayout appbarLayout;
     private ImageView backIv;
     private TextView toolbarTitle;
     private TextInputLayout vital3Til;
     private EditText vital3Et;
+
+    private OnCloseActionInterface onCloseActionInterface;
+    private VitalsApiViewModel vitalsApiViewModel;
+    private AttachObserverInterface attachObserverInterface;
+    private OnViewChangeInterface onViewChangeInterface;
+    private ToolBarInterface toolBarInterface;
+
+    private String selectedItem = SupportedMeasurementType.bp, inputType, firstInputUnit, thirdInputUnit, hint1 = "";
+    private boolean isInputValid;
     private boolean isFirstValid = false, isSecondValid = false, isThirdValid = false;
     private int apiCount = 0;
 
@@ -115,12 +116,8 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
 
     private void exit() {
         apiCount -= 1;
-
-        Log.e(TAG, "exit: " + apiCount);
-
         if (apiCount == 0)
             onCloseActionInterface.onClose(false);
-
     }
 
     @Nullable
@@ -178,36 +175,37 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
             switch (selectedItem) {
                 case SupportedMeasurementType.gulcose:
                     inputType = VitalsConstant.INPUT_GLUCOSE;
-                    vital1Til.setHint(inputType);
+                    hint1 = VitalsConstant.INPUT_GLUCOSE;
                     break;
                 case SupportedMeasurementType.heartRate:
                     inputType = VitalsConstant.INPUT_PULSE;
-                    vital1Til.setHint(inputType);
+                    hint1 = VitalsConstant.INPUT_PULSE;
                     break;
                 case SupportedMeasurementType.pulseOximeter:
                     inputType = VitalsConstant.INPUT_SPO2;
-                    vital1Til.setHint(inputType);
+                    hint1 = VitalsConstant.INPUT_SPO2;
                     break;
                 case SupportedMeasurementType.temperature:
                     inputType = VitalsConstant.INPUT_TEMPERATURE;
-                    vital1Til.setHint(inputType);
+                    hint1 = VitalsConstant.INPUT_TEMPERATURE;
                     break;
                 case SupportedMeasurementType.weight:
                     inputType = VitalsConstant.INPUT_WEIGHT;
-                    vital1Til.setHint(inputType);
+                    hint1 = VitalsConstant.INPUT_WEIGHT;
                     break;
                 case SupportedMeasurementType.bp:
                     vital2Til.setVisibility(View.VISIBLE);
                     vital3Til.setVisibility(View.VISIBLE);
 
                     inputType = VitalsConstant.INPUT_SYSTOLE;
-                    vital1Til.setHint(VitalsConstant.INPUT_SYSTOLE_HINT);
+                    hint1 = VitalsConstant.INPUT_SYSTOLE_HINT;
                     vital2Til.setHint(VitalsConstant.INPUT_DIASTOLE_HINT);
                     vital3Til.setHint(VitalsConstant.INPUT_PULSE);
 
                     thirdInputUnit = SupportedMeasurementType.getVitalUnit(SupportedMeasurementType.heartRate);
                     break;
             }
+            vital1Til.setHint(hint1);
 
             vital1Et.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -275,27 +273,67 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
             vital1Et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus && vital1Et.getText().toString().isEmpty()) {
+                        vital1Til.setHint(hint1);
+                    } else {
+                        vital1Til.setHint(hint1.toUpperCase());
+                    }
+                    if (!vital1Et.getText().toString().isEmpty())
+                        updateEditText(vital1Et, hasFocus, firstInputUnit);
+                    else {
+                        setInputType(vital1Et);
+                    }
 
-                    updateEditText(vital1Et, hasFocus, firstInputUnit);
                 }
             });
 
             vital2Et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    updateEditText(vital2Et, hasFocus, firstInputUnit);
+
+                    if (!hasFocus && vital2Et.getText().toString().isEmpty()) {
+                        vital2Til.setHint(VitalsConstant.INPUT_DIASTOLE_HINT);
+                    } else {
+                        vital2Til.setHint(VitalsConstant.INPUT_DIASTOLE_HINT.toUpperCase());
+                    }
+                    if (!vital2Et.getText().toString().isEmpty())
+                        updateEditText(vital2Et, hasFocus, firstInputUnit);
+
                 }
             });
 
             vital3Et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    updateEditText(vital3Et, hasFocus, thirdInputUnit);
+                    if (!hasFocus && vital3Et.getText().toString().isEmpty()) {
+                        vital3Til.setHint(VitalsConstant.INPUT_PULSE);
+                    } else {
+                        vital3Til.setHint(VitalsConstant.INPUT_PULSE.toUpperCase());
+                    }
+
+                    if (!vital3Et.getText().toString().isEmpty())
+                        updateEditText(vital3Et, hasFocus, thirdInputUnit);
+
                 }
             });
 
         }
 
+    }
+
+    private void setInputType(EditText editText) {
+        switch (selectedItem) {
+            case SupportedMeasurementType.weight:
+            case SupportedMeasurementType.temperature:
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                break;
+            default:
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                break;
+        }
+
+        editText.requestFocus();
+        showOrHideSoftInputWindow(true);
     }
 
     private void checkAllInput() {
@@ -320,18 +358,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
                 }
             }
 
-            switch (selectedItem) {
-                case SupportedMeasurementType.weight:
-                case SupportedMeasurementType.temperature:
-                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    break;
-                default:
-                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    break;
-            }
-
-            editText.requestFocus();
-            editText.setShowSoftInputOnFocus(true);
+            setInputType(editText);
 
         } else {
             editText.setInputType(InputType.TYPE_NULL);
@@ -434,6 +461,7 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
+                Utils.hideKeyboard(getActivity());
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.submit_btn:
@@ -495,16 +523,17 @@ public class VitalCreateNewFragment extends BaseFragment implements View.OnClick
 
 
         String value;
-        double vital1Value = Double.parseDouble(vital1Et.getText().toString().split(" ")[0]);
+
+        double vital1Value = !vital1Et.getText().toString().isEmpty() ? Double.parseDouble(vital1Et.getText().toString().split(" ")[0]) : 0;
 
         if (type.equals(SupportedMeasurementType.bp)) {
-            double vital2Value = Double.parseDouble(vital2Et.getText().toString().split(" ")[0]);
+            double vital2Value = !vital2Et.getText().toString().isEmpty() ? Double.parseDouble(vital2Et.getText().toString().split(" ")[0]) : 0;
 
             value = (int) vital1Value + "/" + (int) vital2Value;
 
         } else if (type.equals(SupportedMeasurementType.heartRate)) {
 
-            value = String.valueOf((int) Double.parseDouble(vital3Et.getText().toString().split(" ")[0]));
+            value = String.valueOf(!vital3Et.getText().toString().isEmpty() ? (int) Double.parseDouble(vital3Et.getText().toString().split(" ")[0]) : " ");
 
         } else {
             switch (type) {

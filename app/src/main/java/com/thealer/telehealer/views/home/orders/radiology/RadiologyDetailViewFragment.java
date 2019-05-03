@@ -220,7 +220,7 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
                         patientOcv.setSub_title_visible(true);
                     }
 
-                    commentsOcv.setTitleTv(getRadiologyResponseModel.getDetail().getComment());
+                    commentsOcv.setTitleTv(getRadiologyResponseModel.getDetail().getComment().trim());
                     dateOcv.setTitleTv(getRadiologyResponseModel.getDetail().getRequested_date());
 
                     if (getRadiologyResponseModel.getDetail().getCopy_to() != null) {

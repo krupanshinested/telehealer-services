@@ -36,6 +36,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -279,6 +280,10 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         return RetrofitManager.getInstance(getApplication()).getAuthApiService();
     }
 
+    public ApiInterface getServiceApi() {
+        return RetrofitManager.getInstance(getApplication()).getServiceApi();
+    }
+
     public boolean isRequestInProgress() {
         return requestInProgress;
     }
@@ -373,7 +378,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     public void handleError(Throwable e) {
         Log.e(TAG, "onError: " + e.getMessage());
-        if (e instanceof NoConnectivityException) {
+        if (e instanceof NoConnectivityException || e instanceof SocketTimeoutException) {
             isLoadingLiveData.setValue(false);
             errorModelLiveData.setValue(new ErrorModel(NETWORK_ERROR_CODE, e.getMessage(), e.getMessage()));
         } else if (e instanceof HttpException) {
@@ -444,9 +449,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     }
 
     private void goToSigninActivity() {
-        String email = UserDetailPreferenceManager.getEmail();
-        appPreference.deletePreference();
-        UserDetailPreferenceManager.setEmail(email);
+        UserDetailPreferenceManager.invalidateUser();
+
         PubnubUtil.shared.unsubscribe();
 
         EventRecorder.updateUserId(null);

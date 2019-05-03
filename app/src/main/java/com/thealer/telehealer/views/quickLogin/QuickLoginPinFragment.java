@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.quickLogin;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -92,6 +94,7 @@ public class QuickLoginPinFragment extends BaseFragment {
         closeIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                showOrhideKeyboard(false);
                 if (isNewUser) {
                     appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_NONE);
                     sendQuickLoginBroadCast(ArgumentKeys.QUICK_LOGIN_CREATED);
@@ -175,6 +178,7 @@ public class QuickLoginPinFragment extends BaseFragment {
         } else {
             showValidatePin();
         }
+
     }
 
     private void validatePin() {
@@ -200,8 +204,7 @@ public class QuickLoginPinFragment extends BaseFragment {
     }
 
     private void sendQuickLoginBroadCast(int Authorized) {
-        pinEt.clearFocus();
-        Utils.hideKeyboard(getActivity());
+        showOrhideKeyboard(false);
 
         Intent intent = new Intent(getString(R.string.quick_login_broadcast_receiver));
         Bundle bundle = new Bundle();
@@ -257,18 +260,36 @@ public class QuickLoginPinFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        pinEt.setShowSoftInputOnFocus(true);
+        showOrhideKeyboard(true);
+        pinEt.requestFocus();
+    }
+
+    private void showOrhideKeyboard(boolean show) {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (show) {
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        } else {
+            imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Utils.hideKeyboard(getActivity());
+        pinEt.clearFocus();
+//        Utils.hideKeyboard(getActivity());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Utils.hideKeyboard(getActivity());
+//        Utils.hideKeyboard(getActivity());
+        showOrhideKeyboard(false);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        showOrhideKeyboard(false);
     }
 }
