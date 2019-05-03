@@ -320,7 +320,7 @@ public class OrdersApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getPharmacies(query, location, nextPage)
+                    getServiceApi().getPharmacies(query, location, nextPage)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

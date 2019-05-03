@@ -79,6 +79,8 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
                     viewHolder.commentsEt.setVisibility(View.VISIBLE);
                 } else {
                     viewHolder.commentsEt.setVisibility(View.GONE);
+                    createScheduleViewModel.getPatientHistory().get(i).setReason(null);
+                    viewHolder.commentsEt.setText(null);
                 }
 
                 if (createScheduleViewModel != null) {

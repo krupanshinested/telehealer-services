@@ -19,6 +19,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -28,7 +29,8 @@ import com.thealer.telehealer.views.signup.RegistrationEmailFragment;
 /**
  * Created by Aswin on 02,November,2018
  */
-public class ForgotPassword extends BaseActivity implements OnViewChangeInterface, OnActionCompleteInterface, SuccessViewInterface, View.OnClickListener {
+public class ForgotPassword extends BaseActivity implements OnViewChangeInterface, OnActionCompleteInterface,
+        SuccessViewInterface, View.OnClickListener, OnCloseActionInterface {
 
     private Toolbar toolbar;
     private ImageView backIv;
@@ -239,5 +241,10 @@ public class ForgotPassword extends BaseActivity implements OnViewChangeInterfac
     @Override
     public void hideOrShowOtherOption(boolean hideOrShow) {
 
+    }
+
+    @Override
+    public void onClose(boolean isRefreshRequired) {
+        onBackPressed();
     }
 }

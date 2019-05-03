@@ -574,7 +574,11 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     }
 
     private void showSubFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction().addToBackStack(fragment.getClass().getSimpleName()).replace(R.id.sub_fragment_holder, fragment).commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right)
+                .addToBackStack(fragment.getClass().getSimpleName())
+                .replace(R.id.sub_fragment_holder, fragment).commit();
     }
 
     @Override
