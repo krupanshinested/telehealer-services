@@ -22,7 +22,7 @@ public class IcdCodeApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status){
-                    getAuthApiService().getFilteredIcdCodes(codes)
+                    getServiceApi().getFilteredIcdCodes(codes)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
                                 @Override
@@ -40,7 +40,7 @@ public class IcdCodeApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status){
-                    getAuthApiService().getAllIcdCodes(key, searchKey)
+                    getServiceApi().getAllIcdCodes(key, searchKey)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
                                 @Override

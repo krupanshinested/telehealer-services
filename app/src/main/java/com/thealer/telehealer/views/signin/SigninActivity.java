@@ -41,7 +41,6 @@ import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
-import com.thealer.telehealer.views.signup.SignUpActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -106,8 +105,10 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
                         if (rememberCb.isChecked()) {
                             appPreference.setString(PreferenceConstants.USER_EMAIL, emailEt.getText().toString());
+                            appPreference.setBoolean(PreferenceConstants.IS_REMEMBER_EMAIL, true);
                         } else {
                             appPreference.setString(PreferenceConstants.USER_EMAIL, null);
+                            appPreference.setBoolean(PreferenceConstants.IS_REMEMBER_EMAIL, false);
                         }
 
                         UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
@@ -261,7 +262,8 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
             }
         });
 
-        if (!appPreference.getString(PreferenceConstants.USER_EMAIL).isEmpty()) {
+        if (appPreference.getBoolean(PreferenceConstants.IS_REMEMBER_EMAIL) &&
+                !appPreference.getString(PreferenceConstants.USER_EMAIL).isEmpty()) {
             emailEt.setText(appPreference.getString(PreferenceConstants.USER_EMAIL));
             rememberCb.setChecked(true);
         }

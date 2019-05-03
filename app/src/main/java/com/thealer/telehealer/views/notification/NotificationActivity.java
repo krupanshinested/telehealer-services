@@ -20,13 +20,11 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
-import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -36,11 +34,8 @@ import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
+import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
-
-import java.util.ArrayList;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 07,January,2019
@@ -118,7 +113,7 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
             }
         });
 
-            showNotificationList();
+        showNotificationList();
     }
 
     private void showNotificationList() {
@@ -163,6 +158,7 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
     public void onShowFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right)
                 .replace(subFragmentHolder.getId(), fragment)
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .commit();
@@ -175,7 +171,7 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
 
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
-        if (success) {
+        if (string.equals(RequestID.REQ_ADD_CONNECTION) && success) {
             int selectedId = bundle.getInt(Constants.ADD_CONNECTION_ID);
             String userGuid = bundle.getString(ArgumentKeys.USER_GUID);
             String doctorGuid = bundle.getString(ArgumentKeys.DOCTOR_GUID);
@@ -191,7 +187,11 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
             successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
 
             addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId));
-
+        } else if (string.equals(RequestID.REQ_SHOW_DETAIL_VIEW)) {
+            bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
+            DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
+            doctorPatientDetailViewFragment.setArguments(bundle);
+            onShowFragment(doctorPatientDetailViewFragment);
         }
     }
 

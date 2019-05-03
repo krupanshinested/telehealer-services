@@ -30,7 +30,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.manager.SupportRequestManagerFragment;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -321,7 +320,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
             WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
-            if (whoAmIApiResponseModel.getQuestionnaire() == null || !whoAmIApiResponseModel.getQuestionnaire().isQuestionariesEmpty()) {
+            if (whoAmIApiResponseModel != null && (whoAmIApiResponseModel.getQuestionnaire() == null || !whoAmIApiResponseModel.getQuestionnaire().isQuestionariesEmpty())) {
                 Bundle bundle = new Bundle();
                 bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_health_heart);
                 bundle.putString(ArgumentKeys.TITLE, getString(R.string.health_profile));
@@ -516,18 +515,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public void onBackPressed() {
 
-        Fragment f = getSupportFragmentManager().findFragmentById(R.id.sub_fragment_holder);
+        Fragment f = fragmentManager.findFragmentById(R.id.sub_fragment_holder);
         boolean isSubFragmentVisible = f == null;
 
         if (!isSubFragmentVisible) {
             if (getResources().getBoolean(R.bool.isXlarge) && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 finish();
             } else {
-                getSupportFragmentManager().popBackStack();
-                if (getSupportFragmentManager().getFragments().get(0) instanceof SupportRequestManagerFragment) {
-                    getSupportFragmentManager().getFragments().remove(0);
-                }
-                updateToolbarOptions(getSupportFragmentManager().getFragments().get(0));
+                fragmentManager.popBackStackImmediate();
+                if (fragmentManager.findFragmentById(R.id.sub_fragment_holder) == null)
+                    updateToolbarOptions(fragmentManager.findFragmentById(R.id.fragment_holder));
             }
         } else {
             finish();
@@ -571,22 +568,28 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 .beginTransaction()
                 .replace(fragmentHolder.getId(), fragment)
                 .commit();
+        Log.e(TAG, "setFragment: " + getSupportFragmentManager().getFragments().toString());
         updateToolbarOptions(fragment);
     }
 
     private void updateToolbarOptions(Fragment fragment) {
-
+        Log.e(TAG, "updateToolbarOptions: 1 ");
         if (optionsMenu != null) {
             if (fragment instanceof ScheduleCalendarFragment) {
                 optionsMenu.findItem(R.id.menu_schedules).setVisible(true);
                 optionsMenu.findItem(R.id.menu_event).setVisible(false);
+                Log.e(TAG, "updateToolbarOptions: 2");
             } else if (fragment instanceof SchedulesListFragment) {
                 optionsMenu.findItem(R.id.menu_schedules).setVisible(false);
                 optionsMenu.findItem(R.id.menu_event).setVisible(true);
+                Log.e(TAG, "updateToolbarOptions: 3");
             } else {
                 optionsMenu.findItem(R.id.menu_schedules).setVisible(false);
                 optionsMenu.findItem(R.id.menu_event).setVisible(false);
+                Log.e(TAG, "updateToolbarOptions: 4");
             }
+        } else {
+            Log.e(TAG, "updateToolbarOptions: 5");
         }
     }
 
@@ -601,11 +604,13 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private void setSubFragment(Fragment fragment) {
         fragmentManager
                 .beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right)
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .replace(subFragmentHolder.getId(), fragment)
                 .commit();
 
         isChildVisible = true;
+        updateToolbarOptions(fragment);
     }
 
     @Override
@@ -773,8 +778,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     protected void onResume() {
         super.onResume();
-        isPreviousActivityAvailable();
-
         checkNotification();
 
         if (UserType.isUserDoctor() && isCheckLicense)

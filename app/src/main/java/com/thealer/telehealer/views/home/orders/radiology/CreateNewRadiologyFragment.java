@@ -31,11 +31,11 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.DatePickerDialogFragment;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.common.DateBroadcastReceiver;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 import com.thealer.telehealer.views.home.orders.labs.IcdCodeListAdapter;
@@ -178,7 +178,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
 
                 userModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
 
-                if (userModel != null){
+                if (userModel != null) {
                     patientOcv.setArrow_visible(false);
                     patientOcv.setClickable(false);
                 }
@@ -276,7 +276,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
         }
     }
 
-    private CreateRadiologyRequestModel getRequest(){
+    private CreateRadiologyRequestModel getRequest() {
         List<CreateRadiologyRequestModel.DetailBean.LabsBean> labsBeanList = new ArrayList<>();
         labsBeanList.add(new CreateRadiologyRequestModel.DetailBean.LabsBean(statSwitch.isChecked(),
                 selectedIcdCodeList,
@@ -292,11 +292,12 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
         }
 
         return new CreateRadiologyRequestModel(userModel.getUser_guid(),
-                new CreateRadiologyRequestModel.DetailBean(commentsEt.getText().toString(),
+                new CreateRadiologyRequestModel.DetailBean(commentsEt.getText().toString().trim(),
                         dateOcv.getTitleText(),
                         copyToBean,
                         labsBeanList));
     }
+
     private void openSelectAssociationFragment(String type, int reqCode) {
         SelectAssociationFragment selectAssociationFragment = new SelectAssociationFragment();
         Bundle bundle = getArguments();

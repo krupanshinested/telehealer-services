@@ -43,6 +43,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -105,7 +106,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private BottomNavigationView userDetailBnv;
     private String view_type;
     private String doctorGuid = null, userGuid = null;
-    boolean checkStatus;
+    boolean checkStatus, isStatusChecked = false;
 
     @Override
     public void onAttach(Context context) {
@@ -126,7 +127,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     connectionStatusApiResponseModel = (ConnectionStatusApiResponseModel) baseApiResponseModel;
-                    if (!connectionStatusApiResponseModel.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
+                    isStatusChecked = true;
+                    if (connectionStatusApiResponseModel.getConnection_status() == null || !connectionStatusApiResponseModel.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
                         view_type = Constants.VIEW_CONNECTION;
                     } else {
                         view_type = Constants.VIEW_ASSOCIATION_DETAIL;
@@ -178,13 +180,18 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                         updateUserStatus(resultBean);
 
                         if (checkStatus) {
-                            connectionStatusApiViewModel.getConnectionStatus(userGuid, doctorGuid, true);
+                            checkConnectionStatus();
                         }
                     }
 
                 }
             }
         });
+    }
+
+    private void checkConnectionStatus() {
+        if (!isStatusChecked)
+            connectionStatusApiViewModel.getConnectionStatus(userGuid, doctorGuid, true);
     }
 
     @Nullable
@@ -376,7 +383,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 Log.e(TAG, "initView: " + view_type + " " + resultBean.getRole());
 
                 if (checkStatus) {
-                    connectionStatusApiViewModel.getConnectionStatus(userGuid, doctorGuid, true);
+                    checkConnectionStatus();
                 } else {
                     if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
                         Set<String> set = new HashSet<>();
@@ -533,8 +540,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     addFragment(getString(R.string.monitoring), monitoringFragment);
                 }
 
-                if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                if (resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
                     userDetailTab.setVisibility(View.GONE);
+                    userDetailBnv.setVisibility(View.GONE);
                     fragmentList.clear();
                     titleList.clear();
                     addFragment(getString(R.string.about), aboutFragment);
@@ -606,7 +614,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
                     bundle.putBoolean(ArgumentKeys.CONNECT_USER, true);
 
-                    onActionCompleteInterface.onCompletionResult(null, true, bundle);
+                    onActionCompleteInterface.onCompletionResult(RequestID.REQ_ADD_CONNECTION, true, bundle);
 
                 }
             });

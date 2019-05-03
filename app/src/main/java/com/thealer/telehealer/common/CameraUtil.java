@@ -98,7 +98,7 @@ public class CameraUtil {
 
         if (resultCode == RESULT_OK) {
             if (requestCode == CAMERA_REQUEST_CODE) {
-                if (data != null) {
+                if (data != null && data.getExtras() != null && data.getExtras().get("data") != null) {
                     Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 
                     return getBitmapFilePath(context, bitmap);

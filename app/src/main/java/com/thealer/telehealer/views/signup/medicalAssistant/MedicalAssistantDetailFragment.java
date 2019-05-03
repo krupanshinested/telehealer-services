@@ -166,6 +166,12 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        Utils.hideKeyboard(getActivity());
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -353,11 +359,15 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     }
 
     private void reloadUI() {
+        Utils.hideKeyboard(getActivity());
         switch (currentDisplayType) {
             case Constants.EDIT_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.Save));
                 updateNextTitle(getString(R.string.Save));
+                firstnameEt.requestFocus();
+                firstnameEt.setSelection(firstnameEt.getText().toString().length());
+                showOrHideSoftInputWindow(true);
                 break;
             case Constants.CREATE_MODE:
                 updateAllViews(true);
@@ -434,7 +444,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
                 && !degreeEt.getText().toString().isEmpty()) {
             onViewChangeInterface.enableNext(true);
             enableNext(true);
-        } else{
+        } else {
             enableNext(false);
             onViewChangeInterface.enableNext(false);
         }
