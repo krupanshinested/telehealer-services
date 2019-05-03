@@ -24,6 +24,8 @@ import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.PermissionChecker;
+import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -393,44 +395,46 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements DoCu
     }
 
     private void showOptionSelection() {
-        List<String> optionsList = new ArrayList<>(Arrays.asList(getString(R.string.camera), getString(R.string.gallery)));
+        if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_CAM_PHOTOS)) {
+            List<String> optionsList = new ArrayList<>(Arrays.asList(getString(R.string.camera), getString(R.string.gallery)));
 
-        if (isPrimaryImage) {
-            if (primaryFrontImgPath != null || primaryBackImgPath != null) {
-                optionsList.add(getString(R.string.Delete));
-            }
-        } else {
-            if (secondaryFrontImgPath != null || secondaryBackImgPath != null) {
-                optionsList.add(getString(R.string.Delete));
-            }
-        }
-
-        Utils.showOptionsSelectionAlert(getActivity(), optionsList, new PickerListener() {
-            @Override
-            public void didSelectedItem(int position) {
-
-                if (optionsList.get(position).equals(getString(R.string.camera))) {
-                    CameraUtil.openCamera(getActivity());
-                } else if (optionsList.get(position).equals(getString(R.string.gallery))) {
-                    CameraUtil.openGallery(getActivity());
-                } else if (optionsList.get(position).equals(getString(R.string.Delete))) {
-
-                    if (isPrimaryImage) {
-                        deletePrimaryImages();
-                        deleteSecondaryImages();
-                    } else {
-                        deleteSecondaryImages();
-                    }
-
-                    checkImagesAdded();
+            if (isPrimaryImage) {
+                if (primaryFrontImgPath != null || primaryBackImgPath != null) {
+                    optionsList.add(getString(R.string.Delete));
+                }
+            } else {
+                if (secondaryFrontImgPath != null || secondaryBackImgPath != null) {
+                    optionsList.add(getString(R.string.Delete));
                 }
             }
 
-            @Override
-            public void didCancelled() {
+            Utils.showOptionsSelectionAlert(getActivity(), optionsList, new PickerListener() {
+                @Override
+                public void didSelectedItem(int position) {
 
-            }
-        });
+                    if (optionsList.get(position).equals(getString(R.string.camera))) {
+                        CameraUtil.openCamera(getActivity());
+                    } else if (optionsList.get(position).equals(getString(R.string.gallery))) {
+                        CameraUtil.openGallery(getActivity());
+                    } else if (optionsList.get(position).equals(getString(R.string.Delete))) {
+
+                        if (isPrimaryImage) {
+                            deletePrimaryImages();
+                            deleteSecondaryImages();
+                        } else {
+                            deleteSecondaryImages();
+                        }
+
+                        checkImagesAdded();
+                    }
+                }
+
+                @Override
+                public void didCancelled() {
+
+                }
+            });
+        }
     }
 
     private void deleteSecondaryImages() {

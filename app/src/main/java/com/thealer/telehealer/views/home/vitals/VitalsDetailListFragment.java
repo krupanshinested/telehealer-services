@@ -299,19 +299,19 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                             line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1]), vitalsApiResponseModelArrayList.get(i).getMode()));
                             break;
                         case SupportedMeasurementType.heartRate:
-
-                            if (Float.parseFloat(value) > maxVlaue) {
-                                maxVlaue = Float.parseFloat(value);
-                            }
-                            if (i == 1) {
-                                minValue = Float.parseFloat(value);
-                            } else {
-                                if (Float.parseFloat(value) < minValue) {
-                                    minValue = Float.parseFloat(value);
+                            if (!value.isEmpty()) {
+                                if (Float.parseFloat(value) > maxVlaue) {
+                                    maxVlaue = Float.parseFloat(value);
                                 }
+                                if (i == 1) {
+                                    minValue = Float.parseFloat(value);
+                                } else {
+                                    if (Float.parseFloat(value) < minValue) {
+                                        minValue = Float.parseFloat(value);
+                                    }
+                                }
+                                line3Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
                             }
-                            line3Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
-
                             break;
                     }
                 } else {

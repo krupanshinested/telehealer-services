@@ -114,7 +114,8 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             @Override
             public void onClick(View v) {
                 Utils.vibrate(fragmentActivity);
-                if (apiResponseModelList.get(i).getConnection_status() == null) {
+                if (apiResponseModelList.get(i).getConnection_status() == null ||
+                        apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_REJECTED)) {
                     selected_position = i;
                     onListItemSelectInterface.onListItemSelected(i, null);
                     Bundle bundle = new Bundle();

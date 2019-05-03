@@ -131,7 +131,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                         @Override
                         public void onClick(View v) {
                             selectedPosition = position;
-                            notificationApiViewModel.updateNotification(adapterModelList.get(position).getInvitesResponseModel().getType(), true,
+                            notificationApiViewModel.updateNotification(adapterModelList.get(position).getInvitesResponseModel().getType(), false,
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NotificationListAdapter.REJECTED.toLowerCase(), null, null,

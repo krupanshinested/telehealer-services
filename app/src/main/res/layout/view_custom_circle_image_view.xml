@@ -19,77 +19,97 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_default">
+            android:layout_height="match_parent">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/avatar_civ"
-                android:layout_width="@dimen/card_image_view_size"
-                android:layout_height="@dimen/card_image_view_size"
-                android:src="@drawable/profile_placeholder"
-                app:civ_border_color="@android:color/darker_gray"
-                app:civ_border_width="1dp"
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_default"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/abnormal_ll"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/status_civ"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="2dp"
-                android:src="@color/status_offline"
-                app:civ_border_color="@color/colorWhite"
-                app:civ_border_width="1dp"
-                app:layout_constraintEnd_toEndOf="@id/avatar_civ"
-                app:layout_constraintTop_toTopOf="@+id/avatar_civ" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatar_civ"
+                    android:layout_width="@dimen/card_image_view_size"
+                    android:layout_height="@dimen/card_image_view_size"
+                    android:src="@drawable/profile_placeholder"
+                    app:civ_border_color="@android:color/darker_gray"
+                    app:civ_border_width="1dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/list_title_tv"
-                style="@style/card_title_text"
-                android:layout_marginEnd="@dimen/margin_default"
-                app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
-                app:layout_constraintEnd_toStartOf="@id/action_ll"
-                app:layout_constraintStart_toEndOf="@id/avatar_civ"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/dummy_text" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/status_civ"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:src="@color/status_offline"
+                    app:civ_border_color="@color/colorWhite"
+                    app:civ_border_width="1dp"
+                    app:layout_constraintEnd_toEndOf="@id/avatar_civ"
+                    app:layout_constraintTop_toTopOf="@+id/avatar_civ" />
 
-            <TextView
-                android:id="@+id/list_sub_title_tv"
-                style="@style/card_sub_title_text"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/list_title_tv"
-                app:layout_constraintStart_toStartOf="@id/list_title_tv"
-                app:layout_constraintTop_toBottomOf="@id/list_title_tv"
-                tools:text="@string/dummy_text" />
+                <TextView
+                    android:id="@+id/list_title_tv"
+                    style="@style/card_title_text"
+                    android:layout_marginEnd="@dimen/margin_default"
+                    app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
+                    app:layout_constraintEnd_toStartOf="@id/action_ll"
+                    app:layout_constraintStart_toEndOf="@id/avatar_civ"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/dummy_text" />
+
+                <TextView
+                    android:id="@+id/list_sub_title_tv"
+                    style="@style/card_sub_title_text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/list_title_tv"
+                    app:layout_constraintStart_toStartOf="@id/list_title_tv"
+                    app:layout_constraintTop_toBottomOf="@id/list_title_tv"
+                    tools:text="@string/dummy_text" />
+
+                <LinearLayout
+                    android:id="@+id/action_ll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/padding_default"
+                    android:paddingEnd="@dimen/padding_default"
+                    app:layout_constraintBottom_toBottomOf="@id/list_sub_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/list_title_tv">
+
+                    <ImageView
+                        android:id="@+id/action_iv"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:visibility="gone" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+            </android.support.constraint.ConstraintLayout>
 
             <LinearLayout
-                android:id="@+id/action_ll"
+                android:id="@+id/abnormal_ll"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:paddingStart="@dimen/padding_default"
-                android:paddingEnd="@dimen/padding_default"
-                app:layout_constraintBottom_toBottomOf="@id/list_sub_title_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/list_title_tv">
+                app:layout_constraintEnd_toEndOf="parent">
 
-                <ImageView
-                    android:id="@+id/action_iv"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:visibility="gone" />
+                <include layout="@layout/view_abnormal_vital" />
 
-                <CheckBox
-                    android:id="@+id/checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:visibility="gone" />
             </LinearLayout>
-
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 

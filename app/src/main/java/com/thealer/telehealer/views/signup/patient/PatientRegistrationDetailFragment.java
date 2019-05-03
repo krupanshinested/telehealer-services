@@ -333,6 +333,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     }
 
     private void reloadUI() {
+        Utils.hideKeyboard(getActivity());
         switch (currentDisplayType) {
             case Constants.SCHEDULE_CREATION_MODE:
                 updateAllViews(true);
@@ -342,6 +343,9 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             case Constants.EDIT_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.Save));
+                firstnameEt.requestFocus();
+                firstnameEt.setSelection(firstnameEt.getText().toString().length());
+                showOrHideSoftInputWindow(true);
                 updateNextTitle(getString(R.string.Save));
                 break;
             case Constants.CREATE_MODE:
@@ -722,6 +726,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     public void onStop() {
         super.onStop();
         updateUserRequestModel();
+        Utils.hideKeyboard(getActivity());
     }
 
     @Override

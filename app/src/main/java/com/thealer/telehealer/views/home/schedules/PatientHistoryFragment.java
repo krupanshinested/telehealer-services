@@ -10,11 +10,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -76,6 +78,15 @@ public class PatientHistoryFragment extends BaseFragment {
                 }
             }
         });
+
+        appointmentSlotUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
+                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                }
+            }
+        });
     }
 
     @Nullable
@@ -123,6 +134,8 @@ public class PatientHistoryFragment extends BaseFragment {
     private void checkForHistoryUpdate() {
         if (createScheduleViewModel != null && createScheduleViewModel.getPatientHistory() != null) {
             createScheduleViewModel.getSchedulesCreateRequestModel().getDetail().setChange_medical_info(false);
+            boolean updateHistory = false;
+
             if (whoAmIApiResponseModel.getHistory() != null) {
                 for (int i = 0; i < createScheduleViewModel.getPatientHistory().size(); i++) {
 
@@ -133,24 +146,22 @@ public class PatientHistoryFragment extends BaseFragment {
                             (createScheduleViewModel.getPatientHistory().get(i).getReason() != null && whoAmIApiResponseModel.getHistory().get(i).getReason() != null &&
                                     !createScheduleViewModel.getPatientHistory().get(i).getReason().trim().equals(whoAmIApiResponseModel.getHistory().get(i).getReason().trim()))) {
 
-                        appointmentSlotUpdate.updateUserHistory(createScheduleViewModel.getPatientHistory(), false);
-
-                        createScheduleViewModel.getSchedulesCreateRequestModel().getDetail().setChange_medical_info(true);
-
-                        WhoAmIApiResponseModel whoAmIApiResponseModel = new WhoAmIApiResponseModel();
-                        whoAmIApiResponseModel.setHistory(createScheduleViewModel.getPatientHistory());
-                        appointmentSlotUpdate.updateUserDetail(whoAmIApiResponseModel, false);
+                        updateHistory = true;
 
                         break;
                     }
                 }
             } else {
+                updateHistory = true;
+            }
+
+            if (updateHistory) {
                 appointmentSlotUpdate.updateUserHistory(createScheduleViewModel.getPatientHistory(), false);
 
                 createScheduleViewModel.getSchedulesCreateRequestModel().getDetail().setChange_medical_info(true);
 
-                WhoAmIApiResponseModel whoAmIApiResponseModel = new WhoAmIApiResponseModel();
                 whoAmIApiResponseModel.setHistory(createScheduleViewModel.getPatientHistory());
+
                 appointmentSlotUpdate.updateUserDetail(whoAmIApiResponseModel, false);
             }
         }

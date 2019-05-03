@@ -14,6 +14,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.biometric.BioMetricAuth;
 import com.thealer.telehealer.common.biometric.BiometricInterface;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -41,6 +42,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
         public void onQuickLogin(int status) {
+            Utils.hideKeyboard(QuickLoginActivity.this);
             if (status == ArgumentKeys.QUICK_LOGIN_CREATED) {
 
                 int quickLoginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
@@ -240,6 +242,12 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
         super.onResume();
         LocalBroadcastManager.getInstance(this).registerReceiver(quickLoginBroadcastReceiver,
                 new IntentFilter(getString(R.string.quick_login_broadcast_receiver)));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Utils.hideKeyboard(this);
     }
 
     @Override

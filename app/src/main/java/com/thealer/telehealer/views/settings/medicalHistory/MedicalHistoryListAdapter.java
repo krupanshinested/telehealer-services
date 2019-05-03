@@ -55,7 +55,7 @@ public class MedicalHistoryListAdapter extends RecyclerView.Adapter<MedicalHisto
         viewHolder.itemCl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeTitleInterface.onTitleChange(listItem[i]);
+//                changeTitleInterface.onTitleChange(listItem[i]);
 
                 MedicalHistoryEditFragment medicalHistoryEditFragment = new MedicalHistoryEditFragment();
                 bundle.putString(ArgumentKeys.HISTORY_TYPE, listItem[i]);
