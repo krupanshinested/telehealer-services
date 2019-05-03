@@ -285,7 +285,10 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
             fragment.setArguments(bundle);
             try {
-                getSupportFragmentManager().beginTransaction().replace(R.id.signup_fragment_container, fragment)
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right)
+                        .replace(R.id.signup_fragment_container, fragment)
                         .addToBackStack(fragment.getClass().getSimpleName())
                         .commit();
             } catch (Exception e) {
@@ -301,7 +304,10 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     public void addChildFragment(Fragment fragment) {
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.signup_fragment_container, fragment)
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right)
+                .replace(R.id.signup_fragment_container, fragment)
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .commit();
 

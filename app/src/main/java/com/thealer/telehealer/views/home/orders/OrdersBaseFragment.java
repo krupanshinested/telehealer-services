@@ -24,8 +24,8 @@ import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialist
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -97,11 +97,11 @@ public class OrdersBaseFragment extends BaseFragment {
                         sendSuccessViewBroadCast(getActivity(), status, title, description);
                         if (onFaxSent) {
                             onFaxSent = false;
-                            onCloseActionInterface.onClose(false);
                             if (isShowSuccess) {
                                 description = getString(R.string.fax_sent_successfully);
                                 sendSuccessViewBroadCast(getActivity(), status, title, description);
                             }
+                            onCloseActionInterface.onClose(false);
                         }
                     } else {
                         isSendFax = false;
@@ -273,7 +273,7 @@ public class OrdersBaseFragment extends BaseFragment {
         ordersCreateApiViewModel.createLabOrder(createTestApiRequestModel, doctorGuid);
     }
 
-    public void createNewMiscellaneousOrder(CreateMiscellaneousRequestModel miscellaneousOrderRequest, String userDisplay_name, String doctorGuid, boolean sendFax){
+    public void createNewMiscellaneousOrder(CreateMiscellaneousRequestModel miscellaneousOrderRequest, String userDisplay_name, String doctorGuid, boolean sendFax) {
         currentOrder = OrderConstant.ORDER_MISC;
         patientName = userDisplay_name;
         isSendFax = sendFax;

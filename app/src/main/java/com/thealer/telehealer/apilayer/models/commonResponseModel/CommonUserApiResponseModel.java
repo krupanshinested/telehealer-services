@@ -29,6 +29,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private UserDetailBean user_detail;
     private boolean email_verified;
     private String website;
+    private boolean has_abnormal_vitals;
 
     public CommonUserApiResponseModel() {
     }
@@ -250,6 +251,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public void setConnection_status(String connection_status) {
         this.connection_status = connection_status;
+    }
+
+    public boolean isHas_abnormal_vitals() {
+        return has_abnormal_vitals;
+    }
+
+    public void setHas_abnormal_vitals(boolean has_abnormal_vitals) {
+        this.has_abnormal_vitals = has_abnormal_vitals;
     }
 
     public String getWebsite() {

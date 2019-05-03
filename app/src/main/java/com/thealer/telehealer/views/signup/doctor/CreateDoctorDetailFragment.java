@@ -445,11 +445,15 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     }
 
     private void reloadUI() {
+        Utils.hideKeyboard(getActivity());
         switch (currentDisplayType) {
             case Constants.EDIT_MODE:
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.Save));
                 updateNextTitle(getString(R.string.Save));
+                firstnameEt.requestFocus();
+                firstnameEt.setSelection(firstnameEt.getText().toString().length());
+                showOrHideSoftInputWindow(true);
                 break;
             case Constants.CREATE_MODE:
                 updateAllViews(true);
@@ -892,6 +896,12 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         }
 
         reloadUI();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utils.hideKeyboard(getActivity());
     }
 
     @Override

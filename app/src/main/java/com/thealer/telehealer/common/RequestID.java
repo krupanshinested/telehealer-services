@@ -53,4 +53,5 @@ public class RequestID {
     public static final String TRANSACTION_DETAIL = "TRANSACTION_DETAIL";
 
     public static final String REQ_SHOW_DETAIL_VIEW = "REQ_SHOW_DETAIL_VIEW";
+    public static final String REQ_ADD_CONNECTION = "REQ_ADD_CONNECTION";
 }

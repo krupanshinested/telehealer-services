@@ -14,7 +14,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -320,7 +319,9 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                 case OtpVerificationFragment.forgot_password:
                 case OtpVerificationFragment.reset_password:
                     isRequestWithEmail = true;
-                    resetPasswordRequestModel.setEmail(UserDetailPreferenceManager.getWhoAmIResponse().getEmail());
+                    if (UserDetailPreferenceManager.getWhoAmIResponse() != null)
+                        resetPasswordRequestModel.setEmail(UserDetailPreferenceManager.getWhoAmIResponse().getEmail());
+
                     onViewChangeInterface.hideOrShowBackIv(true);
                     titleTv.setText(getString(R.string.enter_the_authorization_code_sent_to) + " your phone number");
                     break;
@@ -398,10 +399,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
     private void requestOtp() {
         if (isRequestWithEmail) {
-
-            Log.e(TAG, "requestOtp: " + UserDetailPreferenceManager.getWhoAmIResponse().getEmail());
             requestOtpApiViewModel.requestOtpUsingEmail(resetPasswordRequestModel.getEmail());
-
         } else {
             requestOtpApiViewModel.requestOtpUsingGuid();
         }

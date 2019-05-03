@@ -203,6 +203,8 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                     appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
                     quickLogin.toggleSwitch();
                 } else {
+                    appPreference.setInt(Constants.QUICK_LOGIN_TYPE, QuickLoginUtil.getAvailableQuickLoginType(getActivity()));
+                    appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
                     startActivityForResult(new Intent(getActivity(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_CREATE_PIN, true), RequestID.REQ_CREATE_QUICK_LOGIN);
                 }
                 break;
