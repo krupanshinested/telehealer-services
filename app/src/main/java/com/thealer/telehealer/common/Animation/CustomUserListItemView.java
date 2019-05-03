@@ -45,6 +45,7 @@ public class CustomUserListItemView extends ConstraintLayout {
     private int gravity, actionWidth = 25, actionHeight = 25;
     private boolean showAction, showCheckbox, showStatus, showBottomView;
     private View bottomView;
+    private ConstraintLayout abnormalIndicatorCl;
 
     public CustomUserListItemView(Context context) {
         super(context);
@@ -69,6 +70,7 @@ public class CustomUserListItemView extends ConstraintLayout {
         actionIv = (ImageView) view.findViewById(R.id.action_iv);
         checkbox = (CheckBox) view.findViewById(R.id.checkbox);
         bottomView = (View) view.findViewById(R.id.bottom_view);
+        abnormalIndicatorCl = (ConstraintLayout) view.findViewById(R.id.abnormal_indicator_cl);
 
 
         if (attrs != null) {
@@ -192,6 +194,14 @@ public class CustomUserListItemView extends ConstraintLayout {
             bottomView.setVisibility(VISIBLE);
         } else {
             bottomView.setVisibility(GONE);
+        }
+    }
+
+    public void hasAbnormalVital(boolean isAbnormal) {
+        if (isAbnormal) {
+            abnormalIndicatorCl.setVisibility(VISIBLE);
+        } else {
+            abnormalIndicatorCl.setVisibility(GONE);
         }
     }
 

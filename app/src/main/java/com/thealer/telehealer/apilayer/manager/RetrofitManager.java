@@ -32,6 +32,7 @@ public class RetrofitManager extends ContextWrapper {
     private Retrofit defaultRetrofit;
     private Retrofit authRetrofit;
     private Retrofit foodRetrofit;
+    private Retrofit serviceRetrofit;
 
 
     private RetrofitManager(Context base) {
@@ -54,6 +55,12 @@ public class RetrofitManager extends ContextWrapper {
             createDefaultRetrofit();
         }
         return defaultRetrofit;
+    }
+    private Retrofit getServiceRetrofit() {
+        if (serviceRetrofit == null) {
+            createServiceRetrofit();
+        }
+        return serviceRetrofit;
     }
 
     private Retrofit getAuthRetrofit() {
@@ -99,6 +106,42 @@ public class RetrofitManager extends ContextWrapper {
 
         OkHttpClient client = httpClient.build();
         defaultRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.api_base_url))
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(client)
+                .build();
+    }
+
+    private void createServiceRetrofit() {
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new ConnectivityInterceptor(getApplicationContext()));
+        httpClient.connectTimeout(60, TimeUnit.SECONDS);
+        httpClient.readTimeout(60, TimeUnit.SECONDS);
+        httpClient.writeTimeout(60, TimeUnit.SECONDS);
+        httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+
+                Request request = original.newBuilder()
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "application/json")
+                        .header("User-Agent", "android")
+                        .header("x-api-key", getBaseContext().getString(R.string.service_api_key))
+                        .method(original.method(), original.body())
+                        .build();
+                return chain.proceed(request);
+
+            }
+        });
+
+        RetrofitLogger logging = new RetrofitLogger();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        httpClient.addInterceptor(logging);
+
+        OkHttpClient client = httpClient.build();
+        serviceRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.service_api_base_url))
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(client)
@@ -180,6 +223,10 @@ public class RetrofitManager extends ContextWrapper {
 
     public ApiInterface getPublicApiService() {
         return getDefaultRetrofit().create(ApiInterface.class);
+    }
+
+    public ApiInterface getServiceApi() {
+        return getServiceRetrofit().create(ApiInterface.class);
     }
 
     public ApiInterface getAuthApiService() {

@@ -35,7 +35,6 @@ import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewDisplayable;
 import com.alamkanak.weekview.WeekViewEvent;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -53,7 +52,6 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.CallPopupDialogFragment;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -634,6 +632,9 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         addFab.setClickable(true);
         if (getUserVisibleHint()) {
             setUserVisibleHint(true);
+        }
+        if (!Utils.isInternetEnabled(getActivity())) {
+            setNoNetworkEmptyState();
         }
     }
 
