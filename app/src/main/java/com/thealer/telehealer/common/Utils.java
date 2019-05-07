@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -140,18 +141,21 @@ public class Utils {
         vibrator.vibrate(50);
     }
 
-    public static Dialog showDatePickerDialog(FragmentActivity activity, int type) {
+    public static Dialog showDatePickerDialog(FragmentActivity activity, int type, DatePickerDialog.OnDateSetListener dateSetListener) {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
 
-        DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                sendDateBroadCast(activity, year, month, dayOfMonth);
-            }
-        };
+        DatePickerDialog.OnDateSetListener onDateSetListener = dateSetListener;
+        if (onDateSetListener == null) {
+            onDateSetListener = new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    sendDateBroadCast(activity, year, month, dayOfMonth);
+                }
+            };
+        }
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(activity, onDateSetListener, year, month, day);
 
@@ -208,6 +212,12 @@ public class Utils {
         intent.putExtras(bundle);
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    public static void showTimePickerDialog(FragmentActivity activity, TimePickerDialog.OnTimeSetListener timeSetListener) {
+        Calendar calendar = Calendar.getInstance();
+        TimePickerDialog timePickerDialog = new TimePickerDialog(activity, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
+        timePickerDialog.show();
     }
 
     public static String getFormatedDate(int year, int month, int dayOfMonth) {

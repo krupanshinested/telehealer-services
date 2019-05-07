@@ -26,8 +26,8 @@ import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.orders.forms.EditableFormFragment;
 import com.thealer.telehealer.views.home.orders.labs.LabsDetailViewFragment;
 import com.thealer.telehealer.views.home.orders.miscellaneous.MiscellaneousDetailViewFragment;
 import com.thealer.telehealer.views.home.orders.prescription.PrescriptionDetailViewFragment;
@@ -115,6 +115,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
         CircleImageView itemCiv;
         TextView itemTitleTv, itemSubTitleTv;
         ImageView statusIv;
+        TextView listOptionTitleTv, listOptionSubTitleTv;
 
 
         itemCv = (CardView) convertView.findViewById(R.id.item_cv);
@@ -204,6 +205,18 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
             }
 
         } else {
+            listOptionTitleTv = (TextView) convertView.findViewById(R.id.list_option_title_tv);
+            listOptionSubTitleTv = (TextView) convertView.findViewById(R.id.list_option_sub_title_tv);
+
+
+            if (ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getStatus().equals(OrderStatus.STATUS_COMPLETED)) {
+                listOptionTitleTv.setVisibility(View.VISIBLE);
+                listOptionSubTitleTv.setVisibility(View.VISIBLE);
+
+                listOptionTitleTv.setText(ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getData().getDisplayScore());
+                listOptionSubTitleTv.setText(context.getString(R.string.score));
+
+            }
 
             String key = null;
             if (UserType.isUserAssistant()) {
@@ -212,20 +225,19 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                 if (ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getDoctor() != null) {
                     key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getDoctor().getUser_guid();
                 }
+                if (ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getMedical_assistant() != null) {
+                    key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getMedical_assistant().getUser_guid();
+                }
             }
             if (key != null && userDetailHashMap.containsKey(key)) {
-                itemTitleTv.setText(userDetailHashMap.get(key).getUserDisplay_name());
+                itemSubTitleTv.setText(userDetailHashMap.get(key).getUserDisplay_name());
                 Utils.setImageWithGlide(context, itemCiv, userDetailHashMap.get(key).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
             }
-
-            fragment = new PdfViewerFragment();
-            bundle.putBoolean(ArgumentKeys.IS_FROM_PRESCRIPTION_DETAIL, true);
-            bundle.putString(ArgumentKeys.PDF_TITLE, ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getName());
-            bundle.putString(ArgumentKeys.PDF_URL, ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getUrl());
-            bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, false);
+            fragment = new EditableFormFragment();
+            bundle.putSerializable(ArgumentKeys.FORM_DETAIL, ordersDetailListAdapterModel.getOrdersFormsApiResponseModel());
         }
 
-        itemSubTitleTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getSubTitle());
+        itemTitleTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getSubTitle());
 
         itemCv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -246,6 +258,8 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
             }
         });
+
+        itemCiv.setVisibility(View.GONE);
 
         return convertView;
     }

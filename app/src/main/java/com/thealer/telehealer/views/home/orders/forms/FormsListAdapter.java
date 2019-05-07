@@ -12,12 +12,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.orders.forms.OrdersFormsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.PermissionChecker;
-import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
-import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
 import java.util.ArrayList;
@@ -30,12 +27,12 @@ public class FormsListAdapter extends RecyclerView.Adapter<FormsListAdapter.View
 
     private Context context;
     private OnListItemSelectInterface onListItemSelectInterface;
-    private ArrayList<OrdersFormsApiResponseModel> formsApiResponseModelArrayList;
+    private ArrayList<OrdersUserFormsApiResponseModel> formsApiResponseModelArrayList;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private List<String> selectedFormIds;
 
     public FormsListAdapter(FragmentActivity activity, OnListItemSelectInterface onListItemSelectInterface,
-                            ArrayList<OrdersFormsApiResponseModel> formsApiResponseModelArrayList, List<String> selectedFormIds) {
+                            ArrayList<OrdersUserFormsApiResponseModel> formsApiResponseModelArrayList, List<String> selectedFormIds) {
         this.context = activity;
         this.onListItemSelectInterface = onListItemSelectInterface;
         this.formsApiResponseModelArrayList = formsApiResponseModelArrayList;
@@ -55,23 +52,13 @@ public class FormsListAdapter extends RecyclerView.Adapter<FormsListAdapter.View
         viewHolder.infoIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EditableFormFragment editableFormFragment = new EditableFormFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(ArgumentKeys.FORM_DETAIL, formsApiResponseModelArrayList.get(i));
+                bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
+                editableFormFragment.setArguments(bundle);
 
-                boolean isPermissionGranted = PermissionChecker.with(context).checkPermission(PermissionConstants.PERMISSION_STORAGE);
-                if (isPermissionGranted) {
-
-                    Bundle bundle = new Bundle();
-
-                    PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
-
-                    bundle.putString(ArgumentKeys.PDF_TITLE, formsApiResponseModelArrayList.get(i).getName());
-                    bundle.putString(ArgumentKeys.PDF_URL, formsApiResponseModelArrayList.get(i).getUrl());
-                    bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, false);
-                    bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
-
-                    pdfViewerFragment.setArguments(bundle);
-
-                    showSubFragmentInterface.onShowFragment(pdfViewerFragment);
-                }
+                showSubFragmentInterface.onShowFragment(editableFormFragment);
             }
         });
 
@@ -110,7 +97,7 @@ public class FormsListAdapter extends RecyclerView.Adapter<FormsListAdapter.View
         }
     }
 
-    public void setFormsApiResponseModelArrayList(ArrayList<OrdersFormsApiResponseModel> formsApiResponseModelArrayList) {
+    public void setFormsApiResponseModelArrayList(ArrayList<OrdersUserFormsApiResponseModel> formsApiResponseModelArrayList) {
         this.formsApiResponseModelArrayList = formsApiResponseModelArrayList;
         notifyDataSetChanged();
     }
