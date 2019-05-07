@@ -24,7 +24,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.CreateFormRequestModel;
-import com.thealer.telehealer.apilayer.models.orders.forms.OrdersFormsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
@@ -54,8 +54,8 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
     private OrdersApiViewModel ordersApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private FormsListAdapter formsListAdapter;
-    private ArrayList<OrdersFormsApiResponseModel> formsList = new ArrayList<>();
-    private ArrayList<OrdersFormsApiResponseModel> remainingFormsList = new ArrayList<>();
+    private ArrayList<OrdersUserFormsApiResponseModel> formsList = new ArrayList<>();
+    private ArrayList<OrdersUserFormsApiResponseModel> remainingFormsList = new ArrayList<>();
     private String userGuid = null, doctorGuid;
     private List<String> selectedFormIds = new ArrayList<>();
     private OrdersCreateApiViewModel ordersCreateApiViewModel;
@@ -80,7 +80,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
                     if (baseApiResponseModels.size() > 0) {
 
                         formsList.clear();
-                        formsList = (ArrayList<OrdersFormsApiResponseModel>) (Object) baseApiResponseModels;
+                        formsList = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
 
                         formsListAdapter.setFormsApiResponseModelArrayList(formsList);
                         formsLl.setVisibility(View.VISIBLE);
@@ -152,6 +152,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
         enableOrDisableSend();
 
         formsRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        selectedFormIds.clear();
         formsListAdapter = new FormsListAdapter(getActivity(), this, remainingFormsList, selectedFormIds);
         formsRv.setAdapter(formsListAdapter);
 

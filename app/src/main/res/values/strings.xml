@@ -930,6 +930,8 @@
     <string name="dismiss">dismiss</string>
     <string name="call_pop_up_title">Your appointment with %s is now in progress.</string>
     <string name="device_disconnected_message">Device got disconnected!</string>
+    <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
     <string name="network_error">Network Error</string>
     <string name="please_check_your_network_connection">Please check your network connection</string>
 
@@ -1203,12 +1205,18 @@
     <string name="visit_updated_successfully">Visit updated successfully</string>
     <string name="visit_update_failed">Visit updated failed</string>
     <string name="enter_patient_instruction_here">Enter patient instruction here</string>
+    <string name="score">Score</string>
+    <string name="learn_about_score">Learn about score</string>
     <string name="and">and</string>
     <string name="vitals_has_been_posted">Vitals has been posted successfully.</string>
     <string name="captured">captured</string>
     <string name="patient_diagnosis">Diagnosis</string>
     <string name="doctor_extender">Doctor / Extender</string>
     <string name="office_assistant">Office Assistant</string>
+    <string name="mandatory_questions_info">Questions marked with \' * \' is mandatory</string>
+    <string name="form_updated_successfully">Form updated successfully</string>
+    <string name="enter_all_mandatory_fields">Enter all mandatory fields</string>
+    <string name="na">N/A</string>
     <string name="favorite">Favorites</string>
     <string name="others">Others</string>
     <string name="privacy">Privacy</string>
