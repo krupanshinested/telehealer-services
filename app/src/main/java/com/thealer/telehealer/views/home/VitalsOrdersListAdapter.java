@@ -101,8 +101,6 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
 
                         if (UserType.isUserDoctor()) {
                             if (UserDetailPreferenceManager.getWhoAmIResponse().getUser_detail().getSignature() != null) {
-//                                fragmentActivity.startActivity(new Intent(fragmentActivity, CreateOrderActivity.class)
-//                                        .putExtras(bundle));
                                 fragment = new OrdersDetailListFragment();
                             } else {
                                 bundle.putBoolean(ArgumentKeys.SHOW_SIGNATURE_PROPOSER, true);

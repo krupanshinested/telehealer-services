@@ -97,6 +97,7 @@ public class ArgumentKeys {
     public static final String GROUP_POSITION = "group_position";
     public static final String CHILD_POSITION = "child_position";
     public static final String CONNECT_USER = "connectUser";
+    public static final String FORM_DETAIL = "formDetail";
     public static final String UPDATE_TYPE = "updateType";
     public static final String SELECTED_DOCUMENT = "selected_document";
     public static final String ORDER_DETAIL = "orderDetail";
