@@ -6,11 +6,15 @@ import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+
+import java.util.List;
 
 /**
  * Created by Aswin on 30,November,2018
@@ -63,4 +67,12 @@ public class CustomSpinnerView extends ConstraintLayout {
     public void setSpinnerAdapter(SpinnerAdapter spinnerAdapter) {
         spinner.setAdapter(spinnerAdapter);
     }
+
+    public void setSpinnerData(Context context, List<String> spinnerList, AdapterView.OnItemSelectedListener itemSelectedListener) {
+        ArrayAdapter adapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, spinnerList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(itemSelectedListener);
+    }
+
 }

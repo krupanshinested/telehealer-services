@@ -24,8 +24,12 @@
         <TextView
             android:id="@+id/list_title_tv"
             style="@style/card_title_text"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_default"
+            android:paddingTop="@dimen/padding_default"
+            app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
-            app:layout_constraintEnd_toStartOf="@id/status_iv"
+            app:layout_constraintEnd_toStartOf="@id/options_cl"
             app:layout_constraintStart_toEndOf="@id/item_civ"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/dummy_text" />
@@ -33,20 +37,60 @@
         <TextView
             android:id="@+id/list_sub_title_tv"
             style="@style/card_sub_title_text"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_default"
+            android:paddingBottom="@dimen/padding_default"
+            app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/list_title_tv"
             app:layout_constraintStart_toStartOf="@id/list_title_tv"
             app:layout_constraintTop_toBottomOf="@id/list_title_tv"
             tools:text="@string/dummy_text" />
 
-        <ImageView
-            android:id="@+id/status_iv"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/options_cl"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/list_sub_title_tv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/list_sub_title_tv"
-            tools:src="@drawable/ic_close_red_24dp" />
+            app:layout_constraintStart_toEndOf="@+id/list_title_tv"
+            app:layout_constraintTop_toTopOf="@+id/list_title_tv">
+
+            <TextView
+                android:id="@+id/list_option_title_tv"
+                style="@style/card_title_text"
+                android:layout_width="0dp"
+                android:layout_margin="0dp"
+                android:gravity="center"
+                app:layout_constraintBottom_toTopOf="@+id/list_option_sub_title_tv"
+                app:layout_constraintEnd_toEndOf="@+id/list_option_sub_title_tv"
+                app:layout_constraintStart_toStartOf="@+id/list_option_sub_title_tv"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="0" />
+
+            <TextView
+                android:id="@+id/list_option_sub_title_tv"
+                style="@style/card_sub_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_default"
+                android:paddingEnd="@dimen/padding_default"
+                android:paddingBottom="@dimen/padding_default"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="@string/score" />
+
+            <ImageView
+                android:id="@+id/status_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:src="@drawable/ic_close_red_24dp" />
+        </android.support.constraint.ConstraintLayout>
+
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
 
