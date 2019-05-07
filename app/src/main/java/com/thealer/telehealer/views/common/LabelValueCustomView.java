@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.thealer.telehealer.R;
-
 import androidx.annotation.Nullable;
+
+import com.thealer.telehealer.R;
 
 /**
  * Created by Aswin on 25,March,2019
@@ -28,19 +28,23 @@ public class LabelValueCustomView extends ConstraintLayout {
 
     public LabelValueCustomView(Context context) {
         super(context);
+        initView(context, null);
     }
 
     public LabelValueCustomView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        initView(attrs);
+        initView(context, attrs);
     }
 
-    private void initView(AttributeSet attrs) {
-        context = getContext();
+    private void initView(Context context, AttributeSet attrs) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         View view = layoutInflater.inflate(R.layout.view_label_value, this, true);
+
+        labelTv = (TextView) view.findViewById(R.id.label_tv);
+        valueTv = (TextView) view.findViewById(R.id.value_tv);
+        bottomView = (View) view.findViewById(R.id.bottom_view);
 
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.LabelValueCustomView);
@@ -52,10 +56,6 @@ public class LabelValueCustomView extends ConstraintLayout {
             valueText = typedArray.getString(R.styleable.LabelValueCustomView_lbcv_value_text);
             labelTvColor = typedArray.getColor(R.styleable.LabelValueCustomView_lbcv_label_text_color, 0);
             valueTvColor = typedArray.getColor(R.styleable.LabelValueCustomView_lbcv_value_text_color, 0);
-
-            labelTv = (TextView) view.findViewById(R.id.label_tv);
-            valueTv = (TextView) view.findViewById(R.id.value_tv);
-            bottomView = (View) view.findViewById(R.id.bottom_view);
 
             setLabelVisible(isLabelVisible);
             setValueVisible(isValueVisible);

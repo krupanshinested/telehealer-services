@@ -1145,6 +1145,16 @@
     <string name="patient_diagnosis">Diagnóstico</string>
     <string name="doctor_extender">Doctor/Extensor</string>
     <string name="office_assistant">Asistente de oficina</string>
+    <string name="score">Puntuación</string>
+    <string name="learn_about_score">Aprender sobre la puntuación</string>
+    <string name="and">y</string>
+    <string name="vitals_has_been_posted">Vitals ha sido publicado con éxito.</string>
+    <string name="captured">capturado</string>
+    <string name="select_date">Seleccione fecha</string>
+    <string name="select_time">Seleccione tiempo</string>
+    <string name="mandatory_questions_info">Las preguntas marcadas con \'*\' son obligatorias</string>
+    <string name="form_updated_successfully">Formulario actualizado exitosamente</string>
+    <string name="enter_all_mandatory_fields">Introduce todos los campos obligatorios</string>
     <string name="favorite">Favoritos</string>
     <string name="others">Otros</string>
     <string name="privacy">Intimidad</string>

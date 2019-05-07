@@ -34,7 +34,6 @@ import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiRespon
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.CreateFormRequestModel;
-import com.thealer.telehealer.apilayer.models.orders.forms.OrdersFormsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.CreateTestApiRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiResponseModel;
@@ -129,6 +128,7 @@ public interface ApiInterface {
     String FILTER_ID_IN = "filter_id_in";
     String START_DATE = "start_date";
     String END_DATE = "end_date";
+    String ASSIGNOR = "assignor";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -303,16 +303,20 @@ public interface ApiInterface {
     Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/forms")
-    Observable<ArrayList<OrdersUserFormsApiResponseModel>> getUserForms(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query("assignor") boolean assignor);
+    Observable<ArrayList<OrdersUserFormsApiResponseModel>> getUserForms(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(ASSIGNOR) boolean assignor);
 
     @GET("api/forms")
-    Observable<ArrayList<OrdersFormsApiResponseModel>> getAllForms();
+    Observable<ArrayList<OrdersUserFormsApiResponseModel>> getAllForms();
 
     @GET("api/forms")
-    Observable<ArrayList<OrdersUserFormsApiResponseModel>> getForms();
+    Observable<ArrayList<OrdersUserFormsApiResponseModel>> getForms(@Query(ASSIGNOR) boolean assignor);
 
     @POST("api/forms")
     Observable<BaseApiResponseModel> createForms(@Body CreateFormRequestModel createFormRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+
+    @Multipart
+    @PUT("api/forms/{id}")
+    Observable<BaseApiResponseModel> updateForm(@Path(ID) int id, @Part("data") RequestBody data);
 
     @POST("api/referrals/specialists")
     Observable<OrdersBaseApiResponseModel> assignSpecialist(@Body AssignSpecialistRequestModel assignSpecialistRequestModel, @Query(DOCTOR_GUID) String doctorGuid);

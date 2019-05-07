@@ -13,6 +13,7 @@ public class OrderStatus {
     public static final String STATUS_BUSY = "busy";
     public static final String STATUS_QUEUED = "queued";
     public static final String STATUS_DELIVERED = "delivered";
+    public static final String STATUS_COMPLETED = "completed";
 
     public static int getStatusImage(String status) {
         switch (status) {
