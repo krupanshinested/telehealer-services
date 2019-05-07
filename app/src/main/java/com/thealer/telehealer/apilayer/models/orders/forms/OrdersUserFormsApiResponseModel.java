@@ -12,15 +12,34 @@ public class OrdersUserFormsApiResponseModel extends BaseApiResponseModel {
     private int form_id;
     private String name;
     private String url;
+    private String filled_form_url;
+    private String status;
+    private String order_id;
     private int assigned_to;
     private int assigned_by;
     private Object doctor_id;
     private String created_at;
     private String updated_at;
-    private String order_id;
     private OrdersCommonResultResponseModel.PatientBean patient;
     private OrdersCommonResultResponseModel.DoctorBean doctor;
     private OrdersCommonResultResponseModel.MedicalAssistantBean medical_assistant;
+    private DynamicFormDataBean data;
+
+    public String getFilled_form_url() {
+        return filled_form_url;
+    }
+
+    public void setFilled_form_url(String filled_form_url) {
+        this.filled_form_url = filled_form_url;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getOrder_id() {
         return order_id;
@@ -126,4 +145,11 @@ public class OrdersUserFormsApiResponseModel extends BaseApiResponseModel {
         this.medical_assistant = medical_assistant;
     }
 
+    public DynamicFormDataBean getData() {
+        return data;
+    }
+
+    public void setData(DynamicFormDataBean data) {
+        this.data = data;
+    }
 }

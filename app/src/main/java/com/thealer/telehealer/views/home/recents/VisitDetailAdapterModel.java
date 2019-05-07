@@ -4,7 +4,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.forms.OrdersFormsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.views.home.recents.adapterModels.AddNewModel;
@@ -33,7 +33,7 @@ public class VisitDetailAdapterModel {
     private String date;
     private VisitOrdersAdapterModel visitOrdersAdapterModel;
     private DocumentsApiResponseModel.ResultBean documentModel;
-    private OrdersFormsApiResponseModel formsApiResponseModel;
+    private OrdersUserFormsApiResponseModel formsApiResponseModel;
     private List<DietApiResponseModel> dietApiResponseModel;
 
     public VisitDetailAdapterModel(int viewType, String categoryTitle) {
@@ -83,7 +83,7 @@ public class VisitDetailAdapterModel {
         this.documentModel = documentModel;
     }
 
-    public VisitDetailAdapterModel(int viewType, OrdersFormsApiResponseModel formsApiResponseModel) {
+    public VisitDetailAdapterModel(int viewType, OrdersUserFormsApiResponseModel formsApiResponseModel) {
         this.viewType = viewType;
         this.formsApiResponseModel = formsApiResponseModel;
     }
@@ -216,11 +216,11 @@ public class VisitDetailAdapterModel {
         this.documentModel = documentModel;
     }
 
-    public OrdersFormsApiResponseModel getFormsApiResponseModel() {
+    public OrdersUserFormsApiResponseModel getFormsApiResponseModel() {
         return formsApiResponseModel;
     }
 
-    public void setFormsApiResponseModel(OrdersFormsApiResponseModel formsApiResponseModel) {
+    public void setFormsApiResponseModel(OrdersUserFormsApiResponseModel formsApiResponseModel) {
         this.formsApiResponseModel = formsApiResponseModel;
     }
 

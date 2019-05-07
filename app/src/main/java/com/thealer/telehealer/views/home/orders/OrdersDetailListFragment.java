@@ -119,6 +119,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
     private void updateArrayList(ArrayList<BaseApiResponseModel> baseApiResponseModels) {
         headerList.clear();
         childList.clear();
+        userGuidSet.clear();
 
         ArrayList<OrdersUserFormsApiResponseModel> formsApiResponseModels = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
 

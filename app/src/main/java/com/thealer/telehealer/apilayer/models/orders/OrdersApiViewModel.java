@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.forms.OrdersFormsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
@@ -208,7 +207,7 @@ public class OrdersApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
 
-                    getAuthApiService().getForms()
+                    getAuthApiService().getForms(true)
                             .compose(applySchedulers())
                             .subscribe(new RAListObserver<OrdersUserFormsApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
@@ -230,9 +229,9 @@ public class OrdersApiViewModel extends BaseApiViewModel {
 
                     getAuthApiService().getAllForms()
                             .compose(applySchedulers())
-                            .subscribe(new RAListObserver<OrdersFormsApiResponseModel>(getProgress(isShowProgress)) {
+                            .subscribe(new RAListObserver<OrdersUserFormsApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
-                                public void onSuccess(ArrayList<OrdersFormsApiResponseModel> data) {
+                                public void onSuccess(ArrayList<OrdersUserFormsApiResponseModel> data) {
                                     ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(data);
                                     baseApiArrayListMutableLiveData.setValue(apiResponseModels);
                                 }
