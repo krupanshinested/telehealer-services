@@ -109,6 +109,7 @@ public class Utils {
 
     public static final String UTCFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final TimeZone UtcTimezone = TimeZone.getTimeZone("UTC");
+    public static final TimeZone GmtTimezone = TimeZone.getTimeZone("GMT");
     public static final String defaultDateFormat = "dd MMM, yyyy";
     public static final String yyyy_mm = "yyyy-MM";
     public static final String yyyy_mm_dd = "yyyy-MM-dd";
@@ -610,6 +611,23 @@ public class Utils {
         return "";
     }
 
+    public static String getCurrentUtcDate() {
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EE MMM dd HH:mm:ss zzz yyyy");
+        simpleDateFormat.setTimeZone(GmtTimezone);
+
+        SimpleDateFormat outputFormat = new SimpleDateFormat(UTCFormat);
+        outputFormat.setTimeZone(UtcTimezone);
+
+        try {
+            return outputFormat.format(simpleDateFormat.parse(calendar.getTime().toString()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     public static String getCurrentFomatedDate(String outputFormat) {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.sss");
@@ -1065,7 +1083,7 @@ public class Utils {
 
         String title = data.getAps().get(PubNubNotificationPayload.TITLE);
         String message = data.getAps().get(PubNubNotificationPayload.ALERT);
-        String imageUrl = data.getAps().get(PubNubNotificationPayload.MEDIA_URL);
+        String imageUrl = data.getMedia_url();
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -1101,8 +1119,7 @@ public class Utils {
     public static void displyNotification(String title, String message, Bitmap imageBitmap, Intent intent) {
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(application, notificationChannelId)
-                .setSmallIcon(R.drawable.app_icon)
-                .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
+                .setSmallIcon(R.drawable.app_icon_notification)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setLargeIcon(imageBitmap)

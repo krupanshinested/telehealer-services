@@ -5,6 +5,8 @@
         android:width="28dp"
         android:height="28dp"
         android:gravity="center">
-        <bitmap android:src="@drawable/ic_call" />
+        <bitmap
+            android:src="@drawable/ic_call"
+            android:tint="@color/colorWhite" />
     </item>
 </layer-list>

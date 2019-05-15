@@ -171,6 +171,11 @@
             android:screenOrientation="landscape" />
 
         <activity
+            android:name=".views.home.chat.ChatActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".views.common.RecentsSelectionActivity"
             android:screenOrientation="portrait" />
 
