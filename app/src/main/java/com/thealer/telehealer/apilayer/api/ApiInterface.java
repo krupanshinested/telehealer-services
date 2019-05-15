@@ -12,6 +12,10 @@ import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionRequest
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.UpdateAssociationRequestModel;
+import com.thealer.telehealer.apilayer.models.chat.ChatApiResponseModel;
+import com.thealer.telehealer.apilayer.models.chat.ChatMessageRequestModel;
+import com.thealer.telehealer.apilayer.models.chat.PrecannedMessageApiResponse;
+import com.thealer.telehealer.apilayer.models.chat.UserKeysApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.DataBean;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiResponseModel;
@@ -66,6 +70,7 @@ import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.common.Signal.SignalModels.SignalKey;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 
 import java.util.ArrayList;
@@ -526,6 +531,21 @@ public interface ApiInterface {
 
     @GET("api/invites")
     Observable<PendingInvitesNonRegisterdApiResponseModel> getNonRegisteredUserInvites(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(ACCEPTED) boolean accepted);
+
+    @GET("api/signal/keys")
+    Observable<UserKeysApiResponseModel> getUserKeys(@Query(USER_GUID) String userGuid);
+
+    @POST("api/signal/keys")
+    Observable<UserKeysApiResponseModel> postUserKeys(@Body SignalKey signalKey);
+
+    @GET("api/messages")
+    Observable<ChatApiResponseModel> getChatMessages(@Query("to") String userGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+
+    @POST("api/messages")
+    Observable<BaseApiResponseModel> sendMessage(@Body ChatMessageRequestModel chatMessageRequestModel);
+
+    @GET("precanned-messages")
+    Observable<PrecannedMessageApiResponse> getPrecannedMessages(@Query(TYPE) String type);
 
     @PATCH("api/call/{id}")
     Observable<BaseApiResponseModel> updateVisit(@Path(ID) String orderId, @Body UpdateVisitRequestModel requestModel, @Query(DOCTOR_GUID) String doctorGuid);

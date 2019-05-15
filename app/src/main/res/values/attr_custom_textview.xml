@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomTextView">
+        <attr name="ctv_stroke_color" format="color" />
+        <attr name="ctv_stroke_width" format="dimension" />
+        <attr name="ctv_background_color" format="color" />
+        <attr name="ctv_text_color" format="color" />
+        <attr name="ctv_top_left_corner" format="dimension" />
+        <attr name="ctv_top_right_corner" format="dimension" />
+        <attr name="ctv_bottom_left_corner" format="dimension" />
+        <attr name="ctv_bottom_right_corner" format="dimension" />
+        <attr name="ctv_corner_radius" format="dimension" />
+    </declare-styleable>
+</resources>

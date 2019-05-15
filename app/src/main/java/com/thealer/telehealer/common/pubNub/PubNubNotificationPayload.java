@@ -250,10 +250,9 @@ public class PubNubNotificationPayload {
      * create chat push payload
      *
      * @param to_guid
-     * @param createdAt
      * @return
      */
-    public static PushPayLoad getChatPayload(String to_guid, String createdAt) {
+    public static PushPayLoad getChatPayload(String to_guid) {
         PushPayLoad pushPayLoad = new PushPayLoad();
         APNSPayload apnsPayload = new APNSPayload();
 
@@ -268,10 +267,9 @@ public class PubNubNotificationPayload {
 
         apnsPayload.setAps(aps);
         apnsPayload.setUuid(UUID.randomUUID().toString());
-        apnsPayload.setType(APNSPayload.schedule);
+        apnsPayload.setType(APNSPayload.message);
         apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         apnsPayload.setTo(to_guid);
-        apnsPayload.setAt(createdAt);
         apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
         apnsPayload.setPn_bundle_ids(new String[]{"com.thealer", "com.thealer.pro"});
 

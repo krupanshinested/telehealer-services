@@ -7,8 +7,12 @@
             android:icon="@drawable/ic_call"
             android:title="@string/call" />
         <item
+            android:id="@+id/menu_chat"
+            android:icon="@drawable/ic_chat_drawable"
+            android:title="@string/chat" />
+        <item
             android:id="@+id/menu_schedules"
-            android:icon="@drawable/ic_schedules"
+            android:icon="@drawable/ic_schedule"
             android:title="@string/schedules" />
         <item
             android:id="@+id/menu_upload"
