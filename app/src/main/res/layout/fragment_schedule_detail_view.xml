@@ -46,9 +46,9 @@
 
             <ImageView
                 android:id="@+id/doctor_chat_iv"
-                android:layout_width="22dp"
+                android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_chat_bubble_outline_black_24dp"
                 android:tint="@color/app_gradient_start"
                 android:visibility="gone"
@@ -85,9 +85,9 @@
 
             <ImageView
                 android:id="@+id/patient_chat_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_margin="16dp"
                 android:src="@drawable/ic_chat_bubble_outline_black_24dp"
                 android:tint="@color/app_gradient_start"
                 android:visibility="gone"
@@ -99,7 +99,7 @@
                 android:id="@+id/patient_call_iv"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_margin="8dp"
+                android:layout_margin="16dp"
                 android:src="@drawable/ic_phone"
                 android:tint="@color/app_gradient_start"
                 android:visibility="gone"

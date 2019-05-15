@@ -166,4 +166,5 @@ public class Constants {
 
     public static final List<String> genderList = new ArrayList<>(Arrays.asList(male, female, others));
 
+    public static final String message_broadcast = "message_broadcast";
 }
