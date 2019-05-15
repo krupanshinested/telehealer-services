@@ -64,6 +64,8 @@ public class PreferenceConstants {
     public static final String IS_KNOW_YOUR_NUMBER_SHOWN = "IS_KNOW_YOUR_NUMBER_SHOWN";
     public static final String IS_VITAL_DEVICE_CONNECTED = "IS_VITAL_DEVICE_CONNECTED";
     public static final String DEVICE_CONNECTION_COUNT = "DEVICE_CONNECTION_COUNT";
+    public static final String USER_KEYS = "userKeys";
+    public static final String PRECANNED_MESSAGES = "precannedMessages";
     public static final String APP_INSTALL_TYPE = "app_install_type";
     public static final String APP_INSTALL_TYPE_COUNTRY_CODE = "app_install_type_country_code";
 

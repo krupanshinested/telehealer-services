@@ -1,27 +1,12 @@
 package com.thealer.telehealer.views.home;
 
 import android.annotation.SuppressLint;
-
-import Flavor.iHealth.VitalsListWithGoogleFitFragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -33,6 +18,20 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
@@ -58,6 +57,7 @@ import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
 import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
@@ -74,6 +74,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import Flavor.iHealth.VitalsListWithGoogleFitFragment;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -252,14 +253,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             enableOrDisableCall(true);
         }
 
-
-        if (!UserType.isUserPatient()) {
-            userDetailTab.setTabMode(TabLayout.MODE_SCROLLABLE);
-        }
         userDetailBnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                Bundle bundle = getArguments();
                 switch (menuItem.getItemId()) {
+                    case R.id.menu_chat:
+                        startActivity(new Intent(getActivity(), ChatActivity.class).putExtras(bundle));
+                        break;
                     case R.id.menu_schedules:
                         startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
                         break;
@@ -322,7 +323,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
                         break;
                     case R.id.menu_upload:
-                        Bundle bundle = getArguments();
                         if (bundle == null)
                             bundle = new Bundle();
 
@@ -546,9 +546,13 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 case Constants.ROLE_PATIENT:
                     userDetailBnv.getMenu().findItem(R.id.menu_upload).setVisible(true);
                     userDetailBnv.setVisibility(View.VISIBLE);
+                    userDetailTab.setTabMode(TabLayout.MODE_SCROLLABLE);
                     break;
                 case Constants.ROLE_DOCTOR:
                     genderIv.setVisibility(View.GONE);
+                    if (UserType.isUserAssistant()) {
+                        userDetailTab.setTabMode(TabLayout.MODE_SCROLLABLE);
+                    }
                     break;
                 case Constants.ROLE_ASSISTANT:
                     userDetailBnv.setVisibility(View.GONE);

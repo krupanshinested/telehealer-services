@@ -29,6 +29,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:tabGravity="fill"
                 app:tabSelectedTextColor="@color/app_gradient_start" />
 
             <androidx.viewpager.widget.ViewPager
@@ -60,6 +61,7 @@
             android:background="@drawable/grey_border_drawable"
             app:itemIconTint="@color/app_gradient_start"
             app:itemTextColor="@color/app_gradient_start"
+            app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_navigation_detail_view" />
 
         <Button

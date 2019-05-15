@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,15 +19,18 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.ResultFetcher;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.notification.NotificationDetailActivity;
 
@@ -109,6 +113,17 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             case APNSPayload.text:
                 break;
             case APNSPayload.message:
+                intent = new Intent(this, ChatActivity.class);
+                Bundle chatBundle = new Bundle();
+                chatBundle.putString(ArgumentKeys.USER_GUID, data.getFrom());
+                intent.putExtras(chatBundle);
+                Utils.createNotification(data, intent);
+
+                if (UserType.isUserPatient()) {
+                    Intent messageIntent = new Intent(Constants.message_broadcast);
+                    messageIntent.putExtras(chatBundle);
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+                }
                 break;
             case APNSPayload.callHistory:
                 break;

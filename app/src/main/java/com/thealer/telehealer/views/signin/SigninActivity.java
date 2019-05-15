@@ -28,6 +28,7 @@ import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.chat.UserKeysApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
@@ -39,6 +40,7 @@ import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Signal.SignalKeyManager;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
@@ -139,13 +141,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                         EventRecorder.updateUserId(whoAmIApiResponseModel.getUser_guid());
                         EventRecorder.recordUserStatus(whoAmIApiResponseModel.getUser_activated());
 
-                        if (quickLoginType == -1) {
-                            startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class));
-                        } else {
-                            startActivity(new Intent(SigninActivity.this, HomeActivity.class));
-                        }
-
-                        finish();
+                        checkSignalKeys();
 
                     } else {
                         Dialog dialog = new AlertDialog.Builder(SigninActivity.this)
@@ -180,8 +176,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, authToken);
 
                             if (isQuickLogin) {
-                                appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
-                                goToMainActivity();
+                                checkSignalKeys();
                             } else {
                                 appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, refreshToken);
                                 whoAmIApiViewModel.checkWhoAmI();
@@ -231,6 +226,36 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         });
 
         initView();
+    }
+
+    private void checkSignalKeys() {
+        SignalKeyManager
+                .getInstance(SigninActivity.this)
+                .getUserKey(null, true, true, true)
+                .getUserKeysApiResponseModel().observe(SigninActivity.this, new Observer<UserKeysApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable UserKeysApiResponseModel userKeysApiResponseModel) {
+
+                proceedLoginSuccess();
+            }
+        });
+    }
+
+    private void proceedLoginSuccess() {
+        if (isQuickLogin) {
+            appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
+            goToMainActivity();
+        } else {
+
+            if (quickLoginType == -1) {
+                startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class));
+            } else {
+                startActivity(new Intent(SigninActivity.this, HomeActivity.class));
+            }
+
+            finish();
+
+        }
     }
 
     private void showResetPassword() {
