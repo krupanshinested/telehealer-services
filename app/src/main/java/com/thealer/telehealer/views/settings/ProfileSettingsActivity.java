@@ -595,7 +595,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 showSubFragment(paymentDetailFragment);
                 break;
             case RequestID.REQ_SHOW_DETAIL_VIEW:
-                bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_CONNECTION);
+                bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
                 DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
                 doctorPatientDetailViewFragment.setArguments(bundle);
                 showSubFragment(doctorPatientDetailViewFragment);

@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
@@ -43,6 +44,7 @@ import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
 import java.util.ArrayList;
@@ -76,7 +78,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private SchedulesApiResponseModel.ResultBean resultBean;
     private RecyclerView patientHistoryRv;
     private TextView statusTv;
-    private String doctorGuid = null, doctorName = null;
+    private String userGuid = null, doctorGuid = null, doctorName = null;
     private Button waitingRoomBtn;
     private TextView historyLabel;
 
@@ -167,9 +169,11 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         patientChatIv.setOnClickListener(this);
         waitingRoomBtn.setOnClickListener(this);
 
-        //TODO : Need to change this to visible when chat is integrated
-        patientChatIv.setVisibility(View.GONE);
-        doctorChatIv.setVisibility(View.GONE);
+        if (UserType.isUserPatient()) {
+            doctorChatIv.setVisibility(View.VISIBLE);
+        } else {
+            patientChatIv.setVisibility(View.VISIBLE);
+        }
 
         patientCallIv.setVisibility(View.GONE);
 
@@ -182,11 +186,13 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         waitingRoomBtn.setVisibility(View.GONE);
         if (getArguments() != null) {
             resultBean = (SchedulesApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SCHEDULE_DETAIL);
+
             if (UserType.isUserAssistant()) {
                 doctorGuid = resultBean.getDoctor().getUser_guid();
                 doctorName = resultBean.getDoctor().getUserDisplay_name();
             }
             if (resultBean != null) {
+                userGuid = resultBean.getPatient().getUser_guid();
 
                 if (UserType.isUserPatient() && resultBean.isStartAndEndBetweenCurrentTime()) {
                     waitingRoomBtn.setVisibility(View.VISIBLE);
@@ -313,6 +319,8 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                         });
                 break;
             case R.id.doctor_chat_iv:
+            case R.id.patient_chat_iv:
+                startActivity(new Intent(getActivity(), ChatActivity.class).putExtra(ArgumentKeys.USER_GUID, UserType.isUserPatient() ? resultBean.getDoctor().getUser_guid() : resultBean.getPatient().getUser_guid()));
                 break;
             case R.id.patient_call_iv:
 
@@ -353,8 +361,6 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 itemPickerDialog.setCancelable(false);
                 itemPickerDialog.show();
 
-                break;
-            case R.id.patient_chat_iv:
                 break;
             case R.id.waiting_room_btn:
                 Intent waitingRoomIntent = new Intent(getActivity(), WaitingRoomActivity.class);

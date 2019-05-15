@@ -1184,6 +1184,9 @@
     <string name="no_source_found_message">Las aplicaciones de fuente vital de AppleHealth eventualmente aparecerán aquí</string>
     <string name="health_summary">Resumen de salud</string>
     <string name="last_login">Último acceso : %s</string>
+    <string name="view_message">Ver mensaje</string>
+    <string name="you_have_a_new_message_from_doctor_s_office">Tienes un nuevo mensaje de la oficina del doctor.</string>
+    <string name="search_messages">Buscar mensajes</string>
     <string name="pin">Alfiler</string>
     <string name="custom_range">Rango personalizado</string>
     <string name="logs">Troncos</string>

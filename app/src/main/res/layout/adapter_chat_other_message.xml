@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/padding_default">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/chat_avatar_civ"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="@dimen/margin_default"
+        android:src="@drawable/profile_placeholder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/chat_message_tv" />
+
+
+    <com.thealer.telehealer.common.CustomTextView
+        android:id="@+id/chat_message_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_default"
+        android:autoLink="web"
+        android:linksClickable="true"
+        android:padding="@dimen/padding_default"
+        android:textColor="@color/colorBlack"
+        android:textColorLink="@color/color_blue"
+        app:ctv_background_color="@color/color_grey_light_background"
+        app:ctv_corner_radius="6dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/chat_avatar_civ"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/dummy_text" />
+
+    <TextView
+        android:id="@+id/chat_time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right|center"
+        android:padding="@dimen/padding_default"
+        app:layout_constraintEnd_toEndOf="@+id/chat_message_tv"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@+id/chat_message_tv"
+        app:layout_constraintTop_toBottomOf="@+id/chat_message_tv"
+        tools:text="@string/dummy_text" />
+</androidx.constraintlayout.widget.ConstraintLayout>
