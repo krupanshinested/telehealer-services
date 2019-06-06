@@ -35,6 +35,9 @@ public class OpenTokConstants {
     public static final String videoEnabled = "videoEnabled";
     public static final String otherEndBandwidth = "otherEndBandwidth";
 
+    public static final String subscriberBatteryLevel = "subscriberBatteryLevel";
+    public static final String battery = "battery";
+
     //Call Quality
     public static final String hd = "HD";
     public static final String sd = "SD";

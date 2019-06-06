@@ -297,4 +297,9 @@ public class CallMinimizeService extends Service implements FloatingViewListener
     public String getCurrentCallQuality() {
         return currentCallQuality;
     }
+
+    @Override
+    public void didChangedBattery() {
+
+    }
 }

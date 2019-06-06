@@ -1,9 +1,11 @@
 package com.thealer.telehealer.common.OpenTok;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioAttributes;
 import android.media.AudioDeviceInfo;
 import android.media.AudioFocusRequest;
@@ -12,6 +14,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -177,6 +180,17 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     @NonNull
     private CustomAudioDevice customAudioDevice;
 
+    private boolean isBatteryObserverAdded = false;
+    @Nullable
+    private Float otherPersonBatteryLevel = null;
+    private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive( Context context, Intent intent ) {
+            int level = intent.getIntExtra( BatteryManager.EXTRA_LEVEL, -1);
+            sendBattery(level);
+        }
+    };
+
     public void didRecieveIncoming(APNSPayload apnsPayload) {
         EventRecorder.recordCallUpdates("CALL_RECEIVED",null);
         this.sessionId = apnsPayload.getSessionId();
@@ -312,6 +326,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         this.scheduleId = callInitiateModel.getScheduleId();
         this.isPatientDisclaimerDismissed = false;
         this.otherPersonUserGuid = callInitiateModel.getToUserGuid();
+        this.otherPersonBatteryLevel = null;
 
         if (AudioDeviceManager.getAudioDevice() != null && AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -323,6 +338,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
 
         if (isCalling) {
+            if (tokBoxUIInterface != null) {
+                tokBoxUIInterface.updateCallInfo(application.getString(R.string.trying_to_call));
+            }
+
             this.callState = OpenTokConstants.outGoingCallGoingOn;
             connectToSession();
 
@@ -482,6 +501,14 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         if (mPublisher != null && mPublisher.getView() instanceof GLSurfaceView) {
             ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(true);
+        }
+    }
+
+    public boolean isOtherPersonBatteryLow() {
+        if (otherPersonBatteryLevel != null) {
+            return otherPersonBatteryLevel <= 0.1;
+        } else {
+            return false;
         }
     }
 
@@ -783,6 +810,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         sendTranscript();
 
+        this.otherPersonBatteryLevel = null;
+        if (isBatteryObserverAdded) {
+            isBatteryObserverAdded = false;
+            application.unregisterReceiver(batteryReceiver);
+        }
+
         if (!TextUtils.isEmpty(sessionId)) {
             if (isCalling) {
                 if (connectedDate == null) {
@@ -979,8 +1012,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 if (tokBoxUIInterface != null) {
                     Log.d("TokBox", "ringing");
                     tokBoxUIInterface.updateCallInfo(application.getString(R.string.ringing));
-                    startOutgoingTone();
                 }
+
+                startOutgoingTone();
             }
         });
 
@@ -1226,6 +1260,36 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
     }
 
+    public void sendBattery(int battery) {
+        Log.d("TokBox","battery "+battery);
+        Float bvalue = Float.parseFloat(battery+"");
+        bvalue = bvalue / 100;
+        HashMap<String, Float> message = new HashMap<>();
+        message.put(OpenTokConstants.battery, bvalue);
+        try {
+            String value = Utils.serialize(message);
+            sendMessage(OpenTokConstants.subscriberBatteryLevel, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void didReceiveBatteryStatus(String message) {
+        Type type = new TypeToken<HashMap<String, Float>>() {
+        }.getType();
+
+        try {
+            HashMap<String, Float> map = Utils.deserialize(message, type);
+            Float battery = map.get(OpenTokConstants.battery);
+            this.otherPersonBatteryLevel = battery;
+            Log.d("TokBox","other battery "+battery);
+            if (tokBoxUIInterface != null)
+                this.tokBoxUIInterface.didChangedBattery();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     //Listener Methods
 
@@ -1377,6 +1441,13 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
 
     private void callStarted() {
+        if (!callType.equals(OpenTokConstants.oneWay) && !isBatteryObserverAdded){
+            isBatteryObserverAdded = true;
+            Intent batteryStatus = application.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED) );
+            if (batteryStatus != null)
+                sendBattery(batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1));
+        }
+
         connectedDate = new Date();
 
         if (mPublisher != null)
@@ -1510,6 +1581,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 break;
             case OpenTokConstants.audioMuteStatus:
                 audioMuteStatusReceived(value);
+                break;
+            case OpenTokConstants.subscriberBatteryLevel:
+                didReceiveBatteryStatus(value);
                 break;
             default:
                 if (value != null && tokBoxUIInterface != null) {
