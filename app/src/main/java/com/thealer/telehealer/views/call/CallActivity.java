@@ -159,15 +159,16 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestFullScreenMode();
+        //requestFullScreenMode();
         getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN |
+        getWindow().setStatusBarColor(ContextCompat.getColor(this,R.color.colorBlack));
+
+        this.getWindow().setFlags(
                         WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN |
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                  WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
@@ -1069,7 +1070,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (!TokBox.shared.getPatientDisclaimerDismissed()) {
+                            if (patient_disclaimer.getVisibility() == View.VISIBLE) {
                                 dismissPatientDisclaimer(true);
                             }
                         }
@@ -1333,11 +1334,25 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         }
     }
 
+    private void updateBatterInfo() {
+        if (TokBox.shared.isOtherPersonBatteryLow()) {
+            String remoteuserDisplayName = otherPersonDetail != null ? otherPersonDetail.getDisplayName() : getString(R.string.other_person);
+            audio_disabled_iv.setVisibility(View.VISIBLE);
+            video_disabled_iv.setVisibility(View.GONE);
+            audio_disabled_iv.setImageResource(R.drawable.ic_battery_low);
+            quality_disclaimer_tv.setText(getString(R.string.battery_low_message, remoteuserDisplayName));
+            quality_disclaimer.setVisibility(View.VISIBLE);
+        } else {
+            quality_disclaimer.setVisibility(View.GONE);
+        }
+    }
+
     private void updateQualityView() {
         if (!TokBox.shared.getSubscriberAudioMuted() && !TokBox.shared.getSubscriberVideoMuted()) {
-            quality_disclaimer.setVisibility(View.GONE);
+            updateBatterInfo();
         } else {
 
+            audio_disabled_iv.setImageResource(R.drawable.mic_off);
             String remoteuserDisplayName = otherPersonDetail != null ? otherPersonDetail.getDisplayName() : getString(R.string.other_person);
 
             if (TokBox.shared.getSubscriberAudioMuted() && TokBox.shared.getSubscriberVideoMuted()) {
@@ -1406,6 +1421,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 speaker_type.setImageResource(R.drawable.speaker);
                 break;
         }
+    }
+
+    @Override
+    public void didChangedBattery() {
+        updateQualityView();
     }
 
     @Override

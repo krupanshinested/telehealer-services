@@ -1149,4 +1149,6 @@
     <string name="others">Otros</string>
     <string name="privacy">Intimidad</string>
 
+    <string name="battery_low_message">%1$s la batería se agota</string>
+    <string name="trying_to_call">Tratando de llamar</string>
 </resources>

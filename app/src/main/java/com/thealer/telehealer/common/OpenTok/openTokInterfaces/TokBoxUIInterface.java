@@ -43,4 +43,6 @@ public interface TokBoxUIInterface {
     void bluetoothMediaAction(Boolean forEnd);
 
     String getCurrentCallQuality();
+
+    void didChangedBattery();
 }
