@@ -7,12 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -43,7 +43,7 @@ import java.util.List;
 /**
  * Created by Aswin on 04,February,2019
  */
-public class VitalReportFragment extends BaseFragment implements View.OnClickListener {
+public class VitalReportFragment extends BaseFragment {
     private LinearLayout searchLl;
     private View topView;
     private CardView searchCv;
@@ -106,6 +106,7 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         selectedFilter = VitalReportApiViewModel.LAST_WEEK;
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -131,7 +132,22 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
 
-        filterIv.setOnClickListener(this);
+        filterIv.setVisibility(View.GONE);
+
+        toolbar.inflateMenu(R.menu.add_visit_menu);
+        toolbar.getMenu().findItem(R.id.menu_print).setVisible(false);
+        toolbar.getMenu().findItem(R.id.menu_next).setVisible(false);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_filter:
+                        showFilterDialog();
+                        break;
+                }
+                return true;
+            }
+        });
 
         searchEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -187,7 +203,7 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
 
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
-                toolbarTitle.setText(getString(R.string.vitals));
+                setToolbarTitle(getString(R.string.last_week));
                 onCloseActionInterface = (OnCloseActionInterface) getActivity();
                 backIv.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -233,16 +249,16 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
                     } else if (selectedItem.equals(getString(R.string.all))) {
                         patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH);
                         selectedFilter = VitalReportApiViewModel.ALL;
+                    } else {
+                        selectedFilter = null;
+                        startDate = bundle.getString(ArgumentKeys.START_DATE);
+                        endDate = bundle.getString(ArgumentKeys.END_DATE);
+
+                        String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
+
+                        patientListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
                     }
-
-                } else {
-                    selectedFilter = null;
-                    startDate = bundle.getString(ArgumentKeys.START_DATE);
-                    endDate = bundle.getString(ArgumentKeys.END_DATE);
-
-                    String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
-
-                    patientListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
+                    setToolbarTitle(selectedItem);
                 }
                 getUsersList(selectedFilter, startDate, endDate);
             }
@@ -253,12 +269,12 @@ public class VitalReportFragment extends BaseFragment implements View.OnClickLis
         vitalReportApiViewModel.getVitalUsers(filter, startDate, endDate, doctorGuid, true);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.filter_iv:
-                showFilterDialog();
-                break;
+    private void setToolbarTitle(String text) {
+        if (text.equals(getString(R.string.all))) {
+            toolbarTitle.setText(getString(R.string.vitals));
+        } else {
+            toolbarTitle.setText(String.format(getString(R.string.vitals) + " (%s)", text));
         }
     }
+
 }

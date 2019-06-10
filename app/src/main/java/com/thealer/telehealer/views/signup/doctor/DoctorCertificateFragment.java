@@ -58,6 +58,7 @@ public class DoctorCertificateFragment extends BaseFragment implements DoCurrent
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_doctor_certificate, container, false);
 
+        onViewChangeInterface.hideOrShowNext(true);
         onViewChangeInterface.enableNext(false);
 
         initView(view);

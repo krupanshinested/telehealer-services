@@ -206,6 +206,9 @@ public interface ApiInterface {
     @POST("login")
     Observable<SigninApiResponseModel> signinUser(@Body HashMap<String, Object> params);
 
+    @POST("api/logout")
+    Observable<BaseApiResponseModel> signOut();
+
     @GET("api/whoami")
     Observable<WhoAmIApiResponseModel> whoAmI();
 

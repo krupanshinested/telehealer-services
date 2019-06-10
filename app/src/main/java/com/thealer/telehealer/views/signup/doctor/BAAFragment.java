@@ -223,6 +223,7 @@ public class BAAFragment extends BaseFragment implements DoCurrentTransactionInt
 
     @Override
     public void doCurrentTransaction() {
+        agreeBtn.setEnabled(false);
         createUser();
     }
 }

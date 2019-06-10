@@ -112,8 +112,6 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
             viewHolder.itemSwitch.setChecked(patientHistory.get(i).isIsYes());
             if (patientHistory.get(i).getReason() != null && !patientHistory.get(i).getReason().isEmpty()) {
                 viewHolder.commentsEt.setText(patientHistory.get(i).getReason());
-            } else {
-                viewHolder.commentsEt.setVisibility(View.GONE);
             }
         }
 

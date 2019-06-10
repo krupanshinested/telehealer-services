@@ -607,7 +607,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private void setSubFragment(Fragment fragment) {
         fragmentManager
                 .beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right)
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.fragment_remove_animation, R.anim.fragment_remove_exit)
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .replace(subFragmentHolder.getId(), fragment)
                 .commit();

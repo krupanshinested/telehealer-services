@@ -13,7 +13,9 @@ import android.os.SystemClock;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -29,6 +31,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
 import static com.thealer.telehealer.common.PermissionConstants.CAMERA_REQUEST_CODE;
@@ -38,6 +42,7 @@ import static com.thealer.telehealer.common.PermissionConstants.GALLERY_REQUEST_
  * Created by Aswin on 06,November,2018
  */
 public class CameraUtil {
+    private static String capturedImagePath = null;
 
     public static void showImageSelectionAlert(Context context) {
         if (PermissionChecker.with(context).checkPermission(PermissionConstants.PERMISSION_CAM_PHOTOS)) {
@@ -86,10 +91,24 @@ public class CameraUtil {
     public static void openCamera(Context context) {
         if (PermissionChecker.with(context).checkPermission(PermissionConstants.PERMISSION_CAMERA)) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (intent.resolveActivity(context.getPackageManager()) != null)
-                ((Activity) context).startActivityForResult(intent, CAMERA_REQUEST_CODE);
-            else
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile(context);
+                    capturedImagePath = photoFile.getAbsolutePath();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (photoFile != null) {
+                    Log.e("aswin", "openCamera: " + Uri.fromFile(photoFile).toString());
+                    Uri photoUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", photoFile);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                    ((Activity) context).startActivityForResult(intent, CAMERA_REQUEST_CODE);
+                }
+            } else {
+                capturedImagePath = null;
                 Toast.makeText(context, context.getString(R.string.camera_not_supported), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -97,11 +116,12 @@ public class CameraUtil {
 
         if (resultCode == RESULT_OK) {
             if (requestCode == CAMERA_REQUEST_CODE) {
-                if (data != null && data.getExtras() != null && data.getExtras().get("data") != null) {
-                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-
-                    return getBitmapFilePath(context, bitmap);
-                }
+//                if (data != null && data.getExtras() != null && data.getExtras().get("data") != null) {
+//                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+//
+//                    return getBitmapFilePath(context, bitmap);
+//                }
+                return capturedImagePath;
             } else if (requestCode == GALLERY_REQUEST_CODE) {
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -118,6 +138,13 @@ public class CameraUtil {
             }
         }
         return null;
+    }
+
+    private static File createImageFile(Context context) throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
     public static String getBitmapFilePath(Context context, Bitmap bitmap) {

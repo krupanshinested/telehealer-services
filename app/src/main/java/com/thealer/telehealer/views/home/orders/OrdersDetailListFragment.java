@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -718,13 +719,14 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             case R.id.add_fab:
                 addFab.setClickable(false);
                 Bundle bundle = getArguments();
-                if (UserType.isUserDoctor() && UserDetailPreferenceManager.getSignature() == null) {
+                Log.e(TAG, "onClick: " + UserDetailPreferenceManager.getSignature());
+                if (UserType.isUserDoctor() && (UserDetailPreferenceManager.getSignature() == null || UserDetailPreferenceManager.getSignature().isEmpty())) {
                     if (bundle == null) {
                         bundle = new Bundle();
                     }
                     bundle.putBoolean(ArgumentKeys.SHOW_SIGNATURE_PROPOSER, true);
                     startActivity(new Intent(getActivity(), SignatureActivity.class).putExtras(bundle));
-                } else if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getUser_detail() != null && doctorModel.getUser_detail().getSignature() == null) {
+                } else if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getUser_detail() != null && (doctorModel.getUser_detail().getSignature() == null || doctorModel.getUser_detail().getSignature().isEmpty())) {
 
                     startActivity(new Intent(getActivity(), ContentActivity.class)
                             .putExtra(ArgumentKeys.TITLE, R.string.ma_signature_required_title)

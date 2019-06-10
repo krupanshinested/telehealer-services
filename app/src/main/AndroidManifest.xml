@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.thealer.telehealer">
 
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -54,7 +58,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.signup.SignUpActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".views.signup.PasswordRequirementActivity"
             android:screenOrientation="portrait" />
@@ -169,8 +174,9 @@
             android:name=".views.home.vitals.LandscapeImageView"
             android:screenOrientation="landscape" />
 
-        <activity android:name=".views.common.RecentsSelectionActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".views.common.RecentsSelectionActivity"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
@@ -211,6 +217,15 @@
             android:name="io.fabric.ApiKey"
             android:value="${fabric_key}" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.SupportInformation;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
@@ -24,12 +23,12 @@ import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 /**
@@ -38,7 +37,7 @@ import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 public class VitalConnectingFragment extends BaseFragment implements VitalPairInterface, View.OnClickListener {
 
-    private TextView statusTv,chargeTv,reconnectingTv;
+    private TextView statusTv, chargeTv, reconnectingTv;
     private ImageView deviceImage;
     private CustomButton startButton, statusView;
     private ImageView otherOptionView;
@@ -59,7 +58,7 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
         vitalDevice = (VitalDevice) getArguments().getSerializable(ArgumentKeys.VITAL_DEVICE);
 
         if (saveInstance != null) {
-            currentState = saveInstance.getInt(ArgumentKeys.CURRENT_VITAL_STATE,connecting);
+            currentState = saveInstance.getInt(ArgumentKeys.CURRENT_VITAL_STATE, connecting);
         } else {
             currentState = connecting;
         }
@@ -80,7 +79,7 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
         super.onResume();
 
         updateView(currentState);
-        vitalManagerInstance.updateBatteryView(View.GONE,0);
+        vitalManagerInstance.updateBatteryView(View.GONE, 0);
 
         vitalManagerInstance.getInstance().setListener(this);
 
@@ -101,8 +100,8 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
 
         SupportInformation supportInformation = VitalDeviceType.getConnectInfo(vitalDevice.getType());
 
-        if (supportInformation != null && !getArguments().getBoolean("isDisplaySupportDialog") && !vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(),vitalDevice.getDeviceId()) ) {
-            getArguments().putBoolean("isDisplaySupportDialog",true);
+        if (supportInformation != null && !getArguments().getBoolean("isDisplaySupportDialog") && !vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(), vitalDevice.getDeviceId())) {
+            getArguments().putBoolean("isDisplaySupportDialog", true);
 
             Intent contentIntent = new Intent(getActivity(), ContentActivity.class);
             contentIntent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
@@ -163,8 +162,8 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
         deviceImage.setImageResource(VitalDeviceType.shared.getImage(vitalDevice.getType()));
 
         String deviceName = getString(VitalDeviceType.shared.getTitle(vitalDevice.getType()));
-        chargeTv.setText(getString(R.string.charge_text,deviceName));
-        reconnectingTv.setText(getString(R.string.reconnect_text,deviceName));
+        chargeTv.setText(getString(R.string.charge_text, deviceName));
+        reconnectingTv.setText(getString(R.string.reconnect_text, deviceName));
 
         startButton.setOnClickListener(this);
     }
@@ -179,26 +178,31 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
                 } else {
                     startButton.setText(getResources().getString(R.string.START));
                 }
-                
-                toolBarInterface.updateSubTitle(getString(R.string.connected),View.VISIBLE);
+
+                toolBarInterface.updateSubTitle(getString(R.string.connected), View.VISIBLE);
                 suggestionsLay.setVisibility(View.GONE);
                 break;
             case connecting:
                 startButton.setVisibility(View.GONE);
-                toolBarInterface.updateSubTitle(getString(R.string.connecting),View.VISIBLE);
+                toolBarInterface.updateSubTitle(getString(R.string.connecting), View.VISIBLE);
                 suggestionsLay.setVisibility(View.VISIBLE);
                 break;
             case failed:
                 startButton.setVisibility(View.VISIBLE);
                 startButton.setText(getResources().getString(R.string.retry));
-                toolBarInterface.updateSubTitle(getString(R.string.failed_to_connect),View.VISIBLE);
+                toolBarInterface.updateSubTitle(getString(R.string.failed_to_connect), View.VISIBLE);
                 suggestionsLay.setVisibility(View.VISIBLE);
                 break;
             case notConnected:
                 startButton.setText(getResources().getString(R.string.connect));
-                toolBarInterface.updateSubTitle(getString(R.string.not_connected),View.VISIBLE);
+                toolBarInterface.updateSubTitle(getString(R.string.not_connected), View.VISIBLE);
                 suggestionsLay.setVisibility(View.VISIBLE);
                 break;
+        }
+        if (state != connected) {
+            Utils.greyoutProfile(deviceImage);
+        } else {
+            Utils.removeGreyoutProfile(deviceImage);
         }
     }
 
@@ -281,7 +285,7 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
             bundle = new Bundle();
         }
         bundle.putSerializable(ArgumentKeys.VITAL_DEVICE, vitalDevice);
-        bundle.putBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY,true);
+        bundle.putBoolean(ArgumentKeys.NEED_TO_TRIGGER_VITAL_AUTOMATICALLY, true);
         return bundle;
     }
 
