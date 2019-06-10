@@ -18,8 +18,8 @@
 
     <fr.castorflex.android.circularprogressbar.CircularProgressBar
         android:id="@+id/circular_progress"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="10dp"
         android:indeterminate="true"
         app:cpb_color="@color/app_gradient_start"
@@ -36,8 +36,8 @@
 
     <ImageView
         android:id="@+id/success_iv"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="10dp"
         android:scaleX="1.5"
         android:scaleY="1.5"

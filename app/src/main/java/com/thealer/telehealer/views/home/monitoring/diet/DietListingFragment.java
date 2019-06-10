@@ -167,7 +167,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
         closeIv = (ImageView) view.findViewById(R.id.close_iv);
         dietListCrv = (CustomRecyclerView) view.findViewById(R.id.diet_list_crv);
 
-        toolbarTitle.setText(getString(R.string.diets));
+        setToolbarTitle(getString(R.string.last_week));
 
         toolbar.inflateMenu(R.menu.add_visit_menu);
         nextTv = toolbar.getMenu().findItem(R.id.menu_next);
@@ -193,16 +193,16 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
                                     } else if (selectedItem.equals(getString(R.string.all))) {
                                         dietListCrv.setEmptyState(EmptyViewConstants.EMPTY_DIET);
                                         filter = null;
+                                    } else {
+                                        filter = null;
+                                        startDate = bundle.getString(ArgumentKeys.START_DATE);
+                                        endDate = bundle.getString(ArgumentKeys.END_DATE);
+
+                                        String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_DIET_FROM_TO);
+
+                                        dietListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
                                     }
-
-                                } else {
-                                    filter = null;
-                                    startDate = bundle.getString(ArgumentKeys.START_DATE);
-                                    endDate = bundle.getString(ArgumentKeys.END_DATE);
-
-                                    String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_DIET_FROM_TO);
-
-                                    dietListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
+                                    setToolbarTitle(selectedItem);
                                 }
                                 getDiets(true);
                             }
@@ -330,6 +330,14 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
         updateUI();
 
         getDiets(true);
+    }
+
+    private void setToolbarTitle(String text) {
+        if (text.equals(getString(R.string.all))) {
+            toolbarTitle.setText(getString(R.string.diets));
+        } else {
+            toolbarTitle.setText(String.format(getString(R.string.diets) + " (%s)", text));
+        }
     }
 
     private void changeToViewMode() {

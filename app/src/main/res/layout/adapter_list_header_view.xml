@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center|left"
-    android:padding="8dp"
-    tools:text="@string/dummy_text">
-</TextView>
+    android:paddingStart="8dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="8dp"
+    tools:text="@string/dummy_text"/>

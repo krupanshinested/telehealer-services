@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -71,6 +72,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.thealer.telehealer.common.Constants.AVAILABLE;
+
 /**
  * Created by Aswin on 14,November,2018
  */
@@ -112,6 +117,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private boolean isConnectionStatusChecked = false;
     private boolean checkStatus, isUserDataFetched = false;
     private ImageView favoriteIv;
+    private CircleImageView statusCiv;
 
     @Override
     public void onAttach(Context context) {
@@ -170,7 +176,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     }
 
                     updateView(resultBean);
-                    updateUserStatus(resultBean);
                     updateDateConnectionStatus(resultBean.getConnection_status());
                 }
             }
@@ -237,6 +242,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         bottomView = (LinearLayout) view.findViewById(R.id.bottom_view);
         userDetailBnv = (BottomNavigationView) view.findViewById(R.id.user_detail_bnv);
         favoriteIv = (ImageView) view.findViewById(R.id.favorite_iv);
+        statusCiv = (CircleImageView) view.findViewById(R.id.status_civ);
 
         userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
 
@@ -383,8 +389,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                         Set<String> set = new HashSet<>();
                         set.add(resultBean.getUser_guid());
                         getUserDetail(set);
-                    } else {
-                        updateUserStatus(resultBean);
                     }
                 }
 
@@ -447,7 +451,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                             }
                         } else {
                             updateView(resultBean);
-                            updateUserStatus(resultBean);
                         }
                     }
                 }
@@ -493,7 +496,13 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
         }
 
-        userDobTv.setCompoundDrawablesWithIntrinsicBounds(userApiResponseModel.getStatusColorCode(), 0, 0, 0);
+        if (!userApiResponseModel.getStatus().equals(AVAILABLE)) {
+            Utils.greyoutProfile(userProfileIv);
+        } else {
+            Utils.removeGreyoutProfile(userProfileIv);
+        }
+
+        statusCiv.setImageDrawable(new ColorDrawable(getActivity().getColor(userApiResponseModel.getStatusColorCode())));
     }
 
     private void updateView(CommonUserApiResponseModel resultBean) {
@@ -512,6 +521,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             Utils.setGenderImage(getActivity(), genderIv, resultBean.getGender());
             Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
 
+            updateUserStatus(resultBean);
             if (resultBean.getFavorite() != null) {
                 favoriteIv.setSelected(resultBean.getFavorite());
                 favoriteIv.setVisibility(View.VISIBLE);

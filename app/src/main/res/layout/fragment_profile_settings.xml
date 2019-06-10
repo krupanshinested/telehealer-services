@@ -49,7 +49,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    app:icon="@drawable/ic_orders_documents"
+                    app:icon="@drawable/ic_settings_document"
                     app:title="@string/documents" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView

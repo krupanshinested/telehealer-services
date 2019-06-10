@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -1254,6 +1256,7 @@ public class Utils {
 
                     bundle.putString(ArgumentKeys.START_DATE, startDate);
                     bundle.putString(ArgumentKeys.END_DATE, endDate);
+                    bundle.putString(Constants.SELECTED_ITEM, selectedItem);
                 }
 
                 onListItemSelectInterface.onListItemSelected(position, bundle);
@@ -1264,6 +1267,20 @@ public class Utils {
 
             }
         });
+    }
+
+    public static void greyoutProfile(ImageView imageView) {
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        imageView.setColorFilter(filter);
+    }
+
+    public static void removeGreyoutProfile(ImageView imageView) {
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(1);
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        imageView.setColorFilter(filter);
     }
 
     public static void sendHelpEmail(Context context) {

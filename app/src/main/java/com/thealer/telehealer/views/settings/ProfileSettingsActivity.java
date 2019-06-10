@@ -24,21 +24,22 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
+import com.thealer.telehealer.apilayer.models.signout.SignoutApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -98,11 +99,14 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private boolean isBackDisabled = false;
+    private SignoutApiViewModel signoutApiViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_settings);
+
+        initObservers();
 
         initView();
 
@@ -116,6 +120,29 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             hideOrShowNext(false);
             updateDetailTitle(UserDetailPreferenceManager.getUserDisplayName());
         }
+    }
+
+    private void initObservers() {
+        signoutApiViewModel = ViewModelProviders.of(this).get(SignoutApiViewModel.class);
+        signoutApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
+                    appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
+                    startActivity(new Intent(ProfileSettingsActivity.this, SigninActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                    finish();
+                }
+            }
+        });
+        signoutApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null) {
+                    showToast(errorModel.getMessage());
+                }
+            }
+        });
     }
 
     private void initView() {
@@ -278,12 +305,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 showSubFragment(privacyFragment);
                 break;
             case R.id.signOut:
-                EventRecorder.recordUserSession("logout");
-                appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
-                PubnubUtil.shared.unsubscribe();
-                startActivity(new Intent(this, SigninActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                finish();
+                if (!TokBox.shared.isActiveCallPreset()) {
+                    signoutApiViewModel.signOut();
+                }
                 break;
             case R.id.payments_billings:
                 PaymentsListingFragment paymentsListingFragment = new PaymentsListingFragment();

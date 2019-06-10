@@ -45,7 +45,7 @@ public class SplashActivity extends BaseActivity {
                 @Override
                 public void run() {
                     if (!appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
-                        if (appPreference.getBoolean(PreferenceConstants.IS_FIRST_TIME)) {
+                        if (!appPreference.getBoolean(PreferenceConstants.IS_FIRST_TIME)) {
                             appPreference.setBoolean(PreferenceConstants.IS_FIRST_TIME, true);
                             startActivity(new Intent(SplashActivity.this, OnBoardingActivity.class));
                         } else {
