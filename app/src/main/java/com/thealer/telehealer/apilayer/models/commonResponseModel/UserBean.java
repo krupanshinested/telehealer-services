@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -12,6 +13,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import static com.thealer.telehealer.common.Constants.ACTIVATION_PENDING;
+import static com.thealer.telehealer.common.Constants.AVAILABLE;
+import static com.thealer.telehealer.common.Constants.BUSY;
+import static com.thealer.telehealer.common.Constants.NO_DATA;
+import static com.thealer.telehealer.common.Constants.OFFLINE;
 
 /**
  * Created by Aswin on 19,March,2019
@@ -172,16 +179,28 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     }
 
     public int getStatusColorCode() {
-        switch (status) {
-            case Constants.AVAILABLE:
-                return R.drawable.ic_status_12dp;
-            case Constants.BUSY:
-                return R.drawable.ic_busy_status;
-            case Constants.OFFLINE:
-                return R.drawable.ic_offline_status;
-            default:
-                return R.drawable.ic_offline_status;
+        Log.e("aswin", "setStatusColorCode: " + getDisplayName() + "\t" + getStatus());
+        int color = R.color.status_offline;
+
+        switch (getStatus()) {
+            case AVAILABLE:
+                color = R.color.status_available;
+                break;
+            case OFFLINE:
+                color = R.color.status_offline;
+                break;
+            case ACTIVATION_PENDING:
+                color = R.color.status_activation_pending;
+                break;
+            case BUSY:
+                color = R.color.status_busy;
+                break;
+            case NO_DATA:
+                color = R.color.colorBlack;
+                break;
         }
+
+        return color;
     }
 
     public void setStatus(String status) {

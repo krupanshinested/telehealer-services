@@ -112,11 +112,11 @@ public class RecentListAdapter extends BaseExpandableListAdapter {
         infoIv = (ImageView) convertView.findViewById(R.id.info_iv);
         itemCv = (CardView) convertView.findViewById(R.id.item_cv);
 
-        if (isShowInfoAction) {
-            infoIv.setVisibility(View.VISIBLE);
-        } else {
-            infoIv.setVisibility(View.GONE);
-        }
+//        if (isShowInfoAction) {
+//            infoIv.setVisibility(View.VISIBLE);
+//        } else {
+//            infoIv.setVisibility(View.GONE);
+//        }
 
         RecentsApiResponseModel.ResultBean resultBean = getChild(groupPosition, childPosition);
         boolean isChat = resultBean.getCorr_type().equals(OrderConstant.RECENT_TYPE_CHAT);
