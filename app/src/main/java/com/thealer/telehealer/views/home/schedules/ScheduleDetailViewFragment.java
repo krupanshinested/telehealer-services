@@ -196,8 +196,6 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                     detail = getString(R.string.demographic);
                 } else if (resultBean.getDetail().isInsurance_to_date()) {
                     detail = getString(R.string.insurance);
-                } else {
-                    detail = getString(R.string.detail);
                 }
 
                 if (!detail.isEmpty()) {

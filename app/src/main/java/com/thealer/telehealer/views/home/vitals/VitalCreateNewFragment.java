@@ -1,9 +1,6 @@
 package com.thealer.telehealer.views.home.vitals;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
@@ -37,7 +30,6 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
-import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
@@ -455,7 +447,9 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
 
                 @Nullable
                 CreateVitalApiRequestModel secondary = null;
-                double vital1Value = Double.parseDouble(vital1Et.getText().toString().split(" ")[0]);
+                double vital1Value = 0;
+                if (!vital1Et.getText().toString().isEmpty())
+                    vital1Value = Double.parseDouble(vital1Et.getText().toString().split(" ")[0]);
 
                 if (selectedItem.equals(SupportedMeasurementType.bp)) {
 

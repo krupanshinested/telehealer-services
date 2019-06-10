@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.Utils;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -215,6 +217,7 @@ public class CustomUserListItemView extends ConstraintLayout {
     }
 
     public void setStatus(String status) {
+        Log.e("aswin", "setStatus: " + status);
         int color = R.color.status_offline;
 
         switch (status) {
@@ -236,5 +239,11 @@ public class CustomUserListItemView extends ConstraintLayout {
         }
 
         statusCiv.setImageDrawable(new ColorDrawable(getContext().getColor(color)));
+
+        if (!status.equals(AVAILABLE)) {
+            Utils.greyoutProfile(avatarCiv);
+        } else {
+            Utils.removeGreyoutProfile(avatarCiv);
+        }
     }
 }

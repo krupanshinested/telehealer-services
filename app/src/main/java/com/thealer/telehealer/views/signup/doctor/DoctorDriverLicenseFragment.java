@@ -54,6 +54,7 @@ public class DoctorDriverLicenseFragment extends BaseFragment implements DoCurre
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_doctor_driver_license, container, false);
 
+        onViewChangeInterface.hideOrShowNext(true);
         onViewChangeInterface.enableNext(false);
 
         initView(view);

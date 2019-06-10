@@ -56,6 +56,7 @@ public class RetrofitManager extends ContextWrapper {
         }
         return defaultRetrofit;
     }
+
     private Retrofit getServiceRetrofit() {
         if (serviceRetrofit == null) {
             createServiceRetrofit();
@@ -79,11 +80,7 @@ public class RetrofitManager extends ContextWrapper {
 
     private void createDefaultRetrofit() {
 
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-                .addInterceptor(new ConnectivityInterceptor(getApplicationContext()));
-        httpClient.connectTimeout(60, TimeUnit.SECONDS);
-        httpClient.readTimeout(60, TimeUnit.SECONDS);
-        httpClient.writeTimeout(60, TimeUnit.SECONDS);
+        OkHttpClient.Builder httpClient = getHttpBuilder();
         httpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -93,16 +90,13 @@ public class RetrofitManager extends ContextWrapper {
                         .header("Content-Type", "application/json")
                         .header("Accept", "application/json")
                         .header("User-Agent", "android")
+                        .header("X-Install-Type", getString(R.string.app_install_type))
                         .method(original.method(), original.body())
                         .build();
                 return chain.proceed(request);
 
             }
         });
-
-        RetrofitLogger logging = new RetrofitLogger();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        httpClient.addInterceptor(logging);
 
         OkHttpClient client = httpClient.build();
         defaultRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.api_base_url))
@@ -112,13 +106,35 @@ public class RetrofitManager extends ContextWrapper {
                 .build();
     }
 
+    private void createAuthRetrofit() {
+        OkHttpClient.Builder httpClient = getHttpBuilder();
+
+        httpClient.addInterceptor(chain -> {
+            Request original = chain.request();
+            String token = TeleHealerApplication.appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN);
+            Request request = original.newBuilder()
+                    .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
+                    .header("User-Agent", "android")
+                    .header("X-Install-Type", getString(R.string.app_install_type))
+                    .header(Constants.HEADER_AUTH_TOKEN, token)
+                    .method(original.method(), original.body())
+                    .build();
+
+            return chain.proceed(request);
+        });
+
+        OkHttpClient client = httpClient.build();
+        authRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.api_base_url))
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(client)
+                .build();
+    }
+
     private void createServiceRetrofit() {
 
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-                .addInterceptor(new ConnectivityInterceptor(getApplicationContext()));
-        httpClient.connectTimeout(60, TimeUnit.SECONDS);
-        httpClient.readTimeout(60, TimeUnit.SECONDS);
-        httpClient.writeTimeout(60, TimeUnit.SECONDS);
+        OkHttpClient.Builder httpClient = getHttpBuilder();
         httpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -128,6 +144,7 @@ public class RetrofitManager extends ContextWrapper {
                         .header("Content-Type", "application/json")
                         .header("Accept", "application/json")
                         .header("User-Agent", "android")
+                        .header("X-Install-Type", getString(R.string.app_install_type))
                         .header("x-api-key", getBaseContext().getString(R.string.service_api_key))
                         .method(original.method(), original.body())
                         .build();
@@ -136,9 +153,6 @@ public class RetrofitManager extends ContextWrapper {
             }
         });
 
-        RetrofitLogger logging = new RetrofitLogger();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        httpClient.addInterceptor(logging);
 
         OkHttpClient client = httpClient.build();
         serviceRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.service_api_base_url))
@@ -150,11 +164,7 @@ public class RetrofitManager extends ContextWrapper {
 
     private void createFoodRetrofit() {
 
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-                .addInterceptor(new ConnectivityInterceptor(getApplicationContext()));
-        httpClient.connectTimeout(60, TimeUnit.SECONDS);
-        httpClient.readTimeout(60, TimeUnit.SECONDS);
-        httpClient.writeTimeout(60, TimeUnit.SECONDS);
+        OkHttpClient.Builder httpClient = getHttpBuilder();
         httpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -170,10 +180,6 @@ public class RetrofitManager extends ContextWrapper {
             }
         });
 
-        RetrofitLogger logging = new RetrofitLogger();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        httpClient.addInterceptor(logging);
-
         OkHttpClient client = httpClient.build();
         foodRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.food_api_base_url))
                 .addConverterFactory(GsonConverterFactory.create())
@@ -182,37 +188,18 @@ public class RetrofitManager extends ContextWrapper {
                 .build();
     }
 
-    private void createAuthRetrofit() {
+    private OkHttpClient.Builder getHttpBuilder() {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
                 .addInterceptor(new ConnectivityInterceptor(getApplicationContext()));
         httpClient.connectTimeout(60, TimeUnit.SECONDS);
         httpClient.readTimeout(60, TimeUnit.SECONDS);
         httpClient.writeTimeout(60, TimeUnit.SECONDS);
-        httpClient.addInterceptor(chain -> {
-            Request original = chain.request();
-            String token = TeleHealerApplication.appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN);
-            Request request = original.newBuilder()
-                    .header("Content-Type", "application/json")
-                    .header("Accept", "application/json")
-                    .header("User-Agent", "android")
-                    .header(Constants.HEADER_AUTH_TOKEN, token)
-                    .method(original.method(), original.body())
-                    .build();
-
-            return chain.proceed(request);
-        });
 
         RetrofitLogger logging = new RetrofitLogger();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClient.addInterceptor(logging);
 
-
-        OkHttpClient client = httpClient.build();
-        authRetrofit = new Retrofit.Builder().baseUrl(getBaseContext().getString(R.string.api_base_url))
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(client)
-                .build();
+        return httpClient;
     }
 
     public void clearAll() {

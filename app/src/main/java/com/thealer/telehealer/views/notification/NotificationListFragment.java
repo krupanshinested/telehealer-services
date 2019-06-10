@@ -13,6 +13,7 @@ import android.widget.ExpandableListView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
@@ -78,9 +79,17 @@ public class NotificationListFragment extends BaseFragment {
                                     getNotification(true);
                                 }
                             }
+                        } else {
+                            notificationListAdapter.notifyDataSetChanged();
                         }
                     }
                 });
+        notificationApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                notificationListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void updateNotificationList() {

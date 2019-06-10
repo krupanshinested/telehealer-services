@@ -202,7 +202,7 @@ public class DietUserListingFragment extends BaseFragment {
         if (getArguments() != null) {
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
-                toolbarTitle.setText(getString(R.string.patients));
+                setToolbarTitle(getString(R.string.last_week));
                 backIv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -218,6 +218,14 @@ public class DietUserListingFragment extends BaseFragment {
         }
 
         getDietUserList(true);
+    }
+
+    private void setToolbarTitle(String text) {
+        if (text.equals(getString(R.string.all))) {
+            toolbarTitle.setText(getString(R.string.diets));
+        } else {
+            toolbarTitle.setText(String.format(getString(R.string.diets) + " (%s)", text));
+        }
     }
 
     private void getDietUserList(boolean isShowProgress) {
@@ -240,16 +248,16 @@ public class DietUserListingFragment extends BaseFragment {
                     } else if (selectedItem.equals(getString(R.string.all))) {
                         doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH);
                         selectedFilter = VitalReportApiViewModel.ALL;
+                    } else {
+                        selectedFilter = null;
+                        startDate = bundle.getString(ArgumentKeys.START_DATE);
+                        endDate = bundle.getString(ArgumentKeys.END_DATE);
+
+                        String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
+
+                        doctorPatientListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
                     }
-
-                } else {
-                    selectedFilter = null;
-                    startDate = bundle.getString(ArgumentKeys.START_DATE);
-                    endDate = bundle.getString(ArgumentKeys.END_DATE);
-
-                    String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
-
-                    doctorPatientListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
+                    setToolbarTitle(selectedItem);
                 }
                 getDietUserList(true);
             }
