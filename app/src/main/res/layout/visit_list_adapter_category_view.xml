@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center|left"
-    android:padding="8dp"
+    android:paddingStart="8dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="8dp"
     android:textAllCaps="true"
     android:textColor="@color/app_gradient_start"
     tools:text="@string/dummy_text" />

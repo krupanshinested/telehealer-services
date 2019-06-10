@@ -189,6 +189,7 @@ public class VitalUserReportListFragment extends BaseFragment {
         vitalsListCelv = (CustomExpandableListView) view.findViewById(R.id.vitals_list_cerv);
 
         toolbar.inflateMenu(R.menu.add_visit_menu);
+        setToolbarTitle(getString(R.string.last_week));
 
         nextMenu = toolbar.getMenu().findItem(R.id.menu_next);
 
@@ -213,16 +214,16 @@ public class VitalUserReportListFragment extends BaseFragment {
                                     } else if (selectedItem.equals(getString(R.string.all))) {
                                         vitalsListCelv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH);
                                         filter = VitalReportApiViewModel.ALL;
+                                    } else {
+                                        filter = null;
+                                        startDate = bundle.getString(ArgumentKeys.START_DATE);
+                                        endDate = bundle.getString(ArgumentKeys.END_DATE);
+
+                                        String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
+
+                                        vitalsListCelv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
                                     }
-
-                                } else {
-                                    filter = null;
-                                    startDate = bundle.getString(ArgumentKeys.START_DATE);
-                                    endDate = bundle.getString(ArgumentKeys.END_DATE);
-
-                                    String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
-
-                                    vitalsListCelv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
+                                    setToolbarTitle(selectedItem);
                                 }
                                 getUserVitals();
                             }
@@ -276,9 +277,6 @@ public class VitalUserReportListFragment extends BaseFragment {
 
             if (orderId != null) {
                 mode = Constants.EDIT_MODE;
-            }
-            if (commonUserApiResponseModel != null) {
-                toolbarTitle.setText(commonUserApiResponseModel.getUserDisplay_name());
             }
 
             if (getArguments().getBoolean(ArgumentKeys.IS_SHOW_FILTER)) {
@@ -343,7 +341,6 @@ public class VitalUserReportListFragment extends BaseFragment {
 
             if (commonUserApiResponseModel != null) {
                 userGuid = commonUserApiResponseModel.getUser_guid();
-                toolbarTitle.setText(commonUserApiResponseModel.getUserDisplay_name());
             }
         }
 
@@ -351,6 +348,14 @@ public class VitalUserReportListFragment extends BaseFragment {
 
         getUserVitals();
 
+    }
+
+    private void setToolbarTitle(String text) {
+        if (text.equals(getString(R.string.all))) {
+            toolbarTitle.setText(getString(R.string.vitals));
+        } else {
+            toolbarTitle.setText(String.format(getString(R.string.vitals) + " (%s)", text));
+        }
     }
 
     private void generatePrintList() {
