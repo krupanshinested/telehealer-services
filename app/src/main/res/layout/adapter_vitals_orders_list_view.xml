@@ -2,7 +2,8 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/list_cv"
-    style="@style/card_style">
+    style="@style/card_style"
+    app:cardCornerRadius="6dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

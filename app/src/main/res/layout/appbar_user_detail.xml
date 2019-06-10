@@ -69,16 +69,27 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/toolbar_title" />
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/status_civ"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_below="@+id/user_name_tv"
+                android:layout_alignBottom="@+id/user_dob_tv"
+                android:layout_marginStart="@dimen/margin_default"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:src="@color/status_offline" />
+
             <TextView
                 android:id="@+id/user_dob_tv"
                 style="@style/text_sub_title_lignt_bold"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginLeft="5dp"
                 android:layout_marginBottom="10dp"
                 android:layout_toLeftOf="@+id/gender_iv"
-                android:drawableLeft="@drawable/ic_status_12dp"
+                android:layout_toEndOf="@+id/status_civ"
                 android:drawablePadding="10dp"
                 android:gravity="center|left"
                 android:text="@string/dummy_text"

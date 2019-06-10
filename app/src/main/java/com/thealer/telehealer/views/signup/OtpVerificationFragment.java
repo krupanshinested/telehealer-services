@@ -366,8 +366,8 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
             timerTv.setVisibility(View.GONE);
         }
 
+        otpEt.setShowSoftInputOnFocus(true);
         otpEt.requestFocus();
-        showOrHideSoftInputWindow(true);
     }
 
     private void requestOtpValidation() {

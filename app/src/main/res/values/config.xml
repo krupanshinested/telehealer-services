@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="isXlarge">false</bool>
-    <dimen name="max_width">340dp</dimen>
+    <dimen name="max_width">320dp</dimen>
     <string name="release_info_url">http://telehealer.com/info-release/</string>
     <string name="contact_url">http://telehealer.com/feedback</string>
     <string name="get_image_url">api/download?path=</string>
@@ -20,4 +20,6 @@
     //Service api
     <string name="service_api_base_url">https://services.telehealer.com</string>
     <string name="service_api_key">ezuGJrW9O24Ran2gZaF7m2Ro13RTvD1q26IKTj4m</string>
+
+    <string name="app_install_type">telehealer</string>
 </resources>

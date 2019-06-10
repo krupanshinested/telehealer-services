@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
@@ -77,8 +78,16 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                                 }
                             }
                         }
+                        notifyDataSetChanged();
                     }
                 });
+
+        notificationApiViewModel.getErrorModelLiveData().observe(activity, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @NonNull
@@ -116,6 +125,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                     viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            viewHolder.acceptBtn.setEnabled(false);
                             selectedPosition = position;
                             Utils.vibrate(activity);
 
@@ -130,6 +140,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                     viewHolder.rejectBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            viewHolder.rejectBtn.setEnabled(false);
                             selectedPosition = position;
                             notificationApiViewModel.updateNotification(adapterModelList.get(position).getInvitesResponseModel().getType(), false,
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),

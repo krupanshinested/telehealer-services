@@ -199,11 +199,11 @@
     <string name="passcode_wrong">Wrong passcode. Please try again</string>
     <string name="error">Error</string>
     <string name="success_title_touchid">You’ve set up your Touch ID</string>
-    <string name="success_message_touchid">We saved your Email Id on this device so you can use your Touch ID to login next time.</string>
-    <string name="success_title_pin">You’ve set up your login PIN.</string>
-    <string name="success_message_pin">We saved your Email Id on this device so you can use your PIN to login next time.</string>
+    <string name="success_message_touchid">We saved your Email Id on this device so you can use your Touch ID to login next time</string>
+    <string name="success_title_pin">You’ve set up your login PIN</string>
+    <string name="success_message_pin">We saved your Email Id on this device so you can use your PIN to login next time</string>
     <string name="success_broadcast_receiver">SuccessBroadcastReceiver</string>
-    <string name="doctor_search_name_info">Enter your name.</string>
+    <string name="doctor_search_name_info">Enter your name</string>
     <string name="doctor_select_profile_info">Select your profile</string>
     <string name="doctor_detail_info">Doctor Registration</string>
     <string name="release_info">Please read the info release.</string>

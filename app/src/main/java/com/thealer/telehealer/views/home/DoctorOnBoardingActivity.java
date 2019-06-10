@@ -60,6 +60,7 @@ public class DoctorOnBoardingActivity extends BaseActivity {
                         if (baseApiResponseModel != null) {
                             WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                             UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                            setUserData();
 
                             if (appPreference.getBoolean(PreferenceConstants.IS_USER_ACTIVATED)) {
                                 signinApiViewModel.refreshToken();
@@ -105,8 +106,7 @@ public class DoctorOnBoardingActivity extends BaseActivity {
         descriptionTv = (TextView) findViewById(R.id.description_tv);
         videoLinkTv = (TextView) findViewById(R.id.video_link_tv);
 
-        userNameTv.setText("Hi " + UserDetailPreferenceManager.getFirst_name() + "!");
-        Utils.setImageWithGlide(getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
+        setUserData();
 
         videoLinkTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +117,12 @@ public class DoctorOnBoardingActivity extends BaseActivity {
                 startActivity(i);
             }
         });
+    }
+
+    private void setUserData() {
+        userNameTv.setText("Hi " + UserDetailPreferenceManager.getFirst_name() + "!");
+        Utils.setImageWithGlide(getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
+
     }
 
     @Override
