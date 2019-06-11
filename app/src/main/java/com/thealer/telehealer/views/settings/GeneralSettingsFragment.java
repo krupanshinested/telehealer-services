@@ -68,6 +68,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle;
+    private SettingsCellView privacy;
 
     @Override
     public void onAttach(Context context) {
@@ -103,6 +104,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        privacy = (SettingsCellView) view.findViewById(R.id.privacy);
 
         toolbarTitle.setText(getString(R.string.settings));
 
@@ -113,6 +115,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         signature.setOnClickListener(this);
         deleteView.setOnClickListener(this);
         backIv.setOnClickListener(this);
+        privacy.setOnClickListener(this);
 
         updateQuickLoginSwitch();
 
@@ -234,6 +237,14 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                                 dialogInterface.dismiss();
                             }
                         });
+
+                break;
+            case R.id.privacy:
+                intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
 
                 break;
         }
