@@ -35,12 +35,14 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
+import com.thealer.telehealer.apilayer.models.associationlist.UpdateAssociationRequestModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.GetUserDetails;
+import com.thealer.telehealer.common.OnUpdateListener;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.RequestID;
@@ -109,6 +111,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private String doctorGuid = null, userGuid = null;
     private boolean isConnectionStatusChecked = false;
     private boolean checkStatus, isUserDataFetched = false;
+    private ImageView favoriteIv;
 
     @Override
     public void onAttach(Context context) {
@@ -172,6 +175,18 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 }
             }
         });
+
+        associationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
+                    resultBean.setFavorite(!favoriteIv.isSelected());
+                    favoriteIv.setSelected(resultBean.getFavorite());
+                    if (getActivity() instanceof OnUpdateListener)
+                        ((OnUpdateListener) getActivity()).onUpdate();
+                }
+            }
+        });
     }
 
     @Nullable
@@ -221,6 +236,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         nextTv = (TextView) view.findViewById(R.id.next_tv);
         bottomView = (LinearLayout) view.findViewById(R.id.bottom_view);
         userDetailBnv = (BottomNavigationView) view.findViewById(R.id.user_detail_bnv);
+        favoriteIv = (ImageView) view.findViewById(R.id.favorite_iv);
 
         userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
 
@@ -496,6 +512,21 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             Utils.setGenderImage(getActivity(), genderIv, resultBean.getGender());
             Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
 
+            if (resultBean.getFavorite() != null) {
+                favoriteIv.setSelected(resultBean.getFavorite());
+                favoriteIv.setVisibility(View.VISIBLE);
+                favoriteIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        updateFavorites(resultBean.getUser_guid(), !favoriteIv.isSelected());
+                    }
+                });
+            }
+
+            if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
+                favoriteIv.setVisibility(View.GONE);
+            }
+
             switch (resultBean.getRole()) {
                 case Constants.ROLE_PATIENT:
                     userDetailBnv.getMenu().findItem(R.id.menu_upload).setVisible(true);
@@ -620,6 +651,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         }
     }
 
+    private void updateFavorites(String user_guid, boolean isFavorite) {
+        associationApiViewModel.updateAssociationDetail(user_guid, new UpdateAssociationRequestModel(isFavorite), false);
+    }
+
     private void updateDateConnectionStatus(String connection_status) {
         Log.e(TAG, "updateDateConnectionStatus: " + connection_status + " " + view_type);
 
@@ -643,7 +678,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 }
         }
 
-        if (view_type.equals(Constants.VIEW_CONNECTION)) {
+        if (view_type.equals(Constants.VIEW_CONNECTION) && !connection_status.equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
             userDetailTab.setVisibility(View.GONE);
             actionBtn.setVisibility(View.VISIBLE);
             userDetailBnv.setVisibility(View.GONE);
