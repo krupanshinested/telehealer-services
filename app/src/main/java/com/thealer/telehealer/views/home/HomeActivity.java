@@ -42,6 +42,7 @@ import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OnUpdateListener;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -53,6 +54,7 @@ import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
+import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
@@ -81,7 +83,8 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 public class HomeActivity extends BaseActivity implements AttachObserverInterface,
         OnActionCompleteInterface, NavigationView.OnNavigationItemSelectedListener, OnOrientationChangeInterface,
-        OnCloseActionInterface, ShowSubFragmentInterface, SuccessViewInterface, ChangeTitleInterface, ToolBarInterface, OnViewChangeInterface {
+        OnCloseActionInterface, ShowSubFragmentInterface, SuccessViewInterface, ChangeTitleInterface, ToolBarInterface, OnViewChangeInterface,
+        OnUpdateListener {
     private static final String TAG = "aswin";
     private Toolbar toolbar;
     private LinearLayout fragmentHolder, subFragmentHolder;
@@ -918,5 +921,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public void updateNextTitle(String nextTitle) {
 
+    }
+
+    @Override
+    public void onUpdate() {
+        if (getCurrentFragment() instanceof DoCurrentTransactionInterface) {
+            ((DoCurrentTransactionInterface) getCurrentFragment()).doCurrentTransaction();
+        }
+    }
+
+    private Fragment getCurrentFragment() {
+        return getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
     }
 }
