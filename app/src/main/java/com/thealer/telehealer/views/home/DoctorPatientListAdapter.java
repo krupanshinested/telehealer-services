@@ -23,8 +23,6 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.monitoring.diet.DietListingFragment;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -32,16 +30,21 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Aswin on 13,November,2018
  */
-public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatientListAdapter.ViewHolder> {
+public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final int TYPE_HEADER = 1;
+    private final int TYPE_ITEM = 2;
+
     private FragmentActivity fragmentActivity;
     private List<CommonUserApiResponseModel> associationApiResponseModelResult;
     private OnActionCompleteInterface onActionCompleteInterface;
     private boolean isDietView;
     private Bundle bundle;
+    private List<AssociationAdapterListModel> adapterListModels;
 
     public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle) {
         fragmentActivity = activity;
         associationApiResponseModelResult = new ArrayList<>();
+        adapterListModels = new ArrayList<>();
         onActionCompleteInterface = (OnActionCompleteInterface) activity;
         this.isDietView = isDietView;
         this.bundle = bundle;
@@ -52,34 +55,53 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(fragmentActivity).inflate(R.layout.adapter_doctor_patient_list, viewGroup, false);
-        return new ViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view;
+        switch (i) {
+            case TYPE_HEADER:
+                view = LayoutInflater.from(fragmentActivity).inflate(R.layout.adapter_list_header_view, viewGroup, false);
+                return new HeaderHolder(view);
+            case TYPE_ITEM:
+                view = LayoutInflater.from(fragmentActivity).inflate(R.layout.adapter_doctor_patient_list, viewGroup, false);
+                return new ItemViewHolder(view);
+        }
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
 
-        viewHolder.titleTv.setText(associationApiResponseModelResult.get(i).getUserDisplay_name());
-        loadAvatar(viewHolder.avatarCiv, associationApiResponseModelResult.get(i).getUser_avatar());
+        switch (adapterListModels.get(i).getType()) {
+            case TYPE_HEADER:
+                HeaderHolder headerHolder = (HeaderHolder) holder;
+                headerHolder.headerTv.setText(adapterListModels.get(i).getTitle());
+                break;
+            case TYPE_ITEM:
+                ItemViewHolder viewHolder = (ItemViewHolder) holder;
+                CommonUserApiResponseModel userModel = adapterListModels.get(i).getCommonUserApiResponseModel();
 
-        if (UserType.isUserDoctor()) {
-            viewHolder.actionIv.setVisibility(View.VISIBLE);
-            Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, associationApiResponseModelResult.get(i).getGender());
-        } else if (UserType.isUserPatient() || UserType.isUserAssistant()) {
-            viewHolder.actionIv.setVisibility(View.GONE);
+                viewHolder.titleTv.setText(userModel.getUserDisplay_name());
+                loadAvatar(viewHolder.avatarCiv, userModel.getUser_avatar());
+
+                if (UserType.isUserDoctor()) {
+                    viewHolder.actionIv.setVisibility(View.VISIBLE);
+                    Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
+                } else if (UserType.isUserPatient() || UserType.isUserAssistant()) {
+                    viewHolder.actionIv.setVisibility(View.GONE);
+                }
+                viewHolder.subTitleTv.setText(userModel.getDisplayInfo());
+
+                viewHolder.patientTemplateCv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Utils.hideKeyboard(fragmentActivity);
+                        proceed(userModel);
+                    }
+                });
+
+                viewHolder.userListIv.setStatus(userModel.getStatus());
+                break;
         }
-        viewHolder.subTitleTv.setText(associationApiResponseModelResult.get(i).getDisplayInfo());
-
-        viewHolder.patientTemplateCv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.hideKeyboard(fragmentActivity);
-                proceed(associationApiResponseModelResult.get(i));
-            }
-        });
-
-        viewHolder.userListIv.setStatus(associationApiResponseModelResult.get(i).getStatus());
     }
 
     private void proceed(CommonUserApiResponseModel resultBean) {
@@ -99,8 +121,13 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return adapterListModels.get(position).getType();
+    }
+
+    @Override
     public int getItemCount() {
-        return associationApiResponseModelResult.size();
+        return adapterListModels.size();
     }
 
     public void setData(List<CommonUserApiResponseModel> associationApiResponseModelResult, int page) {
@@ -110,18 +137,51 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
             this.associationApiResponseModelResult.addAll(associationApiResponseModelResult);
         }
 
-        Collections.sort(associationApiResponseModelResult,
-                new Comparator<CommonUserApiResponseModel>() {
-                    @Override
-                    public int compare(CommonUserApiResponseModel o1, CommonUserApiResponseModel o2) {
-                        return o1.getFirst_name().compareToIgnoreCase(o2.getFirst_name());
-                    }
-                });
+        generateList();
+
+    }
+
+    private void generateList() {
+        List<CommonUserApiResponseModel> favoriteList = new ArrayList<>();
+        List<CommonUserApiResponseModel> otherList = new ArrayList<>();
+        adapterListModels.clear();
+
+        for (int i = 0; i < associationApiResponseModelResult.size(); i++) {
+            if (associationApiResponseModelResult.get(i).getFavorite() != null && associationApiResponseModelResult.get(i).getFavorite()) {
+                favoriteList.add(associationApiResponseModelResult.get(i));
+            } else {
+                otherList.add(associationApiResponseModelResult.get(i));
+            }
+        }
+
+        if (!favoriteList.isEmpty()) {
+
+            adapterListModels.add(new AssociationAdapterListModel(TYPE_HEADER, fragmentActivity.getString(R.string.favorite)));
+
+            for (int i = 0; i < favoriteList.size(); i++) {
+                adapterListModels.add(new AssociationAdapterListModel(TYPE_ITEM, favoriteList.get(i)));
+            }
+
+            adapterListModels.add(new AssociationAdapterListModel(TYPE_HEADER, fragmentActivity.getString(R.string.others)));
+        }
+
+        for (int i = 0; i < otherList.size(); i++) {
+            adapterListModels.add(new AssociationAdapterListModel(TYPE_ITEM, otherList.get(i)));
+        }
 
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class HeaderHolder extends RecyclerView.ViewHolder {
+        private TextView headerTv;
+
+        public HeaderHolder(@NonNull View itemView) {
+            super(itemView);
+            headerTv = (TextView) itemView.findViewById(R.id.header_tv);
+        }
+    }
+
+    public class ItemViewHolder extends RecyclerView.ViewHolder {
         private CardView patientTemplateCv;
         private CircleImageView avatarCiv;
         private TextView titleTv;
@@ -130,7 +190,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
         private CustomUserListItemView userListIv;
 
 
-        public ViewHolder(@NonNull View itemView) {
+        public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             userListIv = (CustomUserListItemView) itemView.findViewById(R.id.user_list_iv);
             patientTemplateCv = userListIv.getListItemCv();
@@ -139,6 +199,46 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<DoctorPatient
             subTitleTv = userListIv.getListSubTitleTv();
             actionIv = userListIv.getActionIv();
 
+        }
+    }
+
+    public class AssociationAdapterListModel {
+        private int type;
+        private String title;
+        private CommonUserApiResponseModel commonUserApiResponseModel;
+
+        public AssociationAdapterListModel(int type, String title) {
+            this.type = type;
+            this.title = title;
+        }
+
+        public AssociationAdapterListModel(int type, CommonUserApiResponseModel commonUserApiResponseModel) {
+            this.type = type;
+            this.commonUserApiResponseModel = commonUserApiResponseModel;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public CommonUserApiResponseModel getCommonUserApiResponseModel() {
+            return commonUserApiResponseModel;
+        }
+
+        public void setCommonUserApiResponseModel(CommonUserApiResponseModel commonUserApiResponseModel) {
+            this.commonUserApiResponseModel = commonUserApiResponseModel;
         }
     }
 }

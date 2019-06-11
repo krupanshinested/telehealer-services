@@ -21,6 +21,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private boolean email_verified;
     private String website;
     private boolean has_abnormal_vitals;
+    private Boolean favorite;
 
     public CommonUserApiResponseModel() {
     }
@@ -137,6 +138,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             default:
                 return "";
         }
+    }
+
+    public Boolean getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        this.favorite = favorite;
     }
 
     public QuestionnaireBean getQuestionnaire() {

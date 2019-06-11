@@ -1145,5 +1145,8 @@
     <string name="patient_diagnosis">Diagnóstico</string>
     <string name="doctor_extender">Doctor/Extensor</string>
     <string name="office_assistant">Asistente de oficina</string>
+    <string name="favorite">Favoritos</string>
+    <string name="others">Otros</string>
+    <string name="privacy">Intimidad</string>
 
 </resources>

@@ -71,6 +71,12 @@
                     android:layout_height="wrap_content"
                     app:title="@string/signature" />
 
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/privacy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:settings_title="@string/privacy" />
+
             </LinearLayout>
 
             <LinearLayout
