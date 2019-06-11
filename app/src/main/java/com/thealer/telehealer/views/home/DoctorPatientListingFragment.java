@@ -41,6 +41,7 @@ import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
+import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
@@ -55,7 +56,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 /**
  * Created by Aswin on 13,November,2018
  */
-public class DoctorPatientListingFragment extends BaseFragment implements View.OnClickListener {
+public class DoctorPatientListingFragment extends BaseFragment implements View.OnClickListener, DoCurrentTransactionInterface {
 
     private RecyclerView doctorPatientListRv;
     private AssociationApiViewModel associationApiViewModel;
@@ -374,5 +375,10 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 }
                 break;
         }
+    }
+
+    @Override
+    public void doCurrentTransaction() {
+        getAssociationsList(null, false);
     }
 }

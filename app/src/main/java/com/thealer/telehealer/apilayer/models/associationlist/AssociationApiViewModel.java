@@ -77,4 +77,22 @@ public class AssociationApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+    public void updateAssociationDetail(String userGuid, UpdateAssociationRequestModel requestModel, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().updateAssociationDetail(userGuid, requestModel)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
 }
