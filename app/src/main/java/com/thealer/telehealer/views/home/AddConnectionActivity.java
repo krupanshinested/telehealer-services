@@ -10,8 +10,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -33,10 +36,12 @@ import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -45,6 +50,7 @@ import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -73,6 +79,9 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     private boolean isApiRequested = false;
     private boolean isMedicalAssistant = false;
     private List<CommonUserApiResponseModel> commonUserApiResponseModelList;
+    private Toolbar toolbar;
+    private List<String> filterList;
+    private String speciality;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,16 +147,25 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
                         connectionListCrv.setTotalCount(totalCount);
 
+                        if (totalCount > 0) {
+                            connectionListCrv.showOrhideEmptyState(false);
+                        } else {
+                            connectionListCrv.showOrhideEmptyState(true);
+                        }
                     }
                 }
-                isApiRequested = false;
-                connectionListCrv.setScrollable(true);
-                connectionListCrv.hideProgressBar();
-                connectionListCrv.getSwipeLayout().setRefreshing(false);
+                resetData();
             }
         });
 
         initView();
+    }
+
+    private void resetData() {
+        isApiRequested = false;
+        connectionListCrv.setScrollable(true);
+        connectionListCrv.hideProgressBar();
+        connectionListCrv.getSwipeLayout().setRefreshing(false);
     }
 
     @Override
@@ -186,12 +204,14 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
         fragmentHolder = (FrameLayout) findViewById(R.id.fragment_holder);
         connectionListCrv = (CustomRecyclerView) findViewById(R.id.connection_list_crv);
         searchClearIv = (ImageView) findViewById(R.id.search_clear_iv);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         if (getIntent() != null) {
             isMedicalAssistant = getIntent().getBooleanExtra(ArgumentKeys.IS_MEDICAL_ASSISTANT, false);
         }
 
         toolbarTitle.setText(getString(R.string.Add_connections));
+        setSupportActionBar(toolbar);
 
         backIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -233,7 +253,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             }
         });
 
-        connectionListCrv.setEmptyState(EmptyViewConstants.EMPTY_SEARCH);
+        connectionListCrv.setEmptyState(EmptyViewConstants.EMPTY_UNCONNECTED_USER);
 
         connectionListCrv.showOrhideEmptyState(false);
 
@@ -248,8 +268,6 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             public void onPaginate() {
                 ++page;
                 getApiData(false);
-                isApiRequested = true;
-                connectionListCrv.setScrollable(false);
             }
         });
 
@@ -258,12 +276,63 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             public void onRefresh() {
                 page = 1;
                 getApiData(false);
-                isApiRequested = true;
-                connectionListCrv.setScrollable(false);
             }
         });
 
+        filterList = new ArrayList<>();
+        filterList.add(getString(R.string.all));
+        filterList.addAll(Arrays.asList(getResources().getStringArray(R.array.doctor_speciality_list)));
+
+        speciality = getString(R.string.all);
+
         getApiData(true);
+    }
+
+    private void getApiData(boolean showProgress) {
+        String name = null;
+        if (!searchEt.getText().toString().isEmpty()) {
+            name = searchEt.getText().toString();
+        }
+        if (!isApiRequested) {
+            if (speciality.equals(getString(R.string.all))) {
+                speciality = null;
+            }
+            connectionListApiViewModel.getUnconnectedList(name, speciality, page, showProgress, isMedicalAssistant);
+        }
+
+        isApiRequested = true;
+        connectionListCrv.setScrollable(false);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (!UserType.isUserDoctor()) {
+            getMenuInflater().inflate(R.menu.filter_menu, menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_filter:
+
+                Utils.showOptionsSelectionAlert(this, filterList, new PickerListener() {
+                    @Override
+                    public void didSelectedItem(int position) {
+                        page = 1;
+                        speciality = filterList.get(position);
+                        getApiData(true);
+                    }
+
+                    @Override
+                    public void didCancelled() {
+
+                    }
+                });
+                break;
+        }
+        return true;
     }
 
     private void showSearchResult(String search) {
@@ -281,12 +350,6 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             connectionListAdapter.setData(searchResult, -1);
         } else {
             connectionListCrv.showOrhideEmptyState(true);
-        }
-    }
-
-    private void getApiData(boolean showProgress) {
-        if (!isApiRequested) {
-            connectionListApiViewModel.getUnconnectedList(searchEt.getText().toString(), page, showProgress, isMedicalAssistant);
         }
     }
 
@@ -322,7 +385,6 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
         fragmentHolder.bringToFront();
     }
-
 
     @Override
     protected void onResume() {
