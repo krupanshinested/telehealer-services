@@ -38,6 +38,7 @@ public class EmptyViewConstants {
     public static final String EMPTY_MISC = "empty_misc";
     public static final String EMPTY_MISC_WITH_BTN = "empty_misc_with_btn";
     public static final String EMPTY_SEARCH = "empty_search";
+    public static final String EMPTY_UNCONNECTED_USER = "empty_unconnected_user";
     public static final String EMPTY_XRAY = "empty_xray";
     public static final String EMPTY_XRAY_WITH_BTN = "empty_xray_with_btn";
     public static final String EMPTY_FORMS = "empty_forms";

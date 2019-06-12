@@ -699,7 +699,7 @@
 
     <string name="missed">missed</string>
     <string name="audio">audio</string>
-    <string name="chat">chat</string>
+    <string name="chat">Chat</string>
     <string name="fine_transcript_message">Transcript is auto-generated and may have inaccuracies owing to ambient noise, user-accent, and other technical limitations. Please always refer to the recorded audio/video as a more accurate archive of the encounter.</string>
     <string name="duration">Duration</string>
     <string name="type">Type</string>
@@ -1037,6 +1037,8 @@
     <string name="EMPTY_STETHOSCOPE_TITLE">No Stethoscope</string>
     <string name="EMPTY_STETHOSCOPE_MESSAGE">Stethoscope results will eventually show up here</string>
     <string name="EMPTY_STETHOSCOPE_WITH_BTN_MESSAGE">Connect your stethoscope device to measure your vitals</string>
+    <string name="EMPTY_UNCONNECTED_USER">No unconnected users</string>
+    <string name="EMPTY_UNCONNECTED_USER_MESSAGE">Unconnected users will eventually show up here</string>
 
     //password validation
     <string name="password_length_error">Password length should be 8 to 20</string>
@@ -1213,6 +1215,7 @@
     <string name="patient_diagnosis">Diagnosis</string>
     <string name="doctor_extender">Doctor / Extender</string>
     <string name="office_assistant">Office Assistant</string>
+    <string name="calls">Calls</string>
     <string name="mandatory_questions_info">Questions marked with \' * \' is mandatory</string>
     <string name="form_updated_successfully">Form updated successfully</string>
     <string name="enter_all_mandatory_fields">Enter all mandatory fields</string>
