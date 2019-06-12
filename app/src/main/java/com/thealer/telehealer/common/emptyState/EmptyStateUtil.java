@@ -121,6 +121,8 @@ public class EmptyStateUtil {
                 return context.getString(R.string.EMPTY_STETHOSCOPE_TITLE);
             case EmptyViewConstants.EMPTY_VITAL_FROM_TO:
                 return context.getString(R.string.EMPTY_VITAL_FROM_TO);
+            case EmptyViewConstants.EMPTY_UNCONNECTED_USER:
+                return context.getString(R.string.EMPTY_UNCONNECTED_USER);
             default:
                 return null;
         }
@@ -255,6 +257,8 @@ public class EmptyStateUtil {
                 return context.getString(R.string.EMPTY_STETHOSCOPE_MESSAGE);
             case EmptyViewConstants.EMPTY_STETHOSCOPE_WITH_BTN:
                 return context.getString(R.string.EMPTY_STETHOSCOPE_WITH_BTN_MESSAGE);
+            case EmptyViewConstants.EMPTY_UNCONNECTED_USER:
+                return context.getString(R.string.EMPTY_UNCONNECTED_USER_MESSAGE);
             default:
                 return null;
         }
@@ -355,6 +359,7 @@ public class EmptyStateUtil {
                 return R.drawable.emptystate_diet;
             case EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES:
             case EmptyViewConstants.EMPTY_SENT_PENDING_INVITES:
+            case EmptyViewConstants.EMPTY_UNCONNECTED_USER:
                 return R.drawable.emptystate_pending_invites;
             case EmptyViewConstants.EMPTY_BP_TRACK_VALUE:
                 return R.drawable.emptystate_no_vitals;

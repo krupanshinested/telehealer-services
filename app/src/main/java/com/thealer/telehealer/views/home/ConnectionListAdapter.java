@@ -144,7 +144,6 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         if (selectedPosition == -1)
             notifyDataSetChanged();
         else {
-            Log.e("aswin", "setData: " + selectedPosition);
             apiResponseModelList.get(selectedPosition).setConnection_status(Constants.CONNECTION_STATUS_OPEN);
             notifyItemChanged(selected_position);
         }

@@ -678,7 +678,7 @@
     <string name="bill_number">NÚMERO DE FACTURA</string>
     <string name="missed">perdido</string>
     <string name="audio">audio</string>
-    <string name="chat">charla</string>
+    <string name="chat">Charla</string>
     <string name="fine_transcript_message">La transcripción se genera automáticamente y puede tener imprecisiones debido al ruido ambiental, el acento del usuario y otras limitaciones técnicas. Por favor, siempre consulte el audio / video grabado como un archivo más preciso del encuentro.</string>
     <string name="duration">Duración</string>
     <string name="type">Tipo</string>
@@ -981,6 +981,9 @@
     <string name="EMPTY_STETHOSCOPE_TITLE">Sin estetoscopio</string>
     <string name="EMPTY_STETHOSCOPE_MESSAGE">Los resultados del estetoscopio eventualmente aparecerán aquí</string>
     <string name="EMPTY_STETHOSCOPE_WITH_BTN_MESSAGE">Conecte su dispositivo de estetoscopio para medir sus signos vitales</string>
+    <string name="EMPTY_UNCONNECTED_USER">No hay usuarios desconectados</string>
+    <string name="EMPTY_UNCONNECTED_USER_MESSAGE">Los usuarios desconectados eventualmente aparecerán aquí</string>
+
     <string name="password_length_error">La longitud de la contraseña debe ser de 8 a 20</string>
     <string name="password_lower_case_error">La contraseña debe contener al menos 1 carácter en minúscula</string>
     <string name="password_upper_case_error">La contraseña debe contener al menos un carácter en mayúsculas</string>
@@ -1145,6 +1148,7 @@
     <string name="patient_diagnosis">Diagnóstico</string>
     <string name="doctor_extender">Doctor/Extensor</string>
     <string name="office_assistant">Asistente de oficina</string>
+    <string name="calls">Llamadas</string>
     <string name="score">Puntuación</string>
     <string name="learn_about_score">Aprender sobre la puntuación</string>
     <string name="and">y</string>

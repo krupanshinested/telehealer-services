@@ -84,6 +84,18 @@
                 android:text="@string/dummy_text"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/toolbar_subtitle" />
+
+            <ImageView
+                android:id="@+id/favorite_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_drawable_favorite"
+                android:visibility="visible"
+                app:layout_collapseMode="pin" />
+
         </RelativeLayout>
 
         <ImageView
@@ -95,17 +107,6 @@
             android:padding="8dp"
             android:src="@drawable/ic_arrow_back_black_24dp"
             android:tint="@color/colorWhite"
-            app:layout_collapseMode="pin" />
-
-        <ImageView
-            android:id="@+id/favorite_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|right"
-            android:layout_margin="8dp"
-            android:padding="8dp"
-            android:visibility="gone"
-            android:src="@drawable/ic_drawable_favorite"
             app:layout_collapseMode="pin" />
 
         <TextView
