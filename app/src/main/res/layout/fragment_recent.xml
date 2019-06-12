@@ -11,8 +11,8 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <com.thealer.telehealer.common.CustomExpandableListView
-            android:id="@+id/recents_celv"
+        <com.thealer.telehealer.common.CustomRecyclerView
+            android:id="@+id/recents_crv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:fitsSystemWindows="true"

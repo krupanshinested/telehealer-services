@@ -19,21 +19,16 @@ public class ConnectionListApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getUnconnectedList(String name, int page, boolean showProgress, boolean isMedicalAssistant) {
+    public void getUnconnectedList(String name, String speciality, int page, boolean showProgress, boolean isMedicalAssistant) {
 
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
 
-                    int progress = Constants.SHOW_NOTHING;
-                    if (showProgress) {
-                        progress = Constants.SHOW_PROGRESS;
-                    }
-
-                    getAuthApiService().getUnConnectedUsers(paginate, page, page_size, name, isMedicalAssistant)
+                    getAuthApiService().getUnConnectedUsers(paginate, page, page_size, name, isMedicalAssistant, Constants.ROLE_DOCTOR, speciality)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(progress) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
