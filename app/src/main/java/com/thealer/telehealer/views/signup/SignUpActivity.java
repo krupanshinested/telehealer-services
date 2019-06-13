@@ -3,6 +3,8 @@ package com.thealer.telehealer.views.signup;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,11 +17,13 @@ import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -43,7 +47,9 @@ import com.thealer.telehealer.views.signup.patient.PatientChoosePaymentFragment;
 import com.thealer.telehealer.views.signup.patient.PatientRegistrationDetailFragment;
 import com.thealer.telehealer.views.signup.patient.PatientUploadInsuranceFragment;
 
+import java.util.Locale;
 import java.util.Stack;
+import java.util.TimeZone;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.common.UserType.isUserAssistant;
@@ -56,9 +62,9 @@ import static com.thealer.telehealer.common.UserType.isUserPatient;
 public class SignUpActivity extends BaseActivity implements View.OnClickListener, OnViewChangeInterface, OnActionCompleteInterface,
         SuccessViewInterface, AttachObserverInterface, OnCloseActionInterface {
 
-    private static final java.lang.String CURRENT_STEP = "current_step";
+    private static final String CURRENT_STEP = "current_step";
     private int currentStep = 1;
-    private static Stack<java.lang.String> viewInfoStack = new Stack<>();
+    private static Stack<String> viewInfoStack = new Stack<>();
     public CreateUserRequestModel createUserRequestModel;
 
     public ImageView backIv;
@@ -66,6 +72,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     public TextView nextTv;
     public ImageView closeIv;
     private TextView viewInfoTv;
+    private ImageView helpIv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,12 +129,14 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         signupToolbarTitleTv = (TextView) findViewById(R.id.toolbar_title);
         nextTv = (TextView) findViewById(R.id.next_tv);
         closeIv = (ImageView) findViewById(R.id.close_iv);
+        helpIv = (ImageView) findViewById(R.id.help_iv);
+        viewInfoTv = (TextView) findViewById(R.id.view_info_tv);
 
         backIv.setOnClickListener(this);
         nextTv.setOnClickListener(this);
         closeIv.setOnClickListener(this);
-
-        viewInfoTv = (TextView) findViewById(R.id.view_info_tv);
+        helpIv.setOnClickListener(this);
+        helpIv.setVisibility(View.VISIBLE);
 
         createUserRequestModel = ViewModelProviders.of(this).get(CreateUserRequestModel.class);
         createUserRequestModel = new CreateUserRequestModel();
@@ -327,6 +336,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 appPreference.deletePreference();
                 startActivity(new Intent(this, OnBoardingActivity.class));
                 finish();
+                break;
+            case R.id.help_iv:
+                Utils.sendHelpEmail(this);
                 break;
         }
     }

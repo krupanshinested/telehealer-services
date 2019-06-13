@@ -117,6 +117,19 @@
                     android:textColor="@color/colorBlack" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/help_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="email"
+                android:gravity="center"
+                android:linksClickable="true"
+                android:padding="@dimen/padding_default"
+                android:text="@string/still_need_help"
+                android:textColor="@color/color_blue"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/check_box_view" />
 
         </android.support.constraint.ConstraintLayout>
 
