@@ -23,6 +23,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/help_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="@dimen/padding_default"
+            android:src="@drawable/ic_help_outline"
+            android:tint="@color/colorBlack"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/back_iv"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/toolbar_title"
             style="@style/text_title_bold"
@@ -30,8 +42,8 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/dummy_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/next_tv"
+            app:layout_constraintStart_toEndOf="@+id/help_iv"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
