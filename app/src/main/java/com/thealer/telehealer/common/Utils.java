@@ -15,6 +15,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,8 +55,10 @@ import com.bumptech.glide.load.model.Headers;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
@@ -336,7 +339,7 @@ public class Utils {
     }
 
     public static GlideUrl getGlideUrlWithAuth(Context context, String path, boolean decrypt) {
-        path = context.getString(R.string.api_base_url) + context.getString(R.string.get_image_url) + path+"&decrypt="+decrypt;
+        path = context.getString(R.string.api_base_url) + context.getString(R.string.get_image_url) + path + "&decrypt=" + decrypt;
 
         return new GlideUrl(path, new Headers() {
             @Override
@@ -1262,4 +1265,23 @@ public class Utils {
             }
         });
     }
+
+    public static void sendHelpEmail(Context context) {
+        String phoneNumber = "", userName = "";
+        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+        if (whoAmIApiResponseModel != null) {
+            phoneNumber = whoAmIApiResponseModel.getPhone();
+            userName = whoAmIApiResponseModel.getUserDisplay_name();
+        }
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        String mailto = "mailto:support+android@telehealer.com" +
+                "?cc=" +
+                "&subject=" +
+                "&body=" + Uri.encode(String.format("Issue :\n\nPhone Number : %s\n\nName:\n\n\n\nApp Version : " + BuildConfig.VERSION_NAME + "\nDevice Type : " + Build.MODEL + "\nOS Details : " + Build.VERSION.RELEASE + "\nRegion : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "\n\nCheers!\n%s", phoneNumber, userName));
+        intent.setData(Uri.parse(mailto));
+
+        context.startActivity(intent);
+
+    }
+
 }
