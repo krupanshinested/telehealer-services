@@ -36,6 +36,7 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
     private LinearLayout check_box_view;
     private CircleImageView userAvatarCiv;
     private TextView userNameTv;
+    private TextView helpTv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,10 +61,12 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
         check_box_view = findViewById(R.id.check_box_view);
         userAvatarCiv = (CircleImageView) findViewById(R.id.user_avatar_civ);
         userNameTv = (TextView) findViewById(R.id.user_name_tv);
+        helpTv = (TextView) findViewById(R.id.help_tv);
 
         close_iv.setOnClickListener(this);
         action_btn.setOnClickListener(this);
         skip_btn.setOnClickListener(this);
+        helpTv.setOnClickListener(this);
 
         int resource = getIntent().getIntExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.app_icon);
         icon.setImageDrawable(getDrawable(resource));
@@ -167,6 +170,9 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
                 intent.putExtra(ArgumentKeys.IS_SKIPPED, true);
                 setResult(Activity.RESULT_CANCELED, intent);
                 finish();
+                break;
+            case R.id.help_tv:
+                Utils.sendHelpEmail(this);
                 break;
         }
     }
