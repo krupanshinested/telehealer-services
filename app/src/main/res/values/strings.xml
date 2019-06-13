@@ -1225,4 +1225,5 @@
     <string name="privacy">Privacy</string>
     <string name="battery_low_message">%1$s battery runs low</string>
     <string name="trying_to_call">Trying to call</string>
+    <string name="still_need_help">Still need help?</string>
 </resources>
