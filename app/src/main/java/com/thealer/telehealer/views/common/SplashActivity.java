@@ -12,6 +12,7 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;

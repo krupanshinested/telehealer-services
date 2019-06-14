@@ -14,6 +14,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hbb20.CountryCodePicker;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -51,6 +53,7 @@ import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import com.thealer.telehealer.views.signup.OtpVerificationFragment;
 
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
@@ -87,6 +90,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
             }
         }
     };
+    private CountryCodePicker countryPicker;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,7 +112,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                     if (isValidUser(whoAmIApiResponseModel.getRole())) {
 
                         if (!appPreference.getString(PreferenceConstants.USER_EMAIL).equals(emailEt.getText().toString())) {
-                            appPreference.deletePreference();
+                            UserDetailPreferenceManager.deleteAllPreference();
                         }
 
                         setQuickLoginView();
@@ -143,11 +147,11 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                     } else {
                         Dialog dialog = new AlertDialog.Builder(SigninActivity.this)
                                 .setTitle(getString(R.string.error))
-                                .setMessage(getString(R.string.user_not_allowed_error))
+                                .setMessage(String.format(getString(R.string.user_not_allowed_error), getString(R.string.app_name), getString(R.string.opposite_app)))
                                 .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        appPreference.deletePreference();
+                                        UserDetailPreferenceManager.deleteAllPreference();
                                         dialog.dismiss();
                                     }
                                 })
@@ -249,7 +253,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     }
 
     private boolean isValidUser(String role) {
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_DOCTOR)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) {
             return !role.equals(Constants.ROLE_PATIENT);
         } else {
             return role.equals(Constants.ROLE_PATIENT);
@@ -269,6 +273,33 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         quickLoginLl = (LinearLayout) findViewById(R.id.quick_login_ll);
         quickLoginCiv = (ImageView) findViewById(R.id.quick_login_civ);
         quickLoginTv = (TextView) findViewById(R.id.quick_login_tv);
+        countryPicker = (CountryCodePicker) findViewById(R.id.country_picker);
+
+        if (!appConfig.isStethio(this)) {
+            countryPicker.setVisibility(View.VISIBLE);
+            if (!appConfig.isLocaleIndia()) {
+                countryPicker.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
+                    @Override
+                    public void onCountrySelected() {
+                        String installType = appConfig.getInstallType(countryPicker.getSelectedCountryEnglishName());
+                        if (!UserDetailPreferenceManager.getInstallType().equals(installType)) {
+                            UserDetailPreferenceManager.setInstallType(installType);
+                            UserDetailPreferenceManager.setCountryCode(countryPicker.getSelectedCountryNameCode());
+                            setQuickLoginView();
+                        }
+                    }
+                });
+
+                String countryCode = UserDetailPreferenceManager.getCountryCode();
+                if (countryCode == null || countryCode.isEmpty()) {
+                    countryCode = appConfig.getLocaleCountry();
+                }
+                countryPicker.setCountryForNameCode(countryCode);
+            } else {
+                countryPicker.setCcpClickable(false);
+                countryPicker.showArrow(false);
+            }
+        }
         subFragmentHolder = (LinearLayout) findViewById(R.id.sub_fragment_holder);
 
         toolbarTitle.setText(getString(R.string.login));

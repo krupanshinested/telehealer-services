@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Telehealer Professional</string>
+    <string name="opposite_app">Telehealer Patient</string>
+    <string name="organization_name">Telehealer</string>
+</resources>

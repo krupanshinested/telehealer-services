@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StethIO MD</string>
+    <string name="opposite_app">StethIO Health</string>
+    <string name="organization_name">Steth IO</string>
+</resources>

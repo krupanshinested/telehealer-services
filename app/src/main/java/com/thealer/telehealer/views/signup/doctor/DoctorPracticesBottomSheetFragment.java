@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,10 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseBottomSheetDialogFragment;
 
 import java.util.ArrayList;
+
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 
 /**
  * Created by Aswin on 25,October,2018
@@ -86,6 +91,10 @@ public class DoctorPracticesBottomSheetFragment extends BaseBottomSheetDialogFra
         zipEt = (EditText) view.findViewById(R.id.zip_et);
 
         setBottomSheetHeight(view.findViewById(R.id.parent_view), 80);
+
+        if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_ZIP_VALIDATION)) {
+            zipEt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
+        }
 
         if (getArguments() != null) {
             isNewPractice = getArguments().getBoolean(Constants.IS_NEW_PRACTICE);

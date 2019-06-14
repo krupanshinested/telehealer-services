@@ -2,6 +2,14 @@ package com.thealer.telehealer.common.VitalCommon;
 
 import com.thealer.telehealer.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
 /**
  * Created by rsekar on 11/27/18.
  */
@@ -77,6 +85,13 @@ public class SupportedMeasurementType {
         }
     }
 
-    public static final String[] items = new String[]{bp, weight, temperature, gulcose, pulseOximeter};
+
+    public static List<String> getItems() {
+        List<String> items = new ArrayList<>(Arrays.asList(bp, weight, temperature, gulcose, pulseOximeter));
+        if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_STETHOSCOPE)) {
+            items.add(stethoscope);
+        }
+        return items;
+    }
 
 }

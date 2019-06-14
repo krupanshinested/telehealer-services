@@ -115,8 +115,8 @@ public class VitalsListFragment extends BaseFragment {
                 appbarLayout.setVisibility(View.GONE);
             }
         }
-        VitalsOrdersListAdapter vitalsOrdersListAdapter = new VitalsOrdersListAdapter(getActivity(), SupportedMeasurementType.items, Constants.VIEW_VITALS, getArguments());
-        listRv.setAdapter(vitalsOrdersListAdapter);
+            VitalsOrdersListAdapter vitalsOrdersListAdapter = new VitalsOrdersListAdapter(getActivity(), SupportedMeasurementType.getItems(), Constants.VIEW_VITALS, getArguments());
+            listRv.setAdapter(vitalsOrdersListAdapter);
 
     }
 

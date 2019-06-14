@@ -28,6 +28,7 @@ public class QuickLoginTouchFragment extends BaseFragment implements View.OnClic
     private ImageView closeIv;
     private TextView touchIdAgreementTv;
     private CustomButton enableBtn;
+    private TextView infoTv;
 
     @Nullable
     @Override
@@ -41,11 +42,13 @@ public class QuickLoginTouchFragment extends BaseFragment implements View.OnClic
         closeIv = (ImageView) view.findViewById(R.id.close_iv);
         touchIdAgreementTv = (TextView) view.findViewById(R.id.touch_id_agreement_tv);
         enableBtn = (CustomButton) view.findViewById(R.id.enable_btn);
+        infoTv = (TextView) view.findViewById(R.id.info_tv);
 
         closeIv.setOnClickListener(this);
         enableBtn.setOnClickListener(this);
         touchIdAgreementTv.setOnClickListener(this);
 
+        infoTv.setText(String.format(getString(R.string.touch_info, getString(R.string.app_name))));
     }
 
     @Override

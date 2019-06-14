@@ -290,7 +290,7 @@ public class VitalMeasureBaseFragment extends VitalsSendBaseFragment implements 
 
     @Override
     public void didFailConnectDevice(String type, String serailNumber, String errorMessage) {
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
         }
 
