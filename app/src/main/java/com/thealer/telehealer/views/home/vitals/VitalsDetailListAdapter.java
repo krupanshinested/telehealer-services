@@ -115,7 +115,10 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
         CardView itemCv;
         CheckBox visitCb;
         ConstraintLayout vitalRootCl;
+        View bottomView;
 
+
+        bottomView = (View) convertView.findViewById(R.id.bottom_view);
         vitalRootCl = (ConstraintLayout) convertView.findViewById(R.id.vital_root_cl);
         visitCb = (CheckBox) convertView.findViewById(R.id.visit_cb);
         abnormalIndicatorCl = (ConstraintLayout) convertView.findViewById(R.id.abnormal_indicator_cl);
@@ -138,6 +141,7 @@ public class VitalsDetailListAdapter extends BaseExpandableListAdapter {
             itemCv.setRadius(0);
         } else {
 
+            bottomView.setVisibility(View.GONE);
             StethBean stethBean = vitalsApiResponseModel.getStethBean();
 
             unitTv.setText(stethBean.getSegments().size() + " - " + context.getString(R.string.segment));

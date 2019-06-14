@@ -2,12 +2,9 @@ package com.thealer.telehealer.views.home.monitoring.diet;
 
 import android.content.Context;
 
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 
@@ -182,12 +179,7 @@ class DietPdfGenerator {
 
         String title = context.getString(R.string.diet_report);
         String date = Utils.getCurrentFomatedDate();
-        String icon;
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
-            icon = "app_icon_patient.png";
-        } else {
-            icon = "app_icon_doctor.png";
-        }
+        String icon = "pdf_icon.png";
         String backgroundColor = context.getString(R.string.app_gradient_start);
         String created_at_label = context.getString(R.string.date).toUpperCase();
         String value_label = context.getString(R.string.food).toUpperCase();

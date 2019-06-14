@@ -26,6 +26,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
 /**
  * Created by Aswin on 21,November,2018
  */
@@ -62,12 +66,13 @@ public class OrdersListFragment extends BaseFragment {
             typesList.clear();
             imageList.clear();
 
-            String[] ordersTypes = {OrderConstant.ORDER_PRESCRIPTIONS, OrderConstant.ORDER_REFERRALS, OrderConstant.ORDER_LABS, OrderConstant.ORDER_RADIOLOGY, OrderConstant.ORDER_FORM, OrderConstant.ORDER_MISC};
-            Integer[] ordersImages = {R.drawable.ic_orders_prescriptions, R.drawable.ic_orders_referrals, R.drawable.ic_orders_labs, R.drawable.ic_orders_radiology, R.drawable.ic_orders_forms, R.drawable.ic_orders_misc};
+            typesList.addAll(Arrays.asList(OrderConstant.ORDER_PRESCRIPTIONS, OrderConstant.ORDER_REFERRALS, OrderConstant.ORDER_LABS, OrderConstant.ORDER_RADIOLOGY, OrderConstant.ORDER_FORM, OrderConstant.ORDER_MISC));
+            imageList.addAll(Arrays.asList(R.drawable.ic_orders_prescriptions, R.drawable.ic_orders_referrals, R.drawable.ic_orders_labs, R.drawable.ic_orders_radiology, R.drawable.ic_orders_forms, R.drawable.ic_orders_misc));
 
-            typesList.addAll(Arrays.asList(ordersTypes));
-            imageList.addAll(Arrays.asList(ordersImages));
-
+            if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_SPECIALIST)) {
+                typesList.remove(1);
+                imageList.remove(1);
+            }
             boolean isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 
             if (!isFromHome && UserType.isUserPatient()) {

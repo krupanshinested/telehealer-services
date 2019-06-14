@@ -81,6 +81,10 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
         saveBtn.setOnClickListener(this);
         saveFaxBtn.setOnClickListener(this);
 
+        if (isHideSendFax()) {
+            saveFaxBtn.setVisibility(View.GONE);
+        }
+
         instructionEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

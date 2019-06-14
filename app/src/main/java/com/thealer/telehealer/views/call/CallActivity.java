@@ -171,13 +171,13 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         //requestFullScreenMode();
         getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        getWindow().setStatusBarColor(ContextCompat.getColor(this,R.color.colorBlack));
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorBlack));
 
         this.getWindow().setFlags(
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
-                  WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
@@ -553,9 +553,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 }
 
                 if (TokBox.shared.isVideoCall()) {
-                    call_type_tv.setText(getString(R.string.telehealer_video));
+                    call_type_tv.setText(String.format(getString(R.string.telehealer_video), getString(R.string.app_name)));
                 } else {
-                    call_type_tv.setText(getString(R.string.telehealer_audio));
+                    call_type_tv.setText(String.format(getString(R.string.telehealer_audio), getString(R.string.app_name)));
                 }
 
                 Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
@@ -1613,9 +1613,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     @Override
     public VitalsManager getInstance() {
         if (vitalsManager == null) {
-            if (BuildConfig.FLAVOR.equals(Constants.BUILD_DOCTOR)) {
+            if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) {
 
-            } else{
+            } else {
                 checkVitalPermission();
             }
             vitalsManager = VitalsManager.getInstance();

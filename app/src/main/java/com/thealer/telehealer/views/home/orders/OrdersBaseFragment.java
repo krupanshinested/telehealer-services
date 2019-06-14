@@ -42,6 +42,10 @@ import com.thealer.telehealer.views.common.RecentsSelectionActivity;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -437,6 +441,9 @@ public class OrdersBaseFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    public boolean isHideSendFax() {
+        return appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PHARMACY_FAX);
+    }
     public void onDetailReceived(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
 
     }

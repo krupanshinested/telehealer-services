@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Telehealer Professional</string>
-    <string name="user_not_allowed_error">You are attempting to login via the Telehealer Medical app. Instead, please install and sign-in using the Telehealer Patient app.</string>
     <string name="app_gradient_start">#FF8A14</string>
     <string name="app_gradient_end">#FFA938</string>
 </resources>

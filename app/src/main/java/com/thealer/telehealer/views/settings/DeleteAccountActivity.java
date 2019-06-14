@@ -16,6 +16,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.DeleteAccount.DeleteAccountViewModel;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 
@@ -87,7 +88,7 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    appPreference.deletePreference();
+                    UserDetailPreferenceManager.deleteAllPreference();
                     startActivity(new Intent(DeleteAccountActivity.this, SigninActivity.class));
                     finish();
                 }

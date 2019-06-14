@@ -66,7 +66,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         if (VitalsManager.instance != null) {
             return VitalsManager.instance;
         } else {
-            if (BuildConfig.FLAVOR.equals(Constants.BUILD_DOCTOR)) {
+            if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) {
                 VitalsManager.instance = new VitalsManager(TeleHealerApplication.application);
             } else {
                 VitalsManager.instance = new iHealthVitalManager(TeleHealerApplication.application);
@@ -268,7 +268,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didFinishBPMesure(String deviceType, Double systolicValue, Double diastolicValue, Double heartRate) {
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
             detail.put("status", "success");
@@ -283,7 +283,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didFailBPMesure(String deviceType, String error) {
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
             detail.put("status", "fail");
@@ -299,7 +299,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didFinishBpMeasure(Object object) {
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
             detail.put("status", "success");
@@ -349,7 +349,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didThermoFinishMesureWithFailure(String deviceType, String error) {
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
             detail.put("status", "fail");
@@ -378,7 +378,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didFinishMeasure(String deviceType, int spo2, int bpm, int wave, float pi) {
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
             detail.put("status", "success");
@@ -400,7 +400,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didPulseFinishMesureWithFailure(String deviceType, String error) {
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
             detail.put("status", "fail");
@@ -436,7 +436,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
     @Override
     public void didFinishGulcoMesureWithFailure(String deviceType, String error) {
 
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
 
             HashMap<String, String> detail = new HashMap<>();
             detail.put("status", "fail");
