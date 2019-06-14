@@ -71,7 +71,6 @@
         <item>Reconocedor de voz ocupado</item>
         <item>Permisos insuficientes</item>
     </string-array>
-    <string name="app_name">Telehealer</string>
     <string name="sign_up">Registro</string>
     <string name="sign_in">Iniciar sesión</string>
     <string name="dummy_text">El texto viene aqui</string>
@@ -90,8 +89,8 @@
     <string name="requirement_2">Use al menos 1 letra mayúscula, 1 letra minúscula y 1 número</string>
     <string name="requirement_3">No repetir el mismo número o letra más de tres veces seguidas</string>
     <string name="requirement_4">No contiene espacios, y solo puede usar estos caracteres especiales \'@ # * () + = {} /? ~;,.-_\'</string>
-    <string name="email_info">Su dirección de correo electrónico se utilizará para iniciar sesión en su cuenta de Telehealer.</string>
-    <string name="phone_info">Su número de teléfono se utilizará para validar su identidad a través de un código de autorización. Usted acepta que es responsable de pagar cualquiera de los cargos de su proveedor de servicios relacionados con los mensajes SMS recibidos de Telehealer.</string>
+    <string name="email_info">Su dirección de correo electrónico se utilizará para iniciar sesión en su cuenta de %s.</string>
+    <string name="phone_info">Su número de teléfono se utilizará para validar su identidad a través de un código de autorización. Usted acepta que es responsable de pagar cualquiera de los cargos de su proveedor de servicios relacionados con los mensajes SMS recibidos de %s.</string>
     <string name="patient_info">Ingrese su nombre, apellido, sexo y fecha de nacimiento.</string>
     <string name="password_info">Ingrese la contraseña de su cuenta.</string>
     <string name="baa_info">\"Su firma se utilizará para firmar el BAA y se le enviará automáticamente por correo electrónico después de completar con éxito el registro y la incorporación\".</string>
@@ -177,7 +176,7 @@
     <string name="agreement_for_use_of_touch_id">Acuerdo de uso de Touch ID</string>
     <string name="enable">habilitar</string>
     <string name="quick_login_with_touch_id">Inicio de sesión rápido con Touch ID</string>
-    <string name="touch_info">El inicio de sesión con Touch ID es más rápido y más fácil que el inicio de sesión con ID de usuario y contraseña./n/n¿Desea habilitar Touch ID para TeleHealer?</string>
+    <string name="touch_info">El inicio de sesión con Touch ID es más rápido y más fácil que el inicio de sesión con ID de usuario y contraseña./n/n¿Desea habilitar Touch ID para %s?</string>
     <string name="enter_your_pin">Introduce tu PIN</string>
     <string name="forget_passcode">¿Olvidaste la contraseña?</string>
     <string name="BIOMETRIC_FAILED">No reconocido</string>
@@ -237,28 +236,30 @@
     <string name="or_login_with">O, iniciar sesión con</string>
     <string name="touch_id">Iniciar sesión con Touch Id</string>
     <string name="use_touch_id">Usar Touch Id</string>
-    <string name="user_not_allowed_error">Está intentando iniciar sesión a través de la aplicación Telehealer Patient. En su lugar, instale e inicie sesión con la aplicación Telehealer Medical.</string>
+    <string name="user_not_allowed_error">Está intentando iniciar sesión a través de la aplicación %s. En su lugar, instale e inicie sesión con la aplicación %s.</string>
     <string name="license_number_empty_error">El número de licencia no puede estar vacío</string>
     <string name="expired_date_error">La fecha de caducidad ya no se puede tomar para el campo Vencimiento</string>
     <string name="license_state_empty_error">El número de licencia y el estado no pueden estar vacíos</string>
     <string name="license_date_empty_error">El número de licencia y la fecha de caducidad no pueden estar vacíos</string>
     <string name="state_date_empty_error">Estado y fecha de caducidad no pueden estar vacíos</string>
     <string name="allow_access">Permitir el acceso</string>
-    <string name="permission_camera_message">Telehealer desea acceder a su cámara para tomar una foto.</string>
-    <string name="permission_gallery_message">Telehealer desea acceder a sus fotos para elegir una foto.</string>
-    <string name="permission_mic_message">Telehealer desea acceder a su micrófono para grabar un audio.</string>
-    <string name="permission_location_message">Telehealer desea acceder a su ubicación</string>
-    <string name="permission_notification_message">Telehealer le gustaría enviarle actualizaciones de notificación.</string>
-    <string name="permission_health_message">Telehealer le gustaría acceder a sus datos de salud.</string>
-    <string name="permission_cam_mic_noti_message">Telehealer desea acceder a su cámara, micrófono y notificación para tomar fotos, grabar audio y enviar actualizaciones de notificaciones.</string>
-    <string name="permission_cam_photos_message">Telehealer desea acceder a su cámara y fotos para tomar / elegir una foto.</string>
-    <string name="permission_cam_mic_message">Telehealer desea acceder a su cámara y micrófono para tomar fotos y grabar audio.</string>
-    <string name="permission_cam_noti_message">Telehealer desea acceder a su cámara y notificación para tomar fotos y enviar actualizaciones de notificaciones.</string>
-    <string name="permission_mic_noti_message">A Telehealer le gustaría acceder a su Micrófono y Notificación para grabar audio y enviar actualizaciones de notificación.</string>
-    <string name="permission_loc_storage_vitals_message">Telehealer desea acceder a su ubicación y almacenamiento para conectarse con sus dispositivos iHealth.</string>
-    <string name="permission_loc_vitals_message">Telehealer desea acceder a su ubicación para conectarse con sus dispositivos iHealth.</string>
-    <string name="permission_storage_vitals_message">Telehealer desea acceder a su almacenamiento para guardar los datos de sus dispositivos iHealth.</string>
-    <string name="permission_contact_message">Telehealer desea acceder a sus contactos para invitar a usuarios de su contacto</string>
+
+    <string name="permission_camera_message">%s desea acceder a su cámara para tomar una foto.</string>
+    <string name="permission_gallery_message">%s desea acceder a sus fotos para elegir una foto.</string>
+    <string name="permission_mic_message">%s desea acceder a su micrófono para grabar un audio.</string>
+    <string name="permission_location_message">%s desea acceder a su ubicación</string>
+    <string name="permission_notification_message">%s le gustaría enviarle actualizaciones de notificación.</string>
+    <string name="permission_health_message">%s le gustaría acceder a sus datos de salud.</string>
+    <string name="permission_cam_mic_noti_message">%s desea acceder a su cámara, micrófono y notificación para tomar fotos, grabar audio y enviar actualizaciones de notificaciones.</string>
+    <string name="permission_cam_photos_message">%s desea acceder a su cámara y fotos para tomar / elegir una foto.</string>
+    <string name="permission_cam_mic_message">%s desea acceder a su cámara y micrófono para tomar fotos y grabar audio.</string>
+    <string name="permission_cam_noti_message">%s desea acceder a su cámara y notificación para tomar fotos y enviar actualizaciones de notificaciones.</string>
+    <string name="permission_mic_noti_message">A %s le gustaría acceder a su Micrófono y Notificación para grabar audio y enviar actualizaciones de notificación.</string>
+    <string name="permission_loc_storage_vitals_message">%s desea acceder a su ubicación y almacenamiento para conectarse con sus dispositivos iHealth.</string>
+    <string name="permission_loc_vitals_message">%s desea acceder a su ubicación para conectarse con sus dispositivos iHealth.</string>
+    <string name="permission_storage_vitals_message">%s desea acceder a su almacenamiento para guardar los datos de sus dispositivos iHealth.</string>
+    <string name="permission_contact_message">%s desea acceder a sus contactos para invitar a usuarios de su contacto</string>
+
     <string name="permission_camera_title">Conceder acceso a la cámara</string>
     <string name="permission_gallery_title">Otorgar acceso a fotos</string>
     <string name="permission_mic_title">Conceder acceso de micrófono</string>
@@ -368,9 +369,9 @@
     <string name="edit_document">Editar documento</string>
     <string name="search_pharmacy">Buscar Farmacia</string>
     <string name="choose_pharmacy">Elija Farmacia</string>
-    <string name="onboarding_info">Nos pondremos en contacto en 24 horas para validar sus credenciales y permitir el acceso a la plataforma./n/nRecuerde actualizar su compañía de seguros e incluir a Telehealer, Inc. como una plataforma compatible para su práctica.</string>
+    <string name="onboarding_info">Nos pondremos en contacto en 24 horas para validar sus credenciales y permitir el acceso a la plataforma./n/nRecuerde actualizar su compañía de seguros e incluir a $s, Inc. como una plataforma compatible para su práctica.</string>
     <string name="onboarding_in_progress">Onboarding in Progress</string>
-    <string name="permission_storage_message">Telehealer desea acceder a su almacenamiento local para almacenar y mostrar archivos</string>
+    <string name="permission_storage_message">%s desea acceder a su almacenamiento local para almacenar y mostrar archivos</string>
     <string name="permission_storage_title">Acceso de almacenamiento de subvención</string>
     <string name="clinic">CLÍNICA</string>
     <string name="phone">Teléfono</string>
@@ -500,11 +501,11 @@
     <string name="demographics">Demografía</string>
     <string name="send_an_invite_by_using_any_of_the_following">Enviar una invitación utilizando cualquiera de los siguientes</string>
     <string name="invite_a_user">Invitar a un usuario</string>
-    <string name="invite_by_email_info">Se enviará una solicitud de conexión si una dirección de correo electrónico coincidente ya está registrada en Telehealer. De lo contrario, el paciente recibirá un correo electrónico con un enlace para descargar la aplicación.</string>
+    <string name="invite_by_email_info">Se enviará una solicitud de conexión si una dirección de correo electrónico coincidente ya está registrada en %s. De lo contrario, el paciente recibirá un correo electrónico con un enlace para descargar la aplicación.</string>
     <string name="invite">Invitación</string>
     <string name="invite_by_email">Invitar por correo electrónico</string>
     <string name="invite_user_success_message">Has invitado exitosamente a un usuario</string>
-    <string name="invite_by_phone_info">Se enviará una solicitud de conexión si un número de teléfono correspondiente ya está registrado en Telehealer. De lo contrario, el paciente recibirá un SMS con un enlace para descargar la aplicación.</string>
+    <string name="invite_by_phone_info">Se enviará una solicitud de conexión si un número de teléfono correspondiente ya está registrado en %s. De lo contrario, el paciente recibirá un SMS con un enlace para descargar la aplicación.</string>
     <string name="invite_by_phone">Invitar por teléfono</string>
     <string name="invite_by_demographics">Invitar por Demografía</string>
     <string name="invite_by_demographics_info">Se enviará una solicitud de conexión si se encuentra un paciente con detalles demográficos coincidentes.</string>
@@ -579,17 +580,13 @@
     <string name="mute_audio_video">%1$s audio silenciado y video deshabilitado</string>
     <string name="mute_audio">%1$s audio silenciado</string>
     <string name="disabled_video">%1$s video desactivado</string>
-    <string name="telehealer_video">Telehealer Video ....</string>
-    <string name="telehealer_audio">Telehealer Audio ....</string>
+    <string name="telehealer_video">%s Video ....</string>
+    <string name="telehealer_audio">%s Audio ....</string>
     <string name="skip">Omitir</string>
     <string name="proceed">PROCEDER</string>
-    <string name="trial_period_expired_doc_sec_1">¡Gracias por usar Telehealer!
-
- Desafortunadamente, su período de prueba gratuito ya ha terminado. Por favor proporcione un método de pago para continuar usando la plataforma.
-
- Visitar</string>
+    <string name="trial_period_expired_doc_sec_1">¡Gracias por usar %s! \n\nDesafortunadamente, su período de prueba gratuito ya ha terminado. Por favor proporcione un método de pago para continuar usando la plataforma.\n\nVisitar</string>
     <string name="trial_period_expired_doc_sec_2">para detalles sobre precios</string>
-    <string name="trial_period_expired_ma_sec_1">¡Gracias por usar Telehealer!
+    <string name="trial_period_expired_ma_sec_1">¡Gracias por usar %s! \n\n Desafortunadamente, el período de prueba gratuito ya ha finalizado. Solicite %1$s para agregar un método de pago para continuar usando la plataforma.
 
  Desafortunadamente, el periodo de prueba gratuito ha finalizado. Solicite %1$s para agregar un método de pago para continuar usando la plataforma.</string>
     <string name="payment_information_required">Información de pago requerida</string>
@@ -650,10 +647,10 @@
     <string name="bluetooth">Bluetooth</string>
     <string name="choose_audio_input">Elige tu salida de audio</string>
     <string name="enable_patient_video_feed">Habilitar video del paciente</string>
-    <string name="patient_video_feed_description">Para habilitar la alimentación de video, recuérdele a su paciente que haga clic en el botón \'Telehealer\' en la esquina superior derecha de su pantalla bloqueada.</string>
+    <string name="patient_video_feed_description">Para habilitar la alimentación de video, recuérdele a su paciente que haga clic en el botón \'%s\' en la esquina superior derecha de su pantalla bloqueada.</string>
     <string name="do_not_show_again">No mostrar este mensaje de nuevo.</string>
     <string name="enable_video_feed">Habilita tu video</string>
-    <string name="video_feed_description">Cuando conteste las videollamadas de su médico desde la pantalla bloqueada, recuerde hacer clic en el botón \'Telehealer\' en la esquina superior derecha para habilitar su alimentación de video.</string>
+    <string name="video_feed_description">Cuando conteste las videollamadas de su médico desde la pantalla bloqueada, recuerde hacer clic en el botón \'%s\' en la esquina superior derecha para habilitar su alimentación de video.</string>
     <string name="ccm">CCM</string>
     <string name="rpm">RPM</string>
     <string name="bhi">BHI</string>
@@ -1168,6 +1165,12 @@
     <string name="still_need_help">¿Aún necesitas ayuda?</string>
     <string name="enter_waiting_room">Entrar en la sala de espera</string>
     <string name="please_wait_till_the_doctor_starts_the_schedule">Alguien de la oficina de su médico lo llamará pronto. Le invitamos a esperar aquí si lo desea.</string>
+    <string name="registration_number_empty_error">El número de registro no puede estar vacío</string>
+    <string name="year_of_registration_empty_error">año de registro no puede estar vacío</string>
+    <string name="mci_empty_error">El número MCI no puede estar vacío</string>
+    <string name="registration_number">Número de registro</string>
+    <string name="year_of_registration">Año de registro</string>
+    <string name="state_medical_council_for_mci">Consejo medico estatal para mci</string>
     <string name="account_locked_info">Su cuenta ha sido bloqueada por %s horas</string>
     <string name="abnormal_vital">Vital anormal</string>
 </resources>

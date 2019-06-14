@@ -194,37 +194,37 @@ public class PermissionChecker {
     private String getMessage(int permissionFor) {
         switch (permissionFor) {
             case PermissionConstants.PERMISSION_CAMERA:
-                return context.getString(R.string.permission_camera_message);
+                return String.format(context.getString(R.string.permission_camera_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_GALLERY:
-                return context.getString(R.string.permission_gallery_message);
+                return String.format(context.getString(R.string.permission_gallery_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_MICROPHONE:
-                return context.getString(R.string.permission_mic_message);
+                return String.format(context.getString(R.string.permission_mic_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_LOCATION:
-                return context.getString(R.string.permission_location_message);
+                return String.format(context.getString(R.string.permission_location_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_NOTIFICATION:
-                return context.getString(R.string.permission_notification_message);
+                return String.format(context.getString(R.string.permission_notification_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_HEALTH:
-                return context.getString(R.string.permission_health_message);
+                return String.format(context.getString(R.string.permission_health_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
-                return context.getString(R.string.permission_cam_mic_noti_message);
+                return String.format(context.getString(R.string.permission_cam_mic_noti_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_CAM_PHOTOS:
-                return context.getString(R.string.permission_cam_photos_message);
+                return String.format(context.getString(R.string.permission_cam_photos_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_CAM_MIC:
-                return context.getString(R.string.permission_cam_mic_message);
+                return String.format(context.getString(R.string.permission_cam_mic_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_CAM_NOTIFICAITON:
-                return context.getString(R.string.permission_cam_noti_message);
+                return String.format(context.getString(R.string.permission_cam_noti_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_MIC_NITIFICATION:
-                return context.getString(R.string.permission_mic_noti_message);
+                return String.format(context.getString(R.string.permission_mic_noti_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_STORAGE:
-                return context.getString(R.string.permission_storage_message);
+                return String.format(context.getString(R.string.permission_storage_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
-                return context.getString(R.string.permission_loc_storage_vitals_message);
+                return String.format(context.getString(R.string.permission_loc_storage_vitals_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_LOCATION_VITALS:
-                return context.getString(R.string.permission_loc_vitals_message);
+                return String.format(context.getString(R.string.permission_loc_vitals_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
-                return context.getString(R.string.permission_storage_vitals_message);
+                return String.format(context.getString(R.string.permission_storage_vitals_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_CONTACTS:
-                return context.getString(R.string.permission_contact_message);
+                return String.format(context.getString(R.string.permission_contact_message), context.getString(R.string.app_name));
         }
         return null;
     }

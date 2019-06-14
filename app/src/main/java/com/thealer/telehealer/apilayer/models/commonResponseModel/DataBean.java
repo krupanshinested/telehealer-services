@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.commonResponseModel;
 import android.arch.lifecycle.ViewModel;
 
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
+import com.thealer.telehealer.apilayer.models.createuser.OtherInformation;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
 import com.thealer.telehealer.apilayer.models.createuser.SpecialtiesBean;
 
@@ -30,6 +31,7 @@ public class DataBean extends ViewModel implements Serializable {
     private String secondary_insurance_front;
     private String secondary_insurance_back;
     private String website;
+    private OtherInformation otherInformation;
     private List<LicensesBean> licenses = new ArrayList<>();
     private List<SpecialtiesBean> specialties = new ArrayList<>();
     private List<PracticesBean> practices = new ArrayList<>();
@@ -58,6 +60,14 @@ public class DataBean extends ViewModel implements Serializable {
         this.licenses = licenses;
         this.specialties = specialties;
         this.practices = practices;
+    }
+
+    public OtherInformation getOtherInformation() {
+        return otherInformation;
+    }
+
+    public void setOtherInformation(OtherInformation otherInformation) {
+        this.otherInformation = otherInformation;
     }
 
     public String getNpi() {
@@ -200,6 +210,7 @@ public class DataBean extends ViewModel implements Serializable {
     public Boolean isInsurancePresent() {
         return getInsurance_front() != null && getInsurance_back() != null;
     }
+
     public Boolean isSecondaryInsurancePresent() {
         return getSecondary_insurance_front() != null && getSecondary_insurance_back() != null;
     }

@@ -27,7 +27,7 @@ public class CheckUserEmailMobileApiViewModel extends BaseApiViewModel {
     public void checkUserEmail(String email) {
         String app_type;
 
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             app_type = Constants.BUILD_PATIENT;
         } else {
             app_type = Constants.BUILD_MEDICAL;
@@ -60,7 +60,7 @@ public class CheckUserEmailMobileApiViewModel extends BaseApiViewModel {
 
         String app_type;
 
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             app_type = Constants.BUILD_PATIENT;
         } else {
             app_type = Constants.BUILD_MEDICAL;

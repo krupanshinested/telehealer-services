@@ -240,4 +240,33 @@ public class UserDetailPreferenceManager {
         appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
         appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
     }
+
+    public static String getInstallType() {
+        return appPreference.getString(PreferenceConstants.APP_INSTALL_TYPE);
+    }
+
+    public static void setInstallType(String installType) {
+        String type = getInstallType();
+        if (type != null && !type.isEmpty() && !type.equalsIgnoreCase(installType)) {
+            invalidateUser();
+        }
+        appPreference.setString(PreferenceConstants.APP_INSTALL_TYPE, installType);
+    }
+
+    public static String getCountryCode() {
+        return appPreference.getString(PreferenceConstants.APP_INSTALL_TYPE_COUNTRY_CODE);
+    }
+
+    public static void setCountryCode(String countryCode) {
+        appPreference.setString(PreferenceConstants.APP_INSTALL_TYPE_COUNTRY_CODE, countryCode);
+    }
+
+    public static void deleteAllPreference() {
+        String installType = getInstallType();
+        String countryCode = getCountryCode();
+        appPreference.deletePreference();
+
+        setInstallType(installType);
+        setCountryCode(countryCode);
+    }
 }

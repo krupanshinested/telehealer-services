@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.hbb20.CountryCodePicker;
 import com.thealer.telehealer.R;
@@ -36,6 +38,8 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
     private PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher = null;
     private PhoneNumberUtil phoneNumberUtil;
     private Phonenumber.PhoneNumber phoneNumber;
+    private RelativeLayout numberRl;
+    private TextView infoTv;
 
     @Nullable
     @Override
@@ -52,6 +56,8 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
         numberEt = (EditText) view.findViewById(R.id.number_et);
         inviteBtn = (Button) view.findViewById(R.id.invite_btn);
         phoneNumberUtil = PhoneNumberUtil.createInstance(getActivity());
+        infoTv = (TextView) view.findViewById(R.id.info_tv);
+        infoTv.setText(getString(R.string.invite_by_phone_info, getString(R.string.app_name)));
 
         if (getArguments() != null && getArguments().getSerializable(Constants.USER_DETAIL) != null) {
             commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);

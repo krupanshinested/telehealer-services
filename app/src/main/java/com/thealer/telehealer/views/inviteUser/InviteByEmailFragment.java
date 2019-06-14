@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -28,6 +29,7 @@ public class InviteByEmailFragment extends InviteUserBaseFragment {
 
     private CommonUserApiResponseModel commonUserApiResponseModel = null;
     private String doctor_guid = null;
+    private TextView infoTv;
 
     @Nullable
     @Override
@@ -42,6 +44,9 @@ public class InviteByEmailFragment extends InviteUserBaseFragment {
         emailTil = (TextInputLayout) view.findViewById(R.id.email_til);
         emailEt = (EditText) view.findViewById(R.id.email_et);
         inviteBtn = (Button) view.findViewById(R.id.invite_btn);
+        infoTv = (TextView) view.findViewById(R.id.info_tv);
+
+        infoTv.setText(String.format(getString(R.string.invite_by_email_info), getString(R.string.app_name)));
 
         if (getArguments() != null && getArguments().getSerializable(Constants.USER_DETAIL) != null) {
             commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);

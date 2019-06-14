@@ -508,7 +508,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     }
 
     private CreateUserRequestModel createUserRequestModel() {
-        CreateUserRequestModel.UserDataBean userDataBean = new CreateUserRequestModel.UserDataBean();
+        CreateUserRequestModel.UserDataBean userDataBean = new CreateUserRequestModel.UserDataBean(createUserRequestModel.getUser_data().getPhone(), createUserRequestModel.getUser_data().getEmail());
         userDataBean.setFirst_name(firstnameEt.getText().toString());
         userDataBean.setLast_name(lastnameEt.getText().toString());
         userDataBean.setGender(Constants.genderList.get(genderSp.getSelectedItemPosition()));

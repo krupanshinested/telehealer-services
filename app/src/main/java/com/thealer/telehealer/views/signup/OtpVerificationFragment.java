@@ -205,7 +205,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                         int userType = appPreference.getInt(PreferenceConstants.USER_TYPE);
 
                         if (!isVerifyUser) {
-                            appPreference.deletePreference();
+                            UserDetailPreferenceManager.deleteAllPreference();
                         } else {
                             UserDetailPreferenceManager.setUser_activated(Constants.ACTIVATED);
                             WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();

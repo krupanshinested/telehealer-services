@@ -40,6 +40,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
 /**
  * Created by Aswin on 26,November,2018
  */

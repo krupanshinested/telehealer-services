@@ -89,10 +89,12 @@ import java.util.Random;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
+import config.AppConfig;
 import me.toptas.fancyshowcase.FancyShowCaseView;
 import me.toptas.fancyshowcase.FocusShape;
 import me.toptas.fancyshowcase.listener.DismissListener;
 
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.application;
 import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
 
@@ -235,6 +237,9 @@ public class Utils {
     }
 
     public static boolean isValidState(String state) {
+
+        if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_STATE_VALIDATION))
+            return true;
 
         String statePattern = "A[LKSZRAEP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY]";
 
@@ -1342,5 +1347,4 @@ public class Utils {
         context.startActivity(intent);
 
     }
-
 }

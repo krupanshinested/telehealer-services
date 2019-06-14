@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.SignUpActivity;

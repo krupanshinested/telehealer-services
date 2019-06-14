@@ -160,6 +160,10 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
         saveBtn.setOnClickListener(this);
         saveFaxBtn.setOnClickListener(this);
 
+        if (isHideSendFax()) {
+            saveFaxBtn.setVisibility(View.GONE);
+            copyResultOcv.setVisibility(View.GONE);
+        }
         icdListRv.setLayoutManager(new LinearLayoutManager(getActivity()));
         icdCodeListAdapter = new IcdCodeListAdapter(getActivity(), selectedIcdCodeList, icdCodeDetailHashMap);
         icdListRv.setAdapter(icdCodeListAdapter);

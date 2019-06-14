@@ -118,6 +118,8 @@ public class DoctorOnBoardingActivity extends BaseActivity {
                 startActivity(i);
             }
         });
+
+        descriptionTv.setText(String.format(getString(R.string.onboarding_info), getString(R.string.app_name)));
     }
 
     private void setUserData() {

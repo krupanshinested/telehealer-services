@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,6 +39,7 @@ import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.ClinicBean;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
+import com.thealer.telehealer.apilayer.models.createuser.OtherInformation;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
 import com.thealer.telehealer.apilayer.models.createuser.SpecialtiesBean;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
@@ -47,12 +49,14 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.DatePickerDialogFragment;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CurrentModeInterface;
+import com.thealer.telehealer.views.common.DateBroadcastReceiver;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -63,7 +67,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import config.AppConfig;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+import static com.thealer.telehealer.common.Constants.TILL_CURRENT_DAY;
 
 /**
  * Created by Aswin on 25,February,2019
@@ -141,6 +149,23 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     private int currentGalleryCallingId;
     private TextView nextTv;
     private boolean isDataUpdated = false;
+    private ConstraintLayout otherDetailsCl;
+    private TextInputLayout registrationNumberTil;
+    private EditText registrationNumberEt;
+    private TextInputLayout yearOfRegistrationTil;
+    private EditText yearOfRegistrationEt;
+    private TextInputLayout mciTil;
+    private EditText mciEt;
+    private boolean isYor;
+    private DateBroadcastReceiver dateBroadcastReceiver = new DateBroadcastReceiver() {
+        @Override
+        public void onDateReceived(String formatedDate) {
+            if (isYor) {
+                isYor = false;
+                yearOfRegistrationEt.setText(formatedDate);
+            }
+        }
+    };
 
 
     @Override
@@ -296,6 +321,13 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         certificateTv = (TextView) view.findViewById(R.id.certificate_tv);
         certificateCard = (CardView) view.findViewById(R.id.certificate_card);
         certificateIv = (ImageView) view.findViewById(R.id.certificate_iv);
+        otherDetailsCl = (ConstraintLayout) view.findViewById(R.id.other_details_cl);
+        registrationNumberTil = (TextInputLayout) view.findViewById(R.id.registration_number_til);
+        registrationNumberEt = (EditText) view.findViewById(R.id.registration_number_et);
+        yearOfRegistrationTil = (TextInputLayout) view.findViewById(R.id.year_of_registration_til);
+        yearOfRegistrationEt = (EditText) view.findViewById(R.id.year_of_registration_et);
+        mciTil = (TextInputLayout) view.findViewById(R.id.mci_til);
+        mciEt = (EditText) view.findViewById(R.id.mci_et);
 
         bioEt.setOnClickListener(this);
         addAddressEt.setOnClickListener(this);
@@ -313,6 +345,32 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         addTextWatcher(addLicenseEt, addLicenseTil);
         addTextWatcher(npiEt, npiTil);
         addTextWatcher(liabilityEt, liabilityInsuranceTil);
+        addTextWatcher(registrationNumberEt, registrationNumberTil);
+        addTextWatcher(mciEt, mciTil);
+        addTextWatcher(yearOfRegistrationEt, yearOfRegistrationTil);
+
+        yearOfRegistrationEt.setFocusable(false);
+        yearOfRegistrationEt.setClickable(true);
+
+        yearOfRegistrationEt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isYor = true;
+                DatePickerDialogFragment datePickerDialogFragment = new DatePickerDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt(Constants.DATE_PICKER_TYPE, TILL_CURRENT_DAY);
+                datePickerDialogFragment.setArguments(bundle);
+                datePickerDialogFragment.show(getActivity().getSupportFragmentManager(), DatePickerDialogFragment.class.getSimpleName());
+            }
+        });
+
+        if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_NPI)) {
+            npiTil.setVisibility(View.GONE);
+        }
+        if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_LICENSE)) {
+            licenseLl.setVisibility(View.GONE);
+            addLicenseTil.setVisibility(View.GONE);
+        }
 
         specialityArray = getActivity().getResources().getStringArray(R.array.doctor_speciality_list);
         genderArray = getActivity().getResources().getStringArray(R.array.gender_list);
@@ -338,6 +396,10 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                     createUserRequestModel.getUser_detail().getData().getSpecialties() != null &&
                     createUserRequestModel.getUser_detail().getData().getSpecialties().size() > 0)
                 specialitySp.setSelection(getSpecialityPosition(createUserRequestModel.getUser_detail().getData().getSpecialties().get(0).getName()));
+        }
+
+        if (appConfig.getInstallType().equals(getString(R.string.install_type_india))) {
+            otherDetailsCl.setVisibility(View.VISIBLE);
         }
 
         if (getArguments() != null) {
@@ -442,9 +504,18 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         setLicenseList();
         setCertificate();
         setLicense();
+        setOtherInfo();
 
         validateDetails();
         checkFields();
+    }
+
+    private void setOtherInfo() {
+        if (createUserRequestModel.getUser_detail().getData().getOtherInformation() != null) {
+            registrationNumberEt.setText(createUserRequestModel.getUser_detail().getData().getOtherInformation().getRegistrationNumber());
+            mciEt.setText(createUserRequestModel.getUser_detail().getData().getOtherInformation().getMci());
+            yearOfRegistrationEt.setText(Utils.getDayMonthYear(createUserRequestModel.getUser_detail().getData().getOtherInformation().getYearOfRegistration()));
+        }
     }
 
     private void reloadUI() {
@@ -551,6 +622,8 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
             createUserRequestModel.getUser_detail().getData().setPractices(practicesBeanList);
         }
 
+        createUserRequestModel.getUser_detail().getData().setOtherInformation(doctorDetailModel.getOtherInformation());
+
         setData();
 
         checkFields();
@@ -593,6 +666,18 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                 setError(addAddressEt);
             }
         }
+
+        if (appConfig.getInstallType().equals(getString(R.string.install_type_india))) {
+            if (registrationNumberEt.getText().toString().isEmpty()) {
+                setError(registrationNumberEt);
+            }
+            if (yearOfRegistrationEt.getText().toString().isEmpty()) {
+                setError(yearOfRegistrationEt);
+            }
+            if (mciEt.getText().toString().isEmpty()) {
+                setError(mciEt);
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -619,6 +704,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
 
         setLicenseList();
 
+        setOtherInfo();
     }
 
     private void setLicenseList() {
@@ -757,6 +843,15 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
             case R.id.liability_et:
                 liabilityInsuranceTil.setError(getString(R.string.liability_empty_error));
                 break;
+            case R.id.registration_number_et:
+                registrationNumberTil.setError(getString(R.string.registration_number_empty_error));
+                break;
+            case R.id.year_of_registration_et:
+                yearOfRegistrationTil.setError(getString(R.string.year_of_registration_empty_error));
+                break;
+            case R.id.mci_et:
+                mciTil.setError(getString(R.string.mci_empty_error));
+                break;
         }
     }
 
@@ -769,10 +864,10 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                 !titleEt.getText().toString().isEmpty() &&
                 !bioEt.getText().toString().isEmpty() &&
                 createUserRequestModel.getUser_detail().getData().getPractices().size() > 0 &&
-                createUserRequestModel.getUser_detail().getData().getLicenses().size() > 0 &&
+                !liabilityEt.getText().toString().isEmpty() &&
                 hasValidLicense() &&
-                !npiEt.getText().toString().isEmpty() &&
-                !liabilityEt.getText().toString().isEmpty()) {
+                validateLicenseNpi() &&
+                isOtherInfoValid()) {
 
             onViewChangeInterface.enableNext(true);
             enableNext(true);
@@ -782,7 +877,31 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         }
     }
 
+    private boolean isOtherInfoValid() {
+        if (!appConfig.getInstallType().equals(getString(R.string.install_type_india)))
+            return true;
+        else {
+            return !registrationNumberEt.getText().toString().isEmpty() && !yearOfRegistrationEt.getText().toString().isEmpty()
+                    && !mciEt.getText().toString().isEmpty();
+        }
+    }
+
+    private boolean validateLicenseNpi() {
+        if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_NPI))
+            return true;
+
+        return !npiEt.getText().toString().isEmpty();
+    }
+
     private boolean hasValidLicense() {
+        if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_LICENSE)) {
+            return true;
+        }
+
+        if (createUserRequestModel.getUser_detail().getData().getLicenses().size() == 0)
+            return false;
+
+
         boolean isValidLicense = true;
 
         for (Boolean isValid :
@@ -887,6 +1006,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     @Override
     public void onResume() {
         super.onResume();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(dateBroadcastReceiver, new IntentFilter(Constants.DATE_PICKER_INTENT));
 
         if (!isCreateManually && currentDisplayType == Constants.CREATE_MODE) {
             checkFields();
@@ -901,6 +1021,12 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         }
 
         reloadUI();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(dateBroadcastReceiver);
     }
 
     @Override
@@ -979,23 +1105,37 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     }
 
     private boolean needToPutDoctorInOnboarding() {
-        if (createUserRequestModel.getDoctor_driving_license_path() != null || createUserRequestModel.getDoctor_certificate_path() != null) {
-            return true;
-        } else if (!UserDetailPreferenceManager.getNpi().equals(createUserRequestModel.getUser_detail().getData().getNpi())) {
-            return true;
-        } else if (UserDetailPreferenceManager.getLicenses().size() != createUserRequestModel.getUser_detail().getData().getLicenses().size()) {
-            return true;
-        } else {
-            boolean needToPost = false;
 
-            for (int i = 0; i < UserDetailPreferenceManager.getLicenses().size(); i++) {
-                if (!UserDetailPreferenceManager.getLicenses().get(i).isEqual(createUserRequestModel.getUser_detail().getData().getLicenses().get(i))) {
-                    needToPost = true;
-                    break;
-                }
+
+        if (appConfig.getInstallType().equals(getString(R.string.install_type_india))) {
+            WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+            if (whoAmIApiResponseModel.getUser_detail().getData().getOtherInformation() != null) {
+                return !whoAmIApiResponseModel.getUser_detail().getData().getOtherInformation().getYearOfRegistration().equals(createUserRequestModel.getUser_detail().getData().getOtherInformation().getYearOfRegistration())
+                        || !whoAmIApiResponseModel.getUser_detail().getData().getOtherInformation().getMci().equals(createUserRequestModel.getUser_detail().getData().getOtherInformation().getMci())
+                        || !whoAmIApiResponseModel.getUser_detail().getData().getOtherInformation().getRegistrationNumber().equals(createUserRequestModel.getUser_detail().getData().getOtherInformation().getRegistrationNumber());
             }
 
-            return needToPost;
+            return false;
+        } else {
+
+            if (createUserRequestModel.getDoctor_driving_license_path() != null || createUserRequestModel.getDoctor_certificate_path() != null) {
+                return true;
+            } else if (!UserDetailPreferenceManager.getNpi().equals(createUserRequestModel.getUser_detail().getData().getNpi())) {
+                return true;
+            } else if (UserDetailPreferenceManager.getLicenses().size() != createUserRequestModel.getUser_detail().getData().getLicenses().size()) {
+                return true;
+            } else {
+                boolean needToPost = false;
+
+                for (int i = 0; i < UserDetailPreferenceManager.getLicenses().size(); i++) {
+                    if (!UserDetailPreferenceManager.getLicenses().get(i).isEqual(createUserRequestModel.getUser_detail().getData().getLicenses().get(i))) {
+                        needToPost = true;
+                        break;
+                    }
+                }
+
+                return needToPost;
+            }
         }
     }
 
@@ -1010,10 +1150,15 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         createUserRequestModel.getUser_detail().getData().setLiability(liabilityEt.getText().toString());
 
         List<SpecialtiesBean> specialtiesBeans = createUserRequestModel.getUser_detail().getData().getSpecialties();
+        String specialityName = specialitySp.getSelectedItem().toString();
         if (specialtiesBeans.size() > 0) {
-            specialtiesBeans.get(0).setName(specialitySp.getSelectedItem().toString());
-            createUserRequestModel.getUser_detail().getData().setSpecialties(specialtiesBeans);
+            specialtiesBeans.get(0).setName(specialityName);
+        } else {
+            SpecialtiesBean specialtiesBean = new SpecialtiesBean();
+            specialtiesBean.setName(specialityName);
+            specialtiesBeans.add(specialtiesBean);
         }
+        createUserRequestModel.getUser_detail().getData().setSpecialties(specialtiesBeans);
 
 
         createUserRequestModel.getUser_detail().getData().setWebsite(websiteEt.getText().toString());
@@ -1023,6 +1168,12 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         clinicBean.setState(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getState());
 
         createUserRequestModel.getUser_detail().getData().setClinic(clinicBean);
+
+        if (appConfig.getInstallType().equals(getString(R.string.install_type_india))) {
+            createUserRequestModel.getUser_detail().getData().setOtherInformation(new OtherInformation(Utils.getUTCFormat(yearOfRegistrationEt.getText().toString(), Utils.defaultDateFormat),
+                    mciEt.getText().toString(), registrationNumberEt.getText().toString()));
+        }
+        Log.e(TAG, "createUserRequestModel: " + new Gson().toJson(createUserRequestModel));
     }
 
     @Override
