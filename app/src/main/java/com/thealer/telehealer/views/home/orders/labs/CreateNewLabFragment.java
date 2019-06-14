@@ -123,6 +123,11 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
         saveBtn.setOnClickListener(this);
         saveFaxBtn.setOnClickListener(this);
 
+        if (isHideSendFax()) {
+            saveFaxBtn.setVisibility(View.GONE);
+            copyOcv.setVisibility(View.GONE);
+        }
+
         if (getArguments() != null) {
             boolean isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 

@@ -41,6 +41,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
 /**
  * Created by Aswin on 12,December,2018
  */
@@ -159,7 +163,9 @@ public class RadiologyDetailViewFragment extends OrdersBaseFragment implements V
                 return true;
             }
         });
-
+        if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PHARMACY_FAX)){
+            copyResultOcv.setVisibility(View.GONE);
+        }
         backIv.setOnClickListener(this);
         cancelTv.setOnClickListener(this);
 

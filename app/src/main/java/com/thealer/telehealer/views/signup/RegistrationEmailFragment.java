@@ -70,7 +70,7 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
                         if (whereFrom.equals(ForgotPassword.class.getSimpleName())) {
 
                             if (!checkUserEmailMobileResponseModel.isUser_exists()) {
-                                setEmailError(getString(R.string.user_not_allowed_error));
+                                setEmailError(String.format(getString(R.string.user_not_allowed_error), getString(R.string.app_name), getString(R.string.app_name)));
                             } else {
                                 ResetPasswordRequestModel resetPasswordRequestModel = ViewModelProviders.of(getActivity()).get(ResetPasswordRequestModel.class);
                                 resetPasswordRequestModel.setEmail(emailEt.getText().toString());
@@ -148,8 +148,10 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
 
         if (isDeviceXLarge() && isModeLandscape())
             pageHintTv.setVisibility(View.GONE);
-        else
+        else{
+            pageHintTv.setText(String.format(getString(R.string.email_info), getString(R.string.app_name)));
             pageHintTv.setVisibility(View.VISIBLE);
+        }
 
         rememberCb = (CheckBox) view.findViewById(R.id.remember_cb);
 

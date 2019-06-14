@@ -116,7 +116,7 @@ public class CallPlacingActivity extends BaseActivity {
                         int requestId = 0;
                         if (callInitiateModel.getCallType().equals(OpenTokConstants.video)) {
                             intent.putExtra(ArgumentKeys.TITLE, getString(R.string.enable_patient_video_feed));
-                            intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.patient_video_feed_description));
+                            intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.patient_video_feed_description, getString(R.string.organization_name)));
                             intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.call_kit_education);
                             intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
 
@@ -328,7 +328,7 @@ public class CallPlacingActivity extends BaseActivity {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
             intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
 
-            String description = getString(R.string.trial_period_expired_doc_sec_1);
+            String description = String.format(getString(R.string.trial_period_expired_doc_sec_1), getString(R.string.app_name));
             description += " <a href=\"https://telehealer.com/product/doctors/#pricing\">https://telehealer.com/product/doctors/#pricing</a> ";
             description += getString(R.string.trial_period_expired_doc_sec_2);
 
@@ -345,7 +345,7 @@ public class CallPlacingActivity extends BaseActivity {
             intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
 
             String name = TextUtils.isEmpty(doctorName) ? getString(R.string.doctor) : doctorName;
-            String description = getString(R.string.trial_period_expired_ma_sec_1, name);
+            String description = getString(R.string.trial_period_expired_ma_sec_1, getString(R.string.app_name));
 
             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
             requestId = CallPlacingActivity.MA_DOC_PAYMENT_REQUEST;

@@ -2,11 +2,9 @@ package com.thealer.telehealer.views.home.recents;
 
 import android.content.Context;
 
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 
 import java.text.DateFormat;
@@ -205,12 +203,7 @@ public class TranscriptionPdfGenerator {
         String patientName = Utils.getPatientDisplayName(transcriptionApiResponseModel.getPatient().getFirst_name(), transcriptionApiResponseModel.getPatient().getLast_name());
         String doctorName = Utils.getDoctorDisplayName(transcriptionApiResponseModel.getDoctor().getFirst_name(), transcriptionApiResponseModel.getDoctor().getLast_name(), "");
 
-        String icon;
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
-            icon = "app_icon_patient.png";
-        } else {
-            icon = "app_icon_doctor.png";
-        }
+        String icon = "pdf_icon.png";
 
         chatDetails = chatDetails
                 .replace(CHAT_TITLE_LABEL, context.getString(R.string.chat_transcript))

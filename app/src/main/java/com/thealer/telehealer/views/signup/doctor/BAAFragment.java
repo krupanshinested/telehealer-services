@@ -84,7 +84,7 @@ public class BAAFragment extends BaseFragment implements DoCurrentTransactionInt
                         }
 
                         Bundle bundle = new Bundle();
-                        bundle.putString(ArgumentKeys.ROLE,createUserRequestModel.getUser_data().getRole());
+                        bundle.putString(ArgumentKeys.ROLE, createUserRequestModel.getUser_data().getRole());
 
                         onActionCompleteInterface.onCompletionResult(null, true, null);
                     }
@@ -150,10 +150,10 @@ public class BAAFragment extends BaseFragment implements DoCurrentTransactionInt
                 "        <font face=\"Helvetica Neue\" color = \"black\" size=\"5\">\n" +
                 "    <p><strong>ARTICLE I</strong></p>\n" +
                 "<p><strong>Preamble and</strong><strong> Definitions</strong></p>\n" +
-                "<p><u>Business Associate</u>. &ldquo;Business Associate&rdquo; shall generally have the same meaning as the term &ldquo;Business Associate&rdquo; at 45 CFR 160.103, and in reference to the party to this agreement, shall mean Telehealer, Inc.</p>\n" +
+                "<p><u>Business Associate</u>. &ldquo;Business Associate&rdquo; shall generally have the same meaning as the term &ldquo;Business Associate&rdquo; at 45 CFR 160.103, and in reference to the party to this agreement, shall mean %s, Inc.</p>\n" +
                 "<p><u>Covered Entity</u>. &ldquo;Covered Entity&rdquo; shall generally have the same meaning as the term &ldquo;Covered Entity&rdquo; at 45 CFR 160.103, and in reference to the party to this agreement, shall mean #CLINIC_NAME#.</p>\n" +
                 "<p><u>HIPAA Rules</u>. &ldquo;HIPAA Rules&rdquo; shall mean the Privacy, Security, Breach Notification, and Enforcement Rules at 45 CFR Part 160 and Part 164.</p>\n" +
-                "<p>Pursuant to the Health Insurance Portability and Accountability Act of 1996 (as amended, and including its promulgating regulations, &ldquo;<strong>HIPAA</strong>&rdquo;), #CLINIC_NAME#, (&ldquo;<strong>Covered Entity</strong>&rdquo;), a <strong>#STATE#</strong> Corporation, and Telehealer, Inc. (&ldquo;<strong>Business Associate</strong>&rdquo;), a California corporation, enter into this Business Associate Agreement (&ldquo;<strong>BAA</strong>&rdquo;) on <strong>#DATE#</strong>, which addresses the HIPAA requirements with respect to &ldquo;Business Associates,&rdquo; as defined under the privacy, security, breach notification, and enforcement rules at 45 C.F.R. Part 160 and Part 164 (&ldquo;<strong>HIPAA Rules</strong>&rdquo;). A reference in this BAA to a section in the HIPAA Rules means the section as in effect or as amended. This BAA shall become effective as of the date on which Business Associate receives, becomes knowledgeable or aware of, maintains, uses, discloses, or otherwise processes any PHI (as defined below) for or on behalf of Covered Entity or any of its contractors (the &ldquo;<strong>Effective Date</strong>&rdquo;).</p>\n" +
+                "<p>Pursuant to the Health Insurance Portability and Accountability Act of 1996 (as amended, and including its promulgating regulations, &ldquo;<strong>HIPAA</strong>&rdquo;), #CLINIC_NAME#, (&ldquo;<strong>Covered Entity</strong>&rdquo;), a <strong>#STATE#</strong> Corporation, and %s, Inc. (&ldquo;<strong>Business Associate</strong>&rdquo;), a California corporation, enter into this Business Associate Agreement (&ldquo;<strong>BAA</strong>&rdquo;) on <strong>#DATE#</strong>, which addresses the HIPAA requirements with respect to &ldquo;Business Associates,&rdquo; as defined under the privacy, security, breach notification, and enforcement rules at 45 C.F.R. Part 160 and Part 164 (&ldquo;<strong>HIPAA Rules</strong>&rdquo;). A reference in this BAA to a section in the HIPAA Rules means the section as in effect or as amended. This BAA shall become effective as of the date on which Business Associate receives, becomes knowledgeable or aware of, maintains, uses, discloses, or otherwise processes any PHI (as defined below) for or on behalf of Covered Entity or any of its contractors (the &ldquo;<strong>Effective Date</strong>&rdquo;).</p>\n" +
                 "<p>This BAA is intended to ensure that Business Associate will establish and implement appropriate safeguards for the Protected Health Information (as defined under the HIPAA Rules, &ldquo;<strong>PHI</strong>&rdquo;) that Business Associate may receive, create, maintain, use, or disclose in connection with the functions, activities, and services that Business Associate performs for or on behalf of Covered Entity or any of its contractors.</p>\n" +
                 "<p>Pursuant to changes required under the Health Information Technology for Economic and Clinical Health Act of 2009 (the &ldquo;<strong>HITECH Act</strong>&rdquo;) and the American Recovery and Reinvestment Act of 2009 (&ldquo;<strong>ARRA</strong>&rdquo;), this BAA also reflects federal breach notification requirements imposed on Business Associate when any &ldquo;Unsecured PHI&rdquo; (as defined under the HIPAA Rules) is acquired by an unauthorized party, as well as the expanded privacy and security provisions generally imposed on Business Associates.</p>\n" +
                 "<p>Unless the context clearly indicates otherwise, the following terms in this BAA shall have the same meaning as those terms in the HIPAA Rules: Breach, Data Aggregation, Designated Record Set, Disclosure, Health Care Operations, Individual, Minimum Necessary, Notice of Privacy Practices, Protected Health Information, Required By Law, Secretary, Security Incident, Subcontractor, Unsecured Protected Health Information, and Use.</p>\n" +
@@ -218,7 +218,7 @@ public class BAAFragment extends BaseFragment implements DoCurrentTransactionInt
                 .replace(STATE, createUserRequestModel.getUser_detail().getData().getClinic().getState())
                 .replace(DATE, Utils.getCurrentFomatedDate());
 
-        return baaHtmlContent;
+        return String.format(baaHtmlContent, getString(R.string.organization_name), getString(R.string.organization_name));
     }
 
     @Override

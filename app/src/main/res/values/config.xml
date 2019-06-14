@@ -20,6 +20,4 @@
     //Service api
     <string name="service_api_base_url">https://services.telehealer.com</string>
     <string name="service_api_key">ezuGJrW9O24Ran2gZaF7m2Ro13RTvD1q26IKTj4m</string>
-
-    <string name="app_install_type">telehealer</string>
 </resources>

@@ -27,6 +27,10 @@ import com.thealer.telehealer.views.common.CCMItemView;
 import java.util.Date;
 import java.util.HashMap;
 
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
 /**
  * Created by rsekar on 1/11/19.
  */
@@ -139,7 +143,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             }
         });
 
-        if (UserType.isUserPatient()) {
+        if (UserType.isUserPatient() || appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_CCM)) {
             ccm_view.setVisibility(View.GONE);
         } else {
             ccm_view.setVisibility(View.VISIBLE);

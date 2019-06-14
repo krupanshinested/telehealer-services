@@ -287,7 +287,7 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
     @Override
     public void didFinishGulcoMesureWithFailure(String deviceType, String error) {
 
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
         }
 
