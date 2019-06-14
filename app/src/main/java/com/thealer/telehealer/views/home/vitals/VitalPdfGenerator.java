@@ -2,11 +2,9 @@ package com.thealer.telehealer.views.home.vitals;
 
 import android.content.Context;
 
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
@@ -262,12 +260,7 @@ public class VitalPdfGenerator {
             pdfTitle = context.getString(SupportedMeasurementType.getTitle(pdfList.get(0).getType())) + " " + context.getString(R.string.report);
 
         String pdfDate = Utils.getCurrentFomatedDate();
-        String icon;
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
-            icon = "app_icon_patient.png";
-        } else {
-            icon = "app_icon_doctor.png";
-        }
+        String icon = "pdf_icon.png";
         String patientName;
         String dob;
         String gender;

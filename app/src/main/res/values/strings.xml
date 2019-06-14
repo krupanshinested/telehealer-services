@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Telehealer</string>
     <string name="sign_up">Register</string>
     <string name="sign_in">Login</string>
     <string name="dummy_text">Text comes here</string>
@@ -23,8 +22,8 @@
     <string name="requirement_4">Not contain spaces, and may only use these special characters \'@#*()+={}/?~;,.-_\'</string>
 
     //Registration page informations
-    <string name="email_info">Your Email address will be used to log you into your Telehealer account.</string>
-    <string name="phone_info">Your phone number will be used to validate your identity via an authorization code. You agree that you are responsible for paying any of your carrier\'s charges related to SMS messages received from Telehealer.</string>
+    <string name="email_info">Your Email address will be used to log you into your %s account.</string>
+    <string name="phone_info">Your phone number will be used to validate your identity via an authorization code. You agree that you are responsible for paying any of your carrier\'s charges related to SMS messages received from %s.</string>
     <string name="reg_patient_info">Enter your first name,last name,gender and Date of birth.</string>
     <string name="password_info">Enter the password for your account.</string>
     <string name="baa_info">"Your signature will be used to sign the BAA and will be automatically emailed to you after successfully completing registration and onboarding."</string>
@@ -182,7 +181,7 @@
     <string name="agreement_for_use_of_touch_id">Agreement for use of Touch ID</string>
     <string name="enable">enable</string>
     <string name="quick_login_with_touch_id">Quick login with Touch ID</string>
-    <string name="touch_info">Login with Touch ID is faster and easier than the login with User Id and Password.\n\nWould you like to enable Touch ID for TeleHealer?</string>
+    <string name="touch_info">Login with Touch ID is faster and easier than the login with User Id and Password.\n\nWould you like to enable Touch ID for %s?</string>
     <string name="enter_your_pin">Enter your pin</string>
     <string name="forget_passcode">forget passcode?</string>
     <string name="BIOMETRIC_FAILED">Not Recognized</string>
@@ -245,7 +244,7 @@
     <string name="or_login_with">Or, Login with</string>
     <string name="touch_id">Login with Touch Id</string>
     <string name="use_touch_id">Use Touch Id</string>
-    <string name="user_not_allowed_error">You are attempting to login via the Telehealer Patient app. Instead, please install and sign-in using the Telehealer Medical app.</string>
+    <string name="user_not_allowed_error">You are attempting to login via the %s app. Instead, please install and sign-in using the %s app.</string>
     <string name="license_number_empty_error">License number can\'t be empty</string>
     <string name="expired_date_error">Already expired date can\'t be take for Expiration field</string>
     <string name="license_state_empty_error">License number and State can\'t be empty</string>
@@ -254,21 +253,21 @@
     <string name="allow_access">Allow Access</string>
 
     //permission check message
-    <string name="permission_camera_message">Telehealer would like to access your Camera inorder to take a photo.</string>
-    <string name="permission_gallery_message">Telehealer would like to access your Photos inorder to choose a photo.</string>
-    <string name="permission_mic_message">Telehealer would like to access your Microphone inorder to record a audio.</string>
-    <string name="permission_location_message">Telehealer would like to access your Location</string>
-    <string name="permission_notification_message">Telehealer would like to send you notification updates.</string>
-    <string name="permission_health_message">Telehealer would like to access your health data.</string>
-    <string name="permission_cam_mic_noti_message">Telehealer would like to access your Camera,Microphone and Notification inorder to take photo,record audio and send notification updates.</string>
-    <string name="permission_cam_photos_message">Telehealer would like to access your Camera and Photos inorder to take/choose a photo.</string>
-    <string name="permission_cam_mic_message">Telehealer would like to access your Camera and Microphone inorder to take photo and record audio.</string>
-    <string name="permission_cam_noti_message">Telehealer would like to access your Camera and Notification inorder to take photo and send notification updates.</string>
-    <string name="permission_mic_noti_message">Telehealer would like to access your Microphone and Notifiction inorder to record audio and send notification updates.</string>
-    <string name="permission_loc_storage_vitals_message">Telehealer would like to access your Location and Storage inorder to connect with your iHealth devices.</string>
-    <string name="permission_loc_vitals_message">Telehealer would like to access your Location inorder to connect with your iHealth devices.</string>
-    <string name="permission_storage_vitals_message">Telehealer would like to access your Storage inorder to save data from your iHealth devices.</string>
-    <string name="permission_contact_message">Telehealer would like to access your contacts inorder to invite users from your contact</string>
+    <string name="permission_camera_message">%s would like to access your Camera inorder to take a photo.</string>
+    <string name="permission_gallery_message">%s would like to access your Photos inorder to choose a photo.</string>
+    <string name="permission_mic_message">%s would like to access your Microphone inorder to record a audio.</string>
+    <string name="permission_location_message">%s would like to access your Location</string>
+    <string name="permission_notification_message">%s would like to send you notification updates.</string>
+    <string name="permission_health_message">%s would like to access your health data.</string>
+    <string name="permission_cam_mic_noti_message">%s would like to access your Camera,Microphone and Notification inorder to take photo,record audio and send notification updates.</string>
+    <string name="permission_cam_photos_message">%s would like to access your Camera and Photos inorder to take/choose a photo.</string>
+    <string name="permission_cam_mic_message">%s would like to access your Camera and Microphone inorder to take photo and record audio.</string>
+    <string name="permission_cam_noti_message">%s would like to access your Camera and Notification inorder to take photo and send notification updates.</string>
+    <string name="permission_mic_noti_message">%s would like to access your Microphone and Notifiction inorder to record audio and send notification updates.</string>
+    <string name="permission_loc_storage_vitals_message">%s would like to access your Location and Storage inorder to connect with your iHealth devices.</string>
+    <string name="permission_loc_vitals_message">%s would like to access your Location inorder to connect with your iHealth devices.</string>
+    <string name="permission_storage_vitals_message">%s would like to access your Storage inorder to save data from your iHealth devices.</string>
+    <string name="permission_contact_message">%s would like to access your contacts inorder to invite users from your contact</string>
 
     //permission check title
     <string name="permission_camera_title">Grant Camera Access</string>
@@ -387,9 +386,9 @@
     <string name="edit_document">Edit Document</string>
     <string name="search_pharmacy">Search Pharmacy</string>
     <string name="choose_pharmacy">Choose Pharmacy</string>
-    <string name="onboarding_info">We will get in touch within 24hrs to validate your credentials and enable access to the platform.\n\nPlease remember to update your insurance company and include Telehealer,Inc as a supported platform for your practice.</string>
+    <string name="onboarding_info">We will get in touch within 24hrs to validate your credentials and enable access to the platform.\n\nPlease remember to update your insurance company and include %s,Inc as a supported platform for your practice.</string>
     <string name="onboarding_in_progress">Onboarding in Progress</string>
-    <string name="permission_storage_message">Telehealer would like to access your local storage to store and display files</string>
+    <string name="permission_storage_message">%s would like to access your local storage to store and display files</string>
     <string name="permission_storage_title">Grant Storage Access</string>
     <string name="clinic">CLINIC</string>
     <string name="phone">Phone</string>
@@ -523,11 +522,11 @@
     <string name="demographics">Demographics</string>
     <string name="send_an_invite_by_using_any_of_the_following">Send an invite by using any of the following</string>
     <string name="invite_a_user">Invite a User</string>
-    <string name="invite_by_email_info">A connection request will be sent if a matching email address is already registered on Telehealer. Otherwise, the patient will get an email with a link to download the app.</string>
+    <string name="invite_by_email_info">A connection request will be sent if a matching email address is already registered on %s. Otherwise, the patient will get an email with a link to download the app.</string>
     <string name="invite">Invite</string>
     <string name="invite_by_email">Invite by Email</string>
     <string name="invite_user_success_message">You have successfully invited a user</string>
-    <string name="invite_by_phone_info">A connection request will be sent if a matching phone number is already registered on Telehealer. Otherwise, the patient will get an SMS with a link to download the app.</string>
+    <string name="invite_by_phone_info">A connection request will be sent if a matching phone number is already registered on %s. Otherwise, the patient will get an SMS with a link to download the app.</string>
     <string name="invite_by_phone">Invite by Phone</string>
     <string name="invite_by_demographics">Invite by Demographics</string>
     <string name="invite_by_demographics_info">A connection request will be sent if a patient with matching demographic details is found.</string>
@@ -605,13 +604,13 @@
     <string name="mute_audio_video">%1$s muted audio and disabled video</string>
     <string name="mute_audio">%1$s muted audio</string>
     <string name="disabled_video">%1$s disabled video</string>
-    <string name="telehealer_video">Telehealer Video....</string>
-    <string name="telehealer_audio">Telehealer Audio....</string>
+    <string name="telehealer_video">%s Video....</string>
+    <string name="telehealer_audio">%s Audio....</string>
     <string name="skip">Skip</string>
     <string name="proceed">PROCEED</string>
-    <string name="trial_period_expired_doc_sec_1">Thank you for using Telehealer! \n\nUnfortunately, your free trial period has now ended. Please provide a payment method to continue using the platform. \n\nVisit </string>
+    <string name="trial_period_expired_doc_sec_1">Thank you for using %s! \n\nUnfortunately, your free trial period has now ended. Please provide a payment method to continue using the platform. \n\nVisit </string>
     <string name="trial_period_expired_doc_sec_2">for details around pricing</string>
-    <string name="trial_period_expired_ma_sec_1">Thank you for using Telehealer! \n\nUnfortunately, the free trial period has now ended. Please request %1$s to add a payment method to continue using the platform.</string>
+    <string name="trial_period_expired_ma_sec_1">Thank you for using %s! \n\nUnfortunately, the free trial period has now ended. Please request %1$s to add a payment method to continue using the platform.</string>
     <string name="payment_information_required">Payment Information Required</string>
     <string name="call">Call</string>
     <string name="ringing">Ringing...</string>
@@ -670,10 +669,10 @@
     <string name="bluetooth">Bluetooth</string>
     <string name="choose_audio_input">Choose your audio output</string>
     <string name="enable_patient_video_feed">Enable patient\'s video feed</string>
-    <string name="patient_video_feed_description">Inorder to enable the video feed, remind your patient to click on the \'Telehealer button\' on the right top corner of their locked screen.</string>
+    <string name="patient_video_feed_description">Inorder to enable the video feed, remind your patient to click on the \'%s button\' on the right top corner of their locked screen.</string>
     <string name="do_not_show_again">Do not show this message again.</string>
     <string name="enable_video_feed">Enable your video feed</string>
-    <string name="video_feed_description">When answering your doctor\'s video calls from the locked screen, remember to click the \'Telehealer button\' on the right top corner to enable your video feed.</string>
+    <string name="video_feed_description">When answering your doctor\'s video calls from the locked screen, remember to click the \'%s button\' on the right top corner to enable your video feed.</string>
     <string name="ccm">CCM</string>
     <string name="rpm">RPM</string>
     <string name="bhi">BHI</string>
@@ -1219,7 +1218,7 @@
     <string name="mandatory_questions_info">Questions marked with \' * \' is mandatory</string>
     <string name="form_updated_successfully">Form updated successfully</string>
     <string name="enter_all_mandatory_fields">Enter all mandatory fields</string>
-    <string name="na">N/A</string>
+    <string name="na" translatable="false">N/A</string>
     <string name="favorite">Favorites</string>
     <string name="others">Others</string>
     <string name="privacy">Privacy</string>
@@ -1228,6 +1227,12 @@
     <string name="still_need_help">Still need help?</string>
     <string name="enter_waiting_room">Enter waiting room</string>
     <string name="please_wait_till_the_doctor_starts_the_schedule">Someone from your doctor\'s office will call you soon. You are welcome to wait here if you like.</string>
+    <string name="registration_number_empty_error">Registration number can\'t be empty</string>
+    <string name="year_of_registration_empty_error">year of registration can\'t be empty</string>
+    <string name="mci_empty_error">MCI number can\'t be empty</string>
+    <string name="registration_number">Registration Number</string>
+    <string name="year_of_registration">Year of registration</string>
+    <string name="state_medical_council_for_mci">State medical council for mci</string>
     <string name="account_locked_info">Your account has been locked down for %s hours</string>
     <string name="abnormal_vital">Abnormal vital</string>
 </resources>

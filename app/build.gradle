@@ -21,10 +21,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable false
-            manifestPlaceholders = [fabric_key : "11f8f34ff870c34c68c002f45a62b6dcacdf27d9"]
+            manifestPlaceholders = [fabric_key: "11f8f34ff870c34c68c002f45a62b6dcacdf27d9"]
         }
-        debug{
-            manifestPlaceholders = [fabric_key : "066e8b8d88db9729e4c796eabdd396f1edc0d7d8"]
+        debug {
+            manifestPlaceholders = [fabric_key: "066e8b8d88db9729e4c796eabdd396f1edc0d7d8"]
         }
     }
     compileOptions {
@@ -34,6 +34,7 @@ android {
     flavorDimensions "telehealer"
     productFlavors {
         doctor {
+            buildConfigField("String", "FLAVOR_TYPE", "\"doctor\"")
         }
         patient {
             minSdkVersion 23
@@ -42,22 +43,58 @@ android {
             versionCode 9
             versionName "1.0.8"
             applicationId 'com.thealer'
+            buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
+        }
+        stethioHealth {
+            minSdkVersion 23
+            targetSdkVersion 28
+            testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+            versionCode 1
+            versionName '1'
+            buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
+            applicationId 'com.stethio.health'
+        }
+        stethioMd {
+            minSdkVersion 23
+            targetSdkVersion 28
+            testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+            versionCode 1
+            versionName '1'
+            buildConfigField("String", "FLAVOR_TYPE", "\"doctor\"")
+            applicationId 'com.stethio.md'
         }
     }
 
     sourceSets {
         doctor {
+            res.srcDirs = ['src/doctor/res', 'src/telehealerPro/res']
+            assets.srcDirs = ['src/doctor/assets', 'src/telehealerPro/assets']
         }
         patient {
             main {
                 jniLibs.srcDirs = ['libs']
             }
+            res.srcDirs = ['src/patient/res', 'src/telehealer/res']
+            assets.srcDirs = ['src/doctor/assets', 'src/telehealer/assets']
+        }
+        stethioHealth {
+            res.srcDirs = ['src/patient/res', 'src/stethioHealth/res']
+            java.srcDirs = ['src/patient/java']
+            manifest.srcFile 'src/patient/AndroidManifest.xml'
+            jniLibs.srcDirs = ['libs']
+            assets.srcDirs = ['src/doctor/assets', 'src/stethioHealth/assets']
+        }
+        stethioMd {
+            res.srcDirs = ['src/doctor/res', 'src/stethioMd/res']
+            java.srcDirs = ['src/doctor/java']
+            manifest.srcFile 'src/doctor/AndroidManifest.xml'
+            assets.srcDirs = ['src/doctor/assets', 'src/stethioMd/assets']
         }
     }
 
     repositories {
         maven { url 'https://jitpack.io' }
-        maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://maven.fabric.i/public' }
     }
 
     packagingOptions {
@@ -114,6 +151,10 @@ dependencies {
     patientImplementation files('libs/pl2303driver.jar')
     patientImplementation files('libs/smartlinklib3.6.4_product.jar')
     patientImplementation files('libs/iHealthLibrary_2.4.4.jar')
+    stethioHealthImplementation files('libs/d2xx.jar')
+    stethioHealthImplementation files('libs/pl2303driver.jar')
+    stethioHealthImplementation files('libs/smartlinklib3.6.4_product.jar')
+    stethioHealthImplementation files('libs/iHealthLibrary_2.4.4.jar')
 
     //view model and live data
     implementation 'android.arch.lifecycle:extensions:1.1.1'

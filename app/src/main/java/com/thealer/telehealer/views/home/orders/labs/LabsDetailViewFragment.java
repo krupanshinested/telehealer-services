@@ -40,6 +40,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
 /**
  * Created by Aswin on 22,November,2018
  */
@@ -115,6 +119,9 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
         toolbar.inflateMenu(R.menu.orders_detail_menu);
         if (!UserType.isUserPatient()) {
             toolbar.getMenu().findItem(R.id.send_fax_menu).setVisible(true);
+        }
+        if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PHARMACY_FAX)) {
+            copyOcv.setVisibility(View.GONE);
         }
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

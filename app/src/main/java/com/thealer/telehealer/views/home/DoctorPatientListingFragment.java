@@ -341,7 +341,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.call_kit_education);
                 intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
                 intent.putExtra(ArgumentKeys.TITLE, getString(R.string.enable_video_feed));
-                intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.video_feed_description));
+                intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.video_feed_description, getString(R.string.organization_name)));
                 intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
                 intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, false);
 

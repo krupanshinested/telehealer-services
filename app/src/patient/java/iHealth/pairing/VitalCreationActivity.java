@@ -430,7 +430,7 @@ public class VitalCreationActivity extends BaseActivity implements
     @Override
     public VitalsManager getInstance() {
         if (vitalsManager == null) {
-            if (BuildConfig.FLAVOR.equals(Constants.BUILD_DOCTOR)) {
+            if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) {
 
             } else {
                 checkVitalPermission();

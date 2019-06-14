@@ -144,7 +144,7 @@ public class QuickLoginPinFragment extends BaseFragment {
             public void onClick(View v) {
                 if (isNewUser || isRefreshToken) {
                     String email = UserDetailPreferenceManager.getEmail();
-                    appPreference.deletePreference();
+                    UserDetailPreferenceManager.deleteAllPreference();
                     UserDetailPreferenceManager.setEmail(email);
                     getActivity().startActivity(new Intent(getActivity(), SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                     getActivity().finish();

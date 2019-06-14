@@ -3,8 +3,6 @@ package com.thealer.telehealer.views.signup;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,13 +15,13 @@ import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -47,10 +45,11 @@ import com.thealer.telehealer.views.signup.patient.PatientChoosePaymentFragment;
 import com.thealer.telehealer.views.signup.patient.PatientRegistrationDetailFragment;
 import com.thealer.telehealer.views.signup.patient.PatientUploadInsuranceFragment;
 
-import java.util.Locale;
 import java.util.Stack;
-import java.util.TimeZone;
 
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.common.UserType.isUserAssistant;
 import static com.thealer.telehealer.common.UserType.isUserDoctor;
@@ -119,7 +118,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void setUserType() {
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             appPreference.setInt(Constants.USER_TYPE, Constants.TYPE_PATIENT);
         }
     }
@@ -149,23 +148,23 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         if (isUserPatient()) {
             switch (currentStep) {
                 case 1:
-                    viewInfoStack.push(getResources().getString(R.string.reg_patient_info));
-                    return new PatientRegistrationDetailFragment();
-                case 2:
-                    viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
-                    return new TermsAndConditionFragment();
-                case 3:
-                    viewInfoStack.push(getResources().getString(R.string.payment_info));
-                    return new PatientChoosePaymentFragment();
-                case 4:
-                    viewInfoStack.push(getResources().getString(R.string.email_info));
+                    viewInfoStack.push(getString(R.string.email_info, getString(R.string.app_name)));
                     return new RegistrationEmailFragment();
-                case 5:
-                    viewInfoStack.push(getResources().getString(R.string.phone_info));
+                case 2:
+                    viewInfoStack.push(getString(R.string.phone_info, getString(R.string.app_name)));
                     return new RegistrationMobileFragment();
-                case 6:
+                case 3:
                     viewInfoStack.push(getString(R.string.registration_email_phone_verify_info));
                     return new RegistrationEmailMobileVerificationFragment();
+                case 4:
+                    viewInfoStack.push(getResources().getString(R.string.reg_patient_info));
+                    return new PatientRegistrationDetailFragment();
+                case 5:
+                    viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
+                    return new TermsAndConditionFragment();
+                case 6:
+                    viewInfoStack.push(getResources().getString(R.string.payment_info));
+                    return new PatientChoosePaymentFragment();
                 case 7:
                     viewInfoStack.push(getResources().getString(R.string.password_info));
                     return new CreatePasswordFragment();
@@ -184,25 +183,25 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 if (isUserAssistant()) {
                     switch (currentStep) {
                         case 2:
-                            viewInfoStack.push(getResources().getString(R.string.assistant_info));
-                            return new MedicalAssistantDetailFragment();
-                        case 3:
-                            viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
-                            return new TermsAndConditionFragment();
-                        case 4:
-                            viewInfoStack.push(getResources().getString(R.string.ma_certificate_info));
-                            return new MedicalAssistantCertificateUploadFragment();
-                        case 5:
-                            return new MedicalAssistantCertificatePreviewFragment();
-                        case 6:
-                            viewInfoStack.push(getResources().getString(R.string.email_info));
+                            viewInfoStack.push(getString(R.string.email_info, getString(R.string.app_name)));
                             return new RegistrationEmailFragment();
-                        case 7:
-                            viewInfoStack.push(getResources().getString(R.string.phone_info));
+                        case 3:
+                            viewInfoStack.push(getString(R.string.phone_info, getString(R.string.app_name)));
                             return new RegistrationMobileFragment();
-                        case 8:
+                        case 4:
                             viewInfoStack.push(getString(R.string.registration_email_phone_verify_info));
                             return new RegistrationEmailMobileVerificationFragment();
+                        case 5:
+                            viewInfoStack.push(getResources().getString(R.string.assistant_info));
+                            return new MedicalAssistantDetailFragment();
+                        case 6:
+                            viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
+                            return new TermsAndConditionFragment();
+                        case 7:
+                            viewInfoStack.push(getResources().getString(R.string.ma_certificate_info));
+                            return new MedicalAssistantCertificateUploadFragment();
+                        case 8:
+                            return new MedicalAssistantCertificatePreviewFragment();
                         case 9:
                             viewInfoStack.push(getResources().getString(R.string.password_info));
                             return new CreatePasswordFragment();
@@ -214,37 +213,40 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             return null;
                     }
                 } else if (isUserDoctor()) {
+                    if (currentStep == 5 && appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_DOCTOR_SEARCH)) {
+                        currentStep = 7;
+                    }
                     switch (currentStep) {
                         case 2:
-                            viewInfoStack.push(getString(R.string.what_is_your_name));
-                            return new DoctorSearchNameFragment();
-                        case 3:
-                            viewInfoStack.push(getString(R.string.doctor_select_profile_info));
-                            return new DoctorListFragment();
-                        case 4:
-                            viewInfoStack.push(getString(R.string.doctor_detail_info));
-                            return new CreateDoctorDetailFragment();
-                        case 5:
-                            viewInfoStack.push(getString(R.string.doctor_driving_license_hint));
-                            return new DoctorDriverLicenseFragment();
-                        case 6:
-                            viewInfoStack.push(getString(R.string.doctor_certificate_hint));
-                            return new DoctorCertificateFragment();
-                        case 7:
-                            viewInfoStack.push(getString(R.string.release_info));
-                            return new DoctorRegistrationInfoFragment();
-                        case 8:
-                            viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
-                            return new TermsAndConditionFragment();
-                        case 9:
-                            viewInfoStack.push(getString(R.string.email_info));
+                            viewInfoStack.push(getString(R.string.email_info, getString(R.string.app_name)));
                             return new RegistrationEmailFragment();
-                        case 10:
-                            viewInfoStack.push(getResources().getString(R.string.phone_info));
+                        case 3:
+                            viewInfoStack.push(getString(R.string.phone_info, getString(R.string.app_name)));
                             return new RegistrationMobileFragment();
-                        case 11:
+                        case 4:
                             viewInfoStack.push(getString(R.string.registration_email_phone_verify_info));
                             return new RegistrationEmailMobileVerificationFragment();
+                        case 5:
+                            viewInfoStack.push(getString(R.string.what_is_your_name));
+                            return new DoctorSearchNameFragment();
+                        case 6:
+                            viewInfoStack.push(getString(R.string.doctor_select_profile_info));
+                            return new DoctorListFragment();
+                        case 7:
+                            viewInfoStack.push(getString(R.string.doctor_detail_info));
+                            return new CreateDoctorDetailFragment();
+                        case 8:
+                            viewInfoStack.push(getString(R.string.doctor_driving_license_hint));
+                            return new DoctorDriverLicenseFragment();
+                        case 9:
+                            viewInfoStack.push(getString(R.string.doctor_certificate_hint));
+                            return new DoctorCertificateFragment();
+                        case 10:
+                            viewInfoStack.push(getString(R.string.release_info));
+                            return new DoctorRegistrationInfoFragment();
+                        case 11:
+                            viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
+                            return new TermsAndConditionFragment();
                         case 12:
                             viewInfoStack.push(getResources().getString(R.string.password_info));
                             return new CreatePasswordFragment();
@@ -277,11 +279,15 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     signupToolbarTitleTv.setText(currentStep - 1 + " of 9");
                 }
                 if (isUserDoctor()) {
-                    if (currentStep > 3) {
-                        signupToolbarTitleTv.setText(currentStep - 3 + " of 11");
+                    int step;
+                    if (currentStep < 5) {
+                        step = currentStep - 1;
+                    } else if (currentStep <= 7) {
+                        step = 4;
                     } else {
-                        signupToolbarTitleTv.setVisibility(View.GONE);
+                        step = currentStep - 3;
                     }
+                    signupToolbarTitleTv.setText(step + " of 11");
                 }
             }
         }
@@ -334,7 +340,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 proceedNext();
                 break;
             case R.id.close_iv:
-                appPreference.deletePreference();
+                UserDetailPreferenceManager.deleteAllPreference();
                 startActivity(new Intent(this, OnBoardingActivity.class));
                 finish();
                 break;
@@ -393,6 +399,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 getSupportFragmentManager().popBackStack();
 
                 --currentStep;
+                if (currentStep == 6 && UserType.isUserDoctor() && appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_DOCTOR_SEARCH)) {
+                    currentStep = 4;
+                }
                 setCurrentStep();
 
                 if (!viewInfoStack.isEmpty()) {
@@ -431,7 +440,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         if (hideOrShow)
             nextTv.setVisibility(View.VISIBLE);
         else
-            nextTv.setVisibility(View.GONE);
+            nextTv.setVisibility(View.INVISIBLE);
     }
 
     @Override

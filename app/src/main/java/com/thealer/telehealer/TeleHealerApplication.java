@@ -13,22 +13,18 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.thealer.telehealer.common.AppPreference;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
 import com.thealer.telehealer.common.OpenTok.TokBox;
-import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
-import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.call.CallActivity;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import config.AppConfig;
 import io.fabric.sdk.android.Fabric;
 
 
@@ -43,6 +39,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public FirebaseAnalytics firebaseAnalytics;
     public static Set<Integer> popUpSchedulesId = new HashSet<>();
     public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false;
+    public static AppConfig appConfig;
 
     @Override
     public void onCreate() {
@@ -50,6 +47,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
         application = this;
         appPreference = AppPreference.getInstance(this);
+        appConfig = new AppConfig(this);
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Fabric.with(this, new Crashlytics());
 

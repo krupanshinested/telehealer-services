@@ -27,10 +27,15 @@ import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
+import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 
 /**
  * Created by Aswin on 22,November,2018
@@ -107,18 +112,27 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
                 Bundle bundle = new Bundle();
                 switch (menuItem.getItemId()) {
                     case R.id.send_fax_menu:
-                        bundle.putInt(ArgumentKeys.PRESCRIPTION_ID, ordersResultBean.getReferral_id());
-                        bundle.putBoolean(ArgumentKeys.IS_FROM_PRESCRIPTION_DETAIL, true);
-                        bundle.putString(ArgumentKeys.VIEW_TITLE, getString(R.string.choose_pharmacy));
-                        bundle.putString(ArgumentKeys.USER_NAME, userName);
-                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                        if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PHARMACY_FAX)) {
+                            SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
+                            bundle = new Bundle();
+                            bundle.putInt(ArgumentKeys.ORDER_ID, ordersResultBean.getReferral_id());
+                            bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                            sendFaxByNumberFragment.setArguments(bundle);
+                            showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
+                        } else {
 
-                        SelectPharmacyFragment selectPharmacyFragment = new SelectPharmacyFragment();
-                        selectPharmacyFragment.setArguments(bundle);
-                        selectPharmacyFragment.setTargetFragment(PrescriptionDetailViewFragment.this, RequestID.REQ_SEND_FAX);
+                            bundle.putInt(ArgumentKeys.PRESCRIPTION_ID, ordersResultBean.getReferral_id());
+                            bundle.putBoolean(ArgumentKeys.IS_FROM_PRESCRIPTION_DETAIL, true);
+                            bundle.putString(ArgumentKeys.VIEW_TITLE, getString(R.string.choose_pharmacy));
+                            bundle.putString(ArgumentKeys.USER_NAME, userName);
+                            bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
-                        showSubFragmentInterface.onShowFragment(selectPharmacyFragment);
+                            SelectPharmacyFragment selectPharmacyFragment = new SelectPharmacyFragment();
+                            selectPharmacyFragment.setArguments(bundle);
+                            selectPharmacyFragment.setTargetFragment(PrescriptionDetailViewFragment.this, RequestID.REQ_SEND_FAX);
 
+                            showSubFragmentInterface.onShowFragment(selectPharmacyFragment);
+                        }
                         break;
                     case R.id.print_menu:
 
@@ -137,7 +151,6 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
                 return true;
             }
         });
-
         backIv.setOnClickListener(this);
         cancelTv.setOnClickListener(this);
 
