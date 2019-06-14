@@ -28,6 +28,9 @@ import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
+import config.AppConfig;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
@@ -190,7 +193,11 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             case Constants.TYPE_DOCTOR:
                 appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length() + "");
                 medical_history.setVisibility(View.GONE);
-                payments_billings.setVisibility(View.VISIBLE);
+                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
+                    payments_billings.setVisibility(View.VISIBLE);
+                else {
+                    payments_billings.setVisibility(View.GONE);
+                }
                 medicalAssistantLl.setVisibility(View.VISIBLE);
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:

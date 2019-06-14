@@ -79,6 +79,7 @@ import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 public class HomeActivity extends BaseActivity implements AttachObserverInterface,
@@ -785,7 +786,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         super.onResume();
         checkNotification();
 
-        if (UserType.isUserDoctor() && isCheckLicense)
+        if (UserType.isUserDoctor() && isCheckLicense && !appConfig.getInstallType().equals(getString(R.string.install_type_india)))
             checkIsLicenseExpired();
         else
             isCheckLicense = true;

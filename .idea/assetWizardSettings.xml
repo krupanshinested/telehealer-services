@@ -13,7 +13,7 @@
                       <PersistentState>
                         <option name="values">
                           <map>
-                            <entry key="resourceDirectory" value="patient" />
+                            <entry key="resourceDirectory" value="stethioHealth" />
                           </map>
                         </option>
                       </PersistentState>
@@ -63,6 +63,7 @@
                                               <map>
                                                 <entry key="color" value="000000" />
                                                 <entry key="scalingPercent" value="80" />
+                                                <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -73,9 +74,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="3b9eff" />
-                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/telehealer-app-icon-transparent.png" />
-                                      <entry key="showSafeZone" value="false" />
+                                      <entry key="backgroundColor" value="76ff03" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/stethio.webp" />
                                     </map>
                                   </option>
                                 </PersistentState>

@@ -292,7 +292,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             name = searchEt.getText().toString();
         }
         if (!isApiRequested) {
-            if (speciality.equals(getString(R.string.all))) {
+            if (speciality != null && speciality.equals(getString(R.string.all))) {
                 speciality = null;
             }
             connectionListApiViewModel.getUnconnectedList(name, speciality, page, showProgress, isMedicalAssistant);

@@ -11,6 +11,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
@@ -21,6 +22,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 
 /**
  * Created by Aswin on 08,October,2018
@@ -89,8 +92,9 @@ public class RetrofitManager extends ContextWrapper {
                 Request request = original.newBuilder()
                         .header("Content-Type", "application/json")
                         .header("Accept", "application/json")
+                        .header("Accept-Language", Locale.getDefault().getLanguage())
                         .header("User-Agent", "android")
-                        .header("X-Install-Type", getString(R.string.app_install_type))
+                        .header("X-Install-Type", appConfig.getInstallType())
                         .method(original.method(), original.body())
                         .build();
                 return chain.proceed(request);
@@ -116,7 +120,8 @@ public class RetrofitManager extends ContextWrapper {
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
                     .header("User-Agent", "android")
-                    .header("X-Install-Type", getString(R.string.app_install_type))
+                    .header("X-Install-Type", appConfig.getInstallType())
+                    .header("Accept-Language", Locale.getDefault().getLanguage())
                     .header(Constants.HEADER_AUTH_TOKEN, token)
                     .method(original.method(), original.body())
                     .build();
@@ -144,7 +149,8 @@ public class RetrofitManager extends ContextWrapper {
                         .header("Content-Type", "application/json")
                         .header("Accept", "application/json")
                         .header("User-Agent", "android")
-                        .header("X-Install-Type", getString(R.string.app_install_type))
+                        .header("X-Install-Type", appConfig.getInstallType())
+                        .header("Accept-Language", Locale.getDefault().getLanguage())
                         .header("x-api-key", getBaseContext().getString(R.string.service_api_key))
                         .method(original.method(), original.body())
                         .build();

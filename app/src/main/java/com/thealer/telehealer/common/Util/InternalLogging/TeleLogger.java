@@ -40,7 +40,7 @@ public class TeleLogger {
     }
 
     public String getBuildType() {
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             return Constants.BUILD_PATIENT;
         } else {
             return Constants.BUILD_MEDICAL;

@@ -21,6 +21,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileApiViewModel;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -28,6 +29,8 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import io.michaelrocks.libphonenumber.android.NumberParseException;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
 import io.michaelrocks.libphonenumber.android.Phonenumber;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 
 /**
  * Created by Aswin on 12,October,2018
@@ -45,6 +48,7 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
     private PhoneNumberUtil phoneNumberUtil;
     private PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher = null;
     private Phonenumber.PhoneNumber phoneNumber;
+    private CreateUserRequestModel createUserRequestModel;
 
     @Nullable
     @Override
@@ -59,7 +63,7 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
         super.onActivityCreated(savedInstanceState);
 
         checkUserEmailMobileApiViewModel = ViewModelProviders.of(this).get(CheckUserEmailMobileApiViewModel.class);
-        CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
 
         onViewChangeInterface.attachObserver(checkUserEmailMobileApiViewModel);
 
@@ -99,9 +103,17 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
 
         onViewChangeInterface.hideOrShowNext(true);
 
+        String Code = UserDetailPreferenceManager.getCountryCode();
+        if (Code == null || Code.isEmpty()) {
+            Code = appConfig.getLocaleCountry();
+        }
+        countyCode.setCountryForNameCode(Code);
+        setInstallTypeAndCode();
+
         countyCode.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
             @Override
             public void onCountrySelected() {
+                setInstallTypeAndCode();
                 setHint();
             }
         });
@@ -111,6 +123,14 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
         validateNumber();
 
         numberEt.requestFocus();
+    }
+
+    private void setInstallTypeAndCode() {
+        String installType = appConfig.getInstallType(countyCode.getSelectedCountryEnglishName());
+        if (!UserDetailPreferenceManager.getInstallType().equals(installType)) {
+            UserDetailPreferenceManager.setInstallType(installType);
+            UserDetailPreferenceManager.setCountryCode(countyCode.getSelectedCountryNameCode());
+        }
     }
 
     private void setHint() {
@@ -186,6 +206,17 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
 
     @Override
     public void doCurrentTransaction() {
-        makeApiCall();
+//        makeApiCall();
+        proceed();
+    }
+
+    private void proceed() {
+        if (!appConfig.isStethio(getActivity())) {
+            UserDetailPreferenceManager.setInstallType(appConfig.getInstallType(countyCode.getSelectedCountryEnglishName()));
+            UserDetailPreferenceManager.setCountryCode(countyCode.getSelectedCountryNameCode());
+        }
+        mobileNumber = countyCode.getSelectedCountryCodeWithPlus() + "" + phoneNumber.getNationalNumber();
+        createUserRequestModel.getUser_data().setPhone(mobileNumber);
+        onActionCompleteInterface.onCompletionResult(null, true, null);
     }
 }

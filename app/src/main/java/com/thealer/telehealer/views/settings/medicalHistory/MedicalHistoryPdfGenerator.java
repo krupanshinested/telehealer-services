@@ -3,11 +3,9 @@ package com.thealer.telehealer.views.settings.medicalHistory;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.QuestionnaireBean;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 
 import java.util.Locale;
@@ -300,12 +298,7 @@ public class MedicalHistoryPdfGenerator {
         String genderLable = context.getString(R.string.pdf_label_gender);
         String title = context.getString(R.string.health_profile);
         String date = Utils.getCurrentFomatedDate();
-        String icon;
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
-            icon = "app_icon_patient.png";
-        } else {
-            icon = "app_icon_doctor.png";
-        }
+        String icon = "pdf_icon.png";
         String backgroundColor = context.getString(R.string.app_gradient_start);
         String name, dob, gender;
         name = userModel.getUserDisplay_name();

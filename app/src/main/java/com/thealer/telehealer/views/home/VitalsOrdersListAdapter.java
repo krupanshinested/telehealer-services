@@ -37,7 +37,7 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
     private FragmentActivity fragmentActivity;
     private List<String> titleList, typeList;
     private List<Integer> imageList;
-    private String[] vitalMeasurementTypes;
+    private List<String> vitalMeasurementTypes;
     private String viewType;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private Bundle bundle;
@@ -59,7 +59,7 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
     For Vitals
     items - List of Supporting Measurement typ
      */
-    public VitalsOrdersListAdapter(FragmentActivity fragmentActivity, String[] items, String viewType, Bundle bundle) {
+    public VitalsOrdersListAdapter(FragmentActivity fragmentActivity, List<String> items, String viewType, Bundle bundle) {
         this.fragmentActivity = fragmentActivity;
         vitalMeasurementTypes = items;
 
@@ -93,7 +93,7 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
                 Fragment fragment = null;
 
                 if (viewType.equals(Constants.VIEW_VITALS)) {
-                    bundle.putString(ArgumentKeys.MEASUREMENT_TYPE, vitalMeasurementTypes[i]);
+                    bundle.putString(ArgumentKeys.MEASUREMENT_TYPE, vitalMeasurementTypes.get(i));
                     fragment = new VitalsDetailListFragment();
                 } else if (viewType.equals(Constants.VIEW_ORDERS)) {
                     bundle.putString(Constants.SELECTED_ITEM, typeList.get(i));

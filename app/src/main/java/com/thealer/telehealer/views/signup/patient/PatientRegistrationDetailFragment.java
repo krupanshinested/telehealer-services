@@ -485,7 +485,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     }
 
     private void updateUserRequestModel() {
-        CreateUserRequestModel.UserDataBean userDataBean = new CreateUserRequestModel.UserDataBean();
+        CreateUserRequestModel.UserDataBean userDataBean = new CreateUserRequestModel.UserDataBean(createUserRequestModel.getUser_data().getPhone(), createUserRequestModel.getUser_data().getEmail());
         userDataBean.setFirst_name(firstnameEt.getText().toString());
         userDataBean.setLast_name(lastnameEt.getText().toString());
         userDataBean.setDob(dobEt.getText().toString());

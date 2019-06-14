@@ -368,7 +368,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
     @Override
     public void didPulseFinishMesureWithFailure(String deviceType, String error) {
 
-        if (BuildConfig.FLAVOR.equals(Constants.BUILD_PATIENT)) {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
         }
 

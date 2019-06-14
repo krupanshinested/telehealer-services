@@ -1,7 +1,9 @@
 package com.thealer.telehealer.apilayer.models.createuser;
 
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 
@@ -38,7 +40,7 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
 
 
     public void clearData() {
-        this.user_data = new UserDataBean();
+        this.user_data = new UserDataBean(getUser_data().getPhone(), getUser_data().getEmail());
         this.user_detail = new UserDetailBean();
         this.user_avatar_path = null;
         this.insurance_front_path = null;
@@ -173,6 +175,11 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
         private String status;
 
         public UserDataBean() {
+        }
+
+        public UserDataBean(String phone, String email) {
+            this.phone = phone;
+            this.email = email;
         }
 
         public UserDataBean(String phone, String first_name, String last_name,

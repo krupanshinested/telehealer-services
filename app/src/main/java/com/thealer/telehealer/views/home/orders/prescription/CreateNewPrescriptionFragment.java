@@ -126,6 +126,10 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
         addTextWatcher(directionEt);
         addTextWatcher(dispenseEt);
 
+        if (isHideSendFax()) {
+            saveFaxBtn.setVisibility(View.GONE);
+        }
+
         if (getArguments() != null) {
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 

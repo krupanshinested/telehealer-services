@@ -2,6 +2,7 @@ package com.thealer.telehealer.apilayer.models.getDoctorsModel;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.EducationsBean;
+import com.thealer.telehealer.apilayer.models.createuser.OtherInformation;
 import com.thealer.telehealer.apilayer.models.createuser.PhonesBean;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
 import com.thealer.telehealer.apilayer.models.createuser.SpecialtiesBean;
@@ -87,6 +88,7 @@ public class GetDoctorsApiResponseModel extends BaseApiResponseModel implements 
         private String npi;
         private String liability;
         private ProfileBean profile;
+        private OtherInformation otherInformation;
         private List<SpecialtiesBean> specialties;
         private List<LicensesBean> licenses;
         private List<EducationsBean> educations;
@@ -133,6 +135,14 @@ public class GetDoctorsApiResponseModel extends BaseApiResponseModel implements 
             } else {
                 return "";
             }
+        }
+
+        public OtherInformation getOtherInformation() {
+            return otherInformation;
+        }
+
+        public void setOtherInformation(OtherInformation otherInformation) {
+            this.otherInformation = otherInformation;
         }
 
         public String getUid() {
