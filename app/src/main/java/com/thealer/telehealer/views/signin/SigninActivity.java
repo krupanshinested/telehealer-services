@@ -160,12 +160,12 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                             authToken = signinApiResponseModel.getToken();
                             refreshToken = signinApiResponseModel.getRefresh_token();
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, authToken);
-                            appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, refreshToken);
 
                             if (isQuickLogin) {
                                 appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
                                 goToMainActivity();
                             } else {
+                                appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, refreshToken);
                                 whoAmIApiViewModel.checkWhoAmI();
                             }
 

@@ -59,6 +59,7 @@ public class RecentsApiResponseModel extends BaseApiResponseModel implements Ser
         private int callee_id;
         private Object doctor_id;
         private String updated_at;
+        private String created_at;
         private String order_id;
         private int transcription_id;
         private String status;
@@ -98,6 +99,14 @@ public class RecentsApiResponseModel extends BaseApiResponseModel implements Ser
 
         public void setDoctor_id(Object doctor_id) {
             this.doctor_id = doctor_id;
+        }
+
+        public String getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(String created_at) {
+            this.created_at = created_at;
         }
 
         public String getUpdated_at() {

@@ -40,13 +40,12 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private FragmentActivity activity;
     private List<RecentListAdapterModel> adapterModelList;
-    private boolean isShowInfoAction;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private List<RecentsApiResponseModel.ResultBean> recentList;
+    private boolean isCalls = false;
 
-    public NewRecentListAdapter(FragmentActivity activity, boolean isShowInfoAction) {
+    public NewRecentListAdapter(FragmentActivity activity) {
         this.activity = activity;
-        this.isShowInfoAction = isShowInfoAction;
         adapterModelList = new ArrayList<>();
         this.showSubFragmentInterface = (ShowSubFragmentInterface) activity;
     }
@@ -84,13 +83,7 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 break;
             case TYPE_ITEM:
                 ItemHolder itemHolder = (ItemHolder) holder;
-
-                if (isShowInfoAction) {
-                    itemHolder.infoIv.setVisibility(View.VISIBLE);
-                } else {
-                    itemHolder.infoIv.setVisibility(View.GONE);
-                }
-
+                itemHolder.infoIv.setVisibility(View.GONE);
                 RecentsApiResponseModel.ResultBean resultBean = adapterModel.getItemData();
                 boolean isChat = resultBean.getCorr_type().equals(OrderConstant.RECENT_TYPE_CHAT);
 
@@ -213,13 +206,13 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     }
 
-    public void setData(List<RecentsApiResponseModel.ResultBean> recentList, int page) {
+    public void setData(List<RecentsApiResponseModel.ResultBean> recentList, int page, boolean isCalls) {
         if (page == 1) {
             this.recentList = recentList;
         } else {
             this.recentList.addAll(recentList);
         }
-
+        this.isCalls = isCalls;
         generateAdapterList();
     }
 
@@ -232,7 +225,7 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
             List<RecentsApiResponseModel.ResultBean> callList = new ArrayList<>();
 
             for (int i = 0; i < recentList.size(); i++) {
-                if (!recentList.get(i).getUpdated_at().isEmpty()) {
+                if (recentList.get(i).getCreated_at() != null && !recentList.get(i).getCreated_at().isEmpty()) {
                     if (recentList.get(i).getCorr_type().equals(Constants.CALL)) {
                         callList.add(recentList.get(i));
                     } else if (recentList.get(i).getCorr_type().equals(Constants.CHAT)) {
@@ -245,7 +238,7 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 Collections.sort(chatList, new Comparator<RecentsApiResponseModel.ResultBean>() {
                     @Override
                     public int compare(RecentsApiResponseModel.ResultBean o1, RecentsApiResponseModel.ResultBean o2) {
-                        return Utils.getDateFromString(o2.getUpdated_at()).compareTo(Utils.getDateFromString(o1.getUpdated_at()));
+                        return Utils.getDateFromString(o2.getCreated_at()).compareTo(Utils.getDateFromString(o1.getCreated_at()));
                     }
                 });
 
@@ -253,33 +246,37 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                 for (int i = 0; i < chatList.size(); i++) {
                     boolean isShowDate = true;
-                    if (i != 0 && Utils.getDayMonthYear(chatList.get(i).getUpdated_at()).equals(Utils.getDayMonthYear(chatList.get(i - 1).getUpdated_at()))) {
+                    if (i != 0 && Utils.getDayMonthYear(chatList.get(i).getCreated_at()).equals(Utils.getDayMonthYear(chatList.get(i - 1).getCreated_at()))) {
                         isShowDate = false;
                     }
                     if (isShowDate) {
-                        adapterModelList.add(new RecentListAdapterModel(TYPE_SUB_TITLE, Utils.getDayMonthYear(chatList.get(i).getUpdated_at())));
+                        adapterModelList.add(new RecentListAdapterModel(TYPE_SUB_TITLE, Utils.getDayMonthYear(chatList.get(i).getCreated_at())));
                     }
                     adapterModelList.add(new RecentListAdapterModel(TYPE_ITEM, chatList.get(i)));
                 }
+
+                isCalls = true;
             }
 
             if (!callList.isEmpty()) {
                 Collections.sort(callList, new Comparator<RecentsApiResponseModel.ResultBean>() {
                     @Override
                     public int compare(RecentsApiResponseModel.ResultBean o1, RecentsApiResponseModel.ResultBean o2) {
-                        return Utils.getDateFromString(o2.getUpdated_at()).compareTo(Utils.getDateFromString(o1.getUpdated_at()));
+                        return Utils.getDateFromString(o2.getCreated_at()).compareTo(Utils.getDateFromString(o1.getCreated_at()));
                     }
                 });
 
-                adapterModelList.add(new RecentListAdapterModel(TYPE_TITLE, activity.getString(R.string.calls)));
+                if (isCalls) {
+                    adapterModelList.add(new RecentListAdapterModel(TYPE_TITLE, activity.getString(R.string.calls)));
+                }
 
                 for (int i = 0; i < callList.size(); i++) {
                     boolean isShowDate = true;
-                    if (i != 0 && Utils.getDayMonthYear(callList.get(i).getUpdated_at()).equals(Utils.getDayMonthYear(callList.get(i - 1).getUpdated_at()))) {
+                    if (i != 0 && Utils.getDayMonthYear(callList.get(i).getCreated_at()).equals(Utils.getDayMonthYear(callList.get(i - 1).getCreated_at()))) {
                         isShowDate = false;
                     }
                     if (isShowDate) {
-                        adapterModelList.add(new RecentListAdapterModel(TYPE_SUB_TITLE, Utils.getDayMonthYear(callList.get(i).getUpdated_at())));
+                        adapterModelList.add(new RecentListAdapterModel(TYPE_SUB_TITLE, Utils.getDayMonthYear(callList.get(i).getCreated_at())));
                     }
                     adapterModelList.add(new RecentListAdapterModel(TYPE_ITEM, callList.get(i)));
                 }
