@@ -23,6 +23,7 @@ public class PreferenceConstants {
     public static final String USER_SIGNATURE = "user_signature";
     public static final String USER_SPECIALITY = "user_speciality";
     public static final String USER_LICENSES = "user_licenses";
+    public static final String SCHEDULE_WAITING_ROOM = "SCHEDULE_WAITING_ROOM";
 
     public static final String IS_USER_LOGGED_IN = "is_user_logged_in";
     public static final String USER_AUTH_TOKEN = "token";

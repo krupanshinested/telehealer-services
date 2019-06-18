@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -75,6 +76,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private RecyclerView patientHistoryRv;
     private TextView statusTv;
     private String doctorGuid = null, doctorName = null;
+    private Button waitingRoomBtn;
 
     @Override
     public void onAttach(Context context) {
@@ -150,6 +152,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         reasonOcv = (OrdersCustomView) view.findViewById(R.id.reason_ocv);
         patientHistoryRv = (RecyclerView) view.findViewById(R.id.patient_history_rv);
         statusTv = (TextView) view.findViewById(R.id.status_tv);
+        waitingRoomBtn = (Button) view.findViewById(R.id.waiting_room_btn);
 
         cancelTv.setText(getString(R.string.cancel_appointment));
         toolbarTitle.setText(getString(R.string.appointment_detail));
@@ -159,6 +162,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         doctorChatIv.setOnClickListener(this);
         patientCallIv.setOnClickListener(this);
         patientChatIv.setOnClickListener(this);
+        waitingRoomBtn.setOnClickListener(this);
 
         //TODO : Need to change this to visible when chat is integrated
         patientChatIv.setVisibility(View.GONE);
@@ -172,6 +176,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
             patientCallIv.setEnabled(true);
         }
 
+        waitingRoomBtn.setVisibility(View.GONE);
         if (getArguments() != null) {
             resultBean = (SchedulesApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SCHEDULE_DETAIL);
             if (UserType.isUserAssistant()) {
@@ -179,6 +184,10 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 doctorName = resultBean.getDoctor().getUserDisplay_name();
             }
             if (resultBean != null) {
+
+                if (UserType.isUserPatient() && resultBean.isStartAndEndBetweenCurrentTime()) {
+                    waitingRoomBtn.setVisibility(View.VISIBLE);
+                }
 
                 String statusInfo = getString(R.string.patient_has_been_updated);
                 String detail = "";
@@ -247,6 +256,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                     doctorChatIv.setVisibility(View.GONE);
                     patientCallIv.setVisibility(View.GONE);
                     patientChatIv.setVisibility(View.GONE);
+                    waitingRoomBtn.setVisibility(View.GONE);
                 } else if (!UserType.isUserPatient()) {
                     if (resultBean.getPatient().isAvailable()) {
                         patientCallIv.setVisibility(View.VISIBLE);
@@ -337,6 +347,11 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
                 break;
             case R.id.patient_chat_iv:
+                break;
+            case R.id.waiting_room_btn:
+                Intent waitingRoomIntent = new Intent(getActivity(), WaitingRoomActivity.class);
+                waitingRoomIntent.putExtra(ArgumentKeys.SCHEDULE_DETAIL,resultBean);
+                startActivity(waitingRoomIntent);
                 break;
         }
     }
