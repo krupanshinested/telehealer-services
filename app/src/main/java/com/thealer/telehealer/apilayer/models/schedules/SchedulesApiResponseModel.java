@@ -6,8 +6,10 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -141,6 +143,13 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
             } else {
                 return scheduled_with_user;
             }
+        }
+
+        public boolean isStartAndEndBetweenCurrentTime() {
+            Date start = Utils.convertUTCTOLocal(this.start,Utils.UTCFormat);
+            Date end = Utils.convertUTCTOLocal(this.end,Utils.UTCFormat);
+            Date current = Utils.getDateFromString(Utils.getStringFromDate(new Date(),Utils.UTCFormat),Utils.UTCFormat);
+            return current.compareTo(start) >= 0 && current.compareTo(end) <= 0;
         }
 
         public static class DetailBean implements Serializable {

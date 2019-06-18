@@ -173,4 +173,6 @@ dependencies {
 
     //Floating menu for Call Minimize
     implementation 'com.github.recruit-lifestyle:FloatingView:2.4.0'
+
+    implementation 'com.romainpiel.shimmer:library:1.4.0@aar'
 }

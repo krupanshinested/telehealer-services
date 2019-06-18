@@ -16,6 +16,7 @@ import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
@@ -44,6 +45,7 @@ import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.LocationTracker;
@@ -70,6 +72,7 @@ import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.call.CallActivity;
+import com.thealer.telehealer.views.home.schedules.WaitingRoomActivity;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -181,6 +184,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private CustomAudioDevice customAudioDevice;
 
     private boolean isBatteryObserverAdded = false;
+    private boolean isViewSwapped = false;
     @Nullable
     private Float otherPersonBatteryLevel = null;
     private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
@@ -209,6 +213,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 callInitiateModel.setTokBoxApiKey(tokenFetchModel.getApiKey());
                 callInitiateModel.setToken(tokenFetchModel.getToken());
 
+                boolean isInWaitingRoom = WaitingRoomActivity.isActive;
                 initialSetUp(callInitiateModel, false, apnsPayload.getUuid());
 
                 GetUsersApiViewModel getUsersApiViewModel = new GetUsersApiViewModel(application);
@@ -227,10 +232,11 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
                         Intent intent = new Intent(application, CallActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(ArgumentKeys.TRIGGER_ANSWER,isInWaitingRoom);
+
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -268,8 +274,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
                                         @Override
                                         protected void onPostExecute(Boolean prepared) {
-                                            if (prepared) {
-                                                player.start();
+                                            try {
+                                                if (prepared) {
+                                                    player.start();
+                                                }
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
                                             }
                                         }
                                     }.execute();
@@ -327,6 +337,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         this.isPatientDisclaimerDismissed = false;
         this.otherPersonUserGuid = callInitiateModel.getToUserGuid();
         this.otherPersonBatteryLevel = null;
+        this.isViewSwapped = false;
 
         if (AudioDeviceManager.getAudioDevice() != null && AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -431,9 +442,19 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
     }
 
+    public boolean isViewSwapped() {
+        return isViewSwapped;
+    }
+
+    public void setViewSwapped(boolean viewSwapped) {
+        isViewSwapped = viewSwapped;
+    }
+
     public void connectToSession() {
         if (!isCalling)
             stopIncomingRingtone();
+
+        Log.d("TokBox","connectToSession");
 
         mSession = new Session.Builder(application, apiKey, sessionId).build();
         mSession.setSessionListener(this);
@@ -441,7 +462,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         mSession.setSignalListener(this);
         mSession.setStreamPropertiesListener(this);
         mSession.connect(token);
-
     }
 
     public void setUIListener(TokBoxUIInterface tokBoxUIInterface) {
@@ -499,9 +519,22 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             return;
         }
 
-        if (mPublisher != null && mPublisher.getView() instanceof GLSurfaceView) {
-            ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(true);
+        if (mSubscriber != null && mSubscriber.getView() instanceof GLSurfaceView) {
+            if (isViewSwapped) {
+                ((GLSurfaceView) mSubscriber.getView()).setZOrderOnTop(true);
+            } else {
+                ((GLSurfaceView) mSubscriber.getView()).setZOrderOnTop(false);
+            }
         }
+
+        if (mPublisher != null && mPublisher.getView() instanceof GLSurfaceView) {
+            if (isViewSwapped) {
+                ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(false);
+            } else {
+                ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(true);
+            }
+        }
+
     }
 
     public boolean isOtherPersonBatteryLow() {
@@ -580,6 +613,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             remoteView.addView(mSubscriber.getView());
             mSubscriber.getView().setClipToOutline(true);
 
+            setZOrderTopForLocalView();
         }
     }
 

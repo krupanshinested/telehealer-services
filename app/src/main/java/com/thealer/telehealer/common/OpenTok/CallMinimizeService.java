@@ -3,13 +3,16 @@ package com.thealer.telehealer.common.OpenTok;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +24,12 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.TokBoxUIInterface;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.call.CallActivity;
+import com.thealer.telehealer.views.home.UserDetailActivity;
+import com.thealer.telehealer.views.home.schedules.WaitingRoomActivity;
 
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewListener;
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
@@ -54,6 +60,7 @@ public class CallMinimizeService extends Service implements FloatingViewListener
     @Override
     public void onCreate() {
         startForeground(NOTIFICATION_ID, createNotification(this));
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(callScreenOpened, new IntentFilter(Constants.CALL_ACTIVITY_RESUMED));
     }
 
     /**
@@ -151,6 +158,8 @@ public class CallMinimizeService extends Service implements FloatingViewListener
     }
 
     private void destroy() {
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(callScreenOpened);
+        
         if (mFloatingViewManager != null) {
             mFloatingViewManager.removeAllViewToWindow();
             mFloatingViewManager = null;
@@ -194,8 +203,17 @@ public class CallMinimizeService extends Service implements FloatingViewListener
 
     private void openCallScreen(Intent intent) {
         getApplicationContext().startActivity(intent);
+        Intent broadCastIntent = new Intent(Constants.CALL_SCREEN_MAXIMIZE);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadCastIntent);
         destroy();
     }
+
+    private BroadcastReceiver callScreenOpened = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            destroy();
+        }
+    };
 
     //TokBoxUIInterface method
     @Override
