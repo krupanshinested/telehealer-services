@@ -525,6 +525,7 @@ public class iHealthVitalManager extends VitalsManager {
 
     private void publishThatDeviceStarted(String deviceType) {
         EventRecorder.recordVitals("measurement_started", deviceType);
+        EventRecorder.recordVitalsStartMeasurement(deviceType);
 
         HashMap<String, Object> message = new HashMap<>();
         message.put(VitalsConstant.VitalCallMapKeys.status, VitalsConstant.VitalCallMapKeys.startedToMeasure);
