@@ -376,4 +376,36 @@ public class PubNubNotificationPayload {
         return pushPayLoad;
     }
 
+    /**
+     * Create new schedule push notification
+     *
+     * @param to_guid
+     * @return
+     */
+    public static PushPayLoad getWaitingRoomPayload(String to_guid,String scheduleId) {
+        PushPayLoad pushPayLoad = new PushPayLoad();
+        APNSPayload apnsPayload = new APNSPayload();
+
+        HashMap<String, String> aps = new HashMap<>();
+        aps.put(CONTENT_AVAILABLE, "1");
+
+        aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_WAITING_ROOM));
+        aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_WAITING_ROOM, null));
+        aps.put(MUTABLE_CONTENT, "1");
+        aps.put(SOUND, DEFAULT);
+
+        apnsPayload.setAps(aps);
+        apnsPayload.setUuid(UUID.randomUUID().toString());
+        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
+        apnsPayload.setType(APNSPayload.waitingInRoom);
+        apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
+        apnsPayload.setTo(to_guid);
+        apnsPayload.setSessionId(scheduleId);
+
+        pushPayLoad.setPn_apns(apnsPayload);
+        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+
+        return pushPayLoad;
+    }
+
 }

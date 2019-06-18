@@ -13,18 +13,26 @@ public class MoveViewTouchListener
 
     private GestureDetector mGestureDetector;
     private View mView;
+    private float previousX;
+    private float previousY;
 
     public MoveViewTouchListener(View view) {
         mGestureDetector = new GestureDetector(view.getContext(), mGestureListener);
         mView = view;
+        previousX = view.getX();
+        previousY = view.getY();
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
-        if (event.getAction() == MotionEvent.ACTION_BUTTON_PRESS) {
+        if (event.getAction() == MotionEvent.ACTION_UP && previousX == v.getX() && previousY == v.getY()) {
             v.performClick();
+            return true;
         }
+
+        previousX = v.getX();
+        previousY = v.getY();
 
         return mGestureDetector.onTouchEvent(event);
     }

@@ -157,6 +157,8 @@ public class Constants {
 
     public static final String CALL_STARTED_BROADCAST = "CALL_STARTED_BROADCAST";
     public static final String CALL_ENDED_BROADCAST = "CALL_ENDED_BROADCAST";
+    public static final String CALL_SCREEN_MAXIMIZE = "CALL_SCREEN_MAXIMIZE";
+    public static final String CALL_ACTIVITY_RESUMED = "CALL_ACTIVITY_RESUMED";
 
     //Vital States
     public static final int idle = 1;

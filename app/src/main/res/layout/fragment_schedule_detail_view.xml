@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@+id/cancel_ll"
+        app:layout_constraintBottom_toTopOf="@+id/waiting_room_btn"
         app:layout_constraintTop_toBottomOf="@+id/appbar">
 
         <android.support.constraint.ConstraintLayout
@@ -137,19 +137,31 @@
                 android:id="@+id/patient_history_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/cancel_ll"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/history_label" />
+
+            <LinearLayout
+                android:id="@+id/cancel_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <include layout="@layout/order_bottom_cancel_view" />
+            </LinearLayout>
+
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
 
-    <LinearLayout
-        android:id="@+id/cancel_ll"
+    <Button
+        android:id="@+id/waiting_room_btn"
+        style="@style/button_app_background_white_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <include layout="@layout/order_bottom_cancel_view" />
-    </LinearLayout>
+        android:text="@string/enter_waiting_room"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>
