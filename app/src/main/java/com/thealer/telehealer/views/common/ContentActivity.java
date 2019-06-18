@@ -139,6 +139,12 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
             check_box_view.setVisibility(View.GONE);
         }
 
+        if (getIntent().getBooleanExtra(ArgumentKeys.IS_SHOW_HELP, false)) {
+            helpTv.setVisibility(View.VISIBLE);
+        } else {
+            helpTv.setVisibility(View.GONE);
+        }
+
         sub_title_tv.post(new Runnable() {
             @Override
             public void run() {

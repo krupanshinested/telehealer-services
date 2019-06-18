@@ -269,6 +269,10 @@ public class Utils {
     }
 
     public static boolean isOneDayBefore(String date) {
+        if (date == null) {
+            return false;
+        }
+
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR_OF_DAY, -24);
 
@@ -281,8 +285,26 @@ public class Utils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Log.e("aswin", "isOneDayBefore: " + calendar.getTime());
-        Log.e("aswin", "isOneDayBefore: " + input.getTime());
+        return input.before(calendar);
+    }
+
+    public static boolean isOneHourBefore(String date) {
+        if (date == null) {
+            return false;
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR_OF_DAY, -1);
+
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
+        dateFormat.setTimeZone(UtcTimezone);
+        Calendar input = Calendar.getInstance();
+        try {
+            Date inputDate = dateFormat.parse(date);
+            input.setTime(inputDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         return input.before(calendar);
     }
 
@@ -1309,7 +1331,7 @@ public class Utils {
         String mailto = "mailto:support+android@telehealer.com" +
                 "?cc=" +
                 "&subject=" +
-                "&body=" + Uri.encode(String.format("Issue :\n\nPhone Number : %s\n\nName:\n\n\n\nApp Version : " + BuildConfig.VERSION_NAME + "\nDevice Type : " + Build.MODEL + "\nOS Details : " + Build.VERSION.RELEASE + "\nRegion : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "\n\nCheers!\n%s", phoneNumber, userName));
+                "&body=" + Uri.encode(String.format("Issue :\n\nPhone Number : %s\n\nName : %s\n\n\n\nApp Version : " + BuildConfig.VERSION_NAME + "\nDevice Type : " + Build.MODEL + "\nOS Details : " + Build.VERSION.RELEASE + "\nRegion : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "\n\nCheers!\n%s", phoneNumber, userName, userName));
         intent.setData(Uri.parse(mailto));
 
         context.startActivity(intent);

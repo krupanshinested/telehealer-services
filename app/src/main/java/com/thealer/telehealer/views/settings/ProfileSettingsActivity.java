@@ -68,6 +68,8 @@ import com.thealer.telehealer.views.signup.patient.PatientChoosePaymentFragment;
 import com.thealer.telehealer.views.signup.patient.PatientRegistrationDetailFragment;
 import com.thealer.telehealer.views.signup.patient.PatientUploadInsuranceFragment;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
@@ -100,6 +102,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private boolean isBackDisabled = false;
     private SignoutApiViewModel signoutApiViewModel;
+    private ImageView favoriteIv;
+    private CircleImageView statusCiv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -159,6 +163,11 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         other_option_iv = findViewById(R.id.other_option_iv);
         collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorWhite));
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.colorWhite));
+        favoriteIv = (ImageView) findViewById(R.id.favorite_iv);
+        statusCiv = (CircleImageView) findViewById(R.id.status_civ);
+
+        statusCiv.setVisibility(View.GONE);
+        favoriteIv.setVisibility(View.GONE);
 
         nextTv = findViewById(R.id.next_tv);
         toolbar.setTitle(getResources().getString(R.string.settings));
@@ -475,7 +484,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
         switch (string) {
             case RequestID.REQ_PASSWORD_RESET_OTP:
-                updateDetailTitle(getString(R.string.otp));
                 OtpVerificationFragment otpVerificationFragment = new OtpVerificationFragment();
 
                 Bundle otpBundle = bundle;
@@ -599,7 +607,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private void showSubFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right)
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.fragment_remove_animation, R.anim.fragment_remove_exit)
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .replace(R.id.sub_fragment_holder, fragment).commit();
     }

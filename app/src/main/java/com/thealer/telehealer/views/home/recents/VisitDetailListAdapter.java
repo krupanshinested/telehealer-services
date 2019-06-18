@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.recents;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -52,6 +53,7 @@ import com.thealer.telehealer.views.home.monitoring.diet.DietListingFragment;
 import com.thealer.telehealer.views.home.monitoring.diet.FoodConstant;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderSelectionListFragment;
+import com.thealer.telehealer.views.home.orders.OrderStatus;
 import com.thealer.telehealer.views.home.orders.document.DocumentListFragment;
 import com.thealer.telehealer.views.home.orders.document.ViewDocumentFragment;
 import com.thealer.telehealer.views.home.recents.adapterModels.AddNewModel;
@@ -136,6 +138,9 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                 break;
             case VisitDetailConstants.TYPE_DOCUMENT:
                 view = inflater.inflate(R.layout.adapter_document_list, viewGroup, false);
+                break;
+            case VisitDetailConstants.TYPE_INFO:
+                view = inflater.inflate(R.layout.visit_list_adapter_info_view, viewGroup, false);
                 break;
         }
         return new ViewHolder(view);
@@ -282,6 +287,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                         viewHolder.transcriptRootCl.setOnClickListener(null);
                         viewHolder.visitCb.setVisibility(View.GONE);
                         viewHolder.transcriptInfoEt.setEnabled(false);
+                        viewHolder.transcriptInfoEt.setBackground(null);
                         break;
                     case Constants.EDIT_MODE:
                         viewHolder.visitCb.setVisibility(View.VISIBLE);
@@ -296,10 +302,11 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                                         labelsBean.setRemoved(!labelsBean.isRemoved());
                                         break;
                                     }
+                                    detailViewModel.getUpdatedTranscriptResponseModel().getSpeakerLabels().set(j, labelsBean);
                                 }
-                                detailViewModel.setTranscriptUpdated(detailViewModel.getUpdatedTranscriptResponseModel().isUpdated());
                             }
                         });
+                        viewHolder.transcriptInfoEt.setBackgroundColor(activity.getColor(R.color.card_view_background));
                         break;
                 }
                 break;
@@ -317,21 +324,17 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        if (visitDetailAdapterModel.getCategoryTitle() == null) {
-                            if (s.toString().isEmpty())
+
+                        if (visitDetailAdapterModel.getCategoryTitle() == null && !s.toString().isEmpty()) {
+                            detailViewModel.setInstructionUpdated(true);
+                        } else if (visitDetailAdapterModel.getCategoryTitle() != null) {
+                            if (!visitDetailAdapterModel.getCategoryTitle().equals(s.toString())) {
+                                detailViewModel.setInstructionUpdated(true);
+                            } else {
                                 detailViewModel.setInstructionUpdated(false);
-                            else
-                                detailViewModel.setInstructionUpdated(true);
-                        } else {
-                            if (s.toString().isEmpty())
-                                detailViewModel.setInstructionUpdated(true);
-                            else {
-                                if (s.toString().trim().equals(visitDetailAdapterModel.getCategoryTitle()))
-                                    detailViewModel.setInstructionUpdated(false);
-                                else
-                                    detailViewModel.setInstructionUpdated(true);
                             }
                         }
+
                         if (visitDetailAdapterModel.getCategory().equals(activity.getString(R.string.patient_instructions))) {
                             detailViewModel.setInstruction(s.toString().trim());
                         } else if (visitDetailAdapterModel.getCategory().equals(activity.getString(R.string.patient_diagnosis))) {
@@ -345,17 +348,30 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                         viewHolder.inputEt.setEnabled(false);
                         viewHolder.inputEt.setClickable(false);
                         viewHolder.inputEt.removeTextChangedListener(textWatcher);
+                        viewHolder.inputEt.setBackground(null);
                         break;
                     case Constants.EDIT_MODE:
                         viewHolder.inputEt.setEnabled(true);
                         viewHolder.inputEt.setClickable(true);
                         viewHolder.inputEt.setVisibility(View.VISIBLE);
                         viewHolder.inputEt.addTextChangedListener(textWatcher);
+                        viewHolder.inputEt.setBackgroundColor(activity.getColor(R.color.card_view_background));
                         break;
                 }
 
-                if (visitDetailAdapterModel.getCategoryTitle() != null)
-                    viewHolder.inputEt.setText(visitDetailAdapterModel.getCategoryTitle());
+                if (detailViewModel.isInstructionUpdated()) {
+                    if (visitDetailAdapterModel.getCategory().equals(activity.getString(R.string.patient_instructions))) {
+                        viewHolder.inputEt.setText(detailViewModel.getInstruction());
+                    } else if (visitDetailAdapterModel.getCategory().equals(activity.getString(R.string.patient_diagnosis))) {
+                        viewHolder.inputEt.setText(detailViewModel.getDiagnosis());
+                    }
+
+                } else {
+                    if (visitDetailAdapterModel.getCategoryTitle() != null)
+                        viewHolder.inputEt.setText(visitDetailAdapterModel.getCategoryTitle());
+                    else
+                        viewHolder.inputEt.setText(null);
+                }
 
 
                 break;
@@ -488,6 +504,42 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                 viewHolder.orderListIv.setImageResource(visitOrdersAdapterModel.getDisplayImage());
                 viewHolder.orderListTitleTv.setText(visitOrdersAdapterModel.getDisplayTitle());
                 viewHolder.orderListSubTitleTv.setText(UserType.isUserPatient() ? detailViewModel.getDoctorDetailModel().getUserDisplay_name() : detailViewModel.getPatientDetailModel().getUserDisplay_name());
+                int statusImage = 0;
+                switch (visitOrdersAdapterModel.getOrderType()) {
+                    case OrderConstant.ORDER_PRESCRIPTIONS:
+                        statusImage = OrderStatus.getStatusImage(visitOrdersAdapterModel.getPrescriptions().getStatus());
+                        break;
+                    case OrderConstant.ORDER_REFERRALS:
+                        statusImage = OrderStatus.getStatusImage(visitOrdersAdapterModel.getSpecialists().getStatus());
+                        break;
+                    case OrderConstant.ORDER_LABS:
+                        statusImage = OrderStatus.getStatusImage(visitOrdersAdapterModel.getLabs().getStatus());
+                        break;
+                    case OrderConstant.ORDER_RADIOLOGY:
+                        statusImage = OrderStatus.getStatusImage(visitOrdersAdapterModel.getXrays().getStatus());
+                        break;
+                    case OrderConstant.ORDER_MISC:
+                        statusImage = OrderStatus.getStatusImage(visitOrdersAdapterModel.getMiscellaneous().getStatus());
+                        break;
+                    case OrderConstant.ORDER_FORM:
+                        statusImage = OrderStatus.getStatusImage(visitOrdersAdapterModel.getForms().getStatus());
+                        if (visitOrdersAdapterModel.getForms().isCompleted()) {
+                            viewHolder.orderListOptionTitleTv.setVisibility(View.VISIBLE);
+                            viewHolder.orderListOptionSubTitleTv.setVisibility(View.VISIBLE);
+
+                            viewHolder.orderListOptionTitleTv.setText(visitOrdersAdapterModel.getForms().getData().getDisplayScore());
+                            viewHolder.orderListOptionSubTitleTv.setText(activity.getString(R.string.score));
+
+                        }
+                        break;
+                }
+                if (statusImage != 0) {
+                    viewHolder.orderStatusIv.setImageDrawable(activity.getDrawable(statusImage));
+                    if (statusImage == R.drawable.ic_status_pending) {
+                        viewHolder.orderStatusIv.setImageTintList(ColorStateList.valueOf(activity.getColor(R.color.app_gradient_start)));
+                    }
+                    viewHolder.orderStatusIv.setVisibility(View.VISIBLE);
+                }
 
                 viewHolder.visitCb.setChecked(true);
                 viewHolder.visitCb.setClickable(false);
@@ -764,6 +816,12 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                     }
                 });
                 break;
+            case VisitDetailConstants.TYPE_INFO:
+                viewHolder.infoTv.setText(visitDetailAdapterModel.getCategoryTitle());
+                if (!visitDetailAdapterModel.isShow()) {
+                    viewHolder.infoBottomView.setVisibility(View.GONE);
+                }
+                break;
         }
     }
 
@@ -839,6 +897,12 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
         private TextView fatUnitTv;
         private TextView proteinUnitTv;
 
+        private TextView infoTv;
+        private View infoBottomView;
+        private TextView orderListOptionTitleTv;
+        private TextView orderListOptionSubTitleTv;
+        private ImageView orderStatusIv;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -877,6 +941,9 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
             orderListIv = (ImageView) itemView.findViewById(R.id.order_list_iv);
             orderListTitleTv = (TextView) itemView.findViewById(R.id.order_list_title_tv);
             orderListSubTitleTv = (TextView) itemView.findViewById(R.id.order_list_sub_title_tv);
+            orderListOptionTitleTv = (TextView) itemView.findViewById(R.id.order_list_option_title_tv);
+            orderListOptionSubTitleTv = (TextView) itemView.findViewById(R.id.order_list_option_sub_title_tv);
+            orderStatusIv = (ImageView) itemView.findViewById(R.id.order_status_iv);
 
             documentRootCl = (ConstraintLayout) itemView.findViewById(R.id.document_root_cl);
             recentHeaderTv = (TextView) itemView.findViewById(R.id.recent_header_tv);
@@ -901,6 +968,8 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
             carbsUnitTv = (TextView) itemView.findViewById(R.id.carbs_unit_tv);
             fatUnitTv = (TextView) itemView.findViewById(R.id.fat_unit_tv);
             proteinUnitTv = (TextView) itemView.findViewById(R.id.protein_unit_tv);
+            infoTv = (TextView) itemView.findViewById(R.id.info_tv);
+            infoBottomView = (View) itemView.findViewById(R.id.info_bottom_view);
 
         }
     }
@@ -978,8 +1047,9 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
             labelValueModel = new LabelValueModel(activity.getString(R.string.patient_insurance_changed), (scheduleModel.getDetail().isInsurance_to_date() ? activity.getString(R.string.yes) : activity.getString(R.string.no)), false);
             modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_LABEL_VALUE, labelValueModel));
 
-            labelValueModel = new LabelValueModel(activity.getString(R.string.reason_for_visit), scheduleModel.getDetail().getReason(), true);
+            labelValueModel = new LabelValueModel(activity.getString(R.string.reason_for_visit), "", false);
             modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_LABEL_VALUE, labelValueModel));
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_INFO, scheduleModel.getDetail().getReason(), true));
 
             List<HistoryBean> historyBeanList = null;
             if (scheduleModel.getPatient() != null && scheduleModel.getPatient().getHistory() != null) {
@@ -1065,6 +1135,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
          */
         category = activity.getString(R.string.patient_diagnosis);
         data = null;
+        isAdd = false;
 
         if (detailViewModel.getVisitsDetailApiResponseModel() != null
                 && detailViewModel.getVisitsDetailApiResponseModel().getResult() != null

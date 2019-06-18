@@ -78,7 +78,7 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
                         if (baseApiResponseModel != null) {
                             icdCodeApiResponseModel = (IcdCodeApiResponseModel) baseApiResponseModel;
                             selectIcdCodeAdapter.setIcdCodeApiResponseModel(icdCodeApiResponseModel.getResults(), startKey);
-                            icdListCrv.setTotalCount(icdCodeApiResponseModel.getTotal_count());
+                            icdListCrv.setNextPage(icdCodeApiResponseModel.getNext());
                             icdListCrv.setScrollable(true);
                             icdListCrv.hideProgressBar();
                             isApiRequested = false;

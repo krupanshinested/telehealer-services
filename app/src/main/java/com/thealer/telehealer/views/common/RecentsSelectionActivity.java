@@ -61,7 +61,7 @@ public class RecentsSelectionActivity extends BaseActivity {
                     if (recentsApiResponseModel.getCount() > 0) {
                         recentsCrv.showOrhideEmptyState(false);
                         if (page == 1) {
-                            recentsCrv.setTotalCount(recentsApiResponseModel.getCount());
+                            recentsCrv.setNextPage(recentsApiResponseModel.getNext());
                         }
                         recentsSelectionAdapter.setData(recentsApiResponseModel.getResult(), page);
                         recentsCrv.showOrhideEmptyState(false);

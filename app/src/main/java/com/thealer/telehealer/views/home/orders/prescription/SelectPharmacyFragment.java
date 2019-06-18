@@ -89,7 +89,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
                     if (baseApiResponseModel instanceof GetPharmaciesApiResponseModel) {
                         getPharmaciesApiResponseModel = (GetPharmaciesApiResponseModel) baseApiResponseModel;
 
-                        pharmacyCrv.setTotalCount(getPharmaciesApiResponseModel.getTotal_count());
+                        pharmacyCrv.setNextPage(getPharmaciesApiResponseModel.getNext());
 
                         pharmacyListAdapter.setResults(getPharmaciesApiResponseModel.getResults(), nextPage);
 
