@@ -94,7 +94,7 @@ public class InviteUserActivity extends BaseActivity implements ChangeTitleInter
     private void showFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right)
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.fragment_remove_animation, R.anim.fragment_remove_exit)
                 .replace(fragmentHolder.getId(), fragment)
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .commit();

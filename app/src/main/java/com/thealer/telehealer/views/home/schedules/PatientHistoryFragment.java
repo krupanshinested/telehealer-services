@@ -10,13 +10,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -144,7 +142,8 @@ public class PatientHistoryFragment extends BaseFragment {
                             (createScheduleViewModel.getPatientHistory().get(i).getReason() == null && whoAmIApiResponseModel.getHistory().get(i).getReason() != null) ||
                             (createScheduleViewModel.getPatientHistory().get(i).getReason() != null && whoAmIApiResponseModel.getHistory().get(i).getReason() == null) ||
                             (createScheduleViewModel.getPatientHistory().get(i).getReason() != null && whoAmIApiResponseModel.getHistory().get(i).getReason() != null &&
-                                    !createScheduleViewModel.getPatientHistory().get(i).getReason().trim().equals(whoAmIApiResponseModel.getHistory().get(i).getReason().trim()))) {
+                                    !createScheduleViewModel.getPatientHistory().get(i).getReason().trim().equals(whoAmIApiResponseModel.getHistory().get(i).getReason().trim())) &&
+                                    (!createScheduleViewModel.getPatientHistory().get(i).getReason().isEmpty() && !whoAmIApiResponseModel.getHistory().get(i).getReason().isEmpty())) {
 
                         updateHistory = true;
 

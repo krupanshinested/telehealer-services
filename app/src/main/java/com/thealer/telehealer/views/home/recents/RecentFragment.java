@@ -57,9 +57,9 @@ public class RecentFragment extends BaseFragment {
     private OnOrientationChangeInterface onOrientationChangeInterface;
     private AttachObserverInterface attachObserverInterface;
     private boolean isApiRequested = false, isResumed;
-    private int totalCount = 0;
     private ImageView throbberIv;
     private CustomRecyclerView recentsCrv;
+    private boolean isCalls = false;
 
     @Override
     public void onAttach(Context context) {
@@ -82,18 +82,22 @@ public class RecentFragment extends BaseFragment {
 
                     recentsApiResponseModel = (RecentsApiResponseModel) baseApiResponseModel;
 
-                    totalCount = recentsApiResponseModel.getCount();
+                    recentsCrv.setNextPage(recentsApiResponseModel.getNext());
 
 //                    updateList();
 
                     if (!recentsApiResponseModel.getResult().isEmpty()) {
 
-                        recentListAdapter.setData(recentsApiResponseModel.getResult(), page);
+                        recentListAdapter.setData(recentsApiResponseModel.getResult(), page, isCalls);
+
+                        Log.e(TAG, "onChanged: " + recentListAdapter.getItemCount());
 
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(Constants.USER_DETAIL, recentsApiResponseModel.getResult().get(0));
                         onOrientationChangeInterface.onDataReceived(bundle);
-                        recentsCrv.hideEmptyState();
+                        recentsCrv.showOrhideEmptyState(false);
+                    } else {
+                        recentsCrv.showOrhideEmptyState(true);
                     }
                 }
                 isApiRequested = false;
@@ -120,19 +124,16 @@ public class RecentFragment extends BaseFragment {
 
         recentsCrv.hideEmptyState();
 
-        boolean isShowInfoAction = false;
-        if (getArguments() != null) {
-            isShowInfoAction = getArguments().getBoolean(Constants.IS_FROM_HOME);
-        }
         if (getUserVisibleHint()) {
             makeApiCall(true);
         }
-        recentListAdapter = new NewRecentListAdapter(getActivity(), isShowInfoAction);
+        recentListAdapter = new NewRecentListAdapter(getActivity());
         recentsCrv.getRecyclerView().setAdapter(recentListAdapter);
 
         recentsCrv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
             public void onPaginate() {
+                Log.e(TAG, "onPaginate: ");
                 throbberIv.setVisibility(View.VISIBLE);
                 ++page;
                 makeApiCall(false);
@@ -159,112 +160,6 @@ public class RecentFragment extends BaseFragment {
         recentsCrv.setErrorModel(this, recentsApiViewModel.getErrorModelLiveData());
     }
 
-    private void updateList() {
-        if (page == 1) {
-            listHeader.clear();
-            listChild.clear();
-        }
-        if (recentsApiResponseModel != null && recentsApiResponseModel.getResult().size() > 0) {
-            chatList.clear();
-            chatListHeader.clear();
-            videoList.clear();
-            videoListHeader.clear();
-
-            for (int i = 0; i < recentsApiResponseModel.getResult().size(); i++) {
-
-                if (!recentsApiResponseModel.getResult().get(i).getUpdated_at().isEmpty()) {
-                    if (recentsApiResponseModel.getResult().get(i).getCorr_type().equals(Constants.CALL)) {
-                        addTocall(recentsApiResponseModel.getResult().get(i), i);
-
-                    } else if (recentsApiResponseModel.getResult().get(i).getCorr_type().equals(Constants.CHAT)) {
-                        addToChat(recentsApiResponseModel.getResult().get(i), i);
-                    }
-                }
-            }
-
-            if (chatList.size() > 0) {
-                listChild.putAll(chatList);
-                listHeader.add(chatListHeader.get(0));
-            }
-
-            if (videoList.size() > 0) {
-
-                for (int i = 0; i < videoListHeader.size(); i++) {
-                    List<RecentsApiResponseModel.ResultBean> listHashMap = new ArrayList<>();
-
-                    if (!listHeader.contains(videoListHeader.get(i))) {
-                        listHeader.add(videoListHeader.get(i));
-                        listHashMap = videoList.get(videoListHeader.get(i));
-                    } else {
-                        listHashMap = listChild.get(videoListHeader.get(i));
-                        if (listHashMap == null) {
-                            listHashMap = new ArrayList<>();
-                        }
-
-                        listHashMap.addAll(videoList.get(videoListHeader.get(i)));
-                    }
-                    listChild.put(videoListHeader.get(i), listHashMap);
-                }
-            }
-
-            recentsCrv.setTotalCount(totalCount + listHeader.size());
-
-            if (recentListAdapter != null) {
-//                recentListAdapter.setData(listHeader, listChild, page);
-//                expandListView();
-            }
-
-            if (listHeader.isEmpty()) {
-                recentsCrv.showEmptyState();
-            } else {
-                recentsCrv.hideEmptyState();
-            }
-        } else {
-            recentsCrv.showEmptyState();
-        }
-    }
-
-    private void addToChat(RecentsApiResponseModel.ResultBean resultBean, int i) {
-        String date = Utils.getDayMonthYear(resultBean.getUpdated_at()).concat("-c");
-        List<RecentsApiResponseModel.ResultBean> beanList = new ArrayList<>();
-
-        if (!chatListHeader.contains(date)) {
-            chatListHeader.add(date);
-        }
-
-        if (!chatList.isEmpty()) {
-            beanList = chatList.get(date);
-        }
-
-
-        if (beanList == null) {
-            beanList = new ArrayList<>();
-        }
-
-        beanList.add(resultBean);
-        chatList.put(date, beanList);
-    }
-
-    private void addTocall(RecentsApiResponseModel.ResultBean resultBean, int i) {
-        String date = Utils.getDayMonthYear(resultBean.getUpdated_at());
-        List<RecentsApiResponseModel.ResultBean> beanList = new ArrayList<>();
-
-        if (!videoListHeader.contains(date)) {
-            videoListHeader.add(date);
-        }
-
-        if (!videoList.isEmpty()) {
-            beanList = videoList.get(date);
-        }
-
-        if (beanList == null) {
-            beanList = new ArrayList<>();
-        }
-
-        beanList.add(resultBean);
-        videoList.put(date, beanList);
-    }
-
     private void makeApiCall(boolean isShowProgress) {
         if (!isApiRequested) {
             if (recentsApiViewModel != null) {
@@ -278,23 +173,22 @@ public class RecentFragment extends BaseFragment {
                         }
                         recentsApiViewModel.getMyCorrespondentList(page, doctorGuid, isShowProgress);
                     } else {
-                        boolean isCalls = false;
 
                         CommonUserApiResponseModel userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                         String userGuid = null;
                         if (userDetail != null) {
                             userGuid = userDetail.getUser_guid();
-                            recentsApiViewModel.getUserCorrespondentList(userDetail.getUser_guid(), null, null, page, false, isShowProgress);
+//                            recentsApiViewModel.getUserCorrespondentList(userDetail.getUser_guid(), null, null, page, false, isShowProgress);
                         }
                         CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
                         String doctorGuid = null;
                         if (doctorDetail != null) {
                             doctorGuid = doctorDetail.getUser_guid();
                             isCalls = true;
-                        }
 
-                        if (!UserType.isUserAssistant()) {
-                            userGuid = doctorGuid;
+                            if (!UserType.isUserAssistant()) {
+                                userGuid = doctorGuid;
+                            }
                         }
                         Log.e(TAG, "makeApiCall: " + new Gson().toJson(userDetail));
                         Log.e(TAG, "makeApiCall: " + new Gson().toJson(doctorDetail));

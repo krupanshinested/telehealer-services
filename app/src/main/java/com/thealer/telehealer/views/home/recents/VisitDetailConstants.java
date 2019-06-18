@@ -17,6 +17,7 @@ public class VisitDetailConstants {
     public static final int TYPE_ORDER = 11;
     public static final int TYPE_DOCUMENT = 12;
     public static final int TYPE_DATE = 13;
+    public static final int TYPE_INFO = 14;
 
     public static final int ADD_VITAL = 1;
     public static final int ADD_ORDER = 2;

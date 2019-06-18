@@ -100,8 +100,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 });
 
-                Log.e("aswin", "onBindViewHolder: " + userModel.getDisplayName());
-                viewHolder.userListIv.setStatus(userModel.getStatus());
+                viewHolder.userListIv.setStatus(userModel.getStatus(), userModel.getLast_active());
                 break;
         }
     }
@@ -164,9 +163,10 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 adapterListModels.add(new AssociationAdapterListModel(TYPE_ITEM, favoriteList.get(i)));
             }
 
-            adapterListModels.add(new AssociationAdapterListModel(TYPE_HEADER, fragmentActivity.getString(R.string.others)));
+            if (!otherList.isEmpty()) {
+                adapterListModels.add(new AssociationAdapterListModel(TYPE_HEADER, fragmentActivity.getString(R.string.others)));
+            }
         }
-
         for (int i = 0; i < otherList.size(); i++) {
             adapterListModels.add(new AssociationAdapterListModel(TYPE_ITEM, otherList.get(i)));
         }

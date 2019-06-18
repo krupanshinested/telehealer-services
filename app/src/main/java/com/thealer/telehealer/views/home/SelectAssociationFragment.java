@@ -79,7 +79,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                 if (baseApiResponseModel != null) {
                     associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
 
-                    associationRv.setTotalCount(associationApiResponseModel.getCount());
+                    associationRv.setNextPage(associationApiResponseModel.getNext());
 
                     associationListAdapter.setCommonUserApiResponseModelList(associationApiResponseModel.getResult(), page);
                 }
@@ -93,7 +93,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
                 if (baseApiResponseModels != null) {
                     ArrayList<CommonUserApiResponseModel> commonUserApiResponseModelArrayList = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
-                    associationRv.setTotalCount(commonUserApiResponseModelArrayList.size());
+                    associationRv.setNextPage(null);
                     List<CommonUserApiResponseModel> responseModelList = new ArrayList<>(commonUserApiResponseModelArrayList);
                     associationListAdapter.setCommonUserApiResponseModelList(responseModelList, page);
                 }
@@ -108,7 +108,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                 if (baseApiResponseModel != null) {
                     getDoctorsApiResponseModel = (GetDoctorsApiResponseModel) baseApiResponseModel;
 
-                    associationRv.setTotalCount(getDoctorsApiResponseModel.getTotal_count());
+                    associationRv.setNextPage(getDoctorsApiResponseModel.getNext_page());
 
                     associationListAdapter.setDoctorsApiResponseModel(getDoctorsApiResponseModel.getData(), page);
 

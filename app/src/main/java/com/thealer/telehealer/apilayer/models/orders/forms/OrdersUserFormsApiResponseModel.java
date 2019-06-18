@@ -2,6 +2,7 @@ package com.thealer.telehealer.apilayer.models.orders.forms;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCommonResultResponseModel;
+import com.thealer.telehealer.views.home.orders.OrderStatus;
 
 /**
  * Created by Aswin on 28,November,2018
@@ -151,5 +152,12 @@ public class OrdersUserFormsApiResponseModel extends BaseApiResponseModel {
 
     public void setData(DynamicFormDataBean data) {
         this.data = data;
+    }
+
+    public boolean isCompleted() {
+        if (getStatus() == null)
+            return false;
+
+        return getStatus().equals(OrderStatus.STATUS_COMPLETED);
     }
 }

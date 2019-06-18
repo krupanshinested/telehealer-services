@@ -74,8 +74,6 @@ import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.thealer.telehealer.common.Constants.AVAILABLE;
-
 /**
  * Created by Aswin on 14,November,2018
  */
@@ -274,10 +272,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                             commonUserApiResponseModel = resultBean;
                         }
 
-
                         ArrayList<String> callTypes = new ArrayList<>();
-                        callTypes.add(getString(R.string.audio_call));
-                        callTypes.add(getString(R.string.video_call));
+                        if (resultBean.isAvailable()) {
+                            callTypes.add(getString(R.string.audio_call));
+                            callTypes.add(getString(R.string.video_call));
+                        }
                         callTypes.add(getString(R.string.one_way_call));
                         CommonUserApiResponseModel finalCommonUserApiResponseModel = commonUserApiResponseModel;
                         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
@@ -386,9 +385,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     checkConnectionStatus();
                 } else {
                     if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
-                        Set<String> set = new HashSet<>();
-                        set.add(resultBean.getUser_guid());
-                        getUserDetail(set);
+//                        Set<String> set = new HashSet<>();
+//                        set.add(resultBean.getUser_guid());
+                        Log.e(TAG, "initView: need to get user detail");
+//                        getUserDetail(set);
                     }
                 }
 
@@ -490,13 +490,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     }
 
     private void updateUserStatus(CommonUserApiResponseModel userApiResponseModel) {
-        if (userApiResponseModel.isAvailable() && userApiResponseModel.getRole().equals(Constants.ROLE_PATIENT)) {
+        if (userApiResponseModel.getRole().equals(Constants.ROLE_PATIENT)) {
             userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.VISIBLE);
         } else {
             userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
         }
 
-        if (!userApiResponseModel.getStatus().equals(AVAILABLE)) {
+        Log.e(TAG, "updateUserStatus: " + userApiResponseModel.isAvailable());
+        if (!userApiResponseModel.isAvailable()) {
             Utils.greyoutProfile(userProfileIv);
         } else {
             Utils.removeGreyoutProfile(userProfileIv);

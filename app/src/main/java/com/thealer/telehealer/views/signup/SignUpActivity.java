@@ -296,7 +296,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             try {
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right)
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.fragment_remove_animation, R.anim.fragment_remove_exit)
                         .replace(R.id.signup_fragment_container, fragment)
                         .addToBackStack(fragment.getClass().getSimpleName())
                         .commit();
@@ -315,7 +315,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right)
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.fragment_remove_animation, R.anim.fragment_remove_exit)
+
                 .replace(R.id.signup_fragment_container, fragment)
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .commit();
