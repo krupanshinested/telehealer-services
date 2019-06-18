@@ -18,6 +18,7 @@ public class PushNotificationConstants {
     public static final String PUSH_REJECT_CONNECTION = "rejectConnection";
     public static final String PUSH_CANCEL_SCHEDULE = "canceledSchedule";
     public static final String PUSH_CHAT = "chat";
+    public static final String PUSH_WAITING_ROOM = "waitingRoom";
 
     public static String getTitle(@NonNull String push_type) {
         switch (push_type) {
@@ -37,6 +38,8 @@ public class PushNotificationConstants {
                 return "Connection request rejected";
             case PUSH_CHAT:
                 return "Message";
+            case PUSH_WAITING_ROOM:
+                return "Waiting for your call";
         }
         return null;
     }
@@ -64,6 +67,8 @@ public class PushNotificationConstants {
                 return "Your connection request has been rejected.";
             case PUSH_CHAT:
                 return "You have a new message";
+            case PUSH_WAITING_ROOM:
+                return "Your patient is waiting for you in the virtual room.";
         }
         return null;
     }

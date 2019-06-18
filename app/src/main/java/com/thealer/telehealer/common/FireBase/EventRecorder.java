@@ -146,6 +146,13 @@ public class EventRecorder {
         analytics.logEvent("vitals_event",bundle);
     }
 
+    public static void recordVitalsStartMeasurement(String device){
+        Bundle bundle = new Bundle();
+        bundle.putString("VITALS_DEVICE", device);
+        analytics.logEvent("measurement_started", bundle);
+    }
+
+
     public static void recordMeals(String meal,String type){
         Bundle bundle = new Bundle();
         bundle.putString("MEAL", meal);
