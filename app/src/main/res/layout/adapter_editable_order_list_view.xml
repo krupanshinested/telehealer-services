@@ -54,9 +54,12 @@
                 style="@style/text_title"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_marginEnd="@dimen/margin_default"
+                android:ellipsize="end"
                 android:gravity="center|left"
+                android:maxLines="1"
                 app:layout_constraintBottom_toTopOf="@+id/order_list_sub_title_tv"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/options_cl"
                 app:layout_constraintStart_toEndOf="@id/order_list_iv"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="@string/dummy_text" />
@@ -66,12 +69,64 @@
                 style="@style/text_sub_title"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="@color/colorBlack"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/order_list_title_tv"
                 app:layout_constraintStart_toEndOf="@id/order_list_iv"
                 app:layout_constraintTop_toBottomOf="@+id/order_list_title_tv"
                 tools:text="@string/dummy_text" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/options_cl"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@+id/order_list_sub_title_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/order_list_title_tv"
+                app:layout_constraintTop_toTopOf="@+id/order_list_title_tv">
+
+                <TextView
+                    android:id="@+id/order_list_option_title_tv"
+                    style="@style/card_title_text"
+                    android:layout_width="0dp"
+                    android:layout_margin="0dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@+id/order_list_option_sub_title_tv"
+                    app:layout_constraintEnd_toEndOf="@+id/order_list_option_sub_title_tv"
+                    app:layout_constraintStart_toStartOf="@+id/order_list_option_sub_title_tv"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="0" />
+
+                <TextView
+                    android:id="@+id/order_list_option_sub_title_tv"
+                    style="@style/card_sub_title_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/padding_default"
+                    android:paddingEnd="@dimen/padding_default"
+                    android:paddingBottom="@dimen/padding_default"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:text="@string/score" />
+
+                <ImageView
+                    android:id="@+id/order_status_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:paddingEnd="@dimen/padding_default"
+                    android:paddingBottom="@dimen/padding_default"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:src="@drawable/ic_close_red_24dp" />
+            </android.support.constraint.ConstraintLayout>
+
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 </android.support.constraint.ConstraintLayout>

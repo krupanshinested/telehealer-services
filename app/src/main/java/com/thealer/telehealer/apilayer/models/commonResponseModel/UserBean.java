@@ -7,6 +7,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -37,6 +38,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     private String phone;
     private String gender;
     private String name;
+    private String last_active;
 
     public UserBean() {
     }
@@ -179,22 +181,21 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     }
 
     public int getStatusColorCode() {
-        Log.e("aswin", "setStatusColorCode: " + getDisplayName() + "\t" + getStatus());
         int color = R.color.status_offline;
 
         switch (getStatus()) {
             case AVAILABLE:
                 color = R.color.status_available;
+                if (Utils.isOneHourBefore(getLast_active()))
+                    color = R.color.status_away;
                 break;
             case OFFLINE:
                 color = R.color.status_offline;
                 break;
-            case ACTIVATION_PENDING:
-                color = R.color.status_activation_pending;
-                break;
             case BUSY:
                 color = R.color.status_busy;
                 break;
+            case ACTIVATION_PENDING:
             case NO_DATA:
                 color = R.color.colorBlack;
                 break;
@@ -243,4 +244,11 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
         this.name = name;
     }
 
+    public String getLast_active() {
+        return last_active;
+    }
+
+    public void setLast_active(String last_active) {
+        this.last_active = last_active;
+    }
 }

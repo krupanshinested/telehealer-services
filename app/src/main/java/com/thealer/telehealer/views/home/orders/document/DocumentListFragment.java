@@ -161,7 +161,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
 
     private void setData() {
 
-        documentsCrv.setTotalCount(documentsApiResponseModel.getCount());
+        documentsCrv.setNextPage(documentsApiResponseModel.getNext());
 
         if (documentsApiResponseModel.getCount() > 0) {
             documentListAdapter.setData(documentsApiResponseModel.getResult(), page);

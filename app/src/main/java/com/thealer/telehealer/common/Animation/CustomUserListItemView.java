@@ -216,23 +216,21 @@ public class CustomUserListItemView extends ConstraintLayout {
         }
     }
 
-    public void setStatus(String status) {
-        Log.e("aswin", "setStatus: " + status);
+    public void setStatus(String status, String last_active) {
         int color = R.color.status_offline;
-
         switch (status) {
             case AVAILABLE:
                 color = R.color.status_available;
+                if (Utils.isOneHourBefore(last_active))
+                    color = R.color.status_away;
                 break;
             case OFFLINE:
                 color = R.color.status_offline;
                 break;
-            case ACTIVATION_PENDING:
-                color = R.color.status_activation_pending;
-                break;
             case BUSY:
                 color = R.color.status_busy;
                 break;
+            case ACTIVATION_PENDING:
             case NO_DATA:
                 color = R.color.colorBlack;
                 break;

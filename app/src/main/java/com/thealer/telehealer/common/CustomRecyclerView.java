@@ -39,9 +39,9 @@ public class CustomRecyclerView extends ConstraintLayout {
     private LinearLayoutManager linearLayoutManager;
     private String emptyState;
     private boolean isScrollable = false, isLayoutChanging = false;
-    private int totalCount = 0;
     private OnPaginateInterface onPaginateInterface;
     private CustomSwipeRefreshLayout swipeLayout;
+    private boolean isNextPageAvailable;
 
     public CustomRecyclerView(Context context) {
         super(context);
@@ -77,7 +77,7 @@ public class CustomRecyclerView extends ConstraintLayout {
             @Override
             public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (isScrollable && !isLayoutChanging) {
-                    if (linearLayoutManager.getItemCount() < totalCount) {
+                    if (isNextPageAvailable) {
                         if (linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1) {
                             onPaginateInterface.onPaginate();
                             showProgressBar();
@@ -153,8 +153,8 @@ public class CustomRecyclerView extends ConstraintLayout {
         isScrollable = scrollable;
     }
 
-    public void setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
+    public void setNextPage(Object nextPage) {
+        isNextPageAvailable = nextPage != null;
     }
 
     public RecyclerView getRecyclerView() {

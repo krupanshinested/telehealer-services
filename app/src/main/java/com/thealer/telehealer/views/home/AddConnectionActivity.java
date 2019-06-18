@@ -74,7 +74,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private ConnectionListResponseModel connectionListResponseModel;
     private ConnectionListAdapter connectionListAdapter;
-    private int page = 1, totalCount = 0;
+    private int page = 1;
     private int selectedPosition = -1, selectedId;
     private boolean isApiRequested = false;
     private boolean isMedicalAssistant = false;
@@ -136,8 +136,6 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
                     if (connectionListAdapter != null) {
 
-                        totalCount = connectionListResponseModel.getCount();
-
                         if (page == 1) {
                             commonUserApiResponseModelList = connectionListResponseModel.getResult();
                         } else {
@@ -145,9 +143,9 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                         }
                         connectionListAdapter.setData(commonUserApiResponseModelList, -1);
 
-                        connectionListCrv.setTotalCount(totalCount);
+                        connectionListCrv.setNextPage(connectionListResponseModel.getNext());
 
-                        if (totalCount > 0) {
+                        if (commonUserApiResponseModelList.size() > 0) {
                             connectionListCrv.showOrhideEmptyState(false);
                         } else {
                             connectionListCrv.showOrhideEmptyState(true);

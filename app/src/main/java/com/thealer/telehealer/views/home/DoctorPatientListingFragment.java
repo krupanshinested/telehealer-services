@@ -60,7 +60,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
     private RecyclerView doctorPatientListRv;
     private AssociationApiViewModel associationApiViewModel;
-    private int page = 1, totalCount = 0;
+    private int page = 1;
     private AttachObserverInterface attachObserverInterface;
     private DoctorPatientListAdapter doctorPatientListAdapter;
     private OnOrientationChangeInterface onOrientationChangeInterface;
@@ -129,9 +129,8 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                     }
 
                     if (doctorPatientListAdapter != null) {
-                        totalCount = associationApiResponseModel.getCount();
 
-                        doctorPatientListCrv.setTotalCount(totalCount);
+                        doctorPatientListCrv.setNextPage(associationApiResponseModel.getNext());
 
                         if (associationApiResponseModel.getResult().size() > 0) {
                             doctorPatientListCrv.showOrhideEmptyState(false);

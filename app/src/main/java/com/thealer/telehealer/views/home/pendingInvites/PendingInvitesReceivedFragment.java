@@ -25,7 +25,7 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
  */
 public class PendingInvitesReceivedFragment extends BaseFragment {
     private CustomRecyclerView pendingInvitesCrv;
-    private int page = 1, totalCount;
+    private int page = 1;
     private boolean isApiRequested = false, isResume = false;
 
     private PendingInvitesApiViewModel pendingInvitesApiViewModel;
@@ -50,8 +50,7 @@ public class PendingInvitesReceivedFragment extends BaseFragment {
                                 if (invitesResponseModel.getCount() == 0) {
                                     pendingInvitesCrv.showOrhideEmptyState(true);
                                 } else {
-                                    totalCount = invitesResponseModel.getCount();
-                                    pendingInvitesCrv.setTotalCount(totalCount);
+                                    pendingInvitesCrv.setNextPage(invitesResponseModel.getNext());
                                     pendingInvitesCrv.showOrhideEmptyState(false);
                                     pendingInvitesListAdapter.setData(invitesResponseModel.getResult(), page);
                                 }

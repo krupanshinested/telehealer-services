@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/transcript_root_cl"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/padding_default">
 
     <LinearLayout
         android:id="@+id/checkbox_ll"
@@ -24,6 +25,7 @@
         style="@style/text_sub_title_bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:ems="3"
         android:gravity="start|center"
@@ -41,7 +43,9 @@
         android:id="@+id/transcript_info_et"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/card_view_background"
         android:fontFamily="@font/open_sans"
+        android:padding="8dp"
         android:textColor="@color/colorBlack"
         android:textSize="@dimen/sub_title_size"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -49,7 +53,7 @@
         app:layout_constraintStart_toEndOf="@+id/caller_name_tv"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintWidth_percent="0.5"
         tools:text="@string/dummy_text" />
 
 </android.support.constraint.ConstraintLayout>

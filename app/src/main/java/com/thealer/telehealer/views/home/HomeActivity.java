@@ -483,6 +483,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         bundle.putString(ArgumentKeys.DESCRIPTION, new HelpContent(this).getContent(helpContent));
         bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
         bundle.putBoolean(ArgumentKeys.IS_BUTTON_NEEDED, false);
+        bundle.putBoolean(ArgumentKeys.IS_SHOW_HELP, true);
 
         startActivity(new Intent(this, ContentActivity.class).putExtras(bundle));
     }
@@ -527,7 +528,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             } else {
                 fragmentManager.popBackStackImmediate();
                 if (fragmentManager.findFragmentById(R.id.sub_fragment_holder) == null)
-                    updateToolbarOptions(fragmentManager.findFragmentById(R.id.fragment_holder));
+                    updateToolbarOptions(fragmentManager.findFragmentById(R.id.fragment_holder), false);
             }
         } else {
             finish();
@@ -572,10 +573,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 .replace(fragmentHolder.getId(), fragment)
                 .commit();
         Log.e(TAG, "setFragment: " + getSupportFragmentManager().getFragments().toString());
-        updateToolbarOptions(fragment);
+        updateToolbarOptions(fragment, false);
     }
 
-    private void updateToolbarOptions(Fragment fragment) {
+    private void updateToolbarOptions(Fragment fragment, boolean isSubFragment) {
         Log.e(TAG, "updateToolbarOptions: 1 ");
         if (optionsMenu != null) {
             if (fragment instanceof ScheduleCalendarFragment) {
@@ -587,8 +588,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 optionsMenu.findItem(R.id.menu_event).setVisible(true);
                 Log.e(TAG, "updateToolbarOptions: 3");
             } else {
-                optionsMenu.findItem(R.id.menu_schedules).setVisible(false);
-                optionsMenu.findItem(R.id.menu_event).setVisible(false);
+                if (!isSubFragment) {
+                    optionsMenu.findItem(R.id.menu_schedules).setVisible(false);
+                    optionsMenu.findItem(R.id.menu_event).setVisible(false);
+                }
                 Log.e(TAG, "updateToolbarOptions: 4");
             }
         } else {
@@ -613,13 +616,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 .commit();
 
         isChildVisible = true;
-        updateToolbarOptions(fragment);
+        updateToolbarOptions(fragment, true);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Log.e(TAG, "onNavigationItemSelected: ");
-//        showScheduleToolbarOptions(false, 0);
         if (menuItem.getItemId() != R.id.menu_profile_settings) {
             showPendingInvitesOption(false);
         }
