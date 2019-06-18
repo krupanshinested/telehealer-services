@@ -184,4 +184,8 @@ public class ArgumentKeys {
     public static final String ROLE = "ROLE";
     public static final String BRAIN_TREE_CUSTOMER = "BRAIN_TREE_CUSTOMER";
 
+    public static final String TRIGGER_ANSWER = "TRIGGER_ANSWER";
+    public static final String FROM_CALL = "FROM_CALL";
+
+
 }

@@ -720,6 +720,21 @@ public class Utils {
         return "";
     }
 
+    @Nullable
+    public static Date convertUTCTOLocal(String dateStr,String pattern) {
+        SimpleDateFormat df = new SimpleDateFormat(pattern, Locale.ENGLISH);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            Date date = df.parse(dateStr);
+            df.setTimeZone(TimeZone.getDefault());
+            String formattedDate = df.format(date);
+            return getDateFromString(formattedDate,pattern);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static String getSelectedSlotTime(String timeSlot) {
         DateFormat inputFormat = new SimpleDateFormat(UTCFormat);
         DateFormat outputFormat = new SimpleDateFormat("hh:mm aa");

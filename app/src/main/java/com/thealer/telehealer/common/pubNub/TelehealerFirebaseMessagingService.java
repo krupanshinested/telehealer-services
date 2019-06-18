@@ -11,11 +11,16 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
+import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.ResultFetcher;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
@@ -130,6 +135,26 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 intent.putExtras(bundle);
 
                 Utils.createNotification(data, intent);
+                break;
+            case APNSPayload.waitingInRoom:
+                try {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            SchedulesApiViewModel schedulesApiViewModel = new SchedulesApiViewModel(getApplication());
+                            schedulesApiViewModel.getScheduleDetail(Integer.parseInt(data.getSessionId()), null, new ResultFetcher() {
+                                @Override
+                                public void didFetched(BaseApiResponseModel baseApiResponseModel) {
+                                    Intent contentIntent = new Intent(getApplicationContext(), NotificationDetailActivity.class);
+                                    contentIntent.putExtra(ArgumentKeys.SCHEDULE_DETAIL, new Gson().toJson((SchedulesApiResponseModel.ResultBean) baseApiResponseModel));
+                                    Utils.createNotification(data, contentIntent);
+                                }
+                            });
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
