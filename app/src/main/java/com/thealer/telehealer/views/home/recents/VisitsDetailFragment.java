@@ -226,13 +226,16 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                             if (isHasNextRequest()) {
                                 updateVisit();
                             } else {
+                                Log.e(TAG, "onChanged: " + visitDetailViewModel.isInstructionUpdated());
                                 if (visitDetailViewModel.isInstructionUpdated()) {
                                     visitDetailViewModel.setInstructionUpdated(false);
                                     visitsDetailApiResponseModel.getResult().setInstructions(visitDetailViewModel.getInstruction());
                                     visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
+                                    visitsDetailApiResponseModel.getResult().setDiagnosis(visitDetailViewModel.getDiagnosis());
+                                    visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
                                 }
 
-                                if (visitDetailViewModel.isTranscriptEdited()) {
+                                if (visitDetailViewModel.isTranscriptUpdated() || visitDetailViewModel.isTranscriptEdited()) {
 
                                     DownloadTranscriptResponseModel updatedTranscript = new DownloadTranscriptResponseModel();
                                     updatedTranscript.setTranscripts(visitDetailViewModel.getUpdatedTranscriptResponseModel().getTranscripts());
@@ -247,6 +250,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
                                     downloadTranscriptResponseModel = updatedTranscript;
                                     visitDetailViewModel.setDownloadTranscriptResponseModel(updatedTranscript);
+                                    visitDetailViewModel.setUpdatedTranscriptResponseModel(updatedTranscript);
 
                                     Log.e(TAG, "onChanged: " + new Gson().toJson(updatedTranscript.getSpeakerLabels()));
 
@@ -732,13 +736,16 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
                 visitRequestModel.setAdd_associations(addList);
             }
+
+            Log.e(TAG, "isInstructionUpdated : " + visitDetailViewModel.isInstructionUpdated());
             if (visitDetailViewModel.isInstructionUpdated()) {
                 visitRequestModel.setInstructions(visitDetailViewModel.getInstruction());
                 visitRequestModel.setDiagnosis(visitDetailViewModel.getDiagnosis());
             }
 
             if (visitDetailViewModel.isTranscriptUpdated() || visitDetailViewModel.isTranscriptEdited()) {
-
+                Log.e(TAG, "isTranscriptUpdated: " + visitDetailViewModel.isTranscriptUpdated());
+                Log.e(TAG, "isTranscriptEdited: " + visitDetailViewModel.isTranscriptEdited());
                 DownloadTranscriptResponseModel updatedTranscript = new DownloadTranscriptResponseModel();
 
                 updatedTranscript.setTranscripts(visitDetailViewModel.getUpdatedTranscriptResponseModel().getTranscripts());
@@ -753,9 +760,10 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 updatedTranscript.setSpeakerLabels(updatedLabels);
 
                 visitRequestModel.setUpdated_transcript(updatedTranscript);
-                visitDetailViewModel.setUpdatedTranscriptResponseModel(updatedTranscript);
+                Log.e(TAG, "transcriptEdited : " + new Gson().toJson(visitDetailViewModel.getUpdatedTranscriptResponseModel()));
             }
 
+            Log.e(TAG, "visitRequestModel: " + new Gson().toJson(visitRequestModel));
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

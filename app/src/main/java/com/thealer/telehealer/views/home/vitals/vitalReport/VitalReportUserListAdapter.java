@@ -71,7 +71,7 @@ public class VitalReportUserListAdapter extends RecyclerView.Adapter<VitalReport
             }
         });
 
-        viewHolder.userListIv.setStatus(commonUserApiResponseModelList.get(i).getStatus());
+        viewHolder.userListIv.setStatus(commonUserApiResponseModelList.get(i).getStatus(), commonUserApiResponseModelList.get(i).getLast_active());
         viewHolder.userListIv.hasAbnormalVital(commonUserApiResponseModelList.get(i).isHas_abnormal_vitals());
     }
 

@@ -312,6 +312,18 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
         resendTv.setOnClickListener(this);
 
         if (getArguments() != null) {
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                toolbarTitle.setText(getString(R.string.otp));
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onCloseActionInterface.onClose(false);
+                    }
+                });
+                nextTv.setVisibility(View.INVISIBLE);
+            }
+
             int type = getArguments().getInt(ArgumentKeys.OTP_TYPE);
             isVerifyUser = getArguments().getBoolean(ArgumentKeys.IS_VERIFY_OTP);
             this.otpType = type;
@@ -327,16 +339,8 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                     break;
             }
 
-            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
-                appbarLayout.setVisibility(View.VISIBLE);
-                toolbarTitle.setText(getString(R.string.otp));
-                backIv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onCloseActionInterface.onClose(false);
-                    }
-                });
-                nextTv.setVisibility(View.INVISIBLE);
+            if (type == OtpVerificationFragment.reset_password){
+                toolbarTitle.setText("");
             }
         }
 

@@ -128,6 +128,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
         bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
 
         OrdersDetailListAdapterModel ordersDetailListAdapterModel = childList.get(headerList.get(groupPosition)).get(childPosition);
+        String key = null;
 
         if (!ordersDetailListAdapterModel.isForm()) {
 
@@ -203,13 +204,23 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                     statusIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.app_gradient_start)));
                 }
             }
+            if (UserType.isUserAssistant()) {
+                key = ordersCommonResultResponseModel.getPatient().getUser_guid();
+            } else {
+                if (ordersCommonResultResponseModel.getDoctor() != null) {
+                    key = ordersCommonResultResponseModel.getDoctor().getUser_guid();
+                }
+                if (ordersCommonResultResponseModel.getMedical_assistant() != null) {
+                    key = ordersCommonResultResponseModel.getMedical_assistant().getUser_guid();
+                }
+            }
 
         } else {
             listOptionTitleTv = (TextView) convertView.findViewById(R.id.list_option_title_tv);
             listOptionSubTitleTv = (TextView) convertView.findViewById(R.id.list_option_sub_title_tv);
 
 
-            if (ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getStatus().equals(OrderStatus.STATUS_COMPLETED)) {
+            if (ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().isCompleted()) {
                 listOptionTitleTv.setVisibility(View.VISIBLE);
                 listOptionSubTitleTv.setVisibility(View.VISIBLE);
 
@@ -218,7 +229,6 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
             }
 
-            String key = null;
             if (UserType.isUserAssistant()) {
                 key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getPatient().getUser_guid();
             } else {
@@ -229,15 +239,18 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                     key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getMedical_assistant().getUser_guid();
                 }
             }
-            if (key != null && userDetailHashMap.containsKey(key)) {
-                itemSubTitleTv.setText(userDetailHashMap.get(key).getUserDisplay_name());
-                Utils.setImageWithGlide(context, itemCiv, userDetailHashMap.get(key).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
-            }
+
             fragment = new EditableFormFragment();
             bundle.putSerializable(ArgumentKeys.FORM_DETAIL, ordersDetailListAdapterModel.getOrdersFormsApiResponseModel());
+            itemCiv.setVisibility(View.GONE);
         }
 
         itemTitleTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getSubTitle());
+
+        if (key != null && userDetailHashMap.containsKey(key)) {
+            itemSubTitleTv.setText(userDetailHashMap.get(key).getUserDisplay_name());
+            Utils.setImageWithGlide(context, itemCiv, userDetailHashMap.get(key).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
+        }
 
         itemCv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -258,8 +271,6 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
             }
         });
-
-        itemCiv.setVisibility(View.GONE);
 
         return convertView;
     }

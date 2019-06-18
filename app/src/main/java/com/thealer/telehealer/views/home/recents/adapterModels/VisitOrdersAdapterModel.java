@@ -11,9 +11,8 @@ import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseMod
 import com.thealer.telehealer.apilayer.models.orders.miscellaneous.MiscellaneousApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
+import com.thealer.telehealer.views.home.orders.forms.EditableFormFragment;
 import com.thealer.telehealer.views.home.orders.labs.LabsDetailViewFragment;
 import com.thealer.telehealer.views.home.orders.miscellaneous.MiscellaneousDetailViewFragment;
 import com.thealer.telehealer.views.home.orders.prescription.PrescriptionDetailViewFragment;
@@ -169,7 +168,7 @@ public class VisitOrdersAdapterModel implements Serializable {
         } else if (getMiscellaneous() != null) {
             fragment = new MiscellaneousDetailViewFragment();
         } else if (getForms() != null) {
-            fragment = new PdfViewerFragment();
+            fragment = new EditableFormFragment();
         }
 
         return fragment;
@@ -190,9 +189,7 @@ public class VisitOrdersAdapterModel implements Serializable {
         } else if (getMiscellaneous() != null) {
             bundle.putSerializable(ArgumentKeys.ORDER_DETAIL, getMiscellaneous());
         } else if (getForms() != null) {
-            bundle.putString(ArgumentKeys.PDF_TITLE, getForms().getName());
-            bundle.putString(ArgumentKeys.PDF_URL, getForms().getUrl());
-            bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, false);
+            bundle.putSerializable(ArgumentKeys.FORM_DETAIL, getForms());
         }
         return bundle;
     }
@@ -231,7 +228,7 @@ public class VisitOrdersAdapterModel implements Serializable {
         return null;
     }
 
-    public int getReferralId(){
+    public int getReferralId() {
         if (getPrescriptions() != null) {
             return getPrescriptions().getReferral_id();
         } else if (getSpecialists() != null) {
