@@ -13,6 +13,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +72,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
     private TextView learnAboutScoreTv;
     private ConstraintLayout scoreViewCl;
     private boolean isEditable = true;
-    private boolean hideToolbar;
+    private boolean hideToolbar, isUpdated;
 
     @Override
     public void onAttach(Context context) {
@@ -127,8 +128,8 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
 
         if (getArguments() != null) {
             formsApiResponseModel = (OrdersUserFormsApiResponseModel) getArguments().getSerializable(ArgumentKeys.FORM_DETAIL);
-            if (getArguments().getBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, false)) hideToolbar = true;
-            else hideToolbar = false;
+            hideToolbar = getArguments().getBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, false);
+
             if (formsApiResponseModel != null) {
                 if (hideToolbar) {
                     toolbar.setVisibility(View.GONE);
@@ -172,6 +173,8 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
     }
 
     private void addDynamicFields() {
+        Log.e(TAG, "addDynamicFields: " + formsApiResponseModel.getStatus());
+        Log.e(TAG, "addDynamicFields: " + formsApiResponseModel.isCompleted());
         for (int k = 0; k < formsApiResponseModel.getData().getData().size(); k++) {
             DynamicFormDataBean.DataBean dataBean = formsApiResponseModel.getData().getData().get(k);
 
@@ -198,7 +201,6 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                         case FormsConstant.TYPE_LIST:
                             View spinnerView = getLayoutInflater().inflate(R.layout.form_list_view, null);
                             CustomSpinnerView formCsv = (CustomSpinnerView) spinnerView.findViewById(R.id.form_csv);
-
                             List<String> optionList = new ArrayList<>();
                             List<Float> scoreList = new ArrayList<>();
                             for (int j = 0; j < itemsBean.getProperties().getOptions().size(); j++) {
@@ -208,7 +210,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
 
                             int finalI = i;
                             int finalK = k;
-                            if (!hideToolbar) {
+                            if (formsApiResponseModel.isCompleted() || UserType.isUserPatient()) {
                                 formCsv.setSpinnerData(getContext(), optionList, new AdapterView.OnItemSelectedListener() {
                                     @Override
                                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

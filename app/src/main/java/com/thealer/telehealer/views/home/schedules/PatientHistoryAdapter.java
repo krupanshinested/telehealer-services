@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
@@ -116,6 +117,16 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
         }
 
         viewHolder.itemSwitch.setClickable(isEditmode);
+        if (!isEditmode) {
+            viewHolder.yesOrNoTv.setVisibility(View.VISIBLE);
+            viewHolder.yesOrNoTv.setText(patientHistory.get(i).isIsYes() ? activity.getString(R.string.yes) : activity.getString(R.string.no));
+            viewHolder.itemSwitch.setButtonDrawable(null);
+            if (patientHistory.get(i).getReason() == null || patientHistory.get(i).getReason().isEmpty()) {
+                viewHolder.commentsEt.setVisibility(View.GONE);
+            } else {
+                viewHolder.commentsEt.setVisibility(View.VISIBLE);
+            }
+        }
         viewHolder.commentsEt.setEnabled(isEditmode);
     }
 
@@ -127,11 +138,13 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
     public class ViewHolder extends RecyclerView.ViewHolder {
         private CheckBox itemSwitch;
         private EditText commentsEt;
+        private TextView yesOrNoTv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             itemSwitch = (CheckBox) itemView.findViewById(R.id.item_switch);
             commentsEt = (EditText) itemView.findViewById(R.id.comments_et);
+            yesOrNoTv = (TextView) itemView.findViewById(R.id.yesOrNo_tv);
         }
     }
 }

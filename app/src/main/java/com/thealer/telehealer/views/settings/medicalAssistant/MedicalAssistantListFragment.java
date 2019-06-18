@@ -42,7 +42,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
     private TextView toolbarTitle;
 
     private DoctorPatientListAdapter doctorPatientListAdapter;
-    private int page = 1, totalCount = 0;
+    private int page = 1;
     private boolean isApiRequested = false;
 
     private AssociationApiViewModel associationApiViewModel;
@@ -138,9 +138,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
 
         if (doctorPatientListAdapter != null) {
 
-            totalCount = associationApiResponseModel.getCount();
-
-            medicalAssistantCrv.setTotalCount(totalCount);
+            medicalAssistantCrv.setNextPage(associationApiResponseModel.getNext());
 
             if (associationApiResponseModel.getResult().size() > 0) {
                 medicalAssistantCrv.showOrhideEmptyState(false);

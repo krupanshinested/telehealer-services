@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -121,6 +122,7 @@ public class DoctorOnBoardingActivity extends BaseActivity {
 
     private void setUserData() {
         userNameTv.setText("Hi " + UserDetailPreferenceManager.getFirst_name() + "!");
+        Log.e(TAG, "setUserData: " + UserDetailPreferenceManager.getUser_avatar());
         Utils.setImageWithGlide(getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
 
     }
