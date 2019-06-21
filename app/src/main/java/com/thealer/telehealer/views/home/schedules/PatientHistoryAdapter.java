@@ -114,19 +114,19 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
             if (patientHistory.get(i).getReason() != null && !patientHistory.get(i).getReason().isEmpty()) {
                 viewHolder.commentsEt.setText(patientHistory.get(i).getReason());
             }
+            if (!isEditmode) {
+                viewHolder.yesOrNoTv.setVisibility(View.VISIBLE);
+                viewHolder.yesOrNoTv.setText(patientHistory.get(i).isIsYes() ? activity.getString(R.string.yes) : activity.getString(R.string.no));
+                viewHolder.itemSwitch.setButtonDrawable(null);
+                if (patientHistory.get(i).getReason() == null || patientHistory.get(i).getReason().isEmpty()) {
+                    viewHolder.commentsEt.setVisibility(View.GONE);
+                } else {
+                    viewHolder.commentsEt.setVisibility(View.VISIBLE);
+                }
+            }
         }
 
         viewHolder.itemSwitch.setClickable(isEditmode);
-        if (!isEditmode) {
-            viewHolder.yesOrNoTv.setVisibility(View.VISIBLE);
-            viewHolder.yesOrNoTv.setText(patientHistory.get(i).isIsYes() ? activity.getString(R.string.yes) : activity.getString(R.string.no));
-            viewHolder.itemSwitch.setButtonDrawable(null);
-            if (patientHistory.get(i).getReason() == null || patientHistory.get(i).getReason().isEmpty()) {
-                viewHolder.commentsEt.setVisibility(View.GONE);
-            } else {
-                viewHolder.commentsEt.setVisibility(View.VISIBLE);
-            }
-        }
         viewHolder.commentsEt.setEnabled(isEditmode);
     }
 
