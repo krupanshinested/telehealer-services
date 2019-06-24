@@ -1,9 +1,6 @@
 package com.thealer.telehealer.views.home.orders.prescription;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,29 +14,28 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
  * Created by Aswin on 22,November,2018
  */
-public class PrescriptionDetailViewFragment extends BaseFragment implements View.OnClickListener {
+public class PrescriptionDetailViewFragment extends OrdersBaseFragment implements View.OnClickListener {
     private ImageView backIv;
     private TextView toolbarTitle;
     private OrdersCustomView patientOcv;
@@ -55,30 +51,16 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
     private Switch labelSwitch;
     private TextView cancelTv;
 
-    private OnCloseActionInterface onCloseActionInterface;
-    private OrdersApiViewModel ordersApiViewModel;
     private OrdersPrescriptionApiResponseModel.OrdersResultBean ordersResultBean;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private TextView cancelWatermarkTv;
     private Toolbar toolbar;
-    private String userName, doctorGuid;
+    private String userName, doctorGuid, userGuid;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
-        onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
-        ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel.isSuccess()) {
-                        onCloseActionInterface.onClose(false);
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -163,6 +145,7 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
 
             ordersResultBean = (OrdersPrescriptionApiResponseModel.OrdersResultBean) getArguments().getSerializable(ArgumentKeys.ORDER_DETAIL);
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+            userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
 
             CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
@@ -184,55 +167,70 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
             pharmacyOcv.setTitleTv("-");
 
             if (ordersResultBean != null) {
-
-                if (ordersResultBean.getUserDetailMap() != null && !ordersResultBean.getUserDetailMap().isEmpty()) {
-                    if (UserType.isUserPatient()) {
-                        patientOcv.setTitleTv(ordersResultBean.getUserDetailMap().get(ordersResultBean.getDoctor().getUser_guid()).getDoctorDisplayName());
-                    } else {
-                        userName = ordersResultBean.getUserDetailMap().get(ordersResultBean.getPatient().getUser_guid()).getUserDisplay_name();
-                        patientOcv.setTitleTv(userName);
-                    }
-                }
-
-                orderStatusOcv.setTitleTv(ordersResultBean.getStatus());
-
-                if (ordersResultBean.getFaxes().size() > 0) {
-                    if (ordersResultBean.getFaxes().get(0).getDetail() != null &&
-                            ordersResultBean.getFaxes().get(0).getDetail().getPharmacy() != null) {
-                        pharmacyOcv.setTitleTv(ordersResultBean.getFaxes().get(0).getDetail().getPharmacy().getCompany());
-
-                        orderStatusOcv.setLabelTv(getString(R.string.fax_status));
-                        orderStatusOcv.setTitleTv(ordersResultBean.getFaxes().get(0).getStatus());
-                    }
-                }
-
-
-                if (UserType.isUserPatient()) {
-                    cancelTv.setVisibility(View.GONE);
-                }
-
-                if (ordersResultBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
-                    cancelTv.setVisibility(View.GONE);
-                    cancelWatermarkTv.setVisibility(View.VISIBLE);
-                    toolbar.getMenu().clear();
-                }
-
-                if (ordersResultBean.getStatus().equals(OrderStatus.STATUS_FAILED) || ordersResultBean.getFaxes().size() > 0) {
-                    toolbar.getMenu().removeItem(R.id.send_fax_menu);
-                }
-
-                if (ordersResultBean.getDetail() != null) {
-                    toolbarTitle.setText(ordersResultBean.getDetail().getRx_drug_name());
-                    dnsSwitch.setChecked(ordersResultBean.getDetail().isDo_not_substitute());
-                    labelSwitch.setChecked(ordersResultBean.getDetail().isLabel());
-                    prescriptionOcv.setTitleTv(ordersResultBean.getDetail().getRx_drug_name());
-                    formOcv.setTitleTv(ordersResultBean.getDetail().getRx_form());
-                    strengthOcv.setTitleTv(ordersResultBean.getDetail().getStrength());
-                    directionOcv.setTitleTv(ordersResultBean.getDetail().getDirection());
-                    dispenseOcv.setTitleTv(ordersResultBean.getDetail().getDispense());
-                    refillOcv.setTitleTv(ordersResultBean.getDetail().getRefil());
-                }
+                setData(ordersResultBean);
+            } else {
+                int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
+                getOrdersDetail(userGuid, doctorGuid, new ArrayList<>(Arrays.asList(id)), true);
             }
+        }
+    }
+
+    @Override
+    public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
+        if (idListApiResponseModel != null && idListApiResponseModel.getPrescriptions() != null &&
+                !idListApiResponseModel.getPrescriptions().isEmpty()) {
+            ordersResultBean = idListApiResponseModel.getPrescriptions().get(0);
+            setData(ordersResultBean);
+        }
+    }
+
+    private void setData(OrdersPrescriptionApiResponseModel.OrdersResultBean ordersResultBean) {
+        if (ordersResultBean.getUserDetailMap() != null && !ordersResultBean.getUserDetailMap().isEmpty()) {
+            if (UserType.isUserPatient()) {
+                patientOcv.setTitleTv(ordersResultBean.getUserDetailMap().get(ordersResultBean.getDoctor().getUser_guid()).getDoctorDisplayName());
+            } else {
+                userName = ordersResultBean.getUserDetailMap().get(ordersResultBean.getPatient().getUser_guid()).getUserDisplay_name();
+                patientOcv.setTitleTv(userName);
+            }
+        }
+
+        orderStatusOcv.setTitleTv(ordersResultBean.getStatus());
+
+        if (ordersResultBean.getFaxes().size() > 0) {
+            if (ordersResultBean.getFaxes().get(0).getDetail() != null &&
+                    ordersResultBean.getFaxes().get(0).getDetail().getPharmacy() != null) {
+                pharmacyOcv.setTitleTv(ordersResultBean.getFaxes().get(0).getDetail().getPharmacy().getCompany());
+
+                orderStatusOcv.setLabelTv(getString(R.string.fax_status));
+                orderStatusOcv.setTitleTv(ordersResultBean.getFaxes().get(0).getStatus());
+            }
+        }
+
+
+        if (UserType.isUserPatient()) {
+            cancelTv.setVisibility(View.GONE);
+        }
+
+        if (ordersResultBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
+            cancelTv.setVisibility(View.GONE);
+            cancelWatermarkTv.setVisibility(View.VISIBLE);
+            toolbar.getMenu().clear();
+        }
+
+        if (ordersResultBean.getStatus().equals(OrderStatus.STATUS_FAILED) || ordersResultBean.getFaxes().size() > 0) {
+            toolbar.getMenu().removeItem(R.id.send_fax_menu);
+        }
+
+        if (ordersResultBean.getDetail() != null) {
+            toolbarTitle.setText(ordersResultBean.getDetail().getRx_drug_name());
+            dnsSwitch.setChecked(ordersResultBean.getDetail().isDo_not_substitute());
+            labelSwitch.setChecked(ordersResultBean.getDetail().isLabel());
+            prescriptionOcv.setTitleTv(ordersResultBean.getDetail().getRx_drug_name());
+            formOcv.setTitleTv(ordersResultBean.getDetail().getRx_form());
+            strengthOcv.setTitleTv(ordersResultBean.getDetail().getStrength());
+            directionOcv.setTitleTv(ordersResultBean.getDetail().getDirection());
+            dispenseOcv.setTitleTv(ordersResultBean.getDetail().getDispense());
+            refillOcv.setTitleTv(ordersResultBean.getDetail().getRefil());
         }
     }
 
@@ -240,26 +238,10 @@ public class PrescriptionDetailViewFragment extends BaseFragment implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
-                onCloseActionInterface.onClose(false);
+                onBackPressed();
                 break;
             case R.id.cancel_tv:
-                Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps),
-                        getString(R.string.cancel_prescription_order),
-                        getString(R.string.yes),
-                        getString(R.string.no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelOrder(OrderConstant.ORDER_PRESCRIPTIONS, ordersResultBean.getReferral_id(), doctorGuid);
-                                dialog.dismiss();
-
-                            }
-                        }, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                cancelOrder(OrderConstant.ORDER_PRESCRIPTIONS, ordersResultBean.getReferral_id(), doctorGuid);
                 break;
         }
     }

@@ -20,27 +20,30 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
  * Created by Aswin on 26,November,2018
  */
-public class SpecialistDetailViewFragment extends BaseFragment implements View.OnClickListener {
+public class SpecialistDetailViewFragment extends OrdersBaseFragment implements View.OnClickListener {
 
     private ImageView backIv;
     private TextView toolbarTitle;
@@ -53,32 +56,18 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
     private TextView cancelWatermarkTv;
     private Toolbar toolbar;
 
-    private OnCloseActionInterface onCloseActionInterface;
-    private OrdersApiViewModel ordersApiViewModel;
     private OrdersSpecialistApiResponseModel.ResultBean resultBean;
     private ChangeTitleInterface changeTitleInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private OrdersCustomView faxNumberOcv;
     private OrdersCustomView faxStatusOcv;
-    private String doctorGuid;
+    private String doctorGuid, userGuid;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         changeTitleInterface = (ChangeTitleInterface) getActivity();
-        onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
-        ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel.isSuccess()) {
-                        onCloseActionInterface.onClose(false);
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -155,6 +144,7 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
             resultBean = (OrdersSpecialistApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.ORDER_DETAIL);
 
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+            userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
 
             CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
@@ -174,43 +164,59 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
             }
 
             if (resultBean != null) {
-                if (resultBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
-                    cancelView.setVisibility(View.GONE);
-                    cancelWatermarkTv.setVisibility(View.VISIBLE);
-                    toolbar.getMenu().clear();
-                }
-                if (resultBean.getStatus().equals(OrderStatus.STATUS_FAILED) || resultBean.getFaxes().size() > 0) {
-                    toolbar.getMenu().removeItem(R.id.send_fax_menu);
-                }
+                setData(resultBean);
+            } else {
+                int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
 
-                if (resultBean.getFaxes() != null &&
-                        resultBean.getFaxes().size() > 0) {
-                    faxNumberOcv.setTitleTv(resultBean.getFaxes().get(0).getFax_number());
-                    faxStatusOcv.setTitleTv(resultBean.getFaxes().get(0).getStatus());
+                getOrdersDetail(userGuid, doctorGuid, new ArrayList<>(Arrays.asList(id)), true);
+            }
+        }
+    }
 
-                    faxNumberOcv.setVisibility(View.VISIBLE);
-                    faxStatusOcv.setVisibility(View.VISIBLE);
-                } else {
-                    faxNumberOcv.setVisibility(View.GONE);
-                    faxStatusOcv.setVisibility(View.GONE);
-                }
+    @Override
+    public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
+        if (idListApiResponseModel != null && idListApiResponseModel.getSpecialists() != null && !idListApiResponseModel.getSpecialists().isEmpty()) {
+            resultBean = idListApiResponseModel.getSpecialists().get(0);
+            setData(resultBean);
+        }
+    }
 
-                if (resultBean.getDetail() != null) {
-                    reasonOcv.setTitleTv(resultBean.getDetail().getDescription());
+    private void setData(OrdersSpecialistApiResponseModel.ResultBean resultBean) {
+        if (resultBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
+            cancelView.setVisibility(View.GONE);
+            cancelWatermarkTv.setVisibility(View.VISIBLE);
+            toolbar.getMenu().clear();
+        }
+        if (resultBean.getStatus().equals(OrderStatus.STATUS_FAILED) || resultBean.getFaxes().size() > 0) {
+            toolbar.getMenu().removeItem(R.id.send_fax_menu);
+        }
 
-                    referralOcv.setTitleTv(resultBean.getDetail().getCopy_to().getName());
-                    referralOcv.setSubtitleTv(resultBean.getDetail().getCopy_to().getAddress());
+        if (resultBean.getFaxes() != null &&
+                resultBean.getFaxes().size() > 0) {
+            faxNumberOcv.setTitleTv(resultBean.getFaxes().get(0).getFax_number());
+            faxStatusOcv.setTitleTv(resultBean.getFaxes().get(0).getStatus());
 
-                    if (resultBean.getUserDetailMap() != null && resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()) != null) {
-                        referredOcv.setTitleTv(resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()).getDoctorDisplayName());
-                        referredOcv.setSubtitleTv(resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()).getDoctorSpecialist());
+            faxNumberOcv.setVisibility(View.VISIBLE);
+            faxStatusOcv.setVisibility(View.VISIBLE);
+        } else {
+            faxNumberOcv.setVisibility(View.GONE);
+            faxStatusOcv.setVisibility(View.GONE);
+        }
 
-                        toolbarTitle.setText(resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()).getDoctorDisplayName());
+        if (resultBean.getDetail() != null) {
+            reasonOcv.setTitleTv(resultBean.getDetail().getDescription());
 
-                        patientOcv.setTitleTv(resultBean.getUserDetailMap().get(resultBean.getPatient().getUser_guid()).getUserDisplay_name());
-                        patientOcv.setSubtitleTv(resultBean.getUserDetailMap().get(resultBean.getPatient().getUser_guid()).getDob());
-                    }
-                }
+            referralOcv.setTitleTv(resultBean.getDetail().getCopy_to().getName());
+            referralOcv.setSubtitleTv(resultBean.getDetail().getCopy_to().getAddress());
+
+            if (resultBean.getUserDetailMap() != null && resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()) != null) {
+                referredOcv.setTitleTv(resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()).getDoctorDisplayName());
+                referredOcv.setSubtitleTv(resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()).getDoctorSpecialist());
+
+                toolbarTitle.setText(resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid()).getDoctorDisplayName());
+
+                patientOcv.setTitleTv(resultBean.getUserDetailMap().get(resultBean.getPatient().getUser_guid()).getUserDisplay_name());
+                patientOcv.setSubtitleTv(resultBean.getUserDetailMap().get(resultBean.getPatient().getUser_guid()).getDob());
             }
         }
     }
@@ -219,26 +225,10 @@ public class SpecialistDetailViewFragment extends BaseFragment implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
-                onCloseActionInterface.onClose(false);
+                onBackPressed();
                 break;
             case R.id.cancel_tv:
-                Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps),
-                        getString(R.string.cancel_prescription_order),
-                        getString(R.string.yes),
-                        getString(R.string.no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelOrder(OrderConstant.ORDER_REFERRALS, resultBean.getReferral_id(), doctorGuid);
-                                dialog.dismiss();
-
-                            }
-                        }, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                cancelOrder(OrderConstant.ORDER_REFERRALS, resultBean.getReferral_id(), doctorGuid);
                 break;
         }
     }

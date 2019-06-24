@@ -1,9 +1,6 @@
 package com.thealer.telehealer.views.home.orders.miscellaneous;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,29 +15,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.miscellaneous.MiscellaneousApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
-import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
  * Created by Aswin on 13,March,2019
  */
-public class MiscellaneousDetailViewFragment extends BaseFragment implements View.OnClickListener {
+public class MiscellaneousDetailViewFragment extends OrdersBaseFragment implements View.OnClickListener {
     private OrdersCustomView patientOcv;
     private OrdersCustomView doctorOcv;
     private OrdersCustomView notesOcv;
@@ -55,29 +51,15 @@ public class MiscellaneousDetailViewFragment extends BaseFragment implements Vie
 
     private MiscellaneousApiResponseModel.ResultBean resultBean;
     private ShowSubFragmentInterface showSubFragmentInterface;
-    private OnCloseActionInterface onCloseActionInterface;
-    private OrdersApiViewModel ordersApiViewModel;
     private AttachObserverInterface attachObserverInterface;
-    private String doctorGuid;
+    private String doctorGuid, userGuid;
+    private CommonUserApiResponseModel patientDetail, doctorDetail;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         attachObserverInterface = (AttachObserverInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
-        onCloseActionInterface = (OnCloseActionInterface) getActivity();
-
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
-        ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel.isSuccess()) {
-                        onCloseActionInterface.onClose(false);
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -144,9 +126,10 @@ public class MiscellaneousDetailViewFragment extends BaseFragment implements Vie
         if (getArguments() != null) {
             resultBean = (MiscellaneousApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.ORDER_DETAIL);
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+            userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
 
-            CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
-            CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
 
             HashMap<String, CommonUserApiResponseModel> userDetailMap = new HashMap<>();
             if (patientDetail != null) {
@@ -163,52 +146,52 @@ public class MiscellaneousDetailViewFragment extends BaseFragment implements Vie
             }
 
             if (resultBean != null) {
-                if (resultBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
-                    cancelLl.setVisibility(View.GONE);
-                    cancelWatermarkTv.setVisibility(View.VISIBLE);
-                    toolbar.getMenu().clear();
-                }
-                notesOcv.setTitleTv(resultBean.getDetail().getNotes());
-
-                patientDetail = resultBean.getUserDetailMap().get(resultBean.getPatient().getUser_guid());
-                if (patientDetail != null) {
-                    patientOcv.setTitleTv(patientDetail.getDisplayName());
-                    patientOcv.setSubtitleTv(patientDetail.getDisplayInfo());
-                }
-
-                doctorDetail = resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid());
-                if (doctorDetail != null) {
-                    doctorOcv.setTitleTv(doctorDetail.getDisplayName());
-                    doctorOcv.setSubtitleTv(doctorDetail.getDisplayInfo());
-                }
+                setData(resultBean);
+            } else {
+                int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
+                getOrdersDetail(userGuid, doctorGuid, new ArrayList<>(Arrays.asList(id)), true);
             }
         }
+    }
+
+    @Override
+    public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
+        if (idListApiResponseModel != null && idListApiResponseModel.getMiscellaneous() != null && !idListApiResponseModel.getMiscellaneous().isEmpty()) {
+            resultBean = idListApiResponseModel.getMiscellaneous().get(0);
+            setData(resultBean);
+        }
+    }
+
+    private void setData(MiscellaneousApiResponseModel.ResultBean resultBean) {
+        if (resultBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
+            cancelLl.setVisibility(View.GONE);
+            cancelWatermarkTv.setVisibility(View.VISIBLE);
+            toolbar.getMenu().clear();
+        }
+        notesOcv.setTitleTv(resultBean.getDetail().getNotes());
+
+        patientDetail = resultBean.getUserDetailMap().get(resultBean.getPatient().getUser_guid());
+        if (patientDetail != null) {
+            patientOcv.setTitleTv(patientDetail.getDisplayName());
+            patientOcv.setSubtitleTv(patientDetail.getDisplayInfo());
+        }
+
+        doctorDetail = resultBean.getUserDetailMap().get(resultBean.getDoctor().getUser_guid());
+        if (doctorDetail != null) {
+            doctorOcv.setTitleTv(doctorDetail.getDisplayName());
+            doctorOcv.setSubtitleTv(doctorDetail.getDisplayInfo());
+        }
+
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
-                onCloseActionInterface.onClose(false);
+                onBackPressed();
                 break;
             case R.id.cancel_tv:
-                Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps),
-                        getString(R.string.cancel_miscellaneous_order),
-                        getString(R.string.yes),
-                        getString(R.string.no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelOrder(OrderConstant.ORDER_MISC, resultBean.getReferral_id(), doctorGuid);
-                                dialog.dismiss();
-
-                            }
-                        }, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                cancelOrder(OrderConstant.ORDER_MISC, resultBean.getReferral_id(), doctorGuid);
                 break;
         }
     }

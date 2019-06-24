@@ -128,7 +128,7 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
                 documentsApiResponseModel.setResult(resultBeanList);
 
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(Constants.USER_DETAIL, documentsApiResponseModel);
+                bundle.putSerializable(ArgumentKeys.DOCUMENT_DETAIL, documentsApiResponseModel);
                 bundle.putBoolean(Constants.IS_FROM_HOME, isFromHome);
                 bundle.putInt(Constants.SELECTED_ITEM, resultBeanList.get(i).getUser_file_id());
 

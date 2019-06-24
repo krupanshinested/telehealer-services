@@ -181,7 +181,12 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                 Utils.setImageWithGlide(activity, itemHolder.userAvatarCiv, avatar, activity.getDrawable(R.drawable.profile_placeholder), true, true);
                 itemHolder.userNameTv.setText(userName);
-                itemHolder.timeTv.setText(Utils.getFormatedTime(resultBean.getUpdated_at()));
+
+                time = resultBean.getStart_time();
+                if (time == null)
+                    time = resultBean.getUpdated_at();
+
+                itemHolder.timeTv.setText(Utils.getFormatedTime(time));
 
                 if (isChat) {
                     itemHolder.durationTv.setVisibility(View.GONE);
