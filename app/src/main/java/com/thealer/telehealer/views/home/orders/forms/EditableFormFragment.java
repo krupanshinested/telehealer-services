@@ -47,6 +47,7 @@ import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -61,18 +62,18 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
     private TextView toolbarTitle;
     private LinearLayout editableFormRootLl;
     private Button submitBtn;
-
-    private OrdersUserFormsApiResponseModel formsApiResponseModel;
-    private DynamicFormDataBean dynamicFormDataBean;
-
-    private OnCloseActionInterface onCloseActionInterface;
-    private AttachObserverInterface attachObserverInterface;
-    private FormsApiViewModel formsApiViewModel;
     private TextView scoreTv;
     private TextView learnAboutScoreTv;
     private ConstraintLayout scoreViewCl;
+
     private boolean isEditable = true;
     private boolean hideToolbar, isUpdated;
+
+    private OrdersUserFormsApiResponseModel formsApiResponseModel;
+    private DynamicFormDataBean dynamicFormDataBean;
+    private OnCloseActionInterface onCloseActionInterface;
+    private AttachObserverInterface attachObserverInterface;
+    private FormsApiViewModel formsApiViewModel;
 
     @Override
     public void onAttach(Context context) {
@@ -105,6 +106,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                 }
             }
         });
+
     }
 
     @Nullable
@@ -131,41 +133,64 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             hideToolbar = getArguments().getBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, false);
 
             if (formsApiResponseModel != null) {
-                if (hideToolbar) {
-                    toolbar.setVisibility(View.GONE);
-                    ((ChangeTitleInterface) getActivity()).onTitleChange(formsApiResponseModel.getName());
-                } else {
-                    toolbarTitle.setText(formsApiResponseModel.getName());
-                }
+                setData(formsApiResponseModel);
+            } else {
+                int formid = getArguments().getInt(ArgumentKeys.ORDER_ID);
+                String userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
+                String doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
 
-                setScore(formsApiResponseModel.getData().getDisplayScore());
-
-                if (formsApiResponseModel.getStatus() == null || formsApiResponseModel.getStatus().equals(OrderStatus.STATUS_COMPLETED) ||
-                        !UserType.isUserPatient()) {
-                    isEditable = false;
-
-                    if (formsApiResponseModel.getFilled_form_url() == null) {
-                        submitBtn.setVisibility(View.GONE);
-                    } else {
-                        submitBtn.setVisibility(View.VISIBLE);
-                        submitBtn.setText(getString(R.string.print));
-                    }
-                }
-
-                if (formsApiResponseModel.getData() != null && formsApiResponseModel.getData().getData() != null &&
-                        !formsApiResponseModel.getData().getData().isEmpty()) {
-                    dynamicFormDataBean.getData().addAll(formsApiResponseModel.getData().getData());
-                    dynamicFormDataBean.setScore_details(formsApiResponseModel.getData().getScore_details());
-                    dynamicFormDataBean.setTotal_score(formsApiResponseModel.getData().getTotal_score());
-
-                    addDynamicFields();
-                }
+                getFormsDetail(userGuid, doctorGuid, new ArrayList<>(Arrays.asList(formid)), true);
             }
         }
 
         submitBtn.setOnClickListener(this);
         backIv.setOnClickListener(this);
         learnAboutScoreTv.setOnClickListener(this);
+    }
+
+    @Override
+    public void onDetailReceived(ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+        if (baseApiResponseModels != null) {
+            ArrayList<OrdersUserFormsApiResponseModel> arrayList = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
+            if (!arrayList.isEmpty()) {
+                formsApiResponseModel = arrayList.get(0);
+                setData(formsApiResponseModel);
+            }
+        }
+    }
+
+    private void setData(OrdersUserFormsApiResponseModel formsApiResponseModel) {
+        if (hideToolbar) {
+            toolbar.setVisibility(View.GONE);
+            ((ChangeTitleInterface) getActivity()).onTitleChange(formsApiResponseModel.getName());
+        } else {
+            toolbarTitle.setText(formsApiResponseModel.getName());
+        }
+
+        if (formsApiResponseModel.isCompleted())
+            setScore(formsApiResponseModel.getData().getDisplayScore());
+
+        if (formsApiResponseModel.getStatus() == null || formsApiResponseModel.getStatus().equals(OrderStatus.STATUS_COMPLETED) ||
+                !UserType.isUserPatient()) {
+            isEditable = false;
+
+            if (formsApiResponseModel.getFilled_form_url() == null) {
+                submitBtn.setVisibility(View.GONE);
+            } else {
+                submitBtn.setVisibility(View.VISIBLE);
+                submitBtn.setText(getString(R.string.print));
+            }
+        }
+
+        if (formsApiResponseModel.getData() != null && formsApiResponseModel.getData().getData() != null &&
+                !formsApiResponseModel.getData().getData().isEmpty()) {
+            dynamicFormDataBean.getData().addAll(formsApiResponseModel.getData().getData());
+            dynamicFormDataBean.setScore_details(formsApiResponseModel.getData().getScore_details());
+            dynamicFormDataBean.setTotal_score(formsApiResponseModel.getData().getTotal_score());
+
+            addDynamicFields();
+        }
+
     }
 
     private void setScore(String score) {
@@ -481,9 +506,10 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                 }
                 break;
             case R.id.learn_about_score_tv:
-
                 AboutScoreBottomSheet aboutScoreBottomSheet = new AboutScoreBottomSheet();
-                aboutScoreBottomSheet.setArguments(getArguments());
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(ArgumentKeys.FORM_DETAIL, formsApiResponseModel);
+                aboutScoreBottomSheet.setArguments(bundle);
                 aboutScoreBottomSheet.show(getChildFragmentManager(), aboutScoreBottomSheet.getClass().getSimpleName());
                 break;
         }

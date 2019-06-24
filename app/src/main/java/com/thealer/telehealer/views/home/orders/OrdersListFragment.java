@@ -3,17 +3,23 @@ package com.thealer.telehealer.views.home.orders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.VitalsOrdersListAdapter;
 
 import java.util.ArrayList;
@@ -27,8 +33,11 @@ public class OrdersListFragment extends BaseFragment {
     private RecyclerView listRv;
     private List<String> typesList = new ArrayList<>();
     private List<Integer> imageList = new ArrayList<>();
-    private RecyclerView vitalsOrdersListRv;
     private FloatingActionButton addFab;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
 
     @Nullable
     @Override
@@ -43,6 +52,10 @@ public class OrdersListFragment extends BaseFragment {
         addFab.hide();
         listRv = (RecyclerView) view.findViewById(R.id.vitals_orders_list_rv);
         listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
 
         if (getArguments() != null) {
 
@@ -50,7 +63,7 @@ public class OrdersListFragment extends BaseFragment {
             imageList.clear();
 
             String[] ordersTypes = {OrderConstant.ORDER_PRESCRIPTIONS, OrderConstant.ORDER_REFERRALS, OrderConstant.ORDER_LABS, OrderConstant.ORDER_RADIOLOGY, OrderConstant.ORDER_FORM, OrderConstant.ORDER_MISC};
-            Integer[] ordersImages = {R.drawable.ic_orders_prescriptions, R.drawable.ic_orders_referrals, R.drawable.ic_orders_labs, R.drawable.ic_orders_radiology, R.drawable.ic_orders_forms, R.drawable.ic_orders_documents};
+            Integer[] ordersImages = {R.drawable.ic_orders_prescriptions, R.drawable.ic_orders_referrals, R.drawable.ic_orders_labs, R.drawable.ic_orders_radiology, R.drawable.ic_orders_forms, R.drawable.ic_orders_misc};
 
             typesList.addAll(Arrays.asList(ordersTypes));
             imageList.addAll(Arrays.asList(ordersImages));
@@ -63,6 +76,17 @@ public class OrdersListFragment extends BaseFragment {
 
             if (isFromHome && !UserType.isUserPatient()) {
                 typesList.remove(OrderConstant.ORDER_DOCUMENTS);
+            }
+
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                toolbarTitle.setText(getString(R.string.orders));
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((OnCloseActionInterface) getActivity()).onClose(false);
+                    }
+                });
             }
 
             VitalsOrdersListAdapter ordersListAdapter = new VitalsOrdersListAdapter(getActivity(), typesList, imageList, Constants.VIEW_ORDERS, getArguments());

@@ -41,29 +41,44 @@
                 app:layout_constraintTop_toBottomOf="@+id/title_tv" />
 
             <TextView
-                android:id="@+id/column1_tv"
+                android:id="@+id/score_title_tv"
                 style="@style/text_title"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_default"
-                android:gravity="center|left"
+                android:gravity="center"
                 android:padding="@dimen/padding_default"
-                app:layout_constraintEnd_toStartOf="@+id/column2_tv"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view"
                 tools:text="@string/dummy_text" />
 
             <TextView
+                android:id="@+id/column1_tv"
+                style="@style/text_sub_title_bold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_default"
+                android:gravity="center|left"
+                android:padding="@dimen/padding_default"
+                android:textColor="@color/colorBlack"
+                app:layout_constraintEnd_toStartOf="@+id/column2_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/score_title_tv"
+                tools:text="@string/dummy_text" />
+
+            <TextView
                 android:id="@+id/column2_tv"
-                style="@style/text_title"
+                style="@style/text_sub_title_bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/margin_default"
                 android:gravity="center|right"
                 android:padding="@dimen/padding_default"
+                android:textColor="@color/colorBlack"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/column1_tv"
-                app:layout_constraintTop_toBottomOf="@+id/view"
+                app:layout_constraintTop_toBottomOf="@+id/score_title_tv"
                 tools:text="@string/dummy_text" />
 
             <LinearLayout

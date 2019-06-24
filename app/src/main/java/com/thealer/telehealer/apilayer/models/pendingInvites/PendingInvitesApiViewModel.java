@@ -8,7 +8,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
-import com.thealer.telehealer.views.notification.NotificationListAdapter;
+import com.thealer.telehealer.views.notification.NewNotificationListAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +27,8 @@ public class PendingInvitesApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, Object> params = new HashMap<>();
-                    params.put(ApiInterface.TYPE, NotificationListAdapter.REQUEST_TYPE_CONNECTION);
-                    params.put(ApiInterface.STATUS, NotificationListAdapter.REQUEST_STATUS_OPEN);
+                    params.put(ApiInterface.TYPE, NewNotificationListAdapter.REQUEST_TYPE_CONNECTION);
+                    params.put(ApiInterface.STATUS, NewNotificationListAdapter.REQUEST_STATUS_OPEN);
 
                     if (isRequestor)
                         params.put("requestor", isRequestor);

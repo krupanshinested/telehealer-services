@@ -115,6 +115,8 @@ public class ArgumentKeys {
     public static final String SELECTED_LIST_ID = "selectedListId";
     public static final String DISABLE_CANCEL = "disableCancel";
     public static final String IS_SHOW_HELP = "isShowHelp";
+    public static final String IS_GET_TYPE = "isGetType";
+    public static final String SHOW_FAVORITES = "showFavorites";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
@@ -187,6 +189,6 @@ public class ArgumentKeys {
 
     public static final String TRIGGER_ANSWER = "TRIGGER_ANSWER";
     public static final String FROM_CALL = "FROM_CALL";
-
+    public static final String DOCUMENT_DETAIL = "document_detail";
 
 }

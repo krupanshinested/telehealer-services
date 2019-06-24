@@ -33,6 +33,9 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by Aswin on 29,November,2018
  */
@@ -52,6 +55,7 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
     private ShowSubFragmentInterface showSubFragmentInterface;
     private AppBarLayout appbarLayout;
     private ImageView backgroundIv;
+    private int selectedId = -1;
 
     @Override
     public void onAttach(Context context) {
@@ -68,6 +72,18 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
                     if (baseApiResponseModel.isSuccess()) {
                         onCloseActionInterface.onClose(false);
                     }
+                }
+            }
+        });
+
+        ordersApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                if (baseApiResponseModels != null) {
+                    ArrayList<DocumentsApiResponseModel.ResultBean> arrayList = (ArrayList<DocumentsApiResponseModel.ResultBean>) (Object) baseApiResponseModels;
+                    documentsApiResponseModel = new DocumentsApiResponseModel();
+                    documentsApiResponseModel.setResult(arrayList);
+                    setData(documentsApiResponseModel);
                 }
             }
         });
@@ -95,6 +111,12 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
         backgroundIv = (ImageView) view.findViewById(R.id.background_iv);
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCloseActionInterface.onClose(false);
+            }
+        });
 
         if (getArguments() != null) {
 
@@ -104,51 +126,53 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
                 toolbar.inflateMenu(R.menu.documents_menu);
                 toolbar.setOnMenuItemClickListener(this);
             }
+            selectedId = getArguments().getInt(Constants.SELECTED_ITEM);
 
-            documentsApiResponseModel = (DocumentsApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
-            int selectedId = getArguments().getInt(Constants.SELECTED_ITEM);
-
-            documentsPagerAdapter = new DocumentsPagerAdapter(getActivity(), documentsApiResponseModel.getResult());
-
-            int position = 0;
-            for (int i = 0; i < documentsApiResponseModel.getResult().size(); i++) {
-                if (documentsApiResponseModel.getResult().get(i).getUser_file_id() == selectedId) {
-                    position = i;
-                    break;
-                }
+            documentsApiResponseModel = (DocumentsApiResponseModel) getArguments().getSerializable(ArgumentKeys.DOCUMENT_DETAIL);
+            if (documentsApiResponseModel != null) {
+                setData(documentsApiResponseModel);
+            } else {
+                int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
+                ordersApiViewModel.getDocumentsDetail(null, null, new ArrayList<>(Arrays.asList(id)), true);
             }
-
-            viewPager.setAdapter(documentsPagerAdapter);
-            viewPager.setCurrentItem(position);
-            setPositionCount(position, documentsPagerAdapter.getCount());
-            setToolbarTitle(documentsApiResponseModel.getResult().get(position).getName());
-
-            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int i, float v, int i1) {
-
-                }
-
-                @Override
-                public void onPageSelected(int i) {
-                    setToolbarTitle(documentsApiResponseModel.getResult().get(i).getName());
-                    setPositionCount(i, documentsPagerAdapter.getCount());
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int i) {
-
-                }
-            });
-
-            backIv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onCloseActionInterface.onClose(false);
-                }
-            });
         }
 
+    }
+
+    private void setData(DocumentsApiResponseModel documentsApiResponseModel) {
+
+        documentsPagerAdapter = new DocumentsPagerAdapter(getActivity(), documentsApiResponseModel.getResult());
+
+        int position = 0;
+        for (int i = 0; i < documentsApiResponseModel.getResult().size(); i++) {
+            if (documentsApiResponseModel.getResult().get(i).getUser_file_id() == selectedId) {
+                position = i;
+                break;
+            }
+        }
+
+        viewPager.setAdapter(documentsPagerAdapter);
+        viewPager.setCurrentItem(position);
+        setPositionCount(position, documentsPagerAdapter.getCount());
+        setToolbarTitle(documentsApiResponseModel.getResult().get(position).getName());
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                setToolbarTitle(documentsApiResponseModel.getResult().get(i).getName());
+                setPositionCount(i, documentsPagerAdapter.getCount());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
     }
 
     private void setPositionCount(int i, int size) {

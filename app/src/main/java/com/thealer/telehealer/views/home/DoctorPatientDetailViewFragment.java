@@ -523,7 +523,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
 
             updateUserStatus(resultBean);
-            if (resultBean.getFavorite() != null) {
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_FAVORITES, false) && resultBean.getFavorite() != null) {
                 favoriteIv.setSelected(resultBean.getFavorite());
                 favoriteIv.setVisibility(View.VISIBLE);
                 favoriteIv.setOnClickListener(new View.OnClickListener() {
@@ -532,6 +532,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                         updateFavorites(resultBean.getUser_guid(), !favoriteIv.isSelected());
                     }
                 });
+            } else {
+                favoriteIv.setVisibility(View.GONE);
             }
 
             if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
@@ -693,6 +695,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             userDetailTab.setVisibility(View.GONE);
             actionBtn.setVisibility(View.VISIBLE);
             userDetailBnv.setVisibility(View.GONE);
+            favoriteIv.setVisibility(View.GONE);
             addFab.hide();
 
             actionBtn.setOnClickListener(new View.OnClickListener() {

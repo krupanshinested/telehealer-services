@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -17,7 +16,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
-import com.thealer.telehealer.common.CustomExpandableListView;
+import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -40,14 +39,14 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
  */
 public class NotificationListFragment extends BaseFragment {
 
-    private CustomExpandableListView notificationCelv;
+    private CustomRecyclerView notificationCrv;
 
     private AttachObserverInterface attachObserverInterface;
     private NotificationApiViewModel notificationApiViewModel;
     private NotificationApiResponseModel notificationApiResponseModel;
 
     private int page = 1;
-    private NotificationListAdapter notificationListAdapter;
+    private NewNotificationListAdapter notificationListAdapter;
     private List<String> headerList = new ArrayList<>();
     private Map<String, List<NotificationApiResponseModel.ResultBean.RequestsBean>> childList = new HashMap<>();
 
@@ -63,16 +62,27 @@ public class NotificationListFragment extends BaseFragment {
                 new Observer<BaseApiResponseModel>() {
                     @Override
                     public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                        notificationCelv.hideProgressBar();
-                        notificationCelv.getSwipeLayout().setRefreshing(false);
+                        notificationCrv.hideProgressBar();
+                        notificationCrv.getSwipeLayout().setRefreshing(false);
                         if (baseApiResponseModel != null) {
                             if (baseApiResponseModel instanceof NotificationApiResponseModel) {
                                 notificationApiResponseModel = (NotificationApiResponseModel) baseApiResponseModel;
-                                updateNotificationList();
+//                                updateNotificationList();
+
+                                if (notificationApiResponseModel.getResult().getCount() > 0) {
+                                    notificationListAdapter.setData(notificationApiResponseModel.getResult().getRequests(), page);
+                                    notificationCrv.showOrhideEmptyState(false);
+                                } else {
+                                    notificationCrv.showOrhideEmptyState(true);
+                                }
 
                                 if (notificationApiResponseModel.getResult().getUnread_count() > 0) {
                                     updateNotificationStatus();
                                 }
+
+                                notificationCrv.setNextPage(notificationApiResponseModel.getNext());
+                                notificationCrv.setScrollable(true);
+
                             } else if (baseApiResponseModel instanceof NotificationRequestUpdateResponseModel) {
                                 if (baseApiResponseModel.isSuccess()) {
                                     page = 1;
@@ -120,22 +130,16 @@ public class NotificationListFragment extends BaseFragment {
             childList.put(date, list);
         }
 
-        notificationListAdapter.setData(headerList, childList, page);
+//        notificationListAdapter.setData(headerList, childList, page);
 
         if (headerList.size() > 0) {
-            notificationCelv.hideEmptyState();
-            expandList();
+            notificationCrv.hideEmptyState();
         }
-        notificationCelv.setTotalCount(notificationApiResponseModel.getCount() + headerList.size());
+        notificationCrv.setNextPage(notificationApiResponseModel.getNext());
 
-        notificationCelv.setScrollable(true);
+        notificationCrv.setScrollable(true);
     }
 
-    private void expandList() {
-        for (int i = 0; i < headerList.size(); i++) {
-            notificationCelv.getExpandableView().expandGroup(i);
-        }
-    }
 
     @Nullable
     @Override
@@ -146,47 +150,40 @@ public class NotificationListFragment extends BaseFragment {
     }
 
     private void initView(View view) {
-        notificationCelv = (CustomExpandableListView) view.findViewById(R.id.notification_celv);
-        notificationCelv.setEmptyState(EmptyViewConstants.EMPTY_NOTIFICATIONS);
-        notificationCelv.setScrollable(true);
+        notificationCrv = (CustomRecyclerView) view.findViewById(R.id.notification_crv);
+        notificationCrv.setEmptyState(EmptyViewConstants.EMPTY_NOTIFICATIONS);
+        notificationCrv.setScrollable(true);
 
-        notificationCelv.getExpandableView().setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                return true;
-            }
-        });
-
-        notificationCelv.setOnPaginateInterface(new OnPaginateInterface() {
+        notificationCrv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
             public void onPaginate() {
-                notificationCelv.setScrollable(false);
+                notificationCrv.setScrollable(false);
                 page = page + 1;
                 getNotification(false);
-                notificationCelv.showProgressBar();
+                notificationCrv.showProgressBar();
             }
         });
 
-        notificationCelv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+        notificationCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 page = 1;
                 getNotification(false);
-                notificationCelv.showProgressBar();
+                notificationCrv.showProgressBar();
             }
         });
 
-        notificationListAdapter = new NotificationListAdapter(getActivity());
-        notificationCelv.getExpandableView().setAdapter(notificationListAdapter);
+        notificationListAdapter = new NewNotificationListAdapter(getActivity());
+        notificationCrv.getRecyclerView().setAdapter(notificationListAdapter);
 
-        notificationCelv.setActionClickListener(new View.OnClickListener() {
+        notificationCrv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNotification(true);
             }
         });
 
-        notificationCelv.setErrorModel(this, notificationApiViewModel.getErrorModelLiveData());
+        notificationCrv.setErrorModel(this, notificationApiViewModel.getErrorModelLiveData());
     }
 
     private void getNotification(boolean isShowProgress) {

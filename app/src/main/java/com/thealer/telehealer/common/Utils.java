@@ -39,7 +39,6 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.util.Base64;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -242,6 +241,9 @@ public class Utils {
     }
 
     public static boolean isDateExpired(String date) {
+        if (date == null)
+            return true;
+
         try {
             DateFormat dateFormat = new SimpleDateFormat(defaultDateFormat, Locale.ENGLISH);
             Date inputDate = dateFormat.parse(date);
@@ -391,16 +393,18 @@ public class Utils {
     }
 
     public static String getFormatedTime(String updated_at) {
-        DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
-        dateFormat.setTimeZone(UtcTimezone);
+        if (updated_at != null) {
+            DateFormat dateFormat = new SimpleDateFormat(UTCFormat);
+            dateFormat.setTimeZone(UtcTimezone);
 
-        DateFormat returnFormat = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
-        returnFormat.setTimeZone(TimeZone.getDefault());
-        try {
-            Date date = dateFormat.parse(updated_at);
-            return returnFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            DateFormat returnFormat = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
+            returnFormat.setTimeZone(TimeZone.getDefault());
+            try {
+                Date date = dateFormat.parse(updated_at);
+                return returnFormat.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         return "";
     }
@@ -743,14 +747,14 @@ public class Utils {
     }
 
     @Nullable
-    public static Date convertUTCTOLocal(String dateStr,String pattern) {
+    public static Date convertUTCTOLocal(String dateStr, String pattern) {
         SimpleDateFormat df = new SimpleDateFormat(pattern, Locale.ENGLISH);
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
             Date date = df.parse(dateStr);
             df.setTimeZone(TimeZone.getDefault());
             String formattedDate = df.format(date);
-            return getDateFromString(formattedDate,pattern);
+            return getDateFromString(formattedDate, pattern);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
