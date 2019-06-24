@@ -12,7 +12,7 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
-import com.thealer.telehealer.views.notification.NotificationListAdapter;
+import com.thealer.telehealer.views.notification.NewNotificationListAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,7 +85,7 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     switch (type){
-                                        case NotificationListAdapter.REQUEST_TYPE_APPOINTMENT:
+                                        case NewNotificationListAdapter.REQUEST_TYPE_APPOINTMENT:
                                             if (isAccept){
                                                 EventRecorder.recordNotification("APPOINTMENT_ACCEPTED");
                                                 PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getScheduleAcceptPayload(toGuid, startDate), null);
@@ -94,7 +94,7 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                                                 PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getScheduleRejectPayload(toGuid, startDate), null);
                                             }
                                             break;
-                                        case NotificationListAdapter.REQUEST_TYPE_CONNECTION:
+                                        case NewNotificationListAdapter.REQUEST_TYPE_CONNECTION:
                                             if (isAccept){
                                                 EventRecorder.recordNotification("CONNECTION_ACCEPTED");
                                                 EventRecorder.recordConnection("CONNECTION_ACCEPTED");

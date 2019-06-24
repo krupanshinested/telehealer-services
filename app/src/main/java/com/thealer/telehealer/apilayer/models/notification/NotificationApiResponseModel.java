@@ -60,6 +60,7 @@ public class NotificationApiResponseModel extends PaginationCommonResponseModel 
             private boolean requestor_read_status;
             private boolean requestee_read_status;
             private String type;
+            private Integer entity_id;
             private String status;
             private boolean is_requestee;
             private String message;
@@ -99,6 +100,14 @@ public class NotificationApiResponseModel extends PaginationCommonResponseModel 
 
             public void setType(String type) {
                 this.type = type;
+            }
+
+            public Integer getEntity_id() {
+                return entity_id;
+            }
+
+            public void setEntity_id(Integer entity_id) {
+                this.entity_id = entity_id;
             }
 
             public String getStatus() {

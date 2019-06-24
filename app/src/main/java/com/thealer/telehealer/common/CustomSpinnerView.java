@@ -69,7 +69,7 @@ public class CustomSpinnerView extends ConstraintLayout {
     }
 
     public void setSpinnerData(Context context, List<String> spinnerList, AdapterView.OnItemSelectedListener itemSelectedListener) {
-        ArrayAdapter adapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, spinnerList);
+        ArrayAdapter adapter = new ArrayAdapter(context, R.layout.custom_spinner_item, spinnerList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(itemSelectedListener);

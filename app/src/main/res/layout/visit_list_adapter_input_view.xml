@@ -2,7 +2,8 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <EditText
         android:id="@+id/input_et"
@@ -11,6 +12,8 @@
         android:layout_margin="@dimen/margin_default"
         android:background="@color/card_view_background"
         android:padding="8dp"
+        tools:text="@string/dummy_text"
+        android:textColor="@color/colorBlack"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
