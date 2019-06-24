@@ -44,7 +44,7 @@ import java.util.HashMap;
  * Created by rsekar on 1/22/19.
  */
 
-public class CardInformationFragment extends BaseFragment {
+public class CardInformationFragment extends BaseFragment implements View.OnClickListener {
 
     private TextView card_tv, expiration_tv;
     private ImageView card_iv;
@@ -61,7 +61,7 @@ public class CardInformationFragment extends BaseFragment {
     private ImageView backIv;
     private TextView toolbarTitle;
     private TextView nextTv;
-    private ImageView closeIv;
+    private ImageView addIv;
 
     private boolean isUserActionOccured = false;
     private boolean forCheckout = false;
@@ -104,7 +104,7 @@ public class CardInformationFragment extends BaseFragment {
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         nextTv = (TextView) view.findViewById(R.id.next_tv);
-        closeIv = (ImageView) view.findViewById(R.id.close_iv);
+        addIv = (ImageView) view.findViewById(R.id.close_iv);
         card_tv = view.findViewById(R.id.card_tv);
         expiration_tv = view.findViewById(R.id.expiration_tv);
         card_iv = view.findViewById(R.id.card_iv);
@@ -117,6 +117,9 @@ public class CardInformationFragment extends BaseFragment {
         recyclerEmptyStateView.setVisibility(View.GONE);
         main_container.setVisibility(View.GONE);
         brainTreeViewModel.getBrainTreeCustomer();
+
+        addIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_white_24dp));
+        nextTv.setText(getString(R.string.edit));
 
         if (getArguments() != null) {
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
@@ -132,24 +135,8 @@ public class CardInformationFragment extends BaseFragment {
         }
 
         nextTv.setVisibility(View.GONE);
-        nextTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getArguments() == null) {
-                    return;
-                }
-
-                BrainTreeCustomer customer = (BrainTreeCustomer) getArguments().getSerializable(ArgumentKeys.BRAIN_TREE_CUSTOMER);
-
-                HashMap<String, String> param = new HashMap<>();
-                if (customer != null && customer.getPaymentMethods() != null) {
-                    param.put("customerId", UserDetailPreferenceManager.getUser_guid());
-                    param.put("verifyCard", "true");
-                }
-                isUserActionOccured = true;
-                brainTreeViewModel.getBrainTreeClientToken(param);
-            }
-        });
+        nextTv.setOnClickListener(this);
+        addIv.setOnClickListener(this);
     }
 
     private void addObserver() {
@@ -158,7 +145,7 @@ public class CardInformationFragment extends BaseFragment {
         brainTreeViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                Log.v("CardInformation","base api response model observer");
+                Log.v("CardInformation", "base api response model observer");
 
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel instanceof BrainTreeClientToken) {
@@ -171,7 +158,7 @@ public class CardInformationFragment extends BaseFragment {
 
                         BrainTreeCustomer brainTreeCustomer = (BrainTreeCustomer) baseApiResponseModel;
 
-                        getArguments().putSerializable(ArgumentKeys.BRAIN_TREE_CUSTOMER,brainTreeCustomer);
+                        getArguments().putSerializable(ArgumentKeys.BRAIN_TREE_CUSTOMER, brainTreeCustomer);
 
 
                         if (brainTreeCustomer.getCreditCards().size() > 0) {
@@ -200,7 +187,7 @@ public class CardInformationFragment extends BaseFragment {
                         brainTreeViewModel.getBrainTreeCustomer();
                     }
                 } else {
-                    Log.v("CardInformation","base api response model observer null");
+                    Log.v("CardInformation", "base api response model observer null");
                 }
             }
         });
@@ -209,7 +196,7 @@ public class CardInformationFragment extends BaseFragment {
         brainTreeViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-                Log.v("CardInformation","error observer");
+                Log.v("CardInformation", "error observer");
                 if (forCheckout) {
                     brainTreeViewModel.getBrainTreeCustomer();
                     forCheckout = false;
@@ -241,15 +228,11 @@ public class CardInformationFragment extends BaseFragment {
 
     private void setTopButtonType(boolean isAdd) {
         if (isAdd) {
-            nextTv.setText("");
-            nextTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.add_drawable, 0, 0, 0);
-            nextTv.setScaleX(0.5f);
-            nextTv.setScaleY(0.5f);
+            nextTv.setVisibility(View.GONE);
+            addIv.setVisibility(View.VISIBLE);
         } else {
-            nextTv.setText(getString(R.string.edit));
-            nextTv.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            nextTv.setScaleX(1.0f);
-            nextTv.setScaleY(1.0f);
+            nextTv.setVisibility(View.VISIBLE);
+            addIv.setVisibility(View.GONE);
         }
     }
 
@@ -258,7 +241,7 @@ public class CardInformationFragment extends BaseFragment {
         switch (requestCode) {
             case CallPlacingActivity.BRAIN_TREE_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    Log.v("CardInformation","brain tree ok");
+                    Log.v("CardInformation", "brain tree ok");
                     DropInResult result = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
 
                     HashMap<String, Object> param = new HashMap<>();
@@ -270,14 +253,30 @@ public class CardInformationFragment extends BaseFragment {
                     param.put("savePayment", true);
                     forCheckout = true;
                     brainTreeViewModel.checkOutBrainTree(param);
-                    Log.v("CardInformation","brain tree called checkout");
+                    Log.v("CardInformation", "brain tree called checkout");
                 } else if (resultCode == Activity.RESULT_CANCELED) {
-                   break;
+                    break;
                 } else {
                     break;
                 }
-             break;
+                break;
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        if (getArguments() == null) {
+            return;
+        }
+
+        BrainTreeCustomer customer = (BrainTreeCustomer) getArguments().getSerializable(ArgumentKeys.BRAIN_TREE_CUSTOMER);
+
+        HashMap<String, String> param = new HashMap<>();
+        if (customer != null && customer.getPaymentMethods() != null) {
+            param.put("customerId", UserDetailPreferenceManager.getUser_guid());
+            param.put("verifyCard", "true");
+        }
+        isUserActionOccured = true;
+        brainTreeViewModel.getBrainTreeClientToken(param);
+    }
 }

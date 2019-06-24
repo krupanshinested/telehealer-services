@@ -204,7 +204,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                     statusIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.app_gradient_start)));
                 }
             }
-            if (UserType.isUserAssistant()) {
+            if (!UserType.isUserPatient()) {
                 key = ordersCommonResultResponseModel.getPatient().getUser_guid();
             } else {
                 if (ordersCommonResultResponseModel.getDoctor() != null) {
@@ -229,7 +229,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
             }
 
-            if (UserType.isUserAssistant()) {
+            if (!UserType.isUserPatient()) {
                 key = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getPatient().getUser_guid();
             } else {
                 if (ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getDoctor() != null) {

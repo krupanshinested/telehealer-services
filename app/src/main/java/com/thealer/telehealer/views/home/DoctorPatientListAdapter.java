@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Animation.CustomUserListItemView;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
@@ -108,6 +109,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     private void proceed(CommonUserApiResponseModel resultBean) {
         bundle.putSerializable(Constants.USER_DETAIL, resultBean);
         if (!isDietView) {
+            bundle.putBoolean(ArgumentKeys.SHOW_FAVORITES, true);
             onActionCompleteInterface.onCompletionResult(RequestID.REQ_SHOW_DETAIL_VIEW, true, bundle);
         } else {
             ShowSubFragmentInterface showSubFragmentInterface = (ShowSubFragmentInterface) fragmentActivity;

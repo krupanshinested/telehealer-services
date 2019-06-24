@@ -129,7 +129,7 @@ public class VisitOrdersAdapterModel implements Serializable {
         } else if (getXrays() != null) {
             return R.drawable.ic_orders_radiology;
         } else if (getMiscellaneous() != null) {
-            return R.drawable.ic_orders_documents;
+            return R.drawable.ic_orders_misc;
         } else if (getForms() != null) {
             return R.drawable.ic_orders_forms;
         }

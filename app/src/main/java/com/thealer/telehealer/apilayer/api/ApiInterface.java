@@ -64,6 +64,7 @@ import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -248,10 +249,10 @@ public interface ApiInterface {
     @GET("api/vitals")
     Observable<ArrayList<VitalsApiResponseModel>> getVitalDetail(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
 
-    @GET("api/referrals/labs")
+    @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersLabApiResponseModel> getUserLabOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/referrals/labs")
+    @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersLabApiResponseModel> getLabOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("icd-codes")
@@ -260,25 +261,25 @@ public interface ApiInterface {
     @GET("icd-codes")
     Observable<IcdCodeApiResponseModel> getAllIcdCodes(@Query(START_KEY) int key, @Query(SEARCH) String search);
 
-    @GET("api/referrals/prescriptions")
+    @GET("api/referrals/" + OrderConstant.ORDER_TYPE_PRESCRIPTIONS)
     Observable<OrdersPrescriptionApiResponseModel> getUserPrescriptionsOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/referrals/prescriptions")
+    @GET("api/referrals/" + OrderConstant.ORDER_TYPE_PRESCRIPTIONS)
     Observable<OrdersPrescriptionApiResponseModel> getPrescriptionsOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @PATCH("api/referrals/{type}/{id}")
     Observable<BaseApiResponseModel> cancelOrder(@Path("type") String type, @Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Query(CANCEL) boolean cancel);
 
-    @POST("api/referrals/prescriptions")
+    @POST("api/referrals/" + OrderConstant.ORDER_TYPE_PRESCRIPTIONS)
     Observable<OrdersBaseApiResponseModel> createPrescription(@Body CreatePrescriptionRequestModel createPrescriptionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/users")
     Observable<ArrayList<CommonUserApiResponseModel>> getUsersByGuid(@Query(FILTER_USER_GUID_IN) String data);
 
-    @GET("api/referrals/specialists")
+    @GET("api/referrals/" + OrderConstant.ORDER_TYPE_SPECIALIST)
     Observable<OrdersSpecialistApiResponseModel> getUserSpecialistList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/referrals/specialists")
+    @GET("api/referrals/" + OrderConstant.ORDER_TYPE_SPECIALIST)
     Observable<OrdersSpecialistApiResponseModel> getSpecialistList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @DELETE("api/users")
@@ -305,39 +306,39 @@ public interface ApiInterface {
     @POST("api/vitals")
     Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/forms")
+    @GET("api/" + OrderConstant.ORDER_TYPE_FORM)
     Observable<ArrayList<OrdersUserFormsApiResponseModel>> getUserForms(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(ASSIGNOR) boolean assignor);
 
-    @GET("api/forms")
+    @GET("api/" + OrderConstant.ORDER_TYPE_FORM)
     Observable<ArrayList<OrdersUserFormsApiResponseModel>> getAllForms();
 
-    @GET("api/forms")
+    @GET("api/" + OrderConstant.ORDER_TYPE_FORM)
     Observable<ArrayList<OrdersUserFormsApiResponseModel>> getForms(@Query(ASSIGNOR) boolean assignor);
 
-    @POST("api/forms")
+    @POST("api/" + OrderConstant.ORDER_TYPE_FORM)
     Observable<BaseApiResponseModel> createForms(@Body CreateFormRequestModel createFormRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
-    @PUT("api/forms/{id}")
+    @PUT("api/" + OrderConstant.ORDER_TYPE_FORM + "/{id}")
     Observable<BaseApiResponseModel> updateForm(@Path(ID) int id, @Part("data") RequestBody data);
 
-    @POST("api/referrals/specialists")
+    @POST("api/referrals/" + OrderConstant.ORDER_TYPE_SPECIALIST)
     Observable<OrdersBaseApiResponseModel> assignSpecialist(@Body AssignSpecialistRequestModel assignSpecialistRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
-    @POST("api/users/files")
+    @POST("api/users/" + OrderConstant.ORDER_TYPE_FILES)
     Observable<BaseApiResponseModel> uploadDocument(@Part(NAME) RequestBody name, @Part(ORDER_ID) RequestBody vistOrderId, @Part MultipartBody.Part file, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/users/files")
+    @GET("api/users/" + OrderConstant.ORDER_TYPE_FILES)
     Observable<DocumentsApiResponseModel> getDocuments(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/users/files")
+    @GET("api/users/" + OrderConstant.ORDER_TYPE_FILES)
     Observable<DocumentsApiResponseModel> getUserDocuments(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctor_guid);
 
-    @DELETE("api/users/files")
+    @DELETE("api/users/" + OrderConstant.ORDER_TYPE_FILES)
     Observable<BaseApiResponseModel> deleteDocument(@Query("user_file_id") int id);
 
-    @PUT("api/users/files/{id}")
+    @PUT("api/users/" + OrderConstant.ORDER_TYPE_FILES + "/{id}")
     Observable<BaseApiResponseModel> updateDocument(@Path(ID) int id, @Body() Map<String, String> param);
 
     @GET("pharmacies")
@@ -346,7 +347,7 @@ public interface ApiInterface {
     @POST("api/faxes")
     Observable<BaseApiResponseModel> sendFax(@Body SendFaxRequestModel sendFaxRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @POST("api/referrals/labs")
+    @POST("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersBaseApiResponseModel> createLabOrder(@Body CreateTestApiRequestModel createTestApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/download")
@@ -355,31 +356,31 @@ public interface ApiInterface {
     @POST("refresh")
     Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check);
 
-    @POST("api/referrals/x-rays")
+    @POST("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
     Observable<OrdersBaseApiResponseModel> createRadiology(@Body CreateRadiologyRequestModel createRadiologyRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/referrals/x-rays")
+    @GET("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
     Observable<GetRadiologyResponseModel> getRadiologyList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/referrals/x-rays")
+    @GET("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
     Observable<GetRadiologyResponseModel> getUserRadiologyList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/referrals/miscellaneous")
+    @GET("api/referrals/" + OrderConstant.ORDER_TYPE_MISC)
     Observable<MiscellaneousApiResponseModel> getMiscellaneousList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/referrals/miscellaneous")
+    @GET("api/referrals/" + OrderConstant.ORDER_TYPE_MISC)
     Observable<MiscellaneousApiResponseModel> getUserMiscellaneousList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @POST("api/referrals/miscellaneous")
+    @POST("api/referrals/" + OrderConstant.ORDER_TYPE_MISC)
     Observable<BaseApiResponseModel> createMiscellaneous(@Body CreateMiscellaneousRequestModel createMiscellaneousRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals")
     Observable<OrdersIdListApiResponseModel> getOrderDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
 
-    @GET("api/users/files")
+    @GET("api/users/"+ OrderConstant.ORDER_TYPE_FILES)
     Observable<ArrayList<DocumentsApiResponseModel.ResultBean>> getDocumentDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
 
-    @GET("api/forms")
+    @GET("api/" + OrderConstant.ORDER_TYPE_FORM)
     Observable<ArrayList<OrdersUserFormsApiResponseModel>> getFormDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
 
     @GET("api/schedule")

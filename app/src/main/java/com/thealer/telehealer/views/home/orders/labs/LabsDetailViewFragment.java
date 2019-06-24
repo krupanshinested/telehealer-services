@@ -3,7 +3,6 @@ package com.thealer.telehealer.views.home.orders.labs;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,7 +19,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
@@ -28,22 +27,23 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by Aswin on 22,November,2018
  */
-public class LabsDetailViewFragment extends BaseFragment implements View.OnClickListener {
+public class LabsDetailViewFragment extends OrdersBaseFragment implements View.OnClickListener {
     private ImageView backIv;
     private TextView toolbarTitle;
     private OrdersCustomView patientOcv;
@@ -55,25 +55,20 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
     private TextView cancelWatermarkTv;
     private Toolbar toolbar;
 
-    private OnCloseActionInterface onCloseActionInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
-    private OrdersApiViewModel ordersApiViewModel;
     private OrdersLabApiResponseModel.LabsResponseBean labsResponseBean;
     private IcdCodeApiViewModel icdCodeApiViewModel;
     private LabTestListAdapter labTestListAdapter;
     private Map<String, String> icdCodeList = new HashMap<>();
     private OrdersCustomView faxStatusOcv;
     private OrdersCustomView faxNumberOcv;
-    private String doctorGuid;
+    private String doctorGuid, userGuid;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
-        onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
         icdCodeApiViewModel = ViewModelProviders.of(this).get(IcdCodeApiViewModel.class);
-
         icdCodeApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -83,17 +78,6 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
                         icdCodeList.clear();
                         icdCodeList.putAll(icdCodeApiResponseModel.getResultHashMap());
                         labTestListAdapter.setIcdCodeList(icdCodeList);
-                    }
-                }
-            }
-        });
-
-        ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel.isSuccess()) {
-                        onCloseActionInterface.onClose(false);
                     }
                 }
             }
@@ -181,6 +165,7 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
         if (getArguments() != null) {
             labsResponseBean = (OrdersLabApiResponseModel.LabsResponseBean) getArguments().getSerializable(ArgumentKeys.ORDER_DETAIL);
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+            userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
 
             CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
@@ -200,72 +185,87 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
             }
 
             if (labsResponseBean != null) {
+                setData(labsResponseBean);
+            } else {
+                int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
+                getOrdersDetail(userGuid, doctorGuid, new ArrayList<>(Arrays.asList(id)), true);
+            }
+        }
+    }
 
-                if (labsResponseBean.getUserDetailMap() != null) {
+    @Override
+    public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
+        if (idListApiResponseModel != null && idListApiResponseModel.getLabs() != null && !idListApiResponseModel.getLabs().isEmpty()) {
+            labsResponseBean = idListApiResponseModel.getLabs().get(0);
+            setData(labsResponseBean);
+        }
+    }
 
-                    patientOcv.setTitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getPatient().getUser_guid()).getUserDisplay_name());
-                    patientOcv.setSubtitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getPatient().getUser_guid()).getDob());
+    private void setData(OrdersLabApiResponseModel.LabsResponseBean labsResponseBean) {
 
-                    doctorOcv.setTitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getDoctor().getUser_guid()).getDoctorDisplayName());
-                    doctorOcv.setSubtitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getDoctor().getUser_guid()).getDoctorSpecialist());
-                }
+        if (labsResponseBean.getUserDetailMap() != null) {
 
-                if (labsResponseBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
-                    cancelTv.setVisibility(View.GONE);
-                    cancelWatermarkTv.setVisibility(View.VISIBLE);
-                    toolbar.getMenu().clear();
-                }
-                if (labsResponseBean.getStatus().equals(OrderStatus.STATUS_FAILED) || labsResponseBean.getFaxes().size() > 0) {
-                    toolbar.getMenu().removeItem(R.id.send_fax_menu);
-                }
+            patientOcv.setTitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getPatient().getUser_guid()).getUserDisplay_name());
+            patientOcv.setSubtitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getPatient().getUser_guid()).getDob());
 
-                if (labsResponseBean.getFaxes() != null &&
-                        labsResponseBean.getFaxes().size() > 0) {
-                    faxNumberOcv.setTitleTv(labsResponseBean.getFaxes().get(0).getFax_number());
-                    faxStatusOcv.setTitleTv(labsResponseBean.getFaxes().get(0).getStatus());
+            doctorOcv.setTitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getDoctor().getUser_guid()).getDoctorDisplayName());
+            doctorOcv.setSubtitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getDoctor().getUser_guid()).getDoctorSpecialist());
+        }
 
-                    faxNumberOcv.setVisibility(View.VISIBLE);
-                    faxStatusOcv.setVisibility(View.VISIBLE);
-                } else {
-                    faxNumberOcv.setVisibility(View.GONE);
-                    faxStatusOcv.setVisibility(View.GONE);
-                }
+        if (labsResponseBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
+            cancelTv.setVisibility(View.GONE);
+            cancelWatermarkTv.setVisibility(View.VISIBLE);
+            toolbar.getMenu().clear();
+        }
+        if (labsResponseBean.getStatus().equals(OrderStatus.STATUS_FAILED) || labsResponseBean.getFaxes().size() > 0) {
+            toolbar.getMenu().removeItem(R.id.send_fax_menu);
+        }
 
-                dateOcv.setTitleTv(Utils.getDayMonthYear(labsResponseBean.getCreated_at()));
+        if (labsResponseBean.getFaxes() != null &&
+                labsResponseBean.getFaxes().size() > 0) {
+            faxNumberOcv.setTitleTv(labsResponseBean.getFaxes().get(0).getFax_number());
+            faxStatusOcv.setTitleTv(labsResponseBean.getFaxes().get(0).getStatus());
 
-                copyOcv.setTitleTv("N/A");
+            faxNumberOcv.setVisibility(View.VISIBLE);
+            faxStatusOcv.setVisibility(View.VISIBLE);
+        } else {
+            faxNumberOcv.setVisibility(View.GONE);
+            faxStatusOcv.setVisibility(View.GONE);
+        }
 
-                if (labsResponseBean.getDetail() != null) {
-                    toolbarTitle.setText(labsResponseBean.getDetail().getDisplayName());
+        dateOcv.setTitleTv(Utils.getDayMonthYear(labsResponseBean.getCreated_at()));
 
-                    if (labsResponseBean.getDetail().getCopy_to() != null) {
-                        copyOcv.setTitleTv(labsResponseBean.getDetail().getCopy_to().getName());
-                        copyOcv.setSubtitleTv(labsResponseBean.getDetail().getCopy_to().getAddress());
-                        copyOcv.setSub_title_visible(true);
+        copyOcv.setTitleTv("N/A");
+
+        if (labsResponseBean.getDetail() != null) {
+            toolbarTitle.setText(labsResponseBean.getDetail().getDisplayName());
+
+            if (labsResponseBean.getDetail().getCopy_to() != null) {
+                copyOcv.setTitleTv(labsResponseBean.getDetail().getCopy_to().getName());
+                copyOcv.setSubtitleTv(labsResponseBean.getDetail().getCopy_to().getAddress());
+                copyOcv.setSub_title_visible(true);
+            }
+
+            if (labsResponseBean.getDetail().getLabs().size() > 0) {
+                labTestRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+                labTestListAdapter = new LabTestListAdapter(getActivity(), labsResponseBean.getDetail().getLabs(), icdCodeList);
+                labTestRv.setAdapter(labTestListAdapter);
+
+                StringBuilder icdCode = new StringBuilder();
+                for (int i = 0; i < labsResponseBean.getDetail().getLabs().size(); i++) {
+
+                    for (int j = 0; j < labsResponseBean.getDetail().getLabs().get(i).getICD10_codes().size(); j++) {
+
+                        icdCode.append(labsResponseBean.getDetail().getLabs().get(i).getICD10_codes().get(j));
+
+                        if (j != labsResponseBean.getDetail().getLabs().get(i).getICD10_codes().size() - 1)
+                            icdCode.append(",");
                     }
-
-                    if (labsResponseBean.getDetail().getLabs().size() > 0) {
-                        labTestRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        labTestListAdapter = new LabTestListAdapter(getActivity(), labsResponseBean.getDetail().getLabs(), icdCodeList);
-                        labTestRv.setAdapter(labTestListAdapter);
-
-                        StringBuilder icdCode = new StringBuilder();
-                        for (int i = 0; i < labsResponseBean.getDetail().getLabs().size(); i++) {
-
-                            for (int j = 0; j < labsResponseBean.getDetail().getLabs().get(i).getICD10_codes().size(); j++) {
-
-                                icdCode.append(labsResponseBean.getDetail().getLabs().get(i).getICD10_codes().get(j));
-
-                                if (j != labsResponseBean.getDetail().getLabs().get(i).getICD10_codes().size() - 1)
-                                    icdCode.append(",");
-                            }
-                            if (i != labsResponseBean.getDetail().getLabs().size() - 1)
-                                icdCode.append(",");
-                        }
-
-                        icdCodeApiViewModel.getFilteredIcdCodes(icdCode.toString(), false);
-                    }
+                    if (i != labsResponseBean.getDetail().getLabs().size() - 1)
+                        icdCode.append(",");
                 }
+
+                icdCodeApiViewModel.getFilteredIcdCodes(icdCode.toString(), false);
             }
         }
     }
@@ -274,26 +274,10 @@ public class LabsDetailViewFragment extends BaseFragment implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
-                onCloseActionInterface.onClose(false);
+                onBackPressed();
                 break;
             case R.id.cancel_tv:
-                Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps),
-                        getString(R.string.cancel_prescription_order),
-                        getString(R.string.yes),
-                        getString(R.string.no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelOrder(OrderConstant.ORDER_LABS, labsResponseBean.getReferral_id(), doctorGuid);
-                                dialog.dismiss();
-
-                            }
-                        }, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                cancelOrder(OrderConstant.ORDER_LABS, labsResponseBean.getReferral_id(), doctorGuid);
                 break;
         }
     }

@@ -77,6 +77,11 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
                     public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                         if (baseApiResponseModel != null) {
                             icdCodeApiResponseModel = (IcdCodeApiResponseModel) baseApiResponseModel;
+                            if (icdCodeApiResponseModel.getTotal_count() > 0) {
+                                icdListCrv.showOrhideEmptyState(false);
+                            } else {
+                                icdListCrv.showOrhideEmptyState(true);
+                            }
                             selectIcdCodeAdapter.setIcdCodeApiResponseModel(icdCodeApiResponseModel.getResults(), startKey);
                             icdListCrv.setNextPage(icdCodeApiResponseModel.getNext());
                             icdListCrv.setScrollable(true);

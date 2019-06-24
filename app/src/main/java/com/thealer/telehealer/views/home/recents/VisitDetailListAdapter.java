@@ -346,13 +346,11 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                 switch (mode) {
                     case Constants.VIEW_MODE:
                         viewHolder.inputEt.setEnabled(false);
-                        viewHolder.inputEt.setClickable(false);
                         viewHolder.inputEt.removeTextChangedListener(textWatcher);
                         viewHolder.inputEt.setBackground(null);
                         break;
                     case Constants.EDIT_MODE:
                         viewHolder.inputEt.setEnabled(true);
-                        viewHolder.inputEt.setClickable(true);
                         viewHolder.inputEt.setVisibility(View.VISIBLE);
                         viewHolder.inputEt.addTextChangedListener(textWatcher);
                         viewHolder.inputEt.setBackgroundColor(activity.getColor(R.color.card_view_background));
@@ -715,7 +713,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                                 documents.setResult(resultBeanList);
 
                                 Bundle bundle = new Bundle();
-                                bundle.putSerializable(Constants.USER_DETAIL, documents);
+                                bundle.putSerializable(ArgumentKeys.DOCUMENT_DETAIL, documents);
                                 bundle.putInt(Constants.SELECTED_ITEM, documentsApiResponseModel.getUser_file_id());
 
                                 ViewDocumentFragment viewDocumentFragment = new ViewDocumentFragment();

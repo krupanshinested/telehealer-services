@@ -1228,4 +1228,5 @@
     <string name="still_need_help">Still need help?</string>
     <string name="enter_waiting_room">Enter waiting room</string>
     <string name="please_wait_till_the_doctor_starts_the_schedule">Someone from your doctor\'s office will call you soon. You are welcome to wait here if you like.</string>
+    <string name="abnormal_vital">Abnormal vital</string>
 </resources>
