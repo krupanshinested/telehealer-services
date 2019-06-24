@@ -24,7 +24,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
-import com.thealer.telehealer.views.notification.NotificationListAdapter;
+import com.thealer.telehealer.views.notification.NewNotificationListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,7 +132,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                             notificationApiViewModel.updateNotification(adapterModelList.get(position).getInvitesResponseModel().getType(), true,
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
-                                    NotificationListAdapter.ACCEPTED.toLowerCase(), null, null,
+                                    NewNotificationListAdapter.ACCEPTED.toLowerCase(), null, null,
                                     null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
                         }
                     });
@@ -145,7 +145,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                             notificationApiViewModel.updateNotification(adapterModelList.get(position).getInvitesResponseModel().getType(), false,
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
-                                    NotificationListAdapter.REJECTED.toLowerCase(), null, null,
+                                    NewNotificationListAdapter.REJECTED.toLowerCase(), null, null,
                                     null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
                         }
                     });

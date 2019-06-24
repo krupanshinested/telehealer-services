@@ -222,9 +222,9 @@ public class DietUserListingFragment extends BaseFragment {
 
     private void setToolbarTitle(String text) {
         if (text.equals(getString(R.string.all))) {
-            toolbarTitle.setText(getString(R.string.diets));
+            toolbarTitle.setText(getString(R.string.diet));
         } else {
-            toolbarTitle.setText(String.format(getString(R.string.diets) + " (%s)", text));
+            toolbarTitle.setText(String.format(getString(R.string.diet) + " (%s)", text));
         }
     }
 

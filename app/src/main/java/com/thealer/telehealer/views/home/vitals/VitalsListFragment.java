@@ -89,7 +89,7 @@ public class VitalsListFragment extends BaseFragment {
                         }
 
                         Intent intent = new Intent(getActivity(), VitalCreationActivity.class);
-                        startActivityForResult(intent,RequestID.REQ_CREATE_NEW_VITAL);
+                        startActivityForResult(intent, RequestID.REQ_CREATE_NEW_VITAL);
                     }
                 }
             });
@@ -101,7 +101,6 @@ public class VitalsListFragment extends BaseFragment {
         listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if (getArguments() != null) {
-
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
                 toolbarTitle.setText(getString(R.string.vitals));
@@ -115,10 +114,9 @@ public class VitalsListFragment extends BaseFragment {
             } else {
                 appbarLayout.setVisibility(View.GONE);
             }
-
-            VitalsOrdersListAdapter vitalsOrdersListAdapter = new VitalsOrdersListAdapter(getActivity(), SupportedMeasurementType.items, Constants.VIEW_VITALS, getArguments());
-            listRv.setAdapter(vitalsOrdersListAdapter);
         }
+        VitalsOrdersListAdapter vitalsOrdersListAdapter = new VitalsOrdersListAdapter(getActivity(), SupportedMeasurementType.items, Constants.VIEW_VITALS, getArguments());
+        listRv.setAdapter(vitalsOrdersListAdapter);
 
     }
 
@@ -187,7 +185,7 @@ public class VitalsListFragment extends BaseFragment {
                     if (data != null && data.getStringExtra(ArgumentKeys.MEASUREMENT_TYPE) != null) {
                         Bundle bundle = new Bundle();
                         bundle.putString(ArgumentKeys.MEASUREMENT_TYPE, data.getStringExtra(ArgumentKeys.MEASUREMENT_TYPE));
-                        bundle.putBoolean(Constants.IS_FROM_HOME,true);
+                        bundle.putBoolean(Constants.IS_FROM_HOME, true);
                         Fragment fragment = new VitalsDetailListFragment();
                         fragment.setArguments(bundle);
                         if (getActivity() instanceof ShowSubFragmentInterface)

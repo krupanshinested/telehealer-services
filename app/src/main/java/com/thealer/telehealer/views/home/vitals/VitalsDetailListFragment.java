@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.MPPointF;
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -63,6 +65,7 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -112,6 +115,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private ImageView infoIv;
     private CustomSwipeRefreshLayout swipeLayout;
     private ArrayList<String> vitalPrintOptions;
+    private boolean isGetType;
 
 
     @Override
@@ -127,60 +131,65 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
                 swipeLayout.setRefreshing(false);
                 if (baseApiResponseModels != null) {
-
                     vitalsApiResponseModelArrayList = (ArrayList<VitalsApiResponseModel>) (Object) baseApiResponseModels;
 
-                    if (UserType.isUserPatient() && vitalsApiResponseModelArrayList.size() == 0) {
-                        if (!appPreference.getBoolean(selectedItem)) {
-                            boolean isShow = true;
-                            int message = 0;
-                            switch (selectedItem) {
-                                case SupportedMeasurementType.bp:
-                                    message = OverlayViewConstants.OVERLAY_NO_BP;
-                                    break;
-                                case SupportedMeasurementType.gulcose:
-                                    message = OverlayViewConstants.OVERLAY_NO_GLUCOSE;
-                                    break;
-                                case SupportedMeasurementType.heartRate:
-                                    message = OverlayViewConstants.OVERLAY_NO_HEAR_RATE;
-                                    break;
-                                case SupportedMeasurementType.pulseOximeter:
-                                    message = OverlayViewConstants.OVERLAY_NO_PULSE;
-                                    break;
-                                case SupportedMeasurementType.temperature:
-                                    message = OverlayViewConstants.OVERLAY_NO_TEMPERATURE;
-                                    break;
-                                case SupportedMeasurementType.weight:
-                                    message = OverlayViewConstants.OVERLAY_NO_WEIGHT;
-                                    break;
-                                default:
-                                    isShow = false;
+                    if (isGetType) {
+                        isGetType = false;
+                        selectedItem = vitalsApiResponseModelArrayList.get(0).getType();
+                        initializeSelectedItemView(selectedItem);
+                        makeApiCall(true);
+                    } else {
+                        if (UserType.isUserPatient() && vitalsApiResponseModelArrayList.size() == 0) {
+                            if (!appPreference.getBoolean(selectedItem)) {
+                                boolean isShow = true;
+                                int message = 0;
+                                switch (selectedItem) {
+                                    case SupportedMeasurementType.bp:
+                                        message = OverlayViewConstants.OVERLAY_NO_BP;
+                                        break;
+                                    case SupportedMeasurementType.gulcose:
+                                        message = OverlayViewConstants.OVERLAY_NO_GLUCOSE;
+                                        break;
+                                    case SupportedMeasurementType.heartRate:
+                                        message = OverlayViewConstants.OVERLAY_NO_HEAR_RATE;
+                                        break;
+                                    case SupportedMeasurementType.pulseOximeter:
+                                        message = OverlayViewConstants.OVERLAY_NO_PULSE;
+                                        break;
+                                    case SupportedMeasurementType.temperature:
+                                        message = OverlayViewConstants.OVERLAY_NO_TEMPERATURE;
+                                        break;
+                                    case SupportedMeasurementType.weight:
+                                        message = OverlayViewConstants.OVERLAY_NO_WEIGHT;
+                                        break;
+                                    default:
+                                        isShow = false;
+                                }
+                                if (isShow) {
+                                    appPreference.setBoolean(selectedItem, true);
+                                    Utils.showOverlay(getActivity(), addFab, message, new DismissListener() {
+                                        @Override
+                                        public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
+
+                                        }
+
+                                        @Override
+                                        public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
+
+                                        }
+                                    });
+                                }
                             }
-                            if (isShow) {
-                                appPreference.setBoolean(selectedItem, true);
-                                Utils.showOverlay(getActivity(), addFab, message, new DismissListener() {
-                                    @Override
-                                    public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
-
-                                    }
-
-                                    @Override
-                                    public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
-
-                                    }
-                                });
-                            }
-
                         }
-                    }
 
-                    updateList(vitalsApiResponseModelArrayList);
+                        updateList(vitalsApiResponseModelArrayList);
 
-                    if (!selectedItem.equals(SupportedMeasurementType.stethoscope))
-                        updateChart(vitalsApiResponseModelArrayList);
+                        if (!selectedItem.equals(SupportedMeasurementType.stethoscope))
+                            updateChart(vitalsApiResponseModelArrayList);
 
-                    if (isAbnormalVitalView) {
-                        setUserDetailView();
+                        if (isAbnormalVitalView) {
+                            setUserDetailView();
+                        }
                     }
                 }
             }
@@ -297,38 +306,38 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                                     }
                                 }
 
-                            line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0]), vitalsApiResponseModelArrayList.get(i).getMode()));
-                            line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1]), vitalsApiResponseModelArrayList.get(i).getMode()));
-                            break;
-                        case SupportedMeasurementType.heartRate:
-                            if (!value.isEmpty()) {
-                                if (Float.parseFloat(value) > maxVlaue) {
-                                    maxVlaue = Float.parseFloat(value);
-                                }
-                                if (i == 1) {
-                                    minValue = Float.parseFloat(value);
-                                } else {
-                                    if (Float.parseFloat(value) < minValue) {
-                                        minValue = Float.parseFloat(value);
+                                line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0]), vitalsApiResponseModelArrayList.get(i).getMode()));
+                                line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1]), vitalsApiResponseModelArrayList.get(i).getMode()));
+                                break;
+                            case SupportedMeasurementType.heartRate:
+                                if (!value.isEmpty()) {
+                                    if (Float.parseFloat(value) > maxVlaue) {
+                                        maxVlaue = Float.parseFloat(value);
                                     }
+                                    if (i == 1) {
+                                        minValue = Float.parseFloat(value);
+                                    } else {
+                                        if (Float.parseFloat(value) < minValue) {
+                                            minValue = Float.parseFloat(value);
+                                        }
+                                    }
+                                    line3Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
                                 }
-                                line3Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
-                            }
-                            break;
-                    }
-                } else {
-                    if (Float.parseFloat(value) > maxVlaue) {
-                        maxVlaue = Float.parseFloat(value);
-                    }
-                    if (i == 1) {
-                        minValue = Float.parseFloat(value);
-                    } else {
-                        if (Float.parseFloat(value) < minValue) {
-                            minValue = Float.parseFloat(value);
+                                break;
                         }
+                    } else {
+                        if (Float.parseFloat(value) > maxVlaue) {
+                            maxVlaue = Float.parseFloat(value);
+                        }
+                        if (i == 1) {
+                            minValue = Float.parseFloat(value);
+                        } else {
+                            if (Float.parseFloat(value) < minValue) {
+                                minValue = Float.parseFloat(value);
+                            }
+                        }
+                        line1Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
                     }
-                    line1Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
-                }
 
                     xaxisLables.put(Float.valueOf(i + 1), vitalsApiResponseModelArrayList.get(i).getCreated_at());
                 }
@@ -507,13 +516,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         if (getArguments() != null) {
 
-            selectedItem = getArguments().getString(ArgumentKeys.MEASUREMENT_TYPE);
-
-            if (selectedItem.equals(SupportedMeasurementType.stethoscope)) {
-                toolbar.getMenu().clear();
-                addFab.hide();
-            }
-
+            isGetType = getArguments().getBoolean(ArgumentKeys.IS_GET_TYPE, false);
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
 
             isAbnormalVitalView = getArguments().getBoolean(ArgumentKeys.VIEW_ABNORMAL_VITAL);
@@ -532,31 +535,47 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 doctorGuid = doctorModel.getUser_guid();
             }
 
-            if (selectedItem != null) {
-                setEmptyState();
-
-                vitalsDetailListAdapter = new VitalsDetailListAdapter(getActivity(), headerList, childList, selectedItem);
-
-                expandableListView = vitalDetailCelv.getExpandableView();
-
-                expandableListView.setAdapter(vitalsDetailListAdapter);
-
-                vitalDetailCelv.setOnPaginateInterface(new OnPaginateInterface() {
-                    @Override
-                    public void onPaginate() {
-                        //handle pagination here
-                    }
-                });
-
-                expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-                    @Override
-                    public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                        return true;
-                    }
-                });
-
+            if (isGetType) {
+                int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
+                vitalsApiViewModel.getVitalDetail(userGuid, (UserType.isUserAssistant() ? doctorGuid : null), new ArrayList<>(Arrays.asList(id)), true);
+            } else {
+                selectedItem = getArguments().getString(ArgumentKeys.MEASUREMENT_TYPE);
+                initializeSelectedItemView(selectedItem);
             }
         }
+    }
+
+    private void initializeSelectedItemView(String selectedItem) {
+        if (selectedItem != null) {
+            setEmptyState();
+
+            if (selectedItem.equals(SupportedMeasurementType.stethoscope)) {
+                toolbar.getMenu().clear();
+                addFab.hide();
+            }
+
+            vitalsDetailListAdapter = new VitalsDetailListAdapter(getActivity(), headerList, childList, selectedItem);
+
+            expandableListView = vitalDetailCelv.getExpandableView();
+
+            expandableListView.setAdapter(vitalsDetailListAdapter);
+
+            vitalDetailCelv.setOnPaginateInterface(new OnPaginateInterface() {
+                @Override
+                public void onPaginate() {
+                    //handle pagination here
+                }
+            });
+
+            expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+                @Override
+                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                    return true;
+                }
+            });
+
+        }
+
     }
 
     private void generatePdfListItems(String timePeriod) {
@@ -760,7 +779,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         addFab.setClickable(true);
         if (isAbnormalVitalView && commonUserApiResponseModel == null) {
             getUserDetail();
-        } else {
+        } else if (!isGetType) {
             makeApiCall(true);
         }
     }

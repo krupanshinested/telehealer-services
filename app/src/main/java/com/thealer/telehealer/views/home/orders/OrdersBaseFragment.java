@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -16,8 +17,10 @@ import android.view.View;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersBaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCreateApiViewModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.CreateTestApiRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.miscellaneous.CreateMiscellaneousRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
@@ -38,6 +41,9 @@ import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.common.RecentsSelectionActivity;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Aswin on 04,December,2018
@@ -62,6 +68,8 @@ public class OrdersBaseFragment extends BaseFragment {
     private String vistOrderId = null;
     private OrdersCustomView visitOcv;
     private RecentsApiResponseModel recentsApiResponseModel;
+    private OrdersApiViewModel ordersApiViewModel;
+    private boolean isCancelOrder = false;
 
     @Override
     public void onAttach(Context context) {
@@ -117,7 +125,7 @@ public class OrdersBaseFragment extends BaseFragment {
                                 description = getString(R.string.fax_sent_successfully);
                                 sendSuccessViewBroadCast(getActivity(), status, title, description);
                             }
-                            onCloseActionInterface.onClose(false);
+                            onBackPressed();
                         }
                     } else {
                         isSendFax = false;
@@ -179,6 +187,33 @@ public class OrdersBaseFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
 
+            }
+        });
+
+        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
+
+        attachObserverInterface.attachObserver(ordersApiViewModel);
+
+        ordersApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                onDetailReceived(baseApiResponseModels);
+            }
+        });
+
+        ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel instanceof OrdersIdListApiResponseModel) {
+                        onDetailReceived((OrdersIdListApiResponseModel) baseApiResponseModel);
+                    } else if (isCancelOrder) {
+                        isCancelOrder = false;
+                        if (baseApiResponseModel.isSuccess()) {
+                            onBackPressed();
+                        }
+                    }
+                }
             }
         });
     }
@@ -387,7 +422,7 @@ public class OrdersBaseFragment extends BaseFragment {
         switch (requestCode) {
             case RequestID.REQ_SHOW_SUCCESS_VIEW:
                 if (resultCode == Activity.RESULT_OK) {
-                    onCloseActionInterface.onClose(false);
+                    onBackPressed();
                 }
                 break;
             case RequestID.REQ_VISIT_RECENT:
@@ -402,4 +437,61 @@ public class OrdersBaseFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    public void onDetailReceived(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+
+    }
+
+    public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
+
+    }
+
+    public void getFormsDetail(@NonNull String userGuid, @Nullable String doctorGuid, @NonNull List<Integer> idList, @NonNull boolean isShowProgress) {
+        ordersApiViewModel.getFormsDetail(userGuid, doctorGuid, idList, isShowProgress);
+    }
+
+    public void getOrdersDetail(@NonNull String userGuid, @Nullable String doctorGuid, @NonNull List<Integer> idList, @NonNull boolean isShowProgress) {
+        ordersApiViewModel.getOrderdsDetail(userGuid, doctorGuid, idList, isShowProgress);
+    }
+
+    public void cancelOrder(String orderType, int referral_id, String doctorGuid) {
+        String message = null;
+        switch (orderType) {
+            case OrderConstant.ORDER_PRESCRIPTIONS:
+                message = getString(R.string.cancel_prescription_order);
+                break;
+            case OrderConstant.ORDER_REFERRALS:
+                message = getString(R.string.cancel_specialist_order);
+                break;
+            case OrderConstant.ORDER_LABS:
+                message = getString(R.string.cancel_lab_order);
+                break;
+            case OrderConstant.ORDER_RADIOLOGY:
+                message = getString(R.string.cancel_xray_order);
+                break;
+            case OrderConstant.ORDER_MISC:
+                message = getString(R.string.cancel_miscellaneous_order);
+                break;
+        }
+        Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps),
+                message,
+                getString(R.string.yes),
+                getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        isCancelOrder = true;
+                        ordersApiViewModel.cancelOrder(orderType, referral_id, doctorGuid);
+                        dialog.dismiss();
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+    }
+
+    public void onBackPressed() {
+        onCloseActionInterface.onClose(false);
+    }
 }

@@ -416,7 +416,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
 
         for (int i = 0; i < dietApiResponseModelArrayList.size(); i++) {
 
-            String date = Utils.getDayMonthYear(dietApiResponseModelArrayList.get(i).getCreated_at());
+            String date = Utils.getDayMonthYear(dietApiResponseModelArrayList.get(i).getDate());
             List<DietApiResponseModel> modelList = new ArrayList<>();
 
             if (dietApiResponseModelMap.containsKey(date)) {

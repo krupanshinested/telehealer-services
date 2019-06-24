@@ -1,7 +1,6 @@
 package com.thealer.telehealer.views.home.recents;
 
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
@@ -70,9 +69,11 @@ public class VisitDetailViewModel extends ViewModel {
     private boolean isInstructionUpdated;
 
     public boolean isTranscriptUpdated() {
-        for (int i = 0; i < updatedTranscriptResponseModel.getSpeakerLabels().size(); i++) {
-            if (updatedTranscriptResponseModel.getSpeakerLabels().get(i).isRemoved()) {
-                return true;
+        if (updatedTranscriptResponseModel != null && updatedTranscriptResponseModel.getSpeakerLabels() != null) {
+            for (int i = 0; i < updatedTranscriptResponseModel.getSpeakerLabels().size(); i++) {
+                if (updatedTranscriptResponseModel.getSpeakerLabels().get(i).isRemoved()) {
+                    return true;
+                }
             }
         }
         return false;

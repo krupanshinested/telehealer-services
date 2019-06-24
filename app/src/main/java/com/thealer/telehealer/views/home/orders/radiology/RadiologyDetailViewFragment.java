@@ -3,7 +3,6 @@ package com.thealer.telehealer.views.home.orders.radiology;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,30 +21,30 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrderStatus;
+import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 import com.thealer.telehealer.views.home.orders.labs.IcdCodeListAdapter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
  * Created by Aswin on 12,December,2018
  */
-public class RadiologyDetailViewFragment extends BaseFragment implements View.OnClickListener {
+public class RadiologyDetailViewFragment extends OrdersBaseFragment implements View.OnClickListener {
     private OrdersCustomView patientOcv;
     private OrdersCustomView copyResultOcv;
     private TextView radiologyLabel;
@@ -66,21 +65,17 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
     private HashMap<String, String> icdCodeMap = new HashMap<>();
     private IcdCodeListAdapter icdCodeListAdapter;
 
-    private OnCloseActionInterface onCloseActionInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private IcdCodeApiViewModel icdCodeApiViewModel;
-    private OrdersApiViewModel ordersApiViewModel;
     private OrdersCustomView faxNumberOcv;
     private OrdersCustomView faxStatusOcv;
-    private String doctorGuid;
+    private String doctorGuid, userGuid;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        onCloseActionInterface = (OnCloseActionInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         icdCodeApiViewModel = ViewModelProviders.of(this).get(IcdCodeApiViewModel.class);
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
 
         icdCodeApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -91,17 +86,6 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
                         icdCodeMap.clear();
                         icdCodeMap.putAll(icdCodeApiResponseModel.getResultHashMap());
                         icdCodeListAdapter.setMapData(icdCodeMap);
-                    }
-                }
-            }
-        });
-
-        ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel.isSuccess()) {
-                        onCloseActionInterface.onClose(false);
                     }
                 }
             }
@@ -188,6 +172,7 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
         if (getArguments() != null) {
             getRadiologyResponseModel = (GetRadiologyResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.ORDER_DETAIL);
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+            userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
 
             CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
@@ -207,87 +192,101 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
             }
 
             if (getRadiologyResponseModel != null) {
-                if (getRadiologyResponseModel.getDetail() != null) {
+                setData(getRadiologyResponseModel);
+            } else {
+                int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
+                getOrdersDetail(userGuid, doctorGuid, new ArrayList<>(Arrays.asList(id)), true);
+            }
+        }
+    }
 
-                    if (getRadiologyResponseModel.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
-                        cancelTv.setVisibility(View.GONE);
-                        cancelWatermarkTv.setVisibility(View.VISIBLE);
-                        toolbar.getMenu().clear();
-                    }
-                    if (getRadiologyResponseModel.getStatus().equals(OrderStatus.STATUS_FAILED) || getRadiologyResponseModel.getFaxes().size() > 0) {
-                        toolbar.getMenu().removeItem(R.id.send_fax_menu);
-                    }
+    @Override
+    public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
+        if (idListApiResponseModel != null && idListApiResponseModel.getXrays() != null && !idListApiResponseModel.getXrays().isEmpty()) {
+            getRadiologyResponseModel = idListApiResponseModel.getXrays().get(0);
+            setData(getRadiologyResponseModel);
+        }
+    }
 
-                    if (getRadiologyResponseModel.getFaxes() != null &&
-                            getRadiologyResponseModel.getFaxes().size() > 0) {
-                        faxNumberOcv.setTitleTv(getRadiologyResponseModel.getFaxes().get(0).getFax_number());
-                        faxStatusOcv.setTitleTv(getRadiologyResponseModel.getFaxes().get(0).getStatus());
+    private void setData(GetRadiologyResponseModel.ResultBean getRadiologyResponseModel) {
+        if (getRadiologyResponseModel.getDetail() != null) {
 
-                        faxNumberOcv.setVisibility(View.VISIBLE);
-                        faxStatusOcv.setVisibility(View.VISIBLE);
-                    } else {
-                        faxNumberOcv.setVisibility(View.GONE);
-                        faxStatusOcv.setVisibility(View.GONE);
-                    }
+            if (getRadiologyResponseModel.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
+                cancelTv.setVisibility(View.GONE);
+                cancelWatermarkTv.setVisibility(View.VISIBLE);
+                toolbar.getMenu().clear();
+            }
+            if (getRadiologyResponseModel.getStatus().equals(OrderStatus.STATUS_FAILED) || getRadiologyResponseModel.getFaxes().size() > 0) {
+                toolbar.getMenu().removeItem(R.id.send_fax_menu);
+            }
 
-                    if (getRadiologyResponseModel.getUserDetailMap() != null &&
-                            !getRadiologyResponseModel.getUserDetailMap().isEmpty()) {
+            if (getRadiologyResponseModel.getFaxes() != null &&
+                    getRadiologyResponseModel.getFaxes().size() > 0) {
+                faxNumberOcv.setTitleTv(getRadiologyResponseModel.getFaxes().get(0).getFax_number());
+                faxStatusOcv.setTitleTv(getRadiologyResponseModel.getFaxes().get(0).getStatus());
 
-                        patientOcv.setTitleTv(getRadiologyResponseModel.getUserDetailMap().get(getRadiologyResponseModel.getPatient().getUser_guid()).getUserDisplay_name());
-                        patientOcv.setSubtitleTv(getRadiologyResponseModel.getUserDetailMap().get(getRadiologyResponseModel.getPatient().getUser_guid()).getDob());
-                        patientOcv.setSub_title_visible(true);
-                    }
+                faxNumberOcv.setVisibility(View.VISIBLE);
+                faxStatusOcv.setVisibility(View.VISIBLE);
+            } else {
+                faxNumberOcv.setVisibility(View.GONE);
+                faxStatusOcv.setVisibility(View.GONE);
+            }
 
-                    commentsOcv.setTitleTv(getRadiologyResponseModel.getDetail().getComment().trim());
-                    dateOcv.setTitleTv(getRadiologyResponseModel.getDetail().getRequested_date());
+            if (getRadiologyResponseModel.getUserDetailMap() != null &&
+                    !getRadiologyResponseModel.getUserDetailMap().isEmpty()) {
 
-                    if (getRadiologyResponseModel.getDetail().getCopy_to() != null) {
-                        copyResultOcv.setTitleTv(getRadiologyResponseModel.getDetail().getCopy_to().getName());
-                        copyResultOcv.setSub_title_visible(true);
-                        copyResultOcv.setSubtitleTv(getRadiologyResponseModel.getDetail().getCopy_to().getAddress());
-                    }
+                patientOcv.setTitleTv(getRadiologyResponseModel.getUserDetailMap().get(getRadiologyResponseModel.getPatient().getUser_guid()).getUserDisplay_name());
+                patientOcv.setSubtitleTv(getRadiologyResponseModel.getUserDetailMap().get(getRadiologyResponseModel.getPatient().getUser_guid()).getDob());
+                patientOcv.setSub_title_visible(true);
+            }
 
-                    radiologyListRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    icdListRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    statSwitch.setChecked(getRadiologyResponseModel.getDetail().getLabs().get(0).isStat());
+            commentsOcv.setTitleTv(getRadiologyResponseModel.getDetail().getComment().trim());
+            dateOcv.setTitleTv(getRadiologyResponseModel.getDetail().getRequested_date());
 
-                    RadiologyListPreviewAdapter radiologyListPreviewAdapter = new RadiologyListPreviewAdapter(getActivity(), getRadiologyResponseModel.getDetail().getLabs().get(0).getXRayTests());
-                    radiologyListRv.setAdapter(radiologyListPreviewAdapter);
+            if (getRadiologyResponseModel.getDetail().getCopy_to() != null) {
+                copyResultOcv.setTitleTv(getRadiologyResponseModel.getDetail().getCopy_to().getName());
+                copyResultOcv.setSub_title_visible(true);
+                copyResultOcv.setSubtitleTv(getRadiologyResponseModel.getDetail().getCopy_to().getAddress());
+            }
 
-                    StringBuilder title = null;
-                    for (int i = 0; i < getRadiologyResponseModel.getDetail().getLabs().get(0).getXRayTests().size(); i++) {
-                        if (title == null) {
-                            title = new StringBuilder(getRadiologyResponseModel.getDetail().getLabs().get(0).getXRayTests().get(i).getDisplayText());
-                        } else {
-                            title.append(",").append(getRadiologyResponseModel.getDetail().getLabs().get(0).getXRayTests().get(i).getDisplayText());
-                        }
-                    }
+            radiologyListRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+            icdListRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+            statSwitch.setChecked(getRadiologyResponseModel.getDetail().getLabs().get(0).isStat());
 
-                    toolbarTitle.setText(title);
+            RadiologyListPreviewAdapter radiologyListPreviewAdapter = new RadiologyListPreviewAdapter(getActivity(), getRadiologyResponseModel.getDetail().getLabs().get(0).getXRayTests());
+            radiologyListRv.setAdapter(radiologyListPreviewAdapter);
 
-                    if (getRadiologyResponseModel.getDetail().getLabs().get(0).getICD10_codes().size() > 0) {
-                        StringBuilder icdCode = new StringBuilder();
-                        for (int i = 0; i < getRadiologyResponseModel.getDetail().getLabs().size(); i++) {
-
-                            for (int j = 0; j < getRadiologyResponseModel.getDetail().getLabs().get(i).getICD10_codes().size(); j++) {
-
-                                icdCode.append(getRadiologyResponseModel.getDetail().getLabs().get(i).getICD10_codes().get(j));
-
-                                if (j != getRadiologyResponseModel.getDetail().getLabs().get(i).getICD10_codes().size() - 1)
-                                    icdCode.append(",");
-                            }
-                            if (i != getRadiologyResponseModel.getDetail().getLabs().size() - 1)
-                                icdCode.append(",");
-                        }
-
-                        icdCodeApiViewModel.getFilteredIcdCodes(icdCode.toString(), true);
-                    }
-
-                    icdCodeListAdapter = new IcdCodeListAdapter(getActivity(), getRadiologyResponseModel.getDetail().getLabs().get(0).getICD10_codes(), icdCodeMap);
-                    icdListRv.setAdapter(icdCodeListAdapter);
-
+            StringBuilder title = null;
+            for (int i = 0; i < getRadiologyResponseModel.getDetail().getLabs().get(0).getXRayTests().size(); i++) {
+                if (title == null) {
+                    title = new StringBuilder(getRadiologyResponseModel.getDetail().getLabs().get(0).getXRayTests().get(i).getDisplayText());
+                } else {
+                    title.append(",").append(getRadiologyResponseModel.getDetail().getLabs().get(0).getXRayTests().get(i).getDisplayText());
                 }
             }
+
+            toolbarTitle.setText(title);
+
+            if (getRadiologyResponseModel.getDetail().getLabs().get(0).getICD10_codes().size() > 0) {
+                StringBuilder icdCode = new StringBuilder();
+                for (int i = 0; i < getRadiologyResponseModel.getDetail().getLabs().size(); i++) {
+
+                    for (int j = 0; j < getRadiologyResponseModel.getDetail().getLabs().get(i).getICD10_codes().size(); j++) {
+
+                        icdCode.append(getRadiologyResponseModel.getDetail().getLabs().get(i).getICD10_codes().get(j));
+
+                        if (j != getRadiologyResponseModel.getDetail().getLabs().get(i).getICD10_codes().size() - 1)
+                            icdCode.append(",");
+                    }
+                    if (i != getRadiologyResponseModel.getDetail().getLabs().size() - 1)
+                        icdCode.append(",");
+                }
+
+                icdCodeApiViewModel.getFilteredIcdCodes(icdCode.toString(), true);
+            }
+
+            icdCodeListAdapter = new IcdCodeListAdapter(getActivity(), getRadiologyResponseModel.getDetail().getLabs().get(0).getICD10_codes(), icdCodeMap);
+            icdListRv.setAdapter(icdCodeListAdapter);
 
         }
     }
@@ -296,27 +295,10 @@ public class RadiologyDetailViewFragment extends BaseFragment implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
-                onCloseActionInterface.onClose(false);
+                onBackPressed();
                 break;
             case R.id.cancel_tv:
-
-                Utils.showAlertDialog(getActivity(), getString(R.string.cancel_caps),
-                        getString(R.string.cancel_xray_order),
-                        getString(R.string.yes),
-                        getString(R.string.no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ordersApiViewModel.cancelOrder(OrderConstant.ORDER_RADIOLOGY, getRadiologyResponseModel.getReferral_id(), doctorGuid);
-                                dialog.dismiss();
-
-                            }
-                        }, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                cancelOrder(OrderConstant.ORDER_RADIOLOGY, getRadiologyResponseModel.getReferral_id(), doctorGuid);
                 break;
         }
     }
