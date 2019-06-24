@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.home.orders.forms;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,9 @@ public class AboutScoreBottomSheet extends BaseBottomSheetDialogFragment {
     private OrdersUserFormsApiResponseModel formsApiResponseModel;
     private TextView column1Tv;
     private TextView column2Tv;
+    private ConstraintLayout parentView;
+    private View view;
+    private TextView scoreTitleTv;
 
     @Nullable
     @Override
@@ -43,6 +47,7 @@ public class AboutScoreBottomSheet extends BaseBottomSheetDialogFragment {
         closeIv = (ImageView) view.findViewById(R.id.close_iv);
         column1Tv = (TextView) view.findViewById(R.id.column1_tv);
         column2Tv = (TextView) view.findViewById(R.id.column2_tv);
+        scoreTitleTv = (TextView) view.findViewById(R.id.score_title_tv);
 
         closeIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,10 +67,8 @@ public class AboutScoreBottomSheet extends BaseBottomSheetDialogFragment {
                 column2Tv.setText(scoreDetailsBean.getCol1());
 
                 if (scoreDetailsBean.getTitle() != null && !scoreDetailsBean.getTitle().isEmpty()) {
-                    View titleView = getLayoutInflater().inflate(R.layout.form_title_view, null);
-                    TextView titleTv = (TextView) titleView.findViewById(R.id.title_tv);
-                    titleTv.setText(scoreDetailsBean.getTitle());
-                    container.addView(titleView);
+                    scoreTitleTv.setText(scoreDetailsBean.getTitle());
+                    scoreTitleTv.setVisibility(View.VISIBLE);
                 }
 
                 for (int i = 0; i < scoreDetailsBean.getProperties().getValues().size(); i++) {

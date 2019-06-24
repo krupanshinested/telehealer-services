@@ -112,6 +112,11 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
 
                     associationListAdapter.setDoctorsApiResponseModel(getDoctorsApiResponseModel.getData(), page);
 
+                    if (getDoctorsApiResponseModel.getTotal_count() > 0) {
+                        associationRv.showOrhideEmptyState(false);
+                    } else {
+                        associationRv.showOrhideEmptyState(true);
+                    }
                 }
                 associationRv.setScrollable(true);
                 associationRv.hideProgressBar();

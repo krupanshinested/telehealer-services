@@ -1168,4 +1168,5 @@
     <string name="still_need_help">¿Aún necesitas ayuda?</string>
     <string name="enter_waiting_room">Entrar en la sala de espera</string>
     <string name="please_wait_till_the_doctor_starts_the_schedule">Alguien de la oficina de su médico lo llamará pronto. Le invitamos a esperar aquí si lo desea.</string>
+    <string name="abnormal_vital">Vital anormal</string>
 </resources>
