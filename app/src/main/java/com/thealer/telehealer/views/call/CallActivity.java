@@ -4,8 +4,8 @@ import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.Dialog;
 import android.app.Service;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.Observer;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.Observer;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,12 +20,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
@@ -811,6 +811,10 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 }
                 break;
             case R.id.minimize:
+                if (TokBox.shared.getConnectedDate() == null) {
+                    return;
+                }
+
                 EventRecorder.recordCallUpdates("callview_minimized", null);
                 minimizeView(null);
                 break;

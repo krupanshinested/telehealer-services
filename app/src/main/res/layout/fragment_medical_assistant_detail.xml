@@ -12,11 +12,11 @@
         layout="@layout/appbar_app_color_title_back_next"
         android:visibility="gone" />
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="10dp"
@@ -29,7 +29,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/firstname_til"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -44,9 +44,9 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/first_name"
                     android:inputType="text" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/lastname_til"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                     android:hint="@string/last_name"
                     android:inputType="text"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/title_tv"
@@ -123,7 +123,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/title_value"
                 app:layout_constraintWidth_max="@dimen/max_width" />
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/degree_til"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
                     android:hint="@string/degree"
                     android:inputType="text"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
 
             <TextView
@@ -212,7 +212,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gender_splitter"
                 app:layout_constraintWidth_max="@dimen/max_width" />
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/certificate_card"
                 android:layout_width="0dp"
                 android:layout_height="200dp"
@@ -233,8 +233,8 @@
                     android:padding="@dimen/padding_default"
                     android:scaleType="centerCrop"
                     android:visibility="visible" />
-            </android.support.v7.widget.CardView>
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v4.widget.NestedScrollView>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

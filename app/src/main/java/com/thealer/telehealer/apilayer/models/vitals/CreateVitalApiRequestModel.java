@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
+import java.util.ArrayList;
+
 /**
  * Created by Aswin on 27,November,2018
  */
@@ -10,6 +12,7 @@ public class CreateVitalApiRequestModel implements Cloneable {
     private String mode;
     private String display_name;
     private String user_guid;
+    private ArrayList<VitalsApiResponseModel> vitals;
 
     public CreateVitalApiRequestModel(String type, String value, String mode, String display_name, String user_guid) {
         this.type = type;
@@ -17,6 +20,10 @@ public class CreateVitalApiRequestModel implements Cloneable {
         this.mode = mode;
         this.display_name = display_name;
         this.user_guid = user_guid;
+    }
+
+    public CreateVitalApiRequestModel(ArrayList<VitalsApiResponseModel> vitals) {
+        this.vitals = vitals;
     }
 
     public CreateVitalApiRequestModel() {

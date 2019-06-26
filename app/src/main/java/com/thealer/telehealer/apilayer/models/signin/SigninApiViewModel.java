@@ -1,7 +1,7 @@
 package com.thealer.telehealer.apilayer.models.signin;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.TeleHealerApplication;
@@ -10,7 +10,6 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.HashMap;
 

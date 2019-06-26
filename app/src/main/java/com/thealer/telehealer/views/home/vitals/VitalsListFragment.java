@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +38,10 @@ import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.VitalsOrdersListAdapter;
 
-import iHealth.pairing.VitalCreationActivity;
+import java.util.ArrayList;
+import java.util.Date;
+
+import Flavor.iHealth.pairing.VitalCreationActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.isContentViewProceed;
@@ -64,8 +70,7 @@ public class VitalsListFragment extends BaseFragment {
         return view;
     }
 
-    private void initView(View view) {
-
+    protected void initView(View view) {
         fab = view.findViewById(R.id.add_fab);
         appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
@@ -124,19 +129,28 @@ public class VitalsListFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        if (UserType.isUserPatient() && !isContentViewProceed && appPreference.getInt(PreferenceConstants.DEVICE_CONNECTION_COUNT) < 3)
-            checkVitalDeviceConnection();
+        if (UserType.isUserPatient() && !isContentViewProceed && appPreference.getInt(PreferenceConstants.DEVICE_CONNECTION_COUNT) < 3) {
+            boolean result = checkVitalDeviceConnection();
+            if (!result) {
+                runAfterKnowYourNumber();
+            }
+        } else {
+            runAfterKnowYourNumber();
+        }
 
         if (isContentViewProceed && isInForeGround) {
             isContentViewProceed = false;
         }
     }
 
-    private void checkVitalDeviceConnection() {
+    private boolean checkVitalDeviceConnection() {
         if (!appPreference.getBoolean(PreferenceConstants.IS_VITAL_DEVICE_CONNECTED) &&
                 !isVitalDeviceConnectionShown) {
             isVitalDeviceConnectionShown = true;
             showKnowYourNumber();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -192,7 +206,12 @@ public class VitalsListFragment extends BaseFragment {
                             ((ShowSubFragmentInterface) getActivity()).onShowFragment(fragment);
                     }
                 }
+                break;
         }
+
+    }
+
+    protected void runAfterKnowYourNumber() {
 
     }
 }

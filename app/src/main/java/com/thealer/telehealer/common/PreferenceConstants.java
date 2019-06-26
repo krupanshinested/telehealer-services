@@ -66,4 +66,7 @@ public class PreferenceConstants {
     public static final String DEVICE_CONNECTION_COUNT = "DEVICE_CONNECTION_COUNT";
     public static final String APP_INSTALL_TYPE = "app_install_type";
     public static final String APP_INSTALL_TYPE_COUNTRY_CODE = "app_install_type_country_code";
+
+    public static final String GOOGLE_FIT_PRE_FETCHED_DATE = "GOOGLE_FIT_PRE_FETCHED_DATE";
+    public static final String GOOGLE_FIT_PRE_FETCHED_SOURCES = "GOOGLE_FIT_PRE_FETCHED_SOURCES";
 }

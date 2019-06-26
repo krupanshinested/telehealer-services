@@ -1,9 +1,9 @@
 package com.thealer.telehealer.views.inviteUser;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.textfield.TextInputLayout;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.view.LayoutInflater;

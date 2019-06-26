@@ -1,13 +1,11 @@
 package com.thealer.telehealer.apilayer.models.OpenTok;
 
 import android.app.Application;
-import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.widget.Toast;
 
-import com.thealer.telehealer.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import android.text.TextUtils;
+
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
@@ -16,26 +14,14 @@ import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
 import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.common.ResultFetcher;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
-import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
-import com.thealer.telehealer.common.pubNub.PubNubResult;
-import com.thealer.telehealer.common.pubNub.PubnubUtil;
-import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-import static com.thealer.telehealer.TeleHealerApplication.application;
 
 /**
  * Created by rsekar on 12/27/18.
