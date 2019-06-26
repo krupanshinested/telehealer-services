@@ -1,13 +1,15 @@
 package com.thealer.telehealer.common.VitalCommon;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import Flavor.iHealth.iHealthVitalManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
@@ -23,7 +25,6 @@ import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.WeightMeasureIn
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import iHealth.iHealthVitalManager;
 
 /**
  * Created by rsekar on 11/27/18.

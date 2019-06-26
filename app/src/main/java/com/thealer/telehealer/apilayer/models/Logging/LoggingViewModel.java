@@ -1,21 +1,14 @@
 package com.thealer.telehealer.apilayer.models.Logging;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
-import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.OpenTok.TokBox;
-import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
-import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.HashMap;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by rsekar on 1/21/19.

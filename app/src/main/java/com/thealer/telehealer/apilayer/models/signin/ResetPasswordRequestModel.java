@@ -1,6 +1,6 @@
 package com.thealer.telehealer.apilayer.models.signin;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 /**
  * Created by Aswin on 02,November,2018

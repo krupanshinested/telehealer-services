@@ -1,8 +1,7 @@
 package com.thealer.telehealer.apilayer.models.settings;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -19,7 +18,6 @@ import java.util.Map;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 /**

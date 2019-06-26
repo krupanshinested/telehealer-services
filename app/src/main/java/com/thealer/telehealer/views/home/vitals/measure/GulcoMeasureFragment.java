@@ -1,16 +1,16 @@
 package com.thealer.telehealer.views.home.vitals.measure;
 
 import android.app.Activity;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +21,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
-import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
@@ -32,20 +29,11 @@ import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.GulcoMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.GulcoQRCapture;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
-import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.OnActionCompleteInterface;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
-import com.thealer.telehealer.views.home.vitals.VitalsSendBaseFragment;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
-import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 /**
  * Created by rsekar on 12/3/18.

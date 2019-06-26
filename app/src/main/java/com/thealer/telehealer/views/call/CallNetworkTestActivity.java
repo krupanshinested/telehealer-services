@@ -1,11 +1,11 @@
 package com.thealer.telehealer.views.call;
 
-import android.arch.lifecycle.Observer;
+import androidx.lifecycle.Observer;
 import android.content.Intent;
 import android.graphics.drawable.Animatable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;

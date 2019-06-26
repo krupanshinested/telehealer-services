@@ -8,7 +8,7 @@
     android:paddingTop="32dp"
     android:paddingBottom="32dp">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -51,6 +51,6 @@
             app:layout_constraintHeight_percent="0.15"
             app:layout_constraintTop_toBottomOf="@+id/doctor_iv"
             app:layout_constraintWidth_default="percent" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

@@ -1,12 +1,13 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 public class VitalsCreateApiModel extends BaseApiViewModel {
@@ -27,6 +28,7 @@ public class VitalsCreateApiModel extends BaseApiViewModel {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     Log.v("VitalsCreateApiModel","onSuccess");
+                                    EventRecorder.recordVitalsPushed();
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });

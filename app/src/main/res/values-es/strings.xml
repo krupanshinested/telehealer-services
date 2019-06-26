@@ -1173,4 +1173,10 @@
     <string name="state_medical_council_for_mci">Consejo medico estatal para mci</string>
     <string name="account_locked_info">Su cuenta ha sido bloqueada por %s horas</string>
     <string name="abnormal_vital">Vital anormal</string>
+    <string name="captured_via">Capturado a través de %1$s</string>
+    <string name="manage_sources">Administrar Fuentes</string>
+    <string name="manage_sources_description">Lea y almacene datos vitales de las siguientes fuentes de forma continua</string>
+    <string name="manage_sources_sub">Sincronice los datos de las fuentes que escriben en Google Fit.</string>
+    <string name="no_source_found">No se encontraron fuentes</string>
+    <string name="no_source_found_message">Las aplicaciones de fuente vital de AppleHealth eventualmente aparecerán aquí</string>
 </resources>

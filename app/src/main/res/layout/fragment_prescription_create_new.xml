@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/save_btn"
@@ -12,7 +12,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_default">
@@ -29,7 +29,7 @@
                 app:title_text="@string/Click_here_to_select_patient"
                 app:view_label="@string/patient_name" />
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/drug_til"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="text"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.thealer.telehealer.common.CustomSpinnerView
                 android:id="@+id/form_csv"
@@ -57,7 +57,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/drug_til"
                 app:spinner_label_text="@string/form" />
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/strength_til"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.thealer.telehealer.common.CustomSpinnerView
                 android:id="@+id/metric_csv"
@@ -87,7 +87,7 @@
                 app:layout_constraintStart_toEndOf="@id/strength_til"
                 app:spinner_label_text="metric" />
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/direction_til"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="text"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.thealer.telehealer.common.CustomSpinnerView
                 android:id="@+id/direction_1_csv"
@@ -130,7 +130,7 @@
                 app:layout_constraintStart_toEndOf="@id/direction_1_csv"
                 app:spinner_label_visible="false" />
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/dispense_til"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -149,7 +149,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="text"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/refill_label_tv"
@@ -240,8 +240,8 @@
                 app:sub_title_visible="false"
                 app:title_text="@string/click_here_to_select_last_visit"
                 app:view_label="visit" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v4.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <Button
         android:id="@+id/save_btn"
@@ -262,4 +262,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/save_btn" />
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,8 +2,10 @@ package com.thealer.telehealer.views.home;
 
 import android.app.Activity;
 import android.app.NotificationManager;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+
+import Flavor.iHealth.VitalsListWithGoogleFitFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,16 +13,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.navigation.NavigationView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -33,6 +35,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.manager.RetrofitLogger;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
@@ -76,6 +79,7 @@ import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -738,7 +742,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.IS_FROM_HOME, true);
 
-        VitalsListFragment vitalsListFragment = new VitalsListFragment();
+        VitalsListFragment vitalsListFragment = new VitalsListWithGoogleFitFragment();
         vitalsListFragment.setArguments(bundle);
         setFragment(vitalsListFragment);
 
@@ -936,4 +940,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private Fragment getCurrentFragment() {
         return getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
     }
+
+    private void checkGoogleFitData() {
+
+    }
+
 }

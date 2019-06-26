@@ -1,7 +1,6 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import androidx.fragment.app.FragmentActivity;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
