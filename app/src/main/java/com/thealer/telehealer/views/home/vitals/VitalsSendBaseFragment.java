@@ -1,13 +1,13 @@
 package com.thealer.telehealer.views.home.vitals;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -15,19 +15,16 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
-import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
-import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 
 public class VitalsSendBaseFragment extends BaseFragment {

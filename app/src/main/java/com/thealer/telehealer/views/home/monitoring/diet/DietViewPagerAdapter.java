@@ -1,9 +1,9 @@
 package com.thealer.telehealer.views.home.monitoring.diet;
 
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.PagerAdapter;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager.widget.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

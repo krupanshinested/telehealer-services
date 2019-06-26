@@ -1,6 +1,6 @@
 package com.thealer.telehealer.common.VitalCommon;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.SupportInformation;

@@ -1,6 +1,6 @@
 package com.thealer.telehealer.apilayer.models.medicalHistory;
 
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;

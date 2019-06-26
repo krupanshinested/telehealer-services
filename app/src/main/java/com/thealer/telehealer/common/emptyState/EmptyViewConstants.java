@@ -74,4 +74,6 @@ public class EmptyViewConstants {
     public static final String EMPTY_RECEIVED_PENDING_INVITES = "empty_received_pending_intent";
     public static final String EMPTY_SENT_PENDING_INVITES = "empty_sent_pending_intent";
     public static final String EMPTY_VITAL_FROM_TO = "empty_vital_from_to";
+
+    public static final String EMPTY_GOOGLE_FIT_SOURCE = "empty_google_fit_source";
 }

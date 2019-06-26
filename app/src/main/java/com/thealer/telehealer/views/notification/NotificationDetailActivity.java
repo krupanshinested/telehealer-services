@@ -1,9 +1,9 @@
 package com.thealer.telehealer.views.notification;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;

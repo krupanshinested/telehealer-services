@@ -1,7 +1,7 @@
 package com.thealer.telehealer.views.settings.medicalHistory;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
