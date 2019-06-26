@@ -1,6 +1,8 @@
 package com.thealer.telehealer.apilayer.models.createuser;
 
-import android.support.annotation.NonNull;
+
+
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 

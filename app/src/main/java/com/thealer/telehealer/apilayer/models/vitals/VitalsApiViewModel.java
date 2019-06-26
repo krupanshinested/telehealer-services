@@ -1,11 +1,12 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
@@ -84,6 +85,7 @@ public class VitalsApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    EventRecorder.recordVitalsPushed();
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
@@ -91,6 +93,7 @@ public class VitalsApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
 
     public void getVitalDetail(String userGuid, String doctorGuid, List<Integer> idList, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {

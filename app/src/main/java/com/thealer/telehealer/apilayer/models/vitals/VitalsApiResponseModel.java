@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.vitals;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.common.UserType;
@@ -24,6 +25,22 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
     private String updated_at;
     private boolean abnormal;
     private String order_id;
+
+    private String date;
+    private String bundle_id;
+
+    public VitalsApiResponseModel(String type,String value,String display_name, String mode,String date,String bundle_id) {
+        this.type = type;
+        this.display_name = display_name;
+        this.value = value;
+        this.mode = mode;
+        this.date = date;
+        this.bundle_id = bundle_id;
+    }
+
+    public VitalsApiResponseModel() {
+
+    }
 
     public boolean isAbnormal() {
         return abnormal;
@@ -86,11 +103,11 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
     }
 
     public String getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+        if (date != null) {
+            return date;
+        } else {
+            return created_at;
+        }
     }
 
     public String getUpdated_at() {
@@ -111,7 +128,9 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
 
     public String getCapturedBy(Context context) {
         String prefix = context.getString(R.string.captured_by);
-        if (getMode().equals(VitalsConstant.VITAL_MODE_DEVICE)) {
+        if (bundle_id != null &&  !bundle_id.equals(BuildConfig.APPLICATION_ID)) {
+            return String.format(context.getString(R.string.captured_via),display_name);
+        } else if (getMode().equals(VitalsConstant.VITAL_MODE_DEVICE)) {
             return prefix + " " + context.getString(VitalsConstant.LABLE_DEVICE).toLowerCase();
         } else {
             if (UserType.isUserPatient()) {

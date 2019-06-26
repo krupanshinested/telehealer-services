@@ -1,6 +1,6 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import java.io.Serializable;
 

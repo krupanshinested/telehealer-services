@@ -1,6 +1,6 @@
 package com.thealer.telehealer.views.home.recents;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;

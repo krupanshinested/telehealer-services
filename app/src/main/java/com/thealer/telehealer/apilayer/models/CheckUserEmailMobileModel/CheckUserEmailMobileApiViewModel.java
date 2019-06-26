@@ -1,7 +1,7 @@
 package com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;

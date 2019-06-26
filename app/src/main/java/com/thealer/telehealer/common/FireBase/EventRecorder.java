@@ -1,13 +1,12 @@
 package com.thealer.telehealer.common.FireBase;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.thealer.telehealer.BuildConfig;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 
 import java.util.Arrays;
@@ -152,6 +151,10 @@ public class EventRecorder {
         analytics.logEvent("measurement_started", bundle);
     }
 
+    public static void recordVitalsPushed(){
+        Bundle bundle = new Bundle();
+        analytics.logEvent("measurement_captured", bundle);
+    }
 
     public static void recordMeals(String meal,String type){
         Bundle bundle = new Bundle();
