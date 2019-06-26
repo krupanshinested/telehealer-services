@@ -1,6 +1,6 @@
 package com.thealer.telehealer.common.pubNub.models;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.io.Serializable;
 import java.util.HashMap;

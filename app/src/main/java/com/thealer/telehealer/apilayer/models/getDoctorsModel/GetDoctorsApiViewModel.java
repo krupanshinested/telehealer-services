@@ -1,8 +1,8 @@
 package com.thealer.telehealer.apilayer.models.getDoctorsModel;
 
 import android.app.Application;
-import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;

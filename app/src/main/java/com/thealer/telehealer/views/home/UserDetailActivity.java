@@ -1,28 +1,21 @@
 package com.thealer.telehealer.views.home;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
@@ -35,11 +28,7 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
-import com.thealer.telehealer.views.home.schedules.WaitingRoomActivity;
-import com.thealer.telehealer.views.notification.NotificationActivity;
-import com.thealer.telehealer.views.notification.NotificationListFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 public class UserDetailActivity extends BaseActivity implements AttachObserverInterface,

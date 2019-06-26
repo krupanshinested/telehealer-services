@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.thealer.telehealer">
 
     <application
-        android:name=".TeleHealerApplication"
+        android:name="Flavor.Utils.PatientApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        tools:replace="android:name"
         android:usesCleartextTraffic="true">
         <activity android:name=".views.home.orders.CreateOrderActivity"
             android:screenOrientation="portrait">
@@ -25,6 +27,13 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
+        
+        <activity android:name="Flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="Flavor.iHealth.pairing.VitalCreationActivity"
+            android:screenOrientation="portrait" />
 
     </application>
 

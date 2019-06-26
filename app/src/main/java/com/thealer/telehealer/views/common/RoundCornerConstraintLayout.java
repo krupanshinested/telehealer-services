@@ -3,7 +3,7 @@ package com.thealer.telehealer.views.common;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.GradientDrawable;
-import android.support.constraint.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.AttributeSet;
 
 import com.thealer.telehealer.R;

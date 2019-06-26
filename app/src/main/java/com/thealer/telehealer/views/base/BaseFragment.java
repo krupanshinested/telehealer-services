@@ -7,11 +7,14 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -132,9 +135,9 @@ public class BaseFragment extends Fragment {
     public void showSnack(View view, String message) {
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
-        TextView textView = snackbarLayout.findViewById(android.support.design.R.id.snackbar_text);
+        TextView textView = snackbarLayout.findViewById(R.id.snackbar_text);
         textView.setMaxLines(10);
-        snackbar.setDuration(Snackbar.LENGTH_LONG);
+        snackbar.setDuration(BaseTransientBottomBar.LENGTH_LONG);
         snackbar.show();
     }
 

@@ -1,6 +1,6 @@
 package com.thealer.telehealer.apilayer.models.vitals.vitalCreation;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.Gson;

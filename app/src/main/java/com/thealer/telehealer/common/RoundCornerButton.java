@@ -11,7 +11,7 @@ import com.thealer.telehealer.R;
  * Created by rsekar on 1/23/19.
  */
 
-public class RoundCornerButton extends android.support.v7.widget.AppCompatButton {
+public class RoundCornerButton extends androidx.appcompat.widget.AppCompatButton {
     private int backgroundColor, strokeColor;
 
     private int topLeft, topRight, bottomRight, bottomLeft, cornerRadius;

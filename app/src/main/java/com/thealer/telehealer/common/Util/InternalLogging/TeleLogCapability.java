@@ -1,6 +1,6 @@
 package com.thealer.telehealer.common.Util.InternalLogging;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.common.PreferenceConstants;
 

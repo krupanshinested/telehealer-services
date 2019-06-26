@@ -2,12 +2,12 @@ package com.thealer.telehealer.views.base;
 
 import android.graphics.Point;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v7.view.ContextThemeWrapper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import androidx.appcompat.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +37,7 @@ public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
             @Override
             public void onGlobalLayout() {
                 BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) getDialog();
-                FrameLayout bottomSheet = (FrameLayout) bottomSheetDialog.findViewById(android.support.design.R.id.design_bottom_sheet);
+                FrameLayout bottomSheet = (FrameLayout) bottomSheetDialog.findViewById(R.id.design_bottom_sheet);
                 BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
                 behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }

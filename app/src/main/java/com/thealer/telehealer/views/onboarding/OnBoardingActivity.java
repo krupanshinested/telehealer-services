@@ -1,7 +1,7 @@
 package com.thealer.telehealer.views.onboarding;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.views.base.BaseActivity;

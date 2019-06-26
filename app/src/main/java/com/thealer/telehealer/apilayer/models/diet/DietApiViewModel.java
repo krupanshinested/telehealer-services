@@ -1,7 +1,7 @@
 package com.thealer.telehealer.apilayer.models.diet;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;

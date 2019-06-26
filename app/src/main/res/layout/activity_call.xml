@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_container"
@@ -80,7 +81,7 @@
             android:src="@drawable/switch_camera" />
     </LinearLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/user_info_lay"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -145,7 +146,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_info_tv"
             tools:text="Rajasekhar" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/recording_view"
@@ -403,7 +404,7 @@
                 android:textColor="@color/colorWhite" />
         </LinearLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/pager_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -418,7 +419,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <android.support.v4.view.ViewPager
+                <androidx.viewpager.widget.ViewPager
                     android:id="@+id/viewPager"
                     android:layout_width="fill_parent"
                     android:layout_height="400dp"
@@ -450,10 +451,10 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="@string/dummy_text" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/incoming_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -494,7 +495,7 @@
             app:layout_constraintLeft_toRightOf="@+id/logo"
             app:layout_constraintTop_toTopOf="@id/logo" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/smallView"
@@ -510,4 +511,4 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

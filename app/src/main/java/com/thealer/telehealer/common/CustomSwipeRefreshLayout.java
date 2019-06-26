@@ -11,19 +11,19 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.Px;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.NestedScrollingChild;
-import android.support.v4.view.NestedScrollingChildHelper;
-import android.support.v4.view.NestedScrollingParent;
-import android.support.v4.view.NestedScrollingParentHelper;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ListViewCompat;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.Px;
+import androidx.annotation.VisibleForTesting;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.NestedScrollingChildHelper;
+import androidx.core.view.NestedScrollingParent;
+import androidx.core.view.NestedScrollingParentHelper;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.ListViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -899,7 +899,7 @@ public class CustomSwipeRefreshLayout extends ViewGroup implements NestedScrolli
         void onRefresh();
     }
 
-    private class CircleImageView extends android.support.v7.widget.AppCompatImageView {
+    private class CircleImageView extends androidx.appcompat.widget.AppCompatImageView {
         private static final int KEY_SHADOW_COLOR = 503316480;
         private static final int FILL_SHADOW_COLOR = 1023410176;
         private static final float X_OFFSET = 0.0F;

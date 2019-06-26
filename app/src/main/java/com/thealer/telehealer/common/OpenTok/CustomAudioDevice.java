@@ -16,7 +16,7 @@ import android.media.MediaRecorder.AudioSource;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.NoiseSuppressor;
 import android.os.Build;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.opentok.android.BaseAudioDevice;

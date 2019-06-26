@@ -1235,4 +1235,10 @@
     <string name="state_medical_council_for_mci">State medical council for mci</string>
     <string name="account_locked_info">Your account has been locked down for %s hours</string>
     <string name="abnormal_vital">Abnormal vital</string>
+    <string name="captured_via">Captured via %1$s</string>
+    <string name="manage_sources">Manage Sources</string>
+    <string name="manage_sources_description">Read and store vitals from the following sources on an ongoing basis</string>
+    <string name="manage_sources_sub">Sync data from sources that write to Google Fit.</string>
+    <string name="no_source_found">No Sources found</string>
+    <string name="no_source_found_message">AppleHealth vital source apps will eventually show up here</string>
 </resources>

@@ -192,4 +192,8 @@ public class ArgumentKeys {
     public static final String FROM_CALL = "FROM_CALL";
     public static final String DOCUMENT_DETAIL = "document_detail";
 
+    public static final String GOOGLE_FIT_DATA = "GOOGLE_FIT_DATA";
+    public static final String GOOGLE_FIT_SOURCE = "GOOGLE_FIT_SOURCE";
+    public static final String GOOGLE_FIT_CHANGE = "GOOGLE_FIT_CHANGE";
+
 }

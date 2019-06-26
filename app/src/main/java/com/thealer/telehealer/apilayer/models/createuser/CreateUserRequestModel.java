@@ -1,6 +1,6 @@
 package com.thealer.telehealer.apilayer.models.createuser;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 import android.util.Log;
 
 import com.google.gson.Gson;

@@ -2,11 +2,13 @@ package com.thealer.telehealer.views.home.monitoring;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+
+import Flavor.iHealth.VitalsListWithGoogleFitFragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +71,7 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
                 if (titleList.get(i).equals(activity.getString(R.string.vitals))) {
                     if (UserType.isUserPatient()) {
 
-                        fragment = new VitalsListFragment();
+                        fragment = new VitalsListWithGoogleFitFragment();
                         bundle.putBoolean(Constants.IS_FROM_HOME, true);
                         fragment.setArguments(bundle);
 

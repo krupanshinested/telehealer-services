@@ -1,13 +1,11 @@
 package com.thealer.telehealer.apilayer.models.Braintree;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.HashMap;
