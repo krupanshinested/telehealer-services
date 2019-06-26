@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toTopOf="@+id/add_btn"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -162,7 +162,7 @@
                 android:background="@color/colorGrey_light"
                 app:layout_constraintTop_toBottomOf="@+id/no_of_serves_tv" />
 
-            <android.support.design.widget.TabLayout
+            <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
@@ -177,20 +177,20 @@
                 app:tabSelectedTextColor="@color/colorWhite"
                 app:tabTextColor="@color/app_gradient_start">
 
-                <android.support.design.widget.TabItem
+                <com.google.android.material.tabs.TabItem
                     android:id="@+id/nutrition_fact_tab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/nutrition_facts" />
 
-                <android.support.design.widget.TabItem
+                <com.google.android.material.tabs.TabItem
                     android:id="@+id/ingredients_tab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/ingrediants" />
-            </android.support.design.widget.TabLayout>
+            </com.google.android.material.tabs.TabLayout>
 
-            <android.support.v4.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/food_detail_nsv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -198,11 +198,11 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tab_layout">
 
-                <android.support.constraint.ConstraintLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/item_cl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -211,7 +211,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
-                        <android.support.v7.widget.RecyclerView
+                        <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/nutrition_fact_rv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -230,7 +230,7 @@
                             android:textColor="@color/colorBlack"
                             android:visibility="invisible"
                             tools:text="@string/dummy_text" />
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <ImageView
                         android:id="@+id/logo_iv"
@@ -243,10 +243,10 @@
                         app:layout_constraintTop_toBottomOf="@+id/item_cl"
                         app:layout_constraintVertical_bias="1.0" />
 
-                </android.support.constraint.ConstraintLayout>
-            </android.support.v4.widget.NestedScrollView>
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v4.widget.NestedScrollView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <Button
         android:id="@+id/add_btn"
@@ -257,4 +257,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

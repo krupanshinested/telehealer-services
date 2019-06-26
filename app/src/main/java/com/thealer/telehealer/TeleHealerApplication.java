@@ -3,10 +3,10 @@ package com.thealer.telehealer;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.arch.lifecycle.ProcessLifecycleOwner;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -77,7 +77,6 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         }
 
     }
-
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onMoveToForeground() {

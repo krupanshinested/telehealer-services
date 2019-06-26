@@ -1,8 +1,8 @@
 package com.thealer.telehealer.views.base;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
 /**
  * Created by Aswin on 19,November,2018

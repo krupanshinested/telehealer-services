@@ -1,7 +1,7 @@
 package com.thealer.telehealer.views.home.recents.adapterModels;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;

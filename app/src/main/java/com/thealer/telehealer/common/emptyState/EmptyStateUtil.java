@@ -123,6 +123,8 @@ public class EmptyStateUtil {
                 return context.getString(R.string.EMPTY_VITAL_FROM_TO);
             case EmptyViewConstants.EMPTY_UNCONNECTED_USER:
                 return context.getString(R.string.EMPTY_UNCONNECTED_USER);
+            case EmptyViewConstants.EMPTY_GOOGLE_FIT_SOURCE:
+                return context.getString(R.string.no_source_found);
             default:
                 return null;
         }
@@ -259,6 +261,8 @@ public class EmptyStateUtil {
                 return context.getString(R.string.EMPTY_STETHOSCOPE_WITH_BTN_MESSAGE);
             case EmptyViewConstants.EMPTY_UNCONNECTED_USER:
                 return context.getString(R.string.EMPTY_UNCONNECTED_USER_MESSAGE);
+            case EmptyViewConstants.EMPTY_GOOGLE_FIT_SOURCE:
+                return context.getString(R.string.no_source_found_message);
             default:
                 return null;
         }
@@ -362,6 +366,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_UNCONNECTED_USER:
                 return R.drawable.emptystate_pending_invites;
             case EmptyViewConstants.EMPTY_BP_TRACK_VALUE:
+                return R.drawable.emptystate_no_vitals;
+            case EmptyViewConstants.EMPTY_GOOGLE_FIT_SOURCE:
                 return R.drawable.emptystate_no_vitals;
             default:
                 return 0;

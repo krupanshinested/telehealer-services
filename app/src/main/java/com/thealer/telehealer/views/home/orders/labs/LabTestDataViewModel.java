@@ -1,7 +1,7 @@
 package com.thealer.telehealer.views.home.orders.labs;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.thealer.telehealer.apilayer.models.orders.lab.LabsBean;
 
