@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -46,6 +47,7 @@ import com.thealer.telehealer.common.pubNub.PubNubResult;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
+import com.thealer.telehealer.views.CustomTextureView;
 import com.thealer.telehealer.views.base.BaseActivity;
 
 import java.lang.reflect.Type;
@@ -201,6 +203,11 @@ public class WaitingRoomActivity extends BaseActivity {
             }
         });
 
+        /*CustomTextureView customTextureView = new CustomTextureView(WaitingRoomActivity.this);
+        Matrix matrix = new Matrix();
+        matrix.preRotate(90);
+        customTextureView.setTransform(matrix);
+        simpleExoPlayer.setVideoTextureView(customTextureView);*/
         simpleExoPlayer.setPlayWhenReady(true);
         simpleExoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
         playerView.setUseController(false);

@@ -136,6 +136,7 @@ public class VitalMeasureBaseFragment extends VitalsSendBaseFragment implements 
 
     @Override
     public void didFinishPost() {
+        Log.d("VitalMeasureBase","didFinishPost");
         if (isPresentedInsideCallActivity()) {
 
         } else {
