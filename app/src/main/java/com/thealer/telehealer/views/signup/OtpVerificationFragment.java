@@ -455,6 +455,8 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
         onViewChangeInterface.updateNextTitle(getString(R.string.next));
 
         onViewChangeInterface.updateTitle(getString(R.string.otp));
+
+        otpEt.requestFocus();
     }
 
     @Override
