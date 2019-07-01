@@ -209,6 +209,10 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
     }
 
     private void stopLoaderAnimation(boolean status) {
+        if (getActivity() == null) {
+            return;
+        }
+
         if (status) {
             if (successReplaceDrawableId != null) {
                 loaderIv.setImageResource(successReplaceDrawableId);

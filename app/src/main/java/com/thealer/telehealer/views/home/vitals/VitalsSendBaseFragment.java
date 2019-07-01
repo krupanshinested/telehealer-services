@@ -64,10 +64,12 @@ public class VitalsSendBaseFragment extends BaseFragment {
                     postVitals(nextPostMeasurementType,nextPostValue);
                     nextPostValue = null;
                     nextPostMeasurementType = null;
+                    Log.v("VitalsSendBaseFragment","posting next value");
                 } else if (nextPostRequest != null) {
                     previousResponse = (VitalsCreateApiResponseModel) baseApiResponseModel;
                     vitalsApiViewModel.createVital(nextPostRequest, doctor_guid);
                     nextPostRequest = null;
+                    Log.v("VitalsSendBaseFragment","posting next request");
                 } else if (!isPresentedInsideCallActivity()) {
 
                     VitalsCreateApiResponseModel vitalsCreateApiResponseModel = (VitalsCreateApiResponseModel) baseApiResponseModel;
@@ -118,7 +120,9 @@ public class VitalsSendBaseFragment extends BaseFragment {
                             .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
                                     .putExtras(bundle));
 
+                    Log.v("VitalsSendBaseFragment","not present in call kit");
                 } else {
+                    Log.v("VitalsSendBaseFragment","present in call kit");
                     didFinishPost();
                 }
             }
@@ -230,7 +234,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
     }
 
     public void didFinishPost() {
-
+        Log.d("VitalSendBaseFragment","didFinishPost");
     }
 
     private void showSuccessState() {

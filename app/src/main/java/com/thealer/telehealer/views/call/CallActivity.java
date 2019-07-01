@@ -18,7 +18,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -49,7 +48,6 @@ import android.widget.Toast;
 import com.skyfishjy.library.RippleBackground;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
@@ -72,9 +70,12 @@ import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Util.Array.ArrayListFilter;
+import com.thealer.telehealer.common.Util.Array.ArrayListUtil;
 import com.thealer.telehealer.common.Util.TimerInterface;
 import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
@@ -100,7 +101,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import iHealth.iHealthVitalManager;
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -712,12 +712,16 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
                         ArrayList<VitalDevice> devices = new ArrayList<>();
                         if (UserType.isUserPatient()) {
-                            devices = VitalPairedDevices.getAllPairedDevices(appPreference).getDevices();
-                        /*devices.add(new VitalDevice("", VitalsConstant.TYPE_PO3,false,""));
-                        devices.add(new VitalDevice("",VitalsConstant.TYPE_BP3L,false,""));
-                        devices.add(new VitalDevice("",VitalsConstant.TYPE_PO3,false,""));
-                        devices.add(new VitalDevice("",VitalsConstant.TYPE_PO3,false,""));
-                        devices.add(new VitalDevice("",VitalsConstant.TYPE_TS28B,false,""));*/
+                            ArrayList<VitalDevice> items = VitalPairedDevices.getAllPairedDevices(appPreference).getDevices();
+
+                            ArrayListUtil util = new ArrayListUtil<VitalDevice,VitalDevice>();
+                            devices = util.filterList(items, new ArrayListFilter<VitalDevice>() {
+                                @Override
+                                public Boolean needToAddInFilter(VitalDevice model) {
+                                    return !model.getType().equals("BG5");
+                                }
+                            });
+
                         }
 
                         vitalCallAdapter = new VitalCallAdapter(getSupportFragmentManager(), devices, this);
