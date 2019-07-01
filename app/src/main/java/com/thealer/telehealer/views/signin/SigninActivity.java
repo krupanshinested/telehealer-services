@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -24,6 +25,7 @@ import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
@@ -33,21 +35,29 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
+import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.signup.CreatePasswordFragment;
+import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+import com.thealer.telehealer.views.signup.OtpVerificationFragment;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 31,October,2018
  */
-public class SigninActivity extends BaseActivity implements View.OnClickListener {
+public class SigninActivity extends BaseActivity implements View.OnClickListener, OnActionCompleteInterface, OnCloseActionInterface,
+        OnViewChangeInterface, SuccessViewInterface {
     private ImageView backIv;
     private TextView toolbarTitle;
     private TextInputLayout emailTil;
@@ -57,7 +67,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     private CheckBox rememberCb;
     private CustomButton loginBtn;
     private TextView forgetPasswordTv;
-    private LinearLayout quickLoginLl;
+    private LinearLayout quickLoginLl, subFragmentHolder;
     private ImageView quickLoginCiv;
     private TextView quickLoginTv;
 
@@ -182,19 +192,60 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    Utils.showAlertDialog(SigninActivity.this, getString(R.string.error), getString(R.string.login_error_message),
-                            getString(R.string.ok), null,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            }, null);
+                    if (errorModel.isLocked()) {
+                        UserDetailPreferenceManager.invalidateUser();
+                        setQuickLoginView();
+                        Utils.showAlertDialog(SigninActivity.this, getString(R.string.error),
+                                getString(R.string.account_locked_info, String.valueOf(errorModel.getLockTimeInMins() / 60)),
+                                getString(R.string.reset_password), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        showResetPassword();
+                                    }
+                                }, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                    } else {
+                        Utils.showAlertDialog(SigninActivity.this, getString(R.string.error), getString(R.string.login_error_message),
+                                getString(R.string.ok), null,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }, null);
+                    }
                 }
             }
         });
 
         initView();
+    }
+
+    private void showResetPassword() {
+        ResetPasswordRequestModel resetPasswordRequestModel = ViewModelProviders.of(this).get(ResetPasswordRequestModel.class);
+        resetPasswordRequestModel.setEmail(emailEt.getText().toString());
+        resetPasswordRequestModel.setApp_type(Utils.getAppType());
+
+        OtpVerificationFragment otpVerificationFragment = new OtpVerificationFragment();
+
+        Bundle otpBundle = new Bundle();
+        otpBundle.putInt(ArgumentKeys.OTP_TYPE, OtpVerificationFragment.reset_password);
+        otpBundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
+        otpVerificationFragment.setArguments(otpBundle);
+
+        showSubFragment(otpVerificationFragment);
+
+    }
+
+    private void showSubFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.fragment_remove_animation, R.anim.fragment_remove_exit)
+                .addToBackStack(fragment.getClass().getSimpleName())
+                .replace(subFragmentHolder.getId(), fragment).commit();
     }
 
     private boolean isValidUser(String role) {
@@ -218,6 +269,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         quickLoginLl = (LinearLayout) findViewById(R.id.quick_login_ll);
         quickLoginCiv = (ImageView) findViewById(R.id.quick_login_civ);
         quickLoginTv = (TextView) findViewById(R.id.quick_login_tv);
+        subFragmentHolder = (LinearLayout) findViewById(R.id.sub_fragment_holder);
 
         toolbarTitle.setText(getString(R.string.login));
 
@@ -361,7 +413,102 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(this, OnBoardingActivity.class));
-        finish();
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            startActivity(new Intent(this, OnBoardingActivity.class));
+            finish();
+        }
+    }
+
+    @Override
+    public void onCompletionResult(String string, Boolean success, Bundle bundle) {
+        switch (string) {
+            case RequestID.REQ_RESET_PASSWORD:
+                CreatePasswordFragment createPasswordFragment = new CreatePasswordFragment();
+
+                Bundle passwordBundle = bundle;
+
+                if (passwordBundle == null) {
+                    passwordBundle = new Bundle();
+                }
+                passwordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
+                passwordBundle.putString(ArgumentKeys.TITLE, getString(R.string.password));
+                passwordBundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
+                createPasswordFragment.setArguments(passwordBundle);
+
+                showSubFragment(createPasswordFragment);
+
+                break;
+            case RequestID.RESET_PASSWORD_OTP_VALIDATED:
+
+                CreatePasswordFragment reEnterPassword = new CreatePasswordFragment();
+
+                Bundle repasswordBundle = bundle;
+
+                if (repasswordBundle == null) {
+                    repasswordBundle = new Bundle();
+                }
+                repasswordBundle.putInt(ArgumentKeys.PASSWORD_TYPE, CreatePasswordFragment.reset_password);
+                repasswordBundle.putString(ArgumentKeys.TITLE, getString(R.string.reenter_password));
+                repasswordBundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
+                reEnterPassword.setArguments(repasswordBundle);
+                showSubFragment(reEnterPassword);
+
+                break;
+        }
+    }
+
+    @Override
+    public void onClose(boolean isRefreshRequired) {
+        onBackPressed();
+    }
+
+    @Override
+    public void enableNext(boolean enabled) {
+
+    }
+
+    @Override
+    public void hideOrShowNext(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowClose(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowToolbarTile(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowBackIv(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void updateNextTitle(String nextTitle) {
+
+    }
+
+    @Override
+    public void updateTitle(String title) {
+
+    }
+
+    @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void onSuccessViewCompletion(boolean success) {
+        if (success) {
+            startActivity(new Intent(this, SigninActivity.class));
+            finish();
+        }
     }
 }

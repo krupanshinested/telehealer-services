@@ -17,6 +17,9 @@ public class ErrorModel {
     //for Brain Tree
     private String name;
 
+    private boolean locked;
+    private int lockTimeInMins;
+
     public ErrorModel(int code, String message, String data) {
         this.code = code;
         this.message = message;
@@ -66,5 +69,21 @@ public class ErrorModel {
 
     public void setResponse(String response) {
         this.response = response;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public int getLockTimeInMins() {
+        return lockTimeInMins;
+    }
+
+    public void setLockTimeInMins(int lockTimeInMins) {
+        this.lockTimeInMins = lockTimeInMins;
     }
 }
