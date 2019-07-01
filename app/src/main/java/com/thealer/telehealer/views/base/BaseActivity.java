@@ -32,9 +32,11 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.signin.SigninActivity;
 
 /**
  * Created by Aswin on 08,October,2018
@@ -311,6 +313,12 @@ public class BaseActivity extends AppCompatActivity {
         intent.putExtras(bundle);
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    public void invalidateUser(){
+        UserDetailPreferenceManager.invalidateUser();
+        startActivity(new Intent(this, SigninActivity.class));
+        finish();
     }
 
 }

@@ -168,6 +168,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 //user made too many attempts with invalid finger print
                 //send the user back to previous page
                 authStatus = ArgumentKeys.AUTH_FAILED;
+                invalidateUser();
                 finish();
                 break;
             case Constants.BIOMETRIC_FAILED:
