@@ -88,9 +88,15 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
         return view;
     }
 
+    @Override
     public void assignVitalListener() {
-        vitalManagerInstance.getInstance().setListener(this);
-        vitalManagerInstance.getInstance().setGulcoListener(this);
+        if (vitalManagerInstance != null) {
+            vitalManagerInstance.getInstance().setListener(this);
+            vitalManagerInstance.getInstance().setGulcoListener(this);
+            needToAssignIHealthListener = false;
+        } else {
+            needToAssignIHealthListener = true;
+        }
     }
 
     private void initView(View baseView) {
@@ -257,9 +263,7 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
     public void didCapture(String result) {
         setCurrentState(MeasureState.capturedCodeString);
         vitalManagerInstance.getInstance().updateStripBottleId(vitalDevice.getType(), vitalDevice.getDeviceId(), result);
-        if (currentState == MeasureState.notStarted) {
-            startMeasure();
-        }
+        startMeasure();
     }
 
     //GulcoMeasureInterface methods
