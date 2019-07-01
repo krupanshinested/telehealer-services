@@ -2,10 +2,7 @@ package com.thealer.telehealer.views.home.vitals.measure;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,56 +13,39 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiModel;
-import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.BaseAdapterObjectModel;
-import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.CustomRecyclerView;
-import com.thealer.telehealer.common.FireBase.EventRecorder;
-import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Util.Array.ArrayListFilter;
+import com.thealer.telehealer.common.Util.Array.ArrayListMap;
+import com.thealer.telehealer.common.Util.Array.ArrayListUtil;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.VitalCommon.BatteryResult;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.BPMeasureInterface;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
-import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalPairInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
-import com.thealer.telehealer.views.base.BaseActivity;
-import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.call.Interfaces.Action;
-import com.thealer.telehealer.views.call.Interfaces.CallVitalEvents;
 import com.thealer.telehealer.views.call.Interfaces.CallVitalPagerInterFace;
-import com.thealer.telehealer.views.common.OnActionCompleteInterface;
-import com.thealer.telehealer.views.home.vitals.VitalsSendBaseFragment;
 import com.thealer.telehealer.views.home.vitals.measure.Adapter.TrackBPAdapter;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
-import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
         View.OnClickListener, BPMeasureInterface {
@@ -121,23 +101,30 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
     @Override
     public void didFinishPost() {
         Log.d("BPTrack","didFinishPost");
-        ArrayList<BPTrack> unselectedItems = new ArrayList<>();
-        ArrayList<String> selectedIds = new ArrayList<>();
-
-        for (BPTrack bpTrack : selectedList) {
-            selectedIds.add(bpTrack.getDataID());
-        }
-
-        for (BPTrack bpTrack : tracks) {
-            if (!selectedIds.contains(bpTrack.getDataID())) {
-                unselectedItems.add(bpTrack);
-            }
-        }
-
-        tracks.clear();
-        tracks.addAll(unselectedItems);
 
         if (isPresentedInsideCallActivity()) {
+            ArrayList<BPTrack> unselectedItems = new ArrayList<>();
+            final ArrayList<String> selectedIds;
+
+            ArrayListUtil<BPTrack,String> mapUtil = new ArrayListUtil<>();
+            selectedIds = mapUtil.mapList(selectedList, new ArrayListMap<BPTrack, String>() {
+                @Override
+                public String transform(BPTrack model) {
+                    return model.getDataID();
+                }
+            });
+
+            ArrayListUtil<BPTrack,BPTrack> util = new ArrayListUtil<>();
+            unselectedItems = util.filterList(tracks, new ArrayListFilter<BPTrack>() {
+                @Override
+                public Boolean needToAddInFilter(BPTrack model) {
+                    return !selectedIds.contains(model.getDataID());
+                }
+            });
+
+            tracks.clear();
+            tracks.addAll(unselectedItems);
+
             if (vitalManagerInstance != null) {
                 vitalManagerInstance.getInstance().stopMeasure(vitalDevice.getType(), vitalDevice.getDeviceId());
             }
@@ -148,6 +135,7 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
                 adapter.reload(tracks, selectedList);
                 Log.d("BPTrack", "adapter.reload");
             } else {
+                recyclerView.getRecyclerView().getAdapter().notifyDataSetChanged();
                 Log.d("BPTrack", "adapter null");
             }
 
