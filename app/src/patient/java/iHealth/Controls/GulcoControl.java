@@ -159,6 +159,7 @@ public class GulcoControl {
     }
 
     public void updateStripBottleId(String deviceType,String mac,String result) {
+        Log.d("GulcoControl","updateStripBottleId "+deviceType+" mac "+mac);
         Object object = getInstance(deviceType,mac);
         if (object != null) {
             bg5Control = (Bg5Control) object;
@@ -166,15 +167,19 @@ public class GulcoControl {
             String today = formatter.format(new Date());
             bg5Control.setBottleMessageWithInfo(1,1,result,20,today);
         } else {
+            Log.d("GulcoControl","didFinishGulcoMesureWithFailure "+deviceType+" mac "+mac);
             gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
         }
     }
 
     private Object getInstance(String deviceType,String deviceMac) {
+        Log.d("GulcoControl","getInstance type "+deviceType+" mac "+deviceMac);
         switch (deviceType) {
             case iHealthDevicesManager.TYPE_BG5:
+                Log.d("GulcoControl","inside bg5");
                 return iHealthDevicesManager.getInstance().getBg5Control(deviceMac);
             default:
+                Log.d("GulcoControl","inside default");
                 return null;
         }
     }
@@ -201,12 +206,14 @@ public class GulcoControl {
     }
 
     private void startBG5Measure(String deviceType,String deviceMac) {
+        Log.d("GulcoControl","startBG5Measure "+deviceType+" mac "+deviceMac);
         Object object = getInstance(deviceType,deviceMac);
         if (object != null) {
             bg5Control = (Bg5Control) object;
             gulcoMeasureInterface.didGulcoStartMeasure(deviceType);
             bg5Control.startMeasure(1);
         } else {
+            Log.d("GulcoControl","didFinishGulcoMesureWithFailure "+deviceType+" mac "+deviceMac);
             gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
         }
     }

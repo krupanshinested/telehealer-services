@@ -35,7 +35,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
-        android:background="#770F0E0E"
+        android:background="@drawable/black_rounded_background"
         android:gravity="center"
         android:padding="@dimen/padding_default"
         android:text="@string/please_wait_till_the_doctor_starts_the_schedule"
