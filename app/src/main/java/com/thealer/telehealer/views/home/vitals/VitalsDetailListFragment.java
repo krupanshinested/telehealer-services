@@ -13,12 +13,11 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,17 +34,19 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.MPPointF;
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.CustomExpandableListView;
+import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.OpenTok.TokBox;
@@ -67,6 +68,8 @@ import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -82,39 +85,42 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
  * Created by Aswin on 21,November,2018
  */
 public class VitalsDetailListFragment extends BaseFragment implements View.OnClickListener {
-    private CustomExpandableListView vitalDetailCelv;
     private ImageView backIv;
     private TextView toolbarTitle;
     private FloatingActionButton addFab;
-    private String selectedItem;
-
-    private OnCloseActionInterface onCloseActionInterface;
-    private ShowSubFragmentInterface showSubFragmentInterface;
-    private CommonUserApiResponseModel commonUserApiResponseModel, doctorModel;
-    private boolean isFromHome;
-    private VitalsApiViewModel vitalsApiViewModel;
-    private VitalsDetailListAdapter vitalsDetailListAdapter;
-    private List<String> headerList = new ArrayList<>();
-    private HashMap<String, List<VitalsApiResponseModel>> childList = new HashMap<>();
-    private ExpandableListView expandableListView;
-    private AttachObserverInterface attachObserverInterface;
-    private LineChart linechart;
-    private HashMap<Float, String> xaxisLables;
-    private ArrayList<Entry> line1Entry;
-    private ArrayList<Entry> line2Entry;
-    private ArrayList<Entry> line3Entry;
     private Toolbar toolbar;
-    private ArrayList<VitalsApiResponseModel> vitalsApiResponseModelArrayList;
-    private GetUsersApiViewModel getUsersApiViewModel;
-    private boolean isAbnormalVitalView = false;
-    private String userGuid, doctorGuid;
     private ConstraintLayout userDetailCl;
     private CircleImageView itemCiv;
     private TextView itemTitleTv;
     private TextView itemSubTitleTv;
     private ImageView infoIv;
     private CustomSwipeRefreshLayout swipeLayout;
+    private LineChart linechart;
+
+    private OnCloseActionInterface onCloseActionInterface;
+    private ShowSubFragmentInterface showSubFragmentInterface;
+    private CommonUserApiResponseModel commonUserApiResponseModel, doctorModel;
+    private VitalsApiViewModel vitalsApiViewModel;
+    private NewVitalsDetailListAdapter vitalsDetailListAdapter;
+    private AttachObserverInterface attachObserverInterface;
+    private GetUsersApiViewModel getUsersApiViewModel;
+
+    private List<VitalsApiResponseModel> responseModelList = new ArrayList<>();
+    private HashMap<Float, String> xaxisLables;
+    private List<ILineDataSet> lineDataSetList;
+    private HashMap<String, List<VitalsApiResponseModel>> childList = new HashMap<>();
+    private List<String> headerList = new ArrayList<>();
+    private ArrayList<Entry> line1Entry;
+    private ArrayList<Entry> line2Entry;
+    private ArrayList<Entry> line3Entry;
     private ArrayList<String> vitalPrintOptions;
+    private List<VitalsApiResponseModel> vitalsApiResponseModelArrayList;
+    private String userGuid, doctorGuid;
+    private String selectedItem;
+    private boolean isAbnormalVitalView = false;
+    private boolean isFromHome, isApiRequested;
+    private int page = 1;
+    private CustomRecyclerView vitalDetailCrv;
     private boolean isGetType;
 
 
@@ -126,12 +132,17 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
         attachObserverInterface.attachObserver(vitalsApiViewModel);
-        vitalsApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+
+        vitalsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
-            public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
-                swipeLayout.setRefreshing(false);
-                if (baseApiResponseModels != null) {
-                    vitalsApiResponseModelArrayList = (ArrayList<VitalsApiResponseModel>) (Object) baseApiResponseModels;
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+
+                    VitalsPaginatedApiResponseModel vitalsPaginatedApiResponseModel = (VitalsPaginatedApiResponseModel) baseApiResponseModel;
+
+                    vitalDetailCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
+
+                    vitalsApiResponseModelArrayList = vitalsPaginatedApiResponseModel.getResult();
 
                     if (isGetType) {
                         isGetType = false;
@@ -182,16 +193,27 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                             }
                         }
 
-                        updateList(vitalsApiResponseModelArrayList);
+                        if (vitalsPaginatedApiResponseModel.getCount() > 0) {
 
-                        if (!selectedItem.equals(SupportedMeasurementType.stethoscope))
-                            updateChart(vitalsApiResponseModelArrayList);
+                            vitalsDetailListAdapter.setData(vitalsApiResponseModelArrayList, page);
+
+                            if (!selectedItem.equals(SupportedMeasurementType.stethoscope))
+                                updateChart(vitalsApiResponseModelArrayList, vitalsPaginatedApiResponseModel.getNext());
+
+                            vitalDetailCrv.showOrhideEmptyState(false);
+                        } else {
+                            vitalDetailCrv.showOrhideEmptyState(true);
+                        }
 
                         if (isAbnormalVitalView) {
                             setUserDetailView();
                         }
                     }
                 }
+                isApiRequested = false;
+                vitalDetailCrv.setScrollable(true);
+                vitalDetailCrv.hideProgressBar();
+                swipeLayout.setRefreshing(false);
             }
         });
 
@@ -200,7 +222,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         getUsersApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
-            public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+            public void onChanged
+                    (@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
                 if (baseApiResponseModels != null) {
                     ArrayList<CommonUserApiResponseModel> commonUserApiResponseModelArrayList = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
 
@@ -228,18 +251,33 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         userDetailCl.setVisibility(View.VISIBLE);
     }
 
-    private void updateChart(ArrayList<VitalsApiResponseModel> vitalsApiResponseModelArrayList) {
-        if (vitalsApiResponseModelArrayList.size() > 0) {
+
+    private void updateChart(List<VitalsApiResponseModel> vitalsApiResponseModelList, Object next) {
+        if (page == 1) {
+            responseModelList = new ArrayList<>(vitalsApiResponseModelList);
+        } else {
+            responseModelList.addAll(vitalsApiResponseModelList);
+        }
+
+        xaxisLables = new HashMap<>();
+        lineDataSetList = new ArrayList<>();
+        line1Entry = new ArrayList<>();
+        line2Entry = new ArrayList<>();
+        line3Entry = new ArrayList<>();
+
+        if (responseModelList.size() > 0) {
+
+            Collections.sort(responseModelList, new Comparator<VitalsApiResponseModel>() {
+                @Override
+                public int compare(VitalsApiResponseModel o1, VitalsApiResponseModel o2) {
+                    return Utils.getDateFromString(o2.getCreated_at()).compareTo(Utils.getDateFromString(o1.getCreated_at()));
+                }
+            });
 
             linechart.setTouchEnabled(true);
             linechart.getDescription().setEnabled(false);
             linechart.setDrawGridBackground(false);
 
-            xaxisLables = new HashMap<>();
-            List<ILineDataSet> lineDataSetList = new ArrayList<>();
-            line1Entry = new ArrayList<>();
-            line2Entry = new ArrayList<>();
-            line3Entry = new ArrayList<>();
 
             String dataSet1Name = getString(SupportedMeasurementType.getTitle(selectedItem));
 
@@ -277,13 +315,12 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             yAxis.setAxisMinimum(0f);
 
+            for (int i = 0; i < responseModelList.size(); i++) {
 
-            for (int i = 0; i < vitalsApiResponseModelArrayList.size(); i++) {
-
-                String value = vitalsApiResponseModelArrayList.get(i).getValue().toString()
+                String value = responseModelList.get(i).getValue().toString()
                         .replace(SupportedMeasurementType.getVitalUnit(selectedItem), "").trim();
 
-                String type = vitalsApiResponseModelArrayList.get(i).getType();
+                String type = responseModelList.get(i).getType();
 
                 if (!value.isEmpty()) {
                     if (selectedItem.equals(SupportedMeasurementType.bp)) {
@@ -307,8 +344,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                                         }
                                     }
 
-                                    line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0]), vitalsApiResponseModelArrayList.get(i).getMode()));
-                                    line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1]), vitalsApiResponseModelArrayList.get(i).getMode()));
+                                    line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0]), responseModelList.get(i).getMode()));
+                                    line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1]), responseModelList.get(i).getMode()));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -324,10 +361,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                                         if (Float.parseFloat(value) < minValue) {
                                             minValue = Float.parseFloat(value);
                                         }
-                                        line3Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
                                     }
-                                    break;
+                                    line3Entry.add(new Entry(i + 1, Float.parseFloat(value), responseModelList.get(i).getMode()));
                                 }
+                                break;
                         }
                     } else {
                         if (Float.parseFloat(value) > maxVlaue) {
@@ -340,10 +377,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                                 minValue = Float.parseFloat(value);
                             }
                         }
-                        line1Entry.add(new Entry(i + 1, Float.parseFloat(value), vitalsApiResponseModelArrayList.get(i).getMode()));
+                        line1Entry.add(new Entry(i + 1, Float.parseFloat(value), responseModelList.get(i).getMode()));
                     }
 
-                    xaxisLables.put(Float.valueOf(i + 1), vitalsApiResponseModelArrayList.get(i).getCreated_at());
+                    xaxisLables.put(Float.valueOf(i + 1), responseModelList.get(i).getCreated_at());
                 }
             }
 
@@ -355,7 +392,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 dataSet1Name = VitalsConstant.SYSTOLE;
                 color1 = getContext().getColor(R.color.char_line_1);
             }
-
 
             LineDataSet lineDataSet1 = new LineDataSet(line1Entry, dataSet1Name);
             lineDataSet1.setCircleColor(color1);
@@ -398,6 +434,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
                 lineDataSetList.add(lineDataSet2);
                 lineDataSetList.add(lineDataSet3);
+
             }
 
             LineData lineData = new LineData(lineDataSetList);
@@ -430,6 +467,53 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
             linechart.setVisibility(View.VISIBLE);
 
+            linechart.setOnChartGestureListener(new OnChartGestureListener() {
+                @Override
+                public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+                }
+
+                @Override
+                public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+                    if (linechart.getHighestVisibleX() >= responseModelList.size() - 1) {
+                        if (next != null) {
+                            page = page + 1;
+                            makeApiCall(true);
+                        }
+                    }
+                }
+
+                @Override
+                public void onChartLongPressed(MotionEvent me) {
+
+                }
+
+                @Override
+                public void onChartDoubleTapped(MotionEvent me) {
+
+                }
+
+                @Override
+                public void onChartSingleTapped(MotionEvent me) {
+
+                }
+
+                @Override
+                public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+                }
+
+                @Override
+                public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+
+                }
+
+                @Override
+                public void onChartTranslate(MotionEvent me, float dX, float dY) {
+
+                }
+            });
+
         } else {
             toolbar.getMenu().findItem(R.id.print_menu).setEnabled(false);
             toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorGrey_light));
@@ -453,7 +537,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     }
 
     private void initView(View view) {
-        vitalDetailCelv = (CustomExpandableListView) view.findViewById(R.id.vital_detail_celv);
+        vitalDetailCrv = (CustomRecyclerView) view.findViewById(R.id.vital_detail_crv);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
@@ -496,11 +580,12 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         backIv.setOnClickListener(this);
         addFab.setOnClickListener(this);
 
-        vitalDetailCelv.getSwipeLayout().setEnabled(false);
+        vitalDetailCrv.getSwipeLayout().setEnabled(false);
 
         swipeLayout.setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                page = 1;
                 makeApiCall(false);
             }
         });
@@ -509,14 +594,14 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             addFab.hide();
         }
 
-        vitalDetailCelv.setActionClickListener(new View.OnClickListener() {
+        vitalDetailCrv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 makeApiCall(true);
             }
         });
 
-        vitalDetailCelv.setErrorModel(this, vitalsApiViewModel.getErrorModelLiveData());
+        vitalDetailCrv.setErrorModel(this, vitalsApiViewModel.getErrorModelLiveData());
 
         if (getArguments() != null) {
 
@@ -557,29 +642,20 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 toolbar.getMenu().clear();
                 addFab.hide();
             }
+            vitalsDetailListAdapter = new NewVitalsDetailListAdapter(getActivity());
+            vitalDetailCrv.getRecyclerView().setAdapter(vitalsDetailListAdapter);
 
-            vitalsDetailListAdapter = new VitalsDetailListAdapter(getActivity(), headerList, childList, selectedItem);
 
-            expandableListView = vitalDetailCelv.getExpandableView();
-
-            expandableListView.setAdapter(vitalsDetailListAdapter);
-
-            vitalDetailCelv.setOnPaginateInterface(new OnPaginateInterface() {
+            vitalDetailCrv.setOnPaginateInterface(new OnPaginateInterface() {
                 @Override
                 public void onPaginate() {
-                    //handle pagination here
+                    vitalDetailCrv.setScrollable(false);
+                    page = page + 1;
+                    vitalDetailCrv.showProgressBar();
+                    makeApiCall(false);
                 }
             });
-
-            expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-                @Override
-                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                    return true;
-                }
-            });
-
         }
-
     }
 
     private void generatePdfListItems(String timePeriod) {
@@ -654,37 +730,32 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         }
 
-        vitalsDetailListAdapter.setData(headerList, childList);
+//        vitalsDetailListAdapter.setData(headerList, childList);
 
         if (headerList.size() > 0) {
-            vitalDetailCelv.hideEmptyState();
-            expandListView();
+            vitalDetailCrv.showOrhideEmptyState(false);
         } else {
-            vitalDetailCelv.showEmptyState();
+            vitalDetailCrv.showOrhideEmptyState(true);
         }
 
-        vitalDetailCelv.setVisibility(View.VISIBLE);
-    }
-
-    private void expandListView() {
-        for (int i = 0; i < headerList.size(); i++) {
-            expandableListView.expandGroup(i);
-        }
+        vitalDetailCrv.setVisibility(View.VISIBLE);
     }
 
     private void makeApiCall(boolean isShowProgress) {
-        if (selectedItem != null) {
-            String type = selectedItem;
-            if (selectedItem.equals(SupportedMeasurementType.bp)) {
-                type = type + "," + SupportedMeasurementType.heartRate;
-            }
-            if (!isFromHome) {
-                vitalsApiViewModel.getUserVitals(type, commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress);
-            } else {
-                vitalsApiViewModel.getVitals(type, isShowProgress);
+        if (!isApiRequested) {
+            isApiRequested = true;
+            if (selectedItem != null) {
+                String type = selectedItem;
+                if (selectedItem.equals(SupportedMeasurementType.bp)) {
+                    type = type + "," + SupportedMeasurementType.heartRate;
+                }
+                if (!isFromHome) {
+                    vitalsApiViewModel.getUserVitals(type, commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress, page);
+                } else {
+                    vitalsApiViewModel.getVitals(type, page, isShowProgress);
+                }
             }
         }
-
     }
 
     private void setEmptyState() {
@@ -714,7 +785,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 emptyStateType = EmptyViewConstants.EMPTY_WEIGHT;
                 break;
         }
-        vitalDetailCelv.setEmptyState(emptyStateType);
+        vitalDetailCrv.setEmptyState(emptyStateType);
     }
 
     private void setTitle(String title) {

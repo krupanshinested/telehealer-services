@@ -7,6 +7,7 @@
     android:gravity="left|top"
     android:inputType="textMultiLine"
     android:minLines="5"
+    android:textColor="@color/colorBlack"
     tools:text="ask">
 
 </EditText>
