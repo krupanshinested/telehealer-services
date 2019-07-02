@@ -10,9 +10,12 @@ public class PaginationApiResponseModel extends BaseApiResponseModel {
     private int total_count;
     private int result_count;
     private int page_size;
+    private int count;
     private Object current_page;
     private Object prev_page;
     private Object next_page;
+    private Object prev;
+    private Object next;
 
     public int getTotal_count() {
         return total_count;
@@ -60,5 +63,29 @@ public class PaginationApiResponseModel extends BaseApiResponseModel {
 
     public void setNext_page(Object next_page) {
         this.next_page = next_page;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public Object getPrev() {
+        return prev;
+    }
+
+    public void setPrev(Object prev) {
+        this.prev = prev;
+    }
+
+    public Object getNext() {
+        return next;
+    }
+
+    public void setNext(Object next) {
+        this.next = next;
     }
 }
