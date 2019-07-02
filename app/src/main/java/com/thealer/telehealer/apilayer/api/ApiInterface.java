@@ -63,6 +63,7 @@ import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseM
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 
@@ -241,10 +242,10 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> disconnectUser(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/vitals")
-    Observable<ArrayList<VitalsApiResponseModel>> getUserVitals(@Query(TYPE) String type, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<VitalsPaginatedApiResponseModel> getUserVitals(@Query(TYPE) String type, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/vitals")
-    Observable<ArrayList<VitalsApiResponseModel>> getVitals(@Query(TYPE) String type);
+    Observable<VitalsPaginatedApiResponseModel> getVitals(@Query(TYPE) String type, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/vitals")
     Observable<ArrayList<VitalsApiResponseModel>> getVitalDetail(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
@@ -485,7 +486,7 @@ public interface ApiInterface {
     Observable<VitalReportApiReponseModel> getVitalUsers(@Query(FILTER) String filter, @Query(DOCTOR_GUID) String doctorGuid, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate);
 
     @GET("api/vitals")
-    Observable<ArrayList<VitalsApiResponseModel>> getUserFilteredVitals(@Query(FILTER) String type, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<VitalsPaginatedApiResponseModel> getUserFilteredVitals(@Query(FILTER) String type, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @PUT("api/available")
     Observable<BaseApiResponseModel> updateUserStatus(@Query(STATUS) boolean status);
