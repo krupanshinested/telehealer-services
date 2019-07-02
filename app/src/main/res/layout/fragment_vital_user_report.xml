@@ -2,14 +2,17 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:focusable="true">
 
     <include
         android:id="@+id/appbar"
         layout="@layout/appbar_back_with_title_app_color" />
 
-    <com.thealer.telehealer.common.CustomExpandableListView
-        android:id="@+id/vitals_list_cerv"
+    <com.thealer.telehealer.common.CustomRecyclerView
+        android:id="@+id/vitals_list_crv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

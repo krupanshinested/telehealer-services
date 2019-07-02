@@ -20,21 +20,17 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getUserVitals(String type, String user_guid, String doctorGuid, boolean isShowProgress) {
+    public void getUserVitals(String type, String user_guid, String doctorGuid, boolean isShowProgress, int page) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserVitals(type, user_guid, doctorGuid)
+                    getAuthApiService().getUserVitals(type, user_guid, doctorGuid, true, page, Constants.PAGINATION_SIZE)
                             .compose(applySchedulers())
-                            .subscribe(new RAListObserver<VitalsApiResponseModel>(getProgress(isShowProgress)) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
-                                public void onSuccess(ArrayList<VitalsApiResponseModel> o) {
-
-                                    ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(o);
-
-                                    baseApiArrayListMutableLiveData.setValue(apiResponseModels);
-
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
                 }
@@ -42,21 +38,17 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getUserFilteredVitals(String type, String startDate, String endDate, String user_guid, String doctorGuid) {
+    public void getUserFilteredVitals(String type, String startDate, String endDate, String user_guid, String doctorGuid, int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserFilteredVitals(type, startDate, endDate, user_guid, doctorGuid)
+                    getAuthApiService().getUserFilteredVitals(type, startDate, endDate, user_guid, doctorGuid, true, page, Constants.PAGINATION_SIZE)
                             .compose(applySchedulers())
-                            .subscribe(new RAListObserver<VitalsApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
-                                public void onSuccess(ArrayList<VitalsApiResponseModel> o) {
-
-                                    ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(o);
-
-                                    baseApiArrayListMutableLiveData.setValue(apiResponseModels);
-
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
                 }
@@ -64,21 +56,17 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getVitals(String type, boolean isShowProgress) {
+    public void getVitals(String type, int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getVitals(type)
+                    getAuthApiService().getVitals(type, true, page, Constants.PAGINATION_SIZE)
                             .compose(applySchedulers())
-                            .subscribe(new RAListObserver<VitalsApiResponseModel>(getProgress(isShowProgress)) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
-                                public void onSuccess(ArrayList<VitalsApiResponseModel> o) {
-
-                                    ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(o);
-
-                                    baseApiArrayListMutableLiveData.setValue(apiResponseModels);
-
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
                 }
@@ -86,11 +74,11 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createVital(CreateVitalApiRequestModel createVitalApiRequestModel, String doctorGuid){
+    public void createVital(CreateVitalApiRequestModel createVitalApiRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
-                if (status){
+                if (status) {
                     getAuthApiService().createVital(createVitalApiRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {

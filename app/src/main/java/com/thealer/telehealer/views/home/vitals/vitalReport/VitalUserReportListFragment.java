@@ -27,9 +27,11 @@ import com.thealer.telehealer.apilayer.models.visits.VisitsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.CustomExpandableListView;
+import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VisitConstants;
@@ -43,8 +45,8 @@ import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.RecentsSelectionActivity;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.recents.VisitDetailConstants;
+import com.thealer.telehealer.views.home.vitals.NewVitalsDetailListAdapter;
 import com.thealer.telehealer.views.home.vitals.VitalPdfGenerator;
-import com.thealer.telehealer.views.home.vitals.VitalsDetailListAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,29 +60,29 @@ public class VitalUserReportListFragment extends BaseFragment {
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle;
-    private CustomExpandableListView vitalsListCelv;
 
     private OnCloseActionInterface onCloseActionInterface;
     private AttachObserverInterface attachObserverInterface;
     private VitalsApiViewModel vitalsApiViewModel;
-
-    private ArrayList<VitalsApiResponseModel> vitalsApiResponseModel;
-    private List<String> headerList = new ArrayList<>();
-    private HashMap<String, List<VitalsApiResponseModel>> childList = new HashMap<>();
-    private VitalsDetailListAdapter vitalsDetailListAdapter;
     private CommonUserApiResponseModel commonUserApiResponseModel;
-    private String filter = VitalReportApiViewModel.LAST_WEEK, startDate = null, endDate = null;
+    private VisitsApiViewModel visitsApiViewModel;
     private ShowSubFragmentInterface showSubFragmentInterface;
+    private NewVitalsDetailListAdapter vitalsDetailListAdapter;
+
     private MenuItem nextMenu;
-    private int mode = Constants.VIEW_MODE;
-    private List<Integer> actualList = new ArrayList<>();
+    private List<VitalsApiResponseModel> vitalsApiResponseModel;
     private ArrayList<Integer> selectedList = new ArrayList<>();
+    private HashMap<String, List<VitalsApiResponseModel>> childList = new HashMap<>();
+    private HashMap<Integer, VitalsApiResponseModel> vitalsApiResponseModelMap = new HashMap<>();
+    private List<String> headerList = new ArrayList<>();
+    private List<Integer> actualList = new ArrayList<>();
     private List<Integer> unSelectedList = new ArrayList<>();
     private String userGuid;
-    private VisitsApiViewModel visitsApiViewModel;
     private String doctorGuid, orderId;
-    private HashMap<Integer, VitalsApiResponseModel> vitalsApiResponseModelMap = new HashMap<>();
-    private boolean isDisableCancel = false;
+    private String filter = VitalReportApiViewModel.LAST_WEEK, startDate = null, endDate = null;
+    private int mode = Constants.VIEW_MODE, page = 1;
+    private boolean isDisableCancel = false, isApiRequested;
+    private CustomRecyclerView vitalsListCrv;
 
     @Override
     public void onAttach(Context context) {
@@ -95,14 +97,25 @@ public class VitalUserReportListFragment extends BaseFragment {
         attachObserverInterface.attachObserver(vitalsApiViewModel);
         attachObserverInterface.attachObserver(visitsApiViewModel);
 
-        vitalsApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+        vitalsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
-            public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
-                if (baseApiResponseModels != null) {
-                    vitalsApiResponseModel = (ArrayList<VitalsApiResponseModel>) (Object) baseApiResponseModels;
-                    updateList(vitalsApiResponseModel);
-                    enableOrDisablePrint();
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    VitalsPaginatedApiResponseModel vitalsPaginatedApiResponseModel = (VitalsPaginatedApiResponseModel) baseApiResponseModel;
+                    vitalsListCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
+                    if (vitalsPaginatedApiResponseModel.getCount() > 0) {
+                        vitalsApiResponseModel = vitalsPaginatedApiResponseModel.getResult();
+                        vitalsDetailListAdapter.setData(vitalsApiResponseModel, page);
+                        enableOrDisablePrint();
+                        vitalsListCrv.showOrhideEmptyState(false);
+                    } else {
+                        vitalsListCrv.showOrhideEmptyState(true);
+                    }
                 }
+
+                isApiRequested = false;
+                vitalsListCrv.setScrollable(true);
+                vitalsListCrv.hideProgressBar();
             }
         });
 
@@ -151,19 +164,12 @@ public class VitalUserReportListFragment extends BaseFragment {
 
         }
 
-        vitalsDetailListAdapter.setData(headerList, childList);
+//        vitalsDetailListAdapter.setData(headerList, childList);
 
         if (headerList.size() > 0) {
-            vitalsListCelv.hideEmptyState();
-            expandListView();
+            vitalsListCrv.hideEmptyState();
         } else {
-            vitalsListCelv.showEmptyState();
-        }
-    }
-
-    private void expandListView() {
-        for (int i = 0; i < headerList.size(); i++) {
-            vitalsListCelv.getExpandableView().expandGroup(i);
+            vitalsListCrv.showEmptyState();
         }
     }
 
@@ -186,7 +192,7 @@ public class VitalUserReportListFragment extends BaseFragment {
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
-        vitalsListCelv = (CustomExpandableListView) view.findViewById(R.id.vitals_list_cerv);
+        vitalsListCrv = (CustomRecyclerView) view.findViewById(R.id.vitals_list_crv);
 
         toolbar.inflateMenu(R.menu.add_visit_menu);
         setToolbarTitle(getString(R.string.last_week));
@@ -209,10 +215,10 @@ public class VitalUserReportListFragment extends BaseFragment {
 
                                 if (selectedItem != null) {
                                     if (selectedItem.equals(getString(R.string.last_week))) {
-                                        vitalsListCelv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
+                                        vitalsListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
                                         filter = VitalReportApiViewModel.LAST_WEEK;
                                     } else if (selectedItem.equals(getString(R.string.all))) {
-                                        vitalsListCelv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH);
+                                        vitalsListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH);
                                         filter = VitalReportApiViewModel.ALL;
                                     } else {
                                         filter = null;
@@ -221,11 +227,11 @@ public class VitalUserReportListFragment extends BaseFragment {
 
                                         String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
 
-                                        vitalsListCelv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
+                                        vitalsListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
                                     }
                                     setToolbarTitle(selectedItem);
                                 }
-                                getUserVitals();
+                                getUserVitals(true);
                             }
                         });
                         break;
@@ -293,47 +299,57 @@ public class VitalUserReportListFragment extends BaseFragment {
             }
         });
 
-        vitalsListCelv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
+        vitalsListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
 
-        vitalsDetailListAdapter = new VitalsDetailListAdapter(getActivity(), headerList, childList, true, mode, new OnListItemSelectInterface() {
+        vitalsDetailListAdapter = new NewVitalsDetailListAdapter(getActivity(), true, mode, new OnListItemSelectInterface() {
             @Override
             public void onListItemSelected(int position, Bundle bundle) {
-                int groupPosition = bundle.getInt(ArgumentKeys.GROUP_POSITION);
-                int childPosition = bundle.getInt(ArgumentKeys.CHILD_POSITION);
+                if (bundle != null) {
+                    VitalsApiResponseModel apiResponseModel = (VitalsApiResponseModel) bundle.getSerializable(ArgumentKeys.SELECTED_VITAL);
+                    if (apiResponseModel != null) {
+                        int vitalId = apiResponseModel.getUser_vital_id();
 
-                VitalsApiResponseModel apiResponseModel = childList.get(headerList.get(groupPosition)).get(childPosition);
-                int vitalId = apiResponseModel.getUser_vital_id();
+                        if (selectedList.contains(vitalId)) {
+                            selectedList.remove((Object) vitalId);
+                        } else {
+                            selectedList.add(vitalId);
+                        }
 
-                if (selectedList.contains(vitalId)) {
-                    selectedList.remove((Object) vitalId);
-                } else {
-                    selectedList.add(vitalId);
-                }
-
-                if (orderId != null) {
-                    if (vitalsApiResponseModelMap.containsKey(vitalId)) {
-                        vitalsApiResponseModelMap.remove((Object) vitalId);
-                    } else {
-                        vitalsApiResponseModelMap.put(vitalId, apiResponseModel);
+                        if (orderId != null) {
+                            if (vitalsApiResponseModelMap.containsKey(vitalId)) {
+                                vitalsApiResponseModelMap.remove((Object) vitalId);
+                            } else {
+                                vitalsApiResponseModelMap.put(vitalId, apiResponseModel);
+                            }
+                        }
                     }
                 }
-
                 enableOrDisableNext();
             }
         });
 
-        vitalsListCelv.getExpandableView().setAdapter(vitalsDetailListAdapter);
+        vitalsListCrv.getRecyclerView().setAdapter(vitalsDetailListAdapter);
 
-        vitalsListCelv.setErrorModel(this, vitalsApiViewModel.getErrorModelLiveData());
+        vitalsListCrv.setErrorModel(this, vitalsApiViewModel.getErrorModelLiveData());
 
-        vitalsListCelv.setActionClickListener(new View.OnClickListener() {
+        vitalsListCrv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getUserVitals();
+                getUserVitals(true);
             }
         });
 
-        vitalsListCelv.getSwipeLayout().setEnabled(false);
+        vitalsListCrv.setOnPaginateInterface(new OnPaginateInterface() {
+            @Override
+            public void onPaginate() {
+                vitalsListCrv.setScrollable(false);
+                page = page + 1;
+                vitalsListCrv.showProgressBar();
+                getUserVitals(false);
+            }
+        });
+
+        vitalsListCrv.getSwipeLayout().setEnabled(false);
 
         if (getArguments() != null) {
             commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
@@ -346,7 +362,7 @@ public class VitalUserReportListFragment extends BaseFragment {
 
         updateUI();
 
-        getUserVitals();
+        getUserVitals(true);
 
     }
 
@@ -423,10 +439,11 @@ public class VitalUserReportListFragment extends BaseFragment {
         super.onResume();
     }
 
-    private void getUserVitals() {
-        if (commonUserApiResponseModel != null) {
-            vitalsListCelv.hideEmptyState();
-            vitalsApiViewModel.getUserFilteredVitals(filter, startDate, endDate, commonUserApiResponseModel.getUser_guid(), doctorGuid);
+    private void getUserVitals(boolean isShowProgress) {
+        if (commonUserApiResponseModel != null && !isApiRequested) {
+            isApiRequested = true;
+            vitalsListCrv.showOrhideEmptyState(false);
+            vitalsApiViewModel.getUserFilteredVitals(filter, startDate, endDate, commonUserApiResponseModel.getUser_guid(), doctorGuid, page, isShowProgress);
         }
     }
 
@@ -447,7 +464,7 @@ public class VitalUserReportListFragment extends BaseFragment {
                             getTargetFragment().onActivityResult(RequestID.REQ_VISIT_UPDATE, Activity.RESULT_OK, new Intent().putExtra(ArgumentKeys.UPDATE_TYPE, VisitDetailConstants.VISIT_TYPE_VITALS));
                         onCloseActionInterface.onClose(false);
                     } else {
-                        getUserVitals();
+                        getUserVitals(true);
                     }
                 }
                 break;
