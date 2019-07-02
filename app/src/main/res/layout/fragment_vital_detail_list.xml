@@ -107,11 +107,10 @@
                     app:layout_constraintStart_toStartOf="parent" />
             </android.support.constraint.ConstraintLayout>
 
-            <com.thealer.telehealer.common.CustomExpandableListView
-                android:id="@+id/vital_detail_celv"
+            <com.thealer.telehealer.common.CustomRecyclerView
+                android:id="@+id/vital_detail_crv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -198,8 +198,6 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
     }
 
     private void addDynamicFields() {
-        Log.e(TAG, "addDynamicFields: " + formsApiResponseModel.getStatus());
-        Log.e(TAG, "addDynamicFields: " + formsApiResponseModel.isCompleted());
         for (int k = 0; k < formsApiResponseModel.getData().getData().size(); k++) {
             DynamicFormDataBean.DataBean dataBean = formsApiResponseModel.getData().getData().get(k);
 
