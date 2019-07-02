@@ -115,6 +115,7 @@ public class ArgumentKeys {
     public static final String SELECTED_LIST_ID = "selectedListId";
     public static final String DISABLE_CANCEL = "disableCancel";
     public static final String IS_SHOW_HELP = "isShowHelp";
+    public static final String SELECTED_VITAL = "selectedVital";
     public static final String IS_GET_TYPE = "isGetType";
     public static final String SHOW_FAVORITES = "showFavorites";
     public static int AUTH_NONE = 0;
