@@ -194,6 +194,7 @@ public class Utils {
             }
         });
 
+        datePickerDialog.getDatePicker().getTouchables().get(0).performClick();
         datePickerDialog.show();
         return datePickerDialog;
     }
