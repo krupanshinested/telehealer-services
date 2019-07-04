@@ -13,7 +13,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -169,6 +168,8 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
 
         if (formsApiResponseModel.isCompleted())
             setScore(formsApiResponseModel.getData().getDisplayScore());
+        else
+            scoreViewCl.setVisibility(View.GONE);
 
         if (formsApiResponseModel.getStatus() == null || formsApiResponseModel.getStatus().equals(OrderStatus.STATUS_COMPLETED) ||
                 !UserType.isUserPatient()) {
