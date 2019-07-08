@@ -226,6 +226,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                         TelehealerFirebaseMessagingService.refresh();
                         EventRecorder.updateUserId(otpVerificationResponseModel.getData().getUser_guid());
 
+                        Utils.updateLastLogin();
 
                         if (otpType == signup) {
                             whoAmIApiViewModel.checkWhoAmI();

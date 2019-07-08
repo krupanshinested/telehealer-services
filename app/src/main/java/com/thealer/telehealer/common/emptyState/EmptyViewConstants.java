@@ -13,6 +13,7 @@ public class EmptyViewConstants {
     public static final String EMPTY_DOCUMENTS = "empty_documents";
     public static final String EMPTY_DOCUMENTS_WITH_BTN = "empty_documents_with_btn";
     public static final String EMPTY_PRESCRIPTION = "empty_prescription";
+    public static final String EMPTY_ORDER = "empty_order";
     public static final String EMPTY_PRESCRIPTION_WITH_BTN = "empty_prescription_with_btn";
     public static final String EMPTY_HISTORY = "empty_history";
     public static final String EMPTY_HISTORY_WITH_BTN = "empty_history_with_btn";

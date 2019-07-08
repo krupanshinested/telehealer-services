@@ -2,13 +2,6 @@ package com.thealer.telehealer.views.home.recents;
 
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -19,6 +12,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -118,7 +119,10 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
             case VisitDetailConstants.TYPE_TRANSCRIPT:
                 view = inflater.inflate(R.layout.visit_list_adapter_transcript_view, viewGroup, false);
                 break;
-            case VisitDetailConstants.TYPE_INPUT:
+            case VisitDetailConstants.TYPE_INSTRUCTION:
+                view = inflater.inflate(R.layout.visit_list_adapter_input_view, viewGroup, false);
+                break;
+            case VisitDetailConstants.TYPE_DIAGNOSIS:
                 view = inflater.inflate(R.layout.visit_list_adapter_input_view, viewGroup, false);
                 break;
             case VisitDetailConstants.TYPE_ADD:
@@ -214,6 +218,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                     public void onClick(View v) {
                         DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
                         Bundle detailBundle = new Bundle();
+                        detailBundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
 
                         detailBundle.putSerializable(Constants.USER_DETAIL, visitDetailAdapterModel.getUserInfoModel());
                         if (UserType.isUserAssistant()) {
@@ -310,7 +315,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                         break;
                 }
                 break;
-            case VisitDetailConstants.TYPE_INPUT:
+            case VisitDetailConstants.TYPE_INSTRUCTION:
                 TextWatcher textWatcher = new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -325,52 +330,98 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                     @Override
                     public void afterTextChanged(Editable s) {
 
+                        boolean isUpdate = false;
+
                         if (visitDetailAdapterModel.getCategoryTitle() == null && !s.toString().isEmpty()) {
-                            detailViewModel.setInstructionUpdated(true);
+                            isUpdate = true;
                         } else if (visitDetailAdapterModel.getCategoryTitle() != null) {
                             if (!visitDetailAdapterModel.getCategoryTitle().equals(s.toString())) {
-                                detailViewModel.setInstructionUpdated(true);
-                            } else {
-                                detailViewModel.setInstructionUpdated(false);
+                                isUpdate = true;
                             }
                         }
 
-                        if (visitDetailAdapterModel.getCategory().equals(activity.getString(R.string.patient_instructions))) {
-                            detailViewModel.setInstruction(s.toString().trim());
-                        } else if (visitDetailAdapterModel.getCategory().equals(activity.getString(R.string.patient_diagnosis))) {
-                            detailViewModel.setDiagnosis(s.toString().trim());
-                        }
+                        detailViewModel.setInstructionUpdated(isUpdate);
+                        detailViewModel.setInstruction(s.toString().trim());
                     }
                 };
 
                 switch (mode) {
                     case Constants.VIEW_MODE:
-                        viewHolder.inputEt.setEnabled(false);
-                        viewHolder.inputEt.removeTextChangedListener(textWatcher);
-                        viewHolder.inputEt.setBackground(null);
+                        viewHolder.instructionEt.setEnabled(false);
+                        viewHolder.instructionEt.removeTextChangedListener(textWatcher);
+                        viewHolder.instructionEt.setBackground(null);
                         break;
                     case Constants.EDIT_MODE:
-                        viewHolder.inputEt.setEnabled(true);
-                        viewHolder.inputEt.setVisibility(View.VISIBLE);
-                        viewHolder.inputEt.addTextChangedListener(textWatcher);
-                        viewHolder.inputEt.setBackgroundColor(activity.getColor(R.color.card_view_background));
+                        viewHolder.instructionEt.setEnabled(true);
+                        viewHolder.instructionEt.setVisibility(View.VISIBLE);
+                        viewHolder.instructionEt.addTextChangedListener(textWatcher);
+                        viewHolder.instructionEt.setBackgroundColor(activity.getColor(R.color.card_view_background));
                         break;
                 }
 
-                if (detailViewModel.isInstructionUpdated()) {
-                    if (visitDetailAdapterModel.getCategory().equals(activity.getString(R.string.patient_instructions))) {
-                        viewHolder.inputEt.setText(detailViewModel.getInstruction());
-                    } else if (visitDetailAdapterModel.getCategory().equals(activity.getString(R.string.patient_diagnosis))) {
-                        viewHolder.inputEt.setText(detailViewModel.getDiagnosis());
-                    }
+                String text;
 
+                if (detailViewModel.isInstructionUpdated()) {
+                    text = detailViewModel.getInstruction();
                 } else {
-                    if (visitDetailAdapterModel.getCategoryTitle() != null)
-                        viewHolder.inputEt.setText(visitDetailAdapterModel.getCategoryTitle());
-                    else
-                        viewHolder.inputEt.setText(null);
+                    text = visitDetailAdapterModel.getCategoryTitle();
                 }
 
+                viewHolder.instructionEt.setText(text);
+
+                break;
+            case VisitDetailConstants.TYPE_DIAGNOSIS:
+                TextWatcher diagnosisTextWatcher = new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                        boolean isUpdate = false;
+
+                        if (visitDetailAdapterModel.getCategoryTitle() == null && !s.toString().isEmpty()) {
+                            isUpdate = true;
+                        } else if (visitDetailAdapterModel.getCategoryTitle() != null) {
+                            if (!visitDetailAdapterModel.getCategoryTitle().equals(s.toString())) {
+                                isUpdate = true;
+                            }
+                        }
+                        detailViewModel.setDiagnosisUpdated(isUpdate);
+                        detailViewModel.setDiagnosis(s.toString().trim());
+                    }
+                };
+
+                switch (mode) {
+                    case Constants.VIEW_MODE:
+                        viewHolder.diagnosisEt.setEnabled(false);
+                        viewHolder.diagnosisEt.removeTextChangedListener(diagnosisTextWatcher);
+                        viewHolder.diagnosisEt.setBackground(null);
+                        break;
+                    case Constants.EDIT_MODE:
+                        viewHolder.diagnosisEt.setEnabled(true);
+                        viewHolder.diagnosisEt.setVisibility(View.VISIBLE);
+                        viewHolder.diagnosisEt.addTextChangedListener(diagnosisTextWatcher);
+                        viewHolder.diagnosisEt.setBackgroundColor(activity.getColor(R.color.card_view_background));
+                        break;
+                }
+
+                String diagnosis;
+
+                if (detailViewModel.isDiagnosisUpdated()) {
+                    diagnosis = detailViewModel.getDiagnosis();
+                } else {
+                    diagnosis = visitDetailAdapterModel.getCategoryTitle();
+                }
+
+                viewHolder.diagnosisEt.setText(diagnosis);
 
                 break;
             case VisitDetailConstants.TYPE_ADD:
@@ -851,7 +902,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
         private ImageView transcriptVideoIv;
         private CustomUserListItemView userListIv;
         private LabelValueCustomView labelValueCv;
-        private EditText inputEt;
+        private EditText instructionEt, diagnosisEt;
         private CustomEditText transcriptInfoEt;
 
         private ConstraintLayout vitalRootCl;
@@ -917,7 +968,8 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
             historyReasonTv = (TextView) itemView.findViewById(R.id.history_reason_tv);
             callerNameTv = (TextView) itemView.findViewById(R.id.caller_name_tv);
             transcriptInfoEt = (CustomEditText) itemView.findViewById(R.id.transcript_info_et);
-            inputEt = (EditText) itemView.findViewById(R.id.input_et);
+            instructionEt = (EditText) itemView.findViewById(R.id.input_et);
+            diagnosisEt = (EditText) itemView.findViewById(R.id.input_et);
             btAddCardView = (CardView) itemView.findViewById(R.id.bt_add_card_view);
             addItemTv = (TextView) itemView.findViewById(R.id.add_item_tv);
             dateTv = (TextView) itemView.findViewById(R.id.header_tv);
@@ -1125,7 +1177,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
 
         if (isAdd) {
             modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, category));
-            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_INPUT, data, category));
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_INSTRUCTION, data, category));
         }
 
         /**
@@ -1154,7 +1206,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
 
         if (isAdd) {
             modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, category));
-            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_INPUT, data, category));
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_DIAGNOSIS, data, category));
         }
 
         /**

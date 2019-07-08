@@ -1,10 +1,11 @@
 package com.thealer.telehealer.views.notification;
 
 import android.os.Bundle;
+import android.widget.ImageView;
+
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
@@ -144,5 +145,11 @@ public class NotificationDetailActivity extends BaseActivity implements OnCloseA
     @Override
     public void hideOrShowOtherOption(boolean hideOrShow) {
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        removeAllNotification();
     }
 }

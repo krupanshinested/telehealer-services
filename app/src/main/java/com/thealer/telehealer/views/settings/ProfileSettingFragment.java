@@ -1,12 +1,8 @@
 package com.thealer.telehealer.views.settings;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +12,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
@@ -54,6 +56,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     private ProfileCellView documents;
     private TextView versionTv;
     private String selectedItem;
+    private TextView lastLoginTv;
 
     @Nullable
     @Override
@@ -114,6 +117,9 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
         versionTv = (TextView) baseView.findViewById(R.id.version_tv);
+        lastLoginTv = (TextView) baseView.findViewById(R.id.last_login_tv);
+
+        lastLoginTv.setText(getString(R.string.last_login, appPreference.getString(PreferenceConstants.LAST_LOGIN)));
 
 
         try {
