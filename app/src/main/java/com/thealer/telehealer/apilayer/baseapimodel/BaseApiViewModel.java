@@ -25,6 +25,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.common.AppUpdateActivity;
@@ -72,10 +73,10 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
         public void onQuickLogin(int status) {
-            Log.e(TAG, "onQuickLogin: ");
+            Log.e(TAG, "onQuickLogin: " + status);
             if (isQuickLoginReceiverEnabled) {
                 Log.e(TAG, "onQuickLogin: enabled");
-                if (status == ArgumentKeys.AUTH_FAILED) {
+                if (status == ArgumentKeys.AUTH_FAILED || status == ArgumentKeys.AUTH_CANCELLED) {
                     getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                     isRefreshToken = false;
                     isQuickLoginReceiverEnabled = false;
@@ -188,6 +189,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     @Override
                     public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                         Log.e(TAG, "onSuccess: refreshed token");
+                        Utils.updateLastLogin();
                         SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
                         if (signinApiResponseModel.isSuccess()) {
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());

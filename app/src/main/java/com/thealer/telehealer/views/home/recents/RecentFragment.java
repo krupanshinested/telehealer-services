@@ -1,24 +1,25 @@
 package com.thealer.telehealer.views.home.recents;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
@@ -31,10 +32,6 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
@@ -46,19 +43,13 @@ public class RecentFragment extends BaseFragment {
     private RecentsApiViewModel recentsApiViewModel;
     private int page = 1;
     private RecentsApiResponseModel recentsApiResponseModel;
-    private List<String> listHeader = new ArrayList<>();
-    private HashMap<String, List<RecentsApiResponseModel.ResultBean>> listChild = new HashMap<>();
-    private List<String> chatListHeader = new ArrayList<>();
-    private List<String> videoListHeader = new ArrayList<>();
-    private HashMap<String, List<RecentsApiResponseModel.ResultBean>> chatList = new HashMap<>();
-    private HashMap<String, List<RecentsApiResponseModel.ResultBean>> videoList = new HashMap<>();
     private NewRecentListAdapter recentListAdapter;
     private OnOrientationChangeInterface onOrientationChangeInterface;
     private AttachObserverInterface attachObserverInterface;
     private boolean isApiRequested = false, isResumed;
     private ImageView throbberIv;
     private CustomRecyclerView recentsCrv;
-    private boolean isCalls = false;
+    private boolean isCalls;
 
     @Override
     public void onAttach(Context context) {
@@ -82,8 +73,6 @@ public class RecentFragment extends BaseFragment {
                     recentsApiResponseModel = (RecentsApiResponseModel) baseApiResponseModel;
 
                     recentsCrv.setNextPage(recentsApiResponseModel.getNext());
-
-//                    updateList();
 
                     if (!recentsApiResponseModel.getResult().isEmpty()) {
 
@@ -132,7 +121,6 @@ public class RecentFragment extends BaseFragment {
         recentsCrv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
             public void onPaginate() {
-                Log.e(TAG, "onPaginate: ");
                 throbberIv.setVisibility(View.VISIBLE);
                 ++page;
                 makeApiCall(false);
@@ -163,6 +151,9 @@ public class RecentFragment extends BaseFragment {
         if (!isApiRequested) {
             if (recentsApiViewModel != null) {
                 if (getArguments() != null) {
+
+                    isCalls = getArguments().getBoolean(ArgumentKeys.IS_ONLY_CALLS, false);
+
                     if (getArguments().getBoolean(Constants.IS_FROM_HOME)) {
                         isApiRequested = true;
                         String doctorGuid = null;
@@ -177,20 +168,16 @@ public class RecentFragment extends BaseFragment {
                         String userGuid = null;
                         if (userDetail != null) {
                             userGuid = userDetail.getUser_guid();
-//                            recentsApiViewModel.getUserCorrespondentList(userDetail.getUser_guid(), null, null, page, false, isShowProgress);
                         }
                         CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
                         String doctorGuid = null;
                         if (doctorDetail != null) {
                             doctorGuid = doctorDetail.getUser_guid();
-                            isCalls = true;
-
-                            if (!UserType.isUserAssistant()) {
-                                userGuid = doctorGuid;
-                            }
                         }
-                        Log.e(TAG, "makeApiCall: " + new Gson().toJson(userDetail));
-                        Log.e(TAG, "makeApiCall: " + new Gson().toJson(doctorDetail));
+
+                        if (UserType.isUserAssistant() && userGuid == null && doctorGuid != null){
+                            isCalls = true;
+                        }
                         recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
                     }
                 }

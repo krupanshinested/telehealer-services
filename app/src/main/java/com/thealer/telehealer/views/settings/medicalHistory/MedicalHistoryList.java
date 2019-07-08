@@ -57,7 +57,7 @@ public class MedicalHistoryList extends BaseFragment {
 
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
-        toolbarTitle.setText(getString(R.string.health_profile));
+        toolbarTitle.setText(getString(R.string.health_summary));
         backIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,18 +1,10 @@
 package com.thealer.telehealer.views.home.recents;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +12,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -226,11 +227,14 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                             if (isHasNextRequest()) {
                                 updateVisit();
                             } else {
-                                Log.e(TAG, "onChanged: " + visitDetailViewModel.isInstructionUpdated());
                                 if (visitDetailViewModel.isInstructionUpdated()) {
                                     visitDetailViewModel.setInstructionUpdated(false);
                                     visitsDetailApiResponseModel.getResult().setInstructions(visitDetailViewModel.getInstruction());
                                     visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
+                                }
+
+                                if (visitDetailViewModel.isDiagnosisUpdated()) {
+                                    visitDetailViewModel.setDiagnosisUpdated(false);
                                     visitsDetailApiResponseModel.getResult().setDiagnosis(visitDetailViewModel.getDiagnosis());
                                     visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
                                 }
@@ -711,7 +715,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         }
 
         if ((currentUpdateType != null && ((removeList != null && !removeList.isEmpty()) || (addList != null && !addList.isEmpty())))
-                || visitDetailViewModel.isInstructionUpdated() || visitDetailViewModel.isTranscriptUpdated() ||
+                || visitDetailViewModel.isInstructionUpdated() || visitDetailViewModel.isDiagnosisUpdated() || visitDetailViewModel.isTranscriptUpdated() ||
                 visitDetailViewModel.isTranscriptEdited()) {
             if (!isSuccessViewShown) {
                 Bundle bundle = new Bundle();
@@ -737,15 +741,15 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 visitRequestModel.setAdd_associations(addList);
             }
 
-            Log.e(TAG, "isInstructionUpdated : " + visitDetailViewModel.isInstructionUpdated());
             if (visitDetailViewModel.isInstructionUpdated()) {
                 visitRequestModel.setInstructions(visitDetailViewModel.getInstruction());
+            }
+
+            if (visitDetailViewModel.isDiagnosisUpdated()) {
                 visitRequestModel.setDiagnosis(visitDetailViewModel.getDiagnosis());
             }
 
             if (visitDetailViewModel.isTranscriptUpdated() || visitDetailViewModel.isTranscriptEdited()) {
-                Log.e(TAG, "isTranscriptUpdated: " + visitDetailViewModel.isTranscriptUpdated());
-                Log.e(TAG, "isTranscriptEdited: " + visitDetailViewModel.isTranscriptEdited());
                 DownloadTranscriptResponseModel updatedTranscript = new DownloadTranscriptResponseModel();
 
                 updatedTranscript.setTranscripts(visitDetailViewModel.getUpdatedTranscriptResponseModel().getTranscripts());
@@ -760,7 +764,6 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 updatedTranscript.setSpeakerLabels(updatedLabels);
 
                 visitRequestModel.setUpdated_transcript(updatedTranscript);
-                Log.e(TAG, "transcriptEdited : " + new Gson().toJson(visitDetailViewModel.getUpdatedTranscriptResponseModel()));
             }
 
             Log.e(TAG, "visitRequestModel: " + new Gson().toJson(visitRequestModel));
@@ -887,6 +890,18 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                             ordersIdListApiResponseModel.setMiscellaneous(miscellaneous);
 
                             visitDetailViewModel.setOrdersIdListApiResponseModel(ordersIdListApiResponseModel);
+
+                            if (data.getSerializableExtra(ArgumentKeys.SELECTED_FORMS) != null) {
+                                HashMap<Integer, OrdersUserFormsApiResponseModel> selectedForms = (HashMap<Integer, OrdersUserFormsApiResponseModel>) data.getSerializableExtra(ArgumentKeys.SELECTED_FORMS);
+                                ArrayList<OrdersUserFormsApiResponseModel> forms = new ArrayList<>();
+
+                                if (visitDetailViewModel.getFormsApiResponseModels() != null && !visitDetailViewModel.getFormsApiResponseModels().isEmpty()) {
+                                    forms.addAll(visitDetailViewModel.getFormsApiResponseModels());
+                                }
+                                forms.addAll(selectedForms.values());
+                                visitDetailViewModel.setFormsAddList(new ArrayList<>(selectedForms.keySet()));
+                                visitDetailViewModel.setFormsApiResponseModels(forms);
+                            }
 
                             break;
                         case VisitDetailConstants.VISIT_TYPE_DIETS:

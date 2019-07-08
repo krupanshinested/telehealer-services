@@ -10,7 +10,7 @@ public class VisitDetailConstants {
     public static final int TYPE_LABEL_VALUE = 4;
     public static final int TYPE_HISTORY_ITEM = 5;
     public static final int TYPE_TRANSCRIPT = 6;
-    public static final int TYPE_INPUT = 7;
+    public static final int TYPE_INSTRUCTION = 7;
     public static final int TYPE_ADD = 8;
     public static final int TYPE_VITALS = 9;
     public static final int TYPE_DIET = 10;
@@ -18,6 +18,7 @@ public class VisitDetailConstants {
     public static final int TYPE_DOCUMENT = 12;
     public static final int TYPE_DATE = 13;
     public static final int TYPE_INFO = 14;
+    public static final int TYPE_DIAGNOSIS = 15;
 
     public static final int ADD_VITAL = 1;
     public static final int ADD_ORDER = 2;

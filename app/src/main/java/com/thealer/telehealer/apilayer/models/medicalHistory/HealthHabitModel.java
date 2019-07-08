@@ -91,7 +91,7 @@ public class HealthHabitModel extends MedicalHistoryCommonModel implements Seria
 
     public String getDetailString(FragmentActivity activity) {
         String detail;
-        if (getAdditionalInformation().equals(activity.getString(R.string.yes)) || getAdditionalInformation().equals(activity.getString(R.string.both))) {
+        if (getAdditionalInformation().equals(activity.getString(R.string.yes)) || getAdditionalInformation().equals(activity.getString(R.string.quit))) {
             detail = getAdditionalInformation();
 
             if (getDetail() != null) {
@@ -99,12 +99,12 @@ public class HealthHabitModel extends MedicalHistoryCommonModel implements Seria
 
                     if (getDetail().getAlcohol_Often() != null &&
                             !getDetail().getAlcohol_Often().isEmpty()) {
-                        detail = detail + "\n" + activity.getString(R.string.period) + " : " + getDetail().getAlcohol_Often();
+                        detail = detail + "\n" + getDetail().getAlcohol_Often().trim();
                     }
 
                     if (getDetail().getAlcohol_Quantity() != null &&
                             !getDetail().getAlcohol_Quantity().isEmpty()) {
-                        detail = detail + "\n" + activity.getString(R.string.alcohol_quantity) + " : " + getDetail().getAlcohol_Quantity();
+                        detail = detail + "\n" + getDetail().getAlcohol_Quantity();
                     }
 
                     if (getDetail().getAlcohol_Felt_Cut_Down_Drinking() != null &&
@@ -121,7 +121,7 @@ public class HealthHabitModel extends MedicalHistoryCommonModel implements Seria
 
                     if (getDetail().getCigarettes_For_How_Many_Years() != null &&
                             !getDetail().getCigarettes_For_How_Many_Years().isEmpty()) {
-                        detail = detail + "\n" + activity.getString(R.string.For) + " : " + getDetail().getCigarettes_For_How_Many_Years();
+                        detail = detail + "\n" + activity.getString(R.string.For) + " : " + getDetail().getCigarettes_For_How_Many_Years() + " " + activity.getString(R.string.years);
                     }
 
                     if (getDetail().getOtherFormsOfTobacco() != null &&

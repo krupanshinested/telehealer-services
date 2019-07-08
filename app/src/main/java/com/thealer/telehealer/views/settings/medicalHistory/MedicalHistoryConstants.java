@@ -98,7 +98,7 @@ public class MedicalHistoryConstants {
      */
 
     public static final String[] metrics = {"mg", "mcg", "gm"};
-    public static final String[] directionOne = {"Oral", "Rectum", "Under the tongue", "Sub cutaneous", "Intra muscle"};
+    public static final String[] directionOne = {"Tablet", "Capsule", "Drops", "Suppository", "Ointment", "Injection", "Inhaler", "Cream", "Lozenge", "Syrup", "Powder", "Spray", "Gel", "Lotion", "Mouthwash", "Shampoo", "Solution", "Suspension", "Sachet"};
     public static final String[] directionTwo = {"Daily", "Twice a day", "Three times a day", "Four times a day", "Every <N> hours", "Before meals", "After meals", "Before bedtime", "In the morning", "In the evening", "At Noon"};
 
     /**
@@ -109,7 +109,7 @@ public class MedicalHistoryConstants {
     /**
      * For Surgeries
      */
-    public static final List<String> surgeriesList = Arrays.asList("Cataract Removal", "Tonsil Removal", "Appendix Removal", "Gallbladder Removal", "Wisdom teeth Removal", "Dental implants", "Hip replacement", "Knee replacement", "Shoulder surgery", "Fracture repair", "Breast surgery", "C - Section", "Kidney stone removal", "Stomach surgeries(bypass)", "Hear bypass/sents", "Pacemaker", "Spine surgeries", "Vasectomies", "Circumcision", "Bilateral tubal ligation", "Thyroid surgery", "Hysterectomy", "Hernia repair");
+    public static final List<String> surgeriesList = Arrays.asList("Cataract Removal", "Tonsil Removal", "Appendix Removal", "Gallbladder Removal", "Wisdom teeth Removal", "Dental implants", "Hip replacement", "Knee replacement", "Shoulder surgery", "Fracture repair", "Breast surgery", "C - Section", "Kidney stone removal", "Stomach surgeries(bypass)", "Heart bypass / stents", "Pacemaker", "Spine surgeries", "Vasectomies", "Circumcision", "Bilateral tubal ligation", "Thyroid surgery", "Hysterectomy", "Hernia repair");
 
     /**
      * for family history
@@ -155,13 +155,13 @@ public class MedicalHistoryConstants {
 
     public static final List<String> healthHabitList = Arrays.asList(DO_YOU_SMOKE, DO_YOU_DRINK, USED_OTHER_DRUGS);
 
-    public static final String[] yesNoBoth = {"Yes", "No", "Both"};
+    public static final String[] yesNoQuit = {"Yes", "No", "Quit"};
 
     public static final String NO_OF_CIGRATTES = "Number of cigarettes each day?";
     public static final String HOW_MANY_YEARS = "For how many years?";
     public static final String OTHER_FORMS_OF_TOBACCO = "Other forms of tobacco used?";
-    public static final String HOW_MUCH = "How much?";
-    public static final String HOW_OFTEN = "How often?";
+    public static final String HOW_MUCH = "How much? ( in litres )";
+    public static final String HOW_OFTEN = "How often? ( in weeks )";
     public static final String CUT_DOWN = "Have you ever felt that you should cut down on your drinking?";
     public static final String STILL_USING = "If yes, are you still using them?";
 
@@ -217,7 +217,7 @@ public class MedicalHistoryConstants {
      */
     public static final int LIST_YES_OR_NO = 1;
     public static final int LIST_SEXUALLY_ACTIVE_WITH = 2;
-    public static final int LIST_YES_NO_BOTH = 3;
+    public static final int LIST_YES_NO_QUIT = 3;
     public static final int LIST_NOT_WORKING_REASON = 4;
     public static final int LIST_EDUCATION_LEVEL = 5;
     public static final int LIST_MARITAL_STATUS = 6;

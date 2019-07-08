@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.orders;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -449,12 +450,14 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getFormsDetail(String userGuid, String doctorGuid, List<Integer> idList, boolean isShowProgress) {
+    public void getFormsDetail(String userGuid, String doctorGuid, @Nullable List<Integer> idList, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    String ids = idList.toString().replace("[", "").replace("]", "");
+                    String ids = null;
+                    if (idList != null)
+                        ids = idList.toString().replace("[", "").replace("]", "");
                     getAuthApiService().getFormDetails(userGuid, doctorGuid, ids)
                             .compose(applySchedulers())
                             .subscribe(new RAListObserver<OrdersUserFormsApiResponseModel>(getProgress(isShowProgress)) {

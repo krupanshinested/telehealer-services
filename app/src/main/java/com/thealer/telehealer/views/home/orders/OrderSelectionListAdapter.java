@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
@@ -127,12 +128,13 @@ public class OrderSelectionListAdapter extends RecyclerView.Adapter<OrderSelecti
         notifyDataSetChanged();
     }
 
-    public void setData(OrdersIdListApiResponseModel ordersIdListApiResponseModel) {
-        visitOrdersAdapterModels = generateAdapterModel(ordersIdListApiResponseModel);
+    public void setData(OrdersIdListApiResponseModel ordersIdListApiResponseModel, ArrayList<OrdersUserFormsApiResponseModel> formsList) {
+        visitOrdersAdapterModels = generateAdapterModel(ordersIdListApiResponseModel, formsList);
         notifyDataSetChanged();
     }
 
-    private List<VisitOrdersAdapterModel> generateAdapterModel(OrdersIdListApiResponseModel ordersIdListApiResponseModel) {
+    private List<VisitOrdersAdapterModel> generateAdapterModel(OrdersIdListApiResponseModel ordersIdListApiResponseModel,
+                                                               ArrayList<OrdersUserFormsApiResponseModel> formsList) {
 
         List<VisitOrdersAdapterModel> visitOrdersAdapterModels = new ArrayList<>();
 
@@ -169,6 +171,12 @@ public class OrderSelectionListAdapter extends RecyclerView.Adapter<OrderSelecti
             for (int i = 0; i < ordersIdListApiResponseModel.getMiscellaneous().size(); i++) {
                 visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(ordersIdListApiResponseModel.getMiscellaneous().get(i).getCreated_at(),
                         ordersIdListApiResponseModel.getMiscellaneous().get(i)));
+            }
+        }
+
+        if (!formsList.isEmpty()){
+            for (int i = 0; i < formsList.size(); i++) {
+                visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(formsList.get(i).getCreated_at(), formsList.get(i)));
             }
         }
 
