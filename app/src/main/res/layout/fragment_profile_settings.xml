@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tool="http://schemas.android.com/tools"
     android:background="@color/colorWhite">
 
     <androidx.core.widget.NestedScrollView
@@ -57,7 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:icon="@drawable/ic_medical_questionarie"
-                    app:title="@string/medical_history" />
+                    app:title="@string/health_summary" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/settings"
@@ -236,8 +237,19 @@
                     android:layout_marginLeft="10dp"
                     android:textColor="@color/colorGrey"
                     android:textSize="12sp"
+                    tool:text="Version 1.0"
                     app:layout_constraintLeft_toRightOf="@+id/app_icon"
                     app:layout_constraintTop_toBottomOf="@+id/app_name" />
+
+                <TextView
+                    android:id="@+id/last_login_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="12sp"
+                    app:layout_constraintLeft_toRightOf="@+id/app_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/version_tv" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>

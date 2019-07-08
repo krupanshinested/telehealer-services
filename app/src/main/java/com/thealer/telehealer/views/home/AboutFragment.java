@@ -1,7 +1,5 @@
 package com.thealer.telehealer.views.home;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,12 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.viewpager.widget.ViewPager;
-import androidx.cardview.widget.CardView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +14,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -87,6 +89,11 @@ public class AboutFragment extends BaseFragment {
             onStatusUpdate(status);
         }
     };
+    private ConstraintLayout doctorDetailCl;
+    private ConstraintLayout indianDocDetailCl;
+    private TextView registrationNumberTv;
+    private TextView yearOfRegistrationTv;
+    private TextView mciTv;
 
     @Override
     public void onAttach(Context context) {
@@ -147,6 +154,12 @@ public class AboutFragment extends BaseFragment {
         insuranceCashTv = (TextView) view.findViewById(R.id.insurance_cash_tv);
         insuranceImageLl = (LinearLayout) view.findViewById(R.id.insurance_image_ll);
 
+        doctorDetailCl = (ConstraintLayout) view.findViewById(R.id.doctor_detail_cl);
+        indianDocDetailCl = (ConstraintLayout) view.findViewById(R.id.indian_doc_detail_cl);
+        registrationNumberTv = (TextView) view.findViewById(R.id.registration_number_tv);
+        yearOfRegistrationTv = (TextView) view.findViewById(R.id.year_of_registration_tv);
+        mciTv = (TextView) view.findViewById(R.id.mci_tv);
+
         if (getArguments() != null) {
             userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
@@ -179,51 +192,62 @@ public class AboutFragment extends BaseFragment {
                         if (userDetail.getUser_detail() != null &&
                                 userDetail.getUser_detail().getData() != null) {
 
-                            npiTv.setText(userDetail.getUser_detail().getData().getNpi());
-                            doctorBioTv.setText(userDetail.getUser_detail().getData().getBio());
+                            if (userDetail.getUser_detail().getData().getOtherInformation() == null) {
 
-                            if (userDetail.getUser_detail().getData().getLicenses() != null) {
+                                npiTv.setText(userDetail.getUser_detail().getData().getNpi());
+                                doctorBioTv.setText(userDetail.getUser_detail().getData().getBio());
 
-                                StringBuilder license = new StringBuilder();
-                                for (int i = 0; i < userDetail.getUser_detail().getData().getLicenses().size(); i++) {
-                                    license.append(userDetail.getUser_detail().getData().getLicenses().get(i).getState())
-                                            .append(" ")
-                                            .append(userDetail.getUser_detail().getData().getLicenses().get(i).getNumber())
-                                            .append("\n");
-                                }
-                                licenseTv.setText(license.toString());
-                            }
+                                if (userDetail.getUser_detail().getData().getLicenses() != null) {
 
-                            StringBuilder clinicAddress = new StringBuilder();
-                            if (userDetail.getUser_detail().getData().getPractices().size() > 0) {
-                                clinicAddress.append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getStreet())
-                                        .append(",")
-                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getStreet2())
-                                        .append(",")
-                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getCity())
-                                        .append(",")
-                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getState())
-                                        .append(",")
-                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getZip());
-
-                                clinicCv.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        String lat = String.valueOf(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getLat());
-                                        String lon = String.valueOf(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getLon());
-                                        String uriString = String.format("geo:%s,%s?q=%s", lat, lon, clinicAddress);
-                                        Uri uri = Uri.parse(uriString);
-                                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
-                                        mapIntent.setPackage("com.google.android.apps.maps");
-                                        if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                                            startActivity(mapIntent);
-                                        }
+                                    StringBuilder license = new StringBuilder();
+                                    for (int i = 0; i < userDetail.getUser_detail().getData().getLicenses().size(); i++) {
+                                        license.append(userDetail.getUser_detail().getData().getLicenses().get(i).getState())
+                                                .append(" ")
+                                                .append(userDetail.getUser_detail().getData().getLicenses().get(i).getNumber())
+                                                .append("\n");
                                     }
-                                });
+                                    licenseTv.setText(license.toString());
+                                }
 
+                                StringBuilder clinicAddress = new StringBuilder();
+                                if (userDetail.getUser_detail().getData().getPractices().size() > 0) {
+                                    clinicAddress.append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getStreet())
+                                            .append(",")
+                                            .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getStreet2())
+                                            .append(",")
+                                            .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getCity())
+                                            .append(",")
+                                            .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getState())
+                                            .append(",")
+                                            .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getZip());
+
+                                    clinicCv.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            String lat = String.valueOf(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getLat());
+                                            String lon = String.valueOf(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getLon());
+                                            String uriString = String.format("geo:%s,%s?q=%s", lat, lon, clinicAddress);
+                                            Uri uri = Uri.parse(uriString);
+                                            Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
+                                            mapIntent.setPackage("com.google.android.apps.maps");
+                                            if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                                startActivity(mapIntent);
+                                            }
+                                        }
+                                    });
+
+                                }
+                                clinicAddressTv.setText(clinicAddress);
+
+                            } else {
+                                doctorDetailCl.setVisibility(View.GONE);
+                                indianDocDetailCl.setVisibility(View.VISIBLE);
+                                clinicCv.setVisibility(View.GONE);
+
+                                registrationNumberTv.setText(userDetail.getUser_detail().getData().getOtherInformation().getRegistrationNumber());
+                                yearOfRegistrationTv.setText(Utils.getDayMonthYear(userDetail.getUser_detail().getData().getOtherInformation().getYearOfRegistration()));
+                                mciTv.setText(userDetail.getUser_detail().getData().getOtherInformation().getMci());
                             }
-                            clinicAddressTv.setText(clinicAddress);
-
                         }
 
                         moreLessTv.setOnClickListener(new View.OnClickListener() {

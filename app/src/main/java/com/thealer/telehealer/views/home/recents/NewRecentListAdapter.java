@@ -2,15 +2,16 @@ package com.thealer.telehealer.views.home.recents;
 
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
@@ -230,12 +231,12 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
             List<RecentsApiResponseModel.ResultBean> callList = new ArrayList<>();
 
             for (int i = 0; i < recentList.size(); i++) {
-                if (recentList.get(i).getCreated_at() != null && !recentList.get(i).getCreated_at().isEmpty()) {
-                    if (recentList.get(i).getCorr_type().equals(Constants.CALL)) {
+                if (recentList.get(i).getCorr_type().equals(Constants.CALL)) {
+                    if (recentList.get(i).getCreated_at() != null && !recentList.get(i).getCreated_at().isEmpty()) {
                         callList.add(recentList.get(i));
-                    } else if (recentList.get(i).getCorr_type().equals(Constants.CHAT)) {
-                        chatList.add(recentList.get(i));
                     }
+                } else if (recentList.get(i).getCorr_type().equals(Constants.CHAT)) {
+                    chatList.add(recentList.get(i));
                 }
             }
 
@@ -255,12 +256,10 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
                         isShowDate = false;
                     }
                     if (isShowDate) {
-                        adapterModelList.add(new RecentListAdapterModel(TYPE_SUB_TITLE, Utils.getDayMonthYear(chatList.get(i).getCreated_at())));
+                        adapterModelList.add(new RecentListAdapterModel(TYPE_SUB_TITLE, Utils.getDayMonthYear(chatList.get(i).getUpdated_at())));
                     }
                     adapterModelList.add(new RecentListAdapterModel(TYPE_ITEM, chatList.get(i)));
                 }
-
-                isCalls = true;
             }
 
             if (!callList.isEmpty()) {
@@ -271,7 +270,7 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }
                 });
 
-                if (isCalls) {
+                if (!isCalls) {
                     adapterModelList.add(new RecentListAdapterModel(TYPE_TITLE, activity.getString(R.string.calls)));
                 }
 

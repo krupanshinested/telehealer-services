@@ -28,6 +28,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_PRESCRIPTION:
             case EmptyViewConstants.EMPTY_PRESCRIPTION_WITH_BTN:
                 return context.getString(R.string.EMPTY_PRESCRIPTION_TITLE);
+            case EmptyViewConstants.EMPTY_ORDER:
+                return context.getString(R.string.EMPTY_ORDER_TITLE);
             case EmptyViewConstants.EMPTY_HISTORY:
             case EmptyViewConstants.EMPTY_HISTORY_WITH_BTN:
                 return context.getString(R.string.EMPTY_HISTORY_TITLE);
@@ -148,6 +150,8 @@ public class EmptyStateUtil {
                 return context.getString(R.string.EMPTY_MISC_MESSAGE);
             case EmptyViewConstants.EMPTY_MISC_WITH_BTN:
                 return context.getString(R.string.EMPTY_MISC_WITH_BTN_MESSAGE);
+            case EmptyViewConstants.EMPTY_ORDER:
+                return context.getString(R.string.EMPTY_ORDER_MESSAGE);
             case EmptyViewConstants.EMPTY_PRESCRIPTION:
                 return context.getString(R.string.EMPTY_PRESCRIPTION_MESSAGE);
             case EmptyViewConstants.EMPTY_PRESCRIPTION_WITH_BTN:
@@ -284,6 +288,7 @@ public class EmptyStateUtil {
                 return R.drawable.emptystate_misc;
             case EmptyViewConstants.EMPTY_PRESCRIPTION:
             case EmptyViewConstants.EMPTY_PRESCRIPTION_WITH_BTN:
+            case EmptyViewConstants.EMPTY_ORDER:
                 return R.drawable.emptystate_no_prescription;
             case EmptyViewConstants.EMPTY_HISTORY:
             case EmptyViewConstants.EMPTY_HISTORY_WITH_BTN:

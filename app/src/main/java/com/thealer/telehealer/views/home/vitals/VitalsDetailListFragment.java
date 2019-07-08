@@ -1,18 +1,11 @@
 package com.thealer.telehealer.views.home.vitals;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -21,6 +14,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -37,6 +37,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.MPPointF;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -75,8 +76,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import Flavor.iHealth.pairing.VitalCreationActivity;
+import de.hdodenhof.circleimageview.CircleImageView;
 import me.toptas.fancyshowcase.listener.DismissListener;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -108,8 +109,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private List<VitalsApiResponseModel> responseModelList = new ArrayList<>();
     private HashMap<Float, String> xaxisLables;
     private List<ILineDataSet> lineDataSetList;
-    private HashMap<String, List<VitalsApiResponseModel>> childList = new HashMap<>();
-    private List<String> headerList = new ArrayList<>();
     private ArrayList<Entry> line1Entry;
     private ArrayList<Entry> line2Entry;
     private ArrayList<Entry> line3Entry;
@@ -133,6 +132,20 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
         attachObserverInterface.attachObserver(vitalsApiViewModel);
 
+        vitalsApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+            @Override
+            public void onChanged(ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                if (baseApiResponseModels != null) {
+                    ArrayList<VitalsApiResponseModel> arrayList = (ArrayList<VitalsApiResponseModel>) (Object) baseApiResponseModels;
+                    if (isGetType) {
+                        isGetType = false;
+                        selectedItem = arrayList.get(0).getType();
+                        initializeSelectedItemView(selectedItem);
+                        makeApiCall(true);
+                    }
+                }
+            }
+        });
         vitalsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -143,71 +156,63 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                     vitalDetailCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
 
                     vitalsApiResponseModelArrayList = vitalsPaginatedApiResponseModel.getResult();
+                    if (UserType.isUserPatient() && vitalsApiResponseModelArrayList.size() == 0) {
+                        if (!appPreference.getBoolean(selectedItem)) {
+                            boolean isShow = true;
+                            int message = 0;
+                            switch (selectedItem) {
+                                case SupportedMeasurementType.bp:
+                                    message = OverlayViewConstants.OVERLAY_NO_BP;
+                                    break;
+                                case SupportedMeasurementType.gulcose:
+                                    message = OverlayViewConstants.OVERLAY_NO_GLUCOSE;
+                                    break;
+                                case SupportedMeasurementType.heartRate:
+                                    message = OverlayViewConstants.OVERLAY_NO_HEAR_RATE;
+                                    break;
+                                case SupportedMeasurementType.pulseOximeter:
+                                    message = OverlayViewConstants.OVERLAY_NO_PULSE;
+                                    break;
+                                case SupportedMeasurementType.temperature:
+                                    message = OverlayViewConstants.OVERLAY_NO_TEMPERATURE;
+                                    break;
+                                case SupportedMeasurementType.weight:
+                                    message = OverlayViewConstants.OVERLAY_NO_WEIGHT;
+                                    break;
+                                default:
+                                    isShow = false;
+                            }
+                            if (isShow) {
+                                appPreference.setBoolean(selectedItem, true);
+                                Utils.showOverlay(getActivity(), addFab, message, new DismissListener() {
+                                    @Override
+                                    public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
 
-                    if (isGetType) {
-                        isGetType = false;
-                        selectedItem = vitalsApiResponseModelArrayList.get(0).getType();
-                        initializeSelectedItemView(selectedItem);
-                        makeApiCall(true);
-                    } else {
-                        if (UserType.isUserPatient() && vitalsApiResponseModelArrayList.size() == 0) {
-                            if (!appPreference.getBoolean(selectedItem)) {
-                                boolean isShow = true;
-                                int message = 0;
-                                switch (selectedItem) {
-                                    case SupportedMeasurementType.bp:
-                                        message = OverlayViewConstants.OVERLAY_NO_BP;
-                                        break;
-                                    case SupportedMeasurementType.gulcose:
-                                        message = OverlayViewConstants.OVERLAY_NO_GLUCOSE;
-                                        break;
-                                    case SupportedMeasurementType.heartRate:
-                                        message = OverlayViewConstants.OVERLAY_NO_HEAR_RATE;
-                                        break;
-                                    case SupportedMeasurementType.pulseOximeter:
-                                        message = OverlayViewConstants.OVERLAY_NO_PULSE;
-                                        break;
-                                    case SupportedMeasurementType.temperature:
-                                        message = OverlayViewConstants.OVERLAY_NO_TEMPERATURE;
-                                        break;
-                                    case SupportedMeasurementType.weight:
-                                        message = OverlayViewConstants.OVERLAY_NO_WEIGHT;
-                                        break;
-                                    default:
-                                        isShow = false;
-                                }
-                                if (isShow) {
-                                    appPreference.setBoolean(selectedItem, true);
-                                    Utils.showOverlay(getActivity(), addFab, message, new DismissListener() {
-                                        @Override
-                                        public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
+                                    }
 
-                                        }
+                                    @Override
+                                    public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
 
-                                        @Override
-                                        public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
-
-                                        }
-                                    });
-                                }
+                                    }
+                                });
                             }
                         }
+                    }
 
-                        if (vitalsPaginatedApiResponseModel.getCount() > 0) {
+                    if (vitalsPaginatedApiResponseModel.getCount() > 0) {
 
-                            vitalsDetailListAdapter.setData(vitalsApiResponseModelArrayList, page);
+                        vitalsDetailListAdapter.setData(vitalsApiResponseModelArrayList, page);
 
-                            if (!selectedItem.equals(SupportedMeasurementType.stethoscope))
-                                updateChart(vitalsApiResponseModelArrayList, vitalsPaginatedApiResponseModel.getNext());
+                        if (!selectedItem.equals(SupportedMeasurementType.stethoscope))
+                            updateChart(vitalsApiResponseModelArrayList, vitalsPaginatedApiResponseModel.getNext());
 
-                            vitalDetailCrv.showOrhideEmptyState(false);
-                        } else {
-                            vitalDetailCrv.showOrhideEmptyState(true);
-                        }
+                        vitalDetailCrv.showOrhideEmptyState(false);
+                    } else {
+                        vitalDetailCrv.showOrhideEmptyState(true);
+                    }
 
-                        if (isAbnormalVitalView) {
-                            setUserDetailView();
-                        }
+                    if (isAbnormalVitalView) {
+                        setUserDetailView();
                     }
                 }
                 isApiRequested = false;
@@ -705,40 +710,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                         }
                     }, null);
         }
-    }
-
-    private void updateList(ArrayList<VitalsApiResponseModel> vitalsApiResponseModelArrayList) {
-        headerList.clear();
-        childList.clear();
-
-        for (int i = 0; i < vitalsApiResponseModelArrayList.size(); i++) {
-
-            String date = Utils.getDayMonthYear(vitalsApiResponseModelArrayList.get(i).getCreated_at());
-
-            if (!headerList.contains(date)) {
-                headerList.add(date);
-            }
-            List<VitalsApiResponseModel> vitalsApiResponseModelList = new ArrayList<>();
-
-            if (childList.get(date) != null) {
-                vitalsApiResponseModelList.addAll(childList.get(date));
-            }
-
-            vitalsApiResponseModelList.add(vitalsApiResponseModelArrayList.get(i));
-
-            childList.put(date, vitalsApiResponseModelList);
-
-        }
-
-//        vitalsDetailListAdapter.setData(headerList, childList);
-
-        if (headerList.size() > 0) {
-            vitalDetailCrv.showOrhideEmptyState(false);
-        } else {
-            vitalDetailCrv.showOrhideEmptyState(true);
-        }
-
-        vitalDetailCrv.setVisibility(View.VISIBLE);
     }
 
     private void makeApiCall(boolean isShowProgress) {

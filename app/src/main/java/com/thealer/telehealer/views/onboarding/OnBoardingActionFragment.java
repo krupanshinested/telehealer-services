@@ -2,22 +2,21 @@ package com.thealer.telehealer.views.onboarding;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.SignUpActivity;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 10,October,2018
@@ -72,7 +71,7 @@ public class OnBoardingActionFragment extends BaseFragment implements View.OnCli
                 getActivity().finish();
                 break;
             case R.id.signup_btn:
-                appPreference.deletePreference();
+                UserDetailPreferenceManager.deleteAllPreference();
                 startActivity(new Intent(getActivity(), SignUpActivity.class));
                 getActivity().finish();
                 break;

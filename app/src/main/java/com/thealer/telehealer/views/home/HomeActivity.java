@@ -1,11 +1,6 @@
 package com.thealer.telehealer.views.home;
 
 import android.app.Activity;
-import android.app.NotificationManager;
-
-import Flavor.iHealth.VitalsListWithGoogleFitFragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,16 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.navigation.NavigationView;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -32,10 +17,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.navigation.NavigationView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.manager.RetrofitLogger;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
@@ -79,9 +76,10 @@ import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import Flavor.iHealth.VitalsListWithGoogleFitFragment;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -314,7 +312,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             navigationView.getMenu().removeItem(R.id.menu_monitoring);
             navigationView.getMenu().findItem(R.id.menu_schedules).setChecked(true);
             selecteMenuItem = R.id.menu_schedules;
-//            showScheduleToolbarOptions(true, scheduleTypeCalendar);
         }
 
         if (PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC))
@@ -331,7 +328,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             if (whoAmIApiResponseModel != null && (whoAmIApiResponseModel.getQuestionnaire() == null || !whoAmIApiResponseModel.getQuestionnaire().isQuestionariesEmpty())) {
                 Bundle bundle = new Bundle();
                 bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_health_heart);
-                bundle.putString(ArgumentKeys.TITLE, getString(R.string.health_profile));
+                bundle.putString(ArgumentKeys.TITLE, getString(R.string.health_summary));
                 bundle.putString(ArgumentKeys.DESCRIPTION, getString(R.string.add_health_info_content));
                 bundle.putBoolean(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
                 bundle.putBoolean(ArgumentKeys.IS_SKIP_NEEDED, true);
@@ -461,6 +458,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_notification:
                 showNotificationFragment();
                 showOrHideNotificationCount(false, 0);
+                notificationCount = 0;
                 removeAllNotification();
                 break;
         }
@@ -469,12 +467,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void showPendingInvites() {
         startActivity(new Intent(this, PendingInvitesActivity.class));
-    }
-
-    private void removeAllNotification() {
-        notificationCount = 0;
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
     }
 
     private void showNotificationFragment() {
@@ -753,6 +745,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         setToolbarTitle(getString(R.string.visits));
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.IS_FROM_HOME, true);
+        bundle.putBoolean(ArgumentKeys.IS_ONLY_CALLS, true);
         RecentFragment recentFragment = new RecentFragment();
         recentFragment.setArguments(bundle);
         setFragment(recentFragment);
