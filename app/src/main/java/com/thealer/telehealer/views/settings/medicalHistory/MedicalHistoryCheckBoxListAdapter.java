@@ -1,21 +1,22 @@
 package com.thealer.telehealer.views.settings.medicalHistory;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.PersonalHistoryModel;
@@ -458,10 +459,10 @@ public class MedicalHistoryCheckBoxListAdapter extends RecyclerView.Adapter<Medi
 
 
                                                                 if (answers[0] != null && !answers[0].trim().isEmpty()) {
-                                                                    detailBean.setAlcohol_Often(answers[0]);
+                                                                    detailBean.setAlcohol_Often(answers[0] + " " + activity.getString(R.string.times_in_a_week));
                                                                 }
                                                                 if (answers[1] != null && !answers[1].trim().isEmpty()) {
-                                                                    detailBean.setAlcohol_Quantity(answers[1]);
+                                                                    detailBean.setAlcohol_Quantity(answers[1] + " " + activity.getString(R.string.litres));
                                                                 }
                                                                 if (answers[2] != null && !answers[2].trim().isEmpty()) {
                                                                     detailBean.setAlcohol_Felt_Cut_Down_Drinking(answers[2]);
@@ -533,7 +534,7 @@ public class MedicalHistoryCheckBoxListAdapter extends RecyclerView.Adapter<Medi
                         }
                     });
                 }
-                showMHOptionSelectionDialog(stringList.get(position), MedicalHistoryConstants.LIST_YES_NO_BOTH);
+                showMHOptionSelectionDialog(stringList.get(position), MedicalHistoryConstants.LIST_YES_NO_QUIT);
 
                 break;
             case MH_SEXUAL_HISTORY:

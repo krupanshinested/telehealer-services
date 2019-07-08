@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 
@@ -128,7 +129,7 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context, notificationChannelId)
                 .setSmallIcon(R.drawable.app_icon)
-                .setBadgeIconType(R.drawable.app_icon)
+                .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setLargeIcon(imageBitmap)

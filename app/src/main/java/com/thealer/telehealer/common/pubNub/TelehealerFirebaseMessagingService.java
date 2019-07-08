@@ -4,8 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.Nullable;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -133,7 +134,6 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 bundle.putString(ArgumentKeys.USER_GUID, data.getFrom());
                 bundle.putString(ArgumentKeys.DOCTOR_GUID, data.getDoctor_guid());
                 intent.putExtras(bundle);
-
                 Utils.createNotification(data, intent);
                 break;
             case APNSPayload.waitingInRoom:

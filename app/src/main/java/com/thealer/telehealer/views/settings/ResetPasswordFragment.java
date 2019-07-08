@@ -2,17 +2,20 @@ package com.thealer.telehealer.views.settings;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.appcompat.widget.Toolbar;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -67,11 +70,20 @@ public class ResetPasswordFragment extends BaseFragment implements View.OnClickL
 
         toolbarTitle.setText(getString(R.string.reset_password));
 
-        Utils.setImageWithGlide(getActivity().getApplicationContext(), profileView, UserDetailPreferenceManager.getWhoAmIResponse().getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
+        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
-        profileTitle.setText(getString(R.string.hi) + " " + UserDetailPreferenceManager.getUserDisplayName());
+        Utils.setImageWithGlide(getActivity().getApplicationContext(), profileView, whoAmIApiResponseModel.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
 
-        description.setText(getString(R.string.reset_password_string) + " ( " + UserDetailPreferenceManager.getWhoAmIResponse().getPhone() + " )");
+        profileTitle.setText(getString(R.string.hi) + " " + whoAmIApiResponseModel.getFirst_name());
+
+        String html = "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<body>\n" +
+                "<p>%s<font color = %s > ( %s ) </font></p>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        description.setText(Html.fromHtml(String.format(html, getString(R.string.reset_password_string), getString(R.string.app_gradient_start), whoAmIApiResponseModel.getPhone())));
 
         okButton.setOnClickListener(this);
         backIv.setOnClickListener(this);

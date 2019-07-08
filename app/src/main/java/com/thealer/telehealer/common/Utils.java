@@ -22,23 +22,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.app.TaskStackBuilder;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.util.Base64;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -49,6 +39,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.TaskStackBuilder;
+import androidx.fragment.app.FragmentActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -95,6 +97,7 @@ import me.toptas.fancyshowcase.FocusShape;
 import me.toptas.fancyshowcase.listener.DismissListener;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
 import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
 
@@ -480,7 +483,7 @@ public class Utils {
             return returnFormat.format(dateFormat.parse(date));
         } catch (Exception e) {
             e.printStackTrace();
-            return date;
+            return "";
         }
     }
 
@@ -1060,6 +1063,7 @@ public class Utils {
         String message = data.getAps().get(PubNubNotificationPayload.ALERT);
         String imageUrl = data.getAps().get(PubNubNotificationPayload.MEDIA_URL);
 
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (imageUrl != null) {
 
@@ -1094,7 +1098,7 @@ public class Utils {
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(application, notificationChannelId)
                 .setSmallIcon(R.drawable.app_icon)
-                .setBadgeIconType(R.drawable.app_icon)
+                .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setLargeIcon(imageBitmap)
@@ -1346,5 +1350,13 @@ public class Utils {
 
         context.startActivity(intent);
 
+    }
+
+    public static void updateLastLogin() {
+        String utcDate = Utils.getUTCfromGMT(new Timestamp(System.currentTimeMillis()).toString());
+        String lastLogin = Utils.getDayMonthYearTime(utcDate);
+        Log.e("aswin", "updateLastLogin: " + lastLogin);
+
+        appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
     }
 }

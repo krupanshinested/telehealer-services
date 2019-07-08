@@ -133,7 +133,7 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
         PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
         Bundle bundle = new Bundle();
         bundle.putString(ArgumentKeys.HTML_FILE, pdfHtml);
-        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.health_profile));
+        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.health_summary));
         pdfViewerFragment.setArguments(bundle);
         showSubFragmentInterface.onShowFragment(pdfViewerFragment);
     }
@@ -152,14 +152,14 @@ public class MedicalHistoryViewFragment extends BaseFragment implements DoCurren
         Utils.hideKeyboard(getActivity());
 
         if (UserType.isUserPatient()) {
-            changeTitleInterface.onTitleChange(getString(R.string.health_profile));
+            changeTitleInterface.onTitleChange(getString(R.string.health_summary));
             onViewChangeInterface.hideOrShowNext(true);
             onViewChangeInterface.updateNextTitle(getString(R.string.edit));
 
         } else if (UserType.isUserAssistant()) {
             onViewChangeInterface.hideOrShowNext(false);
         }
-        toolbarTitle.setText(getString(R.string.health_profile));
+        toolbarTitle.setText(getString(R.string.health_summary));
 
         showMedicalHistory();
     }
