@@ -892,6 +892,8 @@
     <string name="EMPTY_MISC_WITH_BTN_MESSAGE">Agrega un Misceláneo tocando el botón \'+\'</string>
     <string name="EMPTY_PRESCRIPTION_MESSAGE">Las órdenes de prescripción eventualmente aparecerán aquí</string>
     <string name="EMPTY_PRESCRIPTION_TITLE">Sin receta</string>
+    <string name="EMPTY_ORDER_TITLE">Sin orden</string>
+    <string name="EMPTY_ORDER_MESSAGE">Las órdenes eventualmente aparecerán aquí</string>
     <string name="EMPTY_PRESCRIPTION_WITH_BTN_MESSAGE">Agregar una receta pulsando el botón \'+\'</string>
     <string name="EMPTY_HISTORY_MESSAGE">Las llamadas y mensajes entrantes y salientes eventualmente aparecerán aquí</string>
     <string name="EMPTY_HISTORY_TITLE">No historia</string>
@@ -1171,7 +1173,7 @@
     <string name="registration_number">Número de registro</string>
     <string name="year_of_registration">Año de registro</string>
     <string name="state_medical_council_for_mci">Consejo medico estatal para mci</string>
-    <string name="account_locked_info">Su cuenta ha sido bloqueada por %s horas</string>
+    <string name="account_locked_info">Su cuenta ha sido bloqueada por el siguiente %s horas. O bien puede esperar o restablecer su contraseña.</string>
     <string name="abnormal_vital">Vital anormal</string>
     <string name="captured_via">Capturado a través de %1$s</string>
     <string name="manage_sources">Administrar Fuentes</string>
@@ -1179,4 +1181,6 @@
     <string name="manage_sources_sub">Sincronice los datos de las fuentes que escriben en Google Fit.</string>
     <string name="no_source_found">No se encontraron fuentes</string>
     <string name="no_source_found_message">Las aplicaciones de fuente vital de AppleHealth eventualmente aparecerán aquí</string>
+    <string name="health_summary">Resumen de salud</string>
+    <string name="last_login">Último acceso : %s</string>
 </resources>

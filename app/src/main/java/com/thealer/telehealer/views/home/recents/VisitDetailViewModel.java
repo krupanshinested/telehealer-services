@@ -66,7 +66,7 @@ public class VisitDetailViewModel extends ViewModel {
     private Map<String, List<DietApiResponseModel>> dietListModelMap = new HashMap<>();
 
     private String instruction, diagnosis;
-    private boolean isInstructionUpdated;
+    private boolean isInstructionUpdated, isDiagnosisUpdated;
 
     public boolean isTranscriptUpdated() {
         if (updatedTranscriptResponseModel != null && updatedTranscriptResponseModel.getSpeakerLabels() != null) {
@@ -115,6 +115,14 @@ public class VisitDetailViewModel extends ViewModel {
 
     public void setInstructionUpdated(boolean instructionUpdated) {
         isInstructionUpdated = instructionUpdated;
+    }
+
+    public boolean isDiagnosisUpdated() {
+        return isDiagnosisUpdated;
+    }
+
+    public void setDiagnosisUpdated(boolean diagnosisUpdated) {
+        isDiagnosisUpdated = diagnosisUpdated;
     }
 
     public RecentsApiResponseModel.ResultBean getRecentResponseModel() {

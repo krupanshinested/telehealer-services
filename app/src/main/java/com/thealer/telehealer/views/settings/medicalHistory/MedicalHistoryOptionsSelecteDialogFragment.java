@@ -69,8 +69,8 @@ public class MedicalHistoryOptionsSelecteDialogFragment extends BaseBottomSheetD
                 case MedicalHistoryConstants.LIST_SEXUALLY_ACTIVE_WITH:
                     pickerList = MedicalHistoryConstants.sexWithList;
                     break;
-                case MedicalHistoryConstants.LIST_YES_NO_BOTH:
-                    pickerList = MedicalHistoryConstants.yesNoBoth;
+                case MedicalHistoryConstants.LIST_YES_NO_QUIT:
+                    pickerList = MedicalHistoryConstants.yesNoQuit;
                     break;
                 case MedicalHistoryConstants.LIST_NOT_WORKING_REASON:
                     pickerList = MedicalHistoryConstants.notWorkingReasonList;

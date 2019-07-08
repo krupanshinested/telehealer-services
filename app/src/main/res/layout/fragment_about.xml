@@ -41,7 +41,7 @@
                         android:layout_marginBottom="8dp"
                         android:gravity="left"
                         android:padding="@dimen/padding_default"
-                        android:text="@string/health_profile"
+                        android:text="@string/health_summary"
                         android:textAllCaps="true"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -160,6 +160,7 @@
             app:layout_constraintWidth_max="@dimen/max_width">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/doctor_detail_cl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -233,6 +234,76 @@
                     android:textColor="@color/app_gradient_start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/doctor_bio_tv" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/indian_doc_detail_cl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/registration_number_label"
+                    style="@style/text_sub_title_bold_app_color"
+                    android:layout_width="0dp"
+                    android:gravity="left"
+                    android:padding="@dimen/padding_default"
+                    android:text="@string/registration_number"
+                    android:textAllCaps="true"
+                    app:layout_constraintEnd_toStartOf="@id/year_of_registration_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/year_of_registration_label"
+                    style="@style/text_sub_title_bold_app_color"
+                    android:layout_width="0dp"
+                    android:gravity="left"
+                    android:padding="@dimen/padding_default"
+                    android:text="@string/year_of_registration"
+                    android:textAllCaps="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/registration_number_label"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/registration_number_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@+id/year_of_registration_tv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/registration_number_label"
+                    tools:text="@string/dummy_text" />
+
+                <TextView
+                    android:id="@+id/year_of_registration_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/registration_number_tv"
+                    app:layout_constraintTop_toTopOf="@+id/registration_number_tv"
+                    tools:text="@string/dummy_text" />
+
+                <TextView
+                    android:id="@+id/mci_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:ems="3"
+                    android:maxLines="4"
+                    android:padding="8dp"
+                    android:textColor="@color/colorBlack"
+                    app:layout_constraintTop_toBottomOf="@+id/registration_number_tv"
+                    tools:text="@string/dummy_text" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

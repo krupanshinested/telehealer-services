@@ -69,4 +69,5 @@ public class PreferenceConstants {
 
     public static final String GOOGLE_FIT_PRE_FETCHED_DATE = "GOOGLE_FIT_PRE_FETCHED_DATE";
     public static final String GOOGLE_FIT_PRE_FETCHED_SOURCES = "GOOGLE_FIT_PRE_FETCHED_SOURCES";
+    public static final String LAST_LOGIN = "last_login";
 }

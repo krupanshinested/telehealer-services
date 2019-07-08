@@ -1,21 +1,22 @@
 package com.thealer.telehealer.views.home.orders;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -24,6 +25,7 @@ import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.miscellaneous.MiscellaneousApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
@@ -73,6 +75,7 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
     private List<Integer> referralList = new ArrayList<>();
     private List<Integer> radiologyList = new ArrayList<>();
     private List<Integer> miscellaneousList = new ArrayList<>();
+    private List<Integer> formList = new ArrayList<>();
     private List<Integer> selectedList = null;
     private boolean isSuccessViewShown = false;
     private String currentUpdateType = null;
@@ -81,6 +84,7 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
     private HashMap<Integer, OrdersSpecialistApiResponseModel.ResultBean> specialistsMap = new HashMap<>();
     private HashMap<Integer, OrdersPrescriptionApiResponseModel.OrdersResultBean> prescriptionsMap = new HashMap<>();
     private HashMap<Integer, MiscellaneousApiResponseModel.ResultBean> miscellaneousMap = new HashMap<>();
+    private HashMap<Integer, OrdersUserFormsApiResponseModel> formMap = new HashMap<>();
 
     @Override
     public void onAttach(Context context) {
@@ -140,10 +144,29 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
                 if (baseApiResponseModel != null) {
                     ordersIdListApiResponseModel = (OrdersIdListApiResponseModel) baseApiResponseModel;
 
-                    if (ordersIdListApiResponseModel.isEmpty()) {
+//                    if (ordersIdListApiResponseModel.isEmpty()) {
+//                        ordersListCrv.showOrhideEmptyState(true);
+//                    }
+//                    orderSelectionListAdapter.setData(ordersIdListApiResponseModel);
+
+                    ordersApiViewModel.getFormsDetail(userGuid, doctorGuid, null, true);
+                }
+            }
+        });
+
+        ordersApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+            @Override
+            public void onChanged(ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                if (baseApiResponseModels != null) {
+                    ArrayList<OrdersUserFormsApiResponseModel> formsList = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
+
+                    orderSelectionListAdapter.setData(ordersIdListApiResponseModel, formsList);
+
+                    if (!ordersIdListApiResponseModel.isEmpty() && !formsList.isEmpty()) {
+                        ordersListCrv.showOrhideEmptyState(false);
+                    } else {
                         ordersListCrv.showOrhideEmptyState(true);
                     }
-                    orderSelectionListAdapter.setData(ordersIdListApiResponseModel);
                 }
             }
         });
@@ -287,6 +310,20 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
                                     }
                                 }
                                 break;
+                            case OrderConstant.ORDER_FORM:
+                                if (formList.contains(id)) {
+                                    formList.remove((Object) id);
+                                } else {
+                                    formList.add(id);
+                                }
+                                if (orderId != null) {
+                                    if (formMap.containsKey(id)) {
+                                        formMap.remove((Object) id);
+                                    } else {
+                                        formMap.put(id, visitOrdersAdapterModel.getForms());
+                                    }
+                                }
+                                break;
                         }
                     }
                     enableOrDisableNext();
@@ -313,8 +350,10 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
     private void enableOrDisableNext() {
         boolean isEnabled = true;
 
-        if (prescriptionList.isEmpty() && referralList.isEmpty() && labList.isEmpty() && miscellaneousList.isEmpty() && radiologyList.isEmpty())
+        if (prescriptionList.isEmpty() && referralList.isEmpty() && labList.isEmpty() && miscellaneousList.isEmpty() && radiologyList.isEmpty()
+                && formList.isEmpty())
             isEnabled = false;
+
         if (isEnabled) {
             nextTv.setVisibility(View.VISIBLE);
         } else {
@@ -354,7 +393,8 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
                                                 .putExtra(ArgumentKeys.SELECTED_SPECIALIST, specialistsMap)
                                                 .putExtra(ArgumentKeys.SELECTED_XRAYS, xraysMap)
                                                 .putExtra(ArgumentKeys.SELECTED_LABS, labsMap)
-                                                .putExtra(ArgumentKeys.SELECTED_MISCELLANEOUS, miscellaneousMap));
+                                                .putExtra(ArgumentKeys.SELECTED_MISCELLANEOUS, miscellaneousMap)
+                                                .putExtra(ArgumentKeys.SELECTED_FORMS, formMap));
 
                             onCloseActionInterface.onClose(false);
                         }
@@ -370,6 +410,8 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
         referralList.clear();
         radiologyList.clear();
         miscellaneousList.clear();
+        formList.clear();
+        formMap.clear();
         labsMap.clear();
         prescriptionsMap.clear();
         specialistsMap.clear();
@@ -409,6 +451,9 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
         } else if (!miscellaneousList.isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS;
             selectedList = miscellaneousList;
+        } else if (!formList.isEmpty()) {
+            currentUpdateType = VisitDetailConstants.VISIT_TYPE_FORMS;
+            selectedList = formList;
         }
 
         if (!isSuccessViewShown) {
@@ -447,7 +492,8 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
                 !referralList.isEmpty() ||
                 !labList.isEmpty() ||
                 !radiologyList.isEmpty() ||
-                !miscellaneousList.isEmpty();
+                !miscellaneousList.isEmpty() ||
+                !formList.isEmpty();
     }
 
 }

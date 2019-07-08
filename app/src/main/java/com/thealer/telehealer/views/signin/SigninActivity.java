@@ -54,6 +54,8 @@ import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import com.thealer.telehealer.views.signup.OtpVerificationFragment;
 
+import okhttp3.internal.Util;
+
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -172,6 +174,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                         SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
                         if (signinApiResponseModel.isSuccess()) {
 
+                            Utils.updateLastLogin();
                             authToken = signinApiResponseModel.getToken();
                             refreshToken = signinApiResponseModel.getRefresh_token();
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, authToken);

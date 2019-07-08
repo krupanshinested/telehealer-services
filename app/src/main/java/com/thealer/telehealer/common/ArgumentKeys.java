@@ -109,6 +109,7 @@ public class ArgumentKeys {
     public static final String SELECTED_SPECIALIST = "selectedSpecialist";
     public static final String SELECTED_XRAYS = "selectedXrays";
     public static final String SELECTED_MISCELLANEOUS = "selectedMiscellaneous";
+    public static final String SELECTED_FORMS = "selectedForms";
     public static final String SELECTED_LABS = "selectedLabs";
     public static final String SELECTED_DIET = "selectedDiet";
     public static final String SELECTED_FILES = "selectedFiles";
@@ -118,6 +119,7 @@ public class ArgumentKeys {
     public static final String SELECTED_VITAL = "selectedVital";
     public static final String IS_GET_TYPE = "isGetType";
     public static final String SHOW_FAVORITES = "showFavorites";
+    public static final String IS_ONLY_CALLS = "isOnlyCalls";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;

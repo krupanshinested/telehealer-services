@@ -949,7 +949,9 @@
     <string name="EMPTY_MISC_MESSAGE">Miscellaneous will eventually show up here</string>
     <string name="EMPTY_MISC_WITH_BTN_MESSAGE">Add a Miscellaneous by tapping the \'+\' button</string>
     <string name="EMPTY_PRESCRIPTION_MESSAGE">Prescription orders will eventually show up here</string>
+    <string name="EMPTY_ORDER_MESSAGE">Orders will eventually show up here</string>
     <string name="EMPTY_PRESCRIPTION_TITLE">No Prescription</string>
+    <string name="EMPTY_ORDER_TITLE">No Order</string>
     <string name="EMPTY_PRESCRIPTION_WITH_BTN_MESSAGE">Add a Prescription by tapping the \'+\' button</string>
     <string name="EMPTY_HISTORY_MESSAGE">Inbound and Outbound calls and messages will eventually show up here</string>
     <string name="EMPTY_HISTORY_TITLE">No History</string>
@@ -1233,7 +1235,7 @@
     <string name="registration_number">Registration Number</string>
     <string name="year_of_registration">Year of registration</string>
     <string name="state_medical_council_for_mci">State medical council for mci</string>
-    <string name="account_locked_info">Your account has been locked down for %s hours</string>
+    <string name="account_locked_info">Your account has been locked out for next %s hours. Either you can wait or reset your password.</string>
     <string name="abnormal_vital">Abnormal vital</string>
     <string name="captured_via">Captured via %1$s</string>
     <string name="manage_sources">Manage Sources</string>
@@ -1241,4 +1243,10 @@
     <string name="manage_sources_sub">Sync data from sources that write to Google Fit.</string>
     <string name="no_source_found">No Sources found</string>
     <string name="no_source_found_message">AppleHealth vital source apps will eventually show up here</string>
+    <string name="health_summary">Health Summary</string>
+    <string name="last_login">Last Login : %s</string>
+    <string name="quit">Quit</string>
+    <string name="times_in_a_week">times in a week</string>
+    <string name="litres">litres</string>
+    <string name="years">years</string>
 </resources>

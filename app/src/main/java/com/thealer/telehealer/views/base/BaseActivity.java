@@ -2,6 +2,8 @@ package com.thealer.telehealer.views.base;
 
 import android.app.ActivityManager;
 import androidx.lifecycle.Observer;
+
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -313,6 +315,10 @@ public class BaseActivity extends AppCompatActivity {
         intent.putExtras(bundle);
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+    public void removeAllNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     public void invalidateUser(){
