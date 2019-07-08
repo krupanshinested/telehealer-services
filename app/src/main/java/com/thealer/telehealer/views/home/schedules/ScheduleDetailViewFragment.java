@@ -1,20 +1,11 @@
 package com.thealer.telehealer.views.home.schedules;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +14,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
@@ -77,6 +78,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private TextView statusTv;
     private String doctorGuid = null, doctorName = null;
     private Button waitingRoomBtn;
+    private TextView historyLabel;
 
     @Override
     public void onAttach(Context context) {
@@ -153,6 +155,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         patientHistoryRv = (RecyclerView) view.findViewById(R.id.patient_history_rv);
         statusTv = (TextView) view.findViewById(R.id.status_tv);
         waitingRoomBtn = (Button) view.findViewById(R.id.waiting_room_btn);
+        historyLabel = (TextView) view.findViewById(R.id.history_label);
 
         cancelTv.setText(getString(R.string.cancel_appointment));
         toolbarTitle.setText(getString(R.string.appointment_detail));
@@ -211,17 +214,22 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                     statusInfo = String.format(statusInfo, detail);
                     statusTv.setText(statusInfo);
                     statusTv.setVisibility(View.VISIBLE);
-                }
 
-                List<HistoryBean> historyList = new ArrayList<>();
-                if (resultBean.getScheduled_with_user().getRole().equals(Constants.ROLE_PATIENT)) {
-                    historyList = resultBean.getScheduled_with_user().getHistory();
-                } else if (resultBean.getScheduled_by_user().getRole().equals(Constants.ROLE_PATIENT)) {
-                    historyList = resultBean.getScheduled_by_user().getHistory();
+                    List<HistoryBean> historyList = new ArrayList<>();
+                    if (resultBean.getScheduled_with_user().getRole().equals(Constants.ROLE_PATIENT)) {
+                        historyList = resultBean.getScheduled_with_user().getHistory();
+                    } else if (resultBean.getScheduled_by_user().getRole().equals(Constants.ROLE_PATIENT)) {
+                        historyList = resultBean.getScheduled_by_user().getHistory();
+                    }
+                    patientHistoryRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    PatientHistoryAdapter patientHistoryAdapter = new PatientHistoryAdapter(getActivity(), false, historyList);
+                    patientHistoryRv.setAdapter(patientHistoryAdapter);
+                    historyLabel.setVisibility(View.VISIBLE);
+                    patientHistoryRv.setVisibility(View.VISIBLE);
+                } else {
+                    historyLabel.setVisibility(View.GONE);
+                    patientHistoryRv.setVisibility(View.GONE);
                 }
-                patientHistoryRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-                PatientHistoryAdapter patientHistoryAdapter = new PatientHistoryAdapter(getActivity(), false, historyList);
-                patientHistoryRv.setAdapter(patientHistoryAdapter);
 
                 reasonOcv.setTitleTv(resultBean.getDetail().getReason());
                 appointmentTimeOcv.setTitleTv(Utils.getDayMonth(resultBean.getStart()) + " - " + Utils.getFormatedTime(resultBean.getStart()));
@@ -350,7 +358,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 break;
             case R.id.waiting_room_btn:
                 Intent waitingRoomIntent = new Intent(getActivity(), WaitingRoomActivity.class);
-                waitingRoomIntent.putExtra(ArgumentKeys.SCHEDULE_DETAIL,resultBean);
+                waitingRoomIntent.putExtra(ArgumentKeys.SCHEDULE_DETAIL, resultBean);
                 startActivity(waitingRoomIntent);
                 break;
         }

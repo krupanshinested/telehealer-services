@@ -296,7 +296,7 @@ public class MedicalHistoryPdfGenerator {
         String nameLable = context.getString(R.string.pdf_label_name);
         String dobLable = context.getString(R.string.pdf_label_dob);
         String genderLable = context.getString(R.string.pdf_label_gender);
-        String title = context.getString(R.string.health_profile);
+        String title = context.getString(R.string.health_summary);
         String date = Utils.getCurrentFomatedDate();
         String icon = "pdf_icon.png";
         String backgroundColor = context.getString(R.string.app_gradient_start);

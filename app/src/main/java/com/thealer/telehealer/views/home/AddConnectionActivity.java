@@ -1,16 +1,9 @@
 package com.thealer.telehealer.views.home;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -20,6 +13,14 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -170,7 +171,12 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     public void onCompletionResult(String requestId, Boolean success, Bundle bundle) {
         if (success) {
             selectedId = bundle.getInt(Constants.ADD_CONNECTION_ID);
-            String userGuid = bundle.getString(ArgumentKeys.USER_GUID);
+            CommonUserApiResponseModel userModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
+            String userGuid = null;
+
+            if (userModel != null) {
+                userGuid = userModel.getUser_guid();
+            }
 
             bundle = new Bundle();
             bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));

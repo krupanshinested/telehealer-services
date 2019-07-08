@@ -1,10 +1,10 @@
 package com.thealer.telehealer.apilayer.models.OpenTok;
 
 import android.app.Application;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -15,6 +15,7 @@ import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.HashMap;
@@ -33,15 +34,16 @@ public class OpenTokViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getTokenForSession(String sessionId,OpenTokTokenFetcher fetcher) {
+    public void getTokenForSession(String sessionId, OpenTokTokenFetcher fetcher) {
 
         if (BaseApiViewModel.isAuthExpired()) {
 
-            getAuthApiService().refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN),true)
+            getAuthApiService().refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), true)
                     .compose(applySchedulers())
                     .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                         @Override
                         public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                            Utils.updateLastLogin();
 
                             SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
                             if (signinApiResponseModel.isSuccess()) {
@@ -50,7 +52,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
                                 TokBox.shared.setTempToken(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
                                 appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
 
-                                getToken(sessionId,fetcher);
+                                getToken(sessionId, fetcher);
                             }
 
                             EventRecorder.updateVersion();
@@ -58,11 +60,11 @@ public class OpenTokViewModel extends BaseApiViewModel {
                         }
                     });
         } else {
-            getToken(sessionId,fetcher);
+            getToken(sessionId, fetcher);
         }
     }
 
-    private void getToken(String sessionId,OpenTokTokenFetcher fetcher) {
+    private void getToken(String sessionId, OpenTokTokenFetcher fetcher) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -87,7 +89,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().updateCallStatus(sessionId,params)
+                    getAuthApiService().updateCallStatus(sessionId, params)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -136,22 +138,22 @@ public class OpenTokViewModel extends BaseApiViewModel {
         });
     }
 
-    public void postaVoipCall(@Nullable  String doctorGuid,String toGuid,
-                              @Nullable String scheduleId,String callType) {
+    public void postaVoipCall(@Nullable String doctorGuid, String toGuid,
+                              @Nullable String scheduleId, String callType) {
 
-        HashMap<String,String> result = new HashMap<>();
-        result.put("user_guid",toGuid);
+        HashMap<String, String> result = new HashMap<>();
+        result.put("user_guid", toGuid);
         if (scheduleId != null) {
-            result.put("schedule_id",scheduleId);
+            result.put("schedule_id", scheduleId);
         }
-        result.put("from",UserDetailPreferenceManager.getUser_guid());
-        result.put("type",callType);
+        result.put("from", UserDetailPreferenceManager.getUser_guid());
+        result.put("type", callType);
 
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().postaVOIPCall(doctorGuid,result)
+                    getAuthApiService().postaVOIPCall(doctorGuid, result)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<TokenFetchModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -166,7 +168,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
         });
     }
 
-    public void postTranscript(String orderId,String transcript,Boolean isCaller) {
+    public void postTranscript(String orderId, String transcript, Boolean isCaller) {
         String fileName = isCaller ? "caller_speech" : "callee_speech";
 
         if (TextUtils.isEmpty(transcript)) {
@@ -174,7 +176,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
         }
 
         String finalTranscript = transcript;
-        
+
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
