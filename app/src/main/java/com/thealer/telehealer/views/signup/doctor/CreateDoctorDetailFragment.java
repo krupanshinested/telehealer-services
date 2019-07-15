@@ -1,22 +1,10 @@
 package com.thealer.telehealer.views.signup.doctor;
 
 import android.annotation.SuppressLint;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -31,6 +19,19 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -447,6 +448,8 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                     }
                 }
             }
+        } else {
+            setPhoneList();
         }
 
         if (currentDisplayType != Constants.CREATE_MODE) {
@@ -1163,6 +1166,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
 
         createUserRequestModel.getUser_detail().getData().setWebsite(websiteEt.getText().toString());
 
+        Log.e(TAG, "practices: " + new Gson().toJson(createUserRequestModel.getUser_detail().getData().getPractices()));
         ClinicBean clinicBean = new ClinicBean();
         clinicBean.setName(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getName());
         clinicBean.setState(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getState());

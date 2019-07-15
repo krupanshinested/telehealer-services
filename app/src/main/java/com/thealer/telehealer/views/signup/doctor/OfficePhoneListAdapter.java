@@ -1,10 +1,5 @@
 package com.thealer.telehealer.views.signup.doctor;
 
-import androidx.lifecycle.ViewModelProviders;
-import androidx.annotation.NonNull;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +8,12 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.PhonesBean;
@@ -117,17 +118,23 @@ class OfficePhoneListAdapter extends RecyclerView.Adapter<OfficePhoneListAdapter
             }
             createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).setPhones(phonesBeanList.subList(0, phonesBeanList.size() - 1));
         } else {
-            List<PracticesBean> practicesBeanList = new ArrayList<>();
+            List<PracticesBean> practicesBeanList = createUserRequestModel.getUser_detail().getData().getPractices();
+            if (practicesBeanList == null)
+                practicesBeanList = new ArrayList<>();
 
-            practicesBeanList.add(new PracticesBean(null,
-                    null,
-                    null,
-                    phonesBeanList.subList(0, phonesBeanList.size() - 1)));
+            if (practicesBeanList.size() > 0) {
+                practicesBeanList.get(0).setPhones(phonesBeanList.subList(0, phonesBeanList.size() - 1));
+            } else {
+                practicesBeanList.add(new PracticesBean(null,
+                        null,
+                        null,
+                        phonesBeanList.subList(0, phonesBeanList.size() - 1)));
+            }
 
             createUserRequestModel.getUser_detail().getData().setPractices(practicesBeanList);
             isNewPractice = false;
-
         }
+
     }
 
     @Override
