@@ -1,8 +1,6 @@
 package com.thealer.telehealer.views.settings;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,11 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +15,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.userStatus.UpdateStatusApiViewModel;
@@ -42,6 +43,7 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginUtil;
+import com.thealer.telehealer.views.settings.accessLogs.AccessLogActivity;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
 import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
 
@@ -69,6 +71,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     private ImageView backIv;
     private TextView toolbarTitle;
     private SettingsCellView privacy;
+    private SettingsCellView logs;
 
     @Override
     public void onAttach(Context context) {
@@ -105,6 +108,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         privacy = (SettingsCellView) view.findViewById(R.id.privacy);
+        logs = (SettingsCellView) view.findViewById(R.id.logs);
 
         toolbarTitle.setText(getString(R.string.settings));
 
@@ -116,6 +120,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         deleteView.setOnClickListener(this);
         backIv.setOnClickListener(this);
         privacy.setOnClickListener(this);
+        logs.setOnClickListener(this);
 
         updateQuickLoginSwitch();
 
@@ -245,7 +250,9 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
                 intent.setData(uri);
                 startActivity(intent);
-
+                break;
+            case R.id.logs:
+                startActivity(new Intent(getActivity(), AccessLogActivity.class));
                 break;
         }
     }

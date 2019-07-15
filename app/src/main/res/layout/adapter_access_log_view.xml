@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/log_time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_default"
+        android:layout_marginTop="@dimen/margin_default"
+        android:drawableStart="@drawable/ic_status_pending"
+        android:drawablePadding="@dimen/padding_default"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/log_type_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/dummy_text" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_avatar_civ"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="@dimen/margin_default"
+        android:src="@drawable/profile_placeholder"
+        app:layout_constraintBottom_toTopOf="@+id/log_type_tv"
+        app:layout_constraintStart_toEndOf="@+id/log_time_tv"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/user_name_tv"
+        style="@style/text_sub_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_default"
+        android:layout_marginTop="@dimen/margin_default"
+        android:ellipsize="end"
+        android:ems="3"
+        android:gravity="center|left"
+        android:maxLines="1"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintBottom_toTopOf="@+id/log_type_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/user_avatar_civ"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/dummy_text" />
+
+    <TextView
+        android:id="@+id/log_type_tv"
+        style="@style/text_sub_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_default"
+        android:paddingStart="@dimen/padding_default"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="@string/dummy_text" />
+
+    <View
+        android:id="@+id/bottom_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGrey_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

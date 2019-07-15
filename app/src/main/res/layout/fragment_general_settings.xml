@@ -77,6 +77,12 @@
                     android:layout_height="wrap_content"
                     app:settings_title="@string/privacy" />
 
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/logs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:settings_title="@string/logs" />
+
             </LinearLayout>
 
             <LinearLayout
