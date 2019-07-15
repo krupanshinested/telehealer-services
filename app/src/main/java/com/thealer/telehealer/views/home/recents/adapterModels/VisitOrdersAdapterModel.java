@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.recents.adapterModels;
 
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 
 import com.thealer.telehealer.R;
@@ -226,6 +227,14 @@ public class VisitOrdersAdapterModel implements Serializable {
             return getForms().getOrder_id();
         }
         return null;
+    }
+
+    public boolean isOrderSelectable() {
+        if (getForms() != null) {
+            return getForms().isCompleted();
+        }
+
+        return getOrderId() == null;
     }
 
     public int getReferralId() {
