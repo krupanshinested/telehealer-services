@@ -1234,7 +1234,7 @@
     <string name="mci_empty_error">MCI number can\'t be empty</string>
     <string name="registration_number">Registration Number</string>
     <string name="year_of_registration">Year of registration</string>
-    <string name="state_medical_council_for_mci">State medical council for mci</string>
+    <string name="state_medical_council_for_mci">State medical council for MCI</string>
     <string name="account_locked_info">Your account has been locked out for next %s hours. Either you can wait or reset your password.</string>
     <string name="abnormal_vital">Abnormal vital</string>
     <string name="captured_via">Captured via %1$s</string>
@@ -1249,6 +1249,7 @@
     <string name="times_in_a_week">times in a week</string>
     <string name="litres">litres</string>
     <string name="years">years</string>
+    <string name="pin">Pin</string>
     <string name="logs">Logs</string>
     <string name="access_logs">Access Logs</string>
 </resources>

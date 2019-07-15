@@ -2,16 +2,19 @@ package com.thealer.telehealer.views.signup.medicalAssistant;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.PermissionChecker;
+import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -55,10 +58,16 @@ public class MedicalAssistantCertificateUploadFragment extends BaseFragment impl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.take_photo_btn:
-                CameraUtil.showImageSelectionAlert(getActivity());
+                if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_CAMERA)) {
+                    CameraUtil.openCamera(getActivity());
+                }
+
                 break;
             case R.id.add_document_btn:
-                CameraUtil.showImageSelectionAlert(getActivity());
+                if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_GALLERY)) {
+                    CameraUtil.openGallery(getActivity());
+                }
+
                 break;
         }
     }
