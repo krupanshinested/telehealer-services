@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/colorWhite"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:orientation="vertical">
 
     <include
         layout="@layout/appbar_app_color_title_back_next"
@@ -84,20 +84,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
-                android:drawableStart="@drawable/ic_add_white_24dp"
-                android:drawablePadding="@dimen/padding_default"
-                android:drawableTint="@color/app_gradient_start"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
                 android:text="@string/add_another_insurance"
+                app:background_color="@color/app_gradient_start"
                 app:corner_radius="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/second_insurance_ll"
-                app:stroke_color="@color/app_gradient_start"
-                app:stroke_width="2"
-                app:text_color="@color/app_gradient_start" />
+                app:layout_constraintVertical_bias="0.15"
+                app:text_color="@color/colorWhite" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

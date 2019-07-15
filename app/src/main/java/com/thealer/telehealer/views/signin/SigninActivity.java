@@ -301,7 +301,6 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                 countryPicker.setCountryForNameCode(countryCode);
             } else {
                 countryPicker.setCcpClickable(false);
-                countryPicker.showArrow(false);
             }
         }
         subFragmentHolder = (LinearLayout) findViewById(R.id.sub_fragment_holder);
