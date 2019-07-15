@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -193,8 +194,8 @@ public class PermissionChecker {
 
     private String getMessage(int permissionFor) {
         switch (permissionFor) {
-            case PermissionConstants.PERMISSION_CAMERA:
-                return String.format(context.getString(R.string.permission_camera_message), context.getString(R.string.app_name));
+//            case PermissionConstants.PERMISSION_CAMERA:
+//                return String.format(context.getString(R.string.permission_camera_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_GALLERY:
                 return String.format(context.getString(R.string.permission_gallery_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_MICROPHONE:
@@ -207,6 +208,7 @@ public class PermissionChecker {
                 return String.format(context.getString(R.string.permission_health_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
                 return String.format(context.getString(R.string.permission_cam_mic_noti_message), context.getString(R.string.app_name));
+            case PermissionConstants.PERMISSION_CAMERA:
             case PermissionConstants.PERMISSION_CAM_PHOTOS:
                 return String.format(context.getString(R.string.permission_cam_photos_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_CAM_MIC:
@@ -231,8 +233,8 @@ public class PermissionChecker {
 
     private String getTitle(int permissionFor) {
         switch (permissionFor) {
-            case PermissionConstants.PERMISSION_CAMERA:
-                return context.getString(R.string.permission_camera_title);
+//            case PermissionConstants.PERMISSION_CAMERA:
+//                return context.getString(R.string.permission_camera_title);
             case PermissionConstants.PERMISSION_GALLERY:
                 return context.getString(R.string.permission_gallery_title);
             case PermissionConstants.PERMISSION_MICROPHONE:
@@ -245,6 +247,7 @@ public class PermissionChecker {
                 return context.getString(R.string.permission_health_title);
             case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
                 return context.getString(R.string.permission_cam_mic_noti_title);
+            case PermissionConstants.PERMISSION_CAMERA:
             case PermissionConstants.PERMISSION_CAM_PHOTOS:
                 return context.getString(R.string.permission_cam_photos_title);
             case PermissionConstants.PERMISSION_CAM_MIC:
@@ -269,8 +272,8 @@ public class PermissionChecker {
 
     private int getImage(int permissionFor) {
         switch (permissionFor) {
-            case PermissionConstants.PERMISSION_CAMERA:
-                return R.drawable.permission_camera;
+//            case PermissionConstants.PERMISSION_CAMERA:
+//                return R.drawable.permission_camera;
             case PermissionConstants.PERMISSION_STORAGE:
             case PermissionConstants.PERMISSION_GALLERY:
                 return R.drawable.permission_gallery;
@@ -284,6 +287,7 @@ public class PermissionChecker {
                 return R.drawable.permission_health;
             case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
                 return R.drawable.proposer_banner;
+            case PermissionConstants.PERMISSION_CAMERA:
             case PermissionConstants.PERMISSION_CAM_PHOTOS:
                 return R.drawable.permission_camera_gallery;
             case PermissionConstants.PERMISSION_CAM_MIC:

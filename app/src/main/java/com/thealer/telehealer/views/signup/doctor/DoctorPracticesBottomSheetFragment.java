@@ -1,10 +1,6 @@
 package com.thealer.telehealer.views.signup.doctor;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputLayout;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -14,6 +10,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
@@ -94,6 +95,12 @@ public class DoctorPracticesBottomSheetFragment extends BaseBottomSheetDialogFra
 
         if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_ZIP_VALIDATION)) {
             zipEt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
+        }
+
+        if (appConfig.getInstallType().equals(getString(R.string.install_type_india))) {
+            zipTil.setHint(getString(R.string.pin));
+        } else {
+            zipTil.setHint(getString(R.string.zip));
         }
 
         if (getArguments() != null) {
