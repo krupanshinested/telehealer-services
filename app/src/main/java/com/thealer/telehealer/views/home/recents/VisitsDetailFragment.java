@@ -54,10 +54,12 @@ import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
 import com.thealer.telehealer.apilayer.models.visits.VisitsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.Procedure.ProcedureConstants;
@@ -175,12 +177,17 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         if (visitDetailViewModel.getDiagnosis() != null &&
                                 visitDetailViewModel.getDiagnosis().getICD10_codes() != null &&
                                 !visitDetailViewModel.getDiagnosis().getICD10_codes().isEmpty()) {
+
                             List<String> selectedIcdCodes = new ArrayList<>();
+                            HashMap<String, IcdCodeApiResponseModel.ResultsBean> map = new HashMap<>();
+
                             for (int i = 0; i < visitDetailViewModel.getDiagnosis().getICD10_codes().size(); i++) {
                                 selectedIcdCodes.add(visitDetailViewModel.getDiagnosis().getICD10_codes().get(i).getCode());
+                                map.put(visitDetailViewModel.getDiagnosis().getICD10_codes().get(i).getCode(), visitDetailViewModel.getDiagnosis().getICD10_codes().get(i));
                             }
 
                             icdCodesDataViewModel.getSelectedIcdCodeList().setValue(selectedIcdCodes);
+                            icdCodesDataViewModel.getIcdCodeDetailHashMap().setValue(map);
                         }
 
 
@@ -237,24 +244,31 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                                         break;
                                     case VisitDetailConstants.VISIT_TYPE_FORMS:
                                         visitDetailViewModel.removeForms();
+                                        formsApiResponseModels.clear();
+                                        formsApiResponseModels.addAll(visitDetailViewModel.getFormsApiResponseModels());
                                         break;
                                     case VisitDetailConstants.VISIT_TYPE_FILES:
                                         visitDetailViewModel.removeFiles();
                                         break;
                                     case VisitDetailConstants.VISIT_TYPE_LABS:
                                         visitDetailViewModel.removeLabs();
+                                        ordersIdListApiResponseModel.setLabs(visitDetailViewModel.getOrdersIdListApiResponseModel().getLabs());
                                         break;
                                     case VisitDetailConstants.VISIT_TYPE_XRAYS:
                                         visitDetailViewModel.removeXrays();
+                                        ordersIdListApiResponseModel.setXrays(visitDetailViewModel.getOrdersIdListApiResponseModel().getXrays());
                                         break;
                                     case VisitDetailConstants.VISIT_TYPE_SPECIALIST:
                                         visitDetailViewModel.removeSpecialist();
+                                        ordersIdListApiResponseModel.setSpecialists(visitDetailViewModel.getOrdersIdListApiResponseModel().getSpecialists());
                                         break;
                                     case VisitDetailConstants.VISIT_TYPE_PRESCRIPTIONS:
                                         visitDetailViewModel.removePrescription();
+                                        ordersIdListApiResponseModel.setPrescriptions(visitDetailViewModel.getOrdersIdListApiResponseModel().getPrescriptions());
                                         break;
                                     case VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS:
                                         visitDetailViewModel.removeMiscellaneous();
+                                        ordersIdListApiResponseModel.setMiscellaneous(visitDetailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous());
                                         break;
                                 }
                             }
@@ -295,8 +309,6 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                                 }
 
                                 if (visitDetailViewModel.isHistoryUpdate()) {
-//                                    Log.e(TAG, "onChanged: " + new Gson().toJson(visitDetailViewModel.getHistoryList()));
-//                                    Log.e(TAG, "onChanged: " + new Gson().toJson(visitDetailViewModel.getPatientDetailModel().getHistory()));
                                     List<HistoryBean> historyBeanList = new ArrayList<>();
                                     for (int i = 0; i < visitDetailViewModel.getHistoryList().size(); i++) {
                                         historyBeanList.add(new HistoryBean(visitDetailViewModel.getHistoryList().get(i).isIsYes(),
@@ -392,7 +404,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     ordersIdListApiResponseModel = (OrdersIdListApiResponseModel) baseApiResponseModel;
-                    visitDetailViewModel.setOrdersIdListApiResponseModel(ordersIdListApiResponseModel);
+                    visitDetailViewModel.setOrdersIdListApiResponseModel((OrdersIdListApiResponseModel) baseApiResponseModel);
                     visitDetailListAdapter.setData();
                 }
             }
@@ -406,7 +418,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         visitDetailViewModel.setDocumentsApiResponseModels(documentsApiResponseModels);
                     } else if (baseApiResponseModels.get(0) instanceof OrdersUserFormsApiResponseModel) {
                         formsApiResponseModels = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
-                        visitDetailViewModel.setFormsApiResponseModels(formsApiResponseModels);
+                        visitDetailViewModel.setFormsApiResponseModels((ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels);
                     }
                     visitDetailListAdapter.setData();
                 }
@@ -470,61 +482,75 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 if (transcriptionApiResponseModel == null)
                     recentsApiViewModel.getTranscriptionDetail(recentDetail.getTranscription_id(), true);
 
-                Set<String> guidSet = new HashSet<>();
+                checkForPatientDetail();
 
-                if (visitDetailViewModel.getDoctorDetailModel() == null) {
-                    guidSet.add(doctorGuid);
-                    if (!guidSet.isEmpty()) {
-                        GetUserDetails
-                                .getInstance(getActivity())
-                                .getDetails(guidSet).getHashMapMutableLiveData().observe(this,
-                                new Observer<HashMap<String, CommonUserApiResponseModel>>() {
-                                    @Override
-                                    public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> stringCommonUserApiResponseModelHashMap) {
-                                        if (stringCommonUserApiResponseModelHashMap != null) {
-                                            if (stringCommonUserApiResponseModelHashMap.containsKey(doctorGuid)) {
-                                                visitDetailViewModel.setDoctorDetailModel(stringCommonUserApiResponseModelHashMap.get(doctorGuid));
-                                            }
-                                            visitDetailListAdapter.setData();
-                                        }
-                                    }
-                                });
-                    }
-
-                }
-
-                if (visitDetailViewModel.getPatientDetailModel() == null) {
-
-                    guidSet.clear();
-
-                    guidSet.add(patientGuid);
-
-                    if (!guidSet.isEmpty()) {
-                        GetUserDetails
-                                .getInstance(getActivity())
-                                .getAssociationDetail(guidSet).getHashMapMutableLiveData().observe(this,
-                                new Observer<HashMap<String, CommonUserApiResponseModel>>() {
-                                    @Override
-                                    public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> stringCommonUserApiResponseModelHashMap) {
-                                        if (stringCommonUserApiResponseModelHashMap != null) {
-                                            if (stringCommonUserApiResponseModelHashMap.containsKey(patientGuid)) {
-
-                                                CommonUserApiResponseModel userModel = stringCommonUserApiResponseModelHashMap.get(patientGuid);
-
-                                                visitDetailViewModel.setPatientDetailModel(userModel);
-
-                                                visitDetailViewModel.setHistoryList(visitDetailViewModel.getUpdatedHistoryModelList(userModel.getHistory()));
-                                            }
-                                            visitDetailListAdapter.setData();
-                                        }
-                                    }
-                                });
-                    }
-
-                }
+                checkForDoctorDetail();
             }
         }
 
+    }
+
+    private void checkForDoctorDetail() {
+        if (visitDetailViewModel.getDoctorDetailModel() == null) {
+            Set<String> guidSet = new HashSet<>();
+            guidSet.add(doctorGuid);
+            if (!guidSet.isEmpty()) {
+                GetUserDetails
+                        .getInstance(getActivity())
+                        .getDetails(guidSet)
+                        .getHashMapMutableLiveData().observe(this,
+                        new Observer<HashMap<String, CommonUserApiResponseModel>>() {
+                            @Override
+                            public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> stringCommonUserApiResponseModelHashMap) {
+                                if (stringCommonUserApiResponseModelHashMap != null) {
+                                    if (stringCommonUserApiResponseModelHashMap.containsKey(doctorGuid)) {
+                                        visitDetailViewModel.setDoctorDetailModel(stringCommonUserApiResponseModelHashMap.get(doctorGuid));
+                                        visitDetailListAdapter.setData();
+                                    }
+                                }
+                            }
+                        });
+            }
+
+        }
+    }
+
+    private void checkForPatientDetail() {
+        if (visitDetailViewModel.getPatientDetailModel() == null) {
+
+            if (UserType.isUserPatient()) {
+                WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+                visitDetailViewModel.setPatientDetailModel(whoAmIApiResponseModel);
+                visitDetailViewModel.setHistoryList(visitDetailViewModel.getUpdatedHistoryModelList(whoAmIApiResponseModel.getHistory()));
+                visitDetailListAdapter.setData();
+            } else {
+                Set<String> guidSet = new HashSet<>();
+                guidSet.add(patientGuid);
+
+                if (!guidSet.isEmpty()) {
+                    GetUserDetails
+                            .getInstance(getActivity())
+                            .getAssociationDetail(guidSet, (UserType.isUserAssistant() ? doctorGuid : null))
+                            .getHashMapMutableLiveData().observe(this,
+                            new Observer<HashMap<String, CommonUserApiResponseModel>>() {
+                                @Override
+                                public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> stringCommonUserApiResponseModelHashMap) {
+                                    if (stringCommonUserApiResponseModelHashMap != null) {
+                                        if (stringCommonUserApiResponseModelHashMap.containsKey(patientGuid)) {
+
+                                            CommonUserApiResponseModel userModel = stringCommonUserApiResponseModelHashMap.get(patientGuid);
+
+                                            visitDetailViewModel.setPatientDetailModel(userModel);
+
+                                            visitDetailViewModel.setHistoryList(visitDetailViewModel.getUpdatedHistoryModelList(userModel.getHistory()));
+                                            visitDetailListAdapter.setData();
+                                        }
+                                    }
+                                }
+                            });
+                }
+            }
+        }
     }
 
     private void setDetailAdapter() {
@@ -976,50 +1002,64 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                             HashMap<Integer, GetRadiologyResponseModel.ResultBean> selectedXrays = (HashMap<Integer, GetRadiologyResponseModel.ResultBean>) data.getSerializableExtra(ArgumentKeys.SELECTED_XRAYS);
                             HashMap<Integer, MiscellaneousApiResponseModel.ResultBean> selectedMiscellaneous = (HashMap<Integer, MiscellaneousApiResponseModel.ResultBean>) data.getSerializableExtra(ArgumentKeys.SELECTED_MISCELLANEOUS);
 
+                            visitDetailViewModel.setPrescriptionsMap(selectedPrescription);
+                            visitDetailViewModel.setSpecialistsMap(selectedSpecialist);
+                            visitDetailViewModel.setLabsMap(selectedLabs);
+                            visitDetailViewModel.setXraysMap(selectedXrays);
+                            visitDetailViewModel.setMiscellaneousMap(selectedMiscellaneous);
+
+                            //Selected orders
                             ArrayList<OrdersLabApiResponseModel.LabsResponseBean> labs = new ArrayList<>();
                             ArrayList<GetRadiologyResponseModel.ResultBean> xrays = new ArrayList<>();
                             ArrayList<OrdersSpecialistApiResponseModel.ResultBean> specialists = new ArrayList<>();
                             ArrayList<OrdersPrescriptionApiResponseModel.OrdersResultBean> prescriptions = new ArrayList<>();
                             ArrayList<MiscellaneousApiResponseModel.ResultBean> miscellaneous = new ArrayList<>();
 
-                            OrdersIdListApiResponseModel ordersIdListApiResponseModel = visitDetailViewModel.getOrdersIdListApiResponseModel();
+                            OrdersIdListApiResponseModel ordersIdListApiResponseModel = new OrdersIdListApiResponseModel();
 
-                            if (ordersIdListApiResponseModel == null) {
-                                ordersIdListApiResponseModel = new OrdersIdListApiResponseModel();
-                                visitDetailViewModel.setOrdersIdListApiResponseModel(ordersIdListApiResponseModel);
+                            if (this.ordersIdListApiResponseModel != null) {
+                                if (this.ordersIdListApiResponseModel.getLabs() != null)
+                                    ordersIdListApiResponseModel.setLabs(this.ordersIdListApiResponseModel.getLabs());
+                                if (this.ordersIdListApiResponseModel.getPrescriptions() != null)
+                                    ordersIdListApiResponseModel.setPrescriptions(this.ordersIdListApiResponseModel.getPrescriptions());
+                                if (this.ordersIdListApiResponseModel.getSpecialists() != null)
+                                    ordersIdListApiResponseModel.setSpecialists(this.ordersIdListApiResponseModel.getSpecialists());
+                                if (this.ordersIdListApiResponseModel.getMiscellaneous() != null)
+                                    ordersIdListApiResponseModel.setMiscellaneous(this.ordersIdListApiResponseModel.getMiscellaneous());
+                                if (this.ordersIdListApiResponseModel.getXrays() != null)
+                                    ordersIdListApiResponseModel.setXrays(this.ordersIdListApiResponseModel.getXrays());
                             }
-
-                            if (visitDetailViewModel.getOrdersIdListApiResponseModel().getPrescriptions() != null &&
-                                    !visitDetailViewModel.getOrdersIdListApiResponseModel().getPrescriptions().isEmpty()) {
-                                prescriptions.addAll(visitDetailViewModel.getOrdersIdListApiResponseModel().getPrescriptions());
+                            if (ordersIdListApiResponseModel.getPrescriptions() != null &&
+                                    !ordersIdListApiResponseModel.getPrescriptions().isEmpty()) {
+                                prescriptions.addAll(ordersIdListApiResponseModel.getPrescriptions());
                             }
                             prescriptions.addAll(selectedPrescription.values());
                             visitDetailViewModel.setPrescriptionAddList(new ArrayList<>(selectedPrescription.keySet()));
 
-                            if (visitDetailViewModel.getOrdersIdListApiResponseModel().getSpecialists() != null &&
-                                    !visitDetailViewModel.getOrdersIdListApiResponseModel().getSpecialists().isEmpty()) {
-                                specialists.addAll(visitDetailViewModel.getOrdersIdListApiResponseModel().getSpecialists());
+                            if (ordersIdListApiResponseModel.getSpecialists() != null &&
+                                    !ordersIdListApiResponseModel.getSpecialists().isEmpty()) {
+                                specialists.addAll(ordersIdListApiResponseModel.getSpecialists());
                             }
                             specialists.addAll(selectedSpecialist.values());
                             visitDetailViewModel.setSpecialistAddList(new ArrayList<>(selectedSpecialist.keySet()));
 
-                            if (visitDetailViewModel.getOrdersIdListApiResponseModel().getLabs() != null &&
-                                    !visitDetailViewModel.getOrdersIdListApiResponseModel().getLabs().isEmpty()) {
-                                labs.addAll(visitDetailViewModel.getOrdersIdListApiResponseModel().getLabs());
+                            if (ordersIdListApiResponseModel.getLabs() != null &&
+                                    !ordersIdListApiResponseModel.getLabs().isEmpty()) {
+                                labs.addAll(ordersIdListApiResponseModel.getLabs());
                             }
                             labs.addAll(selectedLabs.values());
                             visitDetailViewModel.setLabAddList(new ArrayList<>(selectedLabs.keySet()));
 
-                            if (visitDetailViewModel.getOrdersIdListApiResponseModel().getXrays() != null &&
-                                    !visitDetailViewModel.getOrdersIdListApiResponseModel().getXrays().isEmpty()) {
-                                xrays.addAll(visitDetailViewModel.getOrdersIdListApiResponseModel().getXrays());
+                            if (ordersIdListApiResponseModel.getXrays() != null &&
+                                    !ordersIdListApiResponseModel.getXrays().isEmpty()) {
+                                xrays.addAll(ordersIdListApiResponseModel.getXrays());
                             }
                             xrays.addAll(selectedXrays.values());
                             visitDetailViewModel.setXrayAddList(new ArrayList<>(selectedXrays.keySet()));
 
-                            if (visitDetailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous() != null &&
-                                    !visitDetailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous().isEmpty()) {
-                                miscellaneous.addAll(visitDetailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous());
+                            if (ordersIdListApiResponseModel.getMiscellaneous() != null &&
+                                    !ordersIdListApiResponseModel.getMiscellaneous().isEmpty()) {
+                                miscellaneous.addAll(ordersIdListApiResponseModel.getMiscellaneous());
                             }
                             miscellaneous.addAll(selectedMiscellaneous.values());
                             visitDetailViewModel.setMiscellaneousAddList(new ArrayList<>(selectedMiscellaneous.keySet()));
@@ -1032,11 +1072,15 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
                             visitDetailViewModel.setOrdersIdListApiResponseModel(ordersIdListApiResponseModel);
 
+                            //selected forms
                             if (data.getSerializableExtra(ArgumentKeys.SELECTED_FORMS) != null) {
                                 HashMap<Integer, OrdersUserFormsApiResponseModel> selectedForms = (HashMap<Integer, OrdersUserFormsApiResponseModel>) data.getSerializableExtra(ArgumentKeys.SELECTED_FORMS);
+
+                                visitDetailViewModel.setFormMap(selectedForms);
+
                                 ArrayList<OrdersUserFormsApiResponseModel> forms = new ArrayList<>();
 
-                                if (visitDetailViewModel.getFormsApiResponseModels() != null && !visitDetailViewModel.getFormsApiResponseModels().isEmpty()) {
+                                if (formsApiResponseModels != null && !formsApiResponseModels.isEmpty()) {
                                     forms.addAll(visitDetailViewModel.getFormsApiResponseModels());
                                 }
                                 forms.addAll(selectedForms.values());

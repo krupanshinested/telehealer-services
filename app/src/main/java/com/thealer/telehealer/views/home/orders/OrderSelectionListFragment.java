@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -226,7 +227,39 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
     }
 
     private void setupAdapter() {
-        orderSelectionListAdapter = new OrderSelectionListAdapter(getActivity(), userModel, mode, new OnListItemSelectInterface() {
+        ArrayList<Integer> selectedList = new ArrayList<>();
+        if (getArguments() != null) {
+            miscellaneousMap = (HashMap<Integer, MiscellaneousApiResponseModel.ResultBean>) getArguments().getSerializable(ArgumentKeys.SELECTED_MISCELLANEOUS);
+            prescriptionsMap = (HashMap<Integer, OrdersPrescriptionApiResponseModel.OrdersResultBean>) getArguments().getSerializable(ArgumentKeys.SELECTED_PRESCRIPTION);
+            specialistsMap = (HashMap<Integer, OrdersSpecialistApiResponseModel.ResultBean>) getArguments().getSerializable(ArgumentKeys.SELECTED_SPECIALIST);
+            xraysMap = (HashMap<Integer, GetRadiologyResponseModel.ResultBean>) getArguments().getSerializable(ArgumentKeys.SELECTED_XRAYS);
+            labsMap = (HashMap<Integer, OrdersLabApiResponseModel.LabsResponseBean>) getArguments().getSerializable(ArgumentKeys.SELECTED_LABS);
+            formMap = (HashMap<Integer, OrdersUserFormsApiResponseModel>) getArguments().getSerializable(ArgumentKeys.SELECTED_FORMS);
+
+            if (!miscellaneousMap.isEmpty())
+                miscellaneousList = new ArrayList<>(miscellaneousMap.keySet());
+            if (!prescriptionsMap.isEmpty())
+                prescriptionList = new ArrayList<>(prescriptionsMap.keySet());
+            if (!specialistsMap.isEmpty())
+                referralList = new ArrayList<>(specialistsMap.keySet());
+            if (!xraysMap.isEmpty())
+                radiologyList = new ArrayList<>(xraysMap.keySet());
+            if (!labsMap.isEmpty())
+                labList = new ArrayList<>(labsMap.keySet());
+            if (!formMap.isEmpty())
+                formList = new ArrayList<>(formMap.keySet());
+
+            selectedList.addAll(miscellaneousList);
+            selectedList.addAll(prescriptionList);
+            selectedList.addAll(referralList);
+            selectedList.addAll(radiologyList);
+            selectedList.addAll(labList);
+            selectedList.addAll(formList);
+
+//            enableOrDisableNext();
+            Log.e(TAG, "setupAdapter: " + selectedList.toString());
+        }
+        orderSelectionListAdapter = new OrderSelectionListAdapter(getActivity(), selectedList, userModel, mode, new OnListItemSelectInterface() {
             @Override
             public void onListItemSelected(int position, Bundle bundle) {
                 if (bundle != null) {
@@ -320,7 +353,7 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
                                 break;
                         }
                     }
-                    enableOrDisableNext();
+//                    enableOrDisableNext();
                 }
             }
         });
@@ -336,7 +369,7 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
                 break;
             case Constants.EDIT_MODE:
                 setNextTitle(getString(R.string.Save));
-                enableOrDisableNext();
+//                enableOrDisableNext();
                 break;
         }
     }

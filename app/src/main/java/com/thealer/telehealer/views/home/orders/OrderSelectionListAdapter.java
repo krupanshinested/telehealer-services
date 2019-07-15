@@ -39,13 +39,14 @@ public class OrderSelectionListAdapter extends RecyclerView.Adapter<OrderSelecti
     private OnListItemSelectInterface onListItemSelectInterface;
     private List<VisitOrdersAdapterModel> visitOrdersAdapterModels = new ArrayList<>();
     private CommonUserApiResponseModel userModel;
-    private List<Integer> positionList = new ArrayList<>();
+    private List<Integer> positionList;
 
-    public OrderSelectionListAdapter(FragmentActivity activity, CommonUserApiResponseModel userModel, int mode, OnListItemSelectInterface onListItemSelectInterface) {
+    public OrderSelectionListAdapter(FragmentActivity activity, ArrayList<Integer> selectedList, CommonUserApiResponseModel userModel, int mode, OnListItemSelectInterface onListItemSelectInterface) {
         this.activity = activity;
         this.userModel = userModel;
         this.mode = mode;
         this.onListItemSelectInterface = onListItemSelectInterface;
+        this.positionList = selectedList;
     }
 
     @NonNull
@@ -74,7 +75,9 @@ public class OrderSelectionListAdapter extends RecyclerView.Adapter<OrderSelecti
 
         viewHolder.orderListIv.setImageResource(visitOrdersAdapterModel.getDisplayImage());
         viewHolder.orderListTitleTv.setText(visitOrdersAdapterModel.getDisplayTitle());
-        viewHolder.orderListSubTitleTv.setText(userModel.getUserDisplay_name());
+        if (userModel != null) {
+            viewHolder.orderListSubTitleTv.setText(userModel.getUserDisplay_name());
+        }
 
         switch (mode) {
             case Constants.VIEW_MODE:
@@ -101,17 +104,18 @@ public class OrderSelectionListAdapter extends RecyclerView.Adapter<OrderSelecti
 
                 if (visitOrdersAdapterModel.isOrderSelectable()) {
                     onListItemSelectInterface.onListItemSelected(i, bundle);
-                    if (positionList.contains(i)) {
-                        positionList.remove((Object) i);
+                    Object orderId = visitOrdersAdapterModel.getReferralId();
+                    if (positionList.contains(orderId)) {
+                        positionList.remove(orderId);
                     } else {
-                        positionList.add(i);
+                        positionList.add(visitOrdersAdapterModel.getReferralId());
                     }
                 }
                 notifyItemChanged(i);
             }
         });
 
-        if (positionList.contains(i)) {
+        if (positionList.contains(visitOrdersAdapterModel.getReferralId())) {
             viewHolder.visitCb.setChecked(true);
         } else {
             viewHolder.visitCb.setChecked(false);

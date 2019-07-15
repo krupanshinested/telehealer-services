@@ -102,6 +102,9 @@
             android:name=".views.common.ContentActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".views.call.CallMessageActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".views.call.CallFeedBackActivity"
             android:screenOrientation="portrait" />
         <activity
