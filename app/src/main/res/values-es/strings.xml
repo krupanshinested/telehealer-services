@@ -1183,4 +1183,6 @@
     <string name="no_source_found_message">Las aplicaciones de fuente vital de AppleHealth eventualmente aparecerán aquí</string>
     <string name="health_summary">Resumen de salud</string>
     <string name="last_login">Último acceso : %s</string>
+    <string name="logs">Troncos</string>
+    <string name="access_logs">Registros de acceso</string>
 </resources>
