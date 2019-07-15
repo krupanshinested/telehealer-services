@@ -1,15 +1,16 @@
 package com.thealer.telehealer.views.signup;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
@@ -29,6 +30,7 @@ import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
+import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.signup.doctor.BAAFragment;
@@ -72,6 +74,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     public ImageView closeIv;
     private TextView viewInfoTv;
     private ImageView helpIv;
+    boolean isVerifyOtp = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,7 +87,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         setUserType();
         initView();
 
-        boolean isVerifyOtp = false;
         if (getIntent().getExtras() != null) {
             isVerifyOtp = getIntent().getExtras().getBoolean(ArgumentKeys.IS_VERIFY_OTP, false);
         }
@@ -501,10 +503,14 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onSuccessViewCompletion(boolean success) {
         if (success) {
-            appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(ArgumentKeys.IS_FROM_SIGNUP, true);
-            startActivity(new Intent(SignUpActivity.this, QuickLoginActivity.class).putExtras(bundle));
+            if (!isVerifyOtp) {
+                appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(ArgumentKeys.IS_FROM_SIGNUP, true);
+                startActivity(new Intent(SignUpActivity.this, QuickLoginActivity.class).putExtras(bundle));
+            } else {
+                startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+            }
             finish();
         }
     }

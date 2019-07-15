@@ -1,19 +1,13 @@
 package com.thealer.telehealer.views.signup;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +16,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -345,7 +347,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                     break;
             }
 
-            if (type == OtpVerificationFragment.reset_password){
+            if (type == OtpVerificationFragment.reset_password) {
                 toolbarTitle.setText("");
             }
         }
@@ -378,6 +380,8 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
         otpEt.setShowSoftInputOnFocus(true);
         otpEt.requestFocus();
+
+        Log.e(TAG, "initView: " + appPreference.getInt(Constants.QUICK_LOGIN_TYPE));
     }
 
     private void requestOtpValidation() {
@@ -460,7 +464,9 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
         onViewChangeInterface.hideOrShowBackIv(false);
         onViewChangeInterface.updateNextTitle(getString(R.string.next));
 
-        onViewChangeInterface.updateTitle(getString(R.string.otp));
+        if (otpType != OtpVerificationFragment.reset_password) {
+            onViewChangeInterface.updateTitle(getString(R.string.otp));
+        }
 
         otpEt.requestFocus();
     }

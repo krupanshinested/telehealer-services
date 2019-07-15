@@ -251,6 +251,8 @@ public class DietUserListingFragment extends BaseFragment {
                 endDate = null;
 
                 if (selectedItem != null) {
+                    setToolbarTitle(selectedItem);
+
                     if (selectedItem.equals(getString(R.string.last_week))) {
                         doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
                         selectedFilter = VitalReportApiViewModel.LAST_WEEK;
@@ -262,11 +264,12 @@ public class DietUserListingFragment extends BaseFragment {
                         startDate = bundle.getString(ArgumentKeys.START_DATE);
                         endDate = bundle.getString(ArgumentKeys.END_DATE);
 
+                        setToolbarTitle(Utils.getMonitoringTitle(startDate, endDate));
+
                         String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
 
                         doctorPatientListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
                     }
-                    setToolbarTitle(selectedItem);
                 }
                 getDietUserList(true);
             }
