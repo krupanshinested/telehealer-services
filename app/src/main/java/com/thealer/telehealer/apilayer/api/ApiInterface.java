@@ -7,6 +7,7 @@ import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUse
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
 import com.thealer.telehealer.apilayer.models.Payments.VitalVisitResponse;
+import com.thealer.telehealer.apilayer.models.accessLog.AccessLogApiResponseModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionRequestModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
@@ -378,7 +379,7 @@ public interface ApiInterface {
     @GET("api/referrals")
     Observable<OrdersIdListApiResponseModel> getOrderDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
 
-    @GET("api/users/"+ OrderConstant.ORDER_TYPE_FILES)
+    @GET("api/users/" + OrderConstant.ORDER_TYPE_FILES)
     Observable<ArrayList<DocumentsApiResponseModel.ResultBean>> getDocumentDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
 
     @GET("api/" + OrderConstant.ORDER_TYPE_FORM)
@@ -529,4 +530,6 @@ public interface ApiInterface {
     @GET("api/call/{id}")
     Observable<VisitsDetailApiResponseModel> getOrderDetail(@Path(ID) String orderId, @Query(DOCTOR_GUID) String doctorGuid);
 
+    @GET("api/log/requests-log")
+    Observable<AccessLogApiResponseModel> getAccessLogs(@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query("method") String method);
 }
