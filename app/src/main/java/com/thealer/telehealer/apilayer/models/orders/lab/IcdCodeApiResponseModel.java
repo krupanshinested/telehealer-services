@@ -1,10 +1,7 @@
 package com.thealer.telehealer.apilayer.models.orders.lab;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,9 +48,9 @@ public class IcdCodeApiResponseModel extends BaseApiResponseModel {
         this.results = results;
     }
 
-    public Map<String, String> getResultHashMap(){
+    public Map<String, String> getResultHashMap() {
 
-        Map<String , String > stringMap = new HashMap<>();
+        Map<String, String> stringMap = new HashMap<>();
 
         for (int i = 0; i < getResults().size(); i++) {
             stringMap.put(getResults().get(i).getCode(), getResults().get(i).getDescription());

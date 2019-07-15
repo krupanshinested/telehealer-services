@@ -9,7 +9,7 @@ public class HistoryBean implements Serializable {
 
     private boolean isYes;
     private String question;
-    private String reason;
+    private String reason = "";
 
     public HistoryBean() {
     }

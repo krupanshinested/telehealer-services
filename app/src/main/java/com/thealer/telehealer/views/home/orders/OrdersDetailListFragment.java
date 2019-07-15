@@ -630,8 +630,6 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
         if (selectedItem.equals(OrderConstant.ORDER_DOCUMENTS)) {
 
-            setTitle(OrderConstant.ORDER_DOCUMENTS);
-
             if (UserType.isUserPatient()) {
                 showOrHideFab(false);
                 emptyStateType = EmptyViewConstants.EMPTY_DOCUMENTS;
@@ -641,7 +639,6 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
         } else if (selectedItem.equals(OrderConstant.ORDER_FORM)) {
 
-            setTitle(OrderConstant.ORDER_FORM);
             if (UserType.isUserPatient()) {
                 showOrHideFab(false);
                 emptyStateType = EmptyViewConstants.EMPTY_FORMS;
@@ -650,8 +647,6 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_LABS)) {
-
-            setTitle(OrderConstant.ORDER_LABS);
 
             if (UserType.isUserPatient()) {
                 showOrHideFab(false);
@@ -662,8 +657,6 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
         } else if (selectedItem.equals(OrderConstant.ORDER_PRESCRIPTIONS)) {
 
-            setTitle(OrderConstant.ORDER_PRESCRIPTIONS);
-
             if (UserType.isUserPatient()) {
                 showOrHideFab(false);
                 emptyStateType = EmptyViewConstants.EMPTY_PRESCRIPTION;
@@ -673,7 +666,6 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
         } else if (selectedItem.equals(OrderConstant.ORDER_RADIOLOGY)) {
 
-            setTitle(OrderConstant.ORDER_RADIOLOGY);
             if (UserType.isUserPatient()) {
                 showOrHideFab(false);
                 emptyStateType = EmptyViewConstants.EMPTY_XRAY;
@@ -683,8 +675,6 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
         } else if (selectedItem.equals(OrderConstant.ORDER_REFERRALS)) {
 
-            setTitle(OrderConstant.ORDER_REFERRALS);
-
             if (UserType.isUserPatient()) {
                 showOrHideFab(false);
                 emptyStateType = EmptyViewConstants.EMPTY_SPECIALIST;
@@ -692,8 +682,6 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 emptyStateType = EmptyViewConstants.EMPTY_SPECIALIST_WITH_BTN;
             }
         } else if (selectedItem.equals(OrderConstant.ORDER_MISC)) {
-
-            setTitle(OrderConstant.ORDER_MISC);
 
             if (UserType.isUserPatient()) {
                 showOrHideFab(false);
@@ -703,6 +691,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             }
         }
 
+        setTitle(OrderConstant.getDislpayTitle(getContext(), selectedItem));
         orderDetailCelv.setEmptyState(emptyStateType);
     }
 

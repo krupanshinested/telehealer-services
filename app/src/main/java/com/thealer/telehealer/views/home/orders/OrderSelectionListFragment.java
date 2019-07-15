@@ -143,12 +143,6 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     ordersIdListApiResponseModel = (OrdersIdListApiResponseModel) baseApiResponseModel;
-
-//                    if (ordersIdListApiResponseModel.isEmpty()) {
-//                        ordersListCrv.showOrhideEmptyState(true);
-//                    }
-//                    orderSelectionListAdapter.setData(ordersIdListApiResponseModel);
-
                     ordersApiViewModel.getFormsDetail(userGuid, doctorGuid, null, true);
                 }
             }
@@ -162,10 +156,10 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
 
                     orderSelectionListAdapter.setData(ordersIdListApiResponseModel, formsList);
 
-                    if (!ordersIdListApiResponseModel.isEmpty() && !formsList.isEmpty()) {
-                        ordersListCrv.showOrhideEmptyState(false);
-                    } else {
+                    if (ordersIdListApiResponseModel.isEmpty() && formsList.isEmpty()) {
                         ordersListCrv.showOrhideEmptyState(true);
+                    } else {
+                        ordersListCrv.showOrhideEmptyState(false);
                     }
                 }
             }

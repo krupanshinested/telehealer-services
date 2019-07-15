@@ -1,15 +1,8 @@
 package com.thealer.telehealer.views.home.orders.labs;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -17,11 +10,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -55,8 +61,12 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
     private SelectIcdCodeAdapter selectIcdCodeAdapter;
     private SelectedIcdCodeListAdapter selectedIcdCodeListAdapter;
     private List<String> selectedIcdCodeList = new ArrayList<>();
-    private boolean isApiRequested;
+    private boolean isApiRequested, isDoneEnable;
     private String labTestTitle;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
 
 
     @Override
@@ -112,7 +122,6 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_select_icd_code, container, false);
-        setTitle(getString(R.string.icd_10));
         initView(view);
         return view;
     }
@@ -123,6 +132,27 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
         doneBtn = (Button) view.findViewById(R.id.done_btn);
         selectedIcdCv = (CardView) view.findViewById(R.id.selected_icd_cv);
         selectedIcdRv = (RecyclerView) view.findViewById(R.id.selected_icd_rv);
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+
+        if (getArguments() != null) {
+            isDoneEnable = getArguments().getBoolean(ArgumentKeys.IS_DONE_ENABLE, false);
+            if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR, false)) {
+                appbarLayout.setVisibility(View.VISIBLE);
+                toolbarTitle.setText(getString(R.string.icd_10));
+                backIv.setVisibility(View.INVISIBLE);
+                backIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onCloseActionInterface.onClose(false);
+                    }
+                });
+            } else {
+                setTitle(getString(R.string.icd_10));
+            }
+        }
 
         searchEt.setHint(getString(R.string.search_icd10_codes));
 
@@ -192,6 +222,10 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
         boolean enable = false;
 
         if (selectedIcdCodeList.size() != 0) {
+            enable = true;
+        }
+
+        if (isDoneEnable) {
             enable = true;
         }
 

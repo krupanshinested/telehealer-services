@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.associationlist;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -10,6 +11,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by Aswin on 13,November,2018
@@ -92,6 +94,23 @@ public class AssociationApiViewModel extends BaseApiViewModel {
                                 }
                             });
                 }
+            }
+        });
+    }
+
+    public void getAssociationUserDetails(Set<String> guidList, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                getAuthApiService().getAssociationUserDetail(guidList.toString().replace("[", "").replace("]", ""))
+                        .compose(applySchedulers())
+                        .subscribe(new RAListObserver<CommonUserApiResponseModel>(getProgress(isShowProgress)) {
+                            @Override
+                            public void onSuccess(ArrayList<CommonUserApiResponseModel> data) {
+                                ArrayList<BaseApiResponseModel> responseModels = new ArrayList<>(data);
+                                baseApiArrayListMutableLiveData.setValue(responseModels);
+                            }
+                        });
             }
         });
     }
