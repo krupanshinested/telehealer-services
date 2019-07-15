@@ -92,8 +92,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/copy_ocv"
                 app:sub_title_visible="false"
-                app:title_text="Click here to select last visit"
-                app:view_label="visit" />
+                app:title_text="@string/click_here_to_select_last_visit"
+                app:view_label="@string/visit" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

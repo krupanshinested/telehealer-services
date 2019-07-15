@@ -78,8 +78,6 @@ public class RecentFragment extends BaseFragment {
 
                         recentListAdapter.setData(recentsApiResponseModel.getResult(), page, isCalls);
 
-                        Log.e(TAG, "onChanged: " + recentListAdapter.getItemCount());
-
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(Constants.USER_DETAIL, recentsApiResponseModel.getResult().get(0));
                         onOrientationChangeInterface.onDataReceived(bundle);

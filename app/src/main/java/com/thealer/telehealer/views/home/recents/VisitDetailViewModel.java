@@ -1,8 +1,12 @@
 package com.thealer.telehealer.views.home.recents;
 
+import android.util.Log;
+
 import androidx.lifecycle.ViewModel;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
@@ -16,6 +20,7 @@ import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.VisitDiagnosisModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
@@ -65,9 +70,78 @@ public class VisitDetailViewModel extends ViewModel {
     private List<Integer> MiscellaneousAddList = new ArrayList<>();
 
     private Map<String, List<DietApiResponseModel>> dietListModelMap = new HashMap<>();
+    private List<UpdatedHistoryBean> historyList = new ArrayList<>();
 
-    private String instruction, diagnosis;
+    private String instruction;
+    private VisitDiagnosisModel diagnosis;
     private boolean isInstructionUpdated, isDiagnosisUpdated;
+
+
+    public List<UpdatedHistoryBean> getHistoryList() {
+        return historyList;
+    }
+
+    public void setHistoryList(List<UpdatedHistoryBean> historyList) {
+        this.historyList = historyList;
+    }
+
+    public List<UpdatedHistoryBean> getUpdatedHistoryModelList(List<HistoryBean> historyBeanList) {
+        List<UpdatedHistoryBean> updatedHistoryBeanList = new ArrayList<>();
+
+        if (historyBeanList != null)
+            for (int i = 0; i < historyBeanList.size(); i++) {
+                updatedHistoryBeanList.add(new UpdatedHistoryBean(historyBeanList.get(i).isIsYes(),
+                        historyBeanList.get(i).getQuestion(),
+                        historyBeanList.get(i).getReason()));
+            }
+
+        return updatedHistoryBeanList;
+    }
+
+    public boolean isHistoryUpdate() {
+        for (int i = 0; i < getHistoryList().size(); i++) {
+
+            int compare = Boolean.compare(getHistoryList().get(i).isIsYes(), getPatientDetailModel().getHistory().get(i).isIsYes());
+            Log.e("aswin", "" + i);
+            Log.e("aswin", getPatientDetailModel().getHistory().get(i).isIsYes() + "\t" + getPatientDetailModel().getHistory().get(i).getReason());
+            Log.e("aswin", getHistoryList().get(i).isIsYes() + "\t" + getHistoryList().get(i).getReason());
+            if ((compare != 0) ||
+                    !getHistoryList().get(i).getReason().equals(getPatientDetailModel().getHistory().get(i).getReason())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void resetHistory() {
+        if (getPatientDetailModel() != null)
+            setHistoryList(getUpdatedHistoryModelList(getPatientDetailModel().getHistory()));
+    }
+
+    public static class UpdatedHistoryBean extends HistoryBean {
+        public UpdatedHistoryBean(boolean isYes, String question, String reason) {
+            super(isYes, question, reason);
+        }
+    }
+
+    public void setDiagnosisData() {
+        if (visitsDetailApiResponseModel != null && visitsDetailApiResponseModel.getResult().getDiagnosis() != null &&
+                !(visitsDetailApiResponseModel.getResult().getDiagnosis() instanceof String)) {
+            VisitDiagnosisModel visitDiagnosisModel = new Gson().fromJson(new Gson().toJson(visitsDetailApiResponseModel.getResult().getDiagnosis()), VisitDiagnosisModel.class);
+            setDiagnosis(visitDiagnosisModel);
+        } else {
+            setDiagnosis(null);
+        }
+    }
+
+    public VisitDiagnosisModel getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(VisitDiagnosisModel diagnosis) {
+        this.diagnosis = diagnosis;
+    }
+
 
     private List<ProcedureModel.CPTCodesBean> selectedCptCodeList = new ArrayList<>();
 
@@ -140,14 +214,6 @@ public class VisitDetailViewModel extends ViewModel {
 
     public void setInstruction(String instruction) {
         this.instruction = instruction;
-    }
-
-    public String getDiagnosis() {
-        return diagnosis;
-    }
-
-    public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
     }
 
     public boolean isInstructionUpdated() {
@@ -573,6 +639,8 @@ public class VisitDetailViewModel extends ViewModel {
         removeAddedFiles();
         removeAddedOrders();
 
+        resetHistory();
+        setDiagnosisData();
     }
 
     private void removeAddedVitals() {

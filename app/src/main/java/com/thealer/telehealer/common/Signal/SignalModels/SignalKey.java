@@ -14,6 +14,21 @@ public class SignalKey implements Serializable {
     private String created_at;
     private String updated_at;
 
+    public SignalKey() {
+    }
+
+    public SignalKey(int device_id, int user_id, int registration_id, PreKey pre_key, SignedPreKey signed_pre_key, IdentityKey identity_key,
+                     String user_guid, int encryption_key_id) {
+        this.device_id = device_id;
+        this.user_id = user_id;
+        this.registration_id = registration_id;
+        this.pre_key = pre_key;
+        this.signed_pre_key = signed_pre_key;
+        this.identity_key = identity_key;
+        this.user_guid = user_guid;
+        this.encryption_key_id = encryption_key_id;
+    }
+
     public int getEncryption_key_id() {
         return encryption_key_id;
     }
