@@ -24,7 +24,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".TeleHealerApplication"
@@ -176,6 +176,10 @@
 
         <activity
             android:name=".views.home.schedules.WaitingRoomActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".views.settings.accessLogs.AccessLogActivity"
             android:screenOrientation="portrait" />
 
         <receiver
