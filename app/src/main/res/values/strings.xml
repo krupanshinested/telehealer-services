@@ -1249,4 +1249,6 @@
     <string name="times_in_a_week">times in a week</string>
     <string name="litres">litres</string>
     <string name="years">years</string>
+    <string name="logs">Logs</string>
+    <string name="access_logs">Access Logs</string>
 </resources>
