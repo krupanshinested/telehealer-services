@@ -96,8 +96,8 @@ public class GetUserDetails {
         getUserDetails.hashMapMutableLiveData.setValue(responseModelHashMap);
     }
 
-    public GetUserDetails getAssociationDetail(Set<String> guidList) {
-        associationApiViewModel.getAssociationUserDetails(guidList, true);
+    public GetUserDetails getAssociationDetail(Set<String> guidList, String doctorGuid) {
+        associationApiViewModel.getAssociationUserDetails(guidList, doctorGuid, true);
         return getUserDetails;
     }
 }

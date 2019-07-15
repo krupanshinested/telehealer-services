@@ -69,6 +69,13 @@ public class VisitDetailViewModel extends ViewModel {
     private List<Integer> PrescriptionAddList = new ArrayList<>();
     private List<Integer> MiscellaneousAddList = new ArrayList<>();
 
+    private HashMap<Integer, OrdersLabApiResponseModel.LabsResponseBean> labsMap = new HashMap<>();
+    private HashMap<Integer, GetRadiologyResponseModel.ResultBean> xraysMap = new HashMap<>();
+    private HashMap<Integer, OrdersSpecialistApiResponseModel.ResultBean> specialistsMap = new HashMap<>();
+    private HashMap<Integer, OrdersPrescriptionApiResponseModel.OrdersResultBean> prescriptionsMap = new HashMap<>();
+    private HashMap<Integer, MiscellaneousApiResponseModel.ResultBean> miscellaneousMap = new HashMap<>();
+    private HashMap<Integer, OrdersUserFormsApiResponseModel> formMap = new HashMap<>();
+
     private Map<String, List<DietApiResponseModel>> dietListModelMap = new HashMap<>();
     private List<UpdatedHistoryBean> historyList = new ArrayList<>();
 
@@ -488,6 +495,54 @@ public class VisitDetailViewModel extends ViewModel {
         MiscellaneousAddList = miscellaneousAddList;
     }
 
+    public HashMap<Integer, OrdersLabApiResponseModel.LabsResponseBean> getLabsMap() {
+        return labsMap;
+    }
+
+    public void setLabsMap(HashMap<Integer, OrdersLabApiResponseModel.LabsResponseBean> labsMap) {
+        this.labsMap = labsMap;
+    }
+
+    public HashMap<Integer, GetRadiologyResponseModel.ResultBean> getXraysMap() {
+        return xraysMap;
+    }
+
+    public void setXraysMap(HashMap<Integer, GetRadiologyResponseModel.ResultBean> xraysMap) {
+        this.xraysMap = xraysMap;
+    }
+
+    public HashMap<Integer, OrdersSpecialistApiResponseModel.ResultBean> getSpecialistsMap() {
+        return specialistsMap;
+    }
+
+    public void setSpecialistsMap(HashMap<Integer, OrdersSpecialistApiResponseModel.ResultBean> specialistsMap) {
+        this.specialistsMap = specialistsMap;
+    }
+
+    public HashMap<Integer, OrdersPrescriptionApiResponseModel.OrdersResultBean> getPrescriptionsMap() {
+        return prescriptionsMap;
+    }
+
+    public void setPrescriptionsMap(HashMap<Integer, OrdersPrescriptionApiResponseModel.OrdersResultBean> prescriptionsMap) {
+        this.prescriptionsMap = prescriptionsMap;
+    }
+
+    public HashMap<Integer, MiscellaneousApiResponseModel.ResultBean> getMiscellaneousMap() {
+        return miscellaneousMap;
+    }
+
+    public void setMiscellaneousMap(HashMap<Integer, MiscellaneousApiResponseModel.ResultBean> miscellaneousMap) {
+        this.miscellaneousMap = miscellaneousMap;
+    }
+
+    public HashMap<Integer, OrdersUserFormsApiResponseModel> getFormMap() {
+        return formMap;
+    }
+
+    public void setFormMap(HashMap<Integer, OrdersUserFormsApiResponseModel> formMap) {
+        this.formMap = formMap;
+    }
+
     public void removeVital() {
         getVisitsDetailApiResponseModel().getResult().getUser_vitals().removeAll(getVitalsRemoveList());
         ArrayList<VitalsApiResponseModel> vitalsList = new ArrayList<>();
@@ -526,7 +581,7 @@ public class VisitDetailViewModel extends ViewModel {
         setFormsApiResponseModels(formsList);
         getFormsRemoveList().clear();
         getFormsAddList().clear();
-
+        getFormMap().clear();
     }
 
     public void removeFiles() {
@@ -556,6 +611,7 @@ public class VisitDetailViewModel extends ViewModel {
         setOrdersIdListApiResponseModel(getOrdersIdListApiResponseModel());
         getLabRemoveList().clear();
         getLabAddList().clear();
+        getLabsMap().clear();
     }
 
     public void removeXrays() {
@@ -571,6 +627,7 @@ public class VisitDetailViewModel extends ViewModel {
         setOrdersIdListApiResponseModel(getOrdersIdListApiResponseModel());
         getXrayRemoveList().clear();
         getXrayAddList().clear();
+        getXraysMap().clear();
     }
 
     public void removeSpecialist() {
@@ -586,7 +643,7 @@ public class VisitDetailViewModel extends ViewModel {
         setOrdersIdListApiResponseModel(getOrdersIdListApiResponseModel());
         getSpecialistRemoveList().clear();
         getSpecialistAddList().clear();
-
+        getSpecialistsMap().clear();
     }
 
     public void removePrescription() {
@@ -603,6 +660,7 @@ public class VisitDetailViewModel extends ViewModel {
         setOrdersIdListApiResponseModel(getOrdersIdListApiResponseModel());
         getPrescriptionRemoveList().clear();
         getPrescriptionAddList().clear();
+        getPrescriptionsMap().clear();
 
     }
 
@@ -619,7 +677,7 @@ public class VisitDetailViewModel extends ViewModel {
         setOrdersIdListApiResponseModel(getOrdersIdListApiResponseModel());
         getMiscellaneousRemoveList().clear();
         getMiscellaneousAddList().clear();
-
+        getMiscellaneousMap().clear();
     }
 
     public void clearAddRemoveList() {
@@ -633,6 +691,13 @@ public class VisitDetailViewModel extends ViewModel {
         getPrescriptionRemoveList().clear();
         getMiscellaneousRemoveList().clear();
 
+        getLabsMap().clear();
+        getXraysMap().clear();
+        getSpecialistsMap().clear();
+        getPrescriptionsMap().clear();
+        getMiscellaneousMap().clear();
+        getFormMap().clear();
+
         removeAddedVitals();
         removeAddedDiets();
         removeAddedForms();
@@ -641,6 +706,7 @@ public class VisitDetailViewModel extends ViewModel {
 
         resetHistory();
         setDiagnosisData();
+
     }
 
     private void removeAddedVitals() {

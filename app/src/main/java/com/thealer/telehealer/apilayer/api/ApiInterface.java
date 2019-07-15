@@ -234,6 +234,9 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> updateAssociationDetail(@Path(ID) String userGuid, @Body UpdateAssociationRequestModel requestModel);
 
     @GET("api/associations")
+    Observable<ArrayList<CommonUserApiResponseModel>> getAssociationUserDetail(@Query(FILTER_USER_GUID_IN) String guidList, @Query(DOCTOR_GUID) String doctorGuid);
+
+    @GET("api/associations")
     Observable<ArrayList<CommonUserApiResponseModel>> getAssociationUserDetail(@Query(FILTER_USER_GUID_IN) String guidList);
 
     @GET("api/correspondence-history")
@@ -407,6 +410,9 @@ public interface ApiInterface {
 
     @GET("api/schedule")
     Observable<ArrayList<SchedulesApiResponseModel.ResultBean>> getUserUpcomingSchedules(@Query(USER_GUID) String user_guid, @Query("upcoming") boolean upcoming, @Query(DOCTOR_GUID) String doctorGuid);
+
+    @GET("api/schedule")
+    Observable<ArrayList<SchedulesApiResponseModel.ResultBean>> getUserUpcomingSchedules(@Query(USER_GUID) String user_guid, @Query("upcoming") boolean upcoming, @Query(DOCTOR_GUID) String doctorGuid, @Query("day") String day, @Query("month") String month, @Query("year") String year);
 
     @DELETE("api/schedule")
     Observable<BaseApiResponseModel> deleteSchedule(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);

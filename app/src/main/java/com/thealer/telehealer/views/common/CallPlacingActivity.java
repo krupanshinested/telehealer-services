@@ -345,7 +345,7 @@ public class CallPlacingActivity extends BaseActivity {
             intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
 
             String name = TextUtils.isEmpty(doctorName) ? getString(R.string.doctor) : doctorName;
-            String description = getString(R.string.trial_period_expired_ma_sec_1, getString(R.string.app_name));
+            String description = getString(R.string.trial_period_expired_ma_sec_1, name);
 
             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
             requestId = CallPlacingActivity.MA_DOC_PAYMENT_REQUEST;
