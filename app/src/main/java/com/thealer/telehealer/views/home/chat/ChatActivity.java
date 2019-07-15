@@ -225,6 +225,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         if (getIntent().getExtras() != null) {
             if (getIntent().getExtras().getString(ArgumentKeys.USER_GUID) != null) {
                 userGuid = getIntent().getExtras().getString(ArgumentKeys.USER_GUID);
+                doctorGuid = getIntent().getExtras().getString(ArgumentKeys.DOCTOR_GUID);
 
                 if (userModel == null) {
                     Set<String> set = new HashSet<>();

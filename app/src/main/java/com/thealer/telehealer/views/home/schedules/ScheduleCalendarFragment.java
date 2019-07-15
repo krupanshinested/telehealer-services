@@ -3,17 +3,11 @@ package com.thealer.telehealer.views.home.schedules;
 import android.animation.Animator;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.RectF;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +20,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.EventClickListener;
 import com.alamkanak.weekview.MonthLoader;
@@ -34,6 +34,7 @@ import com.alamkanak.weekview.ScrollListener;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewDisplayable;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
@@ -72,9 +73,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import me.toptas.fancyshowcase.listener.DismissListener;
@@ -98,6 +101,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
 
     private StringBuilder doctorGuidList = new StringBuilder();
     private ArrayList<SchedulesApiResponseModel.ResultBean> responseModelArrayList;
+    private Map<String, ArrayList<SchedulesApiResponseModel.ResultBean>> scheduleMonthlyMap = new HashMap<>();
     private HashSet<CalendarDay> calendarDayHashSet;
     private List<WeekViewDisplayable> weekViewEventList = new ArrayList<>();
     private FloatingActionButton addFab;
@@ -105,12 +109,12 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
     private ImageView emptyIv;
     private TextView emptyTitleTv;
     private TextView emptyMessageTv;
-    private Calendar currentDay;
     private LinearLayout parent;
     private boolean isWeekScrollEnabled = false;
     private Set<String> notificationCreatedId = new HashSet<>();
     private LocalNotificationReceiver localNotificationReceiver = null;
     private CustomButton emptyActionBtn;
+    private String selectedMonth;
 
     @Override
     public void onAttach(Context context) {
@@ -130,7 +134,13 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
                 if (baseApiResponseModels != null) {
                     setEmptyState();
                     responseModelArrayList = (ArrayList<SchedulesApiResponseModel.ResultBean>) (Object) baseApiResponseModels;
+
+                    selectedMonth = getScheduleMapKey();
+
+                    scheduleMonthlyMap.put(selectedMonth, responseModelArrayList);
+
                     updateCalendar();
+
                     if (responseModelArrayList.size() == 0 && !appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_SCHEDULE)) {
                         appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_SCHEDULE, true);
                         emptyMessageTv.setVisibility(View.GONE);
@@ -186,6 +196,13 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
             }
         });
 
+    }
+
+    private String getScheduleMapKey() {
+        int month = calendarview.getSelectedDate().getMonth();
+        int year = calendarview.getSelectedDate().getYear();
+
+        return month + "_" + year;
     }
 
     private void updateCalendar() {
@@ -266,8 +283,8 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
 
         weekView.notifyDataSetChanged();
 
-        calendarview.setCurrentDate(CalendarDay.today());
-        updateEvents(CalendarDay.today());
+//        calendarview.setCurrentDate(calendarview.getSelectedDate());
+        updateEvents(calendarview.getSelectedDate());
 
         calendarview.addDecorator(new DayViewDecorator() {
             @Override
@@ -280,7 +297,6 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
                 dayViewFacade.addSpan(new DotSpan(5f));
             }
         });
-
     }
 
     private void createScheduledNotification() {
@@ -379,13 +395,21 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         calendarview.setOnMonthChangedListener(new OnMonthChangedListener() {
             @Override
             public void onMonthChanged(MaterialCalendarView materialCalendarView, CalendarDay calendarDay) {
-                if (isWeekScrollEnabled && calendarview.getCalendarMode() == CalendarMode.WEEKS && calendarview.getSelectedDate() != null) {
 
+                if (calendarview.getSelectedDate() != null) {
                     LocalDate localDate = LocalDate.of(calendarview.getSelectedDate().getYear(), calendarview.getSelectedDate().getMonth(), calendarview.getSelectedDate().getDay());
-                    if (calendarDay.isAfter(calendarview.getSelectedDate())) {
-                        localDate = localDate.plusDays(7);
-                    } else if (calendarDay.isBefore(calendarview.getSelectedDate())) {
-                        localDate = localDate.minusDays(7);
+                    if (isWeekScrollEnabled && calendarview.getCalendarMode() == CalendarMode.WEEKS) {
+                        if (calendarDay.isAfter(calendarview.getSelectedDate())) {
+                            localDate = localDate.plusDays(7);
+                        } else if (calendarDay.isBefore(calendarview.getSelectedDate())) {
+                            localDate = localDate.minusDays(7);
+                        }
+                    } else {
+                        if (calendarDay.isAfter(calendarview.getSelectedDate())) {
+                            localDate = localDate.plusMonths(1);
+                        } else if (calendarDay.isBefore(calendarview.getSelectedDate())) {
+                            localDate = localDate.minusMonths(1);
+                        }
                     }
                     calendarview.setCurrentDate(localDate);
                     calendarview.setSelectedDate(localDate);
@@ -548,12 +572,14 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
 
 
     private void getAllSchedules() {
-        schedulesApiViewModel.getUserSchedules(null, doctorGuidList.toString(), false, true);
+        int month = calendarview.getSelectedDate().getMonth();
+        int year = calendarview.getSelectedDate().getYear();
+
+        schedulesApiViewModel.getUserSchedules(null, doctorGuidList.toString(), null, String.valueOf(month), String.valueOf(year), false, true);
     }
 
     @Override
     public void onFirstVisibleDayChanged(Calendar newFirstVisibleDay, Calendar oldFirstVisibleDay) {
-        currentDay = newFirstVisibleDay;
         if (calendarview.getSelectedDate() != null && newFirstVisibleDay.compareTo(getCalendarFromCalendarDay(calendarview.getSelectedDate())) != 0) {
             CalendarDay calendarDay = CalendarDay.from(newFirstVisibleDay.get(Calendar.YEAR), newFirstVisibleDay.get(Calendar.MONTH) + 1, newFirstVisibleDay.get(Calendar.DAY_OF_MONTH));
             calendarview.clearSelection();
@@ -561,6 +587,15 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
             calendarview.setDateSelected(calendarDay, true);
 
             updateView(newFirstVisibleDay);
+        }
+        if (scheduleMonthlyMap.containsKey(getScheduleMapKey())) {
+            if (!getScheduleMapKey().equals(selectedMonth)) {
+                selectedMonth = getScheduleMapKey();
+                responseModelArrayList = scheduleMonthlyMap.get(selectedMonth);
+                updateCalendar();
+            }
+        } else {
+            getAllSchedules();
         }
     }
 

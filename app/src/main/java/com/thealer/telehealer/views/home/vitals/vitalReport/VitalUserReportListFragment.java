@@ -221,6 +221,8 @@ public class VitalUserReportListFragment extends BaseFragment {
                                 endDate = null;
 
                                 if (selectedItem != null) {
+                                    setToolbarTitle(selectedItem);
+
                                     if (selectedItem.equals(getString(R.string.last_week))) {
                                         vitalsListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
                                         filter = VitalReportApiViewModel.LAST_WEEK;
@@ -232,6 +234,8 @@ public class VitalUserReportListFragment extends BaseFragment {
                                         startDate = bundle.getString(ArgumentKeys.START_DATE);
                                         endDate = bundle.getString(ArgumentKeys.END_DATE);
 
+                                        setToolbarTitle(Utils.getMonitoringTitle(startDate, endDate));
+
                                         String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
 
                                         vitalsListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
@@ -242,7 +246,6 @@ public class VitalUserReportListFragment extends BaseFragment {
                                     getArguments().putString(ArgumentKeys.START_DATE, startDate);
                                     getArguments().putString(ArgumentKeys.END_DATE, endDate);
 
-                                    setToolbarTitle(selectedItem);
                                 }
                                 page = 1;
                                 resetData();

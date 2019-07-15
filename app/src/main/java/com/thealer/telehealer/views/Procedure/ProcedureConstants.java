@@ -118,6 +118,9 @@ public class ProcedureConstants {
 
 
     public static String getCategory(String type) {
+        if (type == null)
+            return null;
+
         switch (type) {
             case CCM_20:
             case CCM_30:

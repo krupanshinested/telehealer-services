@@ -586,8 +586,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 //                        });
 //                        itemPickerDialog.setCancelable(false);
 //                        itemPickerDialog.show();
-
-
                         Utils.showMonitoringFilter(vitalPrintOptions, getActivity(), new OnListItemSelectInterface() {
                             @Override
                             public void onListItemSelected(int position, Bundle bundle) {
@@ -637,6 +635,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             if (!isFromHome) {
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+                userGuid = commonUserApiResponseModel.getUser_guid();
             }
 
             doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
@@ -734,7 +733,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
             Bundle bundle = new Bundle();
             bundle.putString(ArgumentKeys.HTML_FILE, htmlContent);
-            bundle.putString(ArgumentKeys.PDF_TITLE, "VitalsFile");
+            bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.vitals_file));
             pdfViewerFragment.setArguments(bundle);
             showSubFragmentInterface.onShowFragment(pdfViewerFragment);
         } else {

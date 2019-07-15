@@ -106,6 +106,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 break;
             case APNSPayload.endCall:
                 dismissCall(data);
+                sendNewNotificationBroadCast();
                 break;
             case APNSPayload.busyInAnotherCall:
                 TokBox.shared.endCall(OpenTokConstants.busyInAnotherLine);
@@ -124,6 +125,8 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                     messageIntent.putExtras(chatBundle);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
                 }
+                sendNewNotificationBroadCast();
+
                 break;
             case APNSPayload.callHistory:
                 break;
@@ -139,6 +142,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             case APNSPayload.schedule:
                 intent = new Intent(this, NotificationActivity.class);
                 Utils.createNotification(data, intent);
+                sendNewNotificationBroadCast();
                 break;
             case APNSPayload.vitals:
                 intent = new Intent(this, NotificationDetailActivity.class);
@@ -150,6 +154,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 bundle.putString(ArgumentKeys.DOCTOR_GUID, data.getDoctor_guid());
                 intent.putExtras(bundle);
                 Utils.createNotification(data, intent);
+                sendNewNotificationBroadCast();
                 break;
             case APNSPayload.waitingInRoom:
                 try {
@@ -172,6 +177,10 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 }
                 break;
         }
+    }
+
+    private void sendNewNotificationBroadCast() {
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(Constants.NOTIFICATION_COUNT_RECEIVER));
     }
 
     // Display the incoming call to the user
