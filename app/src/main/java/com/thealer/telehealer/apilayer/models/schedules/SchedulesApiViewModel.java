@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.schedules;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -46,6 +47,26 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().getUserUpcomingSchedules(user_guid, isUpcoming, doctorGuid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAListObserver<SchedulesApiResponseModel.ResultBean>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(ArrayList<SchedulesApiResponseModel.ResultBean> data) {
+                                    ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(data);
+                                    baseApiArrayListMutableLiveData.setValue(apiResponseModels);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getUserSchedules(String user_guid, String doctorGuid, String day, String month, String year,
+                                 boolean isUpcoming, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getUserUpcomingSchedules(user_guid, isUpcoming, doctorGuid, day, month, year)
                             .compose(applySchedulers())
                             .subscribe(new RAListObserver<SchedulesApiResponseModel.ResultBean>(getProgress(isShowProgress)) {
                                 @Override

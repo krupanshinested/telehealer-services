@@ -113,6 +113,8 @@ public class Utils {
     public static final String defaultDateFormat = "dd MMM, yyyy";
     public static final String yyyy_mm = "yyyy-MM";
     public static final String yyyy_mm_dd = "yyyy-MM-dd";
+    public static final String mmm_dd = "MMM dd";
+    public static final String mmm_yyyy = "MMM yyyy";
     public static String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     private static FancyShowCaseView fancyShowCaseView;
@@ -1426,6 +1428,20 @@ public class Utils {
         Log.e("aswin", "updateLastLogin: " + lastLogin);
 
         appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
+    }
+
+    public static String getMonitoringTitle(@NonNull String startDate, @NonNull String endDate){
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(Utils.getDateFromString(startDate));
+
+        Calendar endCal = Calendar.getInstance();
+        endCal.setTime(Utils.getDateFromString(endDate));
+
+        String outputFormat = Utils.mmm_dd;
+        if (startCal.get(Calendar.YEAR) != endCal.get(Calendar.YEAR)) {
+            outputFormat = Utils.mmm_yyyy;
+        }
+        return Utils.getFormatedDateTime(startDate, outputFormat) + " - " + Utils.getFormatedDateTime(endDate, outputFormat);
     }
 
     public static String replaceAmpersand(String input) {

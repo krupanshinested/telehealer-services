@@ -188,6 +188,8 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
                                 endDate = null;
 
                                 if (selectedItem != null) {
+                                    setToolbarTitle(selectedItem);
+
                                     if (selectedItem.equals(getString(R.string.last_week))) {
                                         dietListCrv.setEmptyState(EmptyViewConstants.EMPTY_DIET_LAST_WEEK);
                                         filter = VitalReportApiViewModel.LAST_WEEK;
@@ -198,6 +200,8 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
                                         filter = null;
                                         startDate = bundle.getString(ArgumentKeys.START_DATE);
                                         endDate = bundle.getString(ArgumentKeys.END_DATE);
+
+                                        setToolbarTitle(Utils.getMonitoringTitle(startDate, endDate));
 
                                         String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_DIET_FROM_TO);
 
@@ -210,7 +214,6 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
                                     getArguments().putString(ArgumentKeys.START_DATE, startDate);
                                     getArguments().putString(ArgumentKeys.END_DATE, endDate);
 
-                                    setToolbarTitle(selectedItem);
                                 }
                                 getDiets(true);
                             }

@@ -43,14 +43,7 @@ public class DynamicFormDataBean extends ViewModel implements Serializable {
 
             score = Math.floor(score);
             displayScore = String.valueOf(score.intValue());
-
-//            double remainder = score % 1;
-//            if (remainder == 0) {
-//                displayScore = String.valueOf(score.intValue());
-//            } else {
-//                displayScore = String.valueOf(score);
-//            }
-
+            
         }
         return displayScore;
     }

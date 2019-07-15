@@ -85,7 +85,6 @@ import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.call.Adapter.VitalCallAdapter;
 import com.thealer.telehealer.views.call.Interfaces.LiveVitalCallBack;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
-import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
@@ -162,7 +161,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
     @Nullable
     private CompleteListener lastTaskToDo;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -1221,8 +1219,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
     public static void openFeedBackIfNeeded(String callRejectionReason, Context context) {
         String sessionId = TokBox.shared.getSessionId();
-        String to_guid = "";
+        String to_guid = null;
         String to_name = "";
+        String doctor_guid = TokBox.shared.getDoctor_guid();
+
+
         if (TokBox.shared.getOtherPersonDetail() != null) {
             to_guid = TokBox.shared.getOtherPersonDetail().getUser_guid();
             to_name = TokBox.shared.getOtherPersonDetail().getDisplayName();
@@ -1249,8 +1250,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             case OpenTokConstants.notPickedUp:
             case OpenTokConstants.busyInAnotherLine:
                 if (!UserType.isUserPatient()) {
-                    Intent intent = new Intent(context, ContentActivity.class);
-                    intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, context.getString(R.string.ok));
+                    Intent intent = new Intent(context, CallMessageActivity.class);
+                    intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, context.getString(R.string.send_message));
                     intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
                     intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_missed_call);
                     intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
@@ -1265,6 +1266,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
                     intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
                     intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+                    intent.putExtra(ArgumentKeys.USER_GUID, to_guid);
+                    intent.putExtra(ArgumentKeys.DOCTOR_GUID, doctor_guid);
 
                     context.startActivity(intent);
                 }
@@ -1552,6 +1555,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.v("CallActivity", "onActivityResult");
+
+        Log.e(TAG, "onActivityResult: " + requestCode + " " + resultCode);
 
         switch (requestCode) {
             case PermissionConstants.PERMISSION_CAM_MIC:

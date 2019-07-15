@@ -31,6 +31,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
@@ -561,6 +562,13 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 showSubFragmentInterface.onShowFragment(vitalUserReportListFragment);
                                 break;
                             case VisitDetailConstants.ADD_ORDER:
+                                bundle.putSerializable(ArgumentKeys.SELECTED_FORMS, detailViewModel.getFormMap());
+                                bundle.putSerializable(ArgumentKeys.SELECTED_LABS, detailViewModel.getLabsMap());
+                                bundle.putSerializable(ArgumentKeys.SELECTED_XRAYS, detailViewModel.getXraysMap());
+                                bundle.putSerializable(ArgumentKeys.SELECTED_SPECIALIST, detailViewModel.getSpecialistsMap());
+                                bundle.putSerializable(ArgumentKeys.SELECTED_PRESCRIPTION, detailViewModel.getPrescriptionsMap());
+                                bundle.putSerializable(ArgumentKeys.SELECTED_MISCELLANEOUS, detailViewModel.getMiscellaneousMap());
+
                                 OrderSelectionListFragment orderSelectionListFragment = new OrderSelectionListFragment();
                                 orderSelectionListFragment.setArguments(bundle);
                                 orderSelectionListFragment.setTargetFragment(targetFragment, RequestID.REQ_VISIT_UPDATE);
@@ -1440,7 +1448,9 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         /**
          * History detail
          */
-        modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.details)));
+        if (detailViewModel.getSchedulesApiResponseModel() != null || (detailViewModel.getHistoryList() != null && !detailViewModel.getHistoryList().isEmpty())) {
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.details)));
+        }
 
         if (detailViewModel.getSchedulesApiResponseModel() != null) {
             SchedulesApiResponseModel.ResultBean scheduleModel = detailViewModel.getSchedulesApiResponseModel();
@@ -1562,8 +1572,8 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         boolean isVitalAvailable = detailViewModel.getVitalsApiResponseModels() != null && !detailViewModel.getVitalsApiResponseModels().isEmpty();
 
 
+        modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.vitals), isVitalAvailable));
         if (isVitalAvailable) {
-            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.vitals), isVitalAvailable));
 
             Collections.sort(detailViewModel.getVitalsApiResponseModels(), new Comparator<VitalsApiResponseModel>() {
                 @Override
@@ -1595,46 +1605,47 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 || (detailViewModel.getFormsApiResponseModels() != null && !detailViewModel.getFormsApiResponseModels().isEmpty());
 
 
+        modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.orders), isOrdersAvailable));
         if (isOrdersAvailable) {
-            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.orders), isOrdersAvailable));
 
             List<VisitOrdersAdapterModel> visitOrdersAdapterModels = new ArrayList<>();
 
-            if (detailViewModel.getOrdersIdListApiResponseModel() != null) {
+            OrdersIdListApiResponseModel ordersIdListApiResponseModel = detailViewModel.getOrdersIdListApiResponseModel();
+            if (ordersIdListApiResponseModel != null) {
 
-                if (detailViewModel.getOrdersIdListApiResponseModel().getPrescriptions() != null &&
-                        !detailViewModel.getOrdersIdListApiResponseModel().getPrescriptions().isEmpty()) {
-                    for (int i = 0; i < detailViewModel.getOrdersIdListApiResponseModel().getPrescriptions().size(); i++) {
-                        visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(detailViewModel.getOrdersIdListApiResponseModel().getPrescriptions().get(i).getCreated_at(),
-                                detailViewModel.getOrdersIdListApiResponseModel().getPrescriptions().get(i)));
+                if (ordersIdListApiResponseModel.getPrescriptions() != null &&
+                        !ordersIdListApiResponseModel.getPrescriptions().isEmpty()) {
+                    for (int i = 0; i < ordersIdListApiResponseModel.getPrescriptions().size(); i++) {
+                        visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(ordersIdListApiResponseModel.getPrescriptions().get(i).getCreated_at(),
+                                ordersIdListApiResponseModel.getPrescriptions().get(i)));
                     }
                 }
-                if (detailViewModel.getOrdersIdListApiResponseModel().getSpecialists() != null &&
-                        !detailViewModel.getOrdersIdListApiResponseModel().getSpecialists().isEmpty()) {
-                    for (int i = 0; i < detailViewModel.getOrdersIdListApiResponseModel().getSpecialists().size(); i++) {
-                        visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(detailViewModel.getOrdersIdListApiResponseModel().getSpecialists().get(i).getCreated_at(),
-                                detailViewModel.getOrdersIdListApiResponseModel().getSpecialists().get(i)));
+                if (ordersIdListApiResponseModel.getSpecialists() != null &&
+                        !ordersIdListApiResponseModel.getSpecialists().isEmpty()) {
+                    for (int i = 0; i < ordersIdListApiResponseModel.getSpecialists().size(); i++) {
+                        visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(ordersIdListApiResponseModel.getSpecialists().get(i).getCreated_at(),
+                                ordersIdListApiResponseModel.getSpecialists().get(i)));
                     }
                 }
-                if (detailViewModel.getOrdersIdListApiResponseModel().getLabs() != null &&
-                        !detailViewModel.getOrdersIdListApiResponseModel().getLabs().isEmpty()) {
-                    for (int i = 0; i < detailViewModel.getOrdersIdListApiResponseModel().getLabs().size(); i++) {
-                        visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(detailViewModel.getOrdersIdListApiResponseModel().getLabs().get(i).getCreated_at(),
-                                detailViewModel.getOrdersIdListApiResponseModel().getLabs().get(i)));
+                if (ordersIdListApiResponseModel.getLabs() != null &&
+                        !ordersIdListApiResponseModel.getLabs().isEmpty()) {
+                    for (int i = 0; i < ordersIdListApiResponseModel.getLabs().size(); i++) {
+                        visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(ordersIdListApiResponseModel.getLabs().get(i).getCreated_at(),
+                                ordersIdListApiResponseModel.getLabs().get(i)));
                     }
                 }
-                if (detailViewModel.getOrdersIdListApiResponseModel().getXrays() != null &&
-                        !detailViewModel.getOrdersIdListApiResponseModel().getXrays().isEmpty()) {
-                    for (int i = 0; i < detailViewModel.getOrdersIdListApiResponseModel().getXrays().size(); i++) {
-                        visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(detailViewModel.getOrdersIdListApiResponseModel().getXrays().get(i).getCreated_at(),
-                                detailViewModel.getOrdersIdListApiResponseModel().getXrays().get(i)));
+                if (ordersIdListApiResponseModel.getXrays() != null &&
+                        !ordersIdListApiResponseModel.getXrays().isEmpty()) {
+                    for (int i = 0; i < ordersIdListApiResponseModel.getXrays().size(); i++) {
+                        visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(ordersIdListApiResponseModel.getXrays().get(i).getCreated_at(),
+                                ordersIdListApiResponseModel.getXrays().get(i)));
                     }
                 }
-                if (detailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous() != null &&
-                        !detailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous().isEmpty()) {
-                    for (int i = 0; i < detailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous().size(); i++) {
-                        visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(detailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous().get(i).getCreated_at(),
-                                detailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous().get(i)));
+                if (ordersIdListApiResponseModel.getMiscellaneous() != null &&
+                        !ordersIdListApiResponseModel.getMiscellaneous().isEmpty()) {
+                    for (int i = 0; i < ordersIdListApiResponseModel.getMiscellaneous().size(); i++) {
+                        visitOrdersAdapterModels.add(new VisitOrdersAdapterModel(ordersIdListApiResponseModel.getMiscellaneous().get(i).getCreated_at(),
+                                ordersIdListApiResponseModel.getMiscellaneous().get(i)));
                     }
                 }
 
@@ -1680,8 +1691,8 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         boolean isDocumentsAvailable = detailViewModel.getDocumentsApiResponseModels() != null && !detailViewModel.getDocumentsApiResponseModels().isEmpty();
 
 
+        modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.documents), isDocumentsAvailable));
         if (isDocumentsAvailable) {
-            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.documents), isDocumentsAvailable));
 
             Collections.sort(detailViewModel.getDocumentsApiResponseModels(), new Comparator<DocumentsApiResponseModel.ResultBean>() {
                 @Override
@@ -1713,8 +1724,8 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         boolean isDietAvailable = detailViewModel.getDietApiResponseModels() != null && !detailViewModel.getDietApiResponseModels().isEmpty();
 
 
+        modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.diets), isDietAvailable));
         if (isDietAvailable) {
-            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.diets), isDietAvailable));
 
             Map<String, List<DietApiResponseModel>> modelMap = new HashMap<>();
 
@@ -1751,10 +1762,9 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
          * Procedure
          */
 
-        if (!detailViewModel.getSelectedCptCodeList().isEmpty()) {
-
-            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.procedure)));
-
+        boolean isProcedureAvailable = detailViewModel.getSelectedCptCodeList() != null && !detailViewModel.getSelectedCptCodeList().isEmpty();
+        modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.procedure), isProcedureAvailable));
+        if (isProcedureAvailable) {
             modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_PROCEDURE, new ProcedureModel(detailViewModel.getSelectedCptCodeList())));
         } else {
             modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_ADD, new AddNewModel(activity.getString(R.string.add_procedure), VisitDetailConstants.ADD_PROCEDURE)));

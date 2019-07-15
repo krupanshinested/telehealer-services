@@ -267,15 +267,16 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
 
                 openTokViewModel.postCallReview(params);
 
-                UpdateVisitRequestModel visitRequestModel = new UpdateVisitRequestModel();
-                ProcedureModel.CPTCodesBean cptCodesBean = new ProcedureModel.CPTCodesBean(selectedItem, ProcedureConstants.getDescription(this, selectedItem));
-                List<ProcedureModel.CPTCodesBean> codesBeanList = new ArrayList<>();
-                codesBeanList.add(cptCodesBean);
-                ProcedureModel procedureModel = new ProcedureModel(codesBeanList);
-                visitRequestModel.setProcedure(procedureModel);
+                if (selectedItem != null) {
+                    UpdateVisitRequestModel visitRequestModel = new UpdateVisitRequestModel();
+                    ProcedureModel.CPTCodesBean cptCodesBean = new ProcedureModel.CPTCodesBean(selectedItem, ProcedureConstants.getDescription(this, selectedItem));
+                    List<ProcedureModel.CPTCodesBean> codesBeanList = new ArrayList<>();
+                    codesBeanList.add(cptCodesBean);
+                    ProcedureModel procedureModel = new ProcedureModel(codesBeanList);
+                    visitRequestModel.setProcedure(procedureModel);
 
-                visitsApiViewModel.updateOrder(sessionId, visitRequestModel, doctorGuid, true);
-
+                    visitsApiViewModel.updateOrder(sessionId, visitRequestModel, doctorGuid, true);
+                }
                 break;
             case R.id.close_iv:
                 finish();

@@ -176,6 +176,11 @@ public class RecentFragment extends BaseFragment {
                         if (UserType.isUserAssistant() && userGuid == null && doctorGuid != null){
                             isCalls = true;
                         }
+
+                        if (UserType.isUserPatient()){
+                            userGuid = doctorGuid;
+                            doctorGuid = null;
+                        }
                         recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
                     }
                 }
