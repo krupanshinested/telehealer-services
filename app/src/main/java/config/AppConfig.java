@@ -70,12 +70,10 @@ public class AppConfig {
             String type = UserDetailPreferenceManager.getInstallType();
 
             if (type != null && !type.isEmpty()) {
-                Log.e("aswin", "getInstallType: 1 " + type);
                 return type;
             } else {
                 WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
                 if (whoAmIApiResponseModel != null && whoAmIApiResponseModel.getInstall_type() != null && !whoAmIApiResponseModel.getInstall_type().isEmpty()) {
-                    Log.e("aswin", "getInstallType: 2 " + whoAmIApiResponseModel.getInstall_type());
                     return whoAmIApiResponseModel.getInstall_type();
                 } else {
                     if (isLocaleIndia()) {
@@ -83,7 +81,6 @@ public class AppConfig {
                     } else {
                         type = context.getString(R.string.install_type);
                     }
-                    Log.e("aswin", "getInstallType: 3 " + type);
                     UserDetailPreferenceManager.setInstallType(type);
                     UserDetailPreferenceManager.setCountryCode(getLocaleCountry());
                     return type;
@@ -102,7 +99,6 @@ public class AppConfig {
         } else {
             removedList = new ArrayList<>(Arrays.asList(FEATURE_STETHOSCOPE));
         }
-        Log.e("aswin", "getRemovedFeatures: " + UserDetailPreferenceManager.getInstallType() + "\n" + removedList.toString());
         return removedList;
     }
 }

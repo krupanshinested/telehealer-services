@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.visits;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -39,6 +40,25 @@ public class VisitsApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().getOrderDetail(orderId, doctorGuid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getVisitSummary(String orderId, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService()
+                            .getVisitSummary(orderId, true)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

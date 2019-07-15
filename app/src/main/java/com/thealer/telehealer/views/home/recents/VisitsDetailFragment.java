@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.DietApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
@@ -34,6 +36,7 @@ import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiRespon
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.miscellaneous.MiscellaneousApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
@@ -42,6 +45,8 @@ import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponse
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiViewModel;
 import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.VisitDiagnosisModel;
+import com.thealer.telehealer.apilayer.models.recents.VisitSummaryApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
@@ -59,8 +64,9 @@ import com.thealer.telehealer.views.Procedure.ProcedureConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
-import com.thealer.telehealer.views.common.OnModeChangeListener;
+import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.orders.labs.IcdCodesDataViewModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,6 +98,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     private VitalsApiViewModel vitalsApiViewModel;
     private OrdersApiViewModel ordersApiViewModel;
     private DietApiViewModel dietApiViewModel;
+    private IcdCodesDataViewModel icdCodesDataViewModel;
 
     private RecentsApiResponseModel.ResultBean recentDetail;
     private TranscriptionApiResponseModel transcriptionApiResponseModel;
@@ -105,7 +112,6 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     private ArrayList<DietApiResponseModel> dietApiResponseModels;
 
     private VisitDetailListAdapter visitDetailListAdapter;
-    private CommonUserApiResponseModel patientDetail, doctorDetail;
     private String patientGuid, doctorGuid;
     private int mode = Constants.VIEW_MODE;
     private boolean isSecondaryApisCalled = false, isSuccessViewShown = false, isVisitUpdated = false, isPrimaryApiCalled = false;
@@ -117,6 +123,10 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
+
+        icdCodesDataViewModel = ViewModelProviders.of(getActivity()).get(IcdCodesDataViewModel.class);
+        icdCodesDataViewModel.setSelectedIcdCodeList(new MediatorLiveData<>());
+        icdCodesDataViewModel.setIcdCodeDetailHashMap(new MediatorLiveData<>());
 
         dietApiViewModel = ViewModelProviders.of(this).get(DietApiViewModel.class);
         dietApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
@@ -152,9 +162,27 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel instanceof VisitsDetailApiResponseModel) {
+                    if (baseApiResponseModel instanceof VisitSummaryApiResponseModel) {
+
+                        VisitSummaryApiResponseModel visitSummaryApiResponseModel = (VisitSummaryApiResponseModel) baseApiResponseModel;
+                        showPdfViewFragment(visitSummaryApiResponseModel.getResult().getVisit_summary());
+
+                    } else if (baseApiResponseModel instanceof VisitsDetailApiResponseModel) {
                         visitsDetailApiResponseModel = (VisitsDetailApiResponseModel) baseApiResponseModel;
                         visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
+
+                        visitDetailViewModel.setDiagnosisData();
+                        if (visitDetailViewModel.getDiagnosis() != null &&
+                                visitDetailViewModel.getDiagnosis().getICD10_codes() != null &&
+                                !visitDetailViewModel.getDiagnosis().getICD10_codes().isEmpty()) {
+                            List<String> selectedIcdCodes = new ArrayList<>();
+                            for (int i = 0; i < visitDetailViewModel.getDiagnosis().getICD10_codes().size(); i++) {
+                                selectedIcdCodes.add(visitDetailViewModel.getDiagnosis().getICD10_codes().get(i).getCode());
+                            }
+
+                            icdCodesDataViewModel.getSelectedIcdCodeList().setValue(selectedIcdCodes);
+                        }
+
 
                         if (visitsDetailApiResponseModel.getResult().getProcedure() != null)
                             visitDetailViewModel.setSelectedCptCodeList(visitsDetailApiResponseModel.getResult().getProcedure().getCPT_codes());
@@ -264,8 +292,19 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
                                     Log.e(TAG, "onChanged: " + new Gson().toJson(updatedTranscript.getSpeakerLabels()));
 
-                                } else
-                                    Log.e(TAG, "onChanged: else");
+                                }
+
+                                if (visitDetailViewModel.isHistoryUpdate()) {
+//                                    Log.e(TAG, "onChanged: " + new Gson().toJson(visitDetailViewModel.getHistoryList()));
+//                                    Log.e(TAG, "onChanged: " + new Gson().toJson(visitDetailViewModel.getPatientDetailModel().getHistory()));
+                                    List<HistoryBean> historyBeanList = new ArrayList<>();
+                                    for (int i = 0; i < visitDetailViewModel.getHistoryList().size(); i++) {
+                                        historyBeanList.add(new HistoryBean(visitDetailViewModel.getHistoryList().get(i).isIsYes(),
+                                                visitDetailViewModel.getHistoryList().get(i).getQuestion(),
+                                                visitDetailViewModel.getHistoryList().get(i).getReason()));
+                                    }
+                                    visitDetailViewModel.getPatientDetailModel().setHistory(historyBeanList);
+                                }
 
 
                                 if (visitDetailViewModel.isProcedureUpdated()) {
@@ -375,15 +414,6 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         });
     }
 
-    private void computeHeight() {
-        Log.e(TAG, "height: " + visitsDetailRv.getHeight() + " " + visitsDetailRv.computeVerticalScrollRange());
-        if (!isSecondaryApisCalled) {
-            if (visitsDetailRv.computeVerticalScrollRange() < visitsDetailRv.getHeight()) {
-                callSecondaryApis();
-            }
-        }
-    }
-
     private void downloadTranscript(String transcriptUrl, boolean isShowProgress) {
         recentsApiViewModel.downloadTranscriptDetail(transcriptUrl, isShowProgress);
     }
@@ -441,27 +471,56 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                     recentsApiViewModel.getTranscriptionDetail(recentDetail.getTranscription_id(), true);
 
                 Set<String> guidSet = new HashSet<>();
-                if (patientDetail == null)
-                    guidSet.add(patientGuid);
-                if (doctorDetail == null)
-                    guidSet.add(doctorGuid);
 
-                if (!guidSet.isEmpty()) {
-                    GetUserDetails.getInstance(getActivity()).getDetails(guidSet).getHashMapMutableLiveData().observe(this,
-                            new Observer<HashMap<String, CommonUserApiResponseModel>>() {
-                                @Override
-                                public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> stringCommonUserApiResponseModelHashMap) {
-                                    if (stringCommonUserApiResponseModelHashMap != null) {
-                                        if (stringCommonUserApiResponseModelHashMap.containsKey(patientGuid)) {
-                                            visitDetailViewModel.setPatientDetailModel(stringCommonUserApiResponseModelHashMap.get(patientGuid));
+                if (visitDetailViewModel.getDoctorDetailModel() == null) {
+                    guidSet.add(doctorGuid);
+                    if (!guidSet.isEmpty()) {
+                        GetUserDetails
+                                .getInstance(getActivity())
+                                .getDetails(guidSet).getHashMapMutableLiveData().observe(this,
+                                new Observer<HashMap<String, CommonUserApiResponseModel>>() {
+                                    @Override
+                                    public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> stringCommonUserApiResponseModelHashMap) {
+                                        if (stringCommonUserApiResponseModelHashMap != null) {
+                                            if (stringCommonUserApiResponseModelHashMap.containsKey(doctorGuid)) {
+                                                visitDetailViewModel.setDoctorDetailModel(stringCommonUserApiResponseModelHashMap.get(doctorGuid));
+                                            }
+                                            visitDetailListAdapter.setData();
                                         }
-                                        if (stringCommonUserApiResponseModelHashMap.containsKey(doctorGuid)) {
-                                            visitDetailViewModel.setDoctorDetailModel(stringCommonUserApiResponseModelHashMap.get(doctorGuid));
-                                        }
-                                        visitDetailListAdapter.setData();
                                     }
-                                }
-                            });
+                                });
+                    }
+
+                }
+
+                if (visitDetailViewModel.getPatientDetailModel() == null) {
+
+                    guidSet.clear();
+
+                    guidSet.add(patientGuid);
+
+                    if (!guidSet.isEmpty()) {
+                        GetUserDetails
+                                .getInstance(getActivity())
+                                .getAssociationDetail(guidSet).getHashMapMutableLiveData().observe(this,
+                                new Observer<HashMap<String, CommonUserApiResponseModel>>() {
+                                    @Override
+                                    public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> stringCommonUserApiResponseModelHashMap) {
+                                        if (stringCommonUserApiResponseModelHashMap != null) {
+                                            if (stringCommonUserApiResponseModelHashMap.containsKey(patientGuid)) {
+
+                                                CommonUserApiResponseModel userModel = stringCommonUserApiResponseModelHashMap.get(patientGuid);
+
+                                                visitDetailViewModel.setPatientDetailModel(userModel);
+
+                                                visitDetailViewModel.setHistoryList(visitDetailViewModel.getUpdatedHistoryModelList(userModel.getHistory()));
+                                            }
+                                            visitDetailListAdapter.setData();
+                                        }
+                                    }
+                                });
+                    }
+
                 }
             }
         }
@@ -469,12 +528,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void setDetailAdapter() {
-        visitDetailListAdapter = new VisitDetailListAdapter(getActivity(), this, visitDetailViewModel, mode, new OnModeChangeListener() {
-            @Override
-            public void onModeChange(int mode) {
-                setMode(mode);
-            }
-        });
+        visitDetailListAdapter = new VisitDetailListAdapter(getActivity(), this, visitDetailViewModel, mode);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         visitsDetailRv.setLayoutManager(linearLayoutManager);
 
@@ -647,7 +701,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         break;
                 }
                 break;
-            case R.id.print_iv:
+            case R.id.close_iv:
                 printPdf();
                 break;
         }
@@ -728,7 +782,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
         if ((currentUpdateType != null && ((removeList != null && !removeList.isEmpty()) || (addList != null && !addList.isEmpty())))
                 || visitDetailViewModel.isInstructionUpdated() || visitDetailViewModel.isDiagnosisUpdated() || visitDetailViewModel.isTranscriptUpdated() ||
-                visitDetailViewModel.isTranscriptEdited() || visitDetailViewModel.isProcedureUpdated()) {
+                visitDetailViewModel.isTranscriptEdited() || visitDetailViewModel.isHistoryUpdate() || visitDetailViewModel.isProcedureUpdated()) {
 
             if (!isSuccessViewShown) {
                 Bundle bundle = new Bundle();
@@ -779,6 +833,10 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 visitRequestModel.setUpdated_transcript(updatedTranscript);
             }
 
+            if (visitDetailViewModel.isHistoryUpdate()) {
+                visitRequestModel.setPatient_history(visitDetailViewModel.getHistoryList());
+            }
+
             if (visitDetailViewModel.isProcedureUpdated()) {
                 visitRequestModel.setProcedure(new ProcedureModel(visitDetailViewModel.getSelectedCptCodeList()));
             }
@@ -817,7 +875,22 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void printPdf() {
-        //TODO print pdf here
+        if (visitsDetailApiResponseModel.getResult().getVisit_summary() == null) {
+            visitsApiViewModel.getVisitSummary(recentDetail.getOrder_id(), true);
+        } else {
+            showPdfViewFragment(visitsDetailApiResponseModel.getResult().getVisit_summary());
+        }
+    }
+
+    private void showPdfViewFragment(String pdfUrl) {
+        PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.orders));
+        bundle.putString(ArgumentKeys.PDF_URL, pdfUrl);
+        bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+
+        pdfViewerFragment.setArguments(bundle);
+        showSubFragmentInterface.onShowFragment(pdfViewerFragment);
     }
 
     @Override
@@ -842,11 +915,49 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                     visitDetailListAdapter.setData();
                 }
                 break;
+            case RequestID.REQ_SELECT_ICD_CODE:
+                VisitDiagnosisModel visitDiagnosisModel = new VisitDiagnosisModel();
+                List<IcdCodeApiResponseModel.ResultsBean> list = new ArrayList<>();
+
+                if (icdCodesDataViewModel.getSelectedIcdCodeList().getValue() != null) {
+                    for (int i = 0; i < icdCodesDataViewModel.getSelectedIcdCodeList().getValue().size(); i++) {
+                        list.add(icdCodesDataViewModel.getIcdCodeDetailHashMap().getValue().get(icdCodesDataViewModel.getSelectedIcdCodeList().getValue().get(i)));
+                    }
+                }
+
+                visitDiagnosisModel.setICD10_codes(list);
+                visitDetailViewModel.setDiagnosis(visitDiagnosisModel);
+
+                if (visitsDetailApiResponseModel.getResult().getDiagnosis() == null && visitDetailViewModel.getDiagnosis() != null) {
+                    visitDetailViewModel.setDiagnosisUpdated(true);
+
+                } else if (visitsDetailApiResponseModel.getResult().getDiagnosis() != null) {
+
+                    if (visitsDetailApiResponseModel.getResult().getDiagnosis() instanceof VisitDiagnosisModel) {
+                        VisitDiagnosisModel diagnosisModel = (VisitDiagnosisModel) visitsDetailApiResponseModel.getResult().getDiagnosis();
+                        List<String> newICD = icdCodesDataViewModel.getSelectedIcdCodeList().getValue();
+                        List<String> oldICD = new ArrayList<>();
+                        for (int i = 0; i < diagnosisModel.getICD10_codes().size(); i++) {
+                            oldICD.add(diagnosisModel.getICD10_codes().get(i).getCode());
+                        }
+
+                        for (int i = 0; i < newICD.size(); i++) {
+                            if (!oldICD.contains(newICD.get(i))) {
+                                visitDetailViewModel.setDiagnosisUpdated(true);
+                                break;
+                            }
+                        }
+                    } else {
+                        visitDetailViewModel.setDiagnosisUpdated(true);
+                    }
+                }
+
+                visitDetailListAdapter.setData();
+
+                break;
             case RequestID.REQ_VISIT_UPDATE:
                 if (resultCode == Activity.RESULT_OK) {
-//                    isVisitUpdated = true;
                     updateType = data.getStringExtra(ArgumentKeys.UPDATE_TYPE);
-//                    getOrderDetail();
                     switch (updateType) {
                         case VisitDetailConstants.VISIT_TYPE_VITALS:
                             HashMap<Integer, VitalsApiResponseModel> selectedVitals = (HashMap<Integer, VitalsApiResponseModel>) data.getSerializableExtra(ArgumentKeys.SELECTED_VITALS);

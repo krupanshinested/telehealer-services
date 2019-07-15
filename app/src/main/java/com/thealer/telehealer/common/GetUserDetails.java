@@ -1,12 +1,14 @@
 package com.thealer.telehealer.common;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
+import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 
@@ -22,6 +24,8 @@ public class GetUserDetails {
     private static GetUserDetails getUserDetails;
     private GetUsersApiViewModel getUsersApiViewModel;
     public MutableLiveData<HashMap<String, CommonUserApiResponseModel>> hashMapMutableLiveData = new MutableLiveData<>();
+    private AssociationApiViewModel associationApiViewModel;
+    private AssociationApiResponseModel associationApiResponseModel;
 
     public MutableLiveData<HashMap<String, CommonUserApiResponseModel>> getHashMapMutableLiveData() {
         return hashMapMutableLiveData;
@@ -41,15 +45,21 @@ public class GetUserDetails {
             @Override
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
                 if (baseApiResponseModels != null) {
-
-                    ArrayList<CommonUserApiResponseModel> commonUserApiResponseModelArrayList = new ArrayList<>();
-
-                    commonUserApiResponseModelArrayList = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
-
-                    onDataReceived(commonUserApiResponseModelArrayList);
+                    onDataReceived(baseApiResponseModels);
                 }
             }
         });
+
+        getUserDetails.associationApiViewModel = ViewModelProviders.of(fragmentActivity).get(AssociationApiViewModel.class);
+        getUserDetails.associationApiViewModel.baseApiArrayListMutableLiveData.observe(fragmentActivity, new Observer<ArrayList<BaseApiResponseModel>>() {
+            @Override
+            public void onChanged(ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                if (baseApiResponseModels != null) {
+                    onDataReceived(baseApiResponseModels);
+                }
+            }
+        });
+
         return getUserDetails;
     }
 
@@ -73,7 +83,10 @@ public class GetUserDetails {
         return getUserDetails;
     }
 
-    public static void onDataReceived(ArrayList<CommonUserApiResponseModel> commonUserApiResponseModelArrayList) {
+    public static void onDataReceived(ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+
+        ArrayList<CommonUserApiResponseModel> commonUserApiResponseModelArrayList = (ArrayList<CommonUserApiResponseModel>) (Object) baseApiResponseModels;
+
         HashMap<String, CommonUserApiResponseModel> responseModelHashMap = new HashMap<>();
         for (CommonUserApiResponseModel model :
                 commonUserApiResponseModelArrayList) {
@@ -81,5 +94,10 @@ public class GetUserDetails {
         }
 
         getUserDetails.hashMapMutableLiveData.setValue(responseModelHashMap);
+    }
+
+    public GetUserDetails getAssociationDetail(Set<String> guidList) {
+        associationApiViewModel.getAssociationUserDetails(guidList, true);
+        return getUserDetails;
     }
 }

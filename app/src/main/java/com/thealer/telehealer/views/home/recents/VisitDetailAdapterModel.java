@@ -7,6 +7,7 @@ import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiRespo
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.VisitDiagnosisModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.views.home.recents.adapterModels.AddNewModel;
 import com.thealer.telehealer.views.home.recents.adapterModels.CallSummaryModel;
@@ -36,6 +37,7 @@ public class VisitDetailAdapterModel {
     private DocumentsApiResponseModel.ResultBean documentModel;
     private OrdersUserFormsApiResponseModel formsApiResponseModel;
     private List<DietApiResponseModel> dietApiResponseModel;
+    private VisitDiagnosisModel visitDiagnosisModel;
     private List<ProcedureModel.CPTCodesBean> cptCodes;
 
     public VisitDetailAdapterModel(int viewType, ProcedureModel procedureModel) {
@@ -117,6 +119,19 @@ public class VisitDetailAdapterModel {
     public VisitDetailAdapterModel(int viewType, List<DietApiResponseModel> dietApiResponseModel) {
         this.viewType = viewType;
         this.dietApiResponseModel = dietApiResponseModel;
+    }
+
+    public VisitDetailAdapterModel(int viewType, VisitDiagnosisModel visitDiagnosisModel) {
+        this.viewType = viewType;
+        this.visitDiagnosisModel = visitDiagnosisModel;
+    }
+
+    public VisitDiagnosisModel getVisitDiagnosisModel() {
+        return visitDiagnosisModel;
+    }
+
+    public void setVisitDiagnosisModel(VisitDiagnosisModel visitDiagnosisModel) {
+        this.visitDiagnosisModel = visitDiagnosisModel;
     }
 
     public int getViewType() {

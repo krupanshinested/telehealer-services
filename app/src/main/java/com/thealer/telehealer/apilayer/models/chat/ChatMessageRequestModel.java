@@ -47,7 +47,9 @@ public class ChatMessageRequestModel implements Serializable {
         }
 
         public void setReceiver_one_message(String receiver_one_message) {
-            this.receiver_one_message = receiver_one_message.replaceAll("\n", "");
+            if (receiver_one_message != null) {
+                this.receiver_one_message = receiver_one_message.replaceAll("\n", "");
+            }
         }
 
         public String getSender_message() {
@@ -55,7 +57,8 @@ public class ChatMessageRequestModel implements Serializable {
         }
 
         public void setSender_message(String sender_message) {
-            this.sender_message = sender_message.replaceAll("\n", "");
+            if (sender_message != null)
+                this.sender_message = sender_message.replaceAll("\n", "");
         }
 
         public String getFile_type() {
