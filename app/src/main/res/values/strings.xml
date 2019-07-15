@@ -1298,6 +1298,8 @@
     <string name="add_procedure">Add procedure</string>
     <string name="procedure">Procedure</string>
     <string name="cpt" translatable="false">CPT</string>
+    <string name="send_message">Send message</string>
+    <string name="vitals_file">Vitals File</string>
     <string name="visit">Visit</string>
     <string name="payment_pre_authorization">Payment Pre-Authorization</string>
     <string name="payment_pre_authorization_info">You are responsible for patient balances after any or all applicable insurance payments.</string>

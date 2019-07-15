@@ -126,6 +126,7 @@ public class ArgumentKeys {
     public static final String SELECTED_ITEMS = "selected_items";
     public static final String SHOW_PRINT_FILTER = "showPrintFilter";
     public static final String SELECTED_MESSAGE = "selected_messaged";
+    public static final String SELECTED_ORDER_LIST = "selected_order_list";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;

@@ -119,6 +119,8 @@ public class NewVitalsDetailListAdapter extends RecyclerView.Adapter<RecyclerVie
 
                 if (vitalsApiResponseModel.isAbnormal()) {
                     itemHolder.abnormalIndicatorCl.setVisibility(View.VISIBLE);
+                } else {
+                    itemHolder.abnormalIndicatorCl.setVisibility(View.INVISIBLE);
                 }
 
                 if (imageVisible) {
@@ -189,7 +191,7 @@ public class NewVitalsDetailListAdapter extends RecyclerView.Adapter<RecyclerVie
         generateAdapterList();
     }
 
-    public List<VitalsApiResponseModel> getData(){
+    public List<VitalsApiResponseModel> getData() {
         return vitalsApiResponseModelList;
     }
 

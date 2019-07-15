@@ -224,7 +224,8 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                 listOptionTitleTv.setVisibility(View.VISIBLE);
                 listOptionSubTitleTv.setVisibility(View.VISIBLE);
 
-                listOptionTitleTv.setText(ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getData().getDisplayScore());
+                String score = ordersDetailListAdapterModel.getOrdersFormsApiResponseModel().getData().getDisplayScore();
+                listOptionTitleTv.setText(score.equals("0") ? context.getString(R.string.na) : score);
                 listOptionSubTitleTv.setText(context.getString(R.string.score));
 
             }

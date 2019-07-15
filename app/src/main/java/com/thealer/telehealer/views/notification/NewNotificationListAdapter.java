@@ -2,12 +2,22 @@ package com.thealer.telehealer.views.notification;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -40,14 +50,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -60,6 +62,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     public static final String REQUEST_TYPE_CONNECTION = "connection";
     public static final String REQUEST_TYPE_APPOINTMENT = "appointment";
     private final String REQUEST_TYPE_MISSED_CALL = "missed_call";
+    private final String REQUEST_TYPE_CALLS = "calls";
     private final String REQUEST_TYPE_ABNORMAL_VITAL = "vitals";
     private final String MESSAGES = "messages";
 
@@ -145,6 +148,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                 viewHolder.slotCl.setVisibility(View.GONE);
                 viewHolder.bottomView.setVisibility(View.GONE);
 
+                Log.e("aswin", "onBindViewHolder: " + resultModel.getType());
                 switch (resultModel.getType()) {
                     case REQUEST_TYPE_APPOINTMENT:
                         isAddRequestStatus = true;
@@ -198,6 +202,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                         }
                         break;
                     case REQUEST_TYPE_MISSED_CALL:
+                    case REQUEST_TYPE_CALLS:
                         if (UserType.isUserPatient()) {
                             title = activity.getString(R.string.missed_call);
                         } else {
