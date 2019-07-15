@@ -85,7 +85,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/strength_til"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/strength_til"
-                app:spinner_label_text="metric" />
+                app:spinner_label_text="@string/metric" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/direction_til"
@@ -239,7 +239,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/label_cb"
                 app:sub_title_visible="false"
                 app:title_text="@string/click_here_to_select_last_visit"
-                app:view_label="visit" />
+                app:view_label="@string/visit" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

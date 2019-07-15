@@ -1,19 +1,18 @@
 package com.thealer.telehealer.views.home;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -47,14 +46,14 @@ public class UserDetailActivity extends BaseActivity implements AttachObserverIn
         initView();
         showUserDetailFragment();
 
-        if (getIntent().getBooleanExtra(ArgumentKeys.FROM_CALL,false)) {
+        if (getIntent().getBooleanExtra(ArgumentKeys.FROM_CALL, false)) {
             LocalBroadcastManager.getInstance(UserDetailActivity.this).registerReceiver(callStartReceiver, new IntentFilter(Constants.CALL_SCREEN_MAXIMIZE));
         }
     }
 
     @Override
     protected void onDestroy() {
-        if (getIntent().getBooleanExtra(ArgumentKeys.FROM_CALL,false)) {
+        if (getIntent().getBooleanExtra(ArgumentKeys.FROM_CALL, false)) {
             LocalBroadcastManager.getInstance(UserDetailActivity.this).unregisterReceiver(callStartReceiver);
         }
         super.onDestroy();

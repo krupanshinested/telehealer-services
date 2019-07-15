@@ -1,7 +1,10 @@
 package com.thealer.telehealer.apilayer.models.visits;
 
+import com.thealer.telehealer.apilayer.models.commonResponseModel.QuestionnaireBean;
 import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.VisitDiagnosisModel;
+import com.thealer.telehealer.views.home.recents.VisitDetailViewModel;
 
 import java.util.List;
 
@@ -14,8 +17,10 @@ public class UpdateVisitRequestModel {
     private List<Integer> add_associations;
     private List<Integer> remove_associations;
     private String instructions;
-    private String diagnosis;
+    private VisitDiagnosisModel diagnosis;
     private DownloadTranscriptResponseModel updated_transcript;
+    private QuestionnaireBean questionnaire;
+    private List<VisitDetailViewModel.UpdatedHistoryBean> patient_history;
     private ProcedureModel procedure;
 
     public String getAssociation_type() {
@@ -50,11 +55,11 @@ public class UpdateVisitRequestModel {
         this.instructions = instructions;
     }
 
-    public String getDiagnosis() {
+    public VisitDiagnosisModel getDiagnosis() {
         return diagnosis;
     }
 
-    public void setDiagnosis(String diagnosis) {
+    public void setDiagnosis(VisitDiagnosisModel diagnosis) {
         this.diagnosis = diagnosis;
     }
 
@@ -64,6 +69,22 @@ public class UpdateVisitRequestModel {
 
     public void setUpdated_transcript(DownloadTranscriptResponseModel updated_transcript) {
         this.updated_transcript = updated_transcript;
+    }
+
+    public QuestionnaireBean getQuestionnaire() {
+        return questionnaire;
+    }
+
+    public void setQuestionnaire(QuestionnaireBean questionnaire) {
+        this.questionnaire = questionnaire;
+    }
+
+    public List<VisitDetailViewModel.UpdatedHistoryBean> getPatient_history() {
+        return patient_history;
+    }
+
+    public void setPatient_history(List<VisitDetailViewModel.UpdatedHistoryBean> patient_history) {
+        this.patient_history = patient_history;
     }
 
     public ProcedureModel getProcedure() {

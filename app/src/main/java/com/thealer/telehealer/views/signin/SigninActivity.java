@@ -132,7 +132,6 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
                         UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
                         TelehealerFirebaseMessagingService.refresh();
-                        appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
                         appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, authToken);
                         appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, refreshToken);
                         appPreference.setInt(PreferenceConstants.USER_TYPE, Utils.getUserTypeFromRole(whoAmIApiResponseModel.getRole()));

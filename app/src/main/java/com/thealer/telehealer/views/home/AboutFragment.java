@@ -249,7 +249,7 @@ public class AboutFragment extends BaseFragment {
                                 clinicAddressTv.setText(clinicAddress);
                             }
 
-                            if (userDetail.getUser_detail().getData().getWebsite() != null) {
+                            if (userDetail.getUser_detail().getData().getWebsite() != null && !userDetail.getUser_detail().getData().getWebsite().isEmpty()) {
                                 websiteCv.setVisibility(View.VISIBLE);
                                 websiteTv.setText(userDetail.getUser_detail().getData().getWebsite());
                             }

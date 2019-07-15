@@ -121,6 +121,8 @@ public class ArgumentKeys {
     public static final String SHOW_FAVORITES = "showFavorites";
     public static final String PRECANNED_MESSAGES = "PrecannedMessages";
     public static final String IS_ONLY_CALLS = "isOnlyCalls";
+    public static final String IS_UPDATE_VISIT = "isUpdateVisit";
+    public static final String IS_DONE_ENABLE = "isDoneEnable";
     public static final String SELECTED_ITEMS = "selected_items";
     public static final String SHOW_PRINT_FILTER = "showPrintFilter";
     public static final String SELECTED_MESSAGE = "selected_messaged";

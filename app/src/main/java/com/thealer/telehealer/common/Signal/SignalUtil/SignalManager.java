@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import com.thealer.telehealer.common.Signal.SignalModels.IdentityKey;
 import com.thealer.telehealer.common.Signal.SignalModels.PreKey;
 import com.thealer.telehealer.common.Signal.SignalModels.SignalKey;
+import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
 import com.thealer.telehealer.common.Signal.SignalModels.SignedPreKey;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 
@@ -54,8 +55,8 @@ public class SignalManager {
         }
     }
 
-    public static SignalKey generateNewKeys() throws InvalidKeyException {
-        SignalKey key = new SignalKey();
+    public static SignalKeyPostModel generateNewKeys() throws InvalidKeyException {
+        SignalKeyPostModel key = new SignalKeyPostModel();
 
         IdentityKeyPair identityKeyPair = KeyHelper.generateIdentityKeyPair();
 
@@ -86,10 +87,10 @@ public class SignalManager {
         identityKey.setPrivKey(SignalEncodeDecode.privateKey(identityKeyPair.getPrivateKey()));
         identityKey.setPubKey(SignalEncodeDecode.publicKey(identityKeyPair.getPublicKey()));
 
-        key.setPre_key(preKey);
-        key.setSigned_pre_key(signedPreKey);
-        key.setIdentity_key(identityKey);
-        key.setRegistration_id(generateRegistrationId());
+        key.setPreKey(preKey);
+        key.setSignedPreKey(signedPreKey);
+        key.setIdentityKey(identityKey);
+        key.setRegistrationId(generateRegistrationId());
         key.setDevice_id(1);
         key.setUser_guid(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         return key;

@@ -35,6 +35,7 @@ public class VisitsDetailApiResponseModel extends BaseApiResponseModel {
         private Object cost;
         private String instructions;
         private Object diagnosis;
+        private String visit_summary;
         private ProcedureModel procedure;
         private String created_at;
         private String updated_at;
@@ -320,7 +321,7 @@ public class VisitsDetailApiResponseModel extends BaseApiResponseModel {
             return diagnosis;
         }
 
-        public void setDiagnosis(String diagnosis) {
+        public void setDiagnosis(Object diagnosis) {
             this.diagnosis = diagnosis;
         }
 
@@ -330,6 +331,14 @@ public class VisitsDetailApiResponseModel extends BaseApiResponseModel {
 
         public void setProcedure(ProcedureModel procedure) {
             this.procedure = procedure;
+        }
+
+        public String getVisit_summary() {
+            return visit_summary;
+        }
+
+        public void setVisit_summary(String visit_summary) {
+            this.visit_summary = visit_summary;
         }
 
         public String getTranscription_status() {
