@@ -1172,7 +1172,7 @@
     <string name="mci_empty_error">El número MCI no puede estar vacío</string>
     <string name="registration_number">Número de registro</string>
     <string name="year_of_registration">Año de registro</string>
-    <string name="state_medical_council_for_mci">Consejo medico estatal para mci</string>
+    <string name="state_medical_council_for_mci">Consejo medico estatal para MCI</string>
     <string name="account_locked_info">Su cuenta ha sido bloqueada por el siguiente %s horas. O bien puede esperar o restablecer su contraseña.</string>
     <string name="abnormal_vital">Vital anormal</string>
     <string name="captured_via">Capturado a través de %1$s</string>
@@ -1183,6 +1183,7 @@
     <string name="no_source_found_message">Las aplicaciones de fuente vital de AppleHealth eventualmente aparecerán aquí</string>
     <string name="health_summary">Resumen de salud</string>
     <string name="last_login">Último acceso : %s</string>
+    <string name="pin">Alfiler</string>
     <string name="logs">Troncos</string>
     <string name="access_logs">Registros de acceso</string>
 </resources>

@@ -40,6 +40,7 @@
             android:visibility="gone"
             app:ccp_autoDetectCountry="true"
             app:ccp_countryAutoDetectionPref="LOCALE_ONLY"
+            app:ccp_showArrow="false"
             app:ccp_showFullName="false"
             app:ccp_showNameCode="false"
             app:ccp_showPhoneCode="false"
