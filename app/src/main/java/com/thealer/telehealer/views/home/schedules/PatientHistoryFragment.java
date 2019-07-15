@@ -109,8 +109,8 @@ public class PatientHistoryFragment extends BaseFragment {
                     appPreference.setBoolean(PreferenceConstants.IS_PAYMENT_PRE_AUTH_SHOWN, true);
                     Bundle bundle = new Bundle();
                     bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_payment_preauthorization);
-                    bundle.putString(ArgumentKeys.TITLE, "Payment Pre-Authorization");
-                    bundle.putString(ArgumentKeys.DESCRIPTION, "You are responsible for patient balances after any or all applicable insurance payments.");
+                    bundle.putString(ArgumentKeys.TITLE, getString(R.string.payment_pre_authorization));
+                    bundle.putString(ArgumentKeys.DESCRIPTION, getString(R.string.payment_pre_authorization_info));
                     bundle.putString(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.request_appointment));
                     startActivityForResult(new Intent(getActivity(), ContentActivity.class).putExtras(bundle), RequestID.REQ_CONTENT_VIEW);
                 }

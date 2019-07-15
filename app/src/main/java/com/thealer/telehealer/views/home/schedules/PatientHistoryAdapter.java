@@ -1,9 +1,5 @@
 package com.thealer.telehealer.views.home.schedules;
 
-import androidx.lifecycle.ViewModelProviders;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -11,11 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
+import com.thealer.telehealer.common.CustomEditText;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -137,13 +138,13 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private CheckBox itemSwitch;
-        private EditText commentsEt;
+        private CustomEditText commentsEt;
         private TextView yesOrNoTv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             itemSwitch = (CheckBox) itemView.findViewById(R.id.item_switch);
-            commentsEt = (EditText) itemView.findViewById(R.id.comments_et);
+            commentsEt = (CustomEditText) itemView.findViewById(R.id.comments_et);
             yesOrNoTv = (TextView) itemView.findViewById(R.id.yesOrNo_tv);
         }
     }

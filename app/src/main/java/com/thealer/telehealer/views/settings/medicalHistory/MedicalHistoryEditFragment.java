@@ -1,18 +1,10 @@
 package com.thealer.telehealer.views.settings.medicalHistory;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -24,6 +16,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -38,6 +39,8 @@ import com.thealer.telehealer.apilayer.models.medicalHistory.MedicationModel;
 import com.thealer.telehealer.apilayer.models.medicalHistory.SexualHistoryModel;
 import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
 import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
+import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
+import com.thealer.telehealer.apilayer.models.visits.VisitsApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -665,7 +668,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
                     if (baseApiResponseModel != null) {
                         if (baseApiResponseModel.isSuccess()) {
                             updateWhoAmI(questionaryBodyModel);
-                            showSuccessAlert(getString(R.string.success), baseApiResponseModel.getMessage());
+                            showSuccessAlert();
                         }
                     }
                 }
@@ -674,60 +677,87 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
             appointmentSlotUpdate.updateUserQuestionary(questionaryBodyModel, true);
 
         } else {
-            MedicalHistoryApiViewModel medicalHistoryApiViewModel = ViewModelProviders.of(this).get(MedicalHistoryApiViewModel.class);
-            attachObserverInterface.attachObserver(medicalHistoryApiViewModel);
-            medicalHistoryApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-                @Override
-                public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                    if (baseApiResponseModel != null) {
-                        if (baseApiResponseModel.isSuccess()) {
-                            if (getTargetFragment() != null) {
-                                Bundle bundle = new Bundle();
-                                if (commonUserApiResponseModel.getQuestionnaire() == null) {
-                                    commonUserApiResponseModel.setQuestionnaire(new QuestionnaireBean());
-                                }
-                                switch (type) {
-                                    case MH_MEDICATION:
-                                        commonUserApiResponseModel.getQuestionnaire().setMedication(questionaryBodyModel.getQuestionnaire().getMedication());
-                                        break;
-                                    case MH_PAST_MEDICAL_HISTORY:
-                                        commonUserApiResponseModel.getQuestionnaire().setPastMedicalHistoryBean(questionaryBodyModel.getQuestionnaire().getPastMedicalHistoryBean());
-                                        break;
-                                    case MH_SURGERIES:
-                                        commonUserApiResponseModel.getQuestionnaire().setSurgeries(questionaryBodyModel.getQuestionnaire().getSurgeries());
-                                        break;
-                                    case MH_FAMILY_HISTORY:
-                                        commonUserApiResponseModel.getQuestionnaire().setFamilyHistoryBean(questionaryBodyModel.getQuestionnaire().getFamilyHistoryBean());
-                                        break;
-                                    case MH_PERSONAL_HISTORY:
-                                        commonUserApiResponseModel.getQuestionnaire().setPersonalHistoryBean(questionaryBodyModel.getQuestionnaire().getPersonalHistoryBean());
-                                        break;
-                                    case MH_HEALTH_HABITS:
-                                        commonUserApiResponseModel.getQuestionnaire().setHealthHabitBean(questionaryBodyModel.getQuestionnaire().getHealthHabitBean());
-                                        break;
-                                    case MH_SEXUAL_HISTORY:
-                                        commonUserApiResponseModel.getQuestionnaire().setSexualHistoryBean(questionaryBodyModel.getQuestionnaire().getSexualHistoryBean());
-                                        break;
-                                    case MH_RECENT_IMMUNIZATION:
-                                        commonUserApiResponseModel.getQuestionnaire().setRecentImmunizationBean(questionaryBodyModel.getQuestionnaire().getRecentImmunizationBean());
-                                        break;
-                                }
-
-                                bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModel);
-                                Intent intent = new Intent();
-                                intent.putExtras(bundle);
-                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                            }
-                            showSuccessAlert(getString(R.string.success), baseApiResponseModel.getMessage());
-                        }
-                    }
-                }
-            });
 
             if (commonUserApiResponseModel != null) {
-                medicalHistoryApiViewModel.updateQuestionary(commonUserApiResponseModel.getUser_guid(), questionaryBodyModel, true);
+
+                if (getArguments() != null && getArguments().getBoolean(ArgumentKeys.IS_UPDATE_VISIT, false)) {
+
+                    VisitsApiViewModel visitsApiViewModel = ViewModelProviders.of(this).get(VisitsApiViewModel.class);
+
+                    visitsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+                        @Override
+                        public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                            proceedUpdate(questionaryBodyModel);
+                        }
+                    });
+
+                    UpdateVisitRequestModel updateVisitRequestModel = new UpdateVisitRequestModel();
+
+                    updateVisitRequestModel.setQuestionnaire(questionaryBodyModel.getQuestionnaire());
+
+                    visitsApiViewModel.updateOrder(getArguments().getString(ArgumentKeys.ORDER_ID), updateVisitRequestModel, null, true);
+
+                } else {
+
+                    MedicalHistoryApiViewModel medicalHistoryApiViewModel = ViewModelProviders.of(this).get(MedicalHistoryApiViewModel.class);
+                    attachObserverInterface.attachObserver(medicalHistoryApiViewModel);
+                    medicalHistoryApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+                        @Override
+                        public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                            if (baseApiResponseModel != null) {
+                                if (baseApiResponseModel.isSuccess()) {
+                                    proceedUpdate(questionaryBodyModel);
+                                }
+                            }
+                        }
+                    });
+
+                    medicalHistoryApiViewModel.updateQuestionary(commonUserApiResponseModel.getUser_guid(), questionaryBodyModel, true);
+                }
             }
         }
+    }
+
+    private void proceedUpdate(UpdateQuestionaryBodyModel questionaryBodyModel) {
+
+        if (getTargetFragment() != null) {
+            Bundle bundle = new Bundle();
+            if (commonUserApiResponseModel.getQuestionnaire() == null) {
+                commonUserApiResponseModel.setQuestionnaire(new QuestionnaireBean());
+            }
+            switch (type) {
+                case MH_MEDICATION:
+                    commonUserApiResponseModel.getQuestionnaire().setMedication(questionaryBodyModel.getQuestionnaire().getMedication());
+                    break;
+                case MH_PAST_MEDICAL_HISTORY:
+                    commonUserApiResponseModel.getQuestionnaire().setPastMedicalHistoryBean(questionaryBodyModel.getQuestionnaire().getPastMedicalHistoryBean());
+                    break;
+                case MH_SURGERIES:
+                    commonUserApiResponseModel.getQuestionnaire().setSurgeries(questionaryBodyModel.getQuestionnaire().getSurgeries());
+                    break;
+                case MH_FAMILY_HISTORY:
+                    commonUserApiResponseModel.getQuestionnaire().setFamilyHistoryBean(questionaryBodyModel.getQuestionnaire().getFamilyHistoryBean());
+                    break;
+                case MH_PERSONAL_HISTORY:
+                    commonUserApiResponseModel.getQuestionnaire().setPersonalHistoryBean(questionaryBodyModel.getQuestionnaire().getPersonalHistoryBean());
+                    break;
+                case MH_HEALTH_HABITS:
+                    commonUserApiResponseModel.getQuestionnaire().setHealthHabitBean(questionaryBodyModel.getQuestionnaire().getHealthHabitBean());
+                    break;
+                case MH_SEXUAL_HISTORY:
+                    commonUserApiResponseModel.getQuestionnaire().setSexualHistoryBean(questionaryBodyModel.getQuestionnaire().getSexualHistoryBean());
+                    break;
+                case MH_RECENT_IMMUNIZATION:
+                    commonUserApiResponseModel.getQuestionnaire().setRecentImmunizationBean(questionaryBodyModel.getQuestionnaire().getRecentImmunizationBean());
+                    break;
+            }
+
+            bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModel);
+            Intent intent = new Intent();
+            intent.putExtras(bundle);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+        }
+        showSuccessAlert();
     }
 
     private void updateWhoAmI(UpdateQuestionaryBodyModel questionaryBodyModel) {
@@ -736,8 +766,8 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
         UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
     }
 
-    private void showSuccessAlert(String title, String message) {
-        Utils.showAlertDialog(getActivity(), title, getString(R.string.medical_questionaries_updated), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+    private void showSuccessAlert() {
+        Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.medical_questionaries_updated), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

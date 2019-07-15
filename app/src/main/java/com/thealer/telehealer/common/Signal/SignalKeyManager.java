@@ -1,5 +1,7 @@
 package com.thealer.telehealer.common.Signal;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -9,10 +11,12 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatApiViewModel;
 import com.thealer.telehealer.apilayer.models.chat.UserKeysApiResponseModel;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.Signal.SignalModels.SignalKey;
+import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
 import com.thealer.telehealer.common.Signal.SignalUtil.SignalManager;
 
 import org.whispersystems.libsignal.InvalidKeyException;
@@ -27,7 +31,7 @@ public class SignalKeyManager {
     private static ChatApiViewModel chatApiViewModel;
     public MutableLiveData<UserKeysApiResponseModel> userKeysApiResponseModel = new MutableLiveData<>();
     private boolean isOwn, isUpdatePreference, isPostingKey;
-    private SignalKey signalKey;
+    private SignalKeyPostModel signalKey;
 
     public MutableLiveData<UserKeysApiResponseModel> getUserKeysApiResponseModel() {
         return userKeysApiResponseModel;
@@ -48,12 +52,31 @@ public class SignalKeyManager {
                     } else if (signalKeyManager.isPostingKey) {
                         signalKeyManager.isPostingKey = false;
                         UserKeysApiResponseModel userKeysApiResponseModel = new UserKeysApiResponseModel();
-                        userKeysApiResponseModel.setData(signalKeyManager.signalKey);
+                        SignalKey signalKey = new SignalKey(signalKeyManager.signalKey.getDevice_id(),
+                                signalKeyManager.signalKey.getUser_id(),
+                                signalKeyManager.signalKey.getRegistrationId(),
+                                signalKeyManager.signalKey.getPreKey(),
+                                signalKeyManager.signalKey.getSignedPreKey(),
+                                signalKeyManager.signalKey.getIdentityKey(),
+                                signalKeyManager.signalKey.getUser_guid(),
+                                signalKeyManager.signalKey.getEncryption_key_id());
+
+                        userKeysApiResponseModel.setData(signalKey);
                         onDataReceived(userKeysApiResponseModel);
                     }
                 }
             }
         });
+
+        chatApiViewModel.getErrorModelLiveData().observe(fragmentActivity, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                if (errorModel.getStatusCode() == 404) {
+                    postNewKey();
+                }
+            }
+        });
+
         if (signalKeyManager == null)
             signalKeyManager = new SignalKeyManager();
 
@@ -62,19 +85,23 @@ public class SignalKeyManager {
 
     private static void onDataReceived(UserKeysApiResponseModel userKeysApiResponseModel) {
         if (signalKeyManager.isOwn && userKeysApiResponseModel == null) {
-            try {
-                signalKeyManager.signalKey = SignalManager.generateNewKeys();
-                signalKeyManager.isPostingKey = true;
-                chatApiViewModel.postUserKeys(signalKeyManager.signalKey, true);
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
-            }
+            postNewKey();
         } else {
             signalKeyManager.userKeysApiResponseModel.setValue(userKeysApiResponseModel);
 
             if (signalKeyManager.isUpdatePreference) {
                 appPreference.setString(PreferenceConstants.USER_KEYS, new Gson().toJson(userKeysApiResponseModel));
             }
+        }
+    }
+
+    private static void postNewKey() {
+        try {
+            signalKeyManager.signalKey = SignalManager.generateNewKeys();
+            signalKeyManager.isPostingKey = true;
+            chatApiViewModel.postUserKeys(signalKeyManager.signalKey, true);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
         }
     }
 

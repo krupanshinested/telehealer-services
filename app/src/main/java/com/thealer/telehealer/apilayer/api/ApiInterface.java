@@ -55,6 +55,7 @@ import com.thealer.telehealer.apilayer.models.pendingInvites.PendingInvitesNonRe
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.VisitSummaryApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseModel;
 import com.thealer.telehealer.apilayer.models.requestotp.OtpVerificationResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
@@ -70,7 +71,7 @@ import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
-import com.thealer.telehealer.common.Signal.SignalModels.SignalKey;
+import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 
 import java.util.ArrayList;
@@ -231,6 +232,9 @@ public interface ApiInterface {
 
     @PUT("api/associations/{id}")
     Observable<BaseApiResponseModel> updateAssociationDetail(@Path(ID) String userGuid, @Body UpdateAssociationRequestModel requestModel);
+
+    @GET("api/associations")
+    Observable<ArrayList<CommonUserApiResponseModel>> getAssociationUserDetail(@Query(FILTER_USER_GUID_IN) String guidList);
 
     @GET("api/correspondence-history")
     Observable<RecentsApiResponseModel> getUserCorrespondentHistory(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(MONTH) String month, @Query(CALLS) boolean calls, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
@@ -536,7 +540,7 @@ public interface ApiInterface {
     Observable<UserKeysApiResponseModel> getUserKeys(@Query(USER_GUID) String userGuid);
 
     @POST("api/signal/keys")
-    Observable<UserKeysApiResponseModel> postUserKeys(@Body SignalKey signalKey);
+    Observable<UserKeysApiResponseModel> postUserKeys(@Body SignalKeyPostModel signalKey);
 
     @GET("api/messages")
     Observable<ChatApiResponseModel> getChatMessages(@Query("to") String userGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
@@ -552,6 +556,9 @@ public interface ApiInterface {
 
     @GET("api/call/{id}")
     Observable<VisitsDetailApiResponseModel> getOrderDetail(@Path(ID) String orderId, @Query(DOCTOR_GUID) String doctorGuid);
+
+    @GET("api/call/{id}")
+    Observable<VisitSummaryApiResponseModel> getVisitSummary(@Path(ID) String orderId, @Query("visit_summary") boolean isVisitSummary);
 
     @GET("api/log/requests-log")
     Observable<AccessLogApiResponseModel> getAccessLogs(@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query("method") String method);

@@ -9,6 +9,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Signal.SignalModels.SignalKey;
+import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
@@ -41,7 +42,7 @@ public class ChatApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void postUserKeys(@NonNull SignalKey signalKey, boolean isShowProgress) {
+    public void postUserKeys(@NonNull SignalKeyPostModel signalKey, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
