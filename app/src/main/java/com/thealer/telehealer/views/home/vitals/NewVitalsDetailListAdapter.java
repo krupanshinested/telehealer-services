@@ -40,7 +40,7 @@ public class NewVitalsDetailListAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private List<VitalAdapterModel> adapterModelList = new ArrayList<>();
     private FragmentActivity activity;
-    private List<VitalsApiResponseModel> vitalsApiResponseModelList;
+    private List<VitalsApiResponseModel> vitalsApiResponseModelList = new ArrayList<>();
     private boolean imageVisible;
     private int mode;
     private OnListItemSelectInterface onListItemSelectInterface;
@@ -189,6 +189,10 @@ public class NewVitalsDetailListAdapter extends RecyclerView.Adapter<RecyclerVie
         generateAdapterList();
     }
 
+    public List<VitalsApiResponseModel> getData(){
+        return vitalsApiResponseModelList;
+    }
+
     private void generateAdapterList() {
         adapterModelList.clear();
 
@@ -206,6 +210,10 @@ public class NewVitalsDetailListAdapter extends RecyclerView.Adapter<RecyclerVie
     public void setMode(int mode) {
         this.mode = mode;
         notifyDataSetChanged();
+    }
+
+    public List<VitalsApiResponseModel> getItems() {
+        return vitalsApiResponseModelList;
     }
 
     private class ItemHolder extends RecyclerView.ViewHolder {

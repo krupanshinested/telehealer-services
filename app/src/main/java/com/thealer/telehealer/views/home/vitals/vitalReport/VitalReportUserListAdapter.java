@@ -17,6 +17,7 @@ import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
 import java.util.ArrayList;
@@ -31,14 +32,11 @@ public class VitalReportUserListAdapter extends RecyclerView.Adapter<VitalReport
     private FragmentActivity fragmentActivity;
     private List<CommonUserApiResponseModel> commonUserApiResponseModelList = new ArrayList<>();
 
-    private ShowSubFragmentInterface showSubFragmentInterface;
-    private String filter;
-    private String doctorGuid;
+    private OnListItemSelectInterface onListItemSelectInterface;
 
-    public VitalReportUserListAdapter(FragmentActivity activity, String doctorGuid) {
+    public VitalReportUserListAdapter(FragmentActivity activity, OnListItemSelectInterface onListItemSelectInterface) {
         this.fragmentActivity = activity;
-        this.showSubFragmentInterface = (ShowSubFragmentInterface) activity;
-        this.doctorGuid = doctorGuid;
+        this.onListItemSelectInterface = onListItemSelectInterface;
     }
 
     @NonNull
@@ -59,13 +57,10 @@ public class VitalReportUserListAdapter extends RecyclerView.Adapter<VitalReport
         viewHolder.patientTemplateCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                VitalUserReportListFragment vitalUserReportListFragment = new VitalUserReportListFragment();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModelList.get(i));
-                bundle.putString(ArgumentKeys.SEARCH_TYPE, filter);
-                bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
-                vitalUserReportListFragment.setArguments(bundle);
-                showSubFragmentInterface.onShowFragment(vitalUserReportListFragment);
+
+                onListItemSelectInterface.onListItemSelected(i, bundle);
 
                 Utils.hideKeyboard(fragmentActivity);
             }
@@ -80,9 +75,8 @@ public class VitalReportUserListAdapter extends RecyclerView.Adapter<VitalReport
         return commonUserApiResponseModelList.size();
     }
 
-    public void setData(List<CommonUserApiResponseModel> vitalReportApiReponseModel, String filter) {
+    public void setData(List<CommonUserApiResponseModel> vitalReportApiReponseModel) {
         this.commonUserApiResponseModelList = vitalReportApiReponseModel;
-        this.filter = filter;
         notifyDataSetChanged();
     }
 

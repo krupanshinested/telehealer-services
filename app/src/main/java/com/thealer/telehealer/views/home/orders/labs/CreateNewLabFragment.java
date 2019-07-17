@@ -41,6 +41,8 @@ import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
 /**
  * Created by Aswin on 30,November,2018
  */
@@ -124,7 +126,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
         saveBtn.setOnClickListener(this);
         saveFaxBtn.setOnClickListener(this);
 
-        if (isIndianUser())
+        if (appConfig.isIndianUser(getActivity()))
             copyOcv.setVisibility(View.GONE);
 
         if (getArguments() != null) {

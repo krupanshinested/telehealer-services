@@ -1184,6 +1184,7 @@
     <string name="health_summary">Resumen de salud</string>
     <string name="last_login">Último acceso : %s</string>
     <string name="pin">Alfiler</string>
+    <string name="custom_range">Rango personalizado</string>
     <string name="logs">Troncos</string>
     <string name="access_logs">Registros de acceso</string>
 </resources>

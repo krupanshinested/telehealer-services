@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.monitoring.diet;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
@@ -8,7 +9,9 @@ import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -160,12 +163,17 @@ class DietPdfGenerator {
     private final String CONTENT_TITLE = "#SUB_TITLE#";
     private final String CONTENT_VALUE = "#SUB_VALUE#";
 
+    private String startDate, endDate;
+
 
     public DietPdfGenerator(Context context) {
         this.context = context;
     }
 
-    public String getPdfHtmlContent(Map<String, ArrayList<DietApiResponseModel>> pdfList, UserBean userBean) {
+    public String getPdfHtmlContent(Map<String, ArrayList<DietApiResponseModel>> pdfList, UserBean userBean, String startDate, String endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+
         String body = getBody(pdfList);
         String pdfHtml = getHtml(pdfList, userBean);
         return pdfHtml.replace(PDF_BODY, body);
@@ -186,7 +194,7 @@ class DietPdfGenerator {
         String nutrients_label = context.getString(R.string.nutrition_facts).toUpperCase();
 
         String name, dob, gender;
-        String period = calculatePeriod(pdfList.keySet());
+        String period = calculatePeriod();
         if (userBean != null) {
             name = userBean.getName();
             dob = userBean.getDob().replace("DoB : ", "");
@@ -215,18 +223,14 @@ class DietPdfGenerator {
                 .replace(NUTRIENTS_LABLE, nutrients_label);
     }
 
-    private String calculatePeriod(Set<String> keySet) {
-        String endingDate = Utils.getCurrentFomatedDate();
-
-        List<String> sortedDate = new ArrayList<>(keySet);
-        Collections.sort(sortedDate, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return Utils.getDateFromString(o1).compareTo(Utils.getDateFromString(o2));
-            }
-        });
-
-        return Utils.getDayMonthYear(sortedDate.get(0)) + " - " + endingDate;
+    private String calculatePeriod() {
+        if (startDate == null && endDate == null) {
+            Calendar calendar = Calendar.getInstance();
+            endDate = Utils.getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+            calendar.add(Calendar.DAY_OF_WEEK, -7);
+            startDate = Utils.getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+        }
+        return Utils.getDayMonthYear(startDate) + " - " + Utils.getDayMonthYear(endDate);
     }
 
     private String getBody(Map<String, ArrayList<DietApiResponseModel>> pdfList) {
