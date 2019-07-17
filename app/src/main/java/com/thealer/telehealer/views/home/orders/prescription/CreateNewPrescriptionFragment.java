@@ -36,6 +36,8 @@ import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
 /**
  * Created by Aswin on 30,November,2018
  */
@@ -376,7 +378,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
                 showQuickLogin();
                 break;
             case R.id.save_fax_btn:
-                if (isIndianUser())
+                if (appConfig.isIndianUser(getActivity()))
                     sendFaxByNumber();
                 else
                     saveAndFaxPrescription();

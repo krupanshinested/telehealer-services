@@ -157,6 +157,6 @@ public class VitalsConstant {
     }
 
     public static ArrayList<String> getVitalPrintOptions(Context context) {
-        return new ArrayList<>(Arrays.asList(context.getString(R.string.PRINT_1_WEEK), context.getString(R.string.PRINT_2_WEEK), context.getString(R.string.PRINT_1_MONTH), context.getString(R.string.VITAL_PRINT_ALL)));
+        return new ArrayList<>(Arrays.asList(context.getString(R.string.PRINT_1_WEEK), context.getString(R.string.PRINT_2_WEEK), context.getString(R.string.PRINT_1_MONTH), context.getString(R.string.custom_range)));
     }
 }
