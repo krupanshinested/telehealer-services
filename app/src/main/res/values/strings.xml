@@ -1250,6 +1250,7 @@
     <string name="litres">litres</string>
     <string name="years">years</string>
     <string name="pin">Pin</string>
+    <string name="custom_range">Custom range</string>
     <string name="logs">Logs</string>
     <string name="access_logs">Access Logs</string>
 </resources>

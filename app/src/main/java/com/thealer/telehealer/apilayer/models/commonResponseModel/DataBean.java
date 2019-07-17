@@ -166,6 +166,19 @@ public class DataBean extends ViewModel implements Serializable {
         this.practices = practices;
     }
 
+    public String getPracticeAddress(PracticesBean practicesBean) {
+
+        return practicesBean.getVisit_address().getStreet() +
+                "," +
+                practicesBean.getVisit_address().getStreet2() +
+                "," +
+                practicesBean.getVisit_address().getCity() +
+                "," +
+                practicesBean.getVisit_address().getState() +
+                "," +
+                practicesBean.getVisit_address().getZip();
+    }
+
     public String getInsurance_front() {
         return insurance_front;
     }

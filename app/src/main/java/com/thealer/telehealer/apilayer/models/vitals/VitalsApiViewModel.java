@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -39,17 +40,36 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getUserFilteredVitals(String type, String startDate, String endDate, String user_guid, String doctorGuid, int page, boolean isShowProgress) {
+    public void getUserFilteredVitals(String filter, String startDate, String endDate, String user_guid, String doctorGuid, int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUserFilteredVitals(type, startDate, endDate, user_guid, doctorGuid, true, page, Constants.PAGINATION_SIZE)
+                    getAuthApiService().getUserFilteredVitals(filter, startDate, endDate, user_guid, doctorGuid, true, page, Constants.PAGINATION_SIZE)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getUserFilteredVitals(String type,String filter, String startDate, String endDate, String user_guid, String doctorGuid, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getUserFilteredVitals(type, filter, startDate, endDate, user_guid, doctorGuid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAListObserver<VitalsApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(ArrayList<VitalsApiResponseModel> data) {
+                                    ArrayList<BaseApiResponseModel> baseApiResponseModelArrayList = new ArrayList<>(data);
+                                    baseApiArrayListMutableLiveData.setValue(baseApiResponseModelArrayList);
                                 }
                             });
                 }
