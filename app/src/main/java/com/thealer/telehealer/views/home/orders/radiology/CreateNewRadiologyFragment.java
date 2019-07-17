@@ -47,6 +47,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
 /**
  * Created by Aswin on 10,December,2018
  */
@@ -161,7 +163,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
         saveBtn.setOnClickListener(this);
         saveFaxBtn.setOnClickListener(this);
 
-        if (isIndianUser()) {
+        if (appConfig.isIndianUser(getActivity())) {
             copyResultOcv.setVisibility(View.GONE);
         }
         icdListRv.setLayoutManager(new LinearLayoutManager(getActivity()));

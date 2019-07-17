@@ -331,7 +331,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                                 dateEt.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Utils.showDatePickerDialog(getActivity(), Constants.TYPE_DOB, new DatePickerDialog.OnDateSetListener() {
+                                        Utils.showDatePickerDialog(getActivity(), null, Constants.TYPE_DOB, new DatePickerDialog.OnDateSetListener() {
                                             @Override
                                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                                                 dateEt.setText(Utils.getFormatedDate(year, month, dayOfMonth));
@@ -392,7 +392,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                                 formDateEt.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Utils.showDatePickerDialog(getActivity(), Constants.TYPE_DOB, new DatePickerDialog.OnDateSetListener() {
+                                        Utils.showDatePickerDialog(getActivity(), null, Constants.TYPE_DOB, new DatePickerDialog.OnDateSetListener() {
                                             @Override
                                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                                                 selectedYear[0] = year;

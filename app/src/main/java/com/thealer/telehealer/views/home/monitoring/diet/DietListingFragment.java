@@ -1,16 +1,10 @@
 package com.thealer.telehealer.views.home.monitoring.diet;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,6 +13,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -179,7 +180,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
                     case R.id.menu_filter:
                         selectedList.clear();
                         selectedDietMap.clear();
-                        Utils.showMonitoringFilter(getActivity(), new OnListItemSelectInterface() {
+                        Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
                             @Override
                             public void onListItemSelected(int position, Bundle bundle) {
                                 String selectedItem = bundle.getString(Constants.SELECTED_ITEM);
@@ -202,6 +203,13 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
 
                                         dietListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
                                     }
+
+
+                                    getArguments().putString(ArgumentKeys.SELECTED_DATE, selectedItem);
+                                    getArguments().putString(ArgumentKeys.SEARCH_TYPE, filter);
+                                    getArguments().putString(ArgumentKeys.START_DATE, startDate);
+                                    getArguments().putString(ArgumentKeys.END_DATE, endDate);
+
                                     setToolbarTitle(selectedItem);
                                 }
                                 getDiets(true);
@@ -209,7 +217,11 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
                         });
                         break;
                     case R.id.menu_print:
-                        showDietPrintOptions();
+                        if (getArguments().getBoolean(ArgumentKeys.SHOW_PRINT_FILTER, true)) {
+                            showDietPrintOptions();
+                        } else {
+                            generatePdf(getString(R.string.DIET_PRINT_ALL));
+                        }
                         break;
                     case R.id.menu_next:
                         switch (mode) {
@@ -222,8 +234,6 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
                                                 .putExtra(ArgumentKeys.USER_GUID, userGuid)
                                                 .putExtra(ArgumentKeys.DOCTOR_GUID, doctorGuid), RequestID.REQ_VISIT_RECENT);
                                     } else {
-//                                        addVisit(orderId);
-
                                         if (getTargetFragment() != null)
                                             getTargetFragment().onActivityResult(RequestID.REQ_VISIT_UPDATE, Activity.RESULT_OK,
                                                     new Intent().putExtra(ArgumentKeys.UPDATE_TYPE, VisitDetailConstants.VISIT_TYPE_DIETS)
@@ -325,6 +335,14 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
             }
 
             filter = getArguments().getString(ArgumentKeys.SEARCH_TYPE);
+            startDate = getArguments().getString(ArgumentKeys.START_DATE);
+            endDate = getArguments().getString(ArgumentKeys.END_DATE);
+            String title = getArguments().getString(ArgumentKeys.SELECTED_DATE);
+
+            if (title == null)
+                title = filter;
+
+            setToolbarTitle(title);
         }
 
         updateUI();
@@ -333,7 +351,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void setToolbarTitle(String text) {
-        if (text.equals(getString(R.string.all))) {
+        if (text == null || text.equals(getString(R.string.all))) {
             toolbarTitle.setText(getString(R.string.diets));
         } else {
             toolbarTitle.setText(String.format(getString(R.string.diets) + " (%s)", text));
@@ -432,8 +450,6 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
             }
         }
 
-        Log.e(TAG, "updateList: actual " + actualList.toString());
-
         dietSelectionListAdapter.setData(dietApiResponseModelMap);
     }
 
@@ -482,12 +498,13 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void showDietPrintOptions() {
+        ArrayList<String> printOptions = DietConstant.getDietPrintOptions(getActivity());
         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_time_period),
-                DietConstant.getDietPrintOptions(getActivity()),
+                printOptions,
                 new PickerListener() {
                     @Override
                     public void didSelectedItem(int position) {
-                        generatePdf(position);
+                        generatePdf(printOptions.get(position));
                     }
 
                     @Override
@@ -499,7 +516,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
         itemPickerDialog.show();
     }
 
-    private void generatePdf(int position) {
+    private void generatePdf(String selectedOption) {
         Map<String, ArrayList<DietApiResponseModel>> listMap = new HashMap<>();
 
         for (DietApiResponseModel dietResponse : dietApiResponseModelArrayList) {
@@ -529,8 +546,6 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
 
         Set<String> dates = listMap.keySet();
 
-        ArrayList<String> printOptions = DietConstant.getDietPrintOptions(getActivity());
-        String selectedOption = printOptions.get(position);
         if (selectedOption.equals(getString(R.string.DIET_PRINT_ALL))) {
             for (String date : dates) {
                 String utcdate = Utils.getUTCFormat(date, Utils.yyyy_mm_dd);
@@ -559,7 +574,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
 
         if (pdfList.size() > 0) {
             DietPdfGenerator dietPdfGenerator = new DietPdfGenerator(getActivity());
-            String htmlContent = dietPdfGenerator.getPdfHtmlContent(pdfList, userModel);
+            String htmlContent = dietPdfGenerator.getPdfHtmlContent(pdfList, userModel, startDate, endDate);
 
             PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
             Bundle bundle = new Bundle();

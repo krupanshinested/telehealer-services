@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -42,6 +43,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
+import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
@@ -58,14 +60,14 @@ import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
-import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
-import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -113,14 +115,15 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private ArrayList<Entry> line2Entry;
     private ArrayList<Entry> line3Entry;
     private ArrayList<String> vitalPrintOptions;
-    private List<VitalsApiResponseModel> vitalsApiResponseModelArrayList;
+    private List<VitalsApiResponseModel> vitalsApiResponseModelArrayList = new ArrayList<>();
     private String userGuid, doctorGuid;
     private String selectedItem;
     private boolean isAbnormalVitalView = false;
-    private boolean isFromHome, isApiRequested;
+    private boolean isFromHome, isApiRequested, isPdfGeneration;
     private int page = 1;
     private CustomRecyclerView vitalDetailCrv;
     private boolean isGetType;
+    private String filter, startDate, endDate;
 
 
     @Override
@@ -142,6 +145,9 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                         selectedItem = arrayList.get(0).getType();
                         initializeSelectedItemView(selectedItem);
                         makeApiCall(true);
+                    } else if (isPdfGeneration) {
+                        isPdfGeneration = false;
+                        generatePdfListItems(arrayList);
                     }
                 }
             }
@@ -156,6 +162,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                     vitalDetailCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
 
                     vitalsApiResponseModelArrayList = vitalsPaginatedApiResponseModel.getResult();
+
+
                     if (UserType.isUserPatient() && vitalsApiResponseModelArrayList.size() == 0) {
                         if (!appPreference.getBoolean(selectedItem)) {
                             boolean isShow = true;
@@ -562,20 +570,31 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.print_menu:
-                        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_time_period),
-                                vitalPrintOptions, new PickerListener() {
-                            @Override
-                            public void didSelectedItem(int position) {
-                                generatePdfListItems(vitalPrintOptions.get(position));
-                            }
+//                        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_time_period),
+//                                vitalPrintOptions, new PickerListener() {
+//                            @Override
+//                            public void didSelectedItem(int position) {
+//                                isPdfGeneration = true;
+////                                generatePdfListItems(vitalPrintOptions.get(position));
+//                                getFilteredVital(vitalPrintOptions.get(position));
+//                            }
+//
+//                            @Override
+//                            public void didCancelled() {
+//
+//                            }
+//                        });
+//                        itemPickerDialog.setCancelable(false);
+//                        itemPickerDialog.show();
 
-                            @Override
-                            public void didCancelled() {
 
+                        Utils.showMonitoringFilter(vitalPrintOptions, getActivity(), new OnListItemSelectInterface() {
+                            @Override
+                            public void onListItemSelected(int position, Bundle bundle) {
+                                getFilteredVital(bundle);
                             }
                         });
-                        itemPickerDialog.setCancelable(false);
-                        itemPickerDialog.show();
+
                         break;
                 }
                 return true;
@@ -639,6 +658,41 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         }
     }
 
+    private void getFilteredVital(Bundle bundle) {
+
+        filter = bundle.getString(Constants.SELECTED_ITEM);
+        startDate = bundle.getString(ArgumentKeys.START_DATE);
+        endDate = bundle.getString(ArgumentKeys.END_DATE);
+
+        isPdfGeneration = true;
+
+
+        String vitalFilter = null;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+
+        if (!filter.equals(getString(R.string.custom_range)))
+            endDate = Utils.getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+
+        if (filter.equals(getString(R.string.PRINT_1_WEEK))) {
+            calendar.add(Calendar.DAY_OF_MONTH, -7);
+            vitalFilter = VitalReportApiViewModel.LAST_WEEK;
+        } else if (filter.equals(getString(R.string.PRINT_2_WEEK))) {
+            calendar.add(Calendar.DAY_OF_MONTH, -14);
+            vitalFilter = VitalReportApiViewModel.LAST_TWO_WEEK;
+        } else if (filter.equals(getString(R.string.PRINT_1_MONTH))) {
+            calendar.add(Calendar.MONTH, -1);
+            vitalFilter = VitalReportApiViewModel.LAST_MONTH;
+        }
+
+        if (!filter.equals(getString(R.string.custom_range)))
+            startDate = Utils.getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+
+        vitalsApiViewModel.getUserFilteredVitals(getCurrentVitalType(), vitalFilter, startDate, endDate, userGuid, doctorGuid, true);
+
+    }
+
     private void initializeSelectedItemView(String selectedItem) {
         if (selectedItem != null) {
             setEmptyState();
@@ -663,28 +717,14 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         }
     }
 
-    private void generatePdfListItems(String timePeriod) {
-        Calendar calendar = Calendar.getInstance();
-
-        List<VitalsApiResponseModel> pdfList = new ArrayList<>();
-
-        if (timePeriod.equals(getString(R.string.VITAL_PRINT_ALL))) {
-            pdfList.addAll(vitalsApiResponseModelArrayList);
-        } else {
-            if (timePeriod.equals(getString(R.string.PRINT_1_WEEK))) {
-                calendar.add(Calendar.DAY_OF_MONTH, -7);
-            } else if (timePeriod.equals(getString(R.string.PRINT_2_WEEK))) {
-                calendar.add(Calendar.DAY_OF_MONTH, -14);
-            } else if (timePeriod.equals(getString(R.string.PRINT_1_MONTH))) {
-                calendar.add(Calendar.MONTH, -1);
-            }
-
-            for (int i = 0; i < vitalsApiResponseModelArrayList.size(); i++) {
-                if (Utils.getDateFromString(vitalsApiResponseModelArrayList.get(i).getCreated_at()).compareTo(calendar.getTime()) >= 0) {
-                    pdfList.add(vitalsApiResponseModelArrayList.get(i));
-                }
-            }
-        }
+    private void generatePdfListItems(ArrayList<VitalsApiResponseModel> pdfList) {
+//
+//            for (int i = 0; i < vitalsApiResponseModelArrayList.size(); i++) {
+//                if (Utils.getDateFromString(vitalsApiResponseModelArrayList.get(i).getCreated_at()).compareTo(calendar.getTime()) >= 0) {
+//                    pdfList.add(vitalsApiResponseModelArrayList.get(i));
+//                }
+//            }
+//        }
 
         if (!pdfList.isEmpty()) {
             VitalPdfGenerator vitalPdfGenerator = new VitalPdfGenerator(getActivity());
@@ -693,7 +733,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             if (selectedItem.equals(SupportedMeasurementType.bp))
                 isVitalReport = true;
 
-            String htmlContent = vitalPdfGenerator.generatePdfFor(pdfList, commonUserApiResponseModel, isVitalReport);
+            String htmlContent = vitalPdfGenerator.generatePdfFor(pdfList, commonUserApiResponseModel, isVitalReport, startDate, endDate);
 
             PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
             Bundle bundle = new Bundle();
@@ -702,7 +742,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             pdfViewerFragment.setArguments(bundle);
             showSubFragmentInterface.onShowFragment(pdfViewerFragment);
         } else {
-            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + timePeriod, getString(R.string.ok), null,
+            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + filter, getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -716,17 +756,22 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         if (!isApiRequested) {
             isApiRequested = true;
             if (selectedItem != null) {
-                String type = selectedItem;
-                if (selectedItem.equals(SupportedMeasurementType.bp)) {
-                    type = type + "," + SupportedMeasurementType.heartRate;
-                }
                 if (!isFromHome) {
-                    vitalsApiViewModel.getUserVitals(type, commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress, page);
+                    vitalsApiViewModel.getUserVitals(getCurrentVitalType(), commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress, page);
                 } else {
-                    vitalsApiViewModel.getVitals(type, page, isShowProgress);
+                    vitalsApiViewModel.getVitals(getCurrentVitalType(), page, isShowProgress);
                 }
             }
         }
+    }
+
+    private String getCurrentVitalType() {
+        String type = selectedItem;
+        if (selectedItem.equals(SupportedMeasurementType.bp)) {
+            type = type + "," + SupportedMeasurementType.heartRate;
+        }
+
+        return type;
     }
 
     private void setEmptyState() {
