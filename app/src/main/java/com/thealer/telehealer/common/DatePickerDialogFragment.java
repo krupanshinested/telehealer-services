@@ -20,7 +20,7 @@ public class DatePickerDialogFragment extends DialogFragment {
         if (getArguments() != null) {
             type = getArguments().getInt(Constants.DATE_PICKER_TYPE);
         }
-        return Utils.showDatePickerDialog(getActivity(), type, null);
+        return Utils.showDatePickerDialog(getActivity(), null, type, null);
 
     }
 }

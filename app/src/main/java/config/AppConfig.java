@@ -41,6 +41,10 @@ public class AppConfig {
         return getLocaleCountry().equalsIgnoreCase("IN");
     }
 
+    public boolean isIndianUser(Context context) {
+        return UserDetailPreferenceManager.getInstallType().equals(context.getString(R.string.install_type_india));
+    }
+
     public String getLocaleCountry() {
         Locale locale = Locale.getDefault();
         return locale.getCountry();

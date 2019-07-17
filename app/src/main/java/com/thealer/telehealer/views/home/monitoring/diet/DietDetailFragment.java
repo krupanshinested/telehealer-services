@@ -2,20 +2,11 @@ package com.thealer.telehealer.views.home.monitoring.diet;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -24,6 +15,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -33,6 +34,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.DietApiViewModel;
+import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
@@ -40,6 +42,7 @@ import com.thealer.telehealer.common.DatePickerDialogFragment;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -47,6 +50,7 @@ import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.DateBroadcastReceiver;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
@@ -120,6 +124,9 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
     private ShowSubFragmentInterface showSubFragmentInterface;
     private UserBean commonUserApiResponseModel;
     private CustomRecyclerView dietListCrv;
+    private String startDate = null;
+    private String endDate = null;
+    private String selectedItem, selectedFilter;
 
     @Override
     public void onAttach(Context context) {
@@ -172,7 +179,8 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
             }
         }
 
-        showDietPrintOptions();
+        generatePdf(getString(R.string.DIET_PRINT_ALL));
+//        showDietPrintOptions();
         Log.e(TAG, "addAllDataToList: " + listMap.keySet().toString());
     }
 
@@ -328,7 +336,31 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.print_menu:
-                        getAllDietList();
+//                        getAllDietList();
+//                        generatePdf(getString(R.string.DIET_PRINT_ALL));
+
+                        Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
+                            @Override
+                            public void onListItemSelected(int position, Bundle bundle) {
+                                selectedItem = bundle.getString(Constants.SELECTED_ITEM);
+                                startDate = null;
+                                endDate = null;
+
+                                if (selectedItem != null) {
+                                    if (selectedItem.equals(getString(R.string.last_week))) {
+                                        selectedFilter = VitalReportApiViewModel.LAST_WEEK;
+                                    } else if (selectedItem.equals(getString(R.string.all))) {
+                                        selectedFilter = VitalReportApiViewModel.ALL;
+                                    } else {
+                                        selectedFilter = null;
+                                        startDate = bundle.getString(ArgumentKeys.START_DATE);
+                                        endDate = bundle.getString(ArgumentKeys.END_DATE);
+
+                                    }
+                                }
+                                getDietUserList(true);
+                            }
+                        });
                         break;
                 }
                 return true;
@@ -420,7 +452,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
                 new PickerListener() {
                     @Override
                     public void didSelectedItem(int position) {
-                        generatePdf(position);
+//                        generatePdf(position);
                     }
 
                     @Override
@@ -432,25 +464,25 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
         itemPickerDialog.show();
     }
 
-    private void generatePdf(int position) {
+    private void generatePdf(String selectedOption) {
         Calendar calendar = Calendar.getInstance();
 
         Map<String, ArrayList<DietApiResponseModel>> pdfList = new HashMap<>();
 
         Set<String> dates = listMap.keySet();
 
-        if (dietPrintOptions.get(position).equals(getString(R.string.DIET_PRINT_ALL))) {
+        if (selectedOption.equals(getString(R.string.DIET_PRINT_ALL))) {
             for (String date : dates) {
                 String utcdate = Utils.getUTCFormat(date, "yyyy-MM-dd");
                 pdfList.put(utcdate, listMap.get(date));
             }
 
         } else {
-            if (dietPrintOptions.get(position).equals(getString(R.string.PRINT_1_WEEK))) {
+            if (selectedOption.equals(getString(R.string.PRINT_1_WEEK))) {
                 calendar.add(Calendar.DAY_OF_MONTH, -7);
-            } else if (dietPrintOptions.get(position).equals(getString(R.string.PRINT_2_WEEK))) {
+            } else if (selectedOption.equals(getString(R.string.PRINT_2_WEEK))) {
                 calendar.add(Calendar.DAY_OF_MONTH, -14);
-            } else if (dietPrintOptions.get(position).equals(getString(R.string.PRINT_1_MONTH))) {
+            } else if (selectedOption.equals(getString(R.string.PRINT_1_MONTH))) {
                 calendar.add(Calendar.MONTH, -1);
             }
 
@@ -466,7 +498,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
 
         if (pdfList.size() > 0) {
             DietPdfGenerator dietPdfGenerator = new DietPdfGenerator(getActivity());
-            String htmlContent = dietPdfGenerator.getPdfHtmlContent(pdfList, commonUserApiResponseModel);
+            String htmlContent = dietPdfGenerator.getPdfHtmlContent(pdfList, commonUserApiResponseModel, startDate, endDate);
 
             PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
             Bundle bundle = new Bundle();
@@ -476,7 +508,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
             showSubFragmentInterface.onShowFragment(pdfViewerFragment);
 
         } else {
-            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + dietPrintOptions.get(position),
+            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + selectedOption,
                     getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         @Override
@@ -529,12 +561,18 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
     }
 
     private void getDietList() {
+        Log.e(TAG, "getDietList: " + selectedDate);
         dietApiViewModel.getUserDietDetails(selectedDate, userGuid, null, null, true);
     }
 
     private void getAllDietList() {
         isPdfGeneration = true;
         dietApiViewModel.getUserDietDetails(null, userGuid, null, null, true);
+    }
+
+    private void getDietUserList(boolean isShowProgress) {
+        isPdfGeneration = true;
+        dietApiViewModel.getUserDietDetails(selectedFilter, startDate, endDate, null, null, isShowProgress);
     }
 
     @Override

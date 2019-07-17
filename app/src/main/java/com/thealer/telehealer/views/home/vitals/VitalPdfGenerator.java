@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.vitals;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -10,7 +11,9 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,7 +160,7 @@ public class VitalPdfGenerator {
 
     private Context context;
     private boolean isVitalReport;
-    String createdAt, value, capturedBy, mode, category = "";
+    String createdAt, value, capturedBy, mode, category = "", startDate, endDate;
 
     public VitalPdfGenerator(Context context) {
         this.context = context;
@@ -168,8 +171,10 @@ public class VitalPdfGenerator {
     }
 
 
-    public String generatePdfFor(List<VitalsApiResponseModel> pdfList, CommonUserApiResponseModel commonUserApiResponseModel, boolean isVitalReport) {
+    public String generatePdfFor(List<VitalsApiResponseModel> pdfList, CommonUserApiResponseModel commonUserApiResponseModel, boolean isVitalReport, String startDate, String endDate) {
         this.isVitalReport = isVitalReport;
+        this.startDate = startDate;
+        this.endDate = endDate;
 
         String headerDetail = generateHeaderDetail(pdfList, commonUserApiResponseModel);
 
@@ -264,7 +269,7 @@ public class VitalPdfGenerator {
         String patientName;
         String dob;
         String gender;
-        String period = calculatePeriod(pdfList);
+        String period = calculatePeriod();
         if (commonUserApiResponseModel != null) {
             patientName = commonUserApiResponseModel.getUserDisplay_name();
             dob = commonUserApiResponseModel.getDob().replace("DoB : ", "");
@@ -296,8 +301,17 @@ public class VitalPdfGenerator {
         return headerString;
     }
 
-    private String calculatePeriod(List<VitalsApiResponseModel> pdfList) {
-        return Utils.getCurrentFomatedDate() + " - " + Utils.getDayMonthYear(pdfList.get(pdfList.size() - 1).getCreated_at());
+    private String calculatePeriod() {
+        Log.e("aswin", "calculatePeriod: " + startDate);
+        Log.e("aswin", "calculatePeriod: " + endDate);
+        if (startDate == null && endDate == null) {
+            Calendar calendar = Calendar.getInstance();
+            endDate = Utils.getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+            calendar.add(Calendar.DAY_OF_WEEK, -7);
+            startDate = Utils.getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+        }
+        return Utils.getDayMonthYear(startDate) + " - " + Utils.getDayMonthYear(endDate);
+
     }
 
     private String generateList(List<VitalsApiResponseModel> pdfList) {

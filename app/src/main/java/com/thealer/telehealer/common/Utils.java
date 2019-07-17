@@ -150,7 +150,7 @@ public class Utils {
         vibrator.vibrate(50);
     }
 
-    public static Dialog showDatePickerDialog(FragmentActivity activity, int type, DatePickerDialog.OnDateSetListener dateSetListener) {
+    public static Dialog showDatePickerDialog(FragmentActivity activity, Calendar minCalendar, int type, DatePickerDialog.OnDateSetListener dateSetListener) {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
@@ -167,6 +167,10 @@ public class Utils {
         }
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(activity, onDateSetListener, year, month, day);
+
+        if (minCalendar != null) {
+            datePickerDialog.getDatePicker().setMinDate(minCalendar.getTimeInMillis());
+        }
 
         switch (type) {
             case Constants.TYPE_DOB:
@@ -1270,7 +1274,7 @@ public class Utils {
         alertDialog.show();
     }
 
-    public static void showMonitoringFilter(FragmentActivity activity, OnListItemSelectInterface onListItemSelectInterface) {
+    public static void showMonitoringFilter(ArrayList<String> printOptions, FragmentActivity activity, OnListItemSelectInterface onListItemSelectInterface) {
 
 
         Calendar currentMonth = Calendar.getInstance();
@@ -1281,7 +1285,12 @@ public class Utils {
         String current = currentMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
         String previous = previousMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
 
-        List<String> monitoringFilterList = new ArrayList<>(Arrays.asList(activity.getString(R.string.last_week), current, previous, activity.getString(R.string.all)));
+        List<String> monitoringFilterList;
+        if (printOptions == null) {
+            monitoringFilterList = new ArrayList<>(Arrays.asList(activity.getString(R.string.last_week), current, previous, activity.getString(R.string.custom_range)));
+        } else {
+            monitoringFilterList = printOptions;
+        }
 
         showOptionsSelectionAlert(activity, monitoringFilterList, new PickerListener() {
             @Override
@@ -1290,9 +1299,37 @@ public class Utils {
 
                 Bundle bundle = new Bundle();
 
-                if (selectedItem.equals(activity.getString(R.string.last_week)) || selectedItem.equals(activity.getString(R.string.all))) {
-                    bundle.putString(Constants.SELECTED_ITEM, selectedItem);
-                } else {
+                if (selectedItem.equals(activity.getString(R.string.custom_range))) {
+
+                    Utils.showDatePickerDialog(activity, null, Constants.TILL_CURRENT_DAY, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                            Calendar start = Calendar.getInstance();
+                            start.set(year, month, dayOfMonth, 0, 0, 0);
+
+                            String startDate = new Timestamp(start.getTimeInMillis()).toString();
+
+                            Utils.showDatePickerDialog(activity, start, Constants.TILL_CURRENT_DAY, new DatePickerDialog.OnDateSetListener() {
+                                @Override
+                                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                    Calendar end = Calendar.getInstance();
+                                    end.set(year, month, dayOfMonth, 23, 59, 59);
+
+                                    String endDate = new Timestamp(end.getTimeInMillis()).toString();
+
+                                    bundle.putString(ArgumentKeys.START_DATE, getUTCfromGMT(startDate));
+                                    bundle.putString(ArgumentKeys.END_DATE, getUTCfromGMT(endDate));
+                                    bundle.putString(Constants.SELECTED_ITEM, selectedItem);
+
+                                    onListItemSelectInterface.onListItemSelected(position, bundle);
+
+                                }
+                            });
+
+                        }
+                    });
+
+                } else if (selectedItem.equals(current) || selectedItem.equals(previous)) {
                     String startDate, endDate;
                     Calendar calendar = (Calendar) currentMonth.clone();
 
@@ -1301,16 +1338,24 @@ public class Utils {
                     }
 
                     calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+                    calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
                     startDate = getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+
                     calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
                     endDate = getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
 
                     bundle.putString(ArgumentKeys.START_DATE, startDate);
                     bundle.putString(ArgumentKeys.END_DATE, endDate);
                     bundle.putString(Constants.SELECTED_ITEM, selectedItem);
-                }
 
-                onListItemSelectInterface.onListItemSelected(position, bundle);
+                    onListItemSelectInterface.onListItemSelected(position, bundle);
+
+                } else {
+                    bundle.putString(Constants.SELECTED_ITEM, selectedItem);
+                    onListItemSelectInterface.onListItemSelected(position, bundle);
+
+                }
             }
 
             @Override
@@ -1318,6 +1363,12 @@ public class Utils {
 
             }
         });
+    }
+
+    private static String getTimeStampFromDatePicker(int year, int month, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, dayOfMonth);
+        return new Timestamp(calendar.getTimeInMillis()).toString();
     }
 
     public static void greyoutProfile(ImageView imageView) {

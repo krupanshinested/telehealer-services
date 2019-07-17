@@ -1,14 +1,7 @@
 package com.thealer.telehealer.views.home.vitals.vitalReport;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.cardview.widget.CardView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,6 +13,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -36,6 +37,7 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +60,7 @@ public class VitalReportFragment extends BaseFragment {
 
     private VitalReportApiReponseModel vitalReportApiReponseModel;
     private VitalReportUserListAdapter vitalReportUserListAdapter;
-    private static String selectedFilter;
+    private static String selectedFilter, title;
     private String startDate = null;
     private String endDate = null;
     private List<CommonUserApiResponseModel> searchList = new ArrayList<>();
@@ -68,12 +70,16 @@ public class VitalReportFragment extends BaseFragment {
     private TextView toolbarTitle;
     private OnCloseActionInterface onCloseActionInterface;
     private String doctorGuid;
+    private ShowSubFragmentInterface showSubFragmentInterface;
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
+        showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
+
         vitalReportApiViewModel = ViewModelProviders.of(this).get(VitalReportApiViewModel.class);
         attachObserverInterface.attachObserver(vitalReportApiViewModel);
         vitalReportApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -82,7 +88,7 @@ public class VitalReportFragment extends BaseFragment {
                 if (baseApiResponseModel != null) {
                     vitalReportApiReponseModel = (VitalReportApiReponseModel) baseApiResponseModel;
                     if (vitalReportApiReponseModel.getResult().size() > 0) {
-                        vitalReportUserListAdapter.setData(vitalReportApiReponseModel.getResult(), selectedFilter);
+                        vitalReportUserListAdapter.setData(vitalReportApiReponseModel.getResult());
                         patientListCrv.showOrhideEmptyState(false);
                     } else {
                         patientListCrv.showOrhideEmptyState(true);
@@ -173,7 +179,7 @@ public class VitalReportFragment extends BaseFragment {
 
                         if (searchList.size() > 0) {
                             if (vitalReportUserListAdapter != null) {
-                                vitalReportUserListAdapter.setData(searchList, selectedFilter);
+                                vitalReportUserListAdapter.setData(searchList);
                                 patientListCrv.showOrhideEmptyState(false);
                             }
                         } else {
@@ -184,7 +190,7 @@ public class VitalReportFragment extends BaseFragment {
                     }
                 } else {
                     if (vitalReportApiReponseModel != null) {
-                        vitalReportUserListAdapter.setData(vitalReportApiReponseModel.getResult(), selectedFilter);
+                        vitalReportUserListAdapter.setData(vitalReportApiReponseModel.getResult());
                         patientListCrv.showOrhideEmptyState(false);
                     } else {
                         patientListCrv.showOrhideEmptyState(true);
@@ -215,7 +221,22 @@ public class VitalReportFragment extends BaseFragment {
                 appbarLayout.setVisibility(View.GONE);
             }
         }
-        vitalReportUserListAdapter = new VitalReportUserListAdapter(getActivity(), doctorGuid);
+        vitalReportUserListAdapter = new VitalReportUserListAdapter(getActivity(), new OnListItemSelectInterface() {
+            @Override
+            public void onListItemSelected(int position, Bundle bundle) {
+
+                VitalUserReportListFragment vitalUserReportListFragment = new VitalUserReportListFragment();
+                bundle.putString(ArgumentKeys.SEARCH_TYPE, selectedFilter);
+                bundle.putString(ArgumentKeys.START_DATE, startDate);
+                bundle.putString(ArgumentKeys.END_DATE, endDate);
+                bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                bundle.putString(ArgumentKeys.TITLE, title);
+                vitalUserReportListFragment.setArguments(bundle);
+                showSubFragmentInterface.onShowFragment(vitalUserReportListFragment);
+
+            }
+        });
+
         patientListCrv.getRecyclerView().setAdapter(vitalReportUserListAdapter);
 
         patientListCrv.getSwipeLayout().setEnabled(false);
@@ -235,7 +256,7 @@ public class VitalReportFragment extends BaseFragment {
 
     private void showFilterDialog() {
 
-        Utils.showMonitoringFilter(getActivity(), new OnListItemSelectInterface() {
+        Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
             @Override
             public void onListItemSelected(int position, Bundle bundle) {
                 String selectedItem = bundle.getString(Constants.SELECTED_ITEM);
@@ -270,6 +291,7 @@ public class VitalReportFragment extends BaseFragment {
     }
 
     private void setToolbarTitle(String text) {
+        title = text;
         if (text.equals(getString(R.string.all))) {
             toolbarTitle.setText(getString(R.string.vitals));
         } else {

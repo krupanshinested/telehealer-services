@@ -1,16 +1,10 @@
 package com.thealer.telehealer.views.home.monitoring.diet;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.cardview.widget.CardView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +14,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -69,6 +71,7 @@ public class DietUserListingFragment extends BaseFragment {
     private static String selectedFilter;
     private String startDate = null;
     private String endDate = null;
+    private String selectedItem;
     private List<UserBean> searchList = new ArrayList<>();
 
     @Override
@@ -184,6 +187,12 @@ public class DietUserListingFragment extends BaseFragment {
             @Override
             public void onListItemSelected(int position, Bundle bundle) {
                 DietListingFragment dietListingFragment = new DietListingFragment();
+                bundle.putString(ArgumentKeys.SELECTED_DATE, selectedItem);
+                bundle.putString(ArgumentKeys.SEARCH_TYPE, selectedFilter);
+                bundle.putString(ArgumentKeys.START_DATE, startDate);
+                bundle.putString(ArgumentKeys.END_DATE, endDate);
+                bundle.putBoolean(ArgumentKeys.SHOW_PRINT_FILTER, false);
+
                 dietListingFragment.setArguments(bundle);
                 showSubFragmentInterface.onShowFragment(dietListingFragment);
             }
@@ -234,10 +243,10 @@ public class DietUserListingFragment extends BaseFragment {
 
     private void showFilterDialog() {
 
-        Utils.showMonitoringFilter(getActivity(), new OnListItemSelectInterface() {
+        Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
             @Override
             public void onListItemSelected(int position, Bundle bundle) {
-                String selectedItem = bundle.getString(Constants.SELECTED_ITEM);
+                selectedItem = bundle.getString(Constants.SELECTED_ITEM);
                 startDate = null;
                 endDate = null;
 
