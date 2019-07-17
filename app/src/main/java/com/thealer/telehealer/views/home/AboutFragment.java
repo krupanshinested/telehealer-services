@@ -222,17 +222,9 @@ public class AboutFragment extends BaseFragment {
                                 mciTv.setText(userDetail.getUser_detail().getData().getOtherInformation().getMci());
                             }
 
-                            StringBuilder clinicAddress = new StringBuilder();
                             if (userDetail.getUser_detail().getData().getPractices().size() > 0) {
-                                clinicAddress.append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getStreet())
-                                        .append(",")
-                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getStreet2())
-                                        .append(",")
-                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getCity())
-                                        .append(",")
-                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getState())
-                                        .append(",")
-                                        .append(userDetail.getUser_detail().getData().getPractices().get(0).getVisit_address().getZip());
+
+                                String clinicAddress = userDetail.getUser_detail().getData().getPracticeAddress(userDetail.getUser_detail().getData().getPractices().get(0));
 
                                 clinicCv.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -254,8 +246,8 @@ public class AboutFragment extends BaseFragment {
                                     phoneCv.setVisibility(View.VISIBLE);
                                     userPhoneTv.setText(userDetail.getUser_detail().getData().getPractices().get(0).getPhones().get(0).getNumber());
                                 }
+                                clinicAddressTv.setText(clinicAddress);
                             }
-                            clinicAddressTv.setText(clinicAddress);
 
                             if (userDetail.getUser_detail().getData().getWebsite() != null) {
                                 websiteCv.setVisibility(View.VISIBLE);

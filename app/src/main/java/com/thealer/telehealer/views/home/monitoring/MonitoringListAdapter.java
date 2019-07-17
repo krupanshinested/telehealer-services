@@ -77,6 +77,7 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
 
                     } else {
                         fragment = new VitalReportFragment();
+                        bundle.putBoolean(ArgumentKeys.SHOW_PRINT_FILTER, false);
                         fragment.setArguments(bundle);
                     }
                 } else if (titleList.get(i).equals(activity.getString(R.string.medication))) {
@@ -89,6 +90,7 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
                         fragment = new DietDetailFragment();
                     } else {
                         fragment = new DietUserListingFragment();
+                        bundle.putBoolean(ArgumentKeys.SHOW_PRINT_FILTER, false);
                         fragment.setArguments(bundle);
                     }
                 }

@@ -22,6 +22,6 @@ public class DietConstant {
 
 
     public static ArrayList<String> getDietPrintOptions(Context context) {
-        return new ArrayList<>(Arrays.asList(context.getString(R.string.PRINT_1_WEEK), context.getString(R.string.PRINT_2_WEEK), context.getString(R.string.PRINT_1_MONTH), context.getString(R.string.DIET_PRINT_ALL)));
+        return new ArrayList<>(Arrays.asList(context.getString(R.string.PRINT_1_WEEK), context.getString(R.string.PRINT_2_WEEK), context.getString(R.string.PRINT_1_MONTH), context.getString(R.string.custom_range)));
     }
 }

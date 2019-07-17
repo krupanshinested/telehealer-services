@@ -489,6 +489,9 @@ public interface ApiInterface {
     @GET("api/vitals")
     Observable<VitalsPaginatedApiResponseModel> getUserFilteredVitals(@Query(FILTER) String type, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
+    @GET("api/vitals")
+    Observable<ArrayList<VitalsApiResponseModel>> getUserFilteredVitals(@Query(TYPE) String type, @Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
+
     @PUT("api/available")
     Observable<BaseApiResponseModel> updateUserStatus(@Query(STATUS) boolean status);
 

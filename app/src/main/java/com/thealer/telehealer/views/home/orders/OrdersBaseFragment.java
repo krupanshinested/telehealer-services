@@ -446,14 +446,6 @@ public class OrdersBaseFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public boolean isHideSendFax() {
-        return appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PHARMACY_FAX);
-    }
-
-    public boolean isIndianUser() {
-        return UserDetailPreferenceManager.getInstallType().equals(getString(R.string.install_type_india));
-    }
-
     public void onDetailReceived(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
 
     }
