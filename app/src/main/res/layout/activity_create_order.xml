@@ -6,7 +6,7 @@
 
     <include
         android:id="@+id/appbar"
-        layout="@layout/appbar_back_with_title_app_color"
+        layout="@layout/appbar_app_color_title_back_next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

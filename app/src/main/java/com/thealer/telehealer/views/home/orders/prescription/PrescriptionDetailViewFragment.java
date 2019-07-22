@@ -1,12 +1,7 @@
 package com.thealer.telehealer.views.home.orders.prescription;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -131,7 +130,6 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
 
                             SelectPharmacyFragment selectPharmacyFragment = new SelectPharmacyFragment();
                             selectPharmacyFragment.setArguments(bundle);
-                            selectPharmacyFragment.setTargetFragment(PrescriptionDetailViewFragment.this, RequestID.REQ_SEND_FAX);
 
                             showSubFragmentInterface.onShowFragment(selectPharmacyFragment);
                         }
@@ -212,13 +210,18 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
         orderStatusOcv.setTitleTv(ordersResultBean.getStatus());
 
         if (ordersResultBean.getFaxes().size() > 0) {
+
+            pharmacyOcv.setTitleTv(ordersResultBean.getFaxes().get(0).getFax_number());
+
             if (ordersResultBean.getFaxes().get(0).getDetail() != null &&
                     ordersResultBean.getFaxes().get(0).getDetail().getPharmacy() != null) {
                 pharmacyOcv.setTitleTv(ordersResultBean.getFaxes().get(0).getDetail().getPharmacy().getCompany());
 
-                orderStatusOcv.setLabelTv(getString(R.string.fax_status));
-                orderStatusOcv.setTitleTv(ordersResultBean.getFaxes().get(0).getStatus());
             }
+
+            orderStatusOcv.setLabelTv(getString(R.string.fax_status));
+            orderStatusOcv.setTitleTv(ordersResultBean.getFaxes().get(0).getStatus());
+
         }
 
 

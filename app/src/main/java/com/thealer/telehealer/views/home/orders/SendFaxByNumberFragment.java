@@ -2,11 +2,6 @@ package com.thealer.telehealer.views.home.orders;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.appcompat.widget.Toolbar;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -18,13 +13,21 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.textfield.TextInputLayout;
 import com.hbb20.CountryCodePicker;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.orders.lab.CreateTestApiRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.pharmacy.SendFaxRequestModel;
+import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -33,6 +36,8 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import io.michaelrocks.libphonenumber.android.NumberParseException;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
 import io.michaelrocks.libphonenumber.android.Phonenumber;
+
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 
 /**
  * Created by Aswin on 20,March,2019
@@ -96,6 +101,14 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
 
         backIv.setOnClickListener(this);
         sendBtn.setOnClickListener(this);
+
+        String Code = UserDetailPreferenceManager.getCountryCode();
+        if (Code == null || Code.isEmpty()) {
+            Code = appConfig.getLocaleCountry();
+        }
+        countyCode.setCountryForNameCode(Code);
+
+
         countyCode.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
             @Override
             public void onCountrySelected() {
@@ -207,6 +220,8 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
 
                 createNewLabOrder((CreateTestApiRequestModel) requestData, userName, doctorGuid, true);
 
+            } else if (requestData instanceof CreatePrescriptionRequestModel) {
+                createPrescription((CreatePrescriptionRequestModel) requestData, userName, doctorGuid, true);
             }
         } else {
             sendFax(refferralId, false, true);
