@@ -8,7 +8,10 @@
 
     <include
         android:id="@+id/appbar"
-        layout="@layout/appbar_back_with_title_app_color" />
+        layout="@layout/appbar_back_with_title_app_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView"

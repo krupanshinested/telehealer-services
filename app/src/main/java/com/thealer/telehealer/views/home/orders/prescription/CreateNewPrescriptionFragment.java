@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputLayout;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -21,6 +18,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
@@ -33,6 +34,7 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
 import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
+import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 
 /**
  * Created by Aswin on 30,November,2018
@@ -125,10 +127,6 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
         addTextWatcher(strengthEt);
         addTextWatcher(directionEt);
         addTextWatcher(dispenseEt);
-
-        if (isHideSendFax()) {
-            saveFaxBtn.setVisibility(View.GONE);
-        }
 
         if (getArguments() != null) {
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
@@ -378,9 +376,24 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
                 showQuickLogin();
                 break;
             case R.id.save_fax_btn:
-                saveAndFaxPrescription();
+                if (isIndianUser())
+                    sendFaxByNumber();
+                else
+                    saveAndFaxPrescription();
                 break;
         }
+    }
+
+    private void sendFaxByNumber() {
+        Bundle bundle = new Bundle();
+        bundle.putString(ArgumentKeys.USER_NAME, commonUserApiResponseModel.getUserDisplay_name());
+        bundle.putSerializable(ArgumentKeys.ORDER_DATA, getPrescriptionModel());
+        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+
+        SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
+        sendFaxByNumberFragment.setTargetFragment(this, RequestID.REQ_SEND_FAX);
+        sendFaxByNumberFragment.setArguments(bundle);
+        showSubFragmentInterface.onShowFragment(sendFaxByNumberFragment);
     }
 
     private void saveAndFaxPrescription() {
