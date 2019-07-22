@@ -1,17 +1,11 @@
 package com.thealer.telehealer.views.home.orders.prescription;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -22,6 +16,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
@@ -35,16 +37,22 @@ import com.thealer.telehealer.common.LocationTrackerInterface;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
+import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
+import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
+import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 /**
  * Created by Aswin on 30,November,2018
  */
-public class SelectPharmacyFragment extends OrdersBaseFragment implements View.OnClickListener, LocationTrackerInterface {
+public class SelectPharmacyFragment extends OrdersBaseFragment implements View.OnClickListener, LocationTrackerInterface,
+        DoCurrentTransactionInterface {
     private EditText searchEt;
     private CustomRecyclerView pharmacyCrv;
     private Button nextBtn;
@@ -74,6 +82,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
             isProposerRequested = true;
         }
     };
+    private TextView nextTv;
 
     @Override
     public void onAttach(Context context) {
@@ -116,6 +125,9 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        nextTv = (TextView) view.findViewById(R.id.next_tv);
+
+        nextTv.setText(getString(R.string.manual));
 
         searchEt.setHint(getString(R.string.search_pharmacy));
         searchEt.addTextChangedListener(new TextWatcher() {
@@ -141,18 +153,11 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
 
         pharmacyCrv.getSwipeLayout().setEnabled(false);
         nextBtn.setOnClickListener(this);
+        nextTv.setOnClickListener(this);
 
         if (getArguments() != null) {
 
             isFromDetailView = getArguments().getBoolean(ArgumentKeys.IS_FROM_PRESCRIPTION_DETAIL);
-            if (isFromDetailView) {
-                toolbarTitle.setText(getString(R.string.choose_pharmacy));
-                backIv.setOnClickListener(this);
-
-                toolbar.setVisibility(View.VISIBLE);
-            } else {
-                toolbar.setVisibility(View.GONE);
-            }
 
             if (isFromDetailView) {
                 referralId = getArguments().getInt(ArgumentKeys.PRESCRIPTION_ID);
@@ -189,6 +194,20 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
 
     }
 
+    private void updateToolbar() {
+        if (isFromDetailView) {
+            toolbarTitle.setText(getString(R.string.choose_pharmacy));
+            backIv.setOnClickListener(this);
+
+            toolbar.setVisibility(View.VISIBLE);
+        } else {
+            toolbar.setVisibility(View.GONE);
+            ((OnViewChangeInterface) getActivity()).updateNextTitle(getString(R.string.manual));
+            ((OnViewChangeInterface) getActivity()).hideOrShowNext(true);
+        }
+
+    }
+
     private void enableOrDisableNext() {
         boolean enable = false;
 
@@ -219,6 +238,11 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
             case R.id.back_iv:
                 onCloseActionInterface.onClose(false);
                 break;
+            case R.id.next_tv:
+                Bundle bundle = new Bundle();
+                bundle.putInt(ArgumentKeys.ORDER_ID, referralId);
+                sendFaxBynumber(bundle);
+                break;
         }
     }
 
@@ -230,6 +254,8 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
         if (!isLocationRequested) {
             requestPharmacies();
         }
+
+        updateToolbar();
     }
 
     @Override
@@ -263,6 +289,12 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        ((OnViewChangeInterface) getActivity()).hideOrShowNext(false);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
@@ -282,6 +314,38 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
             getLastKnownLocation();
         } else {
             getPharmacies(null, city, true);
+        }
+    }
+
+    @Override
+    public void doCurrentTransaction() {
+        Bundle bundle = new Bundle();
+        bundle.putString(ArgumentKeys.USER_NAME, userName);
+        bundle.putSerializable(ArgumentKeys.ORDER_DATA, createPrescriptionRequestModel);
+
+        sendFaxBynumber(bundle);
+    }
+
+    private void sendFaxBynumber(Bundle bundle) {
+        SendFaxByNumberFragment sendFaxByNumberFragment = new SendFaxByNumberFragment();
+
+        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+        sendFaxByNumberFragment.setTargetFragment(this, RequestID.REQ_SEND_FAX);
+
+        sendFaxByNumberFragment.setArguments(bundle);
+        ((ShowSubFragmentInterface) getActivity()).onShowFragment(sendFaxByNumberFragment);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW) {
+            if (isFromDetailView) {
+                onCloseActionInterface.onClose(false);
+            } else {
+                if (getActivity() != null)
+                    getActivity().finish();
+            }
         }
     }
 }

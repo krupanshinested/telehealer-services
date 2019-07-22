@@ -3,12 +3,13 @@ package com.thealer.telehealer.views.home.orders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -20,6 +21,7 @@ import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
+import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
@@ -31,6 +33,7 @@ import com.thealer.telehealer.views.home.orders.prescription.CreateNewPrescripti
 import com.thealer.telehealer.views.home.orders.radiology.CreateNewRadiologyFragment;
 import com.thealer.telehealer.views.home.orders.specialist.CreateNewSpecialistFragment;
 import com.thealer.telehealer.views.signin.SigninActivity;
+import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
 
@@ -40,13 +43,14 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
  * Created by Aswin on 28,November,2018
  */
 public class CreateOrderActivity extends BaseActivity implements View.OnClickListener, ShowSubFragmentInterface,
-        AttachObserverInterface, OnCloseActionInterface, SuccessViewInterface, ChangeTitleInterface {
+        AttachObserverInterface, OnCloseActionInterface, SuccessViewInterface, ChangeTitleInterface, OnViewChangeInterface {
 
     private ImageView backIv;
     private TextView toolbarTitle;
     private LinearLayout fragmentHolder;
 
     private String orderType;
+    private TextView nextTv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,6 +63,10 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
         backIv = (ImageView) findViewById(R.id.back_iv);
         toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         fragmentHolder = (LinearLayout) findViewById(R.id.fragment_holder);
+        nextTv = (TextView) findViewById(R.id.next_tv);
+
+        nextTv.setOnClickListener(this);
+        nextTv.setVisibility(View.GONE);
 
         backIv.setOnClickListener(this);
 
@@ -150,6 +158,13 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
             case R.id.back_iv:
                 onBackPressed();
                 break;
+            case R.id.next_tv:
+                Fragment fragment = getSupportFragmentManager().findFragmentById(fragmentHolder.getId());
+
+                if (fragment instanceof DoCurrentTransactionInterface)
+                    ((DoCurrentTransactionInterface) fragment).doCurrentTransaction();
+
+                break;
         }
     }
 
@@ -207,5 +222,48 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onTitleChange(String title) {
         toolbarTitle.setText(title);
+    }
+
+    @Override
+    public void enableNext(boolean enabled) {
+
+    }
+
+    @Override
+    public void hideOrShowNext(boolean hideOrShow) {
+        if (hideOrShow) {
+            nextTv.setVisibility(View.VISIBLE);
+        } else
+            nextTv.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideOrShowClose(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowToolbarTile(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void hideOrShowBackIv(boolean hideOrShow) {
+
+    }
+
+    @Override
+    public void updateNextTitle(String nextTitle) {
+        nextTv.setText(nextTitle);
+    }
+
+    @Override
+    public void updateTitle(String title) {
+
+    }
+
+    @Override
+    public void hideOrShowOtherOption(boolean hideOrShow) {
+
     }
 }
