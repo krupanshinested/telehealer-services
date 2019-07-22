@@ -1,22 +1,23 @@
 package com.thealer.telehealer.views.home.orders.labs;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -123,10 +124,8 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
         saveBtn.setOnClickListener(this);
         saveFaxBtn.setOnClickListener(this);
 
-        if (isHideSendFax()) {
-            saveFaxBtn.setVisibility(View.GONE);
+        if (isIndianUser())
             copyOcv.setVisibility(View.GONE);
-        }
 
         if (getArguments() != null) {
             boolean isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
@@ -135,7 +134,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
 
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
 
-                if (commonUserApiResponseModel != null){
+                if (commonUserApiResponseModel != null) {
                     patientOcv.setArrow_visible(false);
                     patientOcv.setClickable(false);
                 }

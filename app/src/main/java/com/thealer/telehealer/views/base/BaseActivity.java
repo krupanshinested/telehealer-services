@@ -1,20 +1,12 @@
 package com.thealer.telehealer.views.base;
 
 import android.app.ActivityManager;
-import androidx.lifecycle.Observer;
-
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +16,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.DrawableImageViewTarget;
@@ -47,6 +47,7 @@ public class BaseActivity extends AppCompatActivity {
     public static final String TAG = "aswin";
     private int showScreenType;
     private RelativeLayout relativeLayout;
+    private int count = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,6 +111,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showProgressDialog() {
+        count = count + 1;
+
         Logs.D(TAG, "inside showProgressDialog");
         dismissProgressDialog();
 
@@ -149,15 +152,19 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void dismissProgressDialog() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Logs.D(TAG, "inside dismissProgressDialog");
-                if (relativeLayout != null && relativeLayout.getVisibility() == View.VISIBLE) {
-                    relativeLayout.setVisibility(View.GONE);
+        Logs.D(TAG, "inside dismissProgressDialog " + count);
+        if (count > 0) {
+            count--;
+        } else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (relativeLayout != null && relativeLayout.getVisibility() == View.VISIBLE) {
+                        relativeLayout.setVisibility(View.GONE);
+                    }
                 }
-            }
-        }, 2000);
+            }, 2000);
+        }
     }
 
     public void showToast(String msg) {
@@ -316,12 +323,13 @@ public class BaseActivity extends AppCompatActivity {
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
+
     public void removeAllNotification() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
     }
 
-    public void invalidateUser(){
+    public void invalidateUser() {
         UserDetailPreferenceManager.invalidateUser();
         startActivity(new Intent(this, SigninActivity.class));
         finish();
