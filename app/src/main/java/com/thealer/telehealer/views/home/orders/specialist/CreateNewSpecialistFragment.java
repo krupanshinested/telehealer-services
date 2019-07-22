@@ -3,9 +3,6 @@ package com.thealer.telehealer.views.home.orders.specialist;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -14,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
@@ -81,10 +82,6 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
         saveBtn.setOnClickListener(this);
         saveFaxBtn.setOnClickListener(this);
 
-        if (isHideSendFax()) {
-            saveFaxBtn.setVisibility(View.GONE);
-        }
-
         instructionEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -112,7 +109,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
 
                 patientModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
 
-                if (patientModel != null){
+                if (patientModel != null) {
                     patientOcv.setArrow_visible(false);
                     patientOcv.setClickable(false);
                 }
