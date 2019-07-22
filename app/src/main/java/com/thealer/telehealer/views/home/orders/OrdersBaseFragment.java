@@ -1,19 +1,19 @@
 package com.thealer.telehealer.views.home.orders;
 
 import android.app.Activity;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -32,6 +32,7 @@ import com.thealer.telehealer.apilayer.models.recents.RecentsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -43,12 +44,12 @@ import com.thealer.telehealer.views.common.RecentsSelectionActivity;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import config.AppConfig;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Aswin on 04,December,2018
@@ -130,7 +131,7 @@ public class OrdersBaseFragment extends BaseFragment {
                                 description = getString(R.string.fax_sent_successfully);
                                 sendSuccessViewBroadCast(getActivity(), status, title, description);
                             }
-                            onBackPressed();
+//                            onBackPressed();
                         }
                     } else {
                         isSendFax = false;
@@ -428,6 +429,9 @@ public class OrdersBaseFragment extends BaseFragment {
             case RequestID.REQ_SHOW_SUCCESS_VIEW:
                 if (resultCode == Activity.RESULT_OK) {
                     onBackPressed();
+                    if (getTargetFragment() != null) {
+                        getTargetFragment().onActivityResult(requestCode, resultCode, data);
+                    }
                 }
                 break;
             case RequestID.REQ_VISIT_RECENT:
@@ -445,6 +449,11 @@ public class OrdersBaseFragment extends BaseFragment {
     public boolean isHideSendFax() {
         return appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PHARMACY_FAX);
     }
+
+    public boolean isIndianUser() {
+        return UserDetailPreferenceManager.getInstallType().equals(getString(R.string.install_type_india));
+    }
+
     public void onDetailReceived(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
 
     }
