@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
@@ -147,13 +146,13 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
                 break;
         }
 
-        if (!UserType.isUserPatient()) {
+        if (!UserType.isUserPatient() && isPresentedInsideCallActivity()) {
             save_bt.setVisibility(View.GONE);
             close_bt.setVisibility(View.GONE);
             remeasure_bt.setVisibility(View.GONE);
         }
 
-        if (callVitalPagerInterFace != null && getUserVisibleHint()) {
+        if (callVitalPagerInterFace != null) {
             if (currentState == MeasureState.failed || currentState == MeasureState.ended || currentState == MeasureState.notStarted) {
                 callVitalPagerInterFace.updateState(Constants.idle);
             } else {
@@ -245,11 +244,11 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
 
     @Override
     public void didThermoFinishMesureWithFailure(String deviceType, String error) {
+        EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
+        didFinishWithError(error);
+    }
 
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-            EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
-        }
-
+    private void didFinishWithError(String error) {
         message_tv.setText(error);
         result_lay.setVisibility(View.GONE);
 
@@ -309,8 +308,7 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
                 case VitalsConstant.VitalCallMapKeys.errorInMeasure:
 
                     String errorMessage = (String) map.get(VitalsConstant.VitalCallMapKeys.message);
-                    didThermoFinishMesureWithFailure(vitalDevice.getType(), errorMessage);
-
+                    didFinishWithError(errorMessage);
                     break;
             }
 

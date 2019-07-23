@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -275,9 +274,7 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
     @Override
     public void didFinishGulcoMesureWithFailure(String deviceType, String error) {
 
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-            EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
-        }
+        EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
 
         setCurrentState(MeasureState.failed);
         lastError = error;
