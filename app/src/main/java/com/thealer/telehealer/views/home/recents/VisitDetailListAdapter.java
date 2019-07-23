@@ -31,6 +31,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewModel;
@@ -44,6 +45,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
+import com.thealer.telehealer.views.Procedure.SelectProceduresFragment;
 import com.thealer.telehealer.views.common.LabelValueCustomView;
 import com.thealer.telehealer.views.common.OnModeChangeListener;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -145,6 +147,9 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                 break;
             case VisitDetailConstants.TYPE_INFO:
                 view = inflater.inflate(R.layout.visit_list_adapter_info_view, viewGroup, false);
+                break;
+            case VisitDetailConstants.TYPE_PROCEDURE:
+                view = inflater.inflate(R.layout.adapter_procedure_view, viewGroup, false);
                 break;
         }
         return new ViewHolder(view);
@@ -473,6 +478,9 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                                 documentListFragment.setArguments(bundle);
                                 documentListFragment.setTargetFragment(targetFragment, RequestID.REQ_VISIT_UPDATE);
                                 showSubFragmentInterface.onShowFragment(documentListFragment);
+                                break;
+                            case VisitDetailConstants.ADD_PROCEDURE:
+                                showProcedureSelectionView();
                                 break;
                         }
                     }
@@ -871,7 +879,51 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
                     viewHolder.infoBottomView.setVisibility(View.GONE);
                 }
                 break;
+            case VisitDetailConstants.TYPE_PROCEDURE:
+
+                viewHolder.itemHolderLl.removeAllViews();
+
+                for (int j = 0; j < adapterModelList.get(i).getCptCodes().size(); j++) {
+
+                    View view = LayoutInflater.from(activity).inflate(R.layout.adapter_procedure_item_view, null);
+
+                    TextView procedureLabelTv = (TextView) view.findViewById(R.id.procedure_label_tv);
+                    TextView procedureValueTv = (TextView) view.findViewById(R.id.procedure_value_tv);
+
+                    procedureLabelTv.setText(adapterModelList.get(i).getCptCodes().get(j).getCode());
+                    procedureValueTv.setText(adapterModelList.get(i).getCptCodes().get(j).getDescription());
+
+                    viewHolder.itemHolderLl.addView(view);
+                }
+
+                if (mode == Constants.EDIT_MODE) {
+                    viewHolder.arrowIv.setVisibility(View.VISIBLE);
+                    viewHolder.procedureCl.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showProcedureSelectionView();
+                        }
+                    });
+                }
+
+                break;
         }
+    }
+
+    private void showProcedureSelectionView() {
+        SelectProceduresFragment selectProceduresFragment = new SelectProceduresFragment();
+        Bundle bundle = new Bundle();
+        ArrayList<String> selectedList = new ArrayList<>();
+
+        for (int i = 0; i < detailViewModel.getSelectedCptCodeList().size(); i++) {
+            selectedList.add(detailViewModel.getSelectedCptCodeList().get(i).getCode());
+        }
+
+        bundle.putStringArrayList(ArgumentKeys.SELECTED_ITEMS, selectedList);
+
+        selectProceduresFragment.setArguments(bundle);
+        selectProceduresFragment.setTargetFragment(targetFragment, RequestID.REQ_SELECT_CPT_CODE);
+        showSubFragmentInterface.onShowFragment(selectProceduresFragment);
     }
 
     @Override
@@ -952,6 +1004,11 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
         private TextView orderListOptionSubTitleTv;
         private ImageView orderStatusIv;
 
+        private ConstraintLayout procedureCl;
+        private LinearLayout itemHolderLl;
+        private ImageView arrowIv;
+        private View bottomView;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -1021,6 +1078,10 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
             infoTv = (TextView) itemView.findViewById(R.id.info_tv);
             infoBottomView = (View) itemView.findViewById(R.id.info_bottom_view);
 
+            procedureCl = (ConstraintLayout) itemView.findViewById(R.id.procedure_cl);
+            itemHolderLl = (LinearLayout) itemView.findViewById(R.id.item_holder_ll);
+            arrowIv = (ImageView) itemView.findViewById(R.id.arrow_iv);
+            bottomView = (View) itemView.findViewById(R.id.bottom_view);
         }
     }
 
@@ -1190,8 +1251,8 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
         if (detailViewModel.getVisitsDetailApiResponseModel() != null
                 && detailViewModel.getVisitsDetailApiResponseModel().getResult() != null
                 && detailViewModel.getVisitsDetailApiResponseModel().getResult().getDiagnosis() != null
-                && !detailViewModel.getVisitsDetailApiResponseModel().getResult().getDiagnosis().isEmpty()) {
-            data = detailViewModel.getVisitsDetailApiResponseModel().getResult().getDiagnosis();
+                && !detailViewModel.getVisitsDetailApiResponseModel().getResult().getDiagnosis().toString().isEmpty()) {
+            data = detailViewModel.getVisitsDetailApiResponseModel().getResult().getDiagnosis().toString();
         }
 
         switch (mode) {
@@ -1401,6 +1462,18 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<VisitDetailListAdapter
         }
         modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_ADD, new AddNewModel(activity.getString(R.string.add_diet), VisitDetailConstants.ADD_DIET)));
 
+        /**
+         * Procedure
+         */
+
+        if (!detailViewModel.getSelectedCptCodeList().isEmpty()) {
+
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.procedure)));
+
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_PROCEDURE, new ProcedureModel(detailViewModel.getSelectedCptCodeList())));
+        } else {
+            modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_ADD, new AddNewModel(activity.getString(R.string.add_procedure), VisitDetailConstants.ADD_PROCEDURE)));
+        }
 
         return modelList;
     }

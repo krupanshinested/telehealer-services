@@ -337,6 +337,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         this.otherPersonUserGuid = callInitiateModel.getToUserGuid();
         this.otherPersonBatteryLevel = null;
         this.isViewSwapped = false;
+        this.doctor_guid = callInitiateModel.getDoctorGuid();
 
         if (AudioDeviceManager.getAudioDevice() != null && AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -907,6 +908,11 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         currentTranscript = "";
         LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.CALL_ENDED_BROADCAST));
+    }
+
+    @Nullable
+    public String getDoctor_guid() {
+        return doctor_guid;
     }
 
     private void sendTranscript() {
