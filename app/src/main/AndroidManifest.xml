@@ -124,6 +124,11 @@
         <activity
             android:name=".views.home.UserDetailActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".views.home.vitals.iHealth.pairing.VitalCreationActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
             android:launchMode="singleTask"

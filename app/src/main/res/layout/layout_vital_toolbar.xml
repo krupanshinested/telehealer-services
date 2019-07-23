@@ -71,7 +71,7 @@
             app:layout_constraintRight_toLeftOf="@+id/batter_view"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Flavor.iHealth.pairing.CustomViews.BatteryView
+        <com.thealer.telehealer.views.home.vitals.iHealth.pairing.CustomViews.BatteryView
             android:id="@+id/batter_view"
             android:layout_width="40dp"
             android:layout_height="20dp"

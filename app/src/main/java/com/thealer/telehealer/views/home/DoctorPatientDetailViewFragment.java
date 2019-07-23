@@ -1,6 +1,10 @@
 package com.thealer.telehealer.views.home;
 
 import android.annotation.SuppressLint;
+
+import Flavor.GoogleFit.VitalsListWithGoogleFitFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -74,7 +78,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import Flavor.iHealth.VitalsListWithGoogleFitFragment;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**

@@ -1,6 +1,6 @@
-package Flavor.iHealth.pairing;
+package com.thealer.telehealer.views.home.vitals.iHealth.pairing;
 
-import Flavor.iHealth.pairing.CustomViews.BatteryView;
+import com.thealer.telehealer.views.home.vitals.iHealth.pairing.CustomViews.BatteryView;
 import androidx.lifecycle.Lifecycle;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -21,7 +21,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
@@ -197,6 +196,13 @@ public class VitalCreationActivity extends BaseActivity implements
 
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
+        if (getIntent().getSerializableExtra(Constants.USER_DETAIL) != null) {
+            if (bundle == null) {
+                bundle = new Bundle();
+            }
+            bundle.putSerializable(Constants.USER_DETAIL,getIntent().getSerializableExtra(Constants.USER_DETAIL));
+        }
+
         switch (string) {
             case RequestID.TRIGGER_MANUAL_ENTRY:
                 VitalCreateNewFragment vitalCreateNewFragment = new VitalCreateNewFragment();
@@ -426,11 +432,7 @@ public class VitalCreationActivity extends BaseActivity implements
     @Override
     public VitalsManager getInstance() {
         if (vitalsManager == null) {
-            if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) {
-
-            } else {
-                checkVitalPermission();
-            }
+            checkVitalPermission();
             vitalsManager = VitalsManager.getInstance();
         }
 

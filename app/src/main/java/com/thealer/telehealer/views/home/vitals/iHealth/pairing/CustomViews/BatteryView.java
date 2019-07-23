@@ -1,4 +1,4 @@
-package Flavor.iHealth.pairing.CustomViews;
+package com.thealer.telehealer.views.home.vitals.iHealth.pairing.CustomViews;
 
 /**
  * Created by rsekar on 12/3/18.

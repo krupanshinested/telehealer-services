@@ -1,4 +1,4 @@
-package Flavor.iHealth;
+package com.thealer.telehealer.views.home.vitals.iHealth;
 
 import android.app.Application;
 import android.content.Intent;
@@ -11,10 +11,12 @@ import com.ihealth.communication.control.UpgradeControl;
 import com.ihealth.communication.manager.iHealthDevicesCallback;
 import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.ihealth.communication.manager.iHealthDevicesUpgradeManager;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
 import com.thealer.telehealer.common.OpenTok.TokBox;
@@ -22,18 +24,17 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.VitalCommon.*;
+import com.thealer.telehealer.views.home.vitals.iHealth.Controls.BPControl;
+import com.thealer.telehealer.views.home.vitals.iHealth.Controls.GulcoControl;
+import com.thealer.telehealer.views.home.vitals.iHealth.Controls.PulseControl;
+import com.thealer.telehealer.views.home.vitals.iHealth.Controls.ThermoControl;
+import com.thealer.telehealer.views.home.vitals.iHealth.Controls.WeightControl;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import Flavor.iHealth.Controls.BPControl;
-import Flavor.iHealth.Controls.GulcoControl;
-import Flavor.iHealth.Controls.PulseControl;
-import Flavor.iHealth.Controls.ThermoControl;
-import Flavor.iHealth.Controls.WeightControl;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -77,8 +78,15 @@ public class iHealthVitalManager extends VitalsManager {
         iHealthDevicesManager.getInstance().init(getApplication(), Log.VERBOSE, Log.ASSERT);
         callbackId = iHealthDevicesManager.getInstance().registerClientCallback(miHealthDevicesCallback);
 
+        String fileName;
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
+            fileName = "com_thealer_android.pem";
+        } else {
+            fileName = "com_thealer_pro_android_med.pem";
+        }
+
         try {
-            InputStream is = getApplication().getAssets().open("com_thealer_android.pem");
+            InputStream is = getApplication().getAssets().open(fileName);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
