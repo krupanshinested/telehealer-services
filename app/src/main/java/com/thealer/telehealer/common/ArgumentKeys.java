@@ -120,6 +120,7 @@ public class ArgumentKeys {
     public static final String IS_GET_TYPE = "isGetType";
     public static final String SHOW_FAVORITES = "showFavorites";
     public static final String IS_ONLY_CALLS = "isOnlyCalls";
+    public static final String SELECTED_ITEMS = "selected_items";
     public static final String SHOW_PRINT_FILTER = "showPrintFilter";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
