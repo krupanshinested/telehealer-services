@@ -1,31 +1,39 @@
 package com.thealer.telehealer.views.call;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
+import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
+import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
+import com.thealer.telehealer.apilayer.models.visits.VisitsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomButton;
-import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.Procedure.ProcedureConstants;
+import com.thealer.telehealer.views.Procedure.SelectProcedureBottomSheetDialogFragment;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.CCMItemView;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import config.AppConfig;
 
@@ -35,7 +43,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appConfig;
  * Created by rsekar on 1/11/19.
  */
 
-public class CallFeedBackActivity extends BaseActivity implements View.OnClickListener {
+public class CallFeedBackActivity extends BaseActivity implements View.OnClickListener, OnListItemSelectInterface {
 
     private TextView app_name_tv, info_tv, quality_tv, ccm_tv;
     private ImageView close_iv;
@@ -44,11 +52,17 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     private ConstraintLayout ccm_view;
     private CCMItemView ccm_item, rpm_item, bhi_item;
     private CustomButton submit_btn;
+    private CCMItemView telehealthItem;
+    private CCMItemView newItem;
+    private TextView moreTv;
 
-    private String sessionId, to_guid;
+    private String sessionId, to_guid, selectedItem, doctorGuid;
     private Date startedDate = new Date(), endedDate = new Date();
 
     private OpenTokViewModel openTokViewModel;
+    private SelectProcedureBottomSheetDialogFragment selectProcedureBottomSheetDialogFragment;
+
+    private VisitsApiViewModel visitsApiViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,10 +95,28 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             }
         });
 
+        visitsApiViewModel = ViewModelProviders.of(this).get(VisitsApiViewModel.class);
+        visitsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel.isSuccess()) {
+
+                }
+                submit_btn.setEnabled(true);
+            }
+        });
+
+        visitsApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                submit_btn.setEnabled(true);
+            }
+        });
 
         attachObserver(openTokViewModel);
+        attachObserver(visitsApiViewModel);
 
-        setUp();
+        initView();
 
         if (savedInstanceState != null) {
             rating_bar.setRating(savedInstanceState.getFloat(ArgumentKeys.FEEDBACK_RATTING));
@@ -106,7 +138,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         saveInstance.putString(ArgumentKeys.FEEDBACK_STRING, rating_et.getText().toString());
     }
 
-    private void setUp() {
+    private void initView() {
         app_name_tv = findViewById(R.id.app_name_tv);
         info_tv = findViewById(R.id.info_tv);
         quality_tv = findViewById(R.id.quality_tv);
@@ -120,6 +152,11 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         ccm_item = findViewById(R.id.ccm_item);
         rpm_item = findViewById(R.id.rpm_item);
         bhi_item = findViewById(R.id.bhi_item);
+        telehealthItem = (CCMItemView) findViewById(R.id.telehealth_item);
+        newItem = (CCMItemView) findViewById(R.id.new_item);
+        moreTv = (TextView) findViewById(R.id.more_tv);
+
+        doctorGuid = getIntent().getStringExtra(ArgumentKeys.DOCTOR_GUID);
 
         initListeners();
 
@@ -148,61 +185,63 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         } else {
             ccm_view.setVisibility(View.VISIBLE);
 
-            ccm_item.update(getString(R.string.ccm), false);
+            ccm_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.CCM_20), false);
             ccm_item.setOnClickListener(this);
             ccm_item.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(ccm_item.getId());
+                    showDetailDialog(ProcedureConstants.CCM_20);
                 }
             });
 
-            rpm_item.update(getString(R.string.rpm), false);
+            rpm_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.RPM_20), false);
             rpm_item.setOnClickListener(this);
             rpm_item.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(rpm_item.getId());
+                    showDetailDialog(ProcedureConstants.RPM_20);
                 }
             });
 
-            bhi_item.update(getString(R.string.bhi), false);
+            bhi_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.BHI_20), false);
             bhi_item.setOnClickListener(this);
             bhi_item.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(bhi_item.getId());
+                    showDetailDialog(ProcedureConstants.BHI_20);
                 }
             });
 
+            telehealthItem.update(ProcedureConstants.getTitle(this, ProcedureConstants.TELEHEALTH), true);
+            telehealthItem.setOnClickListener(this);
+            telehealthItem.setListenerForInfo(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDetailDialog(ProcedureConstants.TELEHEALTH);
+                }
+            });
+
+            newItem.setListenerForInfo(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDetailDialog(selectedItem);
+                }
+            });
+
+            selectedItem = ProcedureConstants.TELEHEALTH;
+
+            moreTv.setOnClickListener(this);
         }
     }
 
-    private void showDetailDialog(int id) {
-        String title = "";
-        String message = "";
-
-        switch (id) {
-            case R.id.ccm_item:
-                title = getString(R.string.ccm_title);
-                message = getString(R.string.ccm_message);
-                break;
-            case R.id.rpm_item:
-                title = getString(R.string.rpm_title);
-                message = getString(R.string.rpm_message);
-                break;
-            case R.id.bhi_item:
-                title = getString(R.string.bhi_title);
-                message = getString(R.string.bhi_message);
-                break;
-        }
-
-        Utils.showAlertDialog(this, title, message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }, null);
+    private void showDetailDialog(String type) {
+        Utils.showAlertDialog(this, ProcedureConstants.getTitle(this, type), ProcedureConstants.getDescription(this, type),
+                getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }, null);
     }
 
     @Override
@@ -212,17 +251,11 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
 
                 submit_btn.setEnabled(false);
 
-                if (ccm_item.getIsSelected()) {
+                String category = ProcedureConstants.getCategory(selectedItem);
+
+                if (category != null) {
                     HashMap<String, String> params = new HashMap<>();
-                    params.put("category", OpenTokConstants.ccm);
-                    openTokViewModel.updateCallStatus(sessionId, params);
-                } else if (bhi_item.getIsSelected()) {
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("category", OpenTokConstants.bhi);
-                    openTokViewModel.updateCallStatus(sessionId, params);
-                } else if (rpm_item.getIsSelected()) {
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("category", OpenTokConstants.rpm);
+                    params.put("category", category);
                     openTokViewModel.updateCallStatus(sessionId, params);
                 }
 
@@ -233,43 +266,85 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                 params.put("review", rating_et.getText().toString());
 
                 openTokViewModel.postCallReview(params);
+
+                UpdateVisitRequestModel visitRequestModel = new UpdateVisitRequestModel();
+                ProcedureModel.CPTCodesBean cptCodesBean = new ProcedureModel.CPTCodesBean(selectedItem, ProcedureConstants.getDescription(this, selectedItem));
+                List<ProcedureModel.CPTCodesBean> codesBeanList = new ArrayList<>();
+                codesBeanList.add(cptCodesBean);
+                ProcedureModel procedureModel = new ProcedureModel(codesBeanList);
+                visitRequestModel.setProcedure(procedureModel);
+
+                visitsApiViewModel.updateOrder(sessionId, visitRequestModel, doctorGuid, true);
+
                 break;
             case R.id.close_iv:
                 finish();
                 break;
             case R.id.ccm_item:
-                if (ccm_item.getIsSelected()) {
-                    ccm_item.update(false);
-                } else {
-                    ccm_item.update(true);
-                }
-
-                bhi_item.update(false);
-                rpm_item.update(false);
+                setSelected(ccm_item);
+                selectedItem = ProcedureConstants.CCM_20;
                 break;
             case R.id.bhi_item:
-
-                if (bhi_item.getIsSelected()) {
-                    bhi_item.update(false);
-                } else {
-                    bhi_item.update(true);
-                }
-
-                ccm_item.update(false);
-                rpm_item.update(false);
+                setSelected(bhi_item);
+                selectedItem = ProcedureConstants.BHI_20;
                 break;
             case R.id.rpm_item:
-
-                if (rpm_item.getIsSelected()) {
-                    rpm_item.update(false);
-                } else {
-                    rpm_item.update(true);
-                }
-
-                ccm_item.update(false);
-                bhi_item.update(false);
-
+                setSelected(rpm_item);
+                selectedItem = ProcedureConstants.RPM_20;
+                break;
+            case R.id.telehealth_item:
+                setSelected(telehealthItem);
+                selectedItem = ProcedureConstants.TELEHEALTH;
+                break;
+            case R.id.more_tv:
+                selectProcedureBottomSheetDialogFragment = new SelectProcedureBottomSheetDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(ArgumentKeys.SELECTED_ITEMS, selectedItem);
+                selectProcedureBottomSheetDialogFragment.setArguments(bundle);
+                selectProcedureBottomSheetDialogFragment.show(getSupportFragmentManager(), selectProcedureBottomSheetDialogFragment.getClass().getSimpleName());
                 break;
         }
+    }
+
+    private void setSelected(CCMItemView view) {
+        telehealthItem.update(false);
+        ccm_item.update(false);
+        rpm_item.update(false);
+        bhi_item.update(false);
+        newItem.update(false);
+
+        view.update(true);
+
+        if (!newItem.getIsSelected()) {
+            newItem.setVisibility(View.GONE);
+        } else {
+            newItem.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onListItemSelected(int position, Bundle bundle) {
+        selectedItem = ProcedureConstants.getItems().get(position);
+
+        switch (selectedItem) {
+            case ProcedureConstants.TELEHEALTH:
+                setSelected(telehealthItem);
+                break;
+            case ProcedureConstants.CCM_20:
+                setSelected(ccm_item);
+                break;
+            case ProcedureConstants.BHI_20:
+                setSelected(bhi_item);
+                break;
+            case ProcedureConstants.RPM_20:
+                setSelected(rpm_item);
+                break;
+            default:
+                setSelected(newItem);
+                newItem.update(ProcedureConstants.getTitle(this, selectedItem), true);
+                break;
+        }
+
+        selectProcedureBottomSheetDialogFragment.dismiss();
     }
 }

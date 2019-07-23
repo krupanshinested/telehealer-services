@@ -2,13 +2,13 @@ package com.thealer.telehealer.views.common;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.thealer.telehealer.R;
 
@@ -23,6 +23,7 @@ public class LabelValueCustomView extends ConstraintLayout {
     private int labelTvColor = 0, valueTvColor = 0;
 
     boolean isLabelVisible = true, isValueVisible = true, isBottomViewVisible = true;
+    private int labelStyle, valueStyle;
     String labelText, valueText;
     Context context;
 
@@ -56,6 +57,8 @@ public class LabelValueCustomView extends ConstraintLayout {
             valueText = typedArray.getString(R.styleable.LabelValueCustomView_lbcv_value_text);
             labelTvColor = typedArray.getColor(R.styleable.LabelValueCustomView_lbcv_label_text_color, 0);
             valueTvColor = typedArray.getColor(R.styleable.LabelValueCustomView_lbcv_value_text_color, 0);
+            labelStyle = typedArray.getResourceId(R.styleable.LabelValueCustomView_lbcv_label_style, R.style.text_sub_title);
+            valueStyle = typedArray.getResourceId(R.styleable.LabelValueCustomView_lbcv_value_style, R.style.text_title_bold);
 
             setLabelVisible(isLabelVisible);
             setValueVisible(isValueVisible);
@@ -70,8 +73,39 @@ public class LabelValueCustomView extends ConstraintLayout {
                 valueTv.setTextColor(valueTvColor);
             }
 
+            if (labelStyle != 0) {
+                setLabelTvStyle(labelStyle);
+            }
+            if (valueStyle != 0) {
+                setValueTvStyle(valueStyle);
+            }
+
             typedArray.recycle();
         }
+    }
+
+    private void setLabelTvStyle(int labelStyle) {
+        valueTv.setTextAppearance(labelStyle);
+    }
+
+    public void setValueTvStyle(int style) {
+        valueTv.setTextAppearance(style);
+    }
+
+    public void setLabelTvGravity(int gravity) {
+        labelTv.setGravity(gravity);
+    }
+
+    public void setValueTvGravity(int gravity) {
+        valueTv.setGravity(gravity);
+    }
+
+    public TextView getLabelTv() {
+        return labelTv;
+    }
+
+    public TextView getValueTv() {
+        return valueTv;
     }
 
     public void setLabelVisible(boolean labelVisible) {

@@ -12,6 +12,7 @@ import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiRes
 import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.miscellaneous.MiscellaneousApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
+import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
@@ -67,6 +68,46 @@ public class VisitDetailViewModel extends ViewModel {
 
     private String instruction, diagnosis;
     private boolean isInstructionUpdated, isDiagnosisUpdated;
+
+    private List<ProcedureModel.CPTCodesBean> selectedCptCodeList = new ArrayList<>();
+
+    public boolean isProcedureUpdated() {
+        boolean isUpdated = false;
+
+        if (getVisitsDetailApiResponseModel().getResult().getProcedure() == null) {
+            isUpdated = !selectedCptCodeList.isEmpty();
+        } else {
+            if (selectedCptCodeList.size() != getVisitsDetailApiResponseModel().getResult().getProcedure().getCPT_codes().size()) {
+                isUpdated = true;
+            } else {
+                for (int i = 0; i < getVisitsDetailApiResponseModel().getResult().getProcedure().getCPT_codes().size(); i++) {
+
+                    boolean isAvailable = false;
+
+                    for (int j = 0; j < selectedCptCodeList.size(); j++) {
+                        if (selectedCptCodeList.get(j).getCode().trim().equals(getVisitsDetailApiResponseModel().getResult().getProcedure().getCPT_codes().get(i).getCode().trim())) {
+                            isAvailable = true;
+                            break;
+                        }
+                    }
+
+                    if (!isAvailable) {
+                        isUpdated = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return isUpdated;
+    }
+
+    public List<ProcedureModel.CPTCodesBean> getSelectedCptCodeList() {
+        return selectedCptCodeList;
+    }
+
+    public void setSelectedCptCodeList(List<ProcedureModel.CPTCodesBean> selectedCptCodeList) {
+        this.selectedCptCodeList = selectedCptCodeList;
+    }
 
     public boolean isTranscriptUpdated() {
         if (updatedTranscriptResponseModel != null && updatedTranscriptResponseModel.getSpeakerLabels() != null) {
