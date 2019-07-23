@@ -19,11 +19,13 @@ public class VisitDetailConstants {
     public static final int TYPE_DATE = 13;
     public static final int TYPE_INFO = 14;
     public static final int TYPE_DIAGNOSIS = 15;
+    public static final int TYPE_PROCEDURE = 16;
 
     public static final int ADD_VITAL = 1;
     public static final int ADD_ORDER = 2;
     public static final int ADD_DOCUMENTS = 3;
     public static final int ADD_DIET = 4;
+    public static final int ADD_PROCEDURE = 6;
 
     public static final String VISIT_TYPE_VITALS = "vitals";
     public static final String VISIT_TYPE_ORDERS = "orders";
@@ -35,5 +37,4 @@ public class VisitDetailConstants {
     public static final String VISIT_TYPE_SPECIALIST = "specialists";
     public static final String VISIT_TYPE_PRESCRIPTIONS = "prescriptions";
     public static final String VISIT_TYPE_MISCELLANEOUS = "miscellaneous";
-
 }

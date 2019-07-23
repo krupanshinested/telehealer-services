@@ -2,6 +2,7 @@ package com.thealer.telehealer.apilayer.models.recents;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
+import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 
 import java.util.List;
 
@@ -33,7 +34,8 @@ public class VisitsDetailApiResponseModel extends BaseApiResponseModel {
         private String category;
         private Object cost;
         private String instructions;
-        private String diagnosis;
+        private Object diagnosis;
+        private ProcedureModel procedure;
         private String created_at;
         private String updated_at;
         private int transcription_id;
@@ -314,12 +316,20 @@ public class VisitsDetailApiResponseModel extends BaseApiResponseModel {
             this.instructions = instructions;
         }
 
-        public String getDiagnosis() {
+        public Object getDiagnosis() {
             return diagnosis;
         }
 
         public void setDiagnosis(String diagnosis) {
             this.diagnosis = diagnosis;
+        }
+
+        public ProcedureModel getProcedure() {
+            return procedure;
+        }
+
+        public void setProcedure(ProcedureModel procedure) {
+            this.procedure = procedure;
         }
 
         public String getTranscription_status() {
