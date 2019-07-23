@@ -1,5 +1,6 @@
 package com.thealer.telehealer.apilayer.models.visits;
 
+import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class UpdateVisitRequestModel {
     private String instructions;
     private String diagnosis;
     private DownloadTranscriptResponseModel updated_transcript;
+    private ProcedureModel procedure;
 
     public String getAssociation_type() {
         return association_type;
@@ -62,5 +64,13 @@ public class UpdateVisitRequestModel {
 
     public void setUpdated_transcript(DownloadTranscriptResponseModel updated_transcript) {
         this.updated_transcript = updated_transcript;
+    }
+
+    public ProcedureModel getProcedure() {
+        return procedure;
+    }
+
+    public void setProcedure(ProcedureModel procedure) {
+        this.procedure = procedure;
     }
 }

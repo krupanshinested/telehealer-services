@@ -5,6 +5,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.views.home.recents.adapterModels.AddNewModel;
@@ -35,6 +36,12 @@ public class VisitDetailAdapterModel {
     private DocumentsApiResponseModel.ResultBean documentModel;
     private OrdersUserFormsApiResponseModel formsApiResponseModel;
     private List<DietApiResponseModel> dietApiResponseModel;
+    private List<ProcedureModel.CPTCodesBean> cptCodes;
+
+    public VisitDetailAdapterModel(int viewType, ProcedureModel procedureModel) {
+        this.viewType = viewType;
+        this.cptCodes = procedureModel.getCPT_codes();
+    }
 
     public VisitDetailAdapterModel(int viewType, String categoryTitle) {
         this.viewType = viewType;
@@ -230,6 +237,14 @@ public class VisitDetailAdapterModel {
 
     public void setDietApiResponseModel(List<DietApiResponseModel> dietApiResponseModel) {
         this.dietApiResponseModel = dietApiResponseModel;
+    }
+
+    public List<ProcedureModel.CPTCodesBean> getCptCodes() {
+        return cptCodes;
+    }
+
+    public void setCptCodes(List<ProcedureModel.CPTCodesBean> cptCodes) {
+        this.cptCodes = cptCodes;
     }
 
     public boolean isShow() {

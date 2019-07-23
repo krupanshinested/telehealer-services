@@ -8,5 +8,7 @@
         <attr name="lbcv_value_text" format="string" />
         <attr name="lbcv_label_text_color" format="color" />
         <attr name="lbcv_value_text_color" format="color" />
+        <attr name="lbcv_label_style" format="reference" />
+        <attr name="lbcv_value_style" format="reference" />
     </declare-styleable>
 </resources>

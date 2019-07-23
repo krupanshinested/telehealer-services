@@ -4,8 +4,6 @@ import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.Dialog;
 import android.app.Service;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.Observer;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,12 +18,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
@@ -44,6 +36,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.Observer;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.skyfishjy.library.RippleBackground;
 import com.thealer.telehealer.BuildConfig;
@@ -75,7 +76,6 @@ import com.thealer.telehealer.common.Util.Array.ArrayListUtil;
 import com.thealer.telehealer.common.Util.TimerInterface;
 import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
@@ -119,7 +119,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     private LinearLayout bigView;
     private FrameLayout smallView;
     private LinearLayout top_option, recording_view, vitalsView, vitalHeaderView;
-    private ImageView minimize, speaker_type, audio_mute, video_mute, video_switch, flip_camera, hang_iv, answer_iv, arrow_iv,name_arrow;
+    private ImageView minimize, speaker_type, audio_mute, video_mute, video_switch, flip_camera, hang_iv, answer_iv, arrow_iv, name_arrow;
     private TextView name_tv, user_info_tv, status_tv, call_quality_tv;
     private Chronometer recording_tv;
     private RoundCornerConstraintLayout recording_dot, quality_disclaimer, call_quality_lay, patient_disclaimer;
@@ -197,7 +197,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             currentCallQuality = savedInstanceState.getString(ArgumentKeys.CALL_QUALITY);
         }
 
-        triggerAnswer = getIntent().getBooleanExtra(ArgumentKeys.TRIGGER_ANSWER,false);
+        triggerAnswer = getIntent().getBooleanExtra(ArgumentKeys.TRIGGER_ANSWER, false);
         initView();
 
         if (TokBox.shared.getConnectedDate() != null) {
@@ -245,14 +245,14 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         didChangedAudioInput(TokBox.shared.getCurrentAudioState());
         LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.CALL_ACTIVITY_RESUMED));
 
-        Log.d("CallActivity","onResume");
+        Log.d("CallActivity", "onResume");
         if (triggerAnswer) {
-            Log.d("CallActivity","triggerAnswer true");
-            getIntent().putExtra(ArgumentKeys.TRIGGER_ANSWER,false);
+            Log.d("CallActivity", "triggerAnswer true");
+            getIntent().putExtra(ArgumentKeys.TRIGGER_ANSWER, false);
             triggerAnswer = false;
             answerTheCall();
         } else {
-            Log.d("CallActivity","triggerAnswer false");
+            Log.d("CallActivity", "triggerAnswer false");
         }
     }
 
@@ -526,7 +526,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void updateState(int currentState) {
-        Log.d("CallActivity","updateState "+currentState);
+        Log.d("CallActivity", "updateState " + currentState);
         TokBox.shared.setCallState(currentState);
         updateUI();
     }
@@ -714,7 +714,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                         if (UserType.isUserPatient()) {
                             ArrayList<VitalDevice> items = VitalPairedDevices.getAllPairedDevices(appPreference).getDevices();
 
-                            ArrayListUtil util = new ArrayListUtil<VitalDevice,VitalDevice>();
+                            ArrayListUtil util = new ArrayListUtil<VitalDevice, VitalDevice>();
                             devices = util.filterList(items, new ArrayListFilter<VitalDevice>() {
                                 @Override
                                 public Boolean needToAddInFilter(VitalDevice model) {
@@ -994,17 +994,17 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     public void didComplete(boolean isSuccess) {
                         if (isSuccess) {
                             Intent intent = new Intent(CallActivity.this, UserDetailActivity.class);
-                            intent.putExtra(Constants.USER_DETAIL,otherPersonDetail);
-                            intent.putExtra(ArgumentKeys.FROM_CALL,true);
+                            intent.putExtra(Constants.USER_DETAIL, otherPersonDetail);
+                            intent.putExtra(ArgumentKeys.FROM_CALL, true);
                             startActivity(intent);
                         }
                     }
                 });
                 break;
             case R.id.smallView:
-                Log.d("CallActivity","small View click");
+                Log.d("CallActivity", "small View click");
                 TokBox.shared.setViewSwapped(!TokBox.shared.isViewSwapped());
-                TokBox.shared.setup(getRemoteView(),getLocalView());
+                TokBox.shared.setup(getRemoteView(), getLocalView());
                 break;
         }
     }
@@ -1037,8 +1037,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void answerTheCall() {
-        Log.d("CallActivity","answerTheCall");
-        EventRecorder.recordCallUpdates("CALL_ACCEPTED",null);
+        Log.d("CallActivity", "answerTheCall");
+        EventRecorder.recordCallUpdates("CALL_ACCEPTED", null);
 
         if (TokBox.shared.isVideoCall()) {
             EventRecorder.recordCallUpdates("opening_video_call", null);
@@ -1239,6 +1239,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     Intent feedBackIntent = new Intent(context, CallFeedBackActivity.class);
                     feedBackIntent.putExtra(ArgumentKeys.ORDER_ID, sessionId);
                     feedBackIntent.putExtra(ArgumentKeys.TO_USER_GUID, to_guid);
+                    feedBackIntent.putExtra(ArgumentKeys.DOCTOR_GUID, TokBox.shared.getDoctor_guid());
                     feedBackIntent.putExtra(ArgumentKeys.STARTED_DATE, startedTime);
                     feedBackIntent.putExtra(ArgumentKeys.ENDED_DATE, endedTime);
                     feedBackIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
