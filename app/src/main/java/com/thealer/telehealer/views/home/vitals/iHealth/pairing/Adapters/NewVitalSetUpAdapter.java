@@ -1,4 +1,4 @@
-package Flavor.iHealth.pairing.Adapters;
+package com.thealer.telehealer.views.home.vitals.iHealth.pairing.Adapters;
 
 import android.content.Context;
 import androidx.annotation.NonNull;

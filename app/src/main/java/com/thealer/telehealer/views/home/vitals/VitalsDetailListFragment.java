@@ -78,7 +78,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import Flavor.iHealth.pairing.VitalCreationActivity;
+import com.thealer.telehealer.views.home.vitals.iHealth.pairing.VitalCreationActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.toptas.fancyshowcase.listener.DismissListener;
 
@@ -833,24 +833,23 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
 
     private void proceedAdd(String selectedItem) {
-        if (UserType.isUserPatient()) {
-            Intent intent = new Intent(getActivity(), VitalCreationActivity.class);
-            intent.putExtra(ArgumentKeys.SELECTED_VITAL_TYPE, selectedItem);
-            getActivity().startActivity(intent);
-        } else {
-            VitalCreateNewFragment vitalCreateNewFragment = new VitalCreateNewFragment();
-            Bundle bundle = getArguments();
-            if (bundle == null) {
-                bundle = new Bundle();
-            }
-            if (isAbnormalVitalView) {
-                bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModel);
-            }
-            bundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE, selectedItem);
-            bundle.putBoolean(ArgumentKeys.USE_OWN_TOOLBAR, true);
-            vitalCreateNewFragment.setArguments(bundle);
-            showSubFragmentInterface.onShowFragment(vitalCreateNewFragment);
+        Bundle bundle = getArguments();
+
+        if (bundle == null) {
+            bundle = new Bundle();
         }
+
+        if (isAbnormalVitalView) {
+            bundle.putSerializable(Constants.USER_DETAIL, commonUserApiResponseModel);
+        }
+
+        Intent intent = new Intent(getActivity(), VitalCreationActivity.class);
+        intent.putExtra(ArgumentKeys.SELECTED_VITAL_TYPE, selectedItem);
+        if (!UserType.isUserPatient()) {
+            intent.putExtra(Constants.USER_DETAIL,bundle.getSerializable(Constants.USER_DETAIL));
+        }
+
+        getActivity().startActivity(intent);
     }
 
     private void showUserDetailView() {

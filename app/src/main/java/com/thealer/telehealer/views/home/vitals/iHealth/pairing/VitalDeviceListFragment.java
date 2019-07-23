@@ -1,4 +1,4 @@
-package Flavor.iHealth.pairing;
+package com.thealer.telehealer.views.home.vitals.iHealth.pairing;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,12 +19,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
@@ -33,11 +35,10 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.home.vitals.iHealth.pairing.Adapters.VitalDeviceListAdapter;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
-
-import Flavor.iHealth.pairing.Adapters.VitalDeviceListAdapter;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -183,9 +184,11 @@ public class VitalDeviceListFragment extends BaseFragment {
                         }
                         break;
                     case VitalDeviceListAdapter.google_fit_sources:
-                        Intent intent = new Intent(getActivity(), GoogleFitSourceSelectionActivity.class);
-                        intent.putExtra(ArgumentKeys.GOOGLE_FIT_SOURCE, GoogleFitDefaults.getPreviousFetchedSources());
-                        startActivity(intent);
+                        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
+                            Intent intent = new Intent(getActivity(), GoogleFitSourceSelectionActivity.class);
+                            intent.putExtra(ArgumentKeys.GOOGLE_FIT_SOURCE, GoogleFitDefaults.getPreviousFetchedSources());
+                            startActivity(intent);
+                        }
                         break;
                     case VitalDeviceListAdapter.none:
                         break;

@@ -1,4 +1,4 @@
-package Flavor.iHealth.pairing;
+package com.thealer.telehealer.views.home.vitals.iHealth.pairing;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,11 +25,10 @@ import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.home.vitals.iHealth.pairing.Adapters.NewVitalSetUpAdapter;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
-
-import Flavor.iHealth.pairing.Adapters.NewVitalSetUpAdapter;
 
 /**
  * Created by rsekar on 11/28/18.
