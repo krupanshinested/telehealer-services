@@ -1,4 +1,4 @@
-package Flavor.iHealth.pairing.Adapters;
+package com.thealer.telehealer.views.home.vitals.iHealth.pairing.Adapters;
 
 import android.content.Context;
 
@@ -10,12 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ClickListener;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 
 import java.util.ArrayList;
@@ -73,9 +74,12 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         sources.add(new DataSource(null,empty_space,"",none));
         sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.manual_input),manual_entry_type));
 
-        sources.add(new DataSource(null,empty_space,"",none));
-        sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.manage_sources),google_fit_sources));
-        sources.add(new DataSource(null,sectionHeader,context.getString(R.string.manage_sources_sub),none));
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
+            sources.add(new DataSource(null,empty_space,"",none));
+            sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.manage_sources),google_fit_sources));
+            sources.add(new DataSource(null,sectionHeader,context.getString(R.string.manage_sources_sub),none));
+        }
+
     }
 
     public ArrayList<DataSource> getSources() {

@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -287,9 +286,7 @@ public class VitalMeasureBaseFragment extends VitalsSendBaseFragment implements 
 
     @Override
     public void didFailConnectDevice(String type, String serailNumber, String errorMessage) {
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-            EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
-        }
+        EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
 
         Utils.showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
             @Override

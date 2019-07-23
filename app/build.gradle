@@ -147,14 +147,10 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
 
     //Vitals ihealth
-    patientImplementation files('libs/d2xx.jar')
-    patientImplementation files('libs/pl2303driver.jar')
-    patientImplementation files('libs/smartlinklib3.6.4_product.jar')
-    patientImplementation files('libs/iHealthLibrary_2.4.4.jar')
-    stethioHealthImplementation files('libs/d2xx.jar')
-    stethioHealthImplementation files('libs/pl2303driver.jar')
-    stethioHealthImplementation files('libs/smartlinklib3.6.4_product.jar')
-    stethioHealthImplementation files('libs/iHealthLibrary_2.4.4.jar')
+    implementation files('libs/d2xx.jar')
+    implementation files('libs/pl2303driver.jar')
+    implementation files('libs/smartlinklib3.6.4_product.jar')
+    implementation files('libs/iHealthLibrary_2.4.4.jar')
 
     //view model and live data
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha02'

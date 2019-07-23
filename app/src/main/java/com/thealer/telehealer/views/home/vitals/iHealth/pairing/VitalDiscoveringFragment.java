@@ -1,4 +1,4 @@
-package Flavor.iHealth.pairing;
+package com.thealer.telehealer.views.home.vitals.iHealth.pairing;
 
 import android.app.Activity;
 import android.content.Context;
