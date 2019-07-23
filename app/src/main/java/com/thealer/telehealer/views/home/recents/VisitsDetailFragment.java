@@ -37,6 +37,7 @@ import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiRes
 import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.miscellaneous.MiscellaneousApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyResponseModel;
+import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiViewModel;
@@ -54,6 +55,7 @@ import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.Procedure.ProcedureConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -153,6 +155,10 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                     if (baseApiResponseModel instanceof VisitsDetailApiResponseModel) {
                         visitsDetailApiResponseModel = (VisitsDetailApiResponseModel) baseApiResponseModel;
                         visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
+
+                        if (visitsDetailApiResponseModel.getResult().getProcedure() != null)
+                            visitDetailViewModel.setSelectedCptCodeList(visitsDetailApiResponseModel.getResult().getProcedure().getCPT_codes());
+
                         visitDetailListAdapter.setData();
 
                         String updatedTranscript = visitsDetailApiResponseModel.getResult().getUpdated_transcript();
@@ -260,6 +266,11 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
                                 } else
                                     Log.e(TAG, "onChanged: else");
+
+
+                                if (visitDetailViewModel.isProcedureUpdated()) {
+                                    visitsDetailApiResponseModel.getResult().setProcedure(new ProcedureModel(visitDetailViewModel.getSelectedCptCodeList()));
+                                }
 
                                 isSuccessViewShown = false;
                                 sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.visit_updated_successfully));
@@ -517,43 +528,44 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             }
         }
 
-        List<Integer> otherOrderIdList = new ArrayList<>();
-        /**
-         * Labs
-         */
-        if (visitsDetailApiResponseModel.getResult().getLabs() != null) {
-            otherOrderIdList.addAll(visitsDetailApiResponseModel.getResult().getLabs());
-        }
-        /**
-         * Specialist
-         */
-        if (visitsDetailApiResponseModel.getResult().getSpecialists() != null) {
-            otherOrderIdList.addAll(visitsDetailApiResponseModel.getResult().getSpecialists());
-        }
-        /**
-         * Xrays
-         */
-        if (visitsDetailApiResponseModel.getResult().getXrays() != null) {
-            otherOrderIdList.addAll(visitsDetailApiResponseModel.getResult().getXrays());
-        }
-        /**
-         * Prescriptions
-         */
-        if (visitsDetailApiResponseModel.getResult().getPrescriptions() != null) {
-            otherOrderIdList.addAll(visitsDetailApiResponseModel.getResult().getPrescriptions());
-        }
-        /**
-         * Miscellaneous
-         */
-        if (visitsDetailApiResponseModel.getResult().getMiscellaneous() != null) {
-            otherOrderIdList.addAll(visitsDetailApiResponseModel.getResult().getMiscellaneous());
-        }
+        if (visitsDetailApiResponseModel != null && visitsDetailApiResponseModel.getResult() != null) {
+            List<Integer> otherOrderIdList = new ArrayList<>();
+            /**
+             * Labs
+             */
+            if (visitsDetailApiResponseModel.getResult().getLabs() != null) {
+                otherOrderIdList.addAll(visitsDetailApiResponseModel.getResult().getLabs());
+            }
+            /**
+             * Specialist
+             */
+            if (visitsDetailApiResponseModel.getResult().getSpecialists() != null) {
+                otherOrderIdList.addAll(visitsDetailApiResponseModel.getResult().getSpecialists());
+            }
+            /**
+             * Xrays
+             */
+            if (visitsDetailApiResponseModel.getResult().getXrays() != null) {
+                otherOrderIdList.addAll(visitsDetailApiResponseModel.getResult().getXrays());
+            }
+            /**
+             * Prescriptions
+             */
+            if (visitsDetailApiResponseModel.getResult().getPrescriptions() != null) {
+                otherOrderIdList.addAll(visitsDetailApiResponseModel.getResult().getPrescriptions());
+            }
+            /**
+             * Miscellaneous
+             */
+            if (visitsDetailApiResponseModel.getResult().getMiscellaneous() != null) {
+                otherOrderIdList.addAll(visitsDetailApiResponseModel.getResult().getMiscellaneous());
+            }
 
-        Log.e(TAG, "getReferralOrderDetail: " + new Gson().toJson(otherOrderIdList));
-        if (!otherOrderIdList.isEmpty()) {
-            ordersApiViewModel.getOrderdsDetail(guidPatient, guidDoctor, otherOrderIdList, true);
+            Log.e(TAG, "getReferralOrderDetail: " + new Gson().toJson(otherOrderIdList));
+            if (!otherOrderIdList.isEmpty()) {
+                ordersApiViewModel.getOrderdsDetail(guidPatient, guidDoctor, otherOrderIdList, true);
+            }
         }
-
     }
 
     /**
@@ -561,7 +573,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
      */
     private void getDietDetails() {
 
-        if (visitsDetailApiResponseModel.getResult().getUser_diets() != null &&
+        if (visitsDetailApiResponseModel != null && visitsDetailApiResponseModel.getResult() != null && visitsDetailApiResponseModel.getResult().getUser_diets() != null &&
                 !visitsDetailApiResponseModel.getResult().getUser_diets().isEmpty()) {
             dietApiViewModel.getUserDietDetails(null, null, null, visitsDetailApiResponseModel.getResult().getUser_diets(), true);
         }
@@ -579,7 +591,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 guidDoctor = doctorGuid;
             }
         }
-        if (visitsDetailApiResponseModel.getResult().getUser_forms() != null &&
+        if (visitsDetailApiResponseModel != null && visitsDetailApiResponseModel.getResult() != null && visitsDetailApiResponseModel.getResult().getUser_forms() != null &&
                 !visitsDetailApiResponseModel.getResult().getUser_forms().isEmpty()) {
             ordersApiViewModel.getFormsDetail(guidPatient, guidDoctor, visitsDetailApiResponseModel.getResult().getUser_forms(), true);
         }
@@ -591,7 +603,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
      */
     private void getDocumentDetails() {
 
-        if (visitsDetailApiResponseModel.getResult().getUser_files() != null &&
+        if (visitsDetailApiResponseModel != null && visitsDetailApiResponseModel.getResult() != null && visitsDetailApiResponseModel.getResult().getUser_files() != null &&
                 !visitsDetailApiResponseModel.getResult().getUser_files().isEmpty()) {
             ordersApiViewModel.getDocumentsDetail(null, null, visitsDetailApiResponseModel.getResult().getUser_files(), true);
         }
@@ -609,7 +621,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 guidDoctor = doctorGuid;
             }
         }
-        if (visitsDetailApiResponseModel.getResult().getUser_vitals() != null &&
+        if (visitsDetailApiResponseModel != null && visitsDetailApiResponseModel.getResult() != null && visitsDetailApiResponseModel.getResult().getUser_vitals() != null &&
                 !visitsDetailApiResponseModel.getResult().getUser_vitals().isEmpty()) {
             vitalsApiViewModel.getVitalDetail(guidPatient, guidDoctor, visitsDetailApiResponseModel.getResult().getUser_vitals(), true);
         }
@@ -716,7 +728,8 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
         if ((currentUpdateType != null && ((removeList != null && !removeList.isEmpty()) || (addList != null && !addList.isEmpty())))
                 || visitDetailViewModel.isInstructionUpdated() || visitDetailViewModel.isDiagnosisUpdated() || visitDetailViewModel.isTranscriptUpdated() ||
-                visitDetailViewModel.isTranscriptEdited()) {
+                visitDetailViewModel.isTranscriptEdited() || visitDetailViewModel.isProcedureUpdated()) {
+
             if (!isSuccessViewShown) {
                 Bundle bundle = new Bundle();
                 bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.loading));
@@ -766,6 +779,10 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 visitRequestModel.setUpdated_transcript(updatedTranscript);
             }
 
+            if (visitDetailViewModel.isProcedureUpdated()) {
+                visitRequestModel.setProcedure(new ProcedureModel(visitDetailViewModel.getSelectedCptCodeList()));
+            }
+
             Log.e(TAG, "visitRequestModel: " + new Gson().toJson(visitRequestModel));
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -809,6 +826,19 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         switch (requestCode) {
             case RequestID.REQ_SHOW_SUCCESS_VIEW:
                 if (resultCode == Activity.RESULT_OK) {
+                    visitDetailListAdapter.setData();
+                }
+                break;
+            case RequestID.REQ_SELECT_CPT_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    ArrayList<String> selectedCptCode = data.getStringArrayListExtra(ArgumentKeys.SELECTED_ITEMS);
+
+                    List<ProcedureModel.CPTCodesBean> codesBeanList = new ArrayList<>();
+
+                    for (int i = 0; i < selectedCptCode.size(); i++) {
+                        codesBeanList.add(new ProcedureModel.CPTCodesBean(selectedCptCode.get(i), ProcedureConstants.getDescription(getActivity(), selectedCptCode.get(i))));
+                    }
+                    visitDetailViewModel.setSelectedCptCodeList(codesBeanList);
                     visitDetailListAdapter.setData();
                 }
                 break;

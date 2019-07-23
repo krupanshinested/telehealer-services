@@ -28,6 +28,7 @@ public class RequestID {
     public static final int REQ_CREATE_QUICK_LOGIN = 6001;
     public static final int REQ_VISIT_UPDATE = 6003;
     public static final int REQ_CREATE_NEW_VITAL = 9003;
+    public static final int REQ_SELECT_CPT_CODE = 9004;
 
     public static final String REQ_PASSWORD_RESET_OTP = "REQ_RESET_OTP";
     public static final String REQ_RESET_PASSWORD = "REQ_RESET_PASSWORD";
