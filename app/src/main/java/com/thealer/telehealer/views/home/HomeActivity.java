@@ -79,7 +79,7 @@ import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import java.util.Calendar;
 import java.util.List;
 
-import Flavor.iHealth.VitalsListWithGoogleFitFragment;
+import Flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;

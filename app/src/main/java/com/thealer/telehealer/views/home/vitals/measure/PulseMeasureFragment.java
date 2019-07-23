@@ -25,7 +25,6 @@ import com.github.mikephil.charting.formatter.IFillFormatter;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.gson.reflect.TypeToken;
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
@@ -189,7 +188,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
                 break;
         }
 
-        if (!UserType.isUserPatient()) {
+        if (!UserType.isUserPatient() && isPresentedInsideCallActivity()) {
             save_bt.setVisibility(View.GONE);
             close_bt.setVisibility(View.GONE);
             remeasure_bt.setVisibility(View.GONE);
@@ -347,15 +346,14 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
 
     @Override
     public void didPulseFinishMesureWithFailure(String deviceType, String error) {
+        EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
+        didReceivedError(error);
+    }
 
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-            EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
-        }
-
+    private void didReceivedError(String error) {
         message_tv.setText(error);
         setCurrentState(MeasureState.failed);
     }
-
 
     @Override
     public void startedToConnect(String type, String serailNumber) {
@@ -438,7 +436,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
                 case VitalsConstant.VitalCallMapKeys.errorInMeasure:
 
                     String errorMessage = (String) map.get(VitalsConstant.VitalCallMapKeys.message);
-                    didPulseFinishMesureWithFailure(vitalDevice.getType(), errorMessage);
+                    didReceivedError(errorMessage);
 
                     break;
                 case VitalsConstant.VitalCallMapKeys.finishedMeasure:

@@ -18,8 +18,10 @@ import android.widget.TextView;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiModel;
@@ -171,7 +173,7 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
             startMeasure();
         }
 
-        if (UserType.isUserPatient()) {
+        if (UserType.isUserPatient() || !isPresentedInsideCallActivity()) {
             sync_bt.setVisibility(View.VISIBLE);
         } else {
             sync_bt.setVisibility(View.GONE);
@@ -226,6 +228,12 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
                         });
 
 
+                        String userGuid = null;
+                        if ((BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) && getArguments().getSerializable(Constants.USER_DETAIL) != null) {
+                            CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+                            userGuid = commonUserApiResponseModel.getUser_guid();
+                        }
+
                         for (int i = 0; i < selectedList.size(); i++) {
 
                             BPTrack track = selectedList.get(i);
@@ -235,10 +243,10 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
                             } else {
                                 VitalsCreateApiModel vitalsCreateApiModel = new VitalsCreateApiModel(TeleHealerApplication.application);
 
-                                CreateVitalApiRequestModel bpRequest = new CreateVitalApiRequestModel(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), VitalsConstant.VITAL_MODE_DEVICE, null, null);
+                                CreateVitalApiRequestModel bpRequest = new CreateVitalApiRequestModel(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), VitalsConstant.VITAL_MODE_DEVICE, null, userGuid);
                                 vitalsCreateApiModel.createVital(bpRequest, null);
 
-                                CreateVitalApiRequestModel hrRequest = new CreateVitalApiRequestModel(SupportedMeasurementType.heartRate, track.getHeartRate() + "", VitalsConstant.VITAL_MODE_DEVICE, null, null);
+                                CreateVitalApiRequestModel hrRequest = new CreateVitalApiRequestModel(SupportedMeasurementType.heartRate, track.getHeartRate() + "", VitalsConstant.VITAL_MODE_DEVICE, null, userGuid);
                                 vitalsCreateApiModel.createVital(hrRequest, null);
                             }
                         }

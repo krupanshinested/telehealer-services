@@ -3,7 +3,7 @@ package com.thealer.telehealer.views.home.monitoring;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import Flavor.iHealth.VitalsListWithGoogleFitFragment;
+import Flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -22,7 +22,6 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.monitoring.diet.DietDetailFragment;
 import com.thealer.telehealer.views.home.monitoring.diet.DietUserListingFragment;
-import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 
 import java.util.Arrays;
