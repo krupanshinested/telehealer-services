@@ -2,12 +2,12 @@ package com.thealer.telehealer.common.VitalCommon;
 
 import android.app.Application;
 
-import Flavor.iHealth.iHealthVitalManager;
+import com.thealer.telehealer.views.home.vitals.iHealth.iHealthVitalManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
@@ -67,11 +67,7 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         if (VitalsManager.instance != null) {
             return VitalsManager.instance;
         } else {
-            if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) {
-                VitalsManager.instance = new VitalsManager(TeleHealerApplication.application);
-            } else {
-                VitalsManager.instance = new iHealthVitalManager(TeleHealerApplication.application);
-            }
+            VitalsManager.instance = new iHealthVitalManager(TeleHealerApplication.application);
             return VitalsManager.instance;
         }
     }
@@ -269,14 +265,10 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didFinishBPMesure(String deviceType, Double systolicValue, Double diastolicValue, Double heartRate) {
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-
-            HashMap<String, String> detail = new HashMap<>();
-            detail.put("status", "success");
-            detail.put("event", "didFinishBPMesure");
-
-            TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
-        }
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "success");
+        detail.put("event", "didFinishBPMesure");
+        TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
 
         if (bpMeasureInterface != null)
             bpMeasureInterface.didFinishBPMesure(deviceType, systolicValue, diastolicValue, heartRate);
@@ -284,15 +276,11 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didFailBPMesure(String deviceType, String error) {
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-
-            HashMap<String, String> detail = new HashMap<>();
-            detail.put("status", "fail");
-            detail.put("reason", error);
-            detail.put("event", "didFailBPMesure");
-
-            TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
-        }
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "fail");
+        detail.put("reason", error);
+        detail.put("event", "didFailBPMesure");
+        TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
 
         if (bpMeasureInterface != null)
             bpMeasureInterface.didFailBPMesure(deviceType, error);
@@ -300,15 +288,10 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didFinishBpMeasure(Object object) {
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-
-            HashMap<String, String> detail = new HashMap<>();
-            detail.put("status", "success");
-            detail.put("event", "didFinishBPMesure");
-
-            TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
-        }
-
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "success");
+        detail.put("event", "didFinishBPMesure");
+        TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
 
         if (bpMeasureInterface != null)
             bpMeasureInterface.didFinishBpMeasure(object);
@@ -350,15 +333,11 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didThermoFinishMesureWithFailure(String deviceType, String error) {
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-
-            HashMap<String, String> detail = new HashMap<>();
-            detail.put("status", "fail");
-            detail.put("reason", error);
-            detail.put("event", "didThermoFinishMesureWithFailure");
-
-            TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
-        }
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "fail");
+        detail.put("reason", error);
+        detail.put("event", "didThermoFinishMesureWithFailure");
+        TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
 
         if (thermoMeasureInterface != null)
             thermoMeasureInterface.didThermoFinishMesureWithFailure(deviceType, error);
@@ -379,14 +358,11 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didFinishMeasure(String deviceType, int spo2, int bpm, int wave, float pi) {
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "success");
+        detail.put("event", "didFinishMeasure");
 
-            HashMap<String, String> detail = new HashMap<>();
-            detail.put("status", "success");
-            detail.put("event", "didFinishMeasure");
-
-            TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
-        }
+        TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
 
         if (pulseMeasureInterface != null)
             pulseMeasureInterface.didFinishMeasure(deviceType, spo2, bpm, wave, pi);
@@ -401,15 +377,11 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didPulseFinishMesureWithFailure(String deviceType, String error) {
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-
-            HashMap<String, String> detail = new HashMap<>();
-            detail.put("status", "fail");
-            detail.put("reason", error);
-            detail.put("event", "didPulseFinishMesureWithFailure");
-
-            TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
-        }
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "fail");
+        detail.put("reason", error);
+        detail.put("event", "didPulseFinishMesureWithFailure");
+        TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
 
         if (pulseMeasureInterface != null)
             pulseMeasureInterface.didPulseFinishMesureWithFailure(deviceType, error);
@@ -436,16 +408,11 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
 
     @Override
     public void didFinishGulcoMesureWithFailure(String deviceType, String error) {
-
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-
-            HashMap<String, String> detail = new HashMap<>();
-            detail.put("status", "fail");
-            detail.put("reason", error);
-            detail.put("event", "didFinishGulcoMesureWithFailure");
-
-            TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
-        }
+        HashMap<String, String> detail = new HashMap<>();
+        detail.put("status", "fail");
+        detail.put("reason", error);
+        detail.put("event", "didFinishGulcoMesureWithFailure");
+        TeleLogger.shared.log(TeleLogExternalAPI.ihealth, detail);
 
         if (gulcoMeasureInterface != null)
             gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType, error);

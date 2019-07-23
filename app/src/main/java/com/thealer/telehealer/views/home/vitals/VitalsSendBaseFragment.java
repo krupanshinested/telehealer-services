@@ -11,9 +11,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
@@ -203,12 +205,30 @@ public class VitalsSendBaseFragment extends BaseFragment {
         vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DEVICE);
         vitalApiRequestModel.setValue(value);
 
+        if ((BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) && getArguments().getSerializable(Constants.USER_DETAIL) != null)  {
+            CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+            vitalApiRequestModel.setUser_guid(commonUserApiResponseModel.getUser_guid());
+        }
+
         vitalsApiViewModel.createVital(vitalApiRequestModel, null);
     }
 
-    public void sendVitals(CreateVitalApiRequestModel vitalApiRequestModel_1, CreateVitalApiRequestModel vitalApiRequestModel_2, String doctor_guid) {
+    public void sendVitals(CreateVitalApiRequestModel vitalApiRequestModel_1,
+                           CreateVitalApiRequestModel vitalApiRequestModel_2, String doctor_guid) {
         showSuccessState();
         this.doctor_guid = doctor_guid;
+
+        if ((BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) && getArguments().getSerializable(Constants.USER_DETAIL) != null) {
+            CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+            if (vitalApiRequestModel_1 != null) {
+                vitalApiRequestModel_1.setUser_guid(commonUserApiResponseModel.getUser_guid());
+            }
+
+            if (vitalApiRequestModel_2 != null) {
+                vitalApiRequestModel_2.setUser_guid(commonUserApiResponseModel.getUser_guid());
+            }
+        }
 
         if (vitalApiRequestModel_1 != null) {
             vitalsApiViewModel.createVital(vitalApiRequestModel_1, doctor_guid);

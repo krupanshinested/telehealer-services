@@ -1,4 +1,4 @@
-package Flavor.iHealth;
+package Flavor.GoogleFit;
 
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 

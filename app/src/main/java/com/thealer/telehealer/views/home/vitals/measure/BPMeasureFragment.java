@@ -214,13 +214,13 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
                 break;
         }
 
-        if (!UserType.isUserPatient()) {
+        if (!UserType.isUserPatient() && isPresentedInsideCallActivity()) {
             save_bt.setVisibility(View.GONE);
             close_bt.setVisibility(View.GONE);
             remeasure_bt.setVisibility(View.GONE);
         }
 
-        if (callVitalPagerInterFace != null && getUserVisibleHint()) {
+        if (callVitalPagerInterFace != null) {
             if (currentState == MeasureState.failed || currentState == MeasureState.ended || currentState == MeasureState.notStarted) {
                 callVitalPagerInterFace.updateState(Constants.idle);
             } else {

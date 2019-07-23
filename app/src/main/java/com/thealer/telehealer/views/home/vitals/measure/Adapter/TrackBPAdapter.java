@@ -28,7 +28,8 @@ public class TrackBPAdapter extends BaseAdapter {
     private ArrayList<BPTrack> selectedTracks;
     private boolean presentInsideCall = false;
 
-    public TrackBPAdapter(Context context, ArrayList<BPTrack> bpTracks,ArrayList<BPTrack> selectedTracks,boolean presentInsideCall) {
+    public TrackBPAdapter(Context context, ArrayList<BPTrack> bpTracks,ArrayList<BPTrack> selectedTracks,
+                          boolean presentInsideCall) {
         this.context = context;
         this.bpTracks = bpTracks;
         this.selectedTracks = selectedTracks;
@@ -78,10 +79,10 @@ public class TrackBPAdapter extends BaseAdapter {
                         dataHolder.check_box.setButtonTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.app_gradient_start,null)));
                     }
 
-                    if (UserType.isUserPatient()) {
-                        dataHolder.check_box.setVisibility(View.VISIBLE);
-                    } else {
+                    if (!UserType.isUserPatient() && presentInsideCall) {
                         dataHolder.check_box.setVisibility(View.GONE);
+                    } else {
+                        dataHolder.check_box.setVisibility(View.VISIBLE);
                     }
 
                     dataHolder.main_container.setOnClickListener(new View.OnClickListener() {

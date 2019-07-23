@@ -31,10 +31,6 @@
         <activity android:name="Flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity"
             android:screenOrientation="portrait" />
 
-        <activity
-            android:name="Flavor.iHealth.pairing.VitalCreationActivity"
-            android:screenOrientation="portrait" />
-
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package Flavor.iHealth.Controls;
+package com.thealer.telehealer.views.home.vitals.iHealth.Controls;
 
 import android.content.Context;
 import android.util.Log;

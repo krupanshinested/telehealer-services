@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +37,7 @@ import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.VitalsOrdersListAdapter;
 
-import java.util.ArrayList;
-import java.util.Date;
-
-import Flavor.iHealth.pairing.VitalCreationActivity;
+import com.thealer.telehealer.views.home.vitals.iHealth.pairing.VitalCreationActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.isContentViewProceed;
