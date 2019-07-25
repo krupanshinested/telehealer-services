@@ -6,6 +6,7 @@ import com.thealer.telehealer.apilayer.models.medicalHistory.HealthHabitModel;
 import com.thealer.telehealer.apilayer.models.medicalHistory.MedicalHistoryCommonModel;
 import com.thealer.telehealer.apilayer.models.medicalHistory.MedicationModel;
 import com.thealer.telehealer.apilayer.models.medicalHistory.SexualHistoryModel;
+import com.thealer.telehealer.common.Utils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -150,7 +151,7 @@ public class QuestionnaireBean implements Serializable {
         private String otherInformation;
 
         public PastMedicalHistoryBean(String otherInformation, List<MedicalHistoryCommonModel> items) {
-            this.otherInformation = otherInformation;
+            this.otherInformation = Utils.replaceAmpersand(otherInformation);
             this.items = items;
         }
 

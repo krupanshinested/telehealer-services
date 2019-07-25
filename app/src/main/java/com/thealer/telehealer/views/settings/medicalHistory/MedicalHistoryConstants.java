@@ -174,7 +174,7 @@ public class MedicalHistoryConstants {
      */
 
     public static final String PROBLEM_WITH_YOUR_BIRTH = "Problems with your birth?";
-    public static final String BORN_AND_RAISE = "Where were you born & raised?";
+    public static final String BORN_AND_RAISE = "Where were you born and raised?";
     public static final String LEVEL_OF_EDUCATION = "Level of education?";
     public static final String MARITAL_STATUS = "Marital Status";
     public static final String CURRENT_OR_PAST_OCCUPATION = "What is your current or past occupation?";
@@ -204,7 +204,7 @@ public class MedicalHistoryConstants {
             case LEVEL_OF_EDUCATION:
                 return "highest level of degree..";
             case DISABILITY_OR_SSI:
-                return "if yes,what disability & how long";
+                return "if yes,what disability and how long";
 
 
         }
