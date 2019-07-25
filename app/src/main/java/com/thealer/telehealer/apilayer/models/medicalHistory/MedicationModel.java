@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.models.medicalHistory;
 
+import com.thealer.telehealer.common.Utils;
+
 import java.io.Serializable;
 
 /**
@@ -19,7 +21,7 @@ public class MedicationModel implements Serializable {
     }
 
     public void setDirectionType2(String directionType2) {
-        this.directionType2 = directionType2;
+        this.directionType2 = Utils.replaceAmpersand(directionType2);
     }
 
     public String getDirection() {
@@ -27,7 +29,7 @@ public class MedicationModel implements Serializable {
     }
 
     public void setDirection(String direction) {
-        this.direction = direction;
+        this.direction = Utils.replaceAmpersand(direction);
     }
 
     public String getUnit() {
@@ -35,7 +37,7 @@ public class MedicationModel implements Serializable {
     }
 
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = Utils.replaceAmpersand(unit);
     }
 
     public String getStrength() {
@@ -43,7 +45,7 @@ public class MedicationModel implements Serializable {
     }
 
     public void setStrength(String strength) {
-        this.strength = strength;
+        this.strength = Utils.replaceAmpersand(strength);
     }
 
     public String getDrugName() {
@@ -51,7 +53,7 @@ public class MedicationModel implements Serializable {
     }
 
     public void setDrugName(String drugName) {
-        this.drugName = drugName;
+        this.drugName = Utils.replaceAmpersand(drugName);
     }
 
     public String getDirectionType1() {
@@ -59,6 +61,6 @@ public class MedicationModel implements Serializable {
     }
 
     public void setDirectionType1(String directionType1) {
-        this.directionType1 = directionType1;
+        this.directionType1 = Utils.replaceAmpersand(directionType1);
     }
 }

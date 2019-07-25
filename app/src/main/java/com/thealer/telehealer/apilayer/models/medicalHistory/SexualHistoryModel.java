@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.medicalHistory;
 import androidx.fragment.app.FragmentActivity;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 
 import java.io.Serializable;
@@ -40,15 +41,15 @@ public class SexualHistoryModel extends MedicalHistoryCommonModel implements Ser
         }
 
         public DetailBean(String periodsRegular, String periodsStoppedAt) {
-            this.periodsRegular = periodsRegular;
-            this.periodsStoppedAt = periodsStoppedAt;
+            setPeriodsRegular(periodsRegular);
+            setPeriodsStoppedAt(periodsStoppedAt);
         }
 
         public DetailBean(String miscarriages_Count, String children_Count, String abortions_Count, String pregnant_Times) {
-            this.miscarriages_Count = miscarriages_Count;
-            this.children_Count = children_Count;
-            this.abortions_Count = abortions_Count;
-            this.pregnant_Times = pregnant_Times;
+            setMiscarriages_Count(miscarriages_Count);
+            setChildren_Count(children_Count);
+            setAbortions_Count(abortions_Count);
+            setPregnant_Times(pregnant_Times);
         }
 
         public String getActively_With() {
@@ -56,7 +57,7 @@ public class SexualHistoryModel extends MedicalHistoryCommonModel implements Ser
         }
 
         public void setActively_With(String actively_With) {
-            this.actively_With = actively_With;
+            this.actively_With = Utils.replaceAmpersand(actively_With);
         }
 
         public String getPeriodsRegular() {
@@ -64,7 +65,7 @@ public class SexualHistoryModel extends MedicalHistoryCommonModel implements Ser
         }
 
         public void setPeriodsRegular(String periodsRegular) {
-            this.periodsRegular = periodsRegular;
+            this.periodsRegular = Utils.replaceAmpersand(periodsRegular);
         }
 
         public String getPeriodsStoppedAt() {
@@ -72,7 +73,7 @@ public class SexualHistoryModel extends MedicalHistoryCommonModel implements Ser
         }
 
         public void setPeriodsStoppedAt(String periodsStoppedAt) {
-            this.periodsStoppedAt = periodsStoppedAt;
+            this.periodsStoppedAt = Utils.replaceAmpersand(periodsStoppedAt);
         }
 
         public String getMiscarriages_Count() {
@@ -80,7 +81,7 @@ public class SexualHistoryModel extends MedicalHistoryCommonModel implements Ser
         }
 
         public void setMiscarriages_Count(String miscarriages_Count) {
-            this.miscarriages_Count = miscarriages_Count;
+            this.miscarriages_Count = Utils.replaceAmpersand(miscarriages_Count);
         }
 
         public String getChildren_Count() {
@@ -88,7 +89,7 @@ public class SexualHistoryModel extends MedicalHistoryCommonModel implements Ser
         }
 
         public void setChildren_Count(String children_Count) {
-            this.children_Count = children_Count;
+            this.children_Count = Utils.replaceAmpersand(children_Count);
         }
 
         public String getAbortions_Count() {
@@ -96,7 +97,7 @@ public class SexualHistoryModel extends MedicalHistoryCommonModel implements Ser
         }
 
         public void setAbortions_Count(String abortions_Count) {
-            this.abortions_Count = abortions_Count;
+            this.abortions_Count = Utils.replaceAmpersand(abortions_Count);
         }
 
         public String getPregnant_Times() {
@@ -104,7 +105,7 @@ public class SexualHistoryModel extends MedicalHistoryCommonModel implements Ser
         }
 
         public void setPregnant_Times(String pregnant_Times) {
-            this.pregnant_Times = pregnant_Times;
+            this.pregnant_Times = Utils.replaceAmpersand(pregnant_Times);
         }
     }
 
