@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.thealer.telehealer.apilayer.models.commonResponseModel.PersonalHistoryModel;
+import com.thealer.telehealer.common.Utils;
 
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class MedicalHistoryViewModel extends ViewModel {
     }
 
     public void setOtherInformation(String otherInformation) {
-        OtherInformation = otherInformation;
+        OtherInformation = Utils.replaceAmpersand(otherInformation);
     }
 
     public MutableLiveData<List<MedicalHistoryCommonModel>> getRecentImmunizationMutableLiveData() {
