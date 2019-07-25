@@ -3,16 +3,19 @@ package com.thealer.telehealer.views.common;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.Nullable;
 import android.util.Log;
+import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
@@ -22,6 +25,7 @@ import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
@@ -29,6 +33,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
  */
 public class SplashActivity extends BaseActivity {
     private boolean isSplashCreated;
+    private ImageView splashIv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +41,12 @@ public class SplashActivity extends BaseActivity {
 
         requestFullScreenMode();
         setContentView(R.layout.activity_splash);
+
+        splashIv = (ImageView) findViewById(R.id.splash_iv);
+
+        if (!appConfig.isStethio(this)) {
+            Glide.with(this).load(R.raw.app_splash).apply(new RequestOptions().placeholder(getDrawable(R.drawable.app_icon))).into(splashIv);
+        }
 
         if (savedInstanceState != null) {
             isSplashCreated = savedInstanceState.getBoolean("isSplashCreated");

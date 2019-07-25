@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -604,7 +606,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
                         medicalHistoryViewModel.getPastMedicalHistoryMutableLiveData().getValue().size() > 0) {
                     questionnaireBean.setPastMedicalHistoryBean(new QuestionnaireBean.PastMedicalHistoryBean(medicalHistoryViewModel.getOtherInformation(), medicalHistoryViewModel.getPastMedicalHistoryMutableLiveData().getValue()));
                 } else {
-                    questionnaireBean.setPastMedicalHistoryBean(null);
+                    questionnaireBean.setPastMedicalHistoryBean(new QuestionnaireBean.PastMedicalHistoryBean(medicalHistoryViewModel.getOtherInformation(), new ArrayList<>()));
                 }
                 break;
             case MH_SURGERIES:
@@ -612,7 +614,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
                         medicalHistoryViewModel.getSurgeriesMutableLiveData().getValue().size() > 0) {
                     questionnaireBean.setSurgeries(new QuestionnaireBean.SurgeriesBean(medicalHistoryViewModel.getOtherInformation(), medicalHistoryViewModel.getSurgeriesMutableLiveData().getValue()));
                 } else {
-                    questionnaireBean.setSurgeries(null);
+                    questionnaireBean.setSurgeries(new QuestionnaireBean.SurgeriesBean(medicalHistoryViewModel.getOtherInformation(), new ArrayList<>()));
                 }
                 break;
             case MH_FAMILY_HISTORY:

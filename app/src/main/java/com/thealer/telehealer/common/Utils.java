@@ -1427,4 +1427,11 @@ public class Utils {
 
         appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
     }
+
+    public static String replaceAmpersand(String input) {
+        if (input != null && input.contains("&")) {
+            return input.replace("&", "and");
+        }
+        return input;
+    }
 }
