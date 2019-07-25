@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
 import com.thealer.telehealer.apilayer.models.medicalHistory.MedicalHistoryCommonModel;
+import com.thealer.telehealer.common.Utils;
 
 import java.io.Serializable;
 
@@ -16,7 +17,7 @@ public class PersonalHistoryModel extends MedicalHistoryCommonModel implements S
     }
 
     public void setSelectedOption(String selectedOption) {
-        this.selectedOption = selectedOption;
+        this.selectedOption = Utils.replaceAmpersand(selectedOption);
     }
 
     public String getDetailString() {
