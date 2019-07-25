@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.models.medicalHistory;
 
+import com.thealer.telehealer.common.Utils;
+
 import java.io.Serializable;
 
 /**
@@ -15,7 +17,7 @@ public class MedicalHistoryCommonModel implements Serializable {
     }
 
     public void setAdditionalInformation(String additionalInformation) {
-        this.additionalInformation = additionalInformation;
+        this.additionalInformation = Utils.replaceAmpersand(additionalInformation);
     }
 
     public String getTitle() {
@@ -23,6 +25,6 @@ public class MedicalHistoryCommonModel implements Serializable {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = Utils.replaceAmpersand(title);
     }
 }

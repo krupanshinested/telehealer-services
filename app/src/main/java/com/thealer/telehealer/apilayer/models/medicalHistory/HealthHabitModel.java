@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.medicalHistory;
 import androidx.fragment.app.FragmentActivity;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 
 import java.io.Serializable;
@@ -37,7 +38,7 @@ public class HealthHabitModel extends MedicalHistoryCommonModel implements Seria
         }
 
         public void setAlcohol_Often(String alcohol_Often) {
-            this.alcohol_Often = alcohol_Often;
+            this.alcohol_Often = Utils.replaceAmpersand(alcohol_Often);
         }
 
         public String getAlcohol_Quantity() {
@@ -45,7 +46,7 @@ public class HealthHabitModel extends MedicalHistoryCommonModel implements Seria
         }
 
         public void setAlcohol_Quantity(String alcohol_Quantity) {
-            this.alcohol_Quantity = alcohol_Quantity;
+            this.alcohol_Quantity = Utils.replaceAmpersand(alcohol_Quantity);
         }
 
         public String getAlcohol_Felt_Cut_Down_Drinking() {
@@ -53,7 +54,7 @@ public class HealthHabitModel extends MedicalHistoryCommonModel implements Seria
         }
 
         public void setAlcohol_Felt_Cut_Down_Drinking(String alcohol_Felt_Cut_Down_Drinking) {
-            this.alcohol_Felt_Cut_Down_Drinking = alcohol_Felt_Cut_Down_Drinking;
+            this.alcohol_Felt_Cut_Down_Drinking = Utils.replaceAmpersand(alcohol_Felt_Cut_Down_Drinking);
         }
 
         public String getCigarettes_Per_Day() {
@@ -61,7 +62,7 @@ public class HealthHabitModel extends MedicalHistoryCommonModel implements Seria
         }
 
         public void setCigarettes_Per_Day(String cigarettes_Per_Day) {
-            this.cigarettes_Per_Day = cigarettes_Per_Day;
+            this.cigarettes_Per_Day = Utils.replaceAmpersand(cigarettes_Per_Day);
         }
 
         public String getOtherFormsOfTobacco() {
@@ -69,7 +70,7 @@ public class HealthHabitModel extends MedicalHistoryCommonModel implements Seria
         }
 
         public void setOtherFormsOfTobacco(String otherFormsOfTobacco) {
-            this.otherFormsOfTobacco = otherFormsOfTobacco;
+            this.otherFormsOfTobacco = Utils.replaceAmpersand(otherFormsOfTobacco);
         }
 
         public String getCigarettes_For_How_Many_Years() {
@@ -77,7 +78,7 @@ public class HealthHabitModel extends MedicalHistoryCommonModel implements Seria
         }
 
         public void setCigarettes_For_How_Many_Years(String cigarettes_For_How_Many_Years) {
-            this.cigarettes_For_How_Many_Years = cigarettes_For_How_Many_Years;
+            this.cigarettes_For_How_Many_Years = Utils.replaceAmpersand(cigarettes_For_How_Many_Years);
         }
 
         public String getStill_Using_Drug() {
@@ -85,7 +86,7 @@ public class HealthHabitModel extends MedicalHistoryCommonModel implements Seria
         }
 
         public void setStill_Using_Drug(String Still_Using_Drug) {
-            this.Still_Using_Drug = Still_Using_Drug;
+            this.Still_Using_Drug = Utils.replaceAmpersand(Still_Using_Drug);
         }
     }
 
