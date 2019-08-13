@@ -614,10 +614,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             }
         });
 
-        if (UserType.isUserAssistant()) {
-            addFab.hide();
-        }
-
         vitalDetailCrv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -847,6 +843,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         intent.putExtra(ArgumentKeys.SELECTED_VITAL_TYPE, selectedItem);
         if (!UserType.isUserPatient()) {
             intent.putExtra(Constants.USER_DETAIL,bundle.getSerializable(Constants.USER_DETAIL));
+        }
+
+        if (UserType.isUserAssistant()) {
+            intent.putExtra(Constants.DOCTOR_ID,doctorGuid);
         }
 
         getActivity().startActivity(intent);

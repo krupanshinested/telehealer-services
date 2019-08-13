@@ -1,5 +1,6 @@
 package Flavor.GoogleFit.Activity;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
@@ -21,9 +22,12 @@ import com.thealer.telehealer.views.base.BaseActivity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import Flavor.GoogleFit.Adapter.GoogleFitSourceAdapter;
 import Flavor.GoogleFit.GoogleFitDefaults;
+import Flavor.GoogleFit.GoogleFitManager;
+import Flavor.GoogleFit.Interface.GoogleFitResultFetcher;
 import Flavor.GoogleFit.Models.GoogleFitData;
 import Flavor.GoogleFit.Models.GoogleFitSource;
 import androidx.annotation.Nullable;
@@ -31,7 +35,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class GoogleFitSourceSelectionActivity extends BaseActivity implements View.OnClickListener {
+public class GoogleFitSourceSelectionActivity extends BaseActivity implements View.OnClickListener, GoogleFitResultFetcher {
 
     private Toolbar toolbar;
     private ImageView closeButton,backIv;
@@ -42,12 +46,27 @@ public class GoogleFitSourceSelectionActivity extends BaseActivity implements Vi
     private ArrayList<GoogleFitSource> sources;
     private ArrayList<GoogleFitData> data;
 
+    private GoogleFitManager googleFitManager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_google_fit_selection);
 
+        googleFitManager = new GoogleFitManager(this);
+        sources = (ArrayList<GoogleFitSource>) getIntent().getSerializableExtra(ArgumentKeys.GOOGLE_FIT_SOURCE);
+        data = (ArrayList<GoogleFitData>) getIntent().getSerializableExtra(ArgumentKeys.GOOGLE_FIT_DATA);
+
+        if (sources == null) {
+            sources = new ArrayList<>();
+        }
+
+        if (data == null) {
+            data = new ArrayList<>();
+        }
+
         initView();
+        fillWithData();
     }
 
     /*
@@ -80,18 +99,9 @@ public class GoogleFitSourceSelectionActivity extends BaseActivity implements Vi
         container = findViewById(R.id.container);
         container.setScrollable(false);
         container.getSwipeLayout().setEnabled(false);
+    }
 
-        sources = (ArrayList<GoogleFitSource>) getIntent().getSerializableExtra(ArgumentKeys.GOOGLE_FIT_SOURCE);
-        data = (ArrayList<GoogleFitData>) getIntent().getSerializableExtra(ArgumentKeys.GOOGLE_FIT_DATA);
-
-        if (sources == null) {
-            sources = new ArrayList<>();
-        }
-
-        if (data == null) {
-            data = new ArrayList<>();
-        }
-
+    private void fillWithData() {
         if (sources.size() == 0) {
             submit_btn.setVisibility(View.GONE);
             message_tv.setVisibility(View.GONE);
@@ -100,6 +110,15 @@ public class GoogleFitSourceSelectionActivity extends BaseActivity implements Vi
             message_tv.setVisibility(View.VISIBLE);
         }
 
+        if (sources.size() == 0) {
+            showProgressDialog();
+            googleFitManager.read(this);
+        } else {
+            assignAdapter();
+        }
+    }
+
+    private void assignAdapter() {
         GoogleFitSourceAdapter googleFitSourceAdapter = new GoogleFitSourceAdapter(sources,this);
         container.setLayoutManager(new LinearLayoutManager(GoogleFitSourceSelectionActivity.this));
         container.getRecyclerView().setAdapter(googleFitSourceAdapter);
@@ -149,5 +168,43 @@ public class GoogleFitSourceSelectionActivity extends BaseActivity implements Vi
                 finish();
                 break;
         }
+    }
+
+    //GoogleFitResultFetcher
+    @Override
+    public void didFinishFetch(ArrayList<GoogleFitData> fitData) {
+        dismissProgressDialog();
+
+        GoogleFitDefaults.setPreviousFetchedData(new Date());
+
+        if (fitData.size() == 0) {
+            return;
+        }
+
+        ArrayList<GoogleFitSource> selectedSource = new ArrayList<>();
+        ArrayList<String> selectedBundleIds = new ArrayList<>();
+
+        for (GoogleFitSource source : GoogleFitDefaults.getPreviousFetchedSources()) {
+            if (source.isSelected()) {
+                selectedBundleIds.add(source.getBundleId());
+                selectedSource.add(source);
+            }
+        }
+
+        this.data = fitData;
+        Intent val = googleFitManager.isChangeInSelectionSource(fitData, selectedBundleIds);
+        ArrayList<GoogleFitSource> newAddedSources = (ArrayList<GoogleFitSource>) val.getSerializableExtra(ArgumentKeys.GOOGLE_FIT_SOURCE);
+        if (newAddedSources == null) {
+            newAddedSources = new ArrayList<>();
+        }
+        selectedSource.addAll(newAddedSources);
+        this.sources = selectedSource;
+        assignAdapter();
+    }
+
+    @Override
+    public void didFailedToFetch(Exception e) {
+        dismissProgressDialog();
+        assignAdapter();
     }
 }
