@@ -108,7 +108,7 @@ public class VitalCreationActivity extends BaseActivity implements
     }
 
     private void openRootFragment() {
-        VitalDeviceListFragment vitalDeviceListFragment = new VitalDeviceListFragment();
+        VitalDeviceListFragment vitalDeviceListFragment = VitalDeviceListFragment.getInstance();
         Bundle bundle = new Bundle();
 
         if (measurementType != null && !TextUtils.isEmpty(measurementType)) {
@@ -196,12 +196,15 @@ public class VitalCreationActivity extends BaseActivity implements
 
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
-        if (getIntent().getSerializableExtra(Constants.USER_DETAIL) != null) {
-            if (bundle == null) {
-                bundle = new Bundle();
-            }
-            bundle.putSerializable(Constants.USER_DETAIL,getIntent().getSerializableExtra(Constants.USER_DETAIL));
+        if (bundle == null) {
+            bundle = new Bundle();
         }
+
+        if (getIntent().getSerializableExtra(Constants.USER_DETAIL) != null) {
+            bundle.putSerializable(Constants.USER_DETAIL, getIntent().getSerializableExtra(Constants.USER_DETAIL));
+        }
+
+        bundle.putSerializable(Constants.DOCTOR_ID,getIntent().getSerializableExtra(Constants.DOCTOR_ID));
 
         switch (string) {
             case RequestID.TRIGGER_MANUAL_ENTRY:

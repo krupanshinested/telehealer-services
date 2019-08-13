@@ -124,6 +124,10 @@ public class GoogleFitManager {
         return intent;
     }
 
+    public void requestPermission() {
+        checkIfHasPermission();
+    }
+
     private void readData() {
         Log.d(TAG, "readData");
         Task<DataReadResponse> task = readHistoryData();

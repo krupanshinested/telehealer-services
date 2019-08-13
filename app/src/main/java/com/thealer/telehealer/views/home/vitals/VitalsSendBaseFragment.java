@@ -210,7 +210,12 @@ public class VitalsSendBaseFragment extends BaseFragment {
             vitalApiRequestModel.setUser_guid(commonUserApiResponseModel.getUser_guid());
         }
 
-        vitalsApiViewModel.createVital(vitalApiRequestModel, null);
+        String doctorGuid = null;
+        if (UserType.isUserAssistant()) {
+            doctorGuid = getArguments().getString(Constants.DOCTOR_ID);
+        }
+
+        vitalsApiViewModel.createVital(vitalApiRequestModel, doctorGuid);
     }
 
     public void sendVitals(CreateVitalApiRequestModel vitalApiRequestModel_1,
