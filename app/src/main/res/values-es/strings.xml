@@ -481,12 +481,12 @@
     <string name="bluetooth_disabled">Bluetooth_disabled</string>
     <string name="bluetooth_enabled">bluetooth_enabled</string>
     <string name="blood_pressure">Presión sanguínea</string>
-    <string name="blood_pressure_heart_rate">BP y frecuencia cardíaca</string>
+    <string name="blood_pressure_heart_rate">BP &amp; La frecuencia del pulso</string>
     <string name="weight">Peso</string>
     <string name="bodyTemperature">Temperatura corporal</string>
     <string name="bloodGlucose">Glucosa en sangre</string>
     <string name="pulseOximeter">Oxímetro de pulso</string>
-    <string name="heartRate">Ritmo cardiaco</string>
+    <string name="heartRate">La frecuencia del pulso</string>
     <string name="stethoscope">Estetoscopio</string>
     <string name="choose_the_type">Elige el tipo</string>
     <string name="information_required">Informacion requerida</string>
@@ -691,12 +691,12 @@
     <string name="UPDATE">ACTUALIZAR</string>
     <string name="help_content_doctor_patient" formatted="false">Vea su lista de %s conectados aquí. Puede agregar a esta lista solicitando una nueva conexión con uno o más de sus %s establecidos./n/nHaga clic en el icono \"+\" en la esquina superior derecha para enviar una solicitud a %s que ya conoce. Una vez que se haya aceptado una solicitud de conexión, %s aparecerá automáticamente en esta lista.</string>
     <string name="help_content_orders">Crear y opcionalmente enviar por fax cualquier pedido nuevo./n/nHaga clic en el icono \"+\" en la esquina superior derecha para comenzar. Los pedidos pueden variar de recetas, laboratorios, radiología, referencias y / o cuestionarios médicos. Una vez que se ha creado un pedido, puede ver y / o imprimir estos pedidos.</string>
-    <string name="help_content_vitals">Empareje con una lista de dispositivos compatibles e inicie una medición./n/nHaga clic en el icono \"+\" en la esquina superior derecha para comenzar. Las mediciones se pueden capturar directamente desde el dispositivo o manualmente, ya sea por el médico o el paciente. Todos los signos vitales capturados se pueden ver y / o imprimir.Las mediciones vitales pueden variar según la presión arterial, el peso, la glucosa, la temperatura, el buey del pulso y la frecuencia cardíaca.</string>
-    <string name="help_content_vital_report">Realice un monitoreo remoto revisando los signos vitales capturados de su paciente. La lista muestra a todos los pacientes que han capturado sus signos vitales durante un período de monitoreo seleccionado. Las mediciones vitales capturadas por el paciente pueden variar según la presión arterial, el peso, la glucosa, la temperatura, el buey del pulso y la frecuencia cardíaca.</string>
+    <string name="help_content_vitals">Empareje con una lista de dispositivos compatibles e inicie una medición. \n\nHaga clic en el icono \"+\" en la esquina superior derecha para comenzar. Las mediciones pueden ser capturadas directamente desde el dispositivo o registradas manualmente por el médico o el paciente. Todos los signos vitales capturados se pueden ver y / o imprimir. \n\nLas mediciones vitales pueden variar de la presión arterial, el peso, la glucosa, la temperatura, el pulso y la frecuencia del pulso.</string>
+    <string name="help_content_vital_report">Realice un monitoreo remoto revisando las constantes vitales capturadas de su paciente. La lista muestra a todos los pacientes que han capturado sus signos vitales durante un período de monitoreo seleccionado. Las mediciones vitales capturadas por el paciente pueden variar de la presión arterial, el peso, la glucosa, la temperatura, el pulso y la frecuencia del pulso.</string>
     <string name="help_content_recents">Ver la lista de llamadas anteriores con su %s . Al hacer clic en cada entrada se mostrará el encuentro registrado junto con la transcripción de la llamada.</string>
     <string name="help_content_schedules">Ver todas sus próximas citas y sus detalles asociados./n/nHaga clic en el icono \"+\" en la esquina superior derecha para iniciar una solicitud de cita. Solo las solicitudes aceptadas aparecerán aquí en la página de horarios. La aplicación también proporciona un recordatorio automático 10 minutos antes de una cita programada.</string>
     <string name="help_content_monitoring_patient">Combine con una lista de dispositivos compatibles para iniciar una medición de signos vitales o monitorear el cumplimiento de la prescripción. Además, puede capturar y controlar manualmente su ingesta diaria de dieta.</string>
-    <string name="help_content_monitoring_doctor">Realice un monitoreo remoto revisando los signos vitales, la dieta y los medicamentos capturados de su paciente. La lista muestra a todos los pacientes que han capturado sus signos vitales durante un período de monitoreo seleccionado./n/nLas mediciones vitales capturadas por el paciente pueden variar según la presión arterial, el peso, la glucosa, la temperatura, el buey del pulso y la frecuencia cardíaca.</string>
+    <string name="help_content_monitoring_doctor">Realice un monitoreo remoto revisando los signos vitales, la dieta y los medicamentos capturados de su paciente. La lista muestra a todos los pacientes que han capturado sus signos vitales durante un período de monitoreo seleccionado. \n\nLas mediciones vitales capturadas por el paciente pueden variar de la presión arterial, peso, glucosa, temperatura, pulso y frecuencia cardíaca.</string>
     <string name="associations">Asociaciones</string>
     <string name="referral_success">Su referencia para %s ha sido publicada con éxito.</string>
     <string name="referral_failure">Su referencia para %s no se ha publicado correctamente.</string>
@@ -940,9 +940,9 @@
     <string name="EMPTY_TRANSCRIPTS_MESSAGE">Transcripciones eventualmente se mostrarán aquí</string>
     <string name="EMPTY_PATIENT_HISTORY_TITLE">No hay registros de historia</string>
     <string name="EMPTY_PATIENT_HISTORY_MESSAGE">La historia del paciente finalmente aparecerá aquí</string>
-    <string name="EMPTY_HEART_RATE_TITLE">Sin frecuencia cardíaca</string>
-    <string name="EMPTY_HEART_RATE_MESSAGE">Los resultados del ritmo cardíaco eventualmente se mostrarán aquí</string>
-    <string name="EMPTY_HEART_RATE_WITH_BTN_MESSAGE">Conecte su dispositivo de signos vitales para medir su ritmo cardíaco</string>
+    <string name="EMPTY_HEART_RATE_TITLE">Sin frecuencia de pulso</string>
+    <string name="EMPTY_HEART_RATE_MESSAGE">Los resultados de la frecuencia del pulso eventualmente aparecerán aquí</string>
+    <string name="EMPTY_HEART_RATE_WITH_BTN_MESSAGE">Conecte su dispositivo vital para medir su frecuencia de pulso</string>
     <string name="EMPTY_PAYMENTS_TITLE">Sin pagos / facturación</string>
     <string name="EMPTY_PAYMENTS_MESSAGE">La información de pago / facturación eventualmente aparecerá aquí</string>
     <string name="EMPTY_CARDS_TITLE">No hay tarjetas</string>
@@ -996,7 +996,7 @@
     <string name="OVERLAY_NO_APPOINTMENT_MESSAGE">Puede agregar una cita tocando el botón \'+\'</string>
     <string name="OVERLAY_NO_BP_MESSAGE">Puede conectar su dispositivo de signos vitales para medir su presión arterial</string>
     <string name="OVERLAY_NO_GLUCOSE_MESSAGE">Puede conectar su dispositivo de signos vitales para medir su glucosa en sangre</string>
-    <string name="OVERLAY_NO_HEAR_RATE_MESSAGE">Puede conectar su dispositivo de signos vitales para medir su ritmo cardíaco</string>
+    <string name="OVERLAY_NO_HEAR_RATE_MESSAGE">Puede conectar su dispositivo vital para medir su frecuencia de pulso</string>
     <string name="OVERLAY_NO_TEMPERATURE_MESSAGE">Puede conectar su dispositivo de signos vitales para medir la temperatura de su cuerpo</string>
     <string name="OVERLAY_NO_PULSE_MESSAGE">Puede conectar su dispositivo de signos vitales para medir su pulso</string>
     <string name="OVERLAY_NO_VITALS_MESSAGE">Puede conectar su dispositivo de signos vitales para medir sus signos vitales pulsando el botón \'+\'</string>
@@ -1228,4 +1228,6 @@
 
     <string name="add_procedure">Añadir procedimiento</string>
     <string name="procedure">Procedimiento</string>
+    <string name="health_source_success">Obtuvo con éxito toda su información de salud de otras fuentes.</string>
+    <string name="health_source_fetching">Obteniendo su información de salud</string>
 </resources>

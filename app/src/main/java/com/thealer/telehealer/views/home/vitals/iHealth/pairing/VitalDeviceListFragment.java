@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 import Flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity;
 import Flavor.GoogleFit.GoogleFitDefaults;
+import Flavor.GoogleFit.VitalDeviceListWithGoogleFitFragment;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -48,6 +50,14 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
  */
 
 public class VitalDeviceListFragment extends BaseFragment {
+
+    public static VitalDeviceListFragment getInstance() {
+        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
+            return new VitalDeviceListWithGoogleFitFragment();
+        } else {
+            return new VitalDeviceListFragment();
+        }
+    }
 
     private RecyclerView recyclerView;
     private OnViewChangeInterface onViewChangeInterface;
@@ -185,9 +195,7 @@ public class VitalDeviceListFragment extends BaseFragment {
                         break;
                     case VitalDeviceListAdapter.google_fit_sources:
                         if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-                            Intent intent = new Intent(getActivity(), GoogleFitSourceSelectionActivity.class);
-                            intent.putExtra(ArgumentKeys.GOOGLE_FIT_SOURCE, GoogleFitDefaults.getPreviousFetchedSources());
-                            startActivity(intent);
+                            openGoogleFitSourceActivity();
                         }
                         break;
                     case VitalDeviceListAdapter.none:
@@ -195,6 +203,10 @@ public class VitalDeviceListFragment extends BaseFragment {
                 }
             }
         };
+    }
+
+    public void openGoogleFitSourceActivity() {
+
     }
 
     private void generateDataSource() {
