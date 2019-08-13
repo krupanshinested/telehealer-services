@@ -14,6 +14,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +45,8 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
     private Animatable2 animatable2;
     private ImageView preloaderIv;
     private boolean isDataReceived = false;
+    private boolean auto_dismiss = false;
+    private boolean isAnimationEnd = false;
 
     @Nullable
     private Integer successReplaceDrawableId = null;
@@ -93,15 +97,7 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                successViewInterface.onSuccessViewCompletion(status);
-                getDialog().dismiss();
-                if (getTargetFragment() != null) {
-                    if (status)
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
-                    else
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, null);
-                }
+                dismissScreen();
             }
         });
     }
@@ -131,12 +127,36 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
                 titleTv.setText(title);
                 messageTv.setText(message);
             }
+
+            if (bundle.getBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON,false)) {
+                doneBtn.setVisibility(View.INVISIBLE);
+            } else {
+                doneBtn.setVisibility(View.VISIBLE);
+            }
+
+            if (bundle.getBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS,false)) {
+                auto_dismiss = true;
+                if (isAnimationEnd) {
+                    dismissScreen();
+                }
+            }
         }
     }
 
     private void setData() {
         doneBtn.setText(status ? getString(R.string.done) : getString(R.string.retry));
         isDataReceived = true;
+    }
+
+    private void dismissScreen() {
+        successViewInterface.onSuccessViewCompletion(status);
+        getDialog().dismiss();
+        if (getTargetFragment() != null) {
+            if (status)
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
+            else
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, null);
+        }
     }
 
     private void animatePreLoader() {
@@ -202,6 +222,11 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
                     animatable2.start();
                 } else {
                     stopLoaderAnimation(status);
+                    if (auto_dismiss) {
+                        dismissScreen();
+                    } else {
+                        isAnimationEnd = true;
+                    }
                 }
             }
         });

@@ -143,6 +143,8 @@ public class Constants {
     public static final String CALL = "call";
     public static final String CHAT = "chat";
     public static final String CONNECTION_STATUS_RECEIVER = "connectionStatusReceiver";
+    public static final String SUCCESS_VIEW_AUTO_DISMISS = "SUCCESS_VIEW_AUTO_DISMISS";
+    public static final String SUCCESS_VIEW_DONE_BUTTON = "SUCCESS_VIEW_DONE_BUTTON";
     public static String male = "male";
     public static String female = "female";
     public static String others = "others";
