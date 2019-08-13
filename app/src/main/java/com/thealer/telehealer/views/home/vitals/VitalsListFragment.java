@@ -57,6 +57,7 @@ public class VitalsListFragment extends BaseFragment {
     private TextView toolbarTitle;
 
     private OnCloseActionInterface onCloseActionInterface;
+    private boolean isKnowYourNumberOpened = false;
 
     @Nullable
     @Override
@@ -141,7 +142,8 @@ public class VitalsListFragment extends BaseFragment {
 
     private boolean checkVitalDeviceConnection() {
         if (!appPreference.getBoolean(PreferenceConstants.IS_VITAL_DEVICE_CONNECTED) &&
-                !isVitalDeviceConnectionShown) {
+                !isVitalDeviceConnectionShown && !isKnowYourNumberOpened) {
+            isKnowYourNumberOpened = true;
             isVitalDeviceConnectionShown = true;
             showKnowYourNumber();
             return true;

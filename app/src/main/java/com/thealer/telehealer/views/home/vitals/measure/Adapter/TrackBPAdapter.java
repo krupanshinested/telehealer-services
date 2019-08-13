@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -94,6 +95,17 @@ public class TrackBPAdapter extends BaseAdapter {
                             } else {
                                 selectedTracks.add(bpTrack);
                                 dataHolder.check_box.setChecked(true);
+                            }
+                        }
+                    });
+
+                    dataHolder.check_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked) {
+                                selectedTracks.add(bpTrack);
+                            } else {
+                                selectedTracks.remove(bpTrack);
                             }
                         }
                     });
