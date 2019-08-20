@@ -546,7 +546,7 @@ public interface ApiInterface {
     Observable<ChatApiResponseModel> getChatMessages(@Query("to") String userGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @POST("api/messages")
-    Observable<BaseApiResponseModel> sendMessage(@Body ChatMessageRequestModel chatMessageRequestModel);
+    Observable<BaseApiResponseModel> sendMessage(@Query("notification") boolean notification,@Body ChatMessageRequestModel chatMessageRequestModel);
 
     @GET("precanned-messages")
     Observable<PrecannedMessageApiResponse> getPrecannedMessages(@Query(TYPE) String type);

@@ -376,8 +376,7 @@ public class PubnubUtil {
                                     }
                                 });
                     } else if (status == CHAT_STATUS_BACKGROUND) {
-                        Log.e(TAG, "getStateMap: 2 " + toGuid);
-                        publishPushMessage(PubNubNotificationPayload.getChatPayload(toGuid), null);
+
                     }
                 }
             }

@@ -2,8 +2,10 @@ package com.thealer.telehealer.apilayer.models.notification;
 
 import com.thealer.telehealer.apilayer.models.PaginationCommonResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -181,6 +183,35 @@ public class NotificationApiResponseModel extends PaginationCommonResponseModel 
                     return requestee;
                 } else {
                     return null;
+                }
+            }
+
+            public CommonUserApiResponseModel getPatientModel() {
+                if (getRequestor().getRole().equals(Constants.ROLE_PATIENT)) {
+                    return requestor;
+                } else if (getRequestee().getRole().equals(Constants.ROLE_PATIENT)) {
+                    return requestee;
+                } else {
+                    return null;
+                }
+            }
+
+            public CommonUserApiResponseModel getOtherUserModel() {
+                WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+                if (!getRequestee().getUser_guid().equals(whoAmIApiResponseModel.getUser_guid())) {
+                    return  getRequestee();
+                } else if (!getRequestor().getUser_guid().equals(whoAmIApiResponseModel.getUser_guid())) {
+                    return getRequestor();
+                } else {
+                    CommonUserApiResponseModel patient = getPatientModel();
+                    CommonUserApiResponseModel doctor = getDoctorModel();
+                    if (patient != null) {
+                        return patient;
+                    } else if (doctor.getUser_guid().equals(requestee.getUser_guid())) {
+                        return requestor;
+                    } else {
+                        return requestee;
+                    }
                 }
             }
 
