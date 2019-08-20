@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.notification;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
+import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.orders.OrdersListFragment;
 import com.thealer.telehealer.views.home.orders.document.ViewDocumentFragment;
@@ -59,6 +61,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     public static final String REQUEST_TYPE_APPOINTMENT = "appointment";
     private final String REQUEST_TYPE_MISSED_CALL = "missed_call";
     private final String REQUEST_TYPE_ABNORMAL_VITAL = "vitals";
+    private final String MESSAGES = "messages";
 
     public static final String REQUEST_STATUS_OPEN = "open";
     public static final String REQUEST_STATUS_ACCEPTED = "accepted";
@@ -456,6 +459,15 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 } else {
                                     showOrderDetail(new MiscellaneousDetailViewFragment(), resultModel.getEntity_id(), finalPatientModel, finalDoctorModel);
                                 }
+                                break;
+                            case MESSAGES:
+                                Bundle bundle1 = new Bundle();
+                                bundle1.putSerializable(Constants.USER_DETAIL,resultModel.getOtherUserModel());
+
+                                if (UserType.isUserAssistant() && resultModel.getDoctorModel() != null) {
+                                    bundle1.putSerializable(Constants.DOCTOR_DETAIL,resultModel.getDoctorModel());
+                                }
+                                activity.startActivity(new Intent(activity, ChatActivity.class).putExtras(bundle1));
                                 break;
                             default:
                                 showUserDetailView(resultModel, finalDoctorModel, finalPatientModel);

@@ -71,18 +71,7 @@ public class InviteUserBaseFragment extends BaseFragment {
                             }
                         }
 
-                        if (inviteByEmailPhoneApiResponseModel.isSuccess()) {
-                            sendSuccessMessage(status, title, message);
-                            if (inviteByEmailPhoneApiResponseModel.getResultData() != null) {
-                                for (int i = 0; i < inviteByEmailPhoneApiResponseModel.getResultData().size(); i++) {
-                                    if (inviteByEmailPhoneApiResponseModel.getResultData().get(i).isSuccess() &&
-                                            inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid() != null &&
-                                            !inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid().isEmpty()) {
-                                        PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionPayload(inviteByEmailPhoneApiResponseModel.getResultData().get(i).getUser_guid()), null);
-                                    }
-                                }
-                            }
-                        }
+                        sendSuccessMessage(status, title, message);
                     } else if (baseApiResponseModel.isSuccess()) {
                         sendSuccessMessage(status, title, message);
                     }
