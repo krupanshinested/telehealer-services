@@ -36,11 +36,8 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
 
-                                    PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionPayload(toGuid), null);
-
                                     EventRecorder.recordNotification("CONNECTION_REQUEST");
                                     EventRecorder.recordConnection("CONNECTION_REQUESTED");
-
                                 }
                             });
                 }
