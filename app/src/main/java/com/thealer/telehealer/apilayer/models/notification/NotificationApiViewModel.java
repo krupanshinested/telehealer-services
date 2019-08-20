@@ -88,10 +88,8 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                                         case NewNotificationListAdapter.REQUEST_TYPE_APPOINTMENT:
                                             if (isAccept){
                                                 EventRecorder.recordNotification("APPOINTMENT_ACCEPTED");
-                                                PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getScheduleAcceptPayload(toGuid, startDate), null);
                                             }else {
                                                 EventRecorder.recordNotification("APPOINTMENT_REJECTED");
-                                                PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getScheduleRejectPayload(toGuid, startDate), null);
                                             }
                                             break;
                                         case NewNotificationListAdapter.REQUEST_TYPE_CONNECTION:
@@ -103,11 +101,9 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                                                     EventRecorder.recordConnection("MA_CONNECTION_ACCEPTED");
                                                 }
 
-                                                PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionAcceptPayload(toGuid), null);
                                             }else {
                                                 EventRecorder.recordNotification("CONNECTION_REJECTED");
                                                 EventRecorder.recordConnection("CONNECTION_REJECTED");
-                                                PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getConnectionRejectPayload(toGuid), null);
                                             }
                                             break;
                                     }

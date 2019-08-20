@@ -72,7 +72,6 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
 
                                     EventRecorder.recordNotification("NEW_APPOINTMENT");
 
-                                    PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getNewSchedulePayload(toGuid), null);
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
@@ -91,7 +90,6 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-                                    PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getScheduleCancelPayload(user_guid, time), null);
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
