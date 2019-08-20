@@ -127,7 +127,12 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
     private void sendSuccessBroadcast() {
         Bundle bundle = new Bundle();
-        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, otpVerificationResponseModel.isSuccess());
+        if (otpVerificationResponseModel != null) {
+            bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, otpVerificationResponseModel.isSuccess());
+        } else {
+            bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+        }
+        
         String description;
 
         if (otpType == signup) {

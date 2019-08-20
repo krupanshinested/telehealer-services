@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.models.chat;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -47,7 +49,9 @@ public class ChatMessageRequestModel implements Serializable {
         }
 
         public void setReceiver_one_message(String receiver_one_message) {
-            if (receiver_one_message != null) {
+            if (TextUtils.isEmpty(receiver_one_message)) {
+                this.receiver_one_message = "";
+            } else {
                 this.receiver_one_message = receiver_one_message.replaceAll("\n", "");
             }
         }
