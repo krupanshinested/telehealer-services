@@ -79,29 +79,26 @@ public class ChatApiViewModel extends BaseApiViewModel {
     }
 
     public void sendMessage(ChatMessageRequestModel chatMessageRequestModel) {
-        fetchToken(new BaseViewInterface() {
+        PubnubUtil.shared.getUserStatus(chatMessageRequestModel.getTo(), new PubnubUserStatusInterface() {
             @Override
-            public void onStatus(boolean status) {
-                if (status) {
-                    getAuthApiService().sendMessage(chatMessageRequestModel)
-                            .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>() {
-                                @Override
-                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-
-                                    PubnubUtil.shared.getUserStatus(chatMessageRequestModel.getTo(), new PubnubUserStatusInterface() {
+            public void userStatus(int chatStatus) {
+                fetchToken(new BaseViewInterface() {
+                    @Override
+                    public void onStatus(boolean status) {
+                        if (status) {
+                            getAuthApiService().sendMessage(chatStatus != PubnubUtil.CHAT_STATUS_ACTIVE,chatMessageRequestModel)
+                                    .compose(applySchedulers())
+                                    .subscribe(new RAObserver<BaseApiResponseModel>() {
                                         @Override
-                                        public void userStatus(int status) {
-                                            if (status == PubnubUtil.CHAT_STATUS_ACTIVE) {
+                                        public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                            if (chatStatus == PubnubUtil.CHAT_STATUS_ACTIVE) {
                                                 PubnubUtil.shared.sendPubnubMessage(chatMessageRequestModel.getTo(), chatMessageRequestModel.getMessages().get(0).getReceiver_one_message());
-                                            } else {
-                                                PubnubUtil.shared.publishPushMessage(PubNubNotificationPayload.getChatPayload(chatMessageRequestModel.getTo()), null);
                                             }
                                         }
                                     });
-                                }
-                            });
-                }
+                        }
+                    }
+                });
             }
         });
     }
