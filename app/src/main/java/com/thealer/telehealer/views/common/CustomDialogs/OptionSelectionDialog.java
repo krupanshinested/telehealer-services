@@ -26,11 +26,13 @@ public class OptionSelectionDialog extends AlertDialog {
     private CardView cancelCv;
     private List<String> optionList;
     private PickerListener pickerListener;
+    private int selectedPosition;
 
-    public OptionSelectionDialog(@NonNull Context context, List<String> optionList, PickerListener pickerListener) {
+    public OptionSelectionDialog(@NonNull Context context, List<String> optionList, int selectedPosition, PickerListener pickerListener) {
         super(context);
         this.optionList = optionList;
         this.pickerListener = pickerListener;
+        this.selectedPosition = selectedPosition;
     }
 
     protected OptionSelectionDialog(@NonNull Context context, @NonNull List<String> optionList, @NonNull PickerListener pickerListener, boolean cancelable, @Nullable OnCancelListener cancelListener) {
@@ -62,7 +64,7 @@ public class OptionSelectionDialog extends AlertDialog {
         });
 
         optionsRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        optionsRv.setAdapter(new OptionSelectionAdapter(getContext(), optionList, pickerListener, this));
+        optionsRv.setAdapter(new OptionSelectionAdapter(getContext(), optionList, selectedPosition, pickerListener, this));
 
     }
 }
