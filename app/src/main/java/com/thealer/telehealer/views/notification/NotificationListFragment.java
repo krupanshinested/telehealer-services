@@ -1,14 +1,16 @@
 package com.thealer.telehealer.views.notification;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -16,9 +18,11 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
+import com.thealer.telehealer.common.OnFilterSelectedInterface;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -39,7 +43,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 /**
  * Created by Aswin on 07,January,2019
  */
-public class NotificationListFragment extends BaseFragment {
+public class NotificationListFragment extends BaseFragment implements OnFilterSelectedInterface {
 
     private CustomRecyclerView notificationCrv;
 
@@ -53,6 +57,7 @@ public class NotificationListFragment extends BaseFragment {
     private List<String> headerList = new ArrayList<>();
     private Map<String, List<NotificationApiResponseModel.ResultBean.RequestsBean>> childList = new HashMap<>();
 
+    private String selectedFilterTypes = null;
 
     @Override
     public void onAttach(Context context) {
@@ -199,7 +204,7 @@ public class NotificationListFragment extends BaseFragment {
             associationGuids = appPreference.getString(PreferenceConstants.ASSOCIATION_GUID_LIST);
             associationGuids = associationGuids.concat(",").concat(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         }
-        notificationApiViewModel.getNotifications(page, isShowProgress, associationGuids);
+        notificationApiViewModel.getNotifications(page, isShowProgress, associationGuids, selectedFilterTypes);
     }
 
 
@@ -211,5 +216,25 @@ public class NotificationListFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         getNotification(true);
+    }
+
+    @Override
+    public void onFilterSelected(@Nullable Bundle bundle) {
+        if (bundle != null) {
+            ArrayList<String> selectedFilters = (ArrayList<String>) bundle.getSerializable(ArgumentKeys.SELECTED_ITEMS);
+            if (selectedFilters == null || selectedFilters.isEmpty()) {
+                selectedFilterTypes = null;
+            } else {
+                selectedFilterTypes = "";
+                for (int i = 0; i < selectedFilters.size(); i++) {
+                    if (i > 0) {
+                        selectedFilterTypes = selectedFilterTypes.concat(",");
+                    }
+                    selectedFilterTypes = selectedFilterTypes.concat(selectedFilters.get(i));
+                }
+            }
+            page = 1;
+            getNotification(true);
+        }
     }
 }
