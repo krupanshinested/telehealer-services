@@ -2,7 +2,6 @@ package com.thealer.telehealer.views.notification;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,7 +147,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                 viewHolder.slotCl.setVisibility(View.GONE);
                 viewHolder.bottomView.setVisibility(View.GONE);
 
-                Log.e("aswin", "onBindViewHolder: " + resultModel.getType());
+                viewHolder.titleTv.setTextColor(activity.getColor(android.R.color.holo_orange_dark));
+
                 switch (resultModel.getType()) {
                     case REQUEST_TYPE_APPOINTMENT:
                         isAddRequestStatus = true;
@@ -202,7 +202,6 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                         }
                         break;
                     case REQUEST_TYPE_MISSED_CALL:
-                    case REQUEST_TYPE_CALLS:
                         if (UserType.isUserPatient()) {
                             title = activity.getString(R.string.missed_call);
                         } else {
@@ -258,6 +257,29 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                         description = resultModel.getMessage();
                         viewHolder.descriptionTv.setVisibility(View.VISIBLE);
                         viewHolder.bottomView.setVisibility(View.VISIBLE);
+                        break;
+                    case NotificationConstants.ORDERS:
+                        title = activity.getString(R.string.orders).toUpperCase();
+                        description = resultModel.getMessage();
+                        viewHolder.descriptionTv.setVisibility(View.VISIBLE);
+                        viewHolder.bottomView.setVisibility(View.VISIBLE);
+                        break;
+                    case MESSAGES:
+                        title = activity.getString(R.string.messages).toUpperCase();
+                        description = resultModel.getMessage();
+                        viewHolder.descriptionTv.setVisibility(View.VISIBLE);
+                        viewHolder.bottomView.setVisibility(View.VISIBLE);
+                        break;
+                    case REQUEST_TYPE_CALLS:
+                        if (UserType.isUserPatient())
+                            title = activity.getString(R.string.missed_call).toUpperCase();
+                        else
+                            title = activity.getString(R.string.not_answered).toUpperCase();
+
+                        description = resultModel.getMessage();
+                        viewHolder.descriptionTv.setVisibility(View.VISIBLE);
+                        viewHolder.bottomView.setVisibility(View.VISIBLE);
+                        viewHolder.titleTv.setTextColor(activity.getColor(R.color.red));
                         break;
                 }
 
@@ -467,12 +489,53 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 break;
                             case MESSAGES:
                                 Bundle bundle1 = new Bundle();
-                                bundle1.putSerializable(Constants.USER_DETAIL,resultModel.getOtherUserModel());
+                                bundle1.putSerializable(Constants.USER_DETAIL, resultModel.getOtherUserModel());
 
                                 if (UserType.isUserAssistant() && resultModel.getDoctorModel() != null) {
-                                    bundle1.putSerializable(Constants.DOCTOR_DETAIL,resultModel.getDoctorModel());
+                                    bundle1.putSerializable(Constants.DOCTOR_DETAIL, resultModel.getDoctorModel());
                                 }
                                 activity.startActivity(new Intent(activity, ChatActivity.class).putExtras(bundle1));
+                                break;
+                            case NotificationConstants.ORDERS:
+                                if (resultModel.getEntity_id() == null) {
+                                    showOrdersListView();
+                                } else {
+                                    if (resultModel.getSub_type() != null) {
+                                        if (finalPatientModel != null) {
+                                            bundle.putString(ArgumentKeys.USER_GUID, finalPatientModel.getUser_guid());
+                                            bundle.putSerializable(Constants.USER_DETAIL, finalPatientModel);
+                                        }
+                                        if (finalDoctorModel != null) {
+                                            bundle.putString(ArgumentKeys.DOCTOR_GUID, finalDoctorModel.getUser_guid());
+                                            bundle.putSerializable(Constants.DOCTOR_DETAIL, finalDoctorModel);
+                                        }
+
+                                        bundle.putInt(ArgumentKeys.ORDER_ID, resultModel.getEntity_id());
+                                        Fragment fragment = null;
+
+                                        switch (resultModel.getSub_type()) {
+                                            case NotificationConstants.ORDER_SUB_TYPE_PRESCRIPTIONS:
+                                                fragment = new PrescriptionDetailViewFragment();
+                                                break;
+                                            case NotificationConstants.ORDER_SUB_TYPE_SPECIALIST:
+                                                fragment = new SpecialistDetailViewFragment();
+                                                break;
+                                            case NotificationConstants.ORDER_SUB_TYPE_X_RAY:
+                                                fragment = new RadiologyDetailViewFragment();
+                                                break;
+                                            case NotificationConstants.ORDER_SUB_TYPE_LABS:
+                                                fragment = new LabsDetailViewFragment();
+                                                break;
+                                            case NotificationConstants.ORDER_SUB_TYPE_MISC:
+                                                fragment = new MiscellaneousDetailViewFragment();
+                                                break;
+                                        }
+                                        if (fragment != null) {
+                                            fragment.setArguments(bundle);
+                                            showSubFragmentInterface.onShowFragment(fragment);
+                                        }
+                                    }
+                                }
                                 break;
                             default:
                                 showUserDetailView(resultModel, finalDoctorModel, finalPatientModel);

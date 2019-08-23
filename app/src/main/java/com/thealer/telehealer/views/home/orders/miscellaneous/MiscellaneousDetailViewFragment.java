@@ -56,6 +56,7 @@ public class MiscellaneousDetailViewFragment extends OrdersBaseFragment implemen
     private AttachObserverInterface attachObserverInterface;
     private String doctorGuid, userGuid;
     private CommonUserApiResponseModel patientDetail, doctorDetail;
+    private HashMap<String, CommonUserApiResponseModel> userDetailMap;
 
     @Override
     public void onAttach(Context context) {
@@ -133,7 +134,7 @@ public class MiscellaneousDetailViewFragment extends OrdersBaseFragment implemen
             patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
 
-            HashMap<String, CommonUserApiResponseModel> userDetailMap = new HashMap<>();
+            userDetailMap = new HashMap<>();
             if (patientDetail != null) {
                 userDetailMap.put(patientDetail.getUser_guid(), patientDetail);
             }
@@ -143,12 +144,10 @@ public class MiscellaneousDetailViewFragment extends OrdersBaseFragment implemen
                 userDetailMap.put(doctorGuid, doctorDetail);
             }
 
-            if (!userDetailMap.isEmpty()) {
-                resultBean.setUserDetailMap(userDetailMap);
-            }
-
             if (resultBean != null) {
                 setData(resultBean);
+
+                setUserDetails();
             } else {
                 int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
                 getOrdersDetail(userGuid, doctorGuid, new ArrayList<>(Arrays.asList(id)), true);
@@ -156,10 +155,17 @@ public class MiscellaneousDetailViewFragment extends OrdersBaseFragment implemen
         }
     }
 
+    private void setUserDetails() {
+        if (!userDetailMap.isEmpty()) {
+            resultBean.setUserDetailMap(userDetailMap);
+        }
+    }
+
     @Override
     public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
         if (idListApiResponseModel != null && idListApiResponseModel.getMiscellaneous() != null && !idListApiResponseModel.getMiscellaneous().isEmpty()) {
             resultBean = idListApiResponseModel.getMiscellaneous().get(0);
+            setUserDetails();
             setData(resultBean);
         }
     }

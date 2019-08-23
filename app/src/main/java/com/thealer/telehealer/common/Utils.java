@@ -1229,8 +1229,8 @@ public class Utils {
         alertDialog.show();
     }
 
-    public static void showOptionsSelectionAlert(Context context, List<String> options, PickerListener pickerListener) {
-        OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(context, options, pickerListener);
+    public static void showOptionsSelectionAlert(Context context, List<String> options, int selectedPosition, PickerListener pickerListener) {
+        OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(context, options, selectedPosition, pickerListener);
         optionSelectionDialog.show();
     }
 
@@ -1315,7 +1315,7 @@ public class Utils {
             monitoringFilterList = printOptions;
         }
 
-        showOptionsSelectionAlert(activity, monitoringFilterList, new PickerListener() {
+        showOptionsSelectionAlert(activity, monitoringFilterList, -1, new PickerListener() {
             @Override
             public void didSelectedItem(int position) {
                 String selectedItem = monitoringFilterList.get(position);
@@ -1432,6 +1432,39 @@ public class Utils {
         Log.e("aswin", "updateLastLogin: " + lastLogin);
 
         appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
+    }
+
+    public static void showMultichoiseItemSelectAlertDialog(@NonNull Context context,@NonNull String title,@NonNull String[] itemsList,@NonNull boolean[] selectedList,@NonNull String positiveTitle,@NonNull String negativeTitle,
+                                                            @NonNull OnMultipleChoiceInterface multipleChoiceInterface){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMultiChoiceItems(itemsList, selectedList, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                selectedList[which] = isChecked;
+            }
+        });
+        builder.setPositiveButton(positiveTitle, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                multipleChoiceInterface.onSelected(selectedList);
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton(negativeTitle, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
+
+    public interface OnMultipleChoiceInterface{
+        void onSelected(boolean[] selectedList);
     }
 
     public static String getPaginatedTitle(@NonNull String title, @NonNull int count){
