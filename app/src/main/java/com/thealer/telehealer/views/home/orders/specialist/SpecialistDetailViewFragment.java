@@ -66,6 +66,7 @@ public class SpecialistDetailViewFragment extends OrdersBaseFragment implements 
     private OrdersCustomView faxNumberOcv;
     private OrdersCustomView faxStatusOcv;
     private String doctorGuid, userGuid;
+    private HashMap<String, CommonUserApiResponseModel> userDetailMap;
 
     @Override
     public void onAttach(Context context) {
@@ -153,7 +154,7 @@ public class SpecialistDetailViewFragment extends OrdersBaseFragment implements 
             CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
 
-            HashMap<String, CommonUserApiResponseModel> userDetailMap = new HashMap<>();
+            userDetailMap = new HashMap<>();
             if (patientDetail != null) {
                 userDetailMap.put(patientDetail.getUser_guid(), patientDetail);
             }
@@ -163,12 +164,9 @@ public class SpecialistDetailViewFragment extends OrdersBaseFragment implements 
                 userDetailMap.put(doctorGuid, doctorDetail);
             }
 
-            if (!userDetailMap.isEmpty()) {
-                resultBean.setUserDetailMap(userDetailMap);
-            }
-
             if (resultBean != null) {
                 setData(resultBean);
+                setUserDetail();
             } else {
                 int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
 
@@ -177,10 +175,17 @@ public class SpecialistDetailViewFragment extends OrdersBaseFragment implements 
         }
     }
 
+    private void setUserDetail() {
+        if (!userDetailMap.isEmpty()) {
+            resultBean.setUserDetailMap(userDetailMap);
+        }
+    }
+
     @Override
     public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
         if (idListApiResponseModel != null && idListApiResponseModel.getSpecialists() != null && !idListApiResponseModel.getSpecialists().isEmpty()) {
             resultBean = idListApiResponseModel.getSpecialists().get(0);
+            setUserDetail();
             setData(resultBean);
         }
     }

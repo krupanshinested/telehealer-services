@@ -74,6 +74,7 @@ public class RadiologyDetailViewFragment extends OrdersBaseFragment implements V
     private OrdersCustomView faxNumberOcv;
     private OrdersCustomView faxStatusOcv;
     private String doctorGuid, userGuid;
+    private HashMap<String, CommonUserApiResponseModel> userDetailMap;
 
     @Override
     public void onAttach(Context context) {
@@ -183,7 +184,7 @@ public class RadiologyDetailViewFragment extends OrdersBaseFragment implements V
             CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
 
-            HashMap<String, CommonUserApiResponseModel> userDetailMap = new HashMap<>();
+            userDetailMap = new HashMap<>();
             if (patientDetail != null) {
                 userDetailMap.put(patientDetail.getUser_guid(), patientDetail);
             }
@@ -193,12 +194,10 @@ public class RadiologyDetailViewFragment extends OrdersBaseFragment implements V
                 userDetailMap.put(doctorGuid, doctorDetail);
             }
 
-            if (!userDetailMap.isEmpty()) {
-                getRadiologyResponseModel.setUserDetailMap(userDetailMap);
-            }
 
             if (getRadiologyResponseModel != null) {
                 setData(getRadiologyResponseModel);
+                setUserDetail();
             } else {
                 int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
                 getOrdersDetail(userGuid, doctorGuid, new ArrayList<>(Arrays.asList(id)), true);
@@ -206,10 +205,17 @@ public class RadiologyDetailViewFragment extends OrdersBaseFragment implements V
         }
     }
 
+    private void setUserDetail() {
+        if (!userDetailMap.isEmpty()) {
+            getRadiologyResponseModel.setUserDetailMap(userDetailMap);
+        }
+    }
+
     @Override
     public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
         if (idListApiResponseModel != null && idListApiResponseModel.getXrays() != null && !idListApiResponseModel.getXrays().isEmpty()) {
             getRadiologyResponseModel = idListApiResponseModel.getXrays().get(0);
+            setUserDetail();
             setData(getRadiologyResponseModel);
         }
     }

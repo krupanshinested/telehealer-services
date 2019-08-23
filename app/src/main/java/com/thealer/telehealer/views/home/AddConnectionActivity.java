@@ -83,6 +83,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     private Toolbar toolbar;
     private List<String> filterList;
     private String speciality;
+    private int selectedFilterPosition = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -313,29 +314,37 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!UserType.isUserDoctor()) {
             getMenuInflater().inflate(R.menu.filter_menu, menu);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_filter:
+            MenuItem filterItem = menu.findItem(R.id.menu_filter);
+            View view = filterItem.getActionView();
+            ImageView filterIv = view.findViewById(R.id.filter_iv);
+            ImageView filterIndicatorIv = view.findViewById(R.id.filter_indicatior_iv);
 
-                Utils.showOptionsSelectionAlert(this, filterList, new PickerListener() {
-                    @Override
-                    public void didSelectedItem(int position) {
-                        page = 1;
-                        speciality = filterList.get(position);
-                        getApiData(true);
-                    }
+            filterIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.showOptionsSelectionAlert(AddConnectionActivity.this, filterList, selectedFilterPosition, new PickerListener() {
+                        @Override
+                        public void didSelectedItem(int position) {
+                            page = 1;
+                            speciality = filterList.get(position);
+                            if (position == 0) {
+                                selectedFilterPosition = -1;
+                                filterIndicatorIv.setVisibility(View.GONE);
+                            } else {
+                                selectedFilterPosition = position;
+                                filterIndicatorIv.setVisibility(View.VISIBLE);
+                            }
+                            getApiData(true);
+                        }
 
-                    @Override
-                    public void didCancelled() {
+                        @Override
+                        public void didCancelled() {
 
-                    }
-                });
-                break;
+                        }
+                    });
+                }
+            });
         }
         return true;
     }

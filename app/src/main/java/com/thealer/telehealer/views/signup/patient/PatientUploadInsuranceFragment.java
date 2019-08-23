@@ -408,7 +408,7 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements DoCu
                 }
             }
 
-            Utils.showOptionsSelectionAlert(getActivity(), optionsList, new PickerListener() {
+            Utils.showOptionsSelectionAlert(getActivity(), optionsList, -1, new PickerListener() {
                 @Override
                 public void didSelectedItem(int position) {
 

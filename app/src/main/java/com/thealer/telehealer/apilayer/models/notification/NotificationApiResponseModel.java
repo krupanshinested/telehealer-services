@@ -71,6 +71,7 @@ public class NotificationApiResponseModel extends PaginationCommonResponseModel 
             private String updated_at;
             private CommonUserApiResponseModel requestor;
             private CommonUserApiResponseModel requestee;
+            private String sub_type;
 
             public int getRequest_id() {
                 return request_id;
@@ -174,6 +175,14 @@ public class NotificationApiResponseModel extends PaginationCommonResponseModel 
 
             public void setRequestee(CommonUserApiResponseModel requestee) {
                 this.requestee = requestee;
+            }
+
+            public String getSub_type() {
+                return sub_type;
+            }
+
+            public void setSub_type(String sub_type) {
+                this.sub_type = sub_type;
             }
 
             public CommonUserApiResponseModel getDoctorModel() {
