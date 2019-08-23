@@ -67,6 +67,7 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
     private OrdersCustomView faxStatusOcv;
     private OrdersCustomView faxNumberOcv;
     private String doctorGuid, userGuid;
+    private HashMap<String, CommonUserApiResponseModel> userDetailMap;
 
     @Override
     public void onAttach(Context context) {
@@ -177,7 +178,7 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
             CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
 
-            HashMap<String, CommonUserApiResponseModel> userDetailMap = new HashMap<>();
+            userDetailMap = new HashMap<>();
             if (patientDetail != null) {
                 userDetailMap.put(patientDetail.getUser_guid(), patientDetail);
             }
@@ -187,12 +188,9 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
                 userDetailMap.put(doctorGuid, doctorDetail);
             }
 
-            if (!userDetailMap.isEmpty()) {
-                labsResponseBean.setUserDetailMap(userDetailMap);
-            }
-
             if (labsResponseBean != null) {
                 setData(labsResponseBean);
+                setUserDetails();
             } else {
                 int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
                 getOrdersDetail(userGuid, doctorGuid, new ArrayList<>(Arrays.asList(id)), true);
@@ -200,10 +198,19 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
         }
     }
 
+    private void setUserDetails() {
+
+        if (!userDetailMap.isEmpty()) {
+            labsResponseBean.setUserDetailMap(userDetailMap);
+        }
+
+    }
+
     @Override
     public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
         if (idListApiResponseModel != null && idListApiResponseModel.getLabs() != null && !idListApiResponseModel.getLabs().isEmpty()) {
             labsResponseBean = idListApiResponseModel.getLabs().get(0);
+            setUserDetails();
             setData(labsResponseBean);
         }
     }
