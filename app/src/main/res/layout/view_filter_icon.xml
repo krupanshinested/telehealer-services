@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="8dp">
+
+    <ImageView
+        android:id="@+id/filter_iv"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_filter" />
+
+    <ImageView
+        android:id="@+id/filter_indicatior_iv"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:src="@drawable/circular_selected_indicator"
+        android:tint="@color/red"
+        android:visibility="gone"
+        app:layout_anchor="@+id/filter_iv"
+        app:layout_anchorGravity="end|top" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

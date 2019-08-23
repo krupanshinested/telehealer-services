@@ -62,6 +62,7 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
     private TextView cancelWatermarkTv;
     private Toolbar toolbar;
     private String userName, doctorGuid, userGuid;
+    private HashMap<String, CommonUserApiResponseModel> userDetailMap;
 
     @Override
     public void onAttach(Context context) {
@@ -163,7 +164,7 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
             CommonUserApiResponseModel patientDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
 
-            HashMap<String, CommonUserApiResponseModel> userDetailMap = new HashMap<>();
+            userDetailMap = new HashMap<>();
             if (patientDetail != null) {
                 userDetailMap.put(patientDetail.getUser_guid(), patientDetail);
             }
@@ -173,18 +174,22 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
                 userDetailMap.put(doctorGuid, doctorDetail);
             }
 
-            if (!userDetailMap.isEmpty()) {
-                ordersResultBean.setUserDetailMap(userDetailMap);
-            }
 
             pharmacyOcv.setTitleTv("-");
 
             if (ordersResultBean != null) {
                 setData(ordersResultBean);
+                setUserDetail();
             } else {
                 int id = getArguments().getInt(ArgumentKeys.ORDER_ID);
                 getOrdersDetail(userGuid, doctorGuid, new ArrayList<>(Arrays.asList(id)), true);
             }
+        }
+    }
+
+    private void setUserDetail() {
+        if (!userDetailMap.isEmpty()) {
+            ordersResultBean.setUserDetailMap(userDetailMap);
         }
     }
 
@@ -193,6 +198,7 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
         if (idListApiResponseModel != null && idListApiResponseModel.getPrescriptions() != null &&
                 !idListApiResponseModel.getPrescriptions().isEmpty()) {
             ordersResultBean = idListApiResponseModel.getPrescriptions().get(0);
+            setUserDetail();
             setData(ordersResultBean);
         }
     }

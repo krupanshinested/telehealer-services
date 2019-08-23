@@ -141,18 +141,17 @@ public class VitalReportFragment extends BaseFragment {
 
         filterIv.setVisibility(View.GONE);
 
-        toolbar.inflateMenu(R.menu.add_visit_menu);
-        toolbar.getMenu().findItem(R.id.menu_print).setVisible(false);
-        toolbar.getMenu().findItem(R.id.menu_next).setVisible(false);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        toolbar.inflateMenu(R.menu.filter_menu);
+        MenuItem filterItem = toolbar.getMenu().findItem(R.id.menu_filter);
+        View filterView = filterItem.getActionView();
+        ImageView filterIv = filterView.findViewById(R.id.filter_iv);
+        ImageView filterIndicatorIv = filterView.findViewById(R.id.filter_indicatior_iv);
+        filterIndicatorIv.setVisibility(View.VISIBLE);
+
+        filterIv.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.menu_filter:
-                        showFilterDialog();
-                        break;
-                }
-                return true;
+            public void onClick(View v) {
+                showFilterDialog();
             }
         });
 

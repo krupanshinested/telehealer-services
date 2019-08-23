@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,10 +26,13 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OnFilterSelectedInterface;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
@@ -38,6 +42,9 @@ import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Aswin on 07,January,2019
@@ -55,6 +62,7 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
 
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private CommonUserApiResponseModel commonUserApiResponseModel;
+    private boolean[] selectedItem;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -116,10 +124,51 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
         });
 
         showNotificationList();
+
+        List<String> filterOptions = NotificationConstants.getNotificationDisplayFilters(this);
+        List<String> filterTypes = NotificationConstants.getNotificationFilterTypes(this);
+        selectedItem = new boolean[filterOptions.size()];
+
+        toolbar.inflateMenu(R.menu.filter_menu);
+        MenuItem filterItem = toolbar.getMenu().findItem(R.id.menu_filter);
+        View view = filterItem.getActionView();
+        ImageView filterIv = view.findViewById(R.id.filter_iv);
+        ImageView filterIndicatorIv = view.findViewById(R.id.filter_indicatior_iv);
+
+        filterIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ArrayList<String> selectionOptions = new ArrayList<>();
+
+                Utils.showMultichoiseItemSelectAlertDialog(NotificationActivity.this, getString(R.string.filter_by_type), filterOptions.toArray(new String[0]), selectedItem,
+                        getString(R.string.ok), getString(R.string.Cancel), new Utils.OnMultipleChoiceInterface() {
+                            @Override
+                            public void onSelected(boolean[] selectedList) {
+                                selectedItem = selectedList;
+                                for (int i = 0; i < selectedList.length; i++) {
+                                    if (selectedList[i]) {
+                                        selectionOptions.add(filterTypes.get(i));
+                                    }
+                                }
+
+                                if (selectionOptions.isEmpty()){
+                                    filterIndicatorIv.setVisibility(View.GONE);
+                                }else {
+                                    filterIndicatorIv.setVisibility(View.VISIBLE);
+                                }
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable(ArgumentKeys.SELECTED_ITEMS, selectionOptions);
+                                Fragment fragment = getSupportFragmentManager().findFragmentById(fragmentHolder.getId());
+                                if (fragment instanceof OnFilterSelectedInterface)
+                                    ((OnFilterSelectedInterface) fragment).onFilterSelected(bundle);
+                            }
+                        });
+            }
+        });
     }
 
     private void showNotificationList() {
-        Log.e(TAG, "showNotificationList: ");
         NotificationListFragment notificationListFragment = new NotificationListFragment();
         getSupportFragmentManager()
                 .beginTransaction()

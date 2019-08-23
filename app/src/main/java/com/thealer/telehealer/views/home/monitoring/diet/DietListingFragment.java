@@ -2,7 +2,6 @@ package com.thealer.telehealer.views.home.monitoring.diet;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,8 +43,6 @@ import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
-import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
-import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
@@ -54,11 +51,9 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.recents.VisitDetailConstants;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Aswin on 15,April,2019
@@ -134,7 +129,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
 
                         PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
                         Bundle bundle = new Bundle();
-                        bundle.putString(ArgumentKeys.PDF_TITLE,getString(R.string.diet_report));
+                        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.diet_report));
                         bundle.putString(ArgumentKeys.PDF_URL, pdfUrlResponse.getUrl());
                         bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
                         pdfViewerFragment.setArguments(bundle);
@@ -194,57 +189,66 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
         toolbar.inflateMenu(R.menu.add_visit_menu);
         nextTv = toolbar.getMenu().findItem(R.id.menu_next);
 
+        MenuItem filterItem = toolbar.getMenu().findItem(R.id.menu_filter);
+        View filterView = filterItem.getActionView();
+        ImageView filterIv = filterView.findViewById(R.id.filter_iv);
+        ImageView filterIndicatorIv = filterView.findViewById(R.id.filter_indicatior_iv);
+        filterIndicatorIv.setVisibility(View.VISIBLE);
+        filterIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedList.clear();
+                selectedDietMap.clear();
+                Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
+                    @Override
+                    public void onListItemSelected(int position, Bundle bundle) {
+                        String selectedItem = bundle.getString(Constants.SELECTED_ITEM);
+                        startDate = null;
+                        endDate = null;
+
+                        if (selectedItem != null) {
+                            setToolbarTitle(selectedItem);
+
+                            if (selectedItem.equals(getString(R.string.last_week))) {
+                                dietListCrv.setEmptyState(EmptyViewConstants.EMPTY_DIET_LAST_WEEK);
+                                filter = VitalReportApiViewModel.LAST_WEEK;
+                            } else if (selectedItem.equals(getString(R.string.all))) {
+                                dietListCrv.setEmptyState(EmptyViewConstants.EMPTY_DIET);
+                                filter = null;
+                            } else {
+                                filter = null;
+                                startDate = bundle.getString(ArgumentKeys.START_DATE);
+                                endDate = bundle.getString(ArgumentKeys.END_DATE);
+
+                                setToolbarTitle(Utils.getMonitoringTitle(startDate, endDate));
+
+                                String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_DIET_FROM_TO);
+
+                                dietListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
+                            }
+
+
+                            getArguments().putString(ArgumentKeys.SELECTED_DATE, selectedItem);
+                            getArguments().putString(ArgumentKeys.SEARCH_TYPE, filter);
+                            getArguments().putString(ArgumentKeys.START_DATE, startDate);
+                            getArguments().putString(ArgumentKeys.END_DATE, endDate);
+
+                        }
+                        getDiets(true);
+                    }
+                });
+            }
+        });
+
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-                    case R.id.menu_filter:
-                        selectedList.clear();
-                        selectedDietMap.clear();
-                        Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
-                            @Override
-                            public void onListItemSelected(int position, Bundle bundle) {
-                                String selectedItem = bundle.getString(Constants.SELECTED_ITEM);
-                                startDate = null;
-                                endDate = null;
-
-                                if (selectedItem != null) {
-                                    setToolbarTitle(selectedItem);
-
-                                    if (selectedItem.equals(getString(R.string.last_week))) {
-                                        dietListCrv.setEmptyState(EmptyViewConstants.EMPTY_DIET_LAST_WEEK);
-                                        filter = VitalReportApiViewModel.LAST_WEEK;
-                                    } else if (selectedItem.equals(getString(R.string.all))) {
-                                        dietListCrv.setEmptyState(EmptyViewConstants.EMPTY_DIET);
-                                        filter = null;
-                                    } else {
-                                        filter = null;
-                                        startDate = bundle.getString(ArgumentKeys.START_DATE);
-                                        endDate = bundle.getString(ArgumentKeys.END_DATE);
-
-                                        setToolbarTitle(Utils.getMonitoringTitle(startDate, endDate));
-
-                                        String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_DIET_FROM_TO);
-
-                                        dietListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
-                                    }
-
-
-                                    getArguments().putString(ArgumentKeys.SELECTED_DATE, selectedItem);
-                                    getArguments().putString(ArgumentKeys.SEARCH_TYPE, filter);
-                                    getArguments().putString(ArgumentKeys.START_DATE, startDate);
-                                    getArguments().putString(ArgumentKeys.END_DATE, endDate);
-
-                                }
-                                getDiets(true);
-                            }
-                        });
-                        break;
                     case R.id.menu_print:
                         if (getArguments().getBoolean(ArgumentKeys.SHOW_PRINT_FILTER, true)) {
                             showDietPrintOptions();
                         } else {
-                            generatePdf(filter,startDate,endDate);
+                            generatePdf(filter, startDate, endDate);
                         }
                         break;
                     case R.id.menu_next:
@@ -526,12 +530,12 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
             @Override
             public void onListItemSelected(int position, Bundle bundle) {
 
-                generatePdf(bundle.getString(Constants.SELECTED_ITEM),bundle.getString(ArgumentKeys.START_DATE),bundle.getString(ArgumentKeys.END_DATE));
+                generatePdf(bundle.getString(Constants.SELECTED_ITEM), bundle.getString(ArgumentKeys.START_DATE), bundle.getString(ArgumentKeys.END_DATE));
             }
         });
     }
 
-    private void generatePdf(String selectedOption,@Nullable String startDate,@Nullable String endDate) {
+    private void generatePdf(String selectedOption, @Nullable String startDate, @Nullable String endDate) {
 
         String filter = null;
         String start_Date = null;
@@ -552,7 +556,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
             }
         }
 
-        dietApiViewModel.getDietPdf(filter,start_Date,end_Date,userGuid,null,true);
+        dietApiViewModel.getDietPdf(filter, start_Date, end_Date, userGuid, null, true);
     }
 
 }
