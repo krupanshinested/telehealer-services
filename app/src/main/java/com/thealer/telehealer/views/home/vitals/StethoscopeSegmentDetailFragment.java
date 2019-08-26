@@ -115,7 +115,12 @@ public class StethoscopeSegmentDetailFragment extends BaseFragment {
     }
 
     private void initializeAudioPlayer(String audio_file) {
-        String path = getString(R.string.api_base_url) + getString(R.string.get_image_url) + audio_file;
+        String path = audio_file;
+        /*if (audio_file.contains("http:") || audio_file.contains("https:")) {
+            path = audio_file;
+        } else {
+            path = getString(R.string.api_base_url) + getString(R.string.get_image_url) + audio_file;
+        }*/
 
         Uri uri = Uri.parse(path);
 
