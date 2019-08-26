@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -427,7 +428,9 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void downloadTranscript(String transcriptUrl, boolean isShowProgress) {
-        recentsApiViewModel.downloadTranscriptDetail(transcriptUrl, isShowProgress);
+        if (!TextUtils.isEmpty(transcriptUrl)) {
+            recentsApiViewModel.downloadTranscriptDetail(transcriptUrl, isShowProgress);
+        }
     }
 
     private void getOrderDetail() {
