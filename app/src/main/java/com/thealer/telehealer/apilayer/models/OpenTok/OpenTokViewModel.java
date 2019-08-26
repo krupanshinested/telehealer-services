@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.TokBox;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import okhttp3.MultipartBody;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.application;
 
 /**
  * Created by rsekar on 12/27/18.
@@ -51,7 +53,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
                                 //Setting the temp token
                                 TokBox.shared.setTempToken(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
                                 appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
-
+                                new WhoAmIApiViewModel(application).assignWhoAmI();
                                 getToken(sessionId, fetcher);
                             }
 

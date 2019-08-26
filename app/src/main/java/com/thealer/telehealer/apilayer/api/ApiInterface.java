@@ -83,6 +83,7 @@ import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -97,6 +98,7 @@ import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 /**
  * Created by Aswin on 08,October,2018
@@ -372,6 +374,9 @@ public interface ApiInterface {
     @GET("api/download")
     Observable<Response<ResponseBody>> getPdfFile(@Query("path") String path, @Query("decrypt") boolean isDecrypt);
 
+    @GET
+    Observable<Response<ResponseBody>> getPdfFile(@Url String fileUrl);
+
     @POST("refresh")
     Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check);
 
@@ -434,6 +439,9 @@ public interface ApiInterface {
 
     @GET("api/download")
     Observable<DownloadTranscriptResponseModel> downloadTranscript(@Query("path") String path, @Query("decrypt") boolean isDecrypt);
+
+    @GET
+    Observable<DownloadTranscriptResponseModel> downloadTranscript(@Url String fileUrl);
 
     @GET("api/sources/{id}")
     Observable<BaseApiResponseModel> getExperimentalFeature(@Path(ID) String id);
