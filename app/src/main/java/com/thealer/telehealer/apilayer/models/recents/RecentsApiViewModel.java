@@ -1,12 +1,16 @@
 package com.thealer.telehealer.apilayer.models.recents;
 
 import android.app.Application;
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
+
+import io.reactivex.Observable;
 
 /**
  * Created by Aswin on 15,November,2018
@@ -82,7 +86,15 @@ public class RecentsApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().downloadTranscript(path, true)
+
+                    Observable<DownloadTranscriptResponseModel> observable =  getAuthApiService().downloadTranscript(path);
+                    /*if (path.contains("http:") || path.contains("https:")) {
+                        observable = getAuthApiService().downloadTranscript(path);
+                    } else {
+                        observable = getAuthApiService().downloadTranscript(path, true);
+                    }*/
+
+                    observable
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
