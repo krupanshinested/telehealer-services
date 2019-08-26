@@ -20,6 +20,7 @@ import com.thealer.telehealer.apilayer.api.ApiInterface;
 import com.thealer.telehealer.apilayer.manager.RetrofitManager;
 import com.thealer.telehealer.apilayer.manager.helper.NoConnectivityException;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
@@ -201,6 +202,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         if (signinApiResponseModel.isSuccess()) {
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
                             updateListnerStatus();
+                            new WhoAmIApiViewModel(application).assignWhoAmI();
                         }
                         EventRecorder.updateVersion();
                     }

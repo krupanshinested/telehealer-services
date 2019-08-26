@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
+
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,7 +137,10 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                                         }
                                     }
 
-                                    recentsApiViewModel.downloadTranscriptDetail(transcriptionApiResponseModel.getTranscript(), true);
+                                    if (!TextUtils.isEmpty(transcriptionApiResponseModel.getTranscript())) {
+                                        recentsApiViewModel.downloadTranscriptDetail(transcriptionApiResponseModel.getTranscript(), true);
+                                    }
+
                                     createVideoPlayer();
                                 } else {
                                     Utils.showAlertDialog(getActivity(),
@@ -233,7 +238,14 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
     }
 
     private void createVideoPlayer() {
-        String path = getString(R.string.api_base_url) + getString(R.string.get_image_url) + transcriptionApiResponseModel.getAudio_stream() + "&decrypt=false";
+        String path = transcriptionApiResponseModel.getAudio_stream();
+
+        /*if (transcriptionApiResponseModel.getAudio_stream().contains("http:") || transcriptionApiResponseModel.getAudio_stream().contains("https:")) {
+            path = transcriptionApiResponseModel.getAudio_stream();
+        } else {
+            path = getString(R.string.api_base_url) + getString(R.string.get_image_url) + transcriptionApiResponseModel.getAudio_stream() + "&decrypt=false";
+        }*/
+
 
         Uri uri = Uri.parse(path);
 
