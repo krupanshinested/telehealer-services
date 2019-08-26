@@ -48,6 +48,8 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
     private boolean auto_dismiss = false;
     private boolean isAnimationEnd = false;
 
+    private boolean needToShowDoneButtonOnResultFetched = true;
+
     @Nullable
     private Integer successReplaceDrawableId = null;
     @Nullable
@@ -128,11 +130,7 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
                 messageTv.setText(message);
             }
 
-            if (bundle.getBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON,false)) {
-                doneBtn.setVisibility(View.INVISIBLE);
-            } else {
-                doneBtn.setVisibility(View.VISIBLE);
-            }
+            needToShowDoneButtonOnResultFetched = !bundle.getBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON,false);
 
             if (bundle.getBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS,false)) {
                 auto_dismiss = true;
@@ -256,9 +254,11 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         titleTv.setText(title);
         messageTv.setText(message);
 
-        doneBtn.setAlpha(0f);
-        doneBtn.setVisibility(View.VISIBLE);
-        doneBtn.animate().alpha(1).setDuration(500);
+        if (needToShowDoneButtonOnResultFetched) {
+            doneBtn.setAlpha(0f);
+            doneBtn.setVisibility(View.VISIBLE);
+            doneBtn.animate().alpha(1).setDuration(500);
+        }
 
     }
 

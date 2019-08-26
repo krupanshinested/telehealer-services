@@ -53,7 +53,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.Headers;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
@@ -62,6 +61,7 @@ import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.common.Util.TeleCacheUrl;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
@@ -361,11 +361,11 @@ public class Utils {
 
     public static void setImageWithGlide(Context context, ImageView imageView, String path, Drawable placeHolder, boolean isUrlAuthNeeded, boolean decrypt) {
         if (path != null && !path.isEmpty()) {
-            GlideUrl glideUrl;
+            TeleCacheUrl glideUrl;
             if (isUrlAuthNeeded) {
                 glideUrl = getGlideUrlWithAuth(context, path, decrypt);
             } else {
-                glideUrl = new GlideUrl(path);
+                glideUrl = new TeleCacheUrl(path);
             }
             if (placeHolder != null) {
                 Glide.with(context).load(glideUrl).apply(new RequestOptions().placeholder(placeHolder)).into(imageView);
@@ -380,10 +380,14 @@ public class Utils {
         }
     }
 
-    public static GlideUrl getGlideUrlWithAuth(Context context, String path, boolean decrypt) {
-        path = context.getString(R.string.api_base_url) + context.getString(R.string.get_image_url) + path + "&decrypt=" + decrypt;
+    public static TeleCacheUrl getGlideUrlWithAuth(Context context, String path, boolean decrypt) {
+        /*if (path.contains("http:") || path.contains("https:")) {
 
-        return new GlideUrl(path, new Headers() {
+        } else {
+            path = context.getString(R.string.api_base_url) + context.getString(R.string.get_image_url) + path + "&decrypt=" + decrypt;
+        }*/
+
+        return new TeleCacheUrl(path, new Headers() {
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> hashMap = new HashMap<>();
@@ -1096,7 +1100,7 @@ public class Utils {
                 public void run() {
                     try {
 
-                        GlideUrl glideUrl = Utils.getGlideUrlWithAuth(application, imageUrl, true);
+                        TeleCacheUrl glideUrl = Utils.getGlideUrlWithAuth(application, imageUrl, true);
 
                         FutureTarget<Bitmap> futureTarget = Glide.with(application).asBitmap().load(glideUrl).submit();
 
