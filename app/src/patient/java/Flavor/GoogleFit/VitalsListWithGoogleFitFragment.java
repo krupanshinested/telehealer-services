@@ -44,16 +44,7 @@ public class VitalsListWithGoogleFitFragment extends VitalsListFragment implemen
             case GoogleFitManager.REQUEST_OAUTH_REQUEST_CODE:
                 if (googleFitManager.isPermitted()) {
 
-                    SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.health_source_success));
-                    bundle.putBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON, true);
-                    successViewDialogFragment.setArguments(bundle);
-                    successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
-                    successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
-
+                    openSuccessFragment();
                     googleFitManager.read(this);
                 }
                 break;
@@ -97,9 +88,28 @@ public class VitalsListWithGoogleFitFragment extends VitalsListFragment implemen
         super.runAfterKnowYourNumber();
 
         if (!googleFitManager.isPermitted() && !isAskedForPermission) {
+            Log.d("GoogleFitFragment","first level");
+            this.isAskedForPermission = true;
+            googleFitManager.read(this);
+        } else if (googleFitManager.isPermitted() && GoogleFitDefaults.getPreviousFetchedSources().size() == 0 && GoogleFitDefaults.getPreviousFetchedData() == null && !isAskedForPermission) {
+            Log.d("GoogleFitFragment","second level");
+            openSuccessFragment();
             this.isAskedForPermission = true;
             googleFitManager.read(this);
         }
+    }
+
+    private void openSuccessFragment() {
+        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.health_source_success));
+        bundle.putBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON, true);
+        successViewDialogFragment.setArguments(bundle);
+        successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+        successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+
     }
 
     //GoogleFitResultFetcher
