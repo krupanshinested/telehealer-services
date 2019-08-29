@@ -68,8 +68,4 @@ public class AppPreference {
 
         return sharedPreferences.getBoolean(key, false);
     }
-
-    public void deletePreference() {
-        editor.clear().commit();
-    }
 }
