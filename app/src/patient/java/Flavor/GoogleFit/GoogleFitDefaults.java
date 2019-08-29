@@ -5,7 +5,9 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 
 import java.lang.reflect.Type;
@@ -21,7 +23,12 @@ public class GoogleFitDefaults {
 
     @Nullable
     public static Date getPreviousFetchedData() {
-        String dateString = TeleHealerApplication.appPreference.getString(PreferenceConstants.GOOGLE_FIT_PRE_FETCHED_DATE);
+        WhoAmIApiResponseModel whoAmIApiResponseModel =  UserDetailPreferenceManager.getWhoAmIResponse();
+        if (whoAmIApiResponseModel == null) {
+            return null;
+        }
+
+        String dateString = TeleHealerApplication.appPreference.getString(whoAmIApiResponseModel.getUser_guid()+"_"+PreferenceConstants.GOOGLE_FIT_PRE_FETCHED_DATE);
         if (TextUtils.isEmpty(dateString)) {
             return null;
         } else {
@@ -30,11 +37,21 @@ public class GoogleFitDefaults {
     }
 
     public static void setPreviousFetchedData(Date fetchedData) {
-        TeleHealerApplication.appPreference.setString(PreferenceConstants.GOOGLE_FIT_PRE_FETCHED_DATE, Utils.getStringFromDate(fetchedData,Utils.UTCFormat));
+        WhoAmIApiResponseModel whoAmIApiResponseModel =  UserDetailPreferenceManager.getWhoAmIResponse();
+        if (whoAmIApiResponseModel == null) {
+            return;
+        }
+        
+        TeleHealerApplication.appPreference.setString(whoAmIApiResponseModel.getUser_guid()+"_"+PreferenceConstants.GOOGLE_FIT_PRE_FETCHED_DATE, Utils.getStringFromDate(fetchedData,Utils.UTCFormat));
     }
 
     public static ArrayList<GoogleFitSource> getPreviousFetchedSources() {
-        String prefetchedSources = TeleHealerApplication.appPreference.getString(PreferenceConstants.GOOGLE_FIT_PRE_FETCHED_SOURCES);
+        WhoAmIApiResponseModel whoAmIApiResponseModel =  UserDetailPreferenceManager.getWhoAmIResponse();
+        if (whoAmIApiResponseModel == null) {
+            return new ArrayList<>();
+        }
+
+        String prefetchedSources = TeleHealerApplication.appPreference.getString(whoAmIApiResponseModel.getUser_guid()+"_"+PreferenceConstants.GOOGLE_FIT_PRE_FETCHED_SOURCES);
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<GoogleFitSource>>() {}.getType();
         ArrayList<GoogleFitSource> sources = gson.fromJson(prefetchedSources, type);
@@ -46,9 +63,14 @@ public class GoogleFitDefaults {
     }
 
     public static void setPreviousFetchedSources(ArrayList<GoogleFitSource> sources) {
+        WhoAmIApiResponseModel whoAmIApiResponseModel =  UserDetailPreferenceManager.getWhoAmIResponse();
+        if (whoAmIApiResponseModel == null) {
+            return;
+        }
+
         Gson gson = new Gson();
         String source = gson.toJson(sources);
-        appPreference.setString(PreferenceConstants.GOOGLE_FIT_PRE_FETCHED_SOURCES, source);
+        appPreference.setString(whoAmIApiResponseModel.getUser_guid()+"_"+PreferenceConstants.GOOGLE_FIT_PRE_FETCHED_SOURCES, source);
     }
 
 }
