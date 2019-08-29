@@ -262,11 +262,6 @@ public class UserDetailPreferenceManager {
     }
 
     public static void deleteAllPreference() {
-        String installType = getInstallType();
-        String countryCode = getCountryCode();
-        appPreference.deletePreference();
-
-        setInstallType(installType);
-        setCountryCode(countryCode);
+        UserDetailPreferenceManager.invalidateUser();
     }
 }
