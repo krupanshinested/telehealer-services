@@ -41,7 +41,8 @@ public class PatientApplication extends TeleHealerApplication implements GoogleF
     }
 
     private void checkGoogleFitData() {
-        if (googleFitManager.isPermitted() && appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
+        if (googleFitManager.isPermitted() && GoogleFitDefaults.getPreviousFetchedData() != null
+                && appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
             googleFitManager.read(this);
         }
     }
