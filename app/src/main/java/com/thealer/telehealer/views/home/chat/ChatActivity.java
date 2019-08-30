@@ -158,17 +158,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         sendIv = (ImageView) findViewById(R.id.send_iv);
         chatMessageCrv = (CustomRecyclerView) findViewById(R.id.chat_message_crv);
 
-        if (UserType.isUserPatient()) {
-            infoIv.setVisibility(View.GONE);
-            messageEt.setFocusable(false);
-            messageEt.setClickable(true);
-            messageEt.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openPrecannedMessage();
-                }
-            });
-        }
         nextTv.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
 
@@ -177,7 +166,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         infoIv.setOnClickListener(this);
 
         chatMessageCrv.setEmptyState(EmptyViewConstants.EMPTY_CHATS);
-
 
         LinearLayoutManager linearLayoutManager = chatMessageCrv.getLayoutManager();
 
@@ -434,6 +422,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     protected void onResume() {
         super.onResume();
         createChannel();
+        if (UserType.isUserPatient()){
+            showSnack(findViewById(R.id.rootLayout), getString(R.string.chat_disclaimer), 5000).show();
+        }
     }
 
     private void createChannel() {

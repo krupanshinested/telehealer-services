@@ -57,6 +57,7 @@ import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.application;
 
 /**
  * Created by Aswin on 08,October,2018
@@ -141,10 +142,16 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                                 isQuickLoginReceiverEnabled = false;
                                 goToSigninActivity();
                             } else {
-                                getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(),
-                                        QuickLoginActivity.class)
-                                        .putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true)
-                                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                if (!Utils.isInternetEnabled(application)){
+                                    updateListnerStatus();
+                                    isLoadingLiveData.setValue(false);
+                                    errorModelLiveData.setValue(new ErrorModel(NETWORK_ERROR_CODE, "No Internet connection", "No Internet connection"));
+                                }else {
+                                    getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(),
+                                            QuickLoginActivity.class)
+                                            .putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true)
+                                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                }
                             }
                         }
                     } else {
