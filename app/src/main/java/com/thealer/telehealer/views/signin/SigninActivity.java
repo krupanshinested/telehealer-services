@@ -1,21 +1,16 @@
 package com.thealer.telehealer.views.signin;
 
 import android.app.Dialog;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkRequest;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -23,6 +18,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.hbb20.CountryCodePicker;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
@@ -56,8 +60,6 @@ import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import com.thealer.telehealer.views.signup.OtpVerificationFragment;
 
-import okhttp3.internal.Util;
-
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -79,6 +81,8 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     private ImageView quickLoginCiv;
     private TextView quickLoginTv;
 
+    private ConnectivityManager connectivityManager;
+    private ConnectivityManager.NetworkCallback networkCallback;
 
     private SigninApiViewModel signinApiViewModel;
     private WhoAmIApiViewModel whoAmIApiViewModel;
@@ -96,6 +100,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         }
     };
     private CountryCodePicker countryPicker;
+    private Snackbar snackbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -225,6 +230,28 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         });
 
         initView();
+
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkCallback = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(Network network) {
+                super.onAvailable(network);
+                onNetworkAvailable(true);
+            }
+
+            @Override
+            public void onLost(Network network) {
+                super.onLost(network);
+                onNetworkAvailable(false);
+            }
+
+            @Override
+            public void onUnavailable() {
+                super.onUnavailable();
+                onNetworkAvailable(false);
+            }
+        };
+
     }
 
     private void checkSignalKeys() {
@@ -387,8 +414,24 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         if (authResponse == ArgumentKeys.AUTH_SUCCESS && appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN) != null) {
             makeRefreshTokenApiCall();
         }
+
+        connectivityManager.registerNetworkCallback(new NetworkRequest.Builder().build(), networkCallback);
+
+        onNetworkAvailable(Utils.isInternetEnabled(this));
     }
 
+    public void onNetworkAvailable(boolean isNetworkAvailable) {
+        if (isNetworkAvailable) {
+            if (snackbar != null) {
+                snackbar.dismiss();
+            }
+        } else {
+            if (snackbar == null) {
+                snackbar = showSnack(findViewById(R.id.rootLayout), getString(R.string.no_network_connection), Snackbar.LENGTH_INDEFINITE);
+            }
+            snackbar.show();
+        }
+    }
     private void makeRefreshTokenApiCall() {
         isQuickLogin = true;
         signinApiViewModel.refreshToken();
@@ -398,6 +441,9 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(quickLoginBroadcastReceiver);
+        if (connectivityManager != null && networkCallback != null){
+            connectivityManager.unregisterNetworkCallback(networkCallback);
+        }
     }
 
     private void goToMainActivity() {

@@ -1305,4 +1305,6 @@
     <string name="payment_pre_authorization_info">You are responsible for patient balances after any or all applicable insurance payments.</string>
     <string name="health_source_success">Successfully fetched all your health information from other sources.</string>
     <string name="health_source_fetching">Fetching your health information</string>
+    <string name="chat_disclaimer">DISCLAIMER: DO NOT USE THIS FORM IF YOU ARE SEEKING URGENT OR EMERGENCY MEDICAL ATTENTION. CALL 911 OR GO TO THE NEAREST EMERGENCY ROOM INSTEAD.\n\nPlease note that your health care provider may not respond to chat messages in a timely fashion. Use this medium only for non-emergent correspondences.</string>
+    <string name="no_network_connection">No Internet Connection</string>
 </resources>
