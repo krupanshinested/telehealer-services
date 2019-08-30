@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -27,6 +28,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.DrawableImageViewTarget;
+import com.google.android.material.snackbar.Snackbar;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -171,9 +173,16 @@ public class BaseActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
-    public void showSnack() {
-        //create a snack bar view and show here
-        Logs.D(TAG, "inside show snack");
+    public Snackbar showSnack(View parentView, String message, int duration) {
+        Snackbar snackbar = Snackbar.make(parentView, "", duration);
+        Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
+        snackbarLayout.setBackgroundColor(getColor(R.color.app_gradient_start));
+        View view = getLayoutInflater().inflate(R.layout.view_snackbar, null);
+        TextView mSnackbarTv = (TextView) view.findViewById(R.id.snackbar_tv);
+        mSnackbarTv.setText(message);
+
+        snackbarLayout.addView(view);
+        return snackbar;
     }
 
     public void showScreen() {
