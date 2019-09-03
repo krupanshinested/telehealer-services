@@ -1,17 +1,19 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Aswin on 27,November,2018
  */
-public class CreateVitalApiRequestModel implements Cloneable {
+public class CreateVitalApiRequestModel implements Cloneable, Serializable {
 
     private String type;
     private String value;
     private String mode;
     private String display_name;
     private String user_guid;
+    private String order_id;
     private ArrayList<VitalsApiResponseModel> vitals;
 
     public CreateVitalApiRequestModel(String type, String value, String mode, String display_name, String user_guid) {
@@ -72,5 +74,9 @@ public class CreateVitalApiRequestModel implements Cloneable {
 
     public Object clone() throws CloneNotSupportedException{
         return (CreateVitalApiRequestModel)super.clone();
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
     }
 }

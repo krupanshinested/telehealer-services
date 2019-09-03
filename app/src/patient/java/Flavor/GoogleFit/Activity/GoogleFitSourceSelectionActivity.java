@@ -3,6 +3,7 @@ package Flavor.GoogleFit.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.Util.Vital.BulkVitalUtil;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -159,9 +161,14 @@ public class GoogleFitSourceSelectionActivity extends BaseActivity implements Vi
                         vitals.add(new VitalsApiResponseModel(data.getType(), data.getValue(), data.getSource().getAppName(), VitalsConstant.VITAL_MODE_PATIENT, date, data.getSource().getBundleId()));
                     }
                 }
-                VitalsApiViewModel vitalsApiViewModel = new VitalsApiViewModel(getApplication());
-                CreateVitalApiRequestModel createVitalApiRequestModel = new CreateVitalApiRequestModel(vitals);
-                vitalsApiViewModel.createVital(createVitalApiRequestModel,null);
+
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        BulkVitalUtil.getInstance().uploadAllVitals(1,vitals,null,null,null);
+                    }
+                });
+
                 finish();
                 break;
             case R.id.close_iv:
