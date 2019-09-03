@@ -99,16 +99,7 @@ public class TrackBPAdapter extends BaseAdapter {
                         }
                     });
 
-                    dataHolder.check_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            if (isChecked) {
-                                selectedTracks.add(bpTrack);
-                            } else {
-                                selectedTracks.remove(bpTrack);
-                            }
-                        }
-                    });
+                    dataHolder.check_box.setClickable(false);
 
                 }
                 break;

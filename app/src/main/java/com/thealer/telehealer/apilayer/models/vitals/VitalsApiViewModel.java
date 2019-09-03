@@ -1,17 +1,28 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.views.base.BaseViewInterface;
+import com.thealer.telehealer.views.common.SuccessViewInterface;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  * Created by Aswin on 21,November,2018
@@ -95,16 +106,25 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createVital(CreateVitalApiRequestModel createVitalApiRequestModel, String doctorGuid) {
+    public void sentBulkVitals(CreateVitalApiRequestModel createVitalApiRequestModel,
+                               String doctorGuid, SuccessViewInterface successViewInterface) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createVital(createVitalApiRequestModel, doctorGuid)
+
+                    Gson gson = new Gson();
+                    String vitals = gson.toJson(createVitalApiRequestModel);
+
+                    MultipartBody.Part file = MultipartBody.Part.createFormData("request_input", "request_input.txt",
+                            RequestBody.create(MediaType.parse("text/plain"),vitals.getBytes()));
+
+                    getAuthApiService().createBulkVital(file, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    successViewInterface.onSuccessViewCompletion(true);
                                     EventRecorder.recordVitalsPushed();
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
