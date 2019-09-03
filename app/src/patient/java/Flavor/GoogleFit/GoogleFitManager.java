@@ -259,7 +259,7 @@ public class GoogleFitManager {
                     appName = dp.getDataSource().getName();
                 } else if (!TextUtils.isEmpty(dp.getOriginalDataSource().getName())) {
                     appName = dp.getOriginalDataSource().getName();
-                } else if (bundleId.equals("com.google.android.gms")) {
+                } else if (bundleId != null && bundleId.equals("com.google.android.gms")) {
                     appName = "Google Fit";
                 } else {
                     appName = bundleId;

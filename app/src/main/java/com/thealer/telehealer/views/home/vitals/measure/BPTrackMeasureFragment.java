@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +26,7 @@ import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -33,6 +36,7 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.Array.ArrayListFilter;
 import com.thealer.telehealer.common.Util.Array.ArrayListMap;
 import com.thealer.telehealer.common.Util.Array.ArrayListUtil;
+import com.thealer.telehealer.common.Util.Vital.BulkVitalUtil;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
@@ -213,12 +217,12 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
 
     @Override
     public void onClick(View view) {
+        view.setClickable(false);
         switch (view.getId()) {
             case R.id.sync_bt:
                 if (!isDataFetched) {
                     startMeasure();
                 } else {
-
                     if (vitalManagerInstance != null) {
 
                         Collections.sort(selectedList, new Comparator<BPTrack>() {
@@ -234,27 +238,41 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
                             userGuid = commonUserApiResponseModel.getUser_guid();
                         }
 
-                        for (int i = 0; i < selectedList.size(); i++) {
+                        if (selectedList.size() == 1) {
+                            Log.d("BPTrack","uploading one");
+                            BPTrack track = selectedList.get(0);
+                            sendVitals(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), SupportedMeasurementType.heartRate, track.getHeartRate() + "");
+                        } else if (selectedList.size() > 1) {
+                            Log.d("BPTrack","uploading many");
+                            BPTrack track = selectedList.get(0);
+                            sendVitals(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), SupportedMeasurementType.heartRate, track.getHeartRate() + "");
+                            Log.d("BPTrack","uploading first");
 
-                            BPTrack track = selectedList.get(i);
-
-                            if (i == 0) {
-                                sendVitals(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), SupportedMeasurementType.heartRate, track.getHeartRate() + "");
-                            } else {
-                                VitalsCreateApiModel vitalsCreateApiModel = new VitalsCreateApiModel(TeleHealerApplication.application);
-
-                                CreateVitalApiRequestModel bpRequest = new CreateVitalApiRequestModel(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), VitalsConstant.VITAL_MODE_DEVICE, null, userGuid);
-                                vitalsCreateApiModel.createVital(bpRequest, null);
-
-                                CreateVitalApiRequestModel hrRequest = new CreateVitalApiRequestModel(SupportedMeasurementType.heartRate, track.getHeartRate() + "", VitalsConstant.VITAL_MODE_DEVICE, null, userGuid);
-                                vitalsCreateApiModel.createVital(hrRequest, null);
+                            ArrayList<VitalsApiResponseModel> vitalApiRequestModels = new ArrayList<>();
+                            ArrayList<BPTrack> tracks = new ArrayList<>(selectedList.subList(1,selectedList.size()));
+                            for (BPTrack track1 : tracks) {
+                                VitalsApiResponseModel bpRequest = new VitalsApiResponseModel(SupportedMeasurementType.bp, track1.getSys() + "/" + track1.getDia(),null, VitalsConstant.VITAL_MODE_DEVICE, null, null);
+                                VitalsApiResponseModel hrRequest = new VitalsApiResponseModel(SupportedMeasurementType.heartRate, track1.getHeartRate() + "", null,VitalsConstant.VITAL_MODE_DEVICE, null, null);
+                                vitalApiRequestModels.add(bpRequest);
+                                vitalApiRequestModels.add(hrRequest);
                             }
+                            Log.d("BPTrack","uploading rest");
+                            String finalUserGuid = userGuid;
+                            new Handler().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    BulkVitalUtil.getInstance().uploadAllVitals(1,vitalApiRequestModels, finalUserGuid,null,null);
+                                }
+                            });
+
                         }
                     }
 
                 }
                 break;
         }
+
+        view.setClickable(true);
     }
 
 
