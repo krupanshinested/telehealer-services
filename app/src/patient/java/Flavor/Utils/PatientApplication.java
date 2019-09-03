@@ -1,6 +1,7 @@
 package Flavor.Utils;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 
 import com.thealer.telehealer.TeleHealerApplication;
@@ -9,6 +10,7 @@ import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.Util.Vital.BulkVitalUtil;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 
@@ -90,10 +92,13 @@ public class PatientApplication extends TeleHealerApplication implements GoogleF
                 vitals.add(new VitalsApiResponseModel(data.getType(),data.getValue(),data.getSource().getAppName(), VitalsConstant.VITAL_MODE_PATIENT,date,data.getSource().getBundleId()));
             }
 
-            VitalsApiViewModel vitalsApiViewModel = new VitalsApiViewModel(this);
-            CreateVitalApiRequestModel createVitalApiRequestModel = new CreateVitalApiRequestModel(vitals);
-            vitalsApiViewModel.createVital(createVitalApiRequestModel,null);
             Log.d("PatientApplication","vital api called");
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    BulkVitalUtil.getInstance().uploadAllVitals(1,vitals,null,null,null);
+                }
+            });
         }
 
     }

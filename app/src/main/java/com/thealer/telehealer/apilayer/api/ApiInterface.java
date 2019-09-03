@@ -317,6 +317,11 @@ public interface ApiInterface {
     @POST("api/vitals")
     Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
+    @Multipart
+    @POST("api/bulk-upload/vitals")
+    Observable<VitalsCreateApiResponseModel> createBulkVital(@Part MultipartBody.Part body, @Query(DOCTOR_GUID) String doctorGuid);
+
+
     @GET("api/" + OrderConstant.ORDER_TYPE_FORM)
     Observable<ArrayList<OrdersUserFormsApiResponseModel>> getUserForms(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(ASSIGNOR) boolean assignor);
 
