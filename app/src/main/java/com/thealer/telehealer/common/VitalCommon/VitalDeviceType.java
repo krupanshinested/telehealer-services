@@ -394,7 +394,7 @@ public class VitalDeviceType {
 
 
     @Nullable
-    public static SupportInformation getConnectInfo(String type) {
+    public static SupportInformation getSetUpInfo(String type) {
         switch (type) {
 
             case VitalsConstant.TYPE_HS4S:
@@ -404,7 +404,7 @@ public class VitalDeviceType {
                 return new SupportInformation(0, R.string.stand_with_bare_feet, R.drawable.bare_foot);
 
             case VitalsConstant.TYPE_BG5:
-                return new SupportInformation(0, R.string.bg5_information, R.drawable.ihealth_glucometer_smart);
+                return new SupportInformation(0, R.string.bg5_information, R.drawable.ihealth_glucometer_smart,true);
 
             case VitalsConstant.TYPE_550BT:
                 return new SupportInformation(0, R.string.track_information, R.drawable.ihealth_bloodpressure_track);
