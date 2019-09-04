@@ -75,7 +75,7 @@ public class iHealthVitalManager extends VitalsManager {
     }
 
     private void init() {
-        iHealthDevicesManager.getInstance().init(getApplication(), Log.VERBOSE, Log.ASSERT);
+        iHealthDevicesManager.getInstance().init(getApplication(), Log.VERBOSE, Log.VERBOSE);
         callbackId = iHealthDevicesManager.getInstance().registerClientCallback(miHealthDevicesCallback);
 
         String fileName;
@@ -352,6 +352,11 @@ public class iHealthVitalManager extends VitalsManager {
         addFilter(deviceType);
 
         gulcoControl.updateStripBottleId(deviceType,mac,result);
+    }
+
+    @Override
+    public void updateStripType(String deviceType, String mac, Boolean isGod) {
+        gulcoControl.updateStripType(deviceType,mac,isGod);
     }
 
     @Override

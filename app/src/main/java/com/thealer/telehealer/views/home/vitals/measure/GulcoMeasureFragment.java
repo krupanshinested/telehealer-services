@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.CallPopupDialogFragment;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
@@ -30,8 +31,10 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
+import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.BGStripSelectionInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.GulcoMeasureInterface;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.GulcoQRCapture;
+import com.thealer.telehealer.views.home.vitals.measure.util.BGStripSelectionDialog;
 import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
 
 /**
@@ -39,7 +42,7 @@ import com.thealer.telehealer.views.home.vitals.measure.util.MeasureState;
  */
 
 public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements View.OnClickListener,
-        GulcoQRCapture,GulcoMeasureInterface {
+        GulcoQRCapture,GulcoMeasureInterface, BGStripSelectionInterface {
 
     private ImageView device_iv;
     private LinearLayout state_lay, bottom_lay;
@@ -50,6 +53,7 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
 
     private String lastError;
     private String finalGulcoValue = "";
+    private boolean isStripSelectionDialogShowed = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,8 +61,10 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
 
         if (savedInstanceState != null) {
             currentState = savedInstanceState.getInt(ArgumentKeys.CURRENT_VITAL_STATE, MeasureState.notStarted);
+            isStripSelectionDialogShowed = savedInstanceState.getBoolean("stripSelectionDialog",false);
         } else {
             currentState = MeasureState.notStarted;
+            isStripSelectionDialogShowed = false;
         }
 
         if (lastError == null) {
@@ -73,6 +79,25 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
 
         initView(view);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (currentState == MeasureState.notStarted && !isStripSelectionDialogShowed) {
+            isStripSelectionDialogShowed = true;
+            BGStripSelectionDialog bgStripSelectionDialog = new BGStripSelectionDialog();
+            bgStripSelectionDialog.bgStripSelectionInterface = this;
+            bgStripSelectionDialog.show(getChildFragmentManager(), bgStripSelectionDialog.getClass().getSimpleName());
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle saveInstnace) {
+        super.onSaveInstanceState(saveInstnace);
+
+        saveInstnace.putBoolean("stripSelectionDialog",isStripSelectionDialogShowed);
     }
 
     @Override
@@ -229,11 +254,6 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
                 finish(null);
                 break;
             case R.id.scan_bt:
-                if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_CAMERA)) {
-                    if (currentState == MeasureState.notStarted) {
-                        onActionCompleteInterface.onCompletionResult(RequestID.OPEN_QR_READER, true, null);
-                    }
-                }
                 break;
 
         }
@@ -326,5 +346,22 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
     public void didConnected(String type, String serailNumber) {
         fetchBattery();
         setCurrentState(MeasureState.started);
+    }
+
+    //BGStripSelectionInterface
+    @Override
+    public void didSelectStrip(boolean isGOD) {
+        vitalManagerInstance.getInstance().updateStripType(vitalDevice.getType(), vitalDevice.getDeviceId(), isGOD);
+
+        if (isGOD) {
+            if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_CAMERA)) {
+                if (currentState == MeasureState.notStarted && onActionCompleteInterface != null) {
+                    onActionCompleteInterface.onCompletionResult(RequestID.OPEN_QR_READER, true, null);
+                }
+            }
+        } else {
+            setCurrentState(MeasureState.capturedCodeString);
+            startMeasure();
+        }
     }
 }

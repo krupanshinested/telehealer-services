@@ -826,7 +826,7 @@
     <string name="do_you_want_to_close">¿Quieres cerrar?</string>
     <string name="search_practices">Prácticas de búsqueda</string>
     <string name="stand_with_bare_feet">Por favor ponte de pie con tus pies descalzos</string>
-    <string name="bg5_information">Conecte manualmente su dispositivo iHealth Smart al bluetooth de su teléfono desde la aplicación de configuración del teléfono antes de intentar vincularlo aquí.</string>
+    <string name="bg5_information">Conecte manualmente su dispositivo iHealth Smart a su teléfono a través de Bluetooth desde la aplicación de configuración antes de intentar emparejar aquí.</string>
     <string name="track_information">Presione el botón M en el monitor de presión arterial para encender el bluetooth del dispositivo e iniciar el emparejamiento.</string>
     <string name="ts28_information">Presione el botón de su termómetro para iniciar el emparejamiento a través de Bluetooth.</string>
     <string name="fdir_information">Presione el botón superior de su termómetro para iniciar el emparejamiento a través de Bluetooth.</string>
@@ -1230,4 +1230,11 @@
     <string name="health_source_fetching">Obteniendo su información de salud</string>
     <string name="chat_disclaimer">DESCARGO DE RESPONSABILIDAD: NO USE ESTE FORMULARIO SI BUSCA ATENCIÓN MÉDICA URGENTE O DE EMERGENCIA. LLAME AL 911 O VAYA A LA SALA DE EMERGENCIA MÁS CERCANA EN LUGAR.\n\n Tenga en cuenta que su proveedor de atención médica puede no responder a los mensajes de chat de manera oportuna. Use este medio solo para correspondencias no emergentes.</string>
     <string name="no_network_connection">Sin conexión a Internet</string>
+    <string name="choose_your_strip">Elige tu tira</string>
+    <string name="coded">Codificado</string>
+    <string name="white_strips">bandas blancas</string>
+    <string name="god_strip_message">Escanee el código QR que está presente en la parte superior de su botella que tira presente antes de insertar uno</string>
+    <string name="gdh_strip_message">No se requiere código antes de insertar uno</string>
+    <string name="non_coded">No codificado</string>
+    <string name="blue_strips">franjas azules</string>
 </resources>
