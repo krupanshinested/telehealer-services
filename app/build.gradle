@@ -75,7 +75,7 @@ android {
                 jniLibs.srcDirs = ['libs']
             }
             res.srcDirs = ['src/patient/res', 'src/telehealer/res']
-            assets.srcDirs = ['src/doctor/assets', 'src/telehealer/assets']
+            assets.srcDirs = ['src/patient/assets', 'src/telehealer/assets']
         }
         stethioHealth {
             res.srcDirs = ['src/patient/res', 'src/stethioHealth/res']
