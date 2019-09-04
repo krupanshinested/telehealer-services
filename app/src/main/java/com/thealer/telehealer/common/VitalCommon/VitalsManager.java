@@ -180,6 +180,9 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
     public void updateStripBottleId(String deviceType, String mac, String result) {
     }
 
+    public void updateStripType(String deviceType, String mac, Boolean isGod) {
+    }
+
     public void stopMeasure(String deviceType, String deviceMac) {
     }
 

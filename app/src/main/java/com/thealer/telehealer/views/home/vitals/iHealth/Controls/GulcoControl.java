@@ -31,6 +31,8 @@ public class GulcoControl {
 
     private Bg5Control bg5Control;
 
+    private boolean isGodStrip = true;
+
     public GulcoControl(Context context, GulcoMeasureInterface gulcoMeasureInterface, VitalBatteryFetcher vitalBatteryFetcher) {
         this.gulcoMeasureInterface = gulcoMeasureInterface;
         this.vitalBatteryFetcher = vitalBatteryFetcher;
@@ -165,10 +167,18 @@ public class GulcoControl {
             bg5Control = (Bg5Control) object;
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             String today = formatter.format(new Date());
-            bg5Control.setBottleMessageWithInfo(1,1,result,20,today);
+            bg5Control.setBottleMessageWithInfo(isGodStrip ? Bg5Profile.STRIP_GOD : Bg5Profile.STRIP_GDH,Bg5Profile.MEASURE_BLOOD,result,20,today);
         } else {
             Log.d("GulcoControl","didFinishGulcoMesureWithFailure "+deviceType+" mac "+mac);
             gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
+        }
+    }
+
+    public void updateStripType(String deviceType,String mac,boolean isGod) {
+        isGodStrip = isGod;
+
+        if (!isGod) {
+            updateStripBottleId(deviceType,mac,"");
         }
     }
 
@@ -211,7 +221,8 @@ public class GulcoControl {
         if (object != null) {
             bg5Control = (Bg5Control) object;
             gulcoMeasureInterface.didGulcoStartMeasure(deviceType);
-            bg5Control.startMeasure(1);
+            bg5Control.startMeasure(Bg5Profile.MEASURE_BLOOD);
+            bg5Control.holdLink();
         } else {
             Log.d("GulcoControl","didFinishGulcoMesureWithFailure "+deviceType+" mac "+deviceMac);
             gulcoMeasureInterface.didFinishGulcoMesureWithFailure(deviceType,context.getString(R.string.unable_to_connect));
