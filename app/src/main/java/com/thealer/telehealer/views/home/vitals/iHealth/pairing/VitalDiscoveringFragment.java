@@ -114,7 +114,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
         onViewChangeInterface.hideOrShowClose(true);
         onViewChangeInterface.hideOrShowBackIv(true);
 
-        SupportInformation supportInformation = VitalDeviceType.getMeasureInfo(deviceType);
+        SupportInformation supportInformation = VitalDeviceType.getSetUpInfo(deviceType);
 
         if (supportInformation != null && !getArguments().getBoolean("isDisplaySupportDialog")) {
             getArguments().putBoolean("isDisplaySupportDialog", true);
@@ -131,11 +131,12 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
 
             contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(supportInformation.getDescriptionId()));
             contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, supportInformation.getIconId());
-            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
+            contentIntent.putExtra(ArgumentKeys.SKIP_TITLE,getString(R.string.settings));
             contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
             contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
 
-            startActivity(contentIntent);
+            startActivityForResult(contentIntent,432);
 
         } else {
             if (VitalDeviceType.shared.getMeasurementType(deviceType).equals(SupportedMeasurementType.temperature)) {
@@ -476,6 +477,10 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
                     break;
                 default:
                     break;
+            }
+        } else if (requestCode == 432) {
+            if (data != null && data.getBooleanExtra(ArgumentKeys.IS_SKIPPED,false)) {
+                startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
             }
         }
     }

@@ -824,7 +824,7 @@
     <string name="do_you_want_to_close">क्या आप बंद करना चाहते हैं?</string>
     <string name="search_practices">अभ्यास खोजें</string>
     <string name="stand_with_bare_feet">कृपया अपने नंगे पैरों के साथ पैमाने पर खड़े हों</string>
-    <string name="bg5_information">यहां जोड़ी बनाने का प्रयास करने से पहले कृपया अपने iHealth स्मार्ट डिवाइस को फ़ोन की सेटिंग ऐप से अपने फ़ोन के ब्लूटूथ से कनेक्ट करें।</string>
+    <string name="bg5_information">कृपया यहां जोड़ी बनाने का प्रयास करने से पहले सेटिंग्स ऐप से ब्लूटूथ के माध्यम से अपने iHealth स्मार्ट डिवाइस को अपने फोन से मैन्युअल रूप से कनेक्ट करें</string>
     <string name="track_information">कृपया डिवाइस के ब्लूटूथ को चालू करने के लिए ब्लड प्रेशर मॉनिटर पर एम बटन दबाएं और पेयरिंग आरंभ करें।</string>
     <string name="ts28_information">कृपया ब्लूटूथ के माध्यम से युग्मन आरंभ करने के लिए अपने थर्मामीटर पर बटन दबाएं।</string>
     <string name="fdir_information">कृपया ब्लूटूथ के माध्यम से युग्मन आरंभ करने के लिए अपने थर्मामीटर के शीर्ष बटन को दबाएं।</string>
@@ -1215,4 +1215,14 @@
     <string name="health_source_fetching">आपके स्वास्थ्य की जानकारी प्राप्त करना</string>
     <string name="chat_disclaimer">अस्वीकरण: इस फार्म का उपयोग न करें यदि आप तत्काल या आपातकालीन ध्यान को देख रहे हैं। 911 पर कॉल करें या सबसे पहले आपातकालीन रूम में जाएँ। \n\n कृपया ध्यान दें कि आपका स्वास्थ्य देखभाल प्रदाता समय पर फ़ैशन चैट संदेशों का जवाब नहीं दे सकता है। इस माध्यम का उपयोग केवल गैर-उभरते संवाददाताओं के लिए करें।</string>
     <string name="no_network_connection">कोई इंटरनेट कनेक्शन नहीं</string>
+    <string name="choose_your_strip">अपनी पट्टी चुनें</string>
+    <string name="coded">कोडित</string>
+    <string name="white_strips">सफेद पट्टियां</string>
+    <string name="god_strip_message">कृपया अपनी बोतल के ऊपर मौजूद क्यूआर कोड को स्कैन करें जो एक डालने से पहले मौजूद है</string>
+    <string name="gdh_strip_message">एक डालने से पहले कोई कोड आवश्यक नहीं है</string>
+    <string name="non_coded">गैर-कोडित</string>
+    <string name="blue_strips">नीली पट्टी</string>
+
+    <string name="send_message">मेसेज भेजें</string>
+    <string name="vitals_file">विटल्स फ़ाइल</string>
 </resources>
