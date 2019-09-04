@@ -98,7 +98,7 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
             otherOptionView.setImageResource(R.drawable.info);
         }
 
-        SupportInformation supportInformation = VitalDeviceType.getConnectInfo(vitalDevice.getType());
+        SupportInformation supportInformation = VitalDeviceType.getMeasureInfo(vitalDevice.getType());
 
         if (supportInformation != null && !getArguments().getBoolean("isDisplaySupportDialog") && !vitalManagerInstance.getInstance().isConnected(vitalDevice.getType(), vitalDevice.getDeviceId())) {
             getArguments().putBoolean("isDisplaySupportDialog", true);
@@ -115,11 +115,12 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
 
             contentIntent.putExtra(ArgumentKeys.DESCRIPTION, getString(supportInformation.getDescriptionId()));
             contentIntent.putExtra(ArgumentKeys.RESOURCE_ICON, supportInformation.getIconId());
-            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+            contentIntent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
+            contentIntent.putExtra(ArgumentKeys.SKIP_TITLE,getString(R.string.settings));
             contentIntent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
             contentIntent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
 
-            startActivity(contentIntent);
+            startActivityForResult(contentIntent,432);
 
         } else {
             connectVital();
@@ -148,6 +149,19 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
         super.onSaveInstanceState(savedInstance);
 
         savedInstance.putInt(ArgumentKeys.CURRENT_VITAL_STATE, currentState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case 432:
+                if (data != null && data.getBooleanExtra(ArgumentKeys.IS_SKIPPED,false)) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                }
+                break;
+        }
     }
 
     private void initView(View baseView) {
