@@ -41,6 +41,7 @@ import com.github.mikephil.charting.utils.MPPointF;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewModel;
@@ -114,12 +115,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private ArrayList<Entry> line1Entry;
     private ArrayList<Entry> line2Entry;
     private ArrayList<Entry> line3Entry;
-    private ArrayList<String> vitalPrintOptions;
     private List<VitalsApiResponseModel> vitalsApiResponseModelArrayList = new ArrayList<>();
     private String userGuid, doctorGuid;
     private String selectedItem;
     private boolean isAbnormalVitalView = false;
-    private boolean isFromHome, isApiRequested, isPdfGeneration;
+    private boolean isFromHome, isApiRequested;
     private int page = 1;
     private CustomRecyclerView vitalDetailCrv;
     private boolean isGetType;
@@ -145,9 +145,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                         selectedItem = arrayList.get(0).getType();
                         initializeSelectedItemView(selectedItem);
                         makeApiCall(true);
-                    } else if (isPdfGeneration) {
-                        isPdfGeneration = false;
-                        generatePdfListItems(arrayList);
                     }
                 }
             }
@@ -157,76 +154,89 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
 
-                    VitalsPaginatedApiResponseModel vitalsPaginatedApiResponseModel = (VitalsPaginatedApiResponseModel) baseApiResponseModel;
+                    if (baseApiResponseModel instanceof PDFUrlResponse) {
+                        PDFUrlResponse pdfUrlResponse = (PDFUrlResponse) baseApiResponseModel;
 
-                    vitalDetailCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
+                        PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.vitals_report));
+                        bundle.putString(ArgumentKeys.PDF_URL, pdfUrlResponse.getUrl());
+                        bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                        pdfViewerFragment.setArguments(bundle);
+                        showSubFragmentInterface.onShowFragment(pdfViewerFragment);
 
-                    vitalsApiResponseModelArrayList = vitalsPaginatedApiResponseModel.getResult();
+                    } else {
+                        VitalsPaginatedApiResponseModel vitalsPaginatedApiResponseModel = (VitalsPaginatedApiResponseModel) baseApiResponseModel;
+
+                        vitalDetailCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
+
+                        vitalsApiResponseModelArrayList = vitalsPaginatedApiResponseModel.getResult();
 
 
-                    if (UserType.isUserPatient() && vitalsApiResponseModelArrayList.size() == 0) {
-                        if (!appPreference.getBoolean(selectedItem)) {
-                            boolean isShow = true;
-                            int message = 0;
-                            switch (selectedItem) {
-                                case SupportedMeasurementType.bp:
-                                    message = OverlayViewConstants.OVERLAY_NO_BP;
-                                    break;
-                                case SupportedMeasurementType.gulcose:
-                                    message = OverlayViewConstants.OVERLAY_NO_GLUCOSE;
-                                    break;
-                                case SupportedMeasurementType.heartRate:
-                                    message = OverlayViewConstants.OVERLAY_NO_HEAR_RATE;
-                                    break;
-                                case SupportedMeasurementType.pulseOximeter:
-                                    message = OverlayViewConstants.OVERLAY_NO_PULSE;
-                                    break;
-                                case SupportedMeasurementType.temperature:
-                                    message = OverlayViewConstants.OVERLAY_NO_TEMPERATURE;
-                                    break;
-                                case SupportedMeasurementType.weight:
-                                    message = OverlayViewConstants.OVERLAY_NO_WEIGHT;
-                                    break;
-                                default:
-                                    isShow = false;
-                            }
-                            if (isShow) {
-                                appPreference.setBoolean(selectedItem, true);
-                                Utils.showOverlay(getActivity(), addFab, message, new DismissListener() {
-                                    @Override
-                                    public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
+                        if (UserType.isUserPatient() && vitalsApiResponseModelArrayList.size() == 0) {
+                            if (!appPreference.getBoolean(selectedItem)) {
+                                boolean isShow = true;
+                                int message = 0;
+                                switch (selectedItem) {
+                                    case SupportedMeasurementType.bp:
+                                        message = OverlayViewConstants.OVERLAY_NO_BP;
+                                        break;
+                                    case SupportedMeasurementType.gulcose:
+                                        message = OverlayViewConstants.OVERLAY_NO_GLUCOSE;
+                                        break;
+                                    case SupportedMeasurementType.heartRate:
+                                        message = OverlayViewConstants.OVERLAY_NO_HEAR_RATE;
+                                        break;
+                                    case SupportedMeasurementType.pulseOximeter:
+                                        message = OverlayViewConstants.OVERLAY_NO_PULSE;
+                                        break;
+                                    case SupportedMeasurementType.temperature:
+                                        message = OverlayViewConstants.OVERLAY_NO_TEMPERATURE;
+                                        break;
+                                    case SupportedMeasurementType.weight:
+                                        message = OverlayViewConstants.OVERLAY_NO_WEIGHT;
+                                        break;
+                                    default:
+                                        isShow = false;
+                                }
+                                if (isShow) {
+                                    appPreference.setBoolean(selectedItem, true);
+                                    Utils.showOverlay(getActivity(), addFab, message, new DismissListener() {
+                                        @Override
+                                        public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
 
-                                    }
+                                        }
 
-                                    @Override
-                                    public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
+                                        @Override
+                                        public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
 
-                                    }
-                                });
+                                        }
+                                    });
+                                }
                             }
                         }
+
+                        if (vitalsPaginatedApiResponseModel.getCount() > 0) {
+
+                            vitalsDetailListAdapter.setData(vitalsApiResponseModelArrayList, page);
+
+                            if (!selectedItem.equals(SupportedMeasurementType.stethoscope))
+                                updateChart(vitalsApiResponseModelArrayList, vitalsPaginatedApiResponseModel.getNext());
+
+                            vitalDetailCrv.showOrhideEmptyState(false);
+                        } else {
+                            vitalDetailCrv.showOrhideEmptyState(true);
+                        }
+
+                        if (isAbnormalVitalView) {
+                            setUserDetailView();
+                        }
                     }
-
-                    if (vitalsPaginatedApiResponseModel.getCount() > 0) {
-
-                        vitalsDetailListAdapter.setData(vitalsApiResponseModelArrayList, page);
-
-                        if (!selectedItem.equals(SupportedMeasurementType.stethoscope))
-                            updateChart(vitalsApiResponseModelArrayList, vitalsPaginatedApiResponseModel.getNext());
-
-                        vitalDetailCrv.showOrhideEmptyState(false);
-                    } else {
-                        vitalDetailCrv.showOrhideEmptyState(true);
-                    }
-
-                    if (isAbnormalVitalView) {
-                        setUserDetailView();
-                    }
+                    isApiRequested = false;
+                    vitalDetailCrv.setScrollable(true);
+                    vitalDetailCrv.hideProgressBar();
+                    swipeLayout.setRefreshing(false);
                 }
-                isApiRequested = false;
-                vitalDetailCrv.setScrollable(true);
-                vitalDetailCrv.hideProgressBar();
-                swipeLayout.setRefreshing(false);
             }
         });
 
@@ -538,7 +548,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        vitalPrintOptions = VitalsConstant.getVitalPrintOptions(getActivity());
     }
 
     @Nullable
@@ -570,26 +579,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.print_menu:
-//                        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_time_period),
-//                                vitalPrintOptions, new PickerListener() {
-//                            @Override
-//                            public void didSelectedItem(int position) {
-//                                isPdfGeneration = true;
-////                                generatePdfListItems(vitalPrintOptions.get(position));
-//                                getFilteredVital(vitalPrintOptions.get(position));
-//                            }
-//
-//                            @Override
-//                            public void didCancelled() {
-//
-//                            }
-//                        });
-//                        itemPickerDialog.setCancelable(false);
-//                        itemPickerDialog.show();
-                        Utils.showMonitoringFilter(vitalPrintOptions, getActivity(), new OnListItemSelectInterface() {
+                        Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
                             @Override
                             public void onListItemSelected(int position, Bundle bundle) {
-                                getFilteredVital(bundle);
+                                openPDFFor(bundle);
                             }
                         });
 
@@ -653,38 +646,30 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         }
     }
 
-    private void getFilteredVital(Bundle bundle) {
+    private void openPDFFor(Bundle bundle) {
 
         filter = bundle.getString(Constants.SELECTED_ITEM);
         startDate = bundle.getString(ArgumentKeys.START_DATE);
         endDate = bundle.getString(ArgumentKeys.END_DATE);
 
-        isPdfGeneration = true;
+        selectedItem = bundle.getString(Constants.SELECTED_ITEM);
+        startDate = null;
+        endDate = null;
 
+        if (selectedItem != null) {
+            if (selectedItem.equals(getString(R.string.last_week))) {
+                filter = VitalReportApiViewModel.LAST_WEEK;
+            } else if (selectedItem.equals(getString(R.string.all))) {
+                filter = VitalReportApiViewModel.ALL;
+            } else {
+                filter = null;
+                startDate = bundle.getString(ArgumentKeys.START_DATE);
+                endDate = bundle.getString(ArgumentKeys.END_DATE);
 
-        String vitalFilter = null;
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
-
-        if (!filter.equals(getString(R.string.custom_range)))
-            endDate = Utils.getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
-
-        if (filter.equals(getString(R.string.PRINT_1_WEEK))) {
-            calendar.add(Calendar.DAY_OF_MONTH, -7);
-            vitalFilter = VitalReportApiViewModel.LAST_WEEK;
-        } else if (filter.equals(getString(R.string.PRINT_2_WEEK))) {
-            calendar.add(Calendar.DAY_OF_MONTH, -14);
-            vitalFilter = VitalReportApiViewModel.LAST_TWO_WEEK;
-        } else if (filter.equals(getString(R.string.PRINT_1_MONTH))) {
-            calendar.add(Calendar.MONTH, -1);
-            vitalFilter = VitalReportApiViewModel.LAST_MONTH;
+            }
         }
 
-        if (!filter.equals(getString(R.string.custom_range)))
-            startDate = Utils.getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
-
-        vitalsApiViewModel.getUserFilteredVitals(getCurrentVitalType(), vitalFilter, startDate, endDate, userGuid, doctorGuid, true);
+        vitalsApiViewModel.getVitalPdf(getCurrentVitalType(),filter, startDate, endDate, userGuid, doctorGuid, true);
 
     }
 
@@ -709,41 +694,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                     makeApiCall(false);
                 }
             });
-        }
-    }
-
-    private void generatePdfListItems(ArrayList<VitalsApiResponseModel> pdfList) {
-//
-//            for (int i = 0; i < vitalsApiResponseModelArrayList.size(); i++) {
-//                if (Utils.getDateFromString(vitalsApiResponseModelArrayList.get(i).getCreated_at()).compareTo(calendar.getTime()) >= 0) {
-//                    pdfList.add(vitalsApiResponseModelArrayList.get(i));
-//                }
-//            }
-//        }
-
-        if (!pdfList.isEmpty()) {
-            VitalPdfGenerator vitalPdfGenerator = new VitalPdfGenerator(getActivity());
-
-            boolean isVitalReport = false;
-            if (selectedItem.equals(SupportedMeasurementType.bp))
-                isVitalReport = true;
-
-            String htmlContent = vitalPdfGenerator.generatePdfFor(pdfList, commonUserApiResponseModel, isVitalReport, startDate, endDate);
-
-            PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(ArgumentKeys.HTML_FILE, htmlContent);
-            bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.vitals_file));
-            pdfViewerFragment.setArguments(bundle);
-            showSubFragmentInterface.onShowFragment(pdfViewerFragment);
-        } else {
-            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + filter, getString(R.string.ok), null,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }, null);
         }
     }
 

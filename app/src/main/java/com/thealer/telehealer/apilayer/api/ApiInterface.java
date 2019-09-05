@@ -5,6 +5,7 @@ import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
+import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
 import com.thealer.telehealer.apilayer.models.Payments.VitalVisitResponse;
 import com.thealer.telehealer.apilayer.models.accessLog.AccessLogApiResponseModel;
@@ -140,6 +141,7 @@ public interface ApiInterface {
     String START_DATE = "start_date";
     String END_DATE = "end_date";
     String ASSIGNOR = "assignor";
+    String DOWNLOAD_SUMMARY = "download_summary";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -518,6 +520,10 @@ public interface ApiInterface {
     Observable<VitalsPaginatedApiResponseModel> getUserFilteredVitals(@Query(FILTER) String type, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/vitals")
+    Observable<PDFUrlResponse> getVitalPDF(@Query(TYPE) String type,@Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(DOWNLOAD_SUMMARY) boolean summary);
+
+
+    @GET("api/vitals")
     Observable<ArrayList<VitalsApiResponseModel>> getUserFilteredVitals(@Query(TYPE) String type, @Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @PUT("api/available")
@@ -535,6 +541,9 @@ public interface ApiInterface {
 
     @GET("api/user-diet")
     Observable<ArrayList<DietApiResponseModel>> getDietDetails(@Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
+
+    @GET("api/user-diet")
+    Observable<PDFUrlResponse> getDietPDF(@Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(DOWNLOAD_SUMMARY) boolean summary);
 
     @GET("api/user-diet/users")
     Observable<DietUserListApiResponseModel> getDietUserFilter(@Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
