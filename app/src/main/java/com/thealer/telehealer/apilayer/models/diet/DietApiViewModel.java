@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
@@ -66,6 +67,26 @@ public class DietApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+
+    public void getDietPdf(String filter, String startDate, String endDate, String userGuid, String doctorGuid, boolean showProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getDietPDF(filter, startDate, endDate, userGuid, doctorGuid,true)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<PDFUrlResponse>(getProgress(showProgress)) {
+                                @Override
+                                public void onSuccess(PDFUrlResponse data) {
+                                    baseApiResponseModelMutableLiveData.setValue(data);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
 
     public void getDietUserList(String filter, String startDate, String endDate, String userGuid, String doctorGuid, boolean showProgress) {
         fetchToken(new BaseViewInterface() {

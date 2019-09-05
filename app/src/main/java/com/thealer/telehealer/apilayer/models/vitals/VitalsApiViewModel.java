@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.views.base.BaseViewInterface;
@@ -68,6 +69,25 @@ public class VitalsApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+    public void getVitalPdf(String type,String filter, String startDate, String endDate, String user_guid, String doctorGuid, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getVitalPDF(type,filter, startDate, endDate, user_guid, doctorGuid, true)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<PDFUrlResponse>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(PDFUrlResponse baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
 
     public void getUserFilteredVitals(String type,String filter, String startDate, String endDate, String user_guid, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
