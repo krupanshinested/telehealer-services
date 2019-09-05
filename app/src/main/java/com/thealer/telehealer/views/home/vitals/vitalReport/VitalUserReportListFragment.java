@@ -22,6 +22,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
@@ -48,7 +49,6 @@ import com.thealer.telehealer.views.common.RecentsSelectionActivity;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.recents.VisitDetailConstants;
 import com.thealer.telehealer.views.home.vitals.NewVitalsDetailListAdapter;
-import com.thealer.telehealer.views.home.vitals.VitalPdfGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,15 +104,28 @@ public class VitalUserReportListFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    VitalsPaginatedApiResponseModel vitalsPaginatedApiResponseModel = (VitalsPaginatedApiResponseModel) baseApiResponseModel;
-                    vitalsListCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
-                    if (vitalsPaginatedApiResponseModel.getCount() > 0) {
-                        vitalsApiResponseModel = vitalsPaginatedApiResponseModel.getResult();
-                        vitalsDetailListAdapter.setData(vitalsApiResponseModel, page);
-                        enableOrDisablePrint();
-                        vitalsListCrv.showOrhideEmptyState(false);
+                    if (baseApiResponseModel instanceof PDFUrlResponse) {
+                        PDFUrlResponse pdfUrlResponse = (PDFUrlResponse) baseApiResponseModel;
+
+                        PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ArgumentKeys.PDF_TITLE,getString(R.string.vitals_report));
+                        bundle.putString(ArgumentKeys.PDF_URL, pdfUrlResponse.getUrl());
+                        bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                        pdfViewerFragment.setArguments(bundle);
+                        showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+
                     } else {
-                        vitalsListCrv.showOrhideEmptyState(true);
+                        VitalsPaginatedApiResponseModel vitalsPaginatedApiResponseModel = (VitalsPaginatedApiResponseModel) baseApiResponseModel;
+                        vitalsListCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
+                        if (vitalsPaginatedApiResponseModel.getCount() > 0) {
+                            vitalsApiResponseModel = vitalsPaginatedApiResponseModel.getResult();
+                            vitalsDetailListAdapter.setData(vitalsApiResponseModel, page);
+                            enableOrDisablePrint();
+                            vitalsListCrv.showOrhideEmptyState(false);
+                        } else {
+                            vitalsListCrv.showOrhideEmptyState(true);
+                        }
                     }
                 }
                 resetData();
@@ -399,26 +412,7 @@ public class VitalUserReportListFragment extends BaseFragment {
     }
 
     private void generatePrintList() {
-        if (!vitalsDetailListAdapter.getData().isEmpty()) {
-            VitalPdfGenerator vitalPdfGenerator = new VitalPdfGenerator(getActivity());
-            String htmlContent = vitalPdfGenerator.generatePdfFor(vitalsDetailListAdapter.getData(), commonUserApiResponseModel, true, startDate, endDate);
-
-            PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(ArgumentKeys.HTML_FILE, htmlContent);
-            bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.vitals_report));
-            pdfViewerFragment.setArguments(bundle);
-            showSubFragmentInterface.onShowFragment(pdfViewerFragment);
-        } else {
-            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + selectedItem,
-                    getString(R.string.ok), null,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }, null);
-        }
+        vitalsApiViewModel.getVitalPdf(null,filter,startDate,endDate,userGuid,doctorGuid,true);
     }
 
     private void enableOrDisablePrint() {

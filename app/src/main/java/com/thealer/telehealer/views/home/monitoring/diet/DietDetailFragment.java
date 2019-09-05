@@ -30,6 +30,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
@@ -93,7 +94,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
     private ArrayList<DietApiResponseModel> dietApiResponseModelArrayList;
     private double calories = 0, carbs = 0, fat = 0, protien = 0;
     private Map<String, ArrayList<DietApiResponseModel>> listMap = new HashMap<>();
-    private boolean isPdfGeneration = false;
+
     private ArrayList<String> dietPrintOptions;
 
     private OnCloseActionInterface onCloseActionInterface;
@@ -142,47 +143,33 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
                 if (baseApiResponseModels != null) {
                     dietApiResponseModelArrayList = (ArrayList<DietApiResponseModel>) (Object) baseApiResponseModels;
-                    if (!isPdfGeneration) {
                         listMap.put(selectedDate, dietApiResponseModelArrayList);
                         setData();
-                    } else {
-                        isPdfGeneration = false;
-                        addAllDataToList(dietApiResponseModelArrayList);
-                    }
+                }
+            }
+        });
 
+        dietApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel instanceof PDFUrlResponse) {
+                        PDFUrlResponse pdfUrlResponse = (PDFUrlResponse) baseApiResponseModel;
+
+                        PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ArgumentKeys.PDF_TITLE,getString(R.string.diet_report));
+                        bundle.putString(ArgumentKeys.PDF_URL, pdfUrlResponse.getUrl());
+                        bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                        pdfViewerFragment.setArguments(bundle);
+                        showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+
+                    }
                 }
             }
         });
     }
 
-    private void addAllDataToList(ArrayList<DietApiResponseModel> dietApiResponseModelArrayList) {
-        listMap.clear();
-
-        for (DietApiResponseModel dietResponse : dietApiResponseModelArrayList) {
-            String date = Utils.getDayMonthYear(dietResponse.getDate());
-            date = getFormatedDate(date);
-
-            if (date != null) {
-                ArrayList<DietApiResponseModel> modelArrayList = new ArrayList<>();
-                if (!listMap.containsKey(date)) {
-                    listMap.put(date, modelArrayList);
-                }
-
-                modelArrayList = listMap.get(date);
-
-                if (modelArrayList == null) {
-                    modelArrayList = new ArrayList<>();
-                }
-                modelArrayList.add(dietResponse);
-
-                listMap.put(date, modelArrayList);
-            }
-        }
-
-        generatePdf(getString(R.string.DIET_PRINT_ALL));
-//        showDietPrintOptions();
-        Log.e(TAG, "addAllDataToList: " + listMap.keySet().toString());
-    }
 
     private void setData() {
         dietViewPagerAdapter.setData(listMap, selectedDate);
@@ -336,8 +323,6 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.print_menu:
-//                        getAllDietList();
-//                        generatePdf(getString(R.string.DIET_PRINT_ALL));
 
                         Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
                             @Override
@@ -358,7 +343,9 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
 
                                     }
                                 }
-                                getDietUserList(true);
+
+                                generatePdf();
+
                             }
                         });
                         break;
@@ -464,60 +451,8 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
         itemPickerDialog.show();
     }
 
-    private void generatePdf(String selectedOption) {
-        Calendar calendar = Calendar.getInstance();
-
-        Map<String, ArrayList<DietApiResponseModel>> pdfList = new HashMap<>();
-
-        Set<String> dates = listMap.keySet();
-
-        if (selectedOption.equals(getString(R.string.DIET_PRINT_ALL))) {
-            for (String date : dates) {
-                String utcdate = Utils.getUTCFormat(date, "yyyy-MM-dd");
-                pdfList.put(utcdate, listMap.get(date));
-            }
-
-        } else {
-            if (selectedOption.equals(getString(R.string.PRINT_1_WEEK))) {
-                calendar.add(Calendar.DAY_OF_MONTH, -7);
-            } else if (selectedOption.equals(getString(R.string.PRINT_2_WEEK))) {
-                calendar.add(Calendar.DAY_OF_MONTH, -14);
-            } else if (selectedOption.equals(getString(R.string.PRINT_1_MONTH))) {
-                calendar.add(Calendar.MONTH, -1);
-            }
-
-            for (String date : dates) {
-                String utcdate = Utils.getUTCFormat(date, "yyyy-MM-dd");
-                Log.e(TAG, "generatePdf: " + date + "\t" + utcdate + "\t" + calendar.getTime());
-                if (Utils.getDateFromString(utcdate).compareTo(calendar.getTime()) >= 0) {
-                    pdfList.put(utcdate, listMap.get(date));
-                }
-            }
-
-        }
-
-        if (pdfList.size() > 0) {
-            DietPdfGenerator dietPdfGenerator = new DietPdfGenerator(getActivity());
-            String htmlContent = dietPdfGenerator.getPdfHtmlContent(pdfList, commonUserApiResponseModel, startDate, endDate);
-
-            PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(ArgumentKeys.HTML_FILE, htmlContent);
-            bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.diet_report));
-            pdfViewerFragment.setArguments(bundle);
-            showSubFragmentInterface.onShowFragment(pdfViewerFragment);
-
-        } else {
-            Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.no_data_available_for) + " " + selectedOption,
-                    getString(R.string.ok), null,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }, null);
-        }
-
+    private void generatePdf() {
+        dietApiViewModel.getDietPdf(selectedFilter,startDate,endDate,userGuid,null,true);
     }
 
     private void setUpViewPager() {
@@ -566,12 +501,10 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
     }
 
     private void getAllDietList() {
-        isPdfGeneration = true;
         dietApiViewModel.getUserDietDetails(null, userGuid, null, null, true);
     }
 
     private void getDietUserList(boolean isShowProgress) {
-        isPdfGeneration = true;
         dietApiViewModel.getUserDietDetails(selectedFilter, startDate, endDate, null, null, isShowProgress);
     }
 
