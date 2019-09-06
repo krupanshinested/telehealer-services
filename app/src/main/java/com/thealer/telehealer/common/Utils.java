@@ -1434,6 +1434,14 @@ public class Utils {
         appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
     }
 
+    public static String getPaginatedTitle(@NonNull String title, @NonNull int count){
+        if (count > 0) {
+            return title + " ( " + count + " )";
+        } else {
+            return title;
+        }
+    }
+
     public static String getMonitoringTitle(@NonNull String startDate, @NonNull String endDate){
         Calendar startCal = Calendar.getInstance();
         startCal.setTime(Utils.getDateFromString(startDate));

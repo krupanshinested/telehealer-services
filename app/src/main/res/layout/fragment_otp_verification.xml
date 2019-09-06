@@ -14,9 +14,7 @@
 
     <TextView
         android:id="@+id/title_tv"
-        style="@style/text_title_app_color"
-        android:gravity="center"
-        android:padding="@dimen/padding_default"
+        style="@style/registration_text_title"
         android:text="@string/enter_the_authorization_code_sent_to"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

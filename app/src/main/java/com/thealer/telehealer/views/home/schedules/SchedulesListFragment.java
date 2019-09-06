@@ -29,6 +29,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.ChangeTitleInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,12 +64,17 @@ public class SchedulesListFragment extends BaseFragment {
         attachObserverInterface = (AttachObserverInterface) getActivity();
         schedulesApiViewModel = ViewModelProviders.of(this).get(SchedulesApiViewModel.class);
         attachObserverInterface.attachObserver(schedulesApiViewModel);
+
         schedulesApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 schedulesElv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModel != null) {
                     schedulesApiResponseModel = (SchedulesApiResponseModel) baseApiResponseModel;
+                    if (page == 1){
+                        if (context instanceof ChangeTitleInterface)
+                            ((ChangeTitleInterface) context).onTitleChange(Utils.getPaginatedTitle(getString(R.string.schedules), schedulesApiResponseModel.getCount()));
+                    }
                     generateList();
                 }
                 isApiRequested = false;

@@ -16,6 +16,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
+import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
@@ -26,6 +27,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.ChangeTitleInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +46,7 @@ public class NotificationListFragment extends BaseFragment {
     private AttachObserverInterface attachObserverInterface;
     private NotificationApiViewModel notificationApiViewModel;
     private NotificationApiResponseModel notificationApiResponseModel;
+    private ChangeTitleInterface changeTitleInterface;
 
     private int page = 1;
     private NewNotificationListAdapter notificationListAdapter;
@@ -57,6 +60,7 @@ public class NotificationListFragment extends BaseFragment {
         attachObserverInterface = (AttachObserverInterface) getActivity();
         notificationApiViewModel = ViewModelProviders.of(getActivity()).get(NotificationApiViewModel.class);
         attachObserverInterface.attachObserver(notificationApiViewModel);
+        changeTitleInterface = (ChangeTitleInterface) context;
 
         notificationApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
                 new Observer<BaseApiResponseModel>() {
@@ -69,6 +73,9 @@ public class NotificationListFragment extends BaseFragment {
                                 notificationApiResponseModel = (NotificationApiResponseModel) baseApiResponseModel;
 //                                updateNotificationList();
 
+                                if (page == 1) {
+                                    changeTitleInterface.onTitleChange(Utils.getPaginatedTitle(getString(R.string.notifications), notificationApiResponseModel.getCount()));
+                                }
                                 if (notificationApiResponseModel.getResult().getCount() > 0) {
                                     notificationListAdapter.setData(notificationApiResponseModel.getResult().getRequests(), page);
                                     notificationCrv.showOrhideEmptyState(false);

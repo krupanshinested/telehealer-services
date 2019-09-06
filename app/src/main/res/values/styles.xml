@@ -245,4 +245,14 @@
         <item name="android:paddingStart">4dp</item>
     </style>
 
+    <style name="registration_text_title">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textSize">@dimen/registration_text_title_size</item>
+        <item name="android:fontFamily">@font/open_sans_semibold</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">@dimen/padding_default</item>
+    </style>
+
 </resources>
