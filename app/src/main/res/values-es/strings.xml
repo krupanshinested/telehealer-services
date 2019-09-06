@@ -1228,6 +1228,7 @@
 
     <string name="health_source_success">Obtuvo con éxito toda su información de salud de otras fuentes.</string>
     <string name="health_source_fetching">Obteniendo su información de salud</string>
+    <string name="setup">Preparar</string>
     <string name="chat_disclaimer">DESCARGO DE RESPONSABILIDAD: NO USE ESTE FORMULARIO SI BUSCA ATENCIÓN MÉDICA URGENTE O DE EMERGENCIA. LLAME AL 911 O VAYA A LA SALA DE EMERGENCIA MÁS CERCANA EN LUGAR.\n\n Tenga en cuenta que su proveedor de atención médica puede no responder a los mensajes de chat de manera oportuna. Use este medio solo para correspondencias no emergentes.</string>
     <string name="no_network_connection">Sin conexión a Internet</string>
     <string name="choose_your_strip">Elige tu tira</string>
@@ -1237,5 +1238,5 @@
     <string name="gdh_strip_message">No se requiere código antes de insertar uno</string>
     <string name="non_coded">No codificado</string>
     <string name="blue_strips">franjas azules</string>
-    <string name="secure_message">Secure Messaging</string>
+    <string name="secure_message">Mensajería segura</string>
 </resources>

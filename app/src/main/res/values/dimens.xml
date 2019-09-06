@@ -24,6 +24,7 @@
     <dimen name="toolbar_title">18sp</dimen>
     <dimen name="toolbar_subtitle">13sp</dimen>
 
+    <dimen name="registration_text_title_size">24sp</dimen>
     <dimen name="text_title_size">18sp</dimen>
     <dimen name="text_sub_title_size">14sp</dimen>
 
