@@ -23,6 +23,7 @@ import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiView
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -63,6 +64,9 @@ public class MedicalAssistantListFragment extends BaseFragment {
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
+                    if (page == 1){
+                        toolbarTitle.setText(Utils.getPaginatedTitle(getString(R.string.medical_assistant), associationApiResponseModel.getCount()));
+                    }
                     updateAdapter();
                 }
             }

@@ -111,6 +111,9 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
                 documentsCrv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModel != null) {
                     documentsApiResponseModel = (DocumentsApiResponseModel) baseApiResponseModel;
+                    if (page == 1){
+                        toolbarTitle.setText(Utils.getPaginatedTitle(getString(R.string.documents), documentsApiResponseModel.getCount()));
+                    }
                     if (UserType.isUserPatient() && page == 1 && documentsApiResponseModel.getResult().size() == 0) {
                         if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_DOCUMENT)) {
                             appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_DOCUMENT, true);

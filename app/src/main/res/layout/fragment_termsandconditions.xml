@@ -8,9 +8,7 @@
 
     <TextView
         android:id="@+id/textView"
-        style="@style/text_title_bold_app_color"
-        android:gravity="center"
-        android:padding="@dimen/padding_default"
+        style="@style/registration_text_title"
         android:text="@string/terms_and_conditions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -6,8 +6,7 @@
 
     <TextView
         android:id="@+id/textView7"
-        style="@style/text_title_bold_app_color"
-        android:gravity="center"
+        style="@style/registration_text_title"
         android:text="@string/select_your_role"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

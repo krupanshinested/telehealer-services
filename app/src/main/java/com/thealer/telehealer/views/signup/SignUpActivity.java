@@ -271,14 +271,14 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     private void setCurrentStep() {
         if (isUserPatient())
-            signupToolbarTitleTv.setText(currentStep + " of 8");
+            signupToolbarTitleTv.setText(getString(R.string.setup) + " " + currentStep + " of 8");
         else {
             if (currentStep == 1)
                 signupToolbarTitleTv.setVisibility(View.GONE);
             else {
                 signupToolbarTitleTv.setVisibility(View.VISIBLE);
                 if (isUserAssistant()) {
-                    signupToolbarTitleTv.setText(currentStep - 1 + " of 9");
+                    signupToolbarTitleTv.setText(getString(R.string.setup) + " " + (currentStep - 1) + " of 9");
                 }
                 if (isUserDoctor()) {
                     int step;
@@ -289,7 +289,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     } else {
                         step = currentStep - 3;
                     }
-                    signupToolbarTitleTv.setText(step + " of 11");
+                    signupToolbarTitleTv.setText(getString(R.string.setup) + " " + step + " of 11");
                 }
             }
         }
