@@ -40,6 +40,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -81,6 +82,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private boolean isDietView, isResumed;
     private String doctorGuid = null;
     private AssociationApiResponseModel associationApiResponseModel;
+    private ChangeTitleInterface changeTitleInterface;
 
     @Override
     public void onAttach(Context context) {
@@ -88,6 +90,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onOrientationChangeInterface = (OnOrientationChangeInterface) getActivity();
+        changeTitleInterface = (ChangeTitleInterface) context;
 
         associationApiViewModel = ViewModelProviders.of(this).get(AssociationApiViewModel.class);
 
@@ -99,6 +102,16 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 if (baseApiResponseModel != null) {
                     associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
 
+                    if (page == 1){
+                        String title;
+                        if (UserType.isUserPatient() || UserType.isUserAssistant()) {
+                            title = getString(R.string.Doctors);
+                        } else {
+                            title = getString(R.string.Patients);
+                        }
+
+                        changeTitleInterface.onTitleChange(Utils.getPaginatedTitle(title, associationApiResponseModel.getCount()));
+                    }
 
                     if (associationApiResponseModel.getResult().size() == 0) {
 

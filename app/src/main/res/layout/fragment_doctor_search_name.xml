@@ -6,9 +6,8 @@
 
     <TextView
         android:id="@+id/textView2"
-        style="@style/text_title_bold_app_color"
+        style="@style/registration_text_title"
         android:layout_marginTop="56dp"
-        android:gravity="center"
         android:text="@string/what_is_your_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

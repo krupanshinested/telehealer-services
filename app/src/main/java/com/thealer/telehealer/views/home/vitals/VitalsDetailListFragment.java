@@ -169,6 +169,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                         VitalsPaginatedApiResponseModel vitalsPaginatedApiResponseModel = (VitalsPaginatedApiResponseModel) baseApiResponseModel;
 
                         vitalDetailCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
+                    if (page == 1){
+                        setTitle(Utils.getPaginatedTitle(getString(SupportedMeasurementType.getTitle(selectedItem)), vitalsPaginatedApiResponseModel.getCount()));
+                    }
+                    vitalDetailCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
 
                         vitalsApiResponseModelArrayList = vitalsPaginatedApiResponseModel.getResult();
 
