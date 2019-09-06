@@ -24,9 +24,7 @@
 
             <TextView
                 android:id="@+id/textView3"
-                style="@style/text_title_bold_app_color"
-                android:gravity="center"
-                android:padding="@dimen/padding_default"
+                style="@style/registration_text_title"
                 android:text="@string/choose_your_payment_method"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -27,9 +27,11 @@ import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -71,6 +73,10 @@ public class RecentFragment extends BaseFragment {
                 if (baseApiResponseModel != null) {
 
                     recentsApiResponseModel = (RecentsApiResponseModel) baseApiResponseModel;
+
+                    if (context instanceof ChangeTitleInterface){
+                        ((ChangeTitleInterface)context).onTitleChange(Utils.getPaginatedTitle(getString(R.string.visits), recentsApiResponseModel.getCount()));
+                    }
 
                     recentsCrv.setNextPage(recentsApiResponseModel.getNext());
 
