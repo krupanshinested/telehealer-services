@@ -13,11 +13,8 @@
 
         <TextView
             android:id="@+id/title_tv"
-            style="@style/text_title_bold_app_color"
-            android:gravity="bottom|center"
-            android:padding="@dimen/padding_default"
+            style="@style/registration_text_title"
             android:text="@string/upload_driver_license"
-            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/license_cv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -139,6 +139,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
                         if (page == 1) {
                             commonUserApiResponseModelList = connectionListResponseModel.getResult();
+                            toolbarTitle.setText(Utils.getPaginatedTitle(getString(R.string.Add_connections), connectionListResponseModel.getCount()));
                         } else {
                             commonUserApiResponseModelList.addAll(connectionListResponseModel.getResult());
                         }

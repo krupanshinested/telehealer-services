@@ -22,14 +22,10 @@
 
             <TextView
                 android:id="@+id/title_tv"
-                style="@style/text_title_bold_app_color"
+                style="@style/registration_text_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_default"
-                android:gravity="center"
-                android:padding="@dimen/padding_default"
                 android:text="@string/confirm_your_mobile_number_and_email"
-                android:textSize="@dimen/title_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

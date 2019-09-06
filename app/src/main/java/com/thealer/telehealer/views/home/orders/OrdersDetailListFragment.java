@@ -1,13 +1,8 @@
 package com.thealer.telehealer.views.home.orders;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +11,16 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.orders.OrdersApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersSpecialistApiResponseModel;
@@ -124,6 +126,8 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
         ArrayList<OrdersUserFormsApiResponseModel> formsApiResponseModels = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
 
+        setTitle(Utils.getPaginatedTitle(OrderConstant.getDislpayTitle(getContext(), selectedItem), formsApiResponseModels.size()));
+
         for (OrdersUserFormsApiResponseModel formsApiResponseModel : formsApiResponseModels) {
             String date = Utils.getDayMonthYear(formsApiResponseModel.getCreated_at());
 
@@ -184,6 +188,10 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             }
         };
 
+        if (page == 1) {
+            OrdersApiResponseModel ordersBaseApiResponseModel = (OrdersApiResponseModel) baseApiResponseModel;
+            setTitle(Utils.getPaginatedTitle(OrderConstant.getDislpayTitle(getContext(), selectedItem), ordersBaseApiResponseModel.getCount()));
+        }
         if (baseApiResponseModel instanceof OrdersLabApiResponseModel) {
 
             OrdersLabApiResponseModel labApiResponseModel = (OrdersLabApiResponseModel) baseApiResponseModel;
