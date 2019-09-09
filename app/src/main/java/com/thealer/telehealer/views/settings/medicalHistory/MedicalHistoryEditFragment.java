@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -40,7 +38,7 @@ import com.thealer.telehealer.apilayer.models.medicalHistory.MedicalHistoryViewM
 import com.thealer.telehealer.apilayer.models.medicalHistory.MedicationModel;
 import com.thealer.telehealer.apilayer.models.medicalHistory.SexualHistoryModel;
 import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
-import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
+import com.thealer.telehealer.apilayer.models.settings.ProfileUpdate;
 import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
 import com.thealer.telehealer.apilayer.models.visits.VisitsApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
@@ -662,9 +660,9 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
         questionaryBodyModel.setQuestionnaire(questionnaireBean);
 
         if (UserType.isUserPatient()) {
-            AppointmentSlotUpdate appointmentSlotUpdate = ViewModelProviders.of(this).get(AppointmentSlotUpdate.class);
-            attachObserverInterface.attachObserver(appointmentSlotUpdate);
-            appointmentSlotUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            ProfileUpdate profileUpdate = ViewModelProviders.of(this).get(ProfileUpdate.class);
+            attachObserverInterface.attachObserver(profileUpdate);
+            profileUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
                 @Override
                 public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                     if (baseApiResponseModel != null) {
@@ -676,7 +674,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
                 }
             });
 
-            appointmentSlotUpdate.updateUserQuestionary(questionaryBodyModel, true);
+            profileUpdate.updateUserQuestionary(questionaryBodyModel, true);
 
         } else {
 

@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.settings.ProfileUpdate;
 import com.thealer.telehealer.apilayer.models.userStatus.UpdateStatusApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -55,7 +56,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 public class GeneralSettingsFragment extends BaseFragment implements View.OnClickListener {
 
-    private SettingsCellView checkCallQuality, presence, quickLogin;
+    private SettingsCellView checkCallQuality, presence, quickLogin,secure_message;
     private ProfileCellView signature;
     private LinearLayout deleteView;
 
@@ -73,6 +74,8 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     private SettingsCellView privacy;
     private SettingsCellView logs;
 
+    private ProfileUpdate profileUpdate;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -87,6 +90,20 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_general_settings, container, false);
         initView(view);
+
+        profileUpdate = ViewModelProviders.of(this).get(ProfileUpdate.class);
+        profileUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+                if (whoAmIApiResponseModel != null) {
+                    whoAmIApiResponseModel.setSecure_message(secure_message.getSwitchStatus());
+                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                }
+            }
+        });
+
+
         return view;
     }
 
@@ -109,6 +126,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         privacy = (SettingsCellView) view.findViewById(R.id.privacy);
         logs = (SettingsCellView) view.findViewById(R.id.logs);
+        secure_message = view.findViewById(R.id.secure_message);
 
         toolbarTitle.setText(getString(R.string.settings));
 
@@ -121,12 +139,14 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         backIv.setOnClickListener(this);
         privacy.setOnClickListener(this);
         logs.setOnClickListener(this);
+        secure_message.setOnClickListener(this);
 
         updateQuickLoginSwitch();
 
         switch (appPreference.getInt(Constants.USER_TYPE)) {
             case Constants.TYPE_PATIENT:
                 signature.setVisibility(View.GONE);
+                secure_message.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
                 break;
@@ -141,6 +161,13 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             presence.updateSwitch(true);
         else
             presence.updateSwitch(false);
+
+        if (whoAmIApiResponseModel != null) {
+            secure_message.updateSwitch(whoAmIApiResponseModel.isSecure_message());
+        } else {
+            secure_message.updateSwitch(false);
+        }
+
     }
 
     private void updateQuickLoginSwitch() {
@@ -254,6 +281,9 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             case R.id.logs:
                 startActivity(new Intent(getActivity(), AccessLogActivity.class));
                 break;
+            case R.id.secure_message:
+                secure_message.toggleSwitch();
+                profileUpdate.updateSecureMessage(secure_message.getSwitchStatus(),true);
         }
     }
 

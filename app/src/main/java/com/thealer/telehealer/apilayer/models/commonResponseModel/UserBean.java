@@ -38,6 +38,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     private String gender;
     private String name;
     private String last_active;
+    private boolean secure_message;
 
     public UserBean() {
     }
@@ -249,5 +250,13 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
 
     public void setLast_active(String last_active) {
         this.last_active = last_active;
+    }
+
+    public boolean isSecure_message() {
+        return secure_message;
+    }
+
+    public void setSecure_message(boolean secure_message) {
+        this.secure_message = secure_message;
     }
 }

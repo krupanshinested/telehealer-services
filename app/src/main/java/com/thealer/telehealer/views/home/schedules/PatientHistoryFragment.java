@@ -19,7 +19,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
-import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
+import com.thealer.telehealer.apilayer.models.settings.ProfileUpdate;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -44,18 +44,18 @@ public class PatientHistoryFragment extends BaseFragment {
     private SchedulesApiViewModel schedulesApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private WhoAmIApiResponseModel whoAmIApiResponseModel;
-    private AppointmentSlotUpdate appointmentSlotUpdate;
+    private ProfileUpdate profileUpdate;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         changeTitleInterface = (ChangeTitleInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        appointmentSlotUpdate = ViewModelProviders.of(getActivity()).get(AppointmentSlotUpdate.class);
+        profileUpdate = ViewModelProviders.of(getActivity()).get(ProfileUpdate.class);
         createScheduleViewModel = ViewModelProviders.of(getActivity()).get(CreateScheduleViewModel.class);
         schedulesApiViewModel = ViewModelProviders.of(this).get(SchedulesApiViewModel.class);
         attachObserverInterface.attachObserver(schedulesApiViewModel);
-        attachObserverInterface.attachObserver(appointmentSlotUpdate);
+        attachObserverInterface.attachObserver(profileUpdate);
 
         schedulesApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -77,7 +77,7 @@ public class PatientHistoryFragment extends BaseFragment {
             }
         });
 
-        appointmentSlotUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+        profileUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
@@ -155,13 +155,13 @@ public class PatientHistoryFragment extends BaseFragment {
             }
 
             if (updateHistory) {
-                appointmentSlotUpdate.updateUserHistory(createScheduleViewModel.getPatientHistory(), false);
+                profileUpdate.updateUserHistory(createScheduleViewModel.getPatientHistory(), false);
 
                 createScheduleViewModel.getSchedulesCreateRequestModel().getDetail().setChange_medical_info(true);
 
                 whoAmIApiResponseModel.setHistory(createScheduleViewModel.getPatientHistory());
 
-                appointmentSlotUpdate.updateUserDetail(whoAmIApiResponseModel, false);
+                profileUpdate.updateUserDetail(whoAmIApiResponseModel, false);
             }
         }
     }

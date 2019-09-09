@@ -1314,4 +1314,5 @@
     <string name="gdh_strip_message">No code required before inserting one</string>
     <string name="non_coded">Non-Coded</string>
     <string name="blue_strips">blue strips</string>
+    <string name="secure_message">Secure Messaging</string>
 </resources>
