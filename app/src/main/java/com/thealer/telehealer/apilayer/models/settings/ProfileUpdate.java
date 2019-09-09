@@ -24,9 +24,9 @@ import okhttp3.RequestBody;
  * Created by rsekar on 11/22/18.
  */
 
-public class AppointmentSlotUpdate extends BaseApiViewModel {
+public class ProfileUpdate extends BaseApiViewModel {
 
-    public AppointmentSlotUpdate(@NonNull Application application) {
+    public ProfileUpdate(@NonNull Application application) {
         super(application);
     }
 
@@ -60,6 +60,29 @@ public class AppointmentSlotUpdate extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().updateUserDetail(whoAmIApiResponseModel)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void updateSecureMessage(boolean isSecureMessaging, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    HashMap<String,Boolean> secureMap = new HashMap<>();
+                    secureMap.put("secure_message",isSecureMessaging);
+
+                    RequestBody body = FormBody.create(MediaType.parse("application/form-data"), new Gson().toJson(secureMap));
+
+                    getAuthApiService().updateUserDetail(body)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

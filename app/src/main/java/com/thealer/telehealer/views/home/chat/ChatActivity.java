@@ -46,6 +46,7 @@ import com.thealer.telehealer.common.Signal.SignalModels.SignalKey;
 import com.thealer.telehealer.common.Signal.SignalUtil.SignalManager;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -209,6 +210,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             }
         });
 
+        disableEditIfNeeded(false);
 
         if (getIntent().getExtras() != null) {
             if (getIntent().getExtras().getString(ArgumentKeys.USER_GUID) != null) {
@@ -230,6 +232,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                                             setToolbarTitle();
                                             getData();
                                             createChannel();
+                                            disableEditIfNeeded(userModel.isSecure_message());
                                         }
                                     }
                                 }
@@ -239,6 +242,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 userModel = (CommonUserApiResponseModel) getIntent().getExtras().getSerializable(Constants.USER_DETAIL);
                 doctorModel = (CommonUserApiResponseModel) getIntent().getExtras().getSerializable(Constants.DOCTOR_DETAIL);
 
+                disableEditIfNeeded(userModel.isSecure_message());
                 if (UserType.isUserAssistant() && doctorModel != null) {
                     doctorGuid = doctorModel.getUser_guid();
                 }
@@ -266,6 +270,16 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         precannedMessages.addAll(appPreference.getStringSet(PreferenceConstants.PRECANNED_MESSAGES));
         if (precannedMessages.isEmpty()) {
             chatApiViewModel.getPrecannedMessages();
+        }
+    }
+
+    private void disableEditIfNeeded(boolean isSecureMessage) {
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) && !isSecureMessage) {
+            Utils.setEditable(messageEt, false);
+            messageEt.setOnClickListener(this);
+        } else {
+            Utils.setEditable(messageEt, true);
+            messageEt.setOnClickListener(null);
         }
     }
 
@@ -365,6 +379,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                     sendMessage();
                 }
                 break;
+            case R.id.message_et:
             case R.id.info_iv:
                 openPrecannedMessage();
                 break;

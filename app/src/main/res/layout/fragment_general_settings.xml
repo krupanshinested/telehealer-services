@@ -64,6 +64,12 @@
                     app:isSwitchNeed="true"
                     app:settings_title="@string/quick_login" />
 
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/secure_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isSwitchNeed="true"
+                    app:settings_title="@string/secure_message" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/signature"
