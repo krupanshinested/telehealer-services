@@ -244,7 +244,7 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
                         if (getArguments().getBoolean(ArgumentKeys.SHOW_PRINT_FILTER, true)) {
                             showDietPrintOptions();
                         } else {
-                            generatePdf(getString(R.string.DIET_PRINT_ALL),null,null);
+                            generatePdf(filter,startDate,endDate);
                         }
                         break;
                     case R.id.menu_next:
@@ -526,35 +526,33 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
             @Override
             public void onListItemSelected(int position, Bundle bundle) {
 
-                String selectedItem = bundle.getString(Constants.SELECTED_ITEM);
-                String startDate = bundle.getString(ArgumentKeys.START_DATE);
-                String  endDate = bundle.getString(ArgumentKeys.END_DATE);
-                String selectedFilter = null;
-                selectedItem = bundle.getString(Constants.SELECTED_ITEM);
-                startDate = null;
-                endDate = null;
-
-                if (selectedItem != null) {
-                    if (selectedItem.equals(getString(R.string.last_week))) {
-                        selectedFilter = VitalReportApiViewModel.LAST_WEEK;
-                    } else if (selectedItem.equals(getString(R.string.all))) {
-                        selectedFilter = VitalReportApiViewModel.ALL;
-                    } else {
-                        selectedFilter = null;
-                        startDate = bundle.getString(ArgumentKeys.START_DATE);
-                        endDate = bundle.getString(ArgumentKeys.END_DATE);
-
-                    }
-                }
-
-                generatePdf(selectedFilter,startDate,endDate);
+                generatePdf(bundle.getString(Constants.SELECTED_ITEM),bundle.getString(ArgumentKeys.START_DATE),bundle.getString(ArgumentKeys.END_DATE));
             }
         });
     }
 
     private void generatePdf(String selectedOption,@Nullable String startDate,@Nullable String endDate) {
-        dietApiViewModel.getDietPdf(selectedOption,startDate,endDate,userGuid,null,true);
 
+        String filter = null;
+        String start_Date = null;
+        String end_Date = null;
+
+        String selectedItem = selectedOption;
+
+        if (selectedItem != null) {
+            if (selectedItem.equals(getString(R.string.last_week))) {
+                filter = VitalReportApiViewModel.LAST_WEEK;
+            } else if (selectedItem.equals(getString(R.string.all))) {
+                filter = VitalReportApiViewModel.ALL;
+            } else {
+                filter = null;
+                start_Date = startDate;
+                end_Date = endDate;
+
+            }
+        }
+
+        dietApiViewModel.getDietPdf(filter,start_Date,end_Date,userGuid,null,true);
     }
 
 }
