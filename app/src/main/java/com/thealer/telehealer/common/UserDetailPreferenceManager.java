@@ -2,6 +2,7 @@ package com.thealer.telehealer.common;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -285,90 +286,117 @@ public class UserDetailPreferenceManager {
         }
 
         try {
-            TeleCacheUrl avatar = new TeleCacheUrl(whoAmIApiResponseModel.getUser_avatar());
-            File avatarCacheFile = Glide.getPhotoCacheDir(context, avatar.getCacheKey());
-            if (avatarCacheFile != null) {
-                avatarCacheFile.delete();
+            String path = whoAmIApiResponseModel.getUser_avatar();
+            if (TextUtils.isEmpty(path)) {
+                TeleCacheUrl avatar = new TeleCacheUrl(path);
+                File avatarCacheFile = Glide.getPhotoCacheDir(context, avatar.getCacheKey());
+                if (avatarCacheFile != null) {
+                    avatarCacheFile.delete();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            TeleCacheUrl signature = new TeleCacheUrl(whoAmIApiResponseModel.getUser_detail().getSignature());
-            File signatureCacheFile = Glide.getPhotoCacheDir(context, signature.getCacheKey());
-            if (signatureCacheFile != null) {
-                signatureCacheFile.delete();
+            String path = whoAmIApiResponseModel.getUser_detail().getSignature();
+            if (!TextUtils.isEmpty(path)) {
+                TeleCacheUrl signature = new TeleCacheUrl(path);
+                File signatureCacheFile = Glide.getPhotoCacheDir(context, signature.getCacheKey());
+                if (signatureCacheFile != null) {
+                    signatureCacheFile.delete();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            TeleCacheUrl certificate = new TeleCacheUrl(whoAmIApiResponseModel.getUser_detail().getData().getCertification());
-            File certificateCacheFile = Glide.getPhotoCacheDir(context, certificate.getCacheKey());
-            if (certificateCacheFile != null) {
-                certificateCacheFile.delete();
+            String path = whoAmIApiResponseModel.getUser_detail().getData().getCertification();
+            if (!TextUtils.isEmpty(path)) {
+                TeleCacheUrl certificate = new TeleCacheUrl(path);
+                File certificateCacheFile = Glide.getPhotoCacheDir(context, certificate.getCacheKey());
+                if (certificateCacheFile != null) {
+                    certificateCacheFile.delete();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            TeleCacheUrl degree = new TeleCacheUrl(whoAmIApiResponseModel.getUser_detail().getData().getDegree());
-            File degreeCacheFile = Glide.getPhotoCacheDir(context, degree.getCacheKey());
-            if (degreeCacheFile != null) {
-                degreeCacheFile.delete();
+            String path = whoAmIApiResponseModel.getUser_detail().getData().getDegree();
+            if (!TextUtils.isEmpty(path)) {
+                TeleCacheUrl degree = new TeleCacheUrl(path);
+                File degreeCacheFile = Glide.getPhotoCacheDir(context, degree.getCacheKey());
+                if (degreeCacheFile != null) {
+                    degreeCacheFile.delete();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            TeleCacheUrl url = new TeleCacheUrl(whoAmIApiResponseModel.getUser_detail().getData().getDiploma_certificate());
-            File cacheFile = Glide.getPhotoCacheDir(context, url.getCacheKey());
-            if (cacheFile != null) {
-                cacheFile.delete();
+            String path = whoAmIApiResponseModel.getUser_detail().getData().getDiploma_certificate();
+            if (!TextUtils.isEmpty(path)) {
+                TeleCacheUrl url = new TeleCacheUrl(path);
+                File cacheFile = Glide.getPhotoCacheDir(context, url.getCacheKey());
+                if (cacheFile != null) {
+                    cacheFile.delete();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            TeleCacheUrl url = new TeleCacheUrl(whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front());
-            File cacheFile = Glide.getPhotoCacheDir(context, url.getCacheKey());
-            if (cacheFile != null) {
-                cacheFile.delete();
+            String path = whoAmIApiResponseModel.getUser_detail().getData().getInsurance_front();
+            if (!TextUtils.isEmpty(path)) {
+                TeleCacheUrl url = new TeleCacheUrl(path);
+                File cacheFile = Glide.getPhotoCacheDir(context, url.getCacheKey());
+                if (cacheFile != null) {
+                    cacheFile.delete();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            TeleCacheUrl url = new TeleCacheUrl(whoAmIApiResponseModel.getUser_detail().getData().getInsurance_back());
-            File cacheFile = Glide.getPhotoCacheDir(context, url.getCacheKey());
-            if (cacheFile != null) {
-                cacheFile.delete();
+            String path = whoAmIApiResponseModel.getUser_detail().getData().getInsurance_back();
+            if (!TextUtils.isEmpty(path)) {
+                TeleCacheUrl url = new TeleCacheUrl(path);
+                File cacheFile = Glide.getPhotoCacheDir(context, url.getCacheKey());
+                if (cacheFile != null) {
+                    cacheFile.delete();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            TeleCacheUrl url = new TeleCacheUrl(whoAmIApiResponseModel.getUser_detail().getData().getSecondary_insurance_front());
-            File cacheFile = Glide.getPhotoCacheDir(context, url.getCacheKey());
-            if (cacheFile != null) {
-                cacheFile.delete();
+            String path = whoAmIApiResponseModel.getUser_detail().getData().getSecondary_insurance_front();
+            if (!TextUtils.isEmpty(path)) {
+                TeleCacheUrl url = new TeleCacheUrl(path);
+                File cacheFile = Glide.getPhotoCacheDir(context, url.getCacheKey());
+                if (cacheFile != null) {
+                    cacheFile.delete();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            TeleCacheUrl url = new TeleCacheUrl(whoAmIApiResponseModel.getUser_detail().getData().getSecondary_insurance_back());
-            File cacheFile = Glide.getPhotoCacheDir(context, url.getCacheKey());
-            if (cacheFile != null) {
-                cacheFile.delete();
+            String path = whoAmIApiResponseModel.getUser_detail().getData().getSecondary_insurance_back();
+            if (!TextUtils.isEmpty(path)) {
+                TeleCacheUrl url = new TeleCacheUrl(path);
+                File cacheFile = Glide.getPhotoCacheDir(context, url.getCacheKey());
+                if (cacheFile != null) {
+                    cacheFile.delete();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

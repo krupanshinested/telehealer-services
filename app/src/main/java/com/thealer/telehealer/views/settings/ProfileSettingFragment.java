@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.models.settings.AppointmentSlotUpdate;
+import com.thealer.telehealer.apilayer.models.settings.ProfileUpdate;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
@@ -49,7 +49,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             feedback, terms_and_condition, privacy_policy, appointment_slots, payments_billings;
     private View signOut;
 
-    private AppointmentSlotUpdate appointmentSlotUpdate;
+    private ProfileUpdate profileUpdate;
     private Boolean isSlotLoaded = false;
     private LinearLayout medicalAssistantLl;
     private ProfileCellView medicalAssistant;
@@ -134,11 +134,11 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         titleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
-        appointmentSlotUpdate = ViewModelProviders.of(getActivity()).get(AppointmentSlotUpdate.class);
+        profileUpdate = ViewModelProviders.of(getActivity()).get(ProfileUpdate.class);
 
-        onViewChangeInterface.attachObserver(appointmentSlotUpdate);
+        onViewChangeInterface.attachObserver(profileUpdate);
 
-        appointmentSlotUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+        profileUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
@@ -161,7 +161,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     isSlotLoaded = true;
                 } else {
                     selectedItem = parent.getItemAtPosition(position).toString();
-                    appointmentSlotUpdate.updateAppointmentSlot(selectedItem);
+                    profileUpdate.updateAppointmentSlot(selectedItem);
                 }
 
             }
