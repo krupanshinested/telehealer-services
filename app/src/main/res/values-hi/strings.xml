@@ -1225,4 +1225,5 @@
 
     <string name="send_message">मेसेज भेजें</string>
     <string name="vitals_file">विटल्स फ़ाइल</string>
+    <string name="secure_message">Secure Messaging</string>
 </resources>
