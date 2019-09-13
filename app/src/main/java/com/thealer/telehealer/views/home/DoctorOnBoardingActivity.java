@@ -12,16 +12,19 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.chat.UserKeysApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.Signal.SignalKeyManager;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.signup.SignUpActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
@@ -78,15 +81,30 @@ public class DoctorOnBoardingActivity extends BaseActivity {
                     SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
                     if (signinApiResponseModel.isSuccess()) {
                         appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
-                        TelehealerFirebaseMessagingService.refresh();
-                        startActivity(new Intent(DoctorOnBoardingActivity.this, HomeActivity.class));
-                        finish();
-                        TelehealerFirebaseMessagingService.refresh();
+                        checkSignalKeys();
                     }
                 }
             }
         });
         initView();
+    }
+
+    private void checkSignalKeys() {
+        SignalKeyManager
+                .getInstance(DoctorOnBoardingActivity.this, new SignalKeyManager.OnUserKeyReceivedListener() {
+                    @Override
+                    public void onKeyReceived(UserKeysApiResponseModel userKeysApiResponseModel) {
+                        proceedLoginSuccess();
+                    }
+                })
+                .getUserKey(null, true, true, true);
+    }
+
+    private void proceedLoginSuccess() {
+        TelehealerFirebaseMessagingService.refresh();
+        startActivity(new Intent(DoctorOnBoardingActivity.this, HomeActivity.class));
+        finish();
+        TelehealerFirebaseMessagingService.refresh();
     }
 
     @Override
