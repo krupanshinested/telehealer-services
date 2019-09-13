@@ -1244,4 +1244,7 @@
     <string name="non_coded">No codificado</string>
     <string name="blue_strips">franjas azules</string>
     <string name="secure_message">Mensajería segura</string>
+    <string name="diet_delete_success">Su dieta ha sido eliminada exitosamente</string>
+    <string name="diet_delete_failure">Su dieta no se elimina con éxito.</string>
+    <string name="deleting_your_diet">Eliminar tu dieta</string>
 </resources>

@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +17,9 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +86,19 @@ public class DietListAdapter extends RecyclerView.Adapter<DietListAdapter.ViewHo
 
                 Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.foodIv, imageUrl, activity.getDrawable(R.drawable.diet_food_placeholder), authRequired, true);
 
-
+                if (UserType.isUserPatient()) {
+                    viewHolder.mDietItemCv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            FoodDetailFragment foodDetailFragment = new FoodDetailFragment();
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(ArgumentKeys.FOOD_DETAIL, dietListAdapterModelList.get(position).getData());
+                            bundle.putBoolean(ArgumentKeys.FOOD_DELETE_MODE, true);
+                            foodDetailFragment.setArguments(bundle);
+                            ((ShowSubFragmentInterface) activity).onShowFragment(foodDetailFragment);
+                        }
+                    });
+                }
                 break;
             case DietConstant.TYEP_ADD_NEW:
                 viewHolder.btAddCardView.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +144,7 @@ public class DietListAdapter extends RecyclerView.Adapter<DietListAdapter.ViewHo
         private TextView foodTitleTv;
         private TextView foodSubtitleTv;
         private CardView btAddCardView;
+        private CardView mDietItemCv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -137,6 +154,7 @@ public class DietListAdapter extends RecyclerView.Adapter<DietListAdapter.ViewHo
             foodTitleTv = (TextView) itemView.findViewById(R.id.food_title_tv);
             foodSubtitleTv = (TextView) itemView.findViewById(R.id.food_subtitle_tv);
             btAddCardView = (CardView) itemView.findViewById(R.id.bt_add_card_view);
+            mDietItemCv = (CardView) itemView.findViewById(R.id.diet_item_cv);
         }
     }
 }
