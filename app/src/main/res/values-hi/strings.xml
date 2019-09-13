@@ -1228,4 +1228,7 @@
     <string name="send_message">मेसेज भेजें</string>
     <string name="vitals_file">विटल्स फ़ाइल</string>
     <string name="secure_message">सुरक्षित मैसेजिंग</string>
+    <string name="diet_delete_success">आपका आहार सफलतापूर्वक हटा दिया गया है</string>
+    <string name="diet_delete_failure">आपका आहार सफलतापूर्वक हटाया नहीं गया है.</string>
+    <string name="deleting_your_diet">अपने आहार को हटाना</string>
 </resources>
