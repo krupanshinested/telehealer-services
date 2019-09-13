@@ -380,6 +380,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
         otpEt.setShowSoftInputOnFocus(true);
         otpEt.requestFocus();
+        showOrHideSoftInputWindow(true);
 
         Log.e(TAG, "initView: " + appPreference.getInt(Constants.QUICK_LOGIN_TYPE));
     }
