@@ -1320,4 +1320,7 @@
     <string name="non_coded">Non-Coded</string>
     <string name="blue_strips">blue strips</string>
     <string name="secure_message">Secure Messaging</string>
+    <string name="diet_delete_success">Your diet has been deleted successfully</string>
+    <string name="diet_delete_failure">Your diet is not deleted successfully.</string>
+    <string name="deleting_your_diet">Deleting your diet</string>
 </resources>
