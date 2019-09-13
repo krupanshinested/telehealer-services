@@ -118,6 +118,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
                         isNextPageAvailable = chatApiResponseModel.getNext() != null;
                         chatMessageCrv.hideProgressBar();
+
                     } else if (baseApiResponseModel instanceof PrecannedMessageApiResponse) {
                         precannedMessageApiResponse = (PrecannedMessageApiResponse) baseApiResponseModel;
 
@@ -161,6 +162,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
         nextTv.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
+        enableOrDisableSend(false);
 
         backIv.setOnClickListener(this);
         sendIv.setOnClickListener(this);
@@ -212,6 +214,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
         disableEditIfNeeded(false);
 
+        setupChatAdapter();
+
         if (getIntent().getExtras() != null) {
             if (getIntent().getExtras().getString(ArgumentKeys.USER_GUID) != null) {
                 userGuid = getIntent().getExtras().getString(ArgumentKeys.USER_GUID);
@@ -242,7 +246,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 userModel = (CommonUserApiResponseModel) getIntent().getExtras().getSerializable(Constants.USER_DETAIL);
                 doctorModel = (CommonUserApiResponseModel) getIntent().getExtras().getSerializable(Constants.DOCTOR_DETAIL);
 
-                disableEditIfNeeded(userModel.isSecure_message());
                 if (UserType.isUserAssistant() && doctorModel != null) {
                     doctorGuid = doctorModel.getUser_guid();
                 }
@@ -250,6 +253,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 if (userModel != null) {
                     setToolbarTitle();
                     userGuid = userModel.getUser_guid();
+                    disableEditIfNeeded(userModel.isSecure_message());
                 }
                 getData();
             }
@@ -284,7 +288,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void getData() {
-        setupChatAdapter();
 
         String mykeys = appPreference.getString(PreferenceConstants.USER_KEYS);
         if (mykeys != null) {
@@ -303,23 +306,28 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void getUserKey(String guid, boolean isOwn, boolean isUpdatePreference, boolean isShowProgress) {
-        SignalKeyManager.getInstance(this)
-                .getUserKey(guid, isOwn, isUpdatePreference, isShowProgress)
-                .getUserKeysApiResponseModel().observe(this, new Observer<UserKeysApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable UserKeysApiResponseModel userKeysApiResponseModel) {
-                if (userKeysApiResponseModel != null) {
-                    if (isOwn) {
-                        mySignalKey = userKeysApiResponseModel.getData();
-                    } else {
-                        userSignalKey = userKeysApiResponseModel.getData();
-                        chatListAdapter.setSignalKeys(mySignalKey, userSignalKey);
+        SignalKeyManager
+                .getInstance(this, new SignalKeyManager.OnUserKeyReceivedListener() {
+                    @Override
+                    public void onKeyReceived(UserKeysApiResponseModel userKeysApiResponseModel) {
+                        if (userKeysApiResponseModel != null) {
+                            if (isOwn) {
+                                mySignalKey = userKeysApiResponseModel.getData();
+                            } else {
+                                if (userGuid.equals(userKeysApiResponseModel.getData().getUser_guid())) {
+                                    userSignalKey = userKeysApiResponseModel.getData();
+                                    chatListAdapter.setSignalKeys(mySignalKey, userSignalKey);
 
-                        getPreviousMessages(true);
+                                    getPreviousMessages(true);
+
+                                    enableOrDisableSend(true);
+                                }
+                            }
+                        }
+
                     }
-                }
-            }
-        });
+                })
+                .getUserKey(guid, isOwn, isUpdatePreference, isShowProgress);
     }
 
     private void setToolbarTitle() {
@@ -332,6 +340,14 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         chatMessageCrv.getSwipeLayout().setEnabled(false);
     }
 
+    private void enableOrDisableSend(boolean enable){
+        if (enable){
+            sendIv.setAlpha(1f);
+        }else {
+            sendIv.setAlpha(0.5f);
+        }
+        sendIv.setEnabled(enable);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -438,7 +454,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         super.onResume();
         createChannel();
         if (UserType.isUserPatient()){
-            showSnack(findViewById(R.id.rootLayout), getString(R.string.chat_disclaimer), 5000).show();
+            showSnack(findViewById(R.id.rootLayout), getString(R.string.chat_disclaimer), 2000).show();
         }
     }
 
@@ -478,11 +494,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         chatMessageCrv.getRecyclerView().smoothScrollToPosition(chatMessageCrv.getLayoutManager().getItemCount());
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unSubscribeChannel();
-    }
 
     private void unSubscribeChannel() {
         if (userGuid != null)
@@ -491,6 +502,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onBackPressed() {
+        unSubscribeChannel();
         if (isPreviousActivityAvailable())
             super.onBackPressed();
         else {

@@ -256,15 +256,13 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
     private void checkSignalKeys() {
         SignalKeyManager
-                .getInstance(SigninActivity.this)
-                .getUserKey(null, true, true, true)
-                .getUserKeysApiResponseModel().observe(SigninActivity.this, new Observer<UserKeysApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable UserKeysApiResponseModel userKeysApiResponseModel) {
-
-                proceedLoginSuccess();
-            }
-        });
+                .getInstance(SigninActivity.this, new SignalKeyManager.OnUserKeyReceivedListener() {
+                    @Override
+                    public void onKeyReceived(UserKeysApiResponseModel userKeysApiResponseModel) {
+                        proceedLoginSuccess();
+                    }
+                })
+                .getUserKey(null, true, true, true);
     }
 
     private void proceedLoginSuccess() {

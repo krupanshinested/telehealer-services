@@ -147,6 +147,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     public void setSignalKeys(SignalKey mySignalKey, SignalKey userSignalKey) {
         this.mySignalKey = mySignalKey;
         this.userSignalKey = userSignalKey;
+        notifyDataSetChanged();
     }
 
     private ChatListAdapterModel getAdapterModel(ChatApiResponseModel.ResultBean newItem, ChatApiResponseModel.ResultBean previousItem) {

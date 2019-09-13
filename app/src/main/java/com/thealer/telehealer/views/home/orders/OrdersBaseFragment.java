@@ -459,6 +459,10 @@ public class OrdersBaseFragment extends BaseFragment {
     }
 
     public void getOrdersDetail(@NonNull String userGuid, @Nullable String doctorGuid, @NonNull List<Integer> idList, @NonNull boolean isShowProgress) {
+        if (UserType.isUserPatient()){
+            doctorGuid = null;
+            userGuid = null;
+        }
         ordersApiViewModel.getOrderdsDetail(userGuid, doctorGuid, idList, isShowProgress);
     }
 
