@@ -1,20 +1,12 @@
 package com.thealer.telehealer.views.home.monitoring.diet;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.tabs.TabLayout;
-import androidx.core.widget.ImageViewCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +14,24 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.ImageViewCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -38,18 +45,22 @@ import com.thealer.telehealer.apilayer.models.diet.food.NutrientsDetailBean;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Aswin on 21,February,2019
@@ -70,7 +81,7 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
 
     private String measureUri, searchedItem, selectedDate, mealType, uploadImage;
     private int count = 1;
-    private boolean isManualEntry;
+    private boolean isManualEntry, isDeleteMode;
 
     private FoodApiViewModel foodApiViewModel;
     private AttachObserverInterface attachObserverInterface;
@@ -80,6 +91,17 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
     private AddDietRequestModel addDietRequestModel;
     private NestedScrollView foodDetailNsv;
     private FoodDetailApiResponseModel foodDetailApiResponseModel;
+    private View bottomView1;
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
+    private ConstraintLayout deleteBtn;
+    private TextView unitValueTv;
+    private TextView unitsCountTv;
+    private LinearLayout unitCountLl;
+    private DietApiResponseModel dietApiResponseModel;
+    private CircleImageView foodAvatarCiv;
 
     @Override
     public void onAttach(Context context) {
@@ -104,7 +126,7 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel.isSuccess()) {
-                        sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.diet_post_success));
+                        sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), (isDeleteMode) ? getString(R.string.diet_delete_success) : getString(R.string.diet_post_success));
                     }
                 }
             }
@@ -114,7 +136,7 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), getString(R.string.diet_post_failure));
+                    sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), isDeleteMode ? getString(R.string.diet_delete_failure) : getString(R.string.diet_post_failure));
                 }
             }
         });
@@ -160,6 +182,16 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
         nutritionFactRv = (RecyclerView) view.findViewById(R.id.nutrition_fact_rv);
         ingrediantsTv = (TextView) view.findViewById(R.id.ingrediants_tv);
         foodDetailNsv = (NestedScrollView) view.findViewById(R.id.food_detail_nsv);
+        bottomView1 = (View) view.findViewById(R.id.view_1);
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        deleteBtn = (ConstraintLayout) view.findViewById(R.id.delete_btn);
+        unitValueTv = (TextView) view.findViewById(R.id.unit_value_tv);
+        unitsCountTv = (TextView) view.findViewById(R.id.units_count_tv);
+        unitCountLl = (LinearLayout) view.findViewById(R.id.unit_count_ll);
+        foodAvatarCiv = (CircleImageView) view.findViewById(R.id.food_avatar_civ);
 
         setNutritionFacts();
 
@@ -167,6 +199,11 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
         addBtn.setOnClickListener(this);
         addIv.setOnClickListener(this);
         subIv.setOnClickListener(this);
+
+
+        nutritionFactsAdapter = new NutritionFactsAdapter(getActivity());
+        nutritionFactRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        nutritionFactRv.setAdapter(nutritionFactsAdapter);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -197,50 +234,94 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
         });
 
         if (getArguments() != null) {
-            hintsBean = (FoodListApiResponseModel.HintsBean) getArguments().getSerializable(ArgumentKeys.FOOD_DETAIL);
-            searchedItem = getArguments().getString(ArgumentKeys.SEARCHED_ITEM);
-            selectedDate = getArguments().getString(ArgumentKeys.SELECTED_DATE);
-            mealType = getArguments().getString(ArgumentKeys.MEAL_TYPE);
-            isManualEntry = getArguments().getBoolean(ArgumentKeys.IS_MANUAL_ENTRY, false);
+            isDeleteMode = getArguments().getBoolean(ArgumentKeys.FOOD_DELETE_MODE, false);
+            if (!isDeleteMode) {
+                hintsBean = (FoodListApiResponseModel.HintsBean) getArguments().getSerializable(ArgumentKeys.FOOD_DETAIL);
+                searchedItem = getArguments().getString(ArgumentKeys.SEARCHED_ITEM);
+                selectedDate = getArguments().getString(ArgumentKeys.SELECTED_DATE);
+                mealType = getArguments().getString(ArgumentKeys.MEAL_TYPE);
+                isManualEntry = getArguments().getBoolean(ArgumentKeys.IS_MANUAL_ENTRY, false);
 
-            if (!isManualEntry) {
-                setFoodDetail();
-                setUnits();
+                if (!isManualEntry) {
+                    setFoodDetail();
+                    setUnits();
 
-                if (hintsBean.getMeasures().size() > 0)
-                    measureUri = hintsBean.getMeasures().get(0).getUri();
+                    if (hintsBean.getMeasures().size() > 0)
+                        measureUri = hintsBean.getMeasures().get(0).getUri();
 
-                getNutrientsDetail();
+                    getNutrientsDetail();
 
-                nutritionFactsAdapter = new NutritionFactsAdapter(getActivity());
-                nutritionFactRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-                nutritionFactRv.setAdapter(nutritionFactsAdapter);
+                } else {
+                    tabLayout.setVisibility(View.GONE);
+                    foodDetailNsv.setVisibility(View.GONE);
 
+                    foodNameTv.setText(searchedItem);
+                    foodIv.setImageDrawable(getActivity().getDrawable(R.drawable.diet_food_placeholder));
+
+                    List<String> unitList = new ArrayList<>();
+                    unitList.add(getString(R.string.servings));
+
+                    setUnitsAdapter(unitList);
+
+                }
             } else {
-                tabLayout.setVisibility(View.GONE);
-                foodDetailNsv.setVisibility(View.GONE);
 
-                foodNameTv.setText(searchedItem);
-                foodIv.setImageDrawable(getActivity().getDrawable(R.drawable.diet_food_placeholder));
+                foodIv.setVisibility(View.GONE);
+                foodNameTv.setVisibility(View.GONE);
+                addPhotoTv.setVisibility(View.GONE);
+                bottomView1.setVisibility(View.GONE);
+                addBtn.setVisibility(View.GONE);
+                spinner.setVisibility(View.GONE);
+                unitCountLl.setVisibility(View.GONE);
 
-                List<String> unitList = new ArrayList<>();
-                unitList.add(getString(R.string.servings));
+                appbarLayout.setVisibility(View.VISIBLE);
+                deleteBtn.setVisibility(View.VISIBLE);
+                unitsCountTv.setVisibility(View.VISIBLE);
+                unitValueTv.setVisibility(View.VISIBLE);
 
-                setUnitsAdapter(unitList);
+                backIv.setOnClickListener(this);
+                deleteBtn.setOnClickListener(this);
 
+                dietApiResponseModel = (DietApiResponseModel) getArguments().getSerializable(ArgumentKeys.FOOD_DETAIL);
+                if (dietApiResponseModel != null) {
+                    unitValueTv.setText(dietApiResponseModel.getServing_unit());
+                    unitsCountTv.setText(String.valueOf(dietApiResponseModel.getServing()));
+                    toolbarTitle.setText(dietApiResponseModel.getFood().getName());
+
+                    if (dietApiResponseModel.getDisplayFoodImage() != null) {
+                        Utils.setImageWithGlide(getContext(), foodAvatarCiv, dietApiResponseModel.getDisplayFoodImage(), getActivity().getDrawable(R.drawable.diet_food_placeholder), false, false);
+                    }else {
+                        foodAvatarCiv.setVisibility(View.GONE);
+                    }
+
+                    if (dietApiResponseModel.getFood().getIngredients() != null) {
+                        setIngredients(dietApiResponseModel.getFood().getIngredients());
+                    } else {
+                        setIngredients(null);
+                    }
+
+                    nutritionFactsAdapter.setData(dietApiResponseModel.getFood().getTotalNutrients());
+                }
             }
-
         }
-
     }
 
     private void setFoodDetail() {
         setFoodImage(hintsBean.getFood().getImage());
         foodNameTv.setText(hintsBean.getFood().getLabel());
+
         if (hintsBean.getFood().getFoodContentsLabel() != null)
-            ingrediantsTv.setText(hintsBean.getFood().getFoodContentsLabel().replace(";", "\n\n"));
+            setIngredients(hintsBean.getFood().getFoodContentsLabel());
         else
+            setIngredients(null);
+    }
+
+    private void setIngredients(String ingredients) {
+        if (ingredients != null) {
+            ingrediantsTv.setText(ingredients.replace(";", "\n\n"));
+        } else {
             ingrediantsTv.setText(getString(R.string.no_ingredients_present));
+        }
     }
 
     private void setUnits() {
@@ -295,7 +376,23 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
             case R.id.sub_iv:
                 modifyCount(false);
                 break;
+            case R.id.back_iv:
+                onBackPressed();
+                break;
+            case R.id.delete_btn:
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+                bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.deleting_your_diet));
+                showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
+
+                dietApiViewModel.deleteDiet(dietApiResponseModel.getUser_diet_id());
+                break;
         }
+    }
+
+    private void onBackPressed() {
+        if (getActivity() instanceof OnCloseActionInterface)
+            ((OnCloseActionInterface) getActivity()).onClose(false);
     }
 
     private void addFood() {
@@ -341,8 +438,12 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RequestID.REQ_SHOW_SUCCESS_VIEW && resultCode == Activity.RESULT_OK) {
-            getActivity().setResult(resultCode);
-            getActivity().finish();
+            if (!isDeleteMode) {
+                getActivity().setResult(resultCode);
+                getActivity().finish();
+            } else {
+                onBackPressed();
+            }
         }
     }
 

@@ -146,4 +146,21 @@ public class DietApiViewModel extends BaseApiViewModel {
         });
     }
 
+    public void deleteDiet(int dietId){
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status){
+                    getAuthApiService().deleteDiet(dietId)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>() {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
 }
