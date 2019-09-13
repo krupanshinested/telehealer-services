@@ -15,12 +15,14 @@ import androidx.lifecycle.ViewModelProviders;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.chat.UserKeysApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.Signal.SignalKeyManager;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
@@ -503,16 +505,31 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onSuccessViewCompletion(boolean success) {
         if (success) {
-            if (!isVerifyOtp) {
-                appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(ArgumentKeys.IS_FROM_SIGNUP, true);
-                startActivity(new Intent(SignUpActivity.this, QuickLoginActivity.class).putExtras(bundle));
-            } else {
-                startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
-            }
-            finish();
+            checkSignalKeys();
         }
+    }
+
+    private void checkSignalKeys() {
+        SignalKeyManager
+                .getInstance(SignUpActivity.this, new SignalKeyManager.OnUserKeyReceivedListener() {
+                    @Override
+                    public void onKeyReceived(UserKeysApiResponseModel userKeysApiResponseModel) {
+                        proceedLoginSuccess();
+                    }
+                })
+                .getUserKey(null, true, true, true);
+    }
+
+    private void proceedLoginSuccess() {
+        if (!isVerifyOtp) {
+            appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(ArgumentKeys.IS_FROM_SIGNUP, true);
+            startActivity(new Intent(SignUpActivity.this, QuickLoginActivity.class).putExtras(bundle));
+        } else {
+            startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+        }
+        finish();
     }
 
     private Fragment getCurrentFragment() {

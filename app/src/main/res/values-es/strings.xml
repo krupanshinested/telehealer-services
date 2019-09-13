@@ -371,7 +371,7 @@
     <string name="edit_document">Editar documento</string>
     <string name="search_pharmacy">Buscar Farmacia</string>
     <string name="choose_pharmacy">Elija Farmacia</string>
-    <string name="onboarding_info">Nos pondremos en contacto en 24 horas para validar sus credenciales y permitir el acceso a la plataforma./n/nRecuerde actualizar su compañía de seguros e incluir a $s, Inc. como una plataforma compatible para su práctica.</string>
+    <string name="onboarding_info">Nos pondremos en contacto en 24 horas para validar sus credenciales y permitir el acceso a la plataforma./n/nRecuerde actualizar su compañía de seguros e incluir a %s, Inc. como una plataforma compatible para su práctica.</string>
     <string name="onboarding_in_progress">Onboarding in Progress</string>
     <string name="permission_storage_message">%s desea acceder a su almacenamiento local para almacenar y mostrar archivos</string>
     <string name="permission_storage_title">Acceso de almacenamiento de subvención</string>
