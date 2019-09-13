@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -22,6 +23,7 @@ import com.thealer.telehealer.apilayer.manager.helper.NoConnectivityException;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -36,6 +38,7 @@ import com.thealer.telehealer.views.signin.SigninActivity;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -474,11 +477,11 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         if (image_path != null) {
             try {
                 File file = new File(image_path);
+                Log.e(TAG, "getMultipartFile: "+file.length() + " " + getReadableFileSize(file.length()) );
 
+                file = getCompressedFile(file);
 
-                if (file.length() / 1024 > 750) {
-                    file = getCompressedFile(file);
-                }
+                Log.e(TAG, "endFile: "+file.length()+" "+ getReadableFileSize(file.length()) );
 
                 return MultipartBody.Part.createFormData(name, file.getName(),
                         RequestBody.create(MediaType.parse("image/*"), file));
@@ -500,15 +503,41 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     }
 
     public File getCompressedFile(File actualFile) {
+        long fileMaxSize = 2000000; // 2MB
+
+        if (actualFile.length() <= fileMaxSize){
+            return actualFile;
+        }
+
+        Bitmap bitmap = BitmapFactory.decodeFile(actualFile.getPath());
+        int actualWidth = bitmap.getWidth();
+        int actualHeight = bitmap.getHeight();
+        double startPoint = 1;
+        Log.e(TAG, "getCompressedFile: "+ bitmap.getWidth() +" "+ bitmap.getHeight());
 
         try {
-            return new Compressor(getApplication())
-                    .setCompressFormat(Bitmap.CompressFormat.PNG)
-                    .setQuality(100)
-                    .setMaxWidth(300)
-                    .setMaxHeight(300)
-                    .compressToFile(actualFile);
+            File file = null;
 
+            while (startPoint > 0.1){
+                startPoint = startPoint - 0.1;
+                int compressWidth = (int) (actualWidth * startPoint);
+                int compressHeight = (int) (actualHeight * startPoint);
+
+                Log.e(TAG, "getCompressedFile: "+ startPoint + " "+ compressWidth + " "+ compressHeight );
+
+                file = new Compressor(getApplication())
+                        .setMaxWidth(compressWidth)
+                        .setMaxHeight(compressHeight)
+                        .compressToFile(actualFile);
+
+                Log.e(TAG, "compressed file: "+file.length()+ " "+ getReadableFileSize(file.length()));
+                if (file.length() <= fileMaxSize){
+                    return file;
+                }
+
+            }
+
+            return file;
         } catch (IOException e) {
             e.printStackTrace();
         }
