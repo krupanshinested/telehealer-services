@@ -45,6 +45,7 @@ public class CameraUtil {
     private static String capturedImagePath = null;
 
     public static void showImageSelectionAlert(Context context) {
+        Utils.hideKeyboard((Activity)context);
         if (PermissionChecker.with(context).checkPermission(PermissionConstants.PERMISSION_CAM_PHOTOS)) {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
             LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -78,6 +79,7 @@ public class CameraUtil {
 
 
     public static void openGallery(Context context) {
+        Utils.hideKeyboard((Activity)context);
         if (PermissionChecker.with(context).checkPermission(PermissionConstants.PERMISSION_GALLERY)) {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             if (intent.resolveActivity(context.getPackageManager()) != null) {
@@ -89,6 +91,7 @@ public class CameraUtil {
     }
 
     public static void openCamera(Context context) {
+        Utils.hideKeyboard((Activity)context);
         if (PermissionChecker.with(context).checkPermission(PermissionConstants.PERMISSION_CAMERA)) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (intent.resolveActivity(context.getPackageManager()) != null) {
