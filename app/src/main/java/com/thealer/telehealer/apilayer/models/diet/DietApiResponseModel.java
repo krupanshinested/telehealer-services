@@ -214,4 +214,12 @@ public class DietApiResponseModel extends BaseApiResponseModel {
     public static String getCalorieUnit(FragmentActivity activity) {
         return activity.getString(R.string.cal);
     }
+
+    public String getDisplayFoodImage(){
+        if (getImage_url() != null){
+            return getImage_url();
+        }else {
+            return getFood().getImage_url();
+        }
+    }
 }

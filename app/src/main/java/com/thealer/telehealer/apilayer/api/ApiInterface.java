@@ -552,6 +552,9 @@ public interface ApiInterface {
     @POST("api/user-diet")
     Observable<BaseApiResponseModel> addDiet(@PartMap Map<String, RequestBody> requestBodyMap, @Part MultipartBody.Part file);
 
+    @DELETE("api/user-diet/{id}")
+    Observable<BaseApiResponseModel> deleteDiet(@Path(ID) int dietId);
+
     @GET("/api/food-database/parser")
     Observable<FoodListApiResponseModel> getFoodList(@Query("ingr") String query, @Query("session") int session, @Query("app_id") String appId, @Query("app_key") String appKey);
 

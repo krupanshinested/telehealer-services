@@ -11,13 +11,76 @@
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@+id/add_btn"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_btn_ll"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appbar"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/app_background_gradient"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?android:attr/actionBarSize"
+                    android:theme="@style/toolbar_menu_light"
+                    app:contentInsetStart="0dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/back_iv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_arrow_back_black_24dp"
+                            android:tint="@color/colorWhite"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/toolbar_title"
+                            style="@style/text_sub_title_lignt_bold"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:textSize="@dimen/toolbar_title"
+                            app:layout_constraintBottom_toTopOf="@+id/back_iv"
+                            app:layout_constraintEnd_toStartOf="@+id/food_avatar_civ"
+                            app:layout_constraintStart_toEndOf="@id/back_iv"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="@string/dummy_text" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/food_avatar_civ"
+                            android:layout_width="60dp"
+                            android:layout_height="0dp"
+                            android:layout_marginEnd="@dimen/margin_default"
+                            android:layout_marginTop="@dimen/margin_default"
+                            android:layout_marginBottom="@dimen/margin_default"
+                            android:src="@drawable/profile_placeholder"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.appcompat.widget.Toolbar>
+
+            </com.google.android.material.appbar.AppBarLayout>
             <ImageView
                 android:id="@+id/food_iv"
                 android:layout_width="@dimen/card_image_view_size"
@@ -25,7 +88,7 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="12dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appbar"
                 tools:src="@drawable/profile_placeholder" />
 
             <TextView
@@ -33,12 +96,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
                 android:textColor="@color/colorBlack"
                 android:textSize="@dimen/list_title_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/food_iv"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@id/food_iv"
                 tools:text="@string/dummy_text" />
 
             <TextView
@@ -72,6 +134,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view_1" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/unit_value_tv"
+                tools:text="@string/dummy_text"
+                android:visibility="gone"
+                android:textColor="@color/colorBlack"
+                android:layout_marginEnd="@dimen/margin_default"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@id/unit_tv"
+                app:layout_constraintTop_toTopOf="@+id/unit_tv"/>
+
             <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="wrap_content"
@@ -104,6 +179,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view_2" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/units_count_tv"
+                tools:text="@string/dummy_text"
+                android:visibility="gone"
+                android:textColor="@color/colorBlack"
+                android:layout_marginEnd="@dimen/margin_default"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@id/no_of_serves_tv"
+                app:layout_constraintTop_toTopOf="@+id/no_of_serves_tv"/>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -112,6 +200,7 @@
                 android:background="@drawable/border_drawable_app_color"
                 android:orientation="horizontal"
                 android:weightSum="3"
+                android:id="@+id/unit_count_ll"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@id/no_of_serves_tv"
@@ -248,13 +337,51 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <Button
-        android:id="@+id/add_btn"
-        style="@style/button_app_background_white_text"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/bottom_btn_ll"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/add"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/add_btn"
+            style="@style/button_app_background_white_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/delete_btn"
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/top_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorGrey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/delete_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/delete"
+                android:textAllCaps="true"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/top_view" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
