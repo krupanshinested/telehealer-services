@@ -1,11 +1,8 @@
 package com.thealer.telehealer.common.Signal;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -29,19 +26,11 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 public class SignalKeyManager {
     private static SignalKeyManager signalKeyManager;
     private static ChatApiViewModel chatApiViewModel;
-    public MutableLiveData<UserKeysApiResponseModel> userKeysApiResponseModel = new MutableLiveData<>();
     private boolean isOwn, isUpdatePreference, isPostingKey;
     private SignalKeyPostModel signalKey;
+    private OnUserKeyReceivedListener onUserKeyReceivedListener;
 
-    public MutableLiveData<UserKeysApiResponseModel> getUserKeysApiResponseModel() {
-        return userKeysApiResponseModel;
-    }
-
-    public void setUserKeysApiResponseModel(MutableLiveData<UserKeysApiResponseModel> userKeysApiResponseModel) {
-        this.userKeysApiResponseModel = userKeysApiResponseModel;
-    }
-
-    public static SignalKeyManager getInstance(FragmentActivity fragmentActivity) {
+    public static SignalKeyManager getInstance(FragmentActivity fragmentActivity, OnUserKeyReceivedListener onUserKeyReceivedListener) {
         chatApiViewModel = ViewModelProviders.of(fragmentActivity).get(ChatApiViewModel.class);
         chatApiViewModel.baseApiResponseModelMutableLiveData.observe(fragmentActivity, new Observer<BaseApiResponseModel>() {
             @Override
@@ -80,6 +69,8 @@ public class SignalKeyManager {
         if (signalKeyManager == null)
             signalKeyManager = new SignalKeyManager();
 
+        signalKeyManager.onUserKeyReceivedListener = onUserKeyReceivedListener;
+
         return signalKeyManager;
     }
 
@@ -87,7 +78,7 @@ public class SignalKeyManager {
         if (signalKeyManager.isOwn && userKeysApiResponseModel == null) {
             postNewKey();
         } else {
-            signalKeyManager.userKeysApiResponseModel.setValue(userKeysApiResponseModel);
+            signalKeyManager.onUserKeyReceivedListener.onKeyReceived(userKeysApiResponseModel);
 
             if (signalKeyManager.isUpdatePreference) {
                 appPreference.setString(PreferenceConstants.USER_KEYS, new Gson().toJson(userKeysApiResponseModel));
@@ -112,5 +103,8 @@ public class SignalKeyManager {
         return signalKeyManager;
     }
 
+    public interface OnUserKeyReceivedListener{
+        void onKeyReceived(UserKeysApiResponseModel userKeysApiResponseModel);
+    }
 
 }
