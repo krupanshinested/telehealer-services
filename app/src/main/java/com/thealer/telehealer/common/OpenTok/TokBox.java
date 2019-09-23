@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.media.AudioAttributes;
 import android.media.AudioDeviceInfo;
 import android.media.AudioFocusRequest;
@@ -49,9 +50,11 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.LocationTracker;
 import com.thealer.telehealer.common.LocationTrackerInterface;
+import com.thealer.telehealer.common.OpenTok.Renders.BasicCustomVideoRenderer;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.AudioInterface;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OnDSListener;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
+import com.thealer.telehealer.common.OpenTok.openTokInterfaces.ScreenCapturerInterface;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.TokBoxUIInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
@@ -170,11 +173,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private LocationTracker patientLocationTracker;
 
     @Nullable
-    private TimerRunnable outGoingCallTimer, callCapTimer;
+    private TimerRunnable outGoingCallTimer, callCapTimer, screenCapturerTimer;
 
     private final OpenTokViewModel openTokViewModel = new OpenTokViewModel(application);
 
     private Boolean isTranscriptSent = false;
+    private Boolean isScreenshotCaptured = false;
     private String currentTranscript = "";
     private GoogleSpeechRecognizer googleSpeechRecognizer;
     private TimerRunnable speechRunnable;
@@ -337,6 +341,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         this.otherPersonUserGuid = callInitiateModel.getToUserGuid();
         this.otherPersonBatteryLevel = null;
         this.isViewSwapped = false;
+        this.isScreenshotCaptured = false;
         this.doctor_guid = callInitiateModel.getDoctorGuid();
 
         if (AudioDeviceManager.getAudioDevice() != null && AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
@@ -710,7 +715,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     //Open tok Actions
 
     private void doPublish() {
-        mPublisher = new Publisher.Builder(application).build();
+        mPublisher = new Publisher.Builder(application)
+                .renderer(new BasicCustomVideoRenderer(application))
+                .build();
         mPublisher.setPublisherListener(this);
         mPublisher.setVideoStatsListener(this);
         mPublisher.setAudioStatsListener(this);
@@ -785,7 +792,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     private void doSubscribe(Stream stream) {
         if (mSession != null) {
-            mSubscriber = new Subscriber.Builder(application, stream).build();
+            mSubscriber = new Subscriber.Builder(application, stream)
+                    .renderer(new BasicCustomVideoRenderer(application))
+                    .build();
             mSubscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
             mSubscriber.setSubscriberListener(this);
             mSubscriber.setAudioLevelListener(this);
@@ -959,7 +968,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         if (otherPersonDetail != null) {
             Log.d("openTok", "endCall");
             PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForEndCall(UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), otherPersonDetail.getUser_guid(), currentUUIDString, callRejectionReason);
-            PubnubUtil.shared.publishVoipMessage(pushPayLoad, null);
+            PubnubUtil.shared.publishPushMessage(pushPayLoad, null);
             EventRecorder.recordNotification("DECLINE_CALL");
         }
     }
@@ -1033,6 +1042,82 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         handler.postDelayed(runnable, Constants.callCapTime);
     }
 
+    private void assignScreenCapturerTime() {
+        Handler handler = new Handler();
+        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+            @Override
+            public void run() {
+                captureScreenshot();
+
+                if (screenCapturerTimer != null)
+                    screenCapturerTimer.setStopped(true);
+
+                screenCapturerTimer = null;
+            }
+        });
+
+        screenCapturerTimer = runnable;
+        handler.postDelayed(runnable, 30000);
+    }
+
+    private void captureScreenshot() {
+        Log.d("Opentok","captureScreenshot");
+        if (isScreenshotCaptured) {
+           return;
+        }
+
+        if (callType.equals(OpenTokConstants.audio)) {
+            return;
+        }
+
+        if (mPublisher == null) {
+            return;
+        }
+
+        View publisherView = mPublisher.getView();
+        if (publisherView == null) {
+            return;
+        }
+
+        Log.d("Opentok","captureScreenshot");
+
+        if (mSubscriber == null) {
+            ((BasicCustomVideoRenderer) mPublisher.getRenderer()).saveScreenshot(true, new ScreenCapturerInterface() {
+                @Override
+                public void didCapturerScreenShot(Bitmap bitmap) {
+                    Log.d("Opentok", "didCapturerScreenShot s");
+                    mergeBitmap(bitmap, null);
+                }
+            });
+        } else {
+            ((BasicCustomVideoRenderer) mSubscriber.getRenderer()).saveScreenshot(true, new ScreenCapturerInterface() {
+                @Override
+                public void didCapturerScreenShot(Bitmap subscriber) {
+                    Log.d("Opentok", "didCapturerScreenShot d");
+                    ((BasicCustomVideoRenderer) mPublisher.getRenderer()).saveScreenshot(true, new ScreenCapturerInterface() {
+                        @Override
+                        public void didCapturerScreenShot(Bitmap bitmap) {
+                            Log.d("Opentok", "didCapturerScreenShot s");
+                            mergeBitmap(bitmap, subscriber);
+                        }
+                    });
+                }
+            });
+        }
+
+
+        isScreenshotCaptured = true;
+    }
+
+    private void mergeBitmap(Bitmap publisher,@Nullable Bitmap subscriber) {
+        if (subscriber != null) {
+            Bitmap combinedBitmap = Utils.mergeBitmap(publisher,subscriber);
+            uploadScreenshot(sessionId,combinedBitmap);
+        } else {
+            uploadScreenshot(sessionId,publisher);
+        }
+    }
+
     //Api methods
 
     private void sendNotification(String sessionId, String toGuid) {
@@ -1063,6 +1148,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         openTokViewModel.updateCallStatus(sessionId, params);
     }
 
+    private void uploadScreenshot(String sessionId, Bitmap bitmap) {
+        openTokViewModel.updateScreenshot(sessionId, bitmap);
+    }
+
     private void startArchive(String sessionId) {
         if (isCalling) {
             openTokViewModel.startArchieve(sessionId);
@@ -1081,7 +1170,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                     if (state != null) {
                         sendLocation(state);
                     } else {
-                        sendLocation("NA");
+                        sendLocation(Constants.inValidState);
                     }
 
                     patientLocationTracker = null;
@@ -1501,6 +1590,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         if (isCalling) {
             assignCallCapTimer();
+            assignScreenCapturerTime();
             HashMap<String, String> params = new HashMap<>();
             params.put("start", "true");
             updateCallStatus(sessionId, params);

@@ -1234,4 +1234,6 @@
     <string name="diet_delete_success">आपका आहार सफलतापूर्वक हटा दिया गया है</string>
     <string name="diet_delete_failure">आपका आहार सफलतापूर्वक हटाया नहीं गया है.</string>
     <string name="deleting_your_diet">अपने आहार को हटाना</string>
+
+    <string name="unable_to_determine_patient_location">रोगी का स्थान निर्धारित करने में असमर्थ।</string>
 </resources>

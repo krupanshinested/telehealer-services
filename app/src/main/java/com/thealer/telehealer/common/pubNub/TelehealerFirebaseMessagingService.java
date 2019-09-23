@@ -197,7 +197,8 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
 
         Log.d("MessagingService", "currentUUID " + currentUUID);
         Log.d("MessagingService", "endCallUUID " + endCallUUID);
-        if (!currentUUID.equals(endCallUUID)) {
+        if (!currentUUID.toLowerCase().equals(endCallUUID.toLowerCase())) {
+            Log.d("MessagingService", "not equal");
             return;
         }
 
@@ -224,8 +225,10 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             @Override
             public void run() {
                 if (data.getCall_rejection() != null) {
+                    Log.d("MessagingService", "endCall");
                     TokBox.shared.endCall(data.getCall_rejection());
                 } else {
+                    Log.d("MessagingService", "endCall");
                     TokBox.shared.endCall(OpenTokConstants.other);
                 }
             }
@@ -237,7 +240,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             TokBox.shared.didRecieveIncoming(data);
         } else {
             PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForBusyInAnotherCall(UserDetailPreferenceManager.getUser_guid(), data.getFrom(), data.getUuid());
-            PubnubUtil.shared.publishVoipMessage(pushPayLoad, null);
+            PubnubUtil.shared.publishPushMessage(pushPayLoad, null);
 
             EventRecorder.recordNotification("BUSY_CALL");
 
