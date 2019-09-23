@@ -466,6 +466,10 @@ public interface ApiInterface {
     @PUT("api/call/{id}")
     Observable<BaseApiResponseModel> updateCallStatus(@Path(ID) String sessionId, @QueryMap Map<String, String> param);
 
+    @Multipart
+    @POST("api/call/{id}")
+    Observable<BaseApiResponseModel> uploadScreenshot(@Path(ID) String sessionId,@Part MultipartBody.Part file);
+
     @GET("api/archive/start")
     Observable<CommonUserApiResponseModel> startArchive(@Query(SESSION_ID) String sessionId);
 

@@ -1247,4 +1247,6 @@
     <string name="diet_delete_success">Su dieta ha sido eliminada exitosamente</string>
     <string name="diet_delete_failure">Su dieta no se elimina con éxito.</string>
     <string name="deleting_your_diet">Eliminar tu dieta</string>
+
+    <string name="unable_to_determine_patient_location">No se puede determinar la ubicación del paciente.</string>
 </resources>

@@ -10,9 +10,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -51,6 +53,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.Headers;
@@ -1494,5 +1497,23 @@ public class Utils {
             return input.replace("&", "and");
         }
         return input;
+    }
+
+    public static Bitmap mergeBitmap(Bitmap fr, Bitmap sc) {
+        Bitmap comboBitmap;
+
+        int width, height;
+
+        width = fr.getWidth() + sc.getWidth();
+        height = fr.getHeight();
+
+        comboBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas comboImage = new Canvas(comboBitmap);
+
+
+        comboImage.drawBitmap(fr, 0f, 0f, null);
+        comboImage.drawBitmap(sc, fr.getWidth(), 0f , null);
+        return comboBitmap;
     }
 }

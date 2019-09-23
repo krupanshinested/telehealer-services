@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.OpenTok;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
+import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.TokBox;
@@ -92,6 +94,25 @@ public class OpenTokViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().updateCallStatus(sessionId, params)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void updateScreenshot(String sessionId, Bitmap bitmap) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    String path = CameraUtil.getBitmapFilePath(getApplication(), bitmap);
+                    getAuthApiService().uploadScreenshot(sessionId,getMultipartFile("audio_stream_screenshot", path))
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override

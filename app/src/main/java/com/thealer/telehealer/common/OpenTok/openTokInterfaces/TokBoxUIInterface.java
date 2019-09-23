@@ -1,5 +1,7 @@
 package com.thealer.telehealer.common.OpenTok.openTokInterfaces;
 
+import android.graphics.Bitmap;
+
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 

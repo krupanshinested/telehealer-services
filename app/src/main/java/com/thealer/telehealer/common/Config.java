@@ -26,17 +26,17 @@ public class Config {
 
     public static String getVoipPublisherKey() {
         if (BuildConfig.BUILD_TYPE.equals(Constants.BUILD_TYPE_DEBUG)) {
-            return "pub-c-d72c3071-a868-4bcc-892e-582937842a38";
+            return "pub-c-44175757-ac32-4f0d-8084-584e366e9bb8";
         } else {
-            return "pub-c-a2f1b7c1-77e3-4c82-a819-696c80bec3d4";
+            return "pub-c-fcaae6eb-5eba-4d72-a119-3513eda312bd";
         }
     }
 
     public static String getVoipSubscriberKey() {
         if (BuildConfig.BUILD_TYPE.equals(Constants.BUILD_TYPE_DEBUG)) {
-            return "sub-c-eddb7d5a-c220-11e8-a085-86a86c9890cf";
+            return "sub-c-9588e6e8-e4ce-11e9-9f1b-ce77373a3518";
         } else {
-            return "sub-c-bad221e2-c221-11e8-a6e8-e682e8ece688";
+            return "sub-c-e160986a-eb75-11e9-ad72-8e6732c0d56b";
         }
     }
 
