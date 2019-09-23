@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.media.AudioDeviceInfo;
 import android.net.Uri;
@@ -178,6 +179,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
 
         setContentView(R.layout.activity_call);
@@ -1283,7 +1287,13 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     @Override
     public void didUpdatedPatientLocation(String state) {
         if (!isValidPatientLocation(state)) {
-            status_tv.setText(getString(R.string.calling_from_outside));
+
+            if (state.equals(Constants.inValidState)) {
+                status_tv.setText(getString(R.string.unable_to_determine_patient_location));
+            } else {
+                status_tv.setText(getString(R.string.calling_from_outside));
+            }
+
             status_tv.setVisibility(View.VISIBLE);
 
             Animation blinkAnimation = AnimationUtils.loadAnimation(CallActivity.this, R.anim.blinking);

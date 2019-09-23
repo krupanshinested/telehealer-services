@@ -93,7 +93,6 @@ public class PubNubNotificationPayload {
         apnsPayload.setSessionId(sessionId);
         apnsPayload.setFrom_name(displayName);
         apnsPayload.setDoctor_guid(doctor_guid);
-        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
         pushPayLoad.setPn_apns(apnsPayload);
         pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
 
