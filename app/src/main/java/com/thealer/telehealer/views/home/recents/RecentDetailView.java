@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -249,28 +250,16 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
 
         Uri uri = Uri.parse(path);
 
-        HashMap<String, String> headerMap = new HashMap<>();
-        headerMap.put(Constants.HEADER_AUTH_TOKEN, appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
-        headerMap.put("Content-Type", "application/x-www-form-urlencoded");
-        headerMap.put("X-REQUEST-TYPE", "mobile");
-        headerMap.put("X-DEVICE-TYPE", "android");
-
-
         TrackSelector trackSelector = new DefaultTrackSelector();
-
-        HttpDataSource.Factory httpFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(getActivity(), getActivity().getPackageName()));
-
-        httpFactory.getDefaultRequestProperties().set(headerMap);
-
         simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
 
         playerView.setPlayer(simpleExoPlayer);
 
         playerView.setShowShuffleButton(false);
-
-        MediaSource mediaSource = new HlsMediaSource.Factory(httpFactory).createMediaSource(uri);
-
-        LoopingMediaSource loopingMediaSource = new LoopingMediaSource(mediaSource);
+        DefaultHttpDataSourceFactory dataSource = new DefaultHttpDataSourceFactory(
+                Util.getUserAgent(getActivity(), "telehealer"));
+        ExtractorMediaSource mediaSource = new ExtractorMediaSource.Factory(dataSource)
+                .createMediaSource(uri);
 
         simpleExoPlayer.prepare(mediaSource);
 

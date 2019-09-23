@@ -1,5 +1,7 @@
 package com.thealer.telehealer.common.Signal.SignalModels;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 
 public class SignalKey implements Serializable {
@@ -9,6 +11,7 @@ public class SignalKey implements Serializable {
     private PreKey pre_key;
     private SignedPreKey signed_pre_key;
     private IdentityKey identity_key;
+    private UserBean user;
     private String user_guid;
     private int encryption_key_id;
     private String created_at;
@@ -26,6 +29,8 @@ public class SignalKey implements Serializable {
         this.signed_pre_key = signed_pre_key;
         this.identity_key = identity_key;
         this.user_guid = user_guid;
+        this.user = new UserBean();
+        this.user.user_guid = user_guid;
         this.encryption_key_id = encryption_key_id;
     }
 
@@ -102,7 +107,13 @@ public class SignalKey implements Serializable {
     }
 
     public String getUser_guid() {
-        return user_guid;
+        if (!TextUtils.isEmpty(user_guid)) {
+            return user_guid;
+        } else if (user != null) {
+            return user.getUser_guid();
+        } else {
+            return "";
+        }
     }
 
     public void setUser_guid(String user_guid) {
@@ -112,5 +123,13 @@ public class SignalKey implements Serializable {
     @Override
     public String toString() {
         return "device_id : \t" + device_id + "\n user_id : \t" + user_id + "\n registration_id : \t" + registration_id + "\n preKey : \n" + pre_key.toString() + "\n signedPreKey : \n" + signed_pre_key.toString() + "\n identityKey : \n" + identity_key.toString() + "\n userGuid : \n" + user_guid;
+    }
+
+    public static class UserBean implements Serializable {
+        private String user_guid;
+
+        public String getUser_guid() {
+            return user_guid;
+        }
     }
 }
