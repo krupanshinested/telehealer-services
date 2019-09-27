@@ -123,9 +123,9 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
 
-        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(this).get(CreateUserRequestModel.class);
         updateProfileModel = new ViewModelProvider(this).get(UpdateProfileModel.class);
-        whoAmIApiViewModel = new ViewModelProvider(getActivity()).get(WhoAmIApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
 
         attachObserverInterface.attachObserver(updateProfileModel);
         attachObserverInterface.attachObserver(whoAmIApiViewModel);
@@ -139,7 +139,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                     if (currentDisplayType == Constants.SCHEDULE_CREATION_MODE) {
                         if (updateProfile) {
                             updateProfile = false;
-                            updateProfileModel.updatePatient(createUserRequestModel);
+                            updateProfileModel.updatePatient(createUserRequestModel, null);
                         } else {
                             getActivity().setResult(Activity.RESULT_OK);
                             getActivity().finish();
@@ -656,7 +656,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                 }
 
                 if (!updateProfile)
-                    updateProfileModel.updatePatient(createUserRequestModel);
+                    updateProfileModel.updatePatient(createUserRequestModel, null);
 
                 break;
             case Constants.VIEW_MODE:

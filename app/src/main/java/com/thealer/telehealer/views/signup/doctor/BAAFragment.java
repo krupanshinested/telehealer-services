@@ -34,13 +34,14 @@ import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.settings.SignatureActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+import com.thealer.telehealer.views.signup.SignupBaseFragment;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 28,February,2019
  */
-public class BAAFragment extends BaseFragment implements DoCurrentTransactionInterface {
+public class BAAFragment extends SignupBaseFragment implements DoCurrentTransactionInterface {
 
     private TextView titleTv;
     private CustomButton agreeBtn;
@@ -141,7 +142,8 @@ public class BAAFragment extends BaseFragment implements DoCurrentTransactionInt
         createUserRequestModel.getUser_data().setRole(Constants.ROLE_DOCTOR);
         createUserRequestModel.getUser_data().setUser_name(Constants.BUILD_MEDICAL);
 
-        createUserApiViewModel.createDoctor(createUserRequestModel);
+//        createUserApiViewModel.createDoctor(createUserRequestModel);
+        postDoctorDetail(createUserRequestModel);
     }
 
     private String getHtml() {
