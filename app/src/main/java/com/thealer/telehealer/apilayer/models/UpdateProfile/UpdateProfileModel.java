@@ -28,7 +28,7 @@ public class UpdateProfileModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void updateMedicalAssistant(CreateUserRequestModel createUserRequestModel) {
+    public void updateMedicalAssistant(CreateUserRequestModel createUserRequestModel, Boolean isProfileComplete) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -50,6 +50,7 @@ public class UpdateProfileModel extends BaseApiViewModel {
 
                     getAuthApiService().updateMedicalAssistant(createUserRequestModel.getUser_data(),
                             createUserRequestModel.getUser_detail().getData(),
+                            isProfileComplete,
                             user_avatar,
                             certification)
                             .compose(applySchedulers())
@@ -64,7 +65,7 @@ public class UpdateProfileModel extends BaseApiViewModel {
         });
     }
 
-    public void updateDoctor(CreateUserRequestModel createUserRequestModel) {
+    public void updateDoctor(CreateUserRequestModel createUserRequestModel, Boolean isProfileComplete) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -100,6 +101,7 @@ public class UpdateProfileModel extends BaseApiViewModel {
 
                     getAuthApiService().updateDoctor(createUserRequestModel.getUser_data(),
                             createUserRequestModel.getUser_detail().getData(),
+                            isProfileComplete,
                             user_avatar,
                             certification,
                             license)
@@ -115,7 +117,7 @@ public class UpdateProfileModel extends BaseApiViewModel {
         });
     }
 
-    public void updatePatient(CreateUserRequestModel createUserRequestModel) {
+    public void updatePatient(CreateUserRequestModel createUserRequestModel, Boolean isProfileComplete) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -147,6 +149,7 @@ public class UpdateProfileModel extends BaseApiViewModel {
                     }
 
                     getAuthApiService().updatePatient(createUserRequestModel.getUser_data(),
+                            isProfileComplete,
                             user_avatar,
                             insuranceFront,
                             insuranceBack,

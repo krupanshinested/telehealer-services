@@ -80,6 +80,7 @@ public class ArgumentKeys {
     public static final String SIGNATURE_PATH = "signaturePath";
     public static final String CHECK_CONNECTION_STATUS = "checkConnectionStatus";
     public static final String IS_VERIFY_OTP = "verifyOtp";
+    public static final String IS_DETAIL_PENDING = "detailPending";
     public static final String ORDER_DATA = "order_data";
     public static final String USER_NAME = "user_name";
     public static final String IS_MANUAL_ENTRY = "isManualEntry";
