@@ -37,6 +37,7 @@ import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.doctor.BAAFragment;
 import com.thealer.telehealer.views.signup.doctor.CreateDoctorDetailFragment;
 import com.thealer.telehealer.views.signup.doctor.DoctorCertificateFragment;
@@ -78,7 +79,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     public ImageView closeIv;
     private TextView viewInfoTv;
     private ImageView helpIv;
-    boolean isVerifyOtp = false;
+    boolean isVerifyOtp = false, isDetailPending = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,10 +94,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
         if (getIntent().getExtras() != null) {
             isVerifyOtp = getIntent().getExtras().getBoolean(ArgumentKeys.IS_VERIFY_OTP, false);
+            isDetailPending = getIntent().getExtras().getBoolean(ArgumentKeys.IS_DETAIL_PENDING, false);
         }
 
         if (isVerifyOtp) {
             showOtpVerification();
+        } if (isDetailPending){
+            showUserDetail();
         } else {
             if (savedInstanceState != null) {
                 currentStep = savedInstanceState.getInt(CURRENT_STEP);
@@ -107,6 +111,25 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
+    private void showUserDetail() {
+
+        signupToolbarTitleTv.setVisibility(View.GONE);
+        if (UserType.isUserPatient()){
+            currentStep = 6;
+        }
+        else if (UserType.isUserDoctor()){
+            if (currentStep == 7 && appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_DOCTOR_SEARCH)) {
+                currentStep = 9;
+            }else {
+                currentStep=7;
+            }
+        }
+        else {
+            currentStep = 7;
+        }
+        setFragment(null);
+    }
+
     private void showOtpVerification() {
         signupToolbarTitleTv.setVisibility(View.GONE);
         OtpVerificationFragment otpVerificationFragment = new OtpVerificationFragment();
@@ -114,6 +137,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         bundle.putBoolean(ArgumentKeys.IS_VERIFY_OTP, true);
         otpVerificationFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.signup_fragment_container, otpVerificationFragment).commit();
+
+        if (UserType.isUserPatient()){
+            currentStep =5;
+        }
+        else {
+            currentStep =6;
+        }
     }
 
     @Override
@@ -164,23 +194,23 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     viewInfoStack.push(getString(R.string.registration_email_phone_verify_info));
                     return new RegistrationEmailMobileVerificationFragment();
                 case 4:
-                    viewInfoStack.push(getResources().getString(R.string.reg_patient_info));
-                    return new PatientRegistrationDetailFragment();
-                case 5:
-                    viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
-                     return new AgreementFragment();
-                case 6:
-                    viewInfoStack.push(getResources().getString(R.string.notice_to_consumer_info));
-                    return new AgreementFragment();
-                case 7:
-                    viewInfoStack.push(getResources().getString(R.string.payment_info));
-                    return new PatientChoosePaymentFragment();
-                case 8:
                     viewInfoStack.push(getResources().getString(R.string.password_info));
                     return new CreatePasswordFragment();
-                case 9:
+                case 5:
                     viewInfoStack.push(getResources().getString(R.string.otp_info));
                     return new OtpVerificationFragment();
+                case 6:
+                    viewInfoStack.push(getResources().getString(R.string.reg_patient_info));
+                    return new PatientRegistrationDetailFragment();
+                case 7:
+                    viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
+                    return new AgreementFragment();
+                case 8:
+                    viewInfoStack.push(getResources().getString(R.string.notice_to_consumer_info));
+                    return new AgreementFragment();
+                case 9:
+                    viewInfoStack.push(getResources().getString(R.string.payment_info));
+                    return new PatientChoosePaymentFragment();
                 default:
                     currentStep--;
                     return null;
@@ -202,29 +232,29 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             viewInfoStack.push(getString(R.string.registration_email_phone_verify_info));
                             return new RegistrationEmailMobileVerificationFragment();
                         case 5:
-                            viewInfoStack.push(getResources().getString(R.string.assistant_info));
-                            return new MedicalAssistantDetailFragment();
-                        case 6:
-                            viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
-                            return new AgreementFragment();
-                        case 7:
-                            viewInfoStack.push(getResources().getString(R.string.ma_certificate_info));
-                            return new MedicalAssistantCertificateUploadFragment();
-                        case 8:
-                            return new MedicalAssistantCertificatePreviewFragment();
-                        case 9:
                             viewInfoStack.push(getResources().getString(R.string.password_info));
                             return new CreatePasswordFragment();
-                        case 10:
+                        case 6:
                             viewInfoStack.push(getResources().getString(R.string.otp_info));
                             return new OtpVerificationFragment();
+                        case 7:
+                            viewInfoStack.push(getResources().getString(R.string.assistant_info));
+                            return new MedicalAssistantDetailFragment();
+                        case 8:
+                            viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
+                            return new AgreementFragment();
+                        case 9:
+                            viewInfoStack.push(getResources().getString(R.string.ma_certificate_info));
+                            return new MedicalAssistantCertificateUploadFragment();
+                        case 10:
+                            return new MedicalAssistantCertificatePreviewFragment();
                         default:
                             currentStep--;
                             return null;
                     }
                 } else if (isUserDoctor()) {
-                    if (currentStep == 5 && appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_DOCTOR_SEARCH)) {
-                        currentStep = 7;
+                    if (currentStep == 7 && appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_DOCTOR_SEARCH)) {
+                        currentStep = 9;
                     }
                     switch (currentStep) {
                         case 2:
@@ -237,35 +267,35 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             viewInfoStack.push(getString(R.string.registration_email_phone_verify_info));
                             return new RegistrationEmailMobileVerificationFragment();
                         case 5:
-                            viewInfoStack.push(getString(R.string.what_is_your_name));
-                            return new DoctorSearchNameFragment();
-                        case 6:
-                            viewInfoStack.push(getString(R.string.doctor_select_profile_info));
-                            return new DoctorListFragment();
-                        case 7:
-                            viewInfoStack.push(getString(R.string.doctor_detail_info));
-                            return new CreateDoctorDetailFragment();
-                        case 8:
-                            viewInfoStack.push(getString(R.string.doctor_driving_license_hint));
-                            return new DoctorDriverLicenseFragment();
-                        case 9:
-                            viewInfoStack.push(getString(R.string.doctor_certificate_hint));
-                            return new DoctorCertificateFragment();
-                        case 10:
-                            viewInfoStack.push(getString(R.string.release_info));
-                            return new DoctorRegistrationInfoFragment();
-                        case 11:
-                            viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
-                            return new AgreementFragment();
-                        case 12:
                             viewInfoStack.push(getResources().getString(R.string.password_info));
                             return new CreatePasswordFragment();
-                        case 13:
-                            viewInfoStack.push(getResources().getString(R.string.baa_info));
-                            return new BAAFragment();
-                        case 14:
+                        case 6:
                             viewInfoStack.push(getResources().getString(R.string.otp_info));
                             return new OtpVerificationFragment();
+                        case 7:
+                            viewInfoStack.push(getString(R.string.what_is_your_name));
+                            return new DoctorSearchNameFragment();
+                        case 8:
+                            viewInfoStack.push(getString(R.string.doctor_select_profile_info));
+                            return new DoctorListFragment();
+                        case 9:
+                            viewInfoStack.push(getString(R.string.doctor_detail_info));
+                            return new CreateDoctorDetailFragment();
+                        case 10:
+                            viewInfoStack.push(getString(R.string.doctor_driving_license_hint));
+                            return new DoctorDriverLicenseFragment();
+                        case 11:
+                            viewInfoStack.push(getString(R.string.doctor_certificate_hint));
+                            return new DoctorCertificateFragment();
+                        case 12:
+                            viewInfoStack.push(getString(R.string.release_info));
+                            return new DoctorRegistrationInfoFragment();
+                        case 13:
+                            viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
+                            return new AgreementFragment();
+                        case 14:
+                            viewInfoStack.push(getResources().getString(R.string.baa_info));
+                            return new BAAFragment();
                         default:
                             currentStep--;
                             return null;
@@ -377,19 +407,36 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         setFragment(bundle);
     }
 
+    private boolean isAllowedToGoPreviousStep() {
+        Fragment currentFragment =  getSupportFragmentManager().getFragments().get(0);
+        if (currentFragment instanceof OtpVerificationFragment || getCurrentFragment() instanceof OtpVerificationFragment) {
+            return false;
+        } else if (currentFragment instanceof PatientRegistrationDetailFragment || getCurrentFragment() instanceof PatientRegistrationDetailFragment) {
+            return false;
+        } else if (currentFragment instanceof MedicalAssistantDetailFragment || getCurrentFragment() instanceof MedicalAssistantDetailFragment) {
+            return false;
+        } else if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_DOCTOR_SEARCH) && (currentFragment instanceof DoctorSearchNameFragment || getCurrentFragment() instanceof DoctorSearchNameFragment)) {
+            return false;
+        } else if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_DOCTOR_SEARCH) && (currentFragment instanceof CreateDoctorDetailFragment || getCurrentFragment() instanceof CreateDoctorDetailFragment)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     @Override
     public void onBackPressed() {
 
         if (getSupportFragmentManager() != null && getSupportFragmentManager().getBackStackEntryCount() > 1) {
 
-            if (getSupportFragmentManager().getFragments().get(0) instanceof OtpVerificationFragment || getCurrentFragment() instanceof OtpVerificationFragment) {
-
+            if  (!isAllowedToGoPreviousStep()) {
                 Utils.showAlertDialog(this, getString(R.string.alert), getString(R.string.do_you_want_to_close),
                         getString(R.string.ok), getString(R.string.cancel),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
+                                startActivity(new Intent(SignUpActivity.this, OnBoardingActivity.class));
                                 finish();
                             }
                         },
@@ -405,9 +452,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 getSupportFragmentManager().popBackStack();
 
             } else {
-
                 getSupportFragmentManager().popBackStack();
-
                 --currentStep;
                 if (currentStep == 6 && UserType.isUserDoctor() && appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_DOCTOR_SEARCH)) {
                     currentStep = 4;
@@ -418,7 +463,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     viewInfoStack.pop();
                     setViewInfoText();
                 }
-
             }
 
         } else {
@@ -511,6 +555,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onSuccessViewCompletion(boolean success) {
         if (success) {
+            if (UserDetailPreferenceManager.isProfileInComplete()){
+                onCompletionResult(null, true, null);
+                return;
+            }
+
             checkSignalKeys();
         }
     }
@@ -533,7 +582,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             bundle.putBoolean(ArgumentKeys.IS_FROM_SIGNUP, true);
             startActivity(new Intent(SignUpActivity.this, QuickLoginActivity.class).putExtras(bundle));
         } else {
-            startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+            Utils.validUserToLogin(SignUpActivity.this);
         }
         finish();
     }

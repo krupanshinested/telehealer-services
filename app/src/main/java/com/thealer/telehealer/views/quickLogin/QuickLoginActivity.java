@@ -216,22 +216,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     }
 
     private void goToMainActivity() {
-        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
-
-        if (whoAmIApiResponseModel != null && whoAmIApiResponseModel.getUser_activated() != null &&
-                whoAmIApiResponseModel.getUser_activated().equals(Constants.ACTIVATION_PENDING)) {
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(ArgumentKeys.IS_VERIFY_OTP, true);
-
-            startActivity(new Intent(this, SignUpActivity.class).putExtras(bundle)
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-            finish();
-        } else {
-            UserDetailPreferenceManager.didUserLoggedIn();
-            Utils.updateLastLogin();
-            startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-            finish();
-        }
+        Utils.validUserToLogin(getApplicationContext());
     }
 
     private void sendQuickLoginBroadCast(Bundle bundle) {

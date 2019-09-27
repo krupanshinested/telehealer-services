@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -139,7 +140,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
         String description;
 
         if (otpType == signup) {
-            description = getString(R.string.registration_success);
+            description = getString(R.string.account_created);
         } else {
             description = getString(R.string.reset_password_success);
         }
@@ -355,12 +356,18 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
 
         if (otpType == signup) {
             String phone;
+
             if (!isVerifyUser) {
                 CreateUserRequestModel createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
                 phone = createUserRequestModel.getUser_data().getPhone();
             } else {
                 phone = UserDetailPreferenceManager.getWhoAmIResponse().getPhone();
             }
+
+            if (TextUtils.isEmpty(phone)) {
+                phone = getString(R.string.your_phone_number);
+            }
+
             titleTv.setText(getString(R.string.enter_the_authorization_code_sent_to) + " " + phone);
         }
 

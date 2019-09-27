@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.appbar.AppBarLayout;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,21 +17,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import com.thealer.telehealer.views.signup.SignUpActivity;
+import com.thealer.telehealer.views.signup.SignupBaseFragment;
 
 /**
  * Created by Aswin on 12,October,2018
  */
-public class PatientChoosePaymentFragment extends BaseFragment implements View.OnClickListener {
+public class PatientChoosePaymentFragment extends SignupBaseFragment implements View.OnClickListener {
 
     private CustomButton choosePaymentInsuranceBtn;
     private CustomButton choosePaymentCashBtn;
@@ -140,7 +143,8 @@ public class PatientChoosePaymentFragment extends BaseFragment implements View.O
                         dialog.dismiss();
                         switch (currentScreenType) {
                             case Constants.forRegistration:
-                                onActionCompleteInterface.onCompletionResult(null, true, null);
+                                CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+                                postPatientDetail(createUserRequestModel);
                                 break;
                             case Constants.forProfileUpdate:
                                 Bundle bundle = new Bundle();

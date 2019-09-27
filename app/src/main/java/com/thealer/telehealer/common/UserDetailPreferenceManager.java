@@ -34,6 +34,8 @@ public class UserDetailPreferenceManager {
     }
 
 
+    public static final String PROFILE_INCOMPLETE = "PROFILE_INCOMPLETE";
+
     public static String getUserDisplayName() {
         if (UserType.isUserDoctor()) {
             return "Dr. " + getFirst_name() + " " + getLast_name() + " " + getTitle();
@@ -416,4 +418,8 @@ public class UserDetailPreferenceManager {
         }
     }
 
+    public static boolean isProfileInComplete() {
+        WhoAmIApiResponseModel whoAmIApiResponseModel = getWhoAmIResponse();
+        return whoAmIApiResponseModel.getStatus() != null && whoAmIApiResponseModel.getStatus().equals(PROFILE_INCOMPLETE);
+    }
 }

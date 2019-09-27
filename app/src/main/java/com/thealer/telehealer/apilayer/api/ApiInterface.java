@@ -15,6 +15,7 @@ import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
 import com.thealer.telehealer.apilayer.models.Payments.VitalVisitResponse;
+import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileApiResponseModel;
 import com.thealer.telehealer.apilayer.models.accessLog.AccessLogApiResponseModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionRequestModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
@@ -149,6 +150,7 @@ public interface ApiInterface {
     String END_DATE = "end_date";
     String ASSIGNOR = "assignor";
     String DOWNLOAD_SUMMARY = "download_summary";
+    String PROFILE_COMPLETE = "profile_complete";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -183,22 +185,25 @@ public interface ApiInterface {
 
     @Multipart
     @PUT("api/users/profile")
-    Observable<CommonUserApiResponseModel> updateMedicalAssistant(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
-                                                                  @Part(USER_DETAIL) DataBean user_detail,
-                                                                  @Part MultipartBody.Part user_avatar,
-                                                                  @Part MultipartBody.Part certification);
+    Observable<UpdateProfileApiResponseModel> updateMedicalAssistant(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
+                                                                     @Part(USER_DETAIL) DataBean user_detail,
+                                                                     @Part(PROFILE_COMPLETE) Boolean profile_complete,
+                                                                     @Part MultipartBody.Part user_avatar,
+                                                                     @Part MultipartBody.Part certification);
 
     @Multipart
     @PUT("api/users/profile")
-    Observable<CommonUserApiResponseModel> updateDoctor(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
+    Observable<UpdateProfileApiResponseModel> updateDoctor(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
                                                         @Part(USER_DETAIL) DataBean user_detail,
+                                                        @Part(PROFILE_COMPLETE) Boolean profile_complete,
                                                         @Part MultipartBody.Part user_avatar,
                                                         @Part MultipartBody.Part certification,
                                                         @Part MultipartBody.Part license);
 
     @Multipart
     @PUT("api/users/profile")
-    Observable<CommonUserApiResponseModel> updatePatient(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
+    Observable<UpdateProfileApiResponseModel> updatePatient(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
+                                                         @Part(PROFILE_COMPLETE) Boolean profile_complete,
                                                          @Part MultipartBody.Part user_avatar,
                                                          @Part MultipartBody.Part insurance_front,
                                                          @Part MultipartBody.Part insurance_back,

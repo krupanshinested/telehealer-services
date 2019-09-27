@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signin;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,6 +54,7 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
@@ -64,6 +66,7 @@ import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import com.thealer.telehealer.views.signup.OtpVerificationFragment;
+import com.thealer.telehealer.views.signup.SignUpActivity;
 
 import org.whispersystems.libsignal.logging.Log;
 
@@ -105,6 +108,10 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         public void onQuickLogin(int status) {
             if (status != ArgumentKeys.QUICK_LOGIN_CREATED) {
                 authResponse = status;
+            }
+
+            if (authResponse == ArgumentKeys.AUTH_SUCCESS && appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN) != null) {
+                makeRefreshTokenApiCall();
             }
         }
     };
@@ -153,6 +160,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                         EventRecorder.updateUserId(whoAmIApiResponseModel.getUser_guid());
                         EventRecorder.recordUserStatus(whoAmIApiResponseModel.getUser_activated());
 
+                        Log.d("SiginActivity","trigg checkSignalKeys whoami");
                         checkSignalKeys();
 
                     } else {
@@ -188,6 +196,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, authToken);
 
                             if (isQuickLogin) {
+                                Log.e("SiginActivity","trigg checkSignalKeys isQuickLogin");
                                 checkSignalKeys();
                             } else {
                                 appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, refreshToken);
@@ -263,29 +272,81 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void checkSignalKeys() {
+        Log.e("SiginActivity","checkSignalKeys");
         SignalKeyManager
                 .getInstance(SigninActivity.this, new SignalKeyManager.OnUserKeyReceivedListener() {
                     @Override
                     public void onKeyReceived(UserKeysApiResponseModel userKeysApiResponseModel) {
-                        proceedLoginSuccess();
+                        Log.e("SiginActivity","checkSignalKeys respo");
+                        checkUserValidation();
                     }
                 })
                 .getUserKey(null, true, true, true);
     }
 
+    private void checkUserValidation() {
+        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+
+        if (whoAmIApiResponseModel != null && whoAmIApiResponseModel.getUser_activated() != null &&
+                whoAmIApiResponseModel.getUser_activated().equals(Constants.ACTIVATION_PENDING)) {
+            showOTPContent();
+        }  else if (UserDetailPreferenceManager.isProfileInComplete()){
+           showProfileIncompleteContent();
+        } else {
+            proceedLoginSuccess();
+        }
+    }
+
+    private void showProfileIncompleteContent() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.banner_help);
+        bundle.putString(ArgumentKeys.TITLE, getString(R.string.profile_incomplete_title));
+        bundle.putString(ArgumentKeys.DESCRIPTION, getString(R.string.profile_incomplete_content));
+        bundle.putString(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
+        bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
+        bundle.putBoolean(ArgumentKeys.IS_BUTTON_NEEDED, true);
+        bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
+        bundle.putBoolean(ArgumentKeys.IS_BOTTOM_TEXT_NEEDED, false);
+
+        startActivityForResult(new Intent(this, ContentActivity.class).putExtras(bundle), RequestID.REQ_PROFILE_INCOMPLETE);
+    }
+
+    private void showOTPContent() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.banner_help);
+        bundle.putString(ArgumentKeys.TITLE, getString(R.string.otp_validation_title));
+        bundle.putString(ArgumentKeys.DESCRIPTION, getString(R.string.otp_validation_content));
+        bundle.putString(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
+        bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
+        bundle.putBoolean(ArgumentKeys.IS_BUTTON_NEEDED, true);
+        bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
+        bundle.putBoolean(ArgumentKeys.IS_BOTTOM_TEXT_NEEDED, false);
+
+        startActivityForResult(new Intent(this, ContentActivity.class).putExtras(bundle), RequestID.REQ_OTP_VALIDATION);
+    }
+
     private void proceedLoginSuccess() {
         if (isQuickLogin) {
-            goToMainActivity();
+           Utils.validUserToLogin(getApplicationContext());
         } else {
             Log.d("SignInActivity","proceedLoginSuccess");
             if (quickLoginType == -1) {
                 startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class));
-            } else {
-                goToMainActivity();
-            }
+            } else
+                Utils.validUserToLogin(getApplicationContext());
 
             finish();
 
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestID.REQ_OTP_VALIDATION && resultCode == Activity.RESULT_OK){
+            proceedLoginSuccess();
+        } else if (requestCode == RequestID.REQ_PROFILE_INCOMPLETE && resultCode == Activity.RESULT_OK){
+            proceedLoginSuccess();
         }
     }
 
@@ -419,9 +480,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
         LocalBroadcastManager.getInstance(this).registerReceiver(quickLoginBroadcastReceiver, new IntentFilter(getString(R.string.quick_login_broadcast_receiver)));
         setQuickLoginView();
-        if (authResponse == ArgumentKeys.AUTH_SUCCESS && appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN) != null) {
-            makeRefreshTokenApiCall();
-        }
+
 
         connectivityManager.registerNetworkCallback(new NetworkRequest.Builder().build(), networkCallback);
 
@@ -452,13 +511,6 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         if (connectivityManager != null && networkCallback != null){
             connectivityManager.unregisterNetworkCallback(networkCallback);
         }
-    }
-
-    private void goToMainActivity() {
-        Log.d("SignInActivity","goToMainActivity");
-        UserDetailPreferenceManager.didUserLoggedIn();
-        startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-        finish();
     }
 
     private void setQuickLoginView() {

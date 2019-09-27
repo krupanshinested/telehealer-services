@@ -495,7 +495,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             case Constants.EDIT_MODE:
                 onViewChangeInterface.enableNext(false);
                 enableNext(false);
-                updateProfileModel.updateMedicalAssistant(createUserRequestModel());
+                updateProfileModel.updateMedicalAssistant(createUserRequestModel(), null);
                 break;
             case Constants.VIEW_MODE:
                 currentDisplayType = Constants.EDIT_MODE;
