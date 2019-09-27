@@ -14,20 +14,18 @@ import android.widget.ImageView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
-import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
-import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+import com.thealer.telehealer.views.signup.SignupBaseFragment;
 
 /**
  * Created by Aswin on 16,October,2018
  */
-public class MedicalAssistantCertificatePreviewFragment extends BaseFragment implements DoCurrentTransactionInterface {
+public class MedicalAssistantCertificatePreviewFragment extends SignupBaseFragment implements DoCurrentTransactionInterface {
     private Bitmap bitmap;
     private ImageView certificatePreviewIv;
     private String certificatePath;
     private OnViewChangeInterface onViewChangeInterface;
-    private OnActionCompleteInterface onActionCompleteInterface;
 
 
     @Nullable
@@ -43,7 +41,6 @@ public class MedicalAssistantCertificatePreviewFragment extends BaseFragment imp
     public void onAttach(Context context) {
         super.onAttach(context);
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
-        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
     }
 
     private void initView(View view) {
@@ -71,6 +68,7 @@ public class MedicalAssistantCertificatePreviewFragment extends BaseFragment imp
     public void doCurrentTransaction() {
         CreateUserRequestModel createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
         createUserRequestModel.setCertification_path(certificatePath);
-        onActionCompleteInterface.onCompletionResult(null, true, null);
+        postMADetail(createUserRequestModel);
+
     }
 }

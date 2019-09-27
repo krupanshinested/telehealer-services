@@ -74,9 +74,11 @@ import com.thealer.telehealer.views.common.CustomDialogs.OptionSelectionDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OptionsSelectionAdapter;
+import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
+import com.thealer.telehealer.views.signup.SignUpActivity;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -1565,5 +1567,28 @@ public class Utils {
         comboImage.drawBitmap(fr, 0f, 0f, null);
         comboImage.drawBitmap(sc, fr.getWidth(), 0f , null);
         return comboBitmap;
+    }
+
+    public static void validUserToLogin(Context context){
+        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+
+        if (whoAmIApiResponseModel != null && whoAmIApiResponseModel.getUser_activated() != null &&
+                whoAmIApiResponseModel.getUser_activated().equals(Constants.ACTIVATION_PENDING)) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(ArgumentKeys.IS_VERIFY_OTP, true);
+
+            context.startActivity(new Intent(context, SignUpActivity.class).putExtras(bundle)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+        }  else if (UserDetailPreferenceManager.isProfileInComplete()){
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(ArgumentKeys.IS_DETAIL_PENDING, true);
+
+            context.startActivity(new Intent(context, SignUpActivity.class).putExtras(bundle)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+        } else {
+            UserDetailPreferenceManager.didUserLoggedIn();
+            Utils.updateLastLogin();
+            context.startActivity(new Intent(context, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+        }
     }
 }
