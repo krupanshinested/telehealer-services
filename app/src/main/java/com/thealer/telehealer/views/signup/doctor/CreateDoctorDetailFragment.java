@@ -646,9 +646,6 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         if (titleEt.getText().toString().isEmpty()) {
             setError(titleEt);
         }
-        if (bioEt.getText().toString().isEmpty()) {
-            setError(bioEt);
-        }
         if (npiEt.getText().toString().isEmpty()) {
             setError(npiEt);
         }
@@ -832,9 +829,6 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
             case R.id.title_et:
                 titleTil.setError(getString(R.string.title_empty_error));
                 break;
-            case R.id.bio_et:
-                bioTil.setError(getString(R.string.bio_empty_error));
-                break;
             case R.id.add_address_et:
                 addAddressTil.setError(getString(R.string.address_empty_error));
                 break;
@@ -866,7 +860,6 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         } else if (!firstnameEt.getText().toString().isEmpty() &&
                 !lastnameEt.getText().toString().isEmpty() &&
                 !titleEt.getText().toString().isEmpty() &&
-                !bioEt.getText().toString().isEmpty() &&
                 createUserRequestModel.getUser_detail().getData().getPractices().size() > 0 &&
                 !liabilityEt.getText().toString().isEmpty() &&
                 hasValidLicense() &&
@@ -1094,7 +1087,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                 if (needToPutDoctorInOnboarding()) {
                     createUserRequestModel.getUser_data().setStatus(Constants.ONBOARDING_PENDING);
                 }
-                updateProfileModel.updateDoctor(createUserRequestModel);
+                updateProfileModel.updateDoctor(createUserRequestModel, null);
                 break;
             case Constants.VIEW_MODE:
                 currentDisplayType = Constants.EDIT_MODE;

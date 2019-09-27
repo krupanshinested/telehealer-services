@@ -71,7 +71,7 @@ public class SplashActivity extends BaseActivity {
                         if (appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == -1) {
                             startActivity(new Intent(SplashActivity.this, QuickLoginActivity.class));
                         } else {
-                            startActivity(new Intent(SplashActivity.this, HomeActivity.class));
+                            Utils.validUserToLogin(SplashActivity.this);
                         }
                     }
 

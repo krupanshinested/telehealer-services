@@ -35,6 +35,7 @@ import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+import com.thealer.telehealer.views.signup.SignupBaseFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +44,7 @@ import java.util.List;
 /**
  * Created by Aswin on 14,October,2018
  */
-public class PatientUploadInsuranceFragment extends BaseFragment implements DoCurrentTransactionInterface, CameraInterface, View.OnClickListener {
+public class PatientUploadInsuranceFragment extends SignupBaseFragment implements DoCurrentTransactionInterface, CameraInterface, View.OnClickListener {
 
     private TextView titleTv;
     private LinearLayout firstInsuranceLl;
@@ -294,7 +295,7 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements DoCu
                 createUserRequestModel.setSecondary_insurance_front_path(secondaryFrontImgPath);
                 createUserRequestModel.setSecondary_insurance_back_path(secondaryBackImgPath);
 
-                onActionCompleteInterface.onCompletionResult(null, true, null);
+                postPatientDetail(createUserRequestModel);
                 break;
             case Constants.forProfileUpdate:
                 Bundle bundle = new Bundle();

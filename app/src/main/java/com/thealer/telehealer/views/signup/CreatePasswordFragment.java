@@ -127,8 +127,6 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
                             appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, createUserApiResponseModel.getData().getRefresh_token());
                             appPreference.setString(PreferenceConstants.USER_NAME, createUserApiResponseModel.getData().getName());
 
-                            createUserApiViewModel.baseApiResponseModelMutableLiveData.setValue(null);
-
                             Bundle bundle = new Bundle();
                             bundle.putString(ArgumentKeys.ROLE,createUserRequestModel.getUser_data().getRole());
 
@@ -362,11 +360,7 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
                 break;
             default:
                 createUserRequestModel.getUser_data().setPassword(passwordEt.getText().toString());
-                if (UserType.isUserDoctor()) {
-                    onActionCompleteInterface.onCompletionResult(null, true, null);
-                } else {
-                    createUser();
-                }
+                createUser();
         }
     }
 

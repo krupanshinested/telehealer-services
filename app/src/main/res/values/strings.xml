@@ -615,6 +615,10 @@
     <string name="telehealer_audio">%s Audio....</string>
     <string name="skip">Skip</string>
     <string name="proceed">PROCEED</string>
+    <string name="otp_validation_title">Validation Pending</string>
+    <string name="profile_incomplete_title">Profile Incomplete</string>
+    <string name="otp_validation_content">Phonenumber validation is still pending. Please validate it by entering the authorization code</string>
+    <string name="profile_incomplete_content">Your profile is incomplete. Please complete it before using our platform</string>
     <string name="trial_period_expired_doc_sec_1">Thank you for using %s! \n\nUnfortunately, your free trial period has now ended. Please provide a payment method to continue using the platform. \n\nVisit </string>
     <string name="trial_period_expired_doc_sec_2">for details around pricing</string>
     <string name="trial_period_expired_ma_sec_1">Thank you for using %1$s! \n\nUnfortunately, the free trial period has now ended. Please request %2$s to add a payment method to continue using the platform.</string>
@@ -1385,4 +1389,7 @@
     <string name="accept_appointment_request">Create Appointment Requests</string>
     <string name="no_new_appointment">No new Appointment request</string>
     <string name="appointment_not_allowed_create">%s does not currently accept appointment requests. Please check back at a later time.</string>
+    <string name="registration_is_on_process">Registration is on process.</string>
+    <string name="registration_error">Registration is not successful</string>
+    <string name="account_created">Your account has been created.\n\nLets spend a few quick minutes to setup your profile</string>
 </resources>
