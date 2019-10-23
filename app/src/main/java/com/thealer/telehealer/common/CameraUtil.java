@@ -131,13 +131,15 @@ public class CameraUtil {
 
                 Cursor cursor = context.getContentResolver().query(selectedImage,
                         filePathColumn, null, null, null);
-                cursor.moveToFirst();
+                if (cursor != null) {
+                    cursor.moveToFirst();
 
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    cursor.close();
 
-                return picturePath;
+                    return picturePath;
+                }
             }
         }
         return null;

@@ -195,9 +195,13 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     }
 
     private void showSuccessViewDialog(Bundle bundle) {
-        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-        successViewDialogFragment.setArguments(bundle);
-        successViewDialogFragment.show(getSupportFragmentManager(), SuccessViewDialogFragment.class.getSimpleName());
+        try {
+            SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+            successViewDialogFragment.setArguments(bundle);
+            successViewDialogFragment.show(getSupportFragmentManager(), SuccessViewDialogFragment.class.getSimpleName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

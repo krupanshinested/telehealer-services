@@ -121,6 +121,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
         lastLoginTv.setText(getString(R.string.last_login, appPreference.getString(PreferenceConstants.LAST_LOGIN)));
 
+        email_id.hideOrShowRightArrow(false);
+        phone_number.hideOrShowRightArrow(false);
 
         try {
             versionTv.setText(getString(R.string.version) + " " + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName);
