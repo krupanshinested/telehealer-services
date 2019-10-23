@@ -12,8 +12,8 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 13
-        versionName "2.0.0"
+        versionCode 15
+        versionName "2.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -40,8 +40,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 28
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 13
-            versionName "2.0.0"
+            versionCode 15
+            versionName "2.0.2"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
         }

@@ -480,6 +480,7 @@
     <string name="forget_device">FORGET DEVICE</string>
     <string name="device_information">Device Information :</string>
     <string name="support">Support :</string>
+    <string name="support_new">Support</string>
     <string name="START">START</string>
     <string name="failed_to_connect">Failed to Connect</string>
     <string name="save_and_close"><![CDATA[SAVE & CLOSE]]></string>

@@ -350,6 +350,10 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     }
 
     private void showSearchResult(String search) {
+        if (commonUserApiResponseModelList == null) {
+            return;
+        }
+
         List<CommonUserApiResponseModel> searchResult = new ArrayList<>();
         for (CommonUserApiResponseModel userModel : commonUserApiResponseModelList) {
             if (userModel.getFirst_name().toLowerCase().contains(search) ||
