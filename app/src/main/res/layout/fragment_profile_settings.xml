@@ -39,6 +39,20 @@
                     android:background="@color/colorGrey_light" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/email_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_mail"
+                    app:title="@string/email" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/phone_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_phone"
+                    app:title="@string/phone_number" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -66,20 +80,6 @@
                     android:layout_height="wrap_content"
                     app:icon="@drawable/ic_settings"
                     app:title="@string/settings" />
-
-                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/email_id"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/ic_mail"
-                    app:title="@string/email" />
-
-                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/phone_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/ic_phone"
-                    app:title="@string/phone_number" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/change_password"
@@ -156,7 +156,7 @@
                     android:id="@+id/feedback"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:title="@string/feedback" />
+                    app:title="@string/support_new" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/terms_and_condition"

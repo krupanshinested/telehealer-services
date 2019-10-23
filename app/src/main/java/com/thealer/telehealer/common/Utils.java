@@ -693,7 +693,7 @@ public class Utils {
     public static void hideKeyboard(Activity activity) {
         View view = activity.getCurrentFocus();
         if (view == null) {
-            view = new View(activity);
+            return;
         }
         if (view.hasFocus()) {
             view.clearFocus();
@@ -1419,7 +1419,7 @@ public class Utils {
             userName = whoAmIApiResponseModel.getUserDisplay_name();
         }
         Intent intent = new Intent(Intent.ACTION_SENDTO);
-        String mailto = "mailto:support+android@telehealer.com" +
+        String mailto = "mailto:support@telehealer.com" +
                 "?cc=" +
                 "&subject=" +
                 "&body=" + Uri.encode(String.format("Issue :\n\nPhone Number : %s\n\nName : %s\n\n\n\nApp Version : " + BuildConfig.VERSION_NAME + "\nDevice Type : " + Build.MODEL + "\nOS Details : " + Build.VERSION.RELEASE + "\nRegion : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "\n\nCheers!\n%s", phoneNumber, userName, userName));
