@@ -320,6 +320,10 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     }
 
     private void showSearchList(String search) {
+        if (associationApiResponseModel  == null || associationApiResponseModel.getResult() == null) {
+            return;
+        }
+
         List<CommonUserApiResponseModel> searchList = new ArrayList<>();
         for (CommonUserApiResponseModel usermodel : associationApiResponseModel.getResult()) {
             if (usermodel.getUserDisplay_name().toLowerCase().contains(search)) {

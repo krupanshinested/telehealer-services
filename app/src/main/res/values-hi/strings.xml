@@ -443,6 +443,7 @@
     <string name="forget_device">भूल जाओ</string>
     <string name="device_information">डिवाइस जानकारी :</string>
     <string name="support">समर्थन :</string>
+    <string name="support_new">समर्थन</string>
     <string name="START">शुरु</string>
     <string name="failed_to_connect">कनेक्ट करने में विफल</string>
     <string name="save_and_close"><![CDATA[सहेजे बंद करें]]></string>
