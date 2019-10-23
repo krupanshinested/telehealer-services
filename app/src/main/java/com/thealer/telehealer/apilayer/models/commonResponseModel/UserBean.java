@@ -122,7 +122,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
         if (dob != null && !dob.isEmpty())
             return "DoB : " + dob;
         else
-            return dob;
+            return dob == null ? "" : dob;
     }
 
     public String getUnformattedDob() {
