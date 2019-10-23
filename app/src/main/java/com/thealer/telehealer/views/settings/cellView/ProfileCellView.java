@@ -105,6 +105,14 @@ public class ProfileCellView extends ConstraintLayout {
         }
     }
 
+    public void hideOrShowRightArrow(Boolean isVisible) {
+        if (!isVisible) {
+            rightArrowImageView.setVisibility(GONE);
+        } else {
+            rightArrowImageView.setVisibility(VISIBLE);
+        }
+    }
+
     public void hideSplitter(Boolean hideSplitter) {
         if (hideSplitter) {
             splitter.setVisibility(GONE);

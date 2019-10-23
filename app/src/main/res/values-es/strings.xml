@@ -444,6 +444,7 @@
     <string name="forget_device">Olvide el dispositivo</string>
     <string name="device_information">Información del dispositivo :</string>
     <string name="support">Apoyo:</string>
+    <string name="support_new">Apoyo</string>
     <string name="START">COMIENZO</string>
     <string name="failed_to_connect">Error al conectar</string>
     <string name="save_and_close"><![CDATA[GUARDAR CERRAR]]></string>
