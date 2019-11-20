@@ -116,7 +116,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         payments_billings = baseView.findViewById(R.id.payments_billings);
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
-        versionTv = (TextView) baseView.findViewById(R.id.version_tv);
+        versionTv
+                = (TextView) baseView.findViewById(R.id.version_tv);
         lastLoginTv = (TextView) baseView.findViewById(R.id.last_login_tv);
 
         lastLoginTv.setText(getString(R.string.last_login, appPreference.getString(PreferenceConstants.LAST_LOGIN)));
@@ -125,7 +126,12 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         phone_number.hideOrShowRightArrow(false);
 
         try {
-            versionTv.setText(getString(R.string.version) + " " + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName);
+            String versionString = getString(R.string.version) + " " + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+            if (getResources().getString(R.string.api_base_url).equals("https://api.dev.telehealer.com/")) {
+                versionString += " DEV";
+            }
+
+            versionTv.setText(versionString);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
