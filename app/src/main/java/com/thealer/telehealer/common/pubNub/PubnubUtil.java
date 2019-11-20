@@ -20,10 +20,13 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 import com.pubnub.api.models.consumer.push.PNPushAddChannelResult;
 import com.pubnub.api.models.consumer.push.PNPushRemoveAllChannelsResult;
 import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.apilayer.models.Pubnub.PubNubMessage;
 import com.thealer.telehealer.apilayer.models.Pubnub.PubNubViewModel;
 import com.thealer.telehealer.apilayer.models.Pubnub.PubnubChatModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Config;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Util.Call.CallChannel;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Utils;
@@ -43,7 +46,7 @@ import java.util.Map;
  * Created by rsekar on 12/25/18.
  */
 
-public class PubnubUtil {
+public class PubnubUtil extends SubscribeCallback {
     private static final String TAG = "aswin";
     public static PubnubUtil shared = new PubnubUtil();
     private PubNub pubnub;
@@ -51,7 +54,9 @@ public class PubnubUtil {
     public static final int CHAT_STATUS_ACTIVE = 0;
     public static final int CHAT_STATUS_INACTIVE = 1;
     public static final int CHAT_STATUS_BACKGROUND = 2;
-    private List<String> channels;
+
+    @Nullable
+    private SubscribeCallback callback;
 
     private PubnubUtil() {
         //punnub configuration
@@ -60,27 +65,12 @@ public class PubnubUtil {
         pnConfiguration.setPublishKey(Config.getPubNubPublisherKey());
         pnConfiguration.setSubscribeKey(Config.getPubNubSubscriberKey());
         pubnub = new PubNub(pnConfiguration);
+        pubnub.addListener(this);
 
         PNConfiguration voipConfiguration = new PNConfiguration();
         voipConfiguration.setPublishKey(Config.getVoipPublisherKey());
         voipConfiguration.setSubscribeKey(Config.getVoipSubscriberKey());
         voipPubnub = new PubNub(voipConfiguration);
-        voipPubnub.addListener(new SubscribeCallback() {
-            @Override
-            public void status(PubNub pubnub, PNStatus status) {
-
-            }
-
-            @Override
-            public void message(PubNub pubnub, PNMessageResult message) {
-
-            }
-
-            @Override
-            public void presence(PubNub pubnub, PNPresenceEventResult presence) {
-
-            }
-        });
     }
 
     void grantPubNub(String token, String channelName) {
@@ -261,15 +251,24 @@ public class PubnubUtil {
     }
 
     public void createChatChannel(String toGuid, String userGuid, SubscribeCallback subscribeCallback) {
-        channels = new ArrayList<>(Collections.singletonList(getChatChannel(toGuid, userGuid)));
-        pubnub.subscribe()
-                .channels(channels)
-                .execute();
-
-        pubnub.addListener(subscribeCallback);
+        subscribe(getChatChannel(toGuid, userGuid));
+        this.callback = subscribeCallback;
 
         setState(CHAT_STATUS_ACTIVE, toGuid, userGuid);
     }
+
+    public void subscribe(String channel) {
+        pubnub.subscribe()
+                .channels(new ArrayList<>(Collections.singletonList(channel)))
+                .execute();
+    }
+
+    public void unSubscribe(String channel) {
+        pubnub.unsubscribe()
+                .channels(new ArrayList<>(Collections.singletonList(channel)))
+                .execute();
+    }
+
 
     private String getChatChannel(String toGuid, String userGuid) {
         List<String> guidList = new ArrayList<>(Arrays.asList(toGuid, userGuid));
@@ -280,28 +279,27 @@ public class PubnubUtil {
     }
 
     public void unSubscribeChatChannel(String toGuid, String userGuid) {
-        pubnub.unsubscribe()
-                .channels(channels)
-                .execute();
+        unSubscribe(getChatChannel(toGuid, userGuid));
         setState(CHAT_STATUS_BACKGROUND, toGuid, userGuid);
     }
 
     private void setState(int state, String toGuid, String userGuid) {
 
-        getState(new GetStateInterface() {
+        String channel = getChatChannel(toGuid, userGuid);
+        getState(channel,new GetStateInterface() {
             @Override
             public void getStateMap(Map<String, Object> stateMap) {
                 if (stateMap == null) {
                     stateMap = new HashMap<>();
                 }
-                Map<String, Integer> map = new ObjectMapper().convertValue(stateMap.get(channels.get(0)), Map.class);
+                Map<String, Integer> map = new ObjectMapper().convertValue(stateMap.get(channel), Map.class);
                 map.put(userGuid, state);
 
                 Log.e("aswin", "getStateMap: " + map.toString());
 
                 pubnub.setPresenceState()
-                        .channels(channels)
-                        .uuid(channels.get(0))
+                        .channels(new ArrayList<>(Collections.singletonList(channel)))
+                        .uuid(channel)
                         .state(map)
                         .async(new PNCallback<PNSetStateResult>() {
                             @Override
@@ -314,31 +312,34 @@ public class PubnubUtil {
         });
     }
 
-    private void getState(GetStateInterface getStateInterface) {
+    private void getState(String channel,
+                          GetStateInterface getStateInterface) {
         pubnub.getPresenceState()
-                .channels(channels)
-                .uuid(channels.get(0))
+                .channels(new ArrayList<>(Collections.singletonList(channel)))
+                .uuid(channel)
                 .async(new PNCallback<PNGetStateResult>() {
                     @Override
                     public void onResponse(PNGetStateResult result, PNStatus status) {
                         if (result != null) {
-                            Log.e("aswin", "onResponse: ! " + result.getStateByUUID().get(channels.get(0)));
+                            Log.e("aswin", "onResponse: ! " + result.getStateByUUID().get(channel));
                             getStateInterface.getStateMap(result.getStateByUUID());
                         }
                     }
                 });
     }
 
-    public void getUserStatus(String userGuid, PubnubUserStatusInterface statusInterface) {
+    public void getUserStatus(String userGuid,
+                              PubnubUserStatusInterface statusInterface) {
+        String channel = getChatChannel(userGuid, UserDetailPreferenceManager.getUser_guid());
         pubnub.getPresenceState()
-                .channels(channels)
-                .uuid(channels.get(0))
+                .channels(new ArrayList<>(Collections.singletonList(channel)))
+                .uuid(channel)
                 .async(new PNCallback<PNGetStateResult>() {
                     @Override
                     public void onResponse(PNGetStateResult result, PNStatus status) {
                         if (result != null) {
                             try {
-                                Map<String, Integer> map = new ObjectMapper().convertValue(result.getStateByUUID().get(channels.get(0)), Map.class);
+                                Map<String, Integer> map = new ObjectMapper().convertValue(result.getStateByUUID().get(channel), Map.class);
                                 statusInterface.userStatus(map.get(userGuid));
                             } catch (Exception e) {
                                 statusInterface.userStatus(PubnubUtil.CHAT_STATUS_INACTIVE);
@@ -348,11 +349,24 @@ public class PubnubUtil {
                 });
     }
 
+    public void sendMessage(String channel,PubNubMessage message) {
+        pubnub.publish()
+                .message(message)
+                .channel(channel)
+                .async(new PNCallback<PNPublishResult>() {
+                    @Override
+                    public void onResponse(PNPublishResult result, PNStatus status) {
+                        Log.e(TAG, "onResponse: " + status.isError());
+                    }
+                });
+    }
+
     public void sendPubnubMessage(String toGuid, String message) {
-        getState(new GetStateInterface() {
+        String channel = getChatChannel(toGuid, UserDetailPreferenceManager.getUser_guid());
+        getState(channel,new GetStateInterface() {
             @Override
             public void getStateMap(Map<String, Object> stateMap) {
-                Map<String, Integer> map = new ObjectMapper().convertValue(stateMap.get(channels.get(0)), Map.class);
+                Map<String, Integer> map = new ObjectMapper().convertValue(stateMap.get(channel), Map.class);
 
                 if (map != null) {
                     int status = CHAT_STATUS_BACKGROUND;
@@ -368,7 +382,7 @@ public class PubnubUtil {
 
                         pubnub.publish()
                                 .message(pubnubChatModel)
-                                .channel(channels.get(0))
+                                .channel(channel)
                                 .async(new PNCallback<PNPublishResult>() {
                                     @Override
                                     public void onResponse(PNPublishResult result, PNStatus status) {
@@ -381,5 +395,33 @@ public class PubnubUtil {
                 }
             }
         });
+    }
+
+
+    //SubscribeCallback
+    @Override
+    public void status(PubNub pubnub, PNStatus status) {
+        if (callback != null) {
+            callback.status(pubnub,status);
+        }
+    }
+
+    @Override
+    public void message(PubNub pubnub, PNMessageResult message) {
+        PubNubMessage pubNubMessage = new Gson().fromJson(message.getMessage().toString(), PubNubMessage.class);
+
+        if (pubNubMessage.type.equals(PubNubMessage.call)) {
+            CallChannel.shared.didReceiveMessage(pubNubMessage);
+        } else if (callback != null) {
+            callback.message(pubnub,message);
+        }
+
+    }
+
+    @Override
+    public void presence(PubNub pubnub, PNPresenceEventResult presence) {
+        if (callback != null) {
+            callback.presence(pubnub,presence);
+        }
     }
 }
