@@ -19,8 +19,6 @@ public class APNSPayload implements Serializable {
     public static final String response = "response";
     public static final String schedule = "schedule";
     public static final String waitingInRoom = "waitingInRoom";
-    public static final String endCall = "end_call";
-    public static final String busyInAnotherCall = "busyInAnotherCall";
     public static final String message = "message";
     public static final String connection = "connection";
     public static final String callProposerBanner = "callProposerBanner";
