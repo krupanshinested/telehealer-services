@@ -62,6 +62,7 @@ import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailFetcher;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Util.Call.CallChannel;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Util.TimerInterface;
@@ -398,6 +399,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         patientLocationTracker = null;
 
         LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.CALL_STARTED_BROADCAST));
+
+        CallChannel.shared.startToListen();
     }
 
     public void setup(ViewGroup remoteView, ViewGroup localView) {
@@ -835,6 +838,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             CallActivity.openFeedBackIfNeeded(callRejectionReason, application);
         }
 
+        CallChannel.shared.stopToListen();
+
         if (TextUtils.isEmpty(sessionId)) {
             return;
         }
@@ -967,8 +972,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         if (otherPersonDetail != null) {
             Log.d("openTok", "endCall");
-            PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForEndCall(UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), otherPersonDetail.getUser_guid(), currentUUIDString, callRejectionReason);
-            PubnubUtil.shared.publishPushMessage(pushPayLoad, null);
+            CallChannel.shared.postEndCallToOtherPerson(otherPersonDetail.getUser_guid(),currentUUIDString,UserDetailPreferenceManager.getUserDisplayName(),UserDetailPreferenceManager.getUser_avatar(),callRejectionReason);
             EventRecorder.recordNotification("DECLINE_CALL");
         }
     }
