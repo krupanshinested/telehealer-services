@@ -26,6 +26,7 @@ import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.ResultFetcher;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Util.Call.CallChannel;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
@@ -104,14 +105,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                     }
                 });
                 break;
-            case APNSPayload.endCall:
-                dismissCall(data);
-                sendNewNotificationBroadCast();
-                break;
-            case APNSPayload.busyInAnotherCall:
-                TokBox.shared.endCall(OpenTokConstants.busyInAnotherLine);
-                break;
-            case APNSPayload.text:
+           case APNSPayload.text:
                 break;
             case APNSPayload.message:
                 intent = new Intent(this, ChatActivity.class);
@@ -183,65 +177,12 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(Constants.NOTIFICATION_COUNT_RECEIVER));
     }
 
-    // Display the incoming call to the user
-    private void dismissCall(APNSPayload data) {
-
-        if (TokBox.shared == null || TokBox.shared.getCurrentUUID() == null) {
-            Log.d("MessagingService", "currentUUID null");
-            return;
-        }
-
-        String currentUUID = TokBox.shared.getCurrentUUID();
-
-        String endCallUUID = data.getUuid() != null ? data.getUuid() : data.getIdentifier();
-
-        Log.d("MessagingService", "currentUUID " + currentUUID);
-        Log.d("MessagingService", "endCallUUID " + endCallUUID);
-        if (!currentUUID.toLowerCase().equals(endCallUUID.toLowerCase())) {
-            Log.d("MessagingService", "not equal");
-            return;
-        }
-
-        if (TokBox.shared.getConnectingDate() == null && TokBox.shared.getConnectedDate() == null && !TokBox.shared.getCalling()) {
-            APNSPayload payload = new APNSPayload();
-            HashMap<String, String> aps = new HashMap<>();
-            if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
-                aps.put(PubNubNotificationPayload.ALERT, getString(R.string.video_missed_call));
-            } else {
-                aps.put(PubNubNotificationPayload.ALERT, getString(R.string.audio_missed_call));
-            }
-            if (TokBox.shared.getOtherPersonDetail() != null) {
-                aps.put(PubNubNotificationPayload.TITLE, TokBox.shared.getOtherPersonDetail().getDisplayName());
-            } else {
-                aps.put(PubNubNotificationPayload.TITLE, data.getFrom_name());
-            }
-
-            aps.put(PubNubNotificationPayload.MEDIA_URL, data.getMedia_url());
-            payload.setAps(aps);
-            Utils.createNotification(payload, getRecentIntent());
-        }
-
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                if (data.getCall_rejection() != null) {
-                    Log.d("MessagingService", "endCall");
-                    TokBox.shared.endCall(data.getCall_rejection());
-                } else {
-                    Log.d("MessagingService", "endCall");
-                    TokBox.shared.endCall(OpenTokConstants.other);
-                }
-            }
-        });
-    }
-
+    // Display the incoming call to the use
     private void displayIncomingCall(APNSPayload data) {
         if (!TokBox.shared.isActiveCallPreset()) {
             TokBox.shared.didRecieveIncoming(data);
         } else {
-            PushPayLoad pushPayLoad = PubNubNotificationPayload.getPayloadForBusyInAnotherCall(UserDetailPreferenceManager.getUser_guid(), data.getFrom(), data.getUuid());
-            PubnubUtil.shared.publishPushMessage(pushPayLoad, null);
-
+            CallChannel.shared.postEndCallToOtherPerson(data.getFrom(),data.getUuid(),UserDetailPreferenceManager.getUserDisplayName(),UserDetailPreferenceManager.getUser_avatar(),OpenTokConstants.busyInAnotherLine);
             EventRecorder.recordNotification("BUSY_CALL");
 
             if (data.getType().equals(OpenTokConstants.video)) {

@@ -22,54 +22,6 @@ public class PubNubNotificationPayload {
     public static final String DEFAULT = "default";
     public static final String CONTENT_AVAILABLE = "content-available";
 
-    public static PushPayLoad getPayloadForBusyInAnotherCall(String from, String to, String uuid) {
-
-        PushPayLoad pushPayLoad = new PushPayLoad();
-        APNSPayload apnsPayload = new APNSPayload();
-
-        HashMap<String, String> aps = new HashMap<>();
-        aps.put(CONTENT_AVAILABLE, "1");
-
-        apnsPayload.setAps(aps);
-        apnsPayload.setFrom(from);
-        apnsPayload.setTo(to);
-        apnsPayload.setUuid(uuid);
-        apnsPayload.setIdentifier(uuid);
-        apnsPayload.setPn_ttl(20);
-        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
-        apnsPayload.setType(APNSPayload.busyInAnotherCall);
-
-        pushPayLoad.setPn_apns(apnsPayload);
-        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
-
-        return pushPayLoad;
-    }
-
-    public static PushPayLoad getPayloadForEndCall(String displayName, String from, String to, String uuid, String callRejectionReason) {
-
-        PushPayLoad pushPayLoad = new PushPayLoad();
-        APNSPayload apnsPayload = new APNSPayload();
-
-        HashMap<String, String> aps = new HashMap<>();
-        aps.put(CONTENT_AVAILABLE, "1");
-
-        apnsPayload.setAps(aps);
-        apnsPayload.setFrom(from);
-        apnsPayload.setTo(to);
-        apnsPayload.setUuid(uuid);
-        apnsPayload.setIdentifier(uuid);
-        apnsPayload.setPn_ttl(20);
-        apnsPayload.setFrom_name(displayName);
-        apnsPayload.setMedia_url(UserDetailPreferenceManager.getUser_avatar());
-        apnsPayload.setType(APNSPayload.endCall);
-        apnsPayload.setCall_rejection(callRejectionReason);
-
-        pushPayLoad.setPn_apns(apnsPayload);
-        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
-
-        return pushPayLoad;
-    }
-
     public static PushPayLoad getCallInvitePayload(String displayName, String from, String to, String uuid,
                                                    String type,
                                                    String sessionId,
