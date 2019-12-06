@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.settings;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -56,7 +57,7 @@ public class SignatureViewFragment extends BaseFragment {
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        signatureApiViewModel = ViewModelProviders.of(this).get(SignatureApiViewModel.class);
+        signatureApiViewModel = new ViewModelProvider(this).get(SignatureApiViewModel.class);
         attachObserverInterface.attachObserver(signatureApiViewModel);
         signatureApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
                 new Observer<BaseApiResponseModel>() {

@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -100,7 +101,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        medicalHistoryViewModel = ViewModelProviders.of(getActivity()).get(MedicalHistoryViewModel.class);
+        medicalHistoryViewModel = new ViewModelProvider(getActivity()).get(MedicalHistoryViewModel.class);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
@@ -660,7 +661,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
         questionaryBodyModel.setQuestionnaire(questionnaireBean);
 
         if (UserType.isUserPatient()) {
-            ProfileUpdate profileUpdate = ViewModelProviders.of(this).get(ProfileUpdate.class);
+            ProfileUpdate profileUpdate = new ViewModelProvider(this).get(ProfileUpdate.class);
             attachObserverInterface.attachObserver(profileUpdate);
             profileUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
                 @Override
@@ -682,7 +683,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
 
                 if (getArguments() != null && getArguments().getBoolean(ArgumentKeys.IS_UPDATE_VISIT, false)) {
 
-                    VisitsApiViewModel visitsApiViewModel = ViewModelProviders.of(this).get(VisitsApiViewModel.class);
+                    VisitsApiViewModel visitsApiViewModel = new ViewModelProvider(this).get(VisitsApiViewModel.class);
 
                     visitsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
                         @Override
@@ -699,7 +700,7 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
 
                 } else {
 
-                    MedicalHistoryApiViewModel medicalHistoryApiViewModel = ViewModelProviders.of(this).get(MedicalHistoryApiViewModel.class);
+                    MedicalHistoryApiViewModel medicalHistoryApiViewModel = new ViewModelProvider(this).get(MedicalHistoryApiViewModel.class);
                     attachObserverInterface.attachObserver(medicalHistoryApiViewModel);
                     medicalHistoryApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
                         @Override

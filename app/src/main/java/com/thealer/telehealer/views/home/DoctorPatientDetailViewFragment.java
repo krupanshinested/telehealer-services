@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 
 import Flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -130,8 +131,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
 
-        addConnectionApiViewModel = ViewModelProviders.of(getActivity()).get(AddConnectionApiViewModel.class);
-        connectionStatusApiViewModel = ViewModelProviders.of(this).get(ConnectionStatusApiViewModel.class);
+        addConnectionApiViewModel = new ViewModelProvider(getActivity()).get(AddConnectionApiViewModel.class);
+        connectionStatusApiViewModel = new ViewModelProvider(this).get(ConnectionStatusApiViewModel.class);
 
         attachObserverInterface.attachObserver(connectionStatusApiViewModel);
 
@@ -167,7 +168,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             }
         });
 
-        associationApiViewModel = ViewModelProviders.of(this).get(AssociationApiViewModel.class);
+        associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
         associationApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {

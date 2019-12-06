@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.R;
@@ -142,7 +143,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         titleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
-        profileUpdate = ViewModelProviders.of(getActivity()).get(ProfileUpdate.class);
+        profileUpdate = new ViewModelProvider(getActivity()).get(ProfileUpdate.class);
 
         onViewChangeInterface.attachObserver(profileUpdate);
 

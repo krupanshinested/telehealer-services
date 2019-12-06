@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
@@ -135,7 +136,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
         onCloseActionInterface = (OnCloseActionInterface) context;
         attachObserverInterface = (AttachObserverInterface) context;
         showSubFragmentInterface = (ShowSubFragmentInterface) context;
-        dietApiViewModel = ViewModelProviders.of(this).get(DietApiViewModel.class);
+        dietApiViewModel = new ViewModelProvider(this).get(DietApiViewModel.class);
         attachObserverInterface.attachObserver(dietApiViewModel);
 
         dietApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {

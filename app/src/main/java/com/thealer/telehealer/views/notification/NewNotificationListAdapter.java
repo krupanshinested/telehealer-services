@@ -15,6 +15,7 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -87,7 +88,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         this.activity = activity;
         modelList = new ArrayList<>();
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
-        notificationApiViewModel = ViewModelProviders.of(activity).get(NotificationApiViewModel.class);
+        notificationApiViewModel = new ViewModelProvider(activity).get(NotificationApiViewModel.class);
     }
 
     @NonNull

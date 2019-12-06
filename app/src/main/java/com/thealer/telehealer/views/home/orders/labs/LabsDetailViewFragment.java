@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.orders.labs;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -73,7 +74,7 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
     public void onAttach(Context context) {
         super.onAttach(context);
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
-        icdCodeApiViewModel = ViewModelProviders.of(this).get(IcdCodeApiViewModel.class);
+        icdCodeApiViewModel = new ViewModelProvider(this).get(IcdCodeApiViewModel.class);
         icdCodeApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {

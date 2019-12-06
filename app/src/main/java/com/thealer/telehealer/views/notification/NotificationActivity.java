@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -68,7 +69,7 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-        addConnectionApiViewModel = ViewModelProviders.of(this).get(AddConnectionApiViewModel.class);
+        addConnectionApiViewModel = new ViewModelProvider(this).get(AddConnectionApiViewModel.class);
         attachObserver(addConnectionApiViewModel);
         addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

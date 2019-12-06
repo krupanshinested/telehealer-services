@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -67,8 +68,8 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
         changeTitleInterface = (ChangeTitleInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        associationApiViewModel = ViewModelProviders.of(this).get(AssociationApiViewModel.class);
-        getDoctorsApiViewModel = ViewModelProviders.of(this).get(GetDoctorsApiViewModel.class);
+        associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
+        getDoctorsApiViewModel = new ViewModelProvider(this).get(GetDoctorsApiViewModel.class);
 
         attachObserverInterface.attachObserver(associationApiViewModel);
         attachObserverInterface.attachObserver(getDoctorsApiViewModel);

@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -94,8 +95,8 @@ public class VitalUserReportListFragment extends BaseFragment {
         attachObserverInterface = (AttachObserverInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
-        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
-        visitsApiViewModel = ViewModelProviders.of(this).get(VisitsApiViewModel.class);
+        vitalsApiViewModel = new ViewModelProvider(this).get(VitalsApiViewModel.class);
+        visitsApiViewModel = new ViewModelProvider(this).get(VisitsApiViewModel.class);
 
         attachObserverInterface.attachObserver(vitalsApiViewModel);
         attachObserverInterface.attachObserver(visitsApiViewModel);

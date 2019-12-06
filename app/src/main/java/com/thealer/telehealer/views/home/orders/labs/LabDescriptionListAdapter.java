@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.orders.labs;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -39,7 +40,7 @@ public class LabDescriptionListAdapter extends RecyclerView.Adapter<LabDescripti
         this.activity = activity;
         this.labsBeanList = labsBeanList;
         this.icdCodeDetailHashMap = icdCodeDetailHashMap;
-        labTestDataViewModel = ViewModelProviders.of(activity).get(LabTestDataViewModel.class);
+        labTestDataViewModel = new ViewModelProvider(activity).get(LabTestDataViewModel.class);
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
     }
 

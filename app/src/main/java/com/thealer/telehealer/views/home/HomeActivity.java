@@ -26,6 +26,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -144,7 +145,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void initViewModels() {
-        addConnectionApiViewModel = ViewModelProviders.of(this).get(AddConnectionApiViewModel.class);
+        addConnectionApiViewModel = new ViewModelProvider(this).get(AddConnectionApiViewModel.class);
 
         attachObserver(addConnectionApiViewModel);
 
@@ -182,7 +183,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void checkNotification() {
-        notificationApiViewModel = ViewModelProviders.of(this).get(NotificationApiViewModel.class);
+        notificationApiViewModel = new ViewModelProvider(this).get(NotificationApiViewModel.class);
         attachObserver(notificationApiViewModel);
         notificationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

@@ -25,6 +25,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.ImageViewCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -107,8 +108,8 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
     public void onAttach(Context context) {
         super.onAttach(context);
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        foodApiViewModel = ViewModelProviders.of(this).get(FoodApiViewModel.class);
-        dietApiViewModel = ViewModelProviders.of(this).get(DietApiViewModel.class);
+        foodApiViewModel = new ViewModelProvider(this).get(FoodApiViewModel.class);
+        dietApiViewModel = new ViewModelProvider(this).get(DietApiViewModel.class);
         attachObserverInterface.attachObserver(foodApiViewModel);
         attachObserverInterface.attachObserver(dietApiViewModel);
         foodApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.R;
@@ -63,7 +64,7 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
     public void onAttach(Context context) {
         super.onAttach(context);
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        notificationApiViewModel = ViewModelProviders.of(getActivity()).get(NotificationApiViewModel.class);
+        notificationApiViewModel = new ViewModelProvider(getActivity()).get(NotificationApiViewModel.class);
         attachObserverInterface.attachObserver(notificationApiViewModel);
         changeTitleInterface = (ChangeTitleInterface) context;
 

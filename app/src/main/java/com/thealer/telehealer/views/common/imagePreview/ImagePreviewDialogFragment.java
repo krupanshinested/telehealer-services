@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.common.imagePreview;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -33,7 +34,7 @@ public class ImagePreviewDialogFragment extends BaseDialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        imagePreviewViewModel = ViewModelProviders.of(getActivity()).get(ImagePreviewViewModel.class);
+        imagePreviewViewModel = new ViewModelProvider(getActivity()).get(ImagePreviewViewModel.class);
     }
 
     @Nullable

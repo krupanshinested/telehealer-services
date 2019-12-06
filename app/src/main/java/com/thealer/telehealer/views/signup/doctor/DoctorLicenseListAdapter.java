@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signup.doctor;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -44,7 +45,7 @@ class DoctorLicenseListAdapter extends RecyclerView.Adapter<DoctorLicenseListAda
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        createUserRequestModel = ViewModelProviders.of(fragmentActivity).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(fragmentActivity).get(CreateUserRequestModel.class);
         licensesBeanList = createUserRequestModel.getUser_detail().getData().getLicenses();
         notifyDataSetChanged();
     }

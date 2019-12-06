@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.inviteUser;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.ContentUris;
 import android.database.Cursor;
@@ -37,7 +38,7 @@ public class SelectedContactListAdapter extends RecyclerView.Adapter<SelectedCon
     public SelectedContactListAdapter(FragmentActivity activity) {
         this.activity = activity;
         selectedContactModels = new ArrayList<>();
-        inviteContactViewModel = ViewModelProviders.of(activity).get(InviteContactViewModel.class);
+        inviteContactViewModel = new ViewModelProvider(activity).get(InviteContactViewModel.class);
         inviteContactViewModel.selectedContactList.observe(activity, new Observer<List<SelectedContactModel>>() {
             @Override
             public void onChanged(@Nullable List<SelectedContactModel> contactModelList) {

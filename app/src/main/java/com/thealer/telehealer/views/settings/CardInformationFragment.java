@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.settings;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -140,7 +141,7 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
     }
 
     private void addObserver() {
-        brainTreeViewModel = ViewModelProviders.of(getActivity()).get(BrainTreeViewModel.class);
+        brainTreeViewModel = new ViewModelProvider(getActivity()).get(BrainTreeViewModel.class);
 
         brainTreeViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

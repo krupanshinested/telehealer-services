@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.monitoring.diet;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
@@ -78,7 +79,7 @@ public class SelectDietActivity extends BaseActivity implements ShowSubFragmentI
     }
 
     private void initViewModels() {
-        foodApiViewModel = ViewModelProviders.of(this).get(FoodApiViewModel.class);
+        foodApiViewModel = new ViewModelProvider(this).get(FoodApiViewModel.class);
         attachObserver(foodApiViewModel);
         foodApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

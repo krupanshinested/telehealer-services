@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.orders.labs;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +28,7 @@ public class SelectedIcdCodeListAdapter extends RecyclerView.Adapter<SelectedIcd
 
     public SelectedIcdCodeListAdapter(FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
-        icdCodesDataViewModel = ViewModelProviders.of(fragmentActivity).get(IcdCodesDataViewModel.class);
+        icdCodesDataViewModel = new ViewModelProvider(fragmentActivity).get(IcdCodesDataViewModel.class);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.orders.document;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -92,9 +93,9 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
 
-        ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
+        ordersCreateApiViewModel = new ViewModelProvider(this).get(OrdersCreateApiViewModel.class);
 
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
+        ordersApiViewModel = new ViewModelProvider(this).get(OrdersApiViewModel.class);
 
         attachObserverInterface.attachObserver(ordersApiViewModel);
 
