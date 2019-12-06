@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.orders.document;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -102,7 +103,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
 
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
+        ordersApiViewModel = new ViewModelProvider(this).get(OrdersApiViewModel.class);
         attachObserverInterface.attachObserver(ordersApiViewModel);
 
         ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -138,7 +139,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
             }
         });
 
-        visitsApiViewModel = ViewModelProviders.of(this).get(VisitsApiViewModel.class);
+        visitsApiViewModel = new ViewModelProvider(this).get(VisitsApiViewModel.class);
         attachObserverInterface.attachObserver(visitsApiViewModel);
 
         visitsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {

@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -76,8 +77,8 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
-        icdCodesDataViewModel = ViewModelProviders.of(getActivity()).get(IcdCodesDataViewModel.class);
-        icdCodeApiViewModel = ViewModelProviders.of(this).get(IcdCodeApiViewModel.class);
+        icdCodesDataViewModel = new ViewModelProvider(getActivity()).get(IcdCodesDataViewModel.class);
+        icdCodeApiViewModel = new ViewModelProvider(this).get(IcdCodeApiViewModel.class);
 
         attachObserverInterface.attachObserver(icdCodeApiViewModel);
 

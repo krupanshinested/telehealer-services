@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.signup;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -49,8 +50,8 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        checkUserEmailMobileApiViewModel = ViewModelProviders.of(this).get(CheckUserEmailMobileApiViewModel.class);
-        CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        checkUserEmailMobileApiViewModel = new ViewModelProvider(this).get(CheckUserEmailMobileApiViewModel.class);
+        CreateUserRequestModel createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
 
         onViewChangeInterface.attachObserver(checkUserEmailMobileApiViewModel);
 
@@ -72,7 +73,7 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
                             if (!checkUserEmailMobileResponseModel.isUser_exists()) {
                                 setEmailError(String.format(getString(R.string.user_not_allowed_error), getString(R.string.app_name), getString(R.string.app_name)));
                             } else {
-                                ResetPasswordRequestModel resetPasswordRequestModel = ViewModelProviders.of(getActivity()).get(ResetPasswordRequestModel.class);
+                                ResetPasswordRequestModel resetPasswordRequestModel = new ViewModelProvider(getActivity()).get(ResetPasswordRequestModel.class);
                                 resetPasswordRequestModel.setEmail(emailEt.getText().toString());
 
                                 checkUserEmailMobileApiViewModel.getBaseApiResponseModelMutableLiveData().setValue(null);

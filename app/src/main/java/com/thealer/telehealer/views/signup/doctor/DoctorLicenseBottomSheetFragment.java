@@ -1,6 +1,8 @@
 package com.thealer.telehealer.views.signup.doctor;
 
 import android.app.Activity;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -52,7 +54,7 @@ public class DoctorLicenseBottomSheetFragment extends BaseBottomSheetDialogFragm
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
         setData();
     }
 

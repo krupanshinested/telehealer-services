@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.schedules;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -30,7 +31,7 @@ class SlotsListAdapter extends RecyclerView.Adapter<SlotsListAdapter.ViewHolder>
 
     public SlotsListAdapter(FragmentActivity activity) {
         this.activity = activity;
-        createScheduleViewModel = ViewModelProviders.of(activity).get(CreateScheduleViewModel.class);
+        createScheduleViewModel = new ViewModelProvider(activity).get(CreateScheduleViewModel.class);
         slotsList = createScheduleViewModel.getTimeSlots().getValue();
         createScheduleViewModel.getTimeSlots().observe(activity, new Observer<List<String>>() {
             @Override

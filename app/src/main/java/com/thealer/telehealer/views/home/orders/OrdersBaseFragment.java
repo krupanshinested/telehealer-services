@@ -12,6 +12,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -88,7 +89,7 @@ public class OrdersBaseFragment extends BaseFragment {
 
         attachObserverInterface = (AttachObserverInterface) getActivity();
 
-        ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
+        ordersCreateApiViewModel = new ViewModelProvider(this).get(OrdersCreateApiViewModel.class);
 
         attachObserverInterface.attachObserver(ordersCreateApiViewModel);
 
@@ -175,7 +176,7 @@ public class OrdersBaseFragment extends BaseFragment {
             }
         });
 
-        recentsApiViewModel = ViewModelProviders.of(this).get(RecentsApiViewModel.class);
+        recentsApiViewModel = new ViewModelProvider(this).get(RecentsApiViewModel.class);
 
         attachObserverInterface.attachObserver(recentsApiViewModel);
 
@@ -196,7 +197,7 @@ public class OrdersBaseFragment extends BaseFragment {
             }
         });
 
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
+        ordersApiViewModel = new ViewModelProvider(this).get(OrdersApiViewModel.class);
 
         attachObserverInterface.attachObserver(ordersApiViewModel);
 

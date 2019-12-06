@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.settings;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -80,7 +81,7 @@ public class DeleteAccountActivity extends BaseActivity implements TextWatcher {
             }
         });
 
-        deleteAccountViewModel = ViewModelProviders.of(DeleteAccountActivity.this).get(DeleteAccountViewModel.class);
+        deleteAccountViewModel = new ViewModelProvider(DeleteAccountActivity.this).get(DeleteAccountViewModel.class);
 
         attachObserver(deleteAccountViewModel);
 

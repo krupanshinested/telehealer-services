@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.orders.forms;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -66,8 +67,8 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
 
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
-        ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
+        ordersApiViewModel = new ViewModelProvider(this).get(OrdersApiViewModel.class);
+        ordersCreateApiViewModel = new ViewModelProvider(this).get(OrdersCreateApiViewModel.class);
 
         attachObserverInterface.attachObserver(ordersApiViewModel);
         attachObserverInterface.attachObserver(ordersCreateApiViewModel);

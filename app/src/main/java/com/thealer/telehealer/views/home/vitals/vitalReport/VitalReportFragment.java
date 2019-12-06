@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -81,7 +82,7 @@ public class VitalReportFragment extends BaseFragment {
         attachObserverInterface = (AttachObserverInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
-        vitalReportApiViewModel = ViewModelProviders.of(this).get(VitalReportApiViewModel.class);
+        vitalReportApiViewModel = new ViewModelProvider(this).get(VitalReportApiViewModel.class);
         attachObserverInterface.attachObserver(vitalReportApiViewModel);
         vitalReportApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -93,7 +94,7 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
 
-        visitsApiViewModel = ViewModelProviders.of(this).get(VisitsApiViewModel.class);
+        visitsApiViewModel = new ViewModelProvider(this).get(VisitsApiViewModel.class);
         visitsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -136,7 +137,7 @@ public class OrderSelectionListFragment extends OrdersBaseFragment implements Vi
             }
         });
 
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
+        ordersApiViewModel = new ViewModelProvider(this).get(OrdersApiViewModel.class);
         attachObserverInterface.attachObserver(ordersApiViewModel);
 
         ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {

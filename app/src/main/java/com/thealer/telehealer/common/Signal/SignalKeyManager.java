@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.gson.Gson;
@@ -31,7 +32,7 @@ public class SignalKeyManager {
     private OnUserKeyReceivedListener onUserKeyReceivedListener;
 
     public static SignalKeyManager getInstance(FragmentActivity fragmentActivity, OnUserKeyReceivedListener onUserKeyReceivedListener) {
-        chatApiViewModel = ViewModelProviders.of(fragmentActivity).get(ChatApiViewModel.class);
+        chatApiViewModel = new ViewModelProvider(fragmentActivity).get(ChatApiViewModel.class);
         chatApiViewModel.baseApiResponseModelMutableLiveData.observe(fragmentActivity, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {

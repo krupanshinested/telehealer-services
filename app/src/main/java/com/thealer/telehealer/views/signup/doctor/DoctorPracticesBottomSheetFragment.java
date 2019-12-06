@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -56,7 +57,7 @@ public class DoctorPracticesBottomSheetFragment extends BaseBottomSheetDialogFra
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
 
         if (createUserRequestModel.getUser_detail() != null &&
                 createUserRequestModel.getUser_detail().getData().getPractices().size() > practiceId) {

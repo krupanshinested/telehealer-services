@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,7 +44,7 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
 
     public PatientHistoryAdapter(FragmentActivity activity) {
         this.activity = activity;
-        createScheduleViewModel = ViewModelProviders.of(activity).get(CreateScheduleViewModel.class);
+        createScheduleViewModel = new ViewModelProvider(activity).get(CreateScheduleViewModel.class);
         if (createScheduleViewModel.getPatientHistory() == null) {
             createScheduleViewModel.setPatientHistory(new ArrayList<>());
             for (int i = 0; i < questions.size(); i++) {

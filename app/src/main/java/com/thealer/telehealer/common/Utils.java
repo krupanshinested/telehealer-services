@@ -27,6 +27,7 @@ import android.os.Vibrator;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.util.Base64;
@@ -249,6 +250,14 @@ public class Utils {
         return Pattern.matches(emailPattern, email);
     }
 
+    public static String trimAndRemoveNewLineCharacters(@Nullable String text) {
+        if (!TextUtils.isEmpty(text)) {
+            return text.trim().replace("\n","");
+        } else {
+            return "";
+        }
+    }
+
     public static boolean isValidState(String state) {
 
         if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_STATE_VALIDATION))
@@ -437,7 +446,7 @@ public class Utils {
         dateFormat.setTimeZone(UtcTimezone);
         try {
             return dateFormat.parse(dateString);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

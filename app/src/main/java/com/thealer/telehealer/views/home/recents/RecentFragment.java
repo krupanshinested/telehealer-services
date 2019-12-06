@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
@@ -60,7 +61,7 @@ public class RecentFragment extends BaseFragment {
 
         onOrientationChangeInterface = (OnOrientationChangeInterface) getActivity();
 
-        recentsApiViewModel = ViewModelProviders.of(this).get(RecentsApiViewModel.class);
+        recentsApiViewModel = new ViewModelProvider(this).get(RecentsApiViewModel.class);
 
         attachObserverInterface.attachObserver(recentsApiViewModel);
 

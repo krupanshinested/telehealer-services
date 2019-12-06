@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.schedules;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -96,9 +97,9 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
         attachObserverInterface = (AttachObserverInterface) getActivity();
         changeTitleInterface = (ChangeTitleInterface) getActivity();
 
-        createScheduleViewModel = ViewModelProviders.of(getActivity()).get(CreateScheduleViewModel.class);
-        schedulesApiViewModel = ViewModelProviders.of(this).get(SchedulesApiViewModel.class);
-        whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+        createScheduleViewModel = new ViewModelProvider(getActivity()).get(CreateScheduleViewModel.class);
+        schedulesApiViewModel = new ViewModelProvider(this).get(SchedulesApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserverInterface.attachObserver(whoAmIApiViewModel);
 
         createScheduleViewModel.getTimeSlots().observe(this, new Observer<List<String>>() {

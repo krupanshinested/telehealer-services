@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -89,7 +90,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
         super.onAttach(context);
 
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
+        ordersApiViewModel = new ViewModelProvider(this).get(OrdersApiViewModel.class);
 
         ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

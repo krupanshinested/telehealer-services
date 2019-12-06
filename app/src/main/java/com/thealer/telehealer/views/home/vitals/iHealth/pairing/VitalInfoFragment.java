@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.vitals.iHealth.pairing;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
@@ -44,6 +47,7 @@ public class VitalInfoFragment extends BaseFragment implements View.OnClickListe
     private TextView device_title,device_description,hardware_version_tv,device_version_tv,device_info_url,support_url;
     private LinearLayout device_info;
     private Button upgrade_bt,forget_device_bt;
+    private ImageView videoView,playButton;
 
     private OnViewChangeInterface onViewChangeInterface;
     private OnActionCompleteInterface onActionCompleteInterface;
@@ -108,11 +112,19 @@ public class VitalInfoFragment extends BaseFragment implements View.OnClickListe
         device_info = baseView.findViewById(R.id.device_info);
         upgrade_bt = baseView.findViewById(R.id.upgrade_bt);
         forget_device_bt = baseView.findViewById(R.id.forget_device_bt);
+        videoView = baseView.findViewById(R.id.video_view);
+        playButton = baseView.findViewById(R.id.play_button);
 
         forget_device_bt.setOnClickListener(this);
         upgrade_bt.setOnClickListener(this);
         support_url.setOnClickListener(this);
         device_info_url.setOnClickListener(this);
+        playButton.setOnClickListener(this);
+
+        Glide.with(getActivity())
+                .load("https://img.youtube.com/vi/"+VitalDeviceType.shared.getVideoId(vitalDevice.getType())+"/0.jpg")
+                .apply(new RequestOptions())
+                .into(videoView);
 
         String supportUrl = VitalDeviceType.shared.getSupportUrl(vitalDevice.getType());
         support_url.setText(Utils.fromHtml("<u>"+supportUrl+"</u>"));
@@ -148,6 +160,17 @@ public class VitalInfoFragment extends BaseFragment implements View.OnClickListe
                 String infoUrl = VitalDeviceType.shared.getUrl(vitalDevice.getType());
                 Intent browserIntent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(infoUrl));
                 startActivity(browserIntent2);
+                break;
+            case R.id.play_button:
+                String videoId = VitalDeviceType.shared.getVideoId(vitalDevice.getType());
+                Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoId));
+                Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://www.youtube.com/watch?v=" + videoId));
+                try {
+                    startActivity(appIntent);
+                } catch (ActivityNotFoundException ex) {
+                    startActivity(webIntent);
+                }
                 break;
         }
     }

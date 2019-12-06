@@ -1,6 +1,8 @@
 package com.thealer.telehealer.views.home.orders.labs;
 
 import android.app.Activity;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -51,7 +53,7 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
         super.onAttach(context);
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        labTestDataViewModel = ViewModelProviders.of(getActivity()).get(LabTestDataViewModel.class);
+        labTestDataViewModel = new ViewModelProvider(getActivity()).get(LabTestDataViewModel.class);
         selectedTitle = labTestDataViewModel.getTestTitle();
         if (selectedTitle != null) {
             isEditMode = true;

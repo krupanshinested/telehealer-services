@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,7 +47,7 @@ class OfficePhoneListAdapter extends RecyclerView.Adapter<OfficePhoneListAdapter
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        createUserRequestModel = ViewModelProviders.of(fragmentActivity).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(fragmentActivity).get(CreateUserRequestModel.class);
         if (createUserRequestModel.getUser_detail().getData().getPractices().size() > practiceId) {
             this.phonesBeanList.addAll(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getPhones());
             addNewField();

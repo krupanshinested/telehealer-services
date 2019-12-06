@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.settings.medicalHistory;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -32,7 +33,7 @@ public class MedicalHistoryOptionsSelecteDialogFragment extends BaseBottomSheetD
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        medicalHistoryViewModel = ViewModelProviders.of(getActivity()).get(MedicalHistoryViewModel.class);
+        medicalHistoryViewModel = new ViewModelProvider(getActivity()).get(MedicalHistoryViewModel.class);
     }
 
     @Nullable

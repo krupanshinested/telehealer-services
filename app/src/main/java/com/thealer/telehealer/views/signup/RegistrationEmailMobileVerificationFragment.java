@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signup;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -36,7 +37,7 @@ public class RegistrationEmailMobileVerificationFragment extends BaseFragment im
         super.onAttach(context);
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
     }
 
     @Nullable

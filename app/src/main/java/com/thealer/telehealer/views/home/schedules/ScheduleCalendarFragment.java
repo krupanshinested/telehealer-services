@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.alamkanak.weekview.DateTimeInterpreter;
@@ -122,8 +123,8 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         attachObserverInterface = (AttachObserverInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
-        associationApiViewModel = ViewModelProviders.of(this).get(AssociationApiViewModel.class);
-        schedulesApiViewModel = ViewModelProviders.of(this).get(SchedulesApiViewModel.class);
+        associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
+        schedulesApiViewModel = new ViewModelProvider(this).get(SchedulesApiViewModel.class);
 
         attachObserverInterface.attachObserver(schedulesApiViewModel);
         attachObserverInterface.attachObserver(associationApiViewModel);

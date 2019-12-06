@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signup.medicalAssistant;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -68,7 +69,7 @@ public class MedicalAssistantCertificatePreviewFragment extends BaseFragment imp
 
     @Override
     public void doCurrentTransaction() {
-        CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        CreateUserRequestModel createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
         createUserRequestModel.setCertification_path(certificatePath);
         onActionCompleteInterface.onCompletionResult(null, true, null);
     }
