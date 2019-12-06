@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.vitals;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -153,7 +154,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsCreateApiModel.class);
+        vitalsApiViewModel = new ViewModelProvider(this).get(VitalsCreateApiModel.class);
 
         if (getActivity() instanceof  AttachObserverInterface && needToAddViewModelObserver()) {
             ((AttachObserverInterface) getActivity()).attachObserver(vitalsApiViewModel);

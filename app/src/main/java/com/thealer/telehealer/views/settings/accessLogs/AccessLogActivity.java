@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -39,7 +40,7 @@ public class AccessLogActivity extends BaseActivity implements View.OnClickListe
     private boolean isApiRequested = false;
 
     private void initObservers() {
-        accessLogApiViewModel = ViewModelProviders.of(this).get(AccessLogApiViewModel.class);
+        accessLogApiViewModel = new ViewModelProvider(this).get(AccessLogApiViewModel.class);
         accessLogApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {

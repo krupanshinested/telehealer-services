@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.schedules;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -62,7 +63,7 @@ public class SchedulesListFragment extends BaseFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        schedulesApiViewModel = ViewModelProviders.of(this).get(SchedulesApiViewModel.class);
+        schedulesApiViewModel = new ViewModelProvider(this).get(SchedulesApiViewModel.class);
         attachObserverInterface.attachObserver(schedulesApiViewModel);
 
         schedulesApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {

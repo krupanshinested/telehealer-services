@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.onboarding;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -66,7 +67,7 @@ public class OnBoardingViewPagerAdapter extends PagerAdapter {
                 pagerItemIv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ImagePreviewViewModel imagePreviewViewModel = ViewModelProviders.of(activity).get(ImagePreviewViewModel.class);
+                        ImagePreviewViewModel imagePreviewViewModel = new ViewModelProvider(activity).get(ImagePreviewViewModel.class);
                         imagePreviewViewModel.setImageList(insuranceImageList);
                         ImagePreviewDialogFragment imagePreviewDialogFragment = new ImagePreviewDialogFragment();
                         imagePreviewDialogFragment.show(activity.getSupportFragmentManager(), ImagePreviewDialogFragment.class.getSimpleName());

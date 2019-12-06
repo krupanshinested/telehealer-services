@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -94,8 +95,8 @@ public class DietListingFragment extends BaseFragment implements View.OnClickLis
         showSubFragmentInterface = (ShowSubFragmentInterface) context;
         attachObserverInterface = (AttachObserverInterface) context;
 
-        dietApiViewModel = ViewModelProviders.of(this).get(DietApiViewModel.class);
-        visitsApiViewModel = ViewModelProviders.of(this).get(VisitsApiViewModel.class);
+        dietApiViewModel = new ViewModelProvider(this).get(DietApiViewModel.class);
+        visitsApiViewModel = new ViewModelProvider(this).get(VisitsApiViewModel.class);
 
         attachObserverInterface.attachObserver(dietApiViewModel);
         attachObserverInterface.attachObserver(visitsApiViewModel);

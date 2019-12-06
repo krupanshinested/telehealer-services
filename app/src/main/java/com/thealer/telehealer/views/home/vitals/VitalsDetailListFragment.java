@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -132,7 +133,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
-        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
+        vitalsApiViewModel = new ViewModelProvider(this).get(VitalsApiViewModel.class);
         attachObserverInterface.attachObserver(vitalsApiViewModel);
 
         vitalsApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
@@ -244,7 +245,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             }
         });
 
-        getUsersApiViewModel = ViewModelProviders.of(this).get(GetUsersApiViewModel.class);
+        getUsersApiViewModel = new ViewModelProvider(this).get(GetUsersApiViewModel.class);
         attachObserverInterface.attachObserver(getUsersApiViewModel);
 
         getUsersApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {

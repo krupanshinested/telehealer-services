@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.pendingInvites;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -127,7 +128,7 @@ public class PendingInvitesSentFragment extends BaseFragment {
 
     private void attachObserver() {
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        pendingInvitesApiViewModel = ViewModelProviders.of(this).get(PendingInvitesApiViewModel.class);
+        pendingInvitesApiViewModel = new ViewModelProvider(this).get(PendingInvitesApiViewModel.class);
         attachObserverInterface.attachObserver(pendingInvitesApiViewModel);
 
         pendingInvitesApiViewModel.baseApiResponseModelMutableLiveData.observe(this,

@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.settings.medicalHistory;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,7 +37,7 @@ public class MedicationListAdapter extends RecyclerView.Adapter<MedicationListAd
 
     public MedicationListAdapter(FragmentActivity activity) {
         this.activity = activity;
-        medicalHistoryViewModel = ViewModelProviders.of(activity).get(MedicalHistoryViewModel.class);
+        medicalHistoryViewModel = new ViewModelProvider(activity).get(MedicalHistoryViewModel.class);
         medicationModelList = medicalHistoryViewModel.getMedicationListMutableLiveData().getValue();
         medicalHistoryViewModel.getMedicationListMutableLiveData().observe(activity,
                 new Observer<List<MedicationModel>>() {

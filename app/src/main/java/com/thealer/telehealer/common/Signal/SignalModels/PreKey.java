@@ -1,5 +1,7 @@
 package com.thealer.telehealer.common.Signal.SignalModels;
 
+import com.thealer.telehealer.common.Utils;
+
 import java.io.Serializable;
 
 public class PreKey implements Serializable {
@@ -16,7 +18,7 @@ public class PreKey implements Serializable {
     }
 
     public String getPubKey() {
-        return pubKey;
+        return Utils.trimAndRemoveNewLineCharacters(pubKey);
     }
 
     public void setPubKey(String pubKey) {
@@ -24,7 +26,7 @@ public class PreKey implements Serializable {
     }
 
     public String getPrivKey() {
-        return privKey;
+        return Utils.trimAndRemoveNewLineCharacters(privKey);
     }
 
     public void setPrivKey(String privKey) {

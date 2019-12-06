@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signin;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -45,7 +46,7 @@ public class ForgotPassword extends BaseActivity implements OnViewChangeInterfac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
-        ResetPasswordRequestModel resetPasswordRequestModel = ViewModelProviders.of(this).get(ResetPasswordRequestModel.class);
+        ResetPasswordRequestModel resetPasswordRequestModel = new ViewModelProvider(this).get(ResetPasswordRequestModel.class);
 
         initView();
 

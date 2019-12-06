@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
@@ -51,8 +52,8 @@ public class DoctorOnBoardingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doctor_onboarding);
 
-        whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
-        signinApiViewModel = ViewModelProviders.of(this).get(SigninApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
+        signinApiViewModel = new ViewModelProvider(this).get(SigninApiViewModel.class);
 
         attachObserver(signinApiViewModel);
         attachObserver(whoAmIApiViewModel);

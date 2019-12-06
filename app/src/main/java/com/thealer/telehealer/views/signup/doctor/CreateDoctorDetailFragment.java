@@ -25,6 +25,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -176,9 +177,9 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
-        updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
-        whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
+        updateProfileModel = new ViewModelProvider(this).get(UpdateProfileModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
 
         attachObserverInterface.attachObserver(updateProfileModel);
         attachObserverInterface.attachObserver(whoAmIApiViewModel);

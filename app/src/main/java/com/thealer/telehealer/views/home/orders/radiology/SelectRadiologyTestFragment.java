@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.orders.radiology;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -46,7 +47,7 @@ public class SelectRadiologyTestFragment extends OrdersBaseFragment implements V
     public void onAttach(Context context) {
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        radiologyListViewModel = ViewModelProviders.of(getActivity()).get(RadiologyListViewModel.class);
+        radiologyListViewModel = new ViewModelProvider(getActivity()).get(RadiologyListViewModel.class);
         radiologyListViewModel.getSelectedRadiologyListLiveData().observe(this,
                 new Observer<List<RadiologyListModel>>() {
                     @Override
