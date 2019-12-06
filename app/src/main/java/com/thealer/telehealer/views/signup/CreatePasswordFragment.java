@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.signup;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -83,8 +84,8 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        createUserApiViewModel = ViewModelProviders.of(this).get(CreateUserApiViewModel.class);
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        createUserApiViewModel = new ViewModelProvider(this).get(CreateUserApiViewModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
 
         onViewChangeInterface.attachObserver(createUserApiViewModel);
 
@@ -175,7 +176,7 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
         super.onAttach(context);
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        resetPasswordRequestModel = ViewModelProviders.of(getActivity()).get(ResetPasswordRequestModel.class);
+        resetPasswordRequestModel = new ViewModelProvider(getActivity()).get(ResetPasswordRequestModel.class);
     }
 
 

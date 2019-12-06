@@ -27,6 +27,7 @@ import com.thealer.telehealer.views.home.orders.OrderConstant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -244,7 +245,15 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 Collections.sort(chatList, new Comparator<RecentsApiResponseModel.ResultBean>() {
                     @Override
                     public int compare(RecentsApiResponseModel.ResultBean o1, RecentsApiResponseModel.ResultBean o2) {
-                        return Utils.getDateFromString(o2.getCreated_at()).compareTo(Utils.getDateFromString(o1.getCreated_at()));
+                        Date start = Utils.getDateFromString(o2.getCreated_at());
+                        Date end = Utils.getDateFromString(o1.getCreated_at());
+
+                        if (start != null && end != null) {
+                            return start.compareTo(end);
+                        } else {
+                            return 1;
+                        }
+
                     }
                 });
 

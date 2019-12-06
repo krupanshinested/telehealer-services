@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,8 +44,8 @@ public class EmailVerificationActivity extends BaseActivity implements View.OnCl
     }
 
     private void initViewModels() {
-        emailValidationApiViewModel = ViewModelProviders.of(this).get(EmailValidationApiViewModel.class);
-        whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+        emailValidationApiViewModel = new ViewModelProvider(this).get(EmailValidationApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserver(whoAmIApiViewModel);
         attachObserver(emailValidationApiViewModel);
         whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {

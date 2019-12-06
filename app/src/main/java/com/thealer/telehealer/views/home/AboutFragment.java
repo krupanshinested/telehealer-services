@@ -21,6 +21,7 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
@@ -104,7 +105,7 @@ public class AboutFragment extends BaseFragment {
         attachObserverInterface = (AttachObserverInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
-        disconnectAssociationApiViewModel = ViewModelProviders.of(this).get(DisconnectAssociationApiViewModel.class);
+        disconnectAssociationApiViewModel = new ViewModelProvider(this).get(DisconnectAssociationApiViewModel.class);
         attachObserverInterface.attachObserver(disconnectAssociationApiViewModel);
 
         disconnectAssociationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -321,7 +322,7 @@ public class AboutFragment extends BaseFragment {
                             insuranceImageLl.setVisibility(View.GONE);
                             insuranceCashTv.setVisibility(View.VISIBLE);
                         } else {
-                            ImagePreviewViewModel imagePreviewViewModel = ViewModelProviders.of(getActivity()).get(ImagePreviewViewModel.class);
+                            ImagePreviewViewModel imagePreviewViewModel = new ViewModelProvider(getActivity()).get(ImagePreviewViewModel.class);
                             imagePreviewViewModel.setImageList(insuranceImageList);
 
                             InsuranceViewPagerAdapter insuranceViewPagerAdapter = new InsuranceViewPagerAdapter(getActivity(), insuranceLabelList, new PickerListener() {

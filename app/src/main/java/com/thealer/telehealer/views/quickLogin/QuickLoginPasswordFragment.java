@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.quickLogin;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -54,7 +55,7 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        signinApiViewModel = ViewModelProviders.of(this).get(SigninApiViewModel.class);
+        signinApiViewModel = new ViewModelProvider(this).get(SigninApiViewModel.class);
         attachObserverInterface = (AttachObserverInterface) getActivity();
         attachObserverInterface.attachObserver(signinApiViewModel);
 

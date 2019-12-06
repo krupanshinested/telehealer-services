@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signup.doctor;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -37,7 +38,7 @@ public class DoctorBioBottomSheetFragment extends BaseBottomSheetDialogFragment 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
 
         isNewBio = createUserRequestModel.getUser_detail().getData().getBio() == null;
 

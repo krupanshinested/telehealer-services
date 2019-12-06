@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.common;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -50,7 +51,7 @@ public class RecentsSelectionActivity extends BaseActivity {
     }
 
     private void initViewModels() {
-        recentsApiViewModel = ViewModelProviders.of(this).get(RecentsApiViewModel.class);
+        recentsApiViewModel = new ViewModelProvider(this).get(RecentsApiViewModel.class);
         attachObserver(recentsApiViewModel);
         recentsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.inviteUser;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ public class InviteUserBaseFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         changeTitleInterface = (ChangeTitleInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        inviteUserApiViewModel = ViewModelProviders.of(this).get(InviteUserApiViewModel.class);
+        inviteUserApiViewModel = new ViewModelProvider(this).get(InviteUserApiViewModel.class);
         attachObserverInterface.attachObserver(inviteUserApiViewModel);
 
         inviteUserApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {

@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.settings;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -55,7 +56,7 @@ public class SignatureActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void initViewModels() {
-        signatureApiViewModel = ViewModelProviders.of(this).get(SignatureApiViewModel.class);
+        signatureApiViewModel = new ViewModelProvider(this).get(SignatureApiViewModel.class);
         attachObserver(signatureApiViewModel);
         signatureApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
                 new Observer<BaseApiResponseModel>() {

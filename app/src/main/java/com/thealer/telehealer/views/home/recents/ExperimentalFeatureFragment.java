@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.recents;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -43,7 +44,7 @@ public class ExperimentalFeatureFragment extends BaseFragment {
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        recentsApiViewModel = ViewModelProviders.of(this).get(RecentsApiViewModel.class);
+        recentsApiViewModel = new ViewModelProvider(this).get(RecentsApiViewModel.class);
         attachObserverInterface.attachObserver(recentsApiViewModel);
         recentsApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
                 new Observer<BaseApiResponseModel>() {

@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.pendingInvites;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,7 +58,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
         this.isShowAction = showAction;
 
         attachObserverInterface = (AttachObserverInterface) activity;
-        notificationApiViewModel = ViewModelProviders.of(activity).get(NotificationApiViewModel.class);
+        notificationApiViewModel = new ViewModelProvider(activity).get(NotificationApiViewModel.class);
         attachObserverInterface.attachObserver(notificationApiViewModel);
 
         notificationApiViewModel.baseApiResponseModelMutableLiveData.observe(activity,

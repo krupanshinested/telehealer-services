@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.signup.patient;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -122,9 +123,9 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
 
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
-        updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
-        whoAmIApiViewModel = ViewModelProviders.of(getActivity()).get(WhoAmIApiViewModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
+        updateProfileModel = new ViewModelProvider(this).get(UpdateProfileModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(getActivity()).get(WhoAmIApiViewModel.class);
 
         attachObserverInterface.attachObserver(updateProfileModel);
         attachObserverInterface.attachObserver(whoAmIApiViewModel);
@@ -625,7 +626,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
                 if (isPrimaryDeleted || isSecondaryDeleted) {
                     updateProfile = true;
-                    UpdateProfileModel updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
+                    UpdateProfileModel updateProfileModel = new ViewModelProvider(this).get(UpdateProfileModel.class);
                     updateProfileModel.deleteInsurance(isPrimaryDeleted, isSecondaryDeleted);
                 }
 

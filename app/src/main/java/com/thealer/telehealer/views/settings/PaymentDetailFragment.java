@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.settings;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -224,7 +225,7 @@ public class PaymentDetailFragment extends BaseFragment {
     }
 
     private void addObserver() {
-        transactionApiViewModel = ViewModelProviders.of(this).get(TransactionApiViewModel.class);
+        transactionApiViewModel = new ViewModelProvider(this).get(TransactionApiViewModel.class);
 
         transactionApiViewModel.getArrayListMutableLiveData().observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override

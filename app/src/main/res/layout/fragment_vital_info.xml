@@ -141,10 +141,33 @@
                     android:layout_marginBottom="10dp"
                     android:textAlignment="center"
                     android:textColor="@color/app_gradient_start"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/video_view"
                     app:layout_constraintLeft_toLeftOf="@+id/device_title"
                     app:layout_constraintRight_toRightOf="@id/device_title"
                     app:layout_constraintTop_toBottomOf="@+id/support_label" />
+
+                <ImageView
+                    android:id="@+id/video_view"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/support_url"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintWidth_max="@dimen/max_width" />
+
+                <ImageView
+                    android:id="@+id/play_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/play"
+                    app:layout_constraintBottom_toBottomOf="@id/video_view"
+                    app:layout_constraintLeft_toLeftOf="@id/video_view"
+                    app:layout_constraintRight_toRightOf="@id/video_view"
+                    app:layout_constraintTop_toTopOf="@id/video_view" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>

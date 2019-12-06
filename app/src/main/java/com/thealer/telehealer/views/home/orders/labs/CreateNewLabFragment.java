@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -83,8 +84,8 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
 
-        labTestDataViewModel = ViewModelProviders.of(getActivity()).get(LabTestDataViewModel.class);
-        icdCodesDataViewModel = ViewModelProviders.of(getActivity()).get(IcdCodesDataViewModel.class);
+        labTestDataViewModel = new ViewModelProvider(getActivity()).get(LabTestDataViewModel.class);
+        icdCodesDataViewModel = new ViewModelProvider(getActivity()).get(IcdCodesDataViewModel.class);
         labTestDataViewModel.getLabsBeanLiveData().observe(this,
                 new Observer<List<LabsBean>>() {
                     @Override

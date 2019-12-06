@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.inviteUser;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.database.Cursor;
@@ -85,7 +86,7 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
     }
 
     private void initViewModels() {
-        inviteUserApiViewModel = ViewModelProviders.of(this).get(InviteUserApiViewModel.class);
+        inviteUserApiViewModel = new ViewModelProvider(this).get(InviteUserApiViewModel.class);
         attachObserver(inviteUserApiViewModel);
         inviteUserApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -153,7 +154,7 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
 
         searchEt.setHint(getString(R.string.search_contact));
 
-        inviteContactViewModel = ViewModelProviders.of(this).get(InviteContactViewModel.class);
+        inviteContactViewModel = new ViewModelProvider(this).get(InviteContactViewModel.class);
         inviteContactViewModel.getSelectedContactList().setValue(new ArrayList<>());
         inviteContactViewModel.getSelectedContactList().observe(this, new Observer<List<SelectedContactModel>>() {
             @Override
