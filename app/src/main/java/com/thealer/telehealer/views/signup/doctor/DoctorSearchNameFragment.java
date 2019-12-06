@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.signup.doctor;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -59,7 +60,7 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
         super.onAttach(context);
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
-        getDoctorsApiViewModel = ViewModelProviders.of(this).get(GetDoctorsApiViewModel.class);
+        getDoctorsApiViewModel = new ViewModelProvider(this).get(GetDoctorsApiViewModel.class);
         onViewChangeInterface.attachObserver(getDoctorsApiViewModel);
         getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

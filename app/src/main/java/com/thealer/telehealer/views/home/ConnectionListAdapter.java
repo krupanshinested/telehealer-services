@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -52,7 +53,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        addConnectionApiViewModel = ViewModelProviders.of(fragmentActivity).get(AddConnectionApiViewModel.class);
+        addConnectionApiViewModel = new ViewModelProvider(fragmentActivity).get(AddConnectionApiViewModel.class);
         onListItemSelectInterface = (OnListItemSelectInterface) fragmentActivity;
         onActionCompleteInterface = (OnActionCompleteInterface) fragmentActivity;
 

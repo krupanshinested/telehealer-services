@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signup;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -39,7 +40,7 @@ public class RoleSelectionFragment extends BaseFragment implements View.OnClickL
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_select_role, container, false);
 
-        createUserRequestModel = ViewModelProviders.of(this).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(this).get(CreateUserRequestModel.class);
 
         initView(view);
 

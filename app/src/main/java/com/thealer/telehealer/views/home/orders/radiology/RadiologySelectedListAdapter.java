@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.orders.radiology;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -25,7 +26,7 @@ class RadiologySelectedListAdapter extends RecyclerView.Adapter<RadiologySelecte
 
     public RadiologySelectedListAdapter(FragmentActivity activity) {
         this.activity = activity;
-        radiologyListViewModel = ViewModelProviders.of(activity).get(RadiologyListViewModel.class);
+        radiologyListViewModel = new ViewModelProvider(activity).get(RadiologyListViewModel.class);
     }
 
     @NonNull

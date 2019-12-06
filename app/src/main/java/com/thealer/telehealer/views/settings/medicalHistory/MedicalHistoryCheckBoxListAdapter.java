@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,7 +61,7 @@ public class MedicalHistoryCheckBoxListAdapter extends RecyclerView.Adapter<Medi
 
     public MedicalHistoryCheckBoxListAdapter(FragmentActivity activity, String type) {
         this.activity = activity;
-        medicalHistoryViewModel = ViewModelProviders.of(activity).get(MedicalHistoryViewModel.class);
+        medicalHistoryViewModel = new ViewModelProvider(activity).get(MedicalHistoryViewModel.class);
         this.type = type;
         stringList.clear();
         switch (type) {

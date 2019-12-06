@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.settings;
 
 import android.app.DatePickerDialog;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -127,7 +128,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     }
 
     private void initObservers() {
-        signoutApiViewModel = ViewModelProviders.of(this).get(SignoutApiViewModel.class);
+        signoutApiViewModel = new ViewModelProvider(this).get(SignoutApiViewModel.class);
         signoutApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -204,7 +205,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
         setFragment(new ProfileSettingFragment(), true, false, false);
 
-        WhoAmIApiViewModel whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+        WhoAmIApiViewModel whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserver(whoAmIApiViewModel);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
@@ -248,7 +249,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 break;
             case R.id.medical_history:
                 if (whoAmIApiViewModel == null) {
-                    whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+                    whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
                 }
                 if (!whoAmIApiViewModel.baseApiResponseModelMutableLiveData.hasActiveObservers()) {
                     whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -275,7 +276,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 break;
             case R.id.change_password:
 
-                ResetPasswordRequestModel resetPasswordRequestModel = ViewModelProviders.of(this).get(ResetPasswordRequestModel.class);
+                ResetPasswordRequestModel resetPasswordRequestModel = new ViewModelProvider(this).get(ResetPasswordRequestModel.class);
                 resetPasswordRequestModel.setEmail(UserDetailPreferenceManager.getEmail());
                 resetPasswordRequestModel.setApp_type(Utils.getAppType());
 

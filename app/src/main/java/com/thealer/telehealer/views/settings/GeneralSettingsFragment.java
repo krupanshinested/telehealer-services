@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -91,7 +92,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         View view = inflater.inflate(R.layout.fragment_general_settings, container, false);
         initView(view);
 
-        profileUpdate = ViewModelProviders.of(this).get(ProfileUpdate.class);
+        profileUpdate = new ViewModelProvider(this).get(ProfileUpdate.class);
         profileUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
@@ -210,7 +211,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                         });
                 break;
             case R.id.presence:
-                UpdateStatusApiViewModel updateStatusApiViewModel = ViewModelProviders.of(this).get(UpdateStatusApiViewModel.class);
+                UpdateStatusApiViewModel updateStatusApiViewModel = new ViewModelProvider(this).get(UpdateStatusApiViewModel.class);
                 attachObserverInterface.attachObserver(updateStatusApiViewModel);
 
                 updateStatusApiViewModel.updateStatus(!presence.getSwitchStatus(), true);

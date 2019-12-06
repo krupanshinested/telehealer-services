@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.orders.labs;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -59,8 +60,8 @@ public class LabTestPreviewFragment extends OrdersBaseFragment implements View.O
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        labTestDataViewModel = ViewModelProviders.of(getActivity()).get(LabTestDataViewModel.class);
-        icdCodesDataViewModel = ViewModelProviders.of(getActivity()).get(IcdCodesDataViewModel.class);
+        labTestDataViewModel = new ViewModelProvider(getActivity()).get(LabTestDataViewModel.class);
+        icdCodesDataViewModel = new ViewModelProvider(getActivity()).get(IcdCodesDataViewModel.class);
 
         icdCodesDataViewModel.selectedIcdCodeList.observe(this,
                 new Observer<List<String>>() {

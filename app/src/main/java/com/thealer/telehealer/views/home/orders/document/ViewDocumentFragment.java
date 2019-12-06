@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.orders.document;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -63,7 +64,7 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
+        ordersApiViewModel = new ViewModelProvider(this).get(OrdersApiViewModel.class);
         attachObserverInterface.attachObserver(ordersApiViewModel);
         ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

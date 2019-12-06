@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -92,7 +93,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         onOrientationChangeInterface = (OnOrientationChangeInterface) getActivity();
         changeTitleInterface = (ChangeTitleInterface) context;
 
-        associationApiViewModel = ViewModelProviders.of(this).get(AssociationApiViewModel.class);
+        associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
 
         attachObserverInterface.attachObserver(associationApiViewModel);
         associationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {

@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.recents;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -95,7 +96,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
-        recentsApiViewModel = ViewModelProviders.of(this).get(RecentsApiViewModel.class);
+        recentsApiViewModel = new ViewModelProvider(this).get(RecentsApiViewModel.class);
         attachObserverInterface.attachObserver(recentsApiViewModel);
 
         recentsApiViewModel.baseApiResponseModelMutableLiveData.observe(this,

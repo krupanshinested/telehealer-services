@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -157,10 +158,10 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
 
-        resetPasswordRequestModel = ViewModelProviders.of(getActivity()).get(ResetPasswordRequestModel.class);
+        resetPasswordRequestModel = new ViewModelProvider(getActivity()).get(ResetPasswordRequestModel.class);
 
-        requestOtpApiViewModel = ViewModelProviders.of(getActivity()).get(RequestOtpApiViewModel.class);
-        whoAmIApiViewModel = ViewModelProviders.of(getActivity()).get(WhoAmIApiViewModel.class);
+        requestOtpApiViewModel = new ViewModelProvider(getActivity()).get(RequestOtpApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(getActivity()).get(WhoAmIApiViewModel.class);
 
         onViewChangeInterface.attachObserver(requestOtpApiViewModel);
         onViewChangeInterface.attachObserver(whoAmIApiViewModel);
@@ -355,7 +356,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
         if (otpType == signup) {
             String phone;
             if (!isVerifyUser) {
-                CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+                CreateUserRequestModel createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
                 phone = createUserRequestModel.getUser_data().getPhone();
             } else {
                 phone = UserDetailPreferenceManager.getWhoAmIResponse().getPhone();

@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -127,11 +128,11 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
-        icdCodesDataViewModel = ViewModelProviders.of(getActivity()).get(IcdCodesDataViewModel.class);
+        icdCodesDataViewModel = new ViewModelProvider(getActivity()).get(IcdCodesDataViewModel.class);
         icdCodesDataViewModel.setSelectedIcdCodeList(new MediatorLiveData<>());
         icdCodesDataViewModel.setIcdCodeDetailHashMap(new MediatorLiveData<>());
 
-        dietApiViewModel = ViewModelProviders.of(this).get(DietApiViewModel.class);
+        dietApiViewModel = new ViewModelProvider(this).get(DietApiViewModel.class);
         dietApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
@@ -143,9 +144,9 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             }
         });
 
-        visitDetailViewModel = ViewModelProviders.of(this).get(VisitDetailViewModel.class);
+        visitDetailViewModel = new ViewModelProvider(this).get(VisitDetailViewModel.class);
 
-        schedulesApiViewModel = ViewModelProviders.of(this).get(SchedulesApiViewModel.class);
+        schedulesApiViewModel = new ViewModelProvider(this).get(SchedulesApiViewModel.class);
         attachObserverInterface.attachObserver(schedulesApiViewModel);
         schedulesApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -159,7 +160,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             }
         });
 
-        visitsApiViewModel = ViewModelProviders.of(this).get(VisitsApiViewModel.class);
+        visitsApiViewModel = new ViewModelProvider(this).get(VisitsApiViewModel.class);
         attachObserverInterface.attachObserver(visitsApiViewModel);
         visitsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -344,7 +345,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             }
         });
 
-        recentsApiViewModel = ViewModelProviders.of(this).get(RecentsApiViewModel.class);
+        recentsApiViewModel = new ViewModelProvider(this).get(RecentsApiViewModel.class);
         attachObserverInterface.attachObserver(recentsApiViewModel);
 
         recentsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -385,7 +386,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             }
         });
 
-        vitalsApiViewModel = ViewModelProviders.of(this).get(VitalsApiViewModel.class);
+        vitalsApiViewModel = new ViewModelProvider(this).get(VitalsApiViewModel.class);
         attachObserverInterface.attachObserver(visitsApiViewModel);
 
         vitalsApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
@@ -399,7 +400,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             }
         });
 
-        ordersApiViewModel = ViewModelProviders.of(this).get(OrdersApiViewModel.class);
+        ordersApiViewModel = new ViewModelProvider(this).get(OrdersApiViewModel.class);
         ordersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {

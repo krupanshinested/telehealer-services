@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.signup.doctor;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -52,8 +53,8 @@ public class BAAFragment extends BaseFragment implements DoCurrentTransactionInt
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
-        createUserApiViewModel = ViewModelProviders.of(this).get(CreateUserApiViewModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
+        createUserApiViewModel = new ViewModelProvider(this).get(CreateUserApiViewModel.class);
 
         AttachObserverInterface attachObserverInterface = (AttachObserverInterface) getActivity();
         attachObserverInterface.attachObserver(createUserApiViewModel);

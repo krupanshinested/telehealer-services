@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.orders.miscellaneous;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -57,7 +58,7 @@ public class CreateNewMiscellaneousFragment extends OrdersBaseFragment implement
         super.onAttach(context);
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        ordersCreateApiViewModel = ViewModelProviders.of(this).get(OrdersCreateApiViewModel.class);
+        ordersCreateApiViewModel = new ViewModelProvider(this).get(OrdersCreateApiViewModel.class);
 
         ordersCreateApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

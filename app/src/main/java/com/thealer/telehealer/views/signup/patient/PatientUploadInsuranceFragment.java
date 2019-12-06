@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signup.patient;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -138,7 +139,7 @@ public class PatientUploadInsuranceFragment extends BaseFragment implements DoCu
         }
 
         if (currentScreenType == Constants.forRegistration) {
-            createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+            createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
 
             primaryFrontImgPath = createUserRequestModel.getInsurance_front_path();
             primaryBackImgPath = createUserRequestModel.getInsurance_back_path();

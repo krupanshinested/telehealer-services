@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.schedules;
 
 import android.app.Activity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -51,9 +52,9 @@ public class PatientHistoryFragment extends BaseFragment {
         super.onAttach(context);
         changeTitleInterface = (ChangeTitleInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        profileUpdate = ViewModelProviders.of(getActivity()).get(ProfileUpdate.class);
-        createScheduleViewModel = ViewModelProviders.of(getActivity()).get(CreateScheduleViewModel.class);
-        schedulesApiViewModel = ViewModelProviders.of(this).get(SchedulesApiViewModel.class);
+        profileUpdate = new ViewModelProvider(getActivity()).get(ProfileUpdate.class);
+        createScheduleViewModel = new ViewModelProvider(getActivity()).get(CreateScheduleViewModel.class);
+        schedulesApiViewModel = new ViewModelProvider(this).get(SchedulesApiViewModel.class);
         attachObserverInterface.attachObserver(schedulesApiViewModel);
         attachObserverInterface.attachObserver(profileUpdate);
 

@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -94,8 +95,8 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
         super.onAttach(context);
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
-        icdCodesDataViewModel = ViewModelProviders.of(getActivity()).get(IcdCodesDataViewModel.class);
-        radiologyListViewModel = ViewModelProviders.of(getActivity()).get(RadiologyListViewModel.class);
+        icdCodesDataViewModel = new ViewModelProvider(getActivity()).get(IcdCodesDataViewModel.class);
+        radiologyListViewModel = new ViewModelProvider(getActivity()).get(RadiologyListViewModel.class);
 
         icdCodesDataViewModel.getSelectedIcdCodeList().observe(this, new Observer<List<String>>() {
             @Override
