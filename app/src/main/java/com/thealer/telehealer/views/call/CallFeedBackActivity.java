@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.R;
@@ -74,7 +75,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         startedDate = (Date) getIntent().getSerializableExtra(ArgumentKeys.STARTED_DATE);
         endedDate = (Date) getIntent().getSerializableExtra(ArgumentKeys.ENDED_DATE);
 
-        openTokViewModel = ViewModelProviders.of(this).get(OpenTokViewModel.class);
+        openTokViewModel = new ViewModelProvider(this).get(OpenTokViewModel.class);
 
         openTokViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -95,7 +96,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             }
         });
 
-        visitsApiViewModel = ViewModelProviders.of(this).get(VisitsApiViewModel.class);
+        visitsApiViewModel = new ViewModelProvider(this).get(VisitsApiViewModel.class);
         visitsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {

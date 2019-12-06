@@ -22,9 +22,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.hbb20.CountryCodePicker;
@@ -107,8 +109,8 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
 
-        signinApiViewModel = ViewModelProviders.of(this).get(SigninApiViewModel.class);
-        whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+        signinApiViewModel = new ViewModelProvider(this).get(SigninApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserver(signinApiViewModel);
         attachObserver(whoAmIApiViewModel);
 
@@ -283,7 +285,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void showResetPassword() {
-        ResetPasswordRequestModel resetPasswordRequestModel = ViewModelProviders.of(this).get(ResetPasswordRequestModel.class);
+        ResetPasswordRequestModel resetPasswordRequestModel = new ViewModelProvider(this).get(ResetPasswordRequestModel.class);
         resetPasswordRequestModel.setEmail(emailEt.getText().toString());
         resetPasswordRequestModel.setApp_type(Utils.getAppType());
 

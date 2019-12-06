@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.settings;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -122,7 +123,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
     }
 
     private void addObserver() {
-        transactionApiViewModel = ViewModelProviders.of(this).get(TransactionApiViewModel.class);
+        transactionApiViewModel = new ViewModelProvider(this).get(TransactionApiViewModel.class);
 
         transactionApiViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override

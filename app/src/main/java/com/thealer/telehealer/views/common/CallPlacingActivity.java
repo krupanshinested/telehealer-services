@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.common;
 import android.app.Activity;
 import android.app.NotificationManager;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -279,7 +280,7 @@ public class CallPlacingActivity extends BaseActivity {
     }
 
     private void addBrainTreeObserver() {
-        brainTreeViewModel = ViewModelProviders.of(CallPlacingActivity.this).get(BrainTreeViewModel.class);
+        brainTreeViewModel = new ViewModelProvider(CallPlacingActivity.this).get(BrainTreeViewModel.class);
 
         attachObserver(brainTreeViewModel);
 

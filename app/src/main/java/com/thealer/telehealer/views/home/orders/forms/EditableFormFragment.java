@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.home.orders.forms;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -80,9 +81,9 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
 
-        dynamicFormDataBean = ViewModelProviders.of(this).get(DynamicFormDataBean.class);
+        dynamicFormDataBean = new ViewModelProvider(this).get(DynamicFormDataBean.class);
 
-        formsApiViewModel = ViewModelProviders.of(this).get(FormsApiViewModel.class);
+        formsApiViewModel = new ViewModelProvider(this).get(FormsApiViewModel.class);
         attachObserverInterface.attachObserver(formsApiViewModel);
 
         formsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {

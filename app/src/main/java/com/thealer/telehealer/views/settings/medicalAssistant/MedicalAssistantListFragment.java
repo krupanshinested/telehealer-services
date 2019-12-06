@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.settings.medicalAssistant;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -57,7 +58,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
 
-        associationApiViewModel = ViewModelProviders.of(this).get(AssociationApiViewModel.class);
+        associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
         attachObserverInterface.attachObserver(associationApiViewModel);
         associationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

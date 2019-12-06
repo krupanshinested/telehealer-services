@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.common;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -50,7 +51,7 @@ public class PdfViewerFragment extends BaseFragment implements View.OnClickListe
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
-        pdfReceiverApiViewModel = ViewModelProviders.of(this).get(PdfReceiverApiViewModel.class);
+        pdfReceiverApiViewModel = new ViewModelProvider(this).get(PdfReceiverApiViewModel.class);
         attachObserverInterface.attachObserver(pdfReceiverApiViewModel);
     }
 

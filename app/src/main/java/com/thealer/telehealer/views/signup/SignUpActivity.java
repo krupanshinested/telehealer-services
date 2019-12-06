@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.BuildConfig;
@@ -141,7 +142,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         helpIv.setOnClickListener(this);
         helpIv.setVisibility(View.VISIBLE);
 
-        createUserRequestModel = ViewModelProviders.of(this).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(this).get(CreateUserRequestModel.class);
         createUserRequestModel = new CreateUserRequestModel();
 
         setViewInfoText();

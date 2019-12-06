@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -94,7 +95,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     private void initViewModel() {
 
-        chatApiViewModel = ViewModelProviders.of(this).get(ChatApiViewModel.class);
+        chatApiViewModel = new ViewModelProvider(this).get(ChatApiViewModel.class);
         attachObserver(chatApiViewModel);
 
         chatApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {

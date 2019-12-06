@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.signup;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -62,8 +63,8 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        checkUserEmailMobileApiViewModel = ViewModelProviders.of(this).get(CheckUserEmailMobileApiViewModel.class);
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        checkUserEmailMobileApiViewModel = new ViewModelProvider(this).get(CheckUserEmailMobileApiViewModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
 
         onViewChangeInterface.attachObserver(checkUserEmailMobileApiViewModel);
 

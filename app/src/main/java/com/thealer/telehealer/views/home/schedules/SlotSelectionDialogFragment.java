@@ -1,6 +1,8 @@
 package com.thealer.telehealer.views.home.schedules;
 
 import android.app.Activity;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -48,7 +50,7 @@ public class SlotSelectionDialogFragment extends BaseBottomSheetDialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        createScheduleViewModel = ViewModelProviders.of(getActivity()).get(CreateScheduleViewModel.class);
+        createScheduleViewModel = new ViewModelProvider(getActivity()).get(CreateScheduleViewModel.class);
     }
 
     @Nullable

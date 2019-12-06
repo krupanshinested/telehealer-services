@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.signup.doctor;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -70,7 +71,7 @@ public class DoctorDriverLicenseFragment extends BaseFragment implements DoCurre
 
     @Override
     public void doCurrentTransaction() {
-        CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        CreateUserRequestModel createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
         createUserRequestModel.setDoctor_driving_license_path(doctorLicensePath);
         onActionCompleteInterface.onCompletionResult(null, true, null);
     }

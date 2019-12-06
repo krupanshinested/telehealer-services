@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -40,7 +41,7 @@ public class GetUserDetails {
         if (getUserDetails == null) {
             getUserDetails = new GetUserDetails();
         }
-        getUserDetails.getUsersApiViewModel = ViewModelProviders.of(fragmentActivity).get(GetUsersApiViewModel.class);
+        getUserDetails.getUsersApiViewModel = new ViewModelProvider(fragmentActivity).get(GetUsersApiViewModel.class);
         getUserDetails.getUsersApiViewModel.baseApiArrayListMutableLiveData.observe(fragmentActivity, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
@@ -50,7 +51,7 @@ public class GetUserDetails {
             }
         });
 
-        getUserDetails.associationApiViewModel = ViewModelProviders.of(fragmentActivity).get(AssociationApiViewModel.class);
+        getUserDetails.associationApiViewModel = new ViewModelProvider(fragmentActivity).get(AssociationApiViewModel.class);
         getUserDetails.associationApiViewModel.baseApiArrayListMutableLiveData.observe(fragmentActivity, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
             public void onChanged(ArrayList<BaseApiResponseModel> baseApiResponseModels) {

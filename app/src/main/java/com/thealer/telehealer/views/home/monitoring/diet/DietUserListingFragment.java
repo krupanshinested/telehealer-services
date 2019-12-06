@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -81,7 +82,7 @@ public class DietUserListingFragment extends BaseFragment {
         attachObserverInterface = (AttachObserverInterface) context;
         onCloseActionInterface = (OnCloseActionInterface) context;
 
-        dietApiViewModel = ViewModelProviders.of(this).get(DietApiViewModel.class);
+        dietApiViewModel = new ViewModelProvider(this).get(DietApiViewModel.class);
         attachObserverInterface.attachObserver(dietApiViewModel);
 
         dietApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {

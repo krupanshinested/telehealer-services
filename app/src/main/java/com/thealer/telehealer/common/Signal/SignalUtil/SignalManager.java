@@ -10,6 +10,7 @@ import com.thealer.telehealer.common.Signal.SignalModels.SignalKey;
 import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
 import com.thealer.telehealer.common.Signal.SignalModels.SignedPreKey;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
 
 import org.whispersystems.libsignal.IdentityKeyPair;
 import org.whispersystems.libsignal.InvalidKeyException;
@@ -72,20 +73,20 @@ public class SignalManager {
         ECPublicKey signed_pre_key_public = ec_signed_key_pair.getPublicKey();
 
         PreKey preKey = new PreKey();
-        preKey.setPubKey(SignalEncodeDecode.publicKey(pre_key_public));
-        preKey.setPrivKey(SignalEncodeDecode.privateKey(pre_key_private));
+        preKey.setPubKey(Utils.trimAndRemoveNewLineCharacters(SignalEncodeDecode.publicKey(pre_key_public)));
+        preKey.setPrivKey(Utils.trimAndRemoveNewLineCharacters(SignalEncodeDecode.privateKey(pre_key_private)));
         preKey.setKeyId(preKeyRecord.getId());
 
         // Signed pre key
         SignedPreKey signedPreKey = new SignedPreKey();
-        signedPreKey.setPrivKey(SignalEncodeDecode.privateKey(signed_pre_key_private));
-        signedPreKey.setPubKey(SignalEncodeDecode.publicKey(signed_pre_key_public));
-        signedPreKey.setSignature(SignalEncodeDecode.signedPreKeySignature(signed_pre_key));
+        signedPreKey.setPrivKey(Utils.trimAndRemoveNewLineCharacters(SignalEncodeDecode.privateKey(signed_pre_key_private)));
+        signedPreKey.setPubKey(Utils.trimAndRemoveNewLineCharacters(SignalEncodeDecode.publicKey(signed_pre_key_public)));
+        signedPreKey.setSignature(Utils.trimAndRemoveNewLineCharacters(SignalEncodeDecode.signedPreKeySignature(signed_pre_key)));
         signedPreKey.setKeyId(signed_pre_key.getId());
 
         IdentityKey identityKey = new IdentityKey();
-        identityKey.setPrivKey(SignalEncodeDecode.privateKey(identityKeyPair.getPrivateKey()));
-        identityKey.setPubKey(SignalEncodeDecode.publicKey(identityKeyPair.getPublicKey()));
+        identityKey.setPrivKey(Utils.trimAndRemoveNewLineCharacters(SignalEncodeDecode.privateKey(identityKeyPair.getPrivateKey())));
+        identityKey.setPubKey(Utils.trimAndRemoveNewLineCharacters(SignalEncodeDecode.publicKey(identityKeyPair.getPublicKey())));
 
         key.setPreKey(preKey);
         key.setSignedPreKey(signedPreKey);

@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.signup.medicalAssistant;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -109,7 +110,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             certificateImagePath = savedInstanceState.getString("certificateImagePath");
         }
 
-        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
 
         initView(view);
         onViewChangeInterface.hideOrShowNext(true);
@@ -251,7 +252,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     }
 
     private void addObservers() {
-        updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
+        updateProfileModel = new ViewModelProvider(this).get(UpdateProfileModel.class);
 
         updateProfileModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -272,7 +273,7 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             }
         });
 
-        whoAmIApiViewModel = ViewModelProviders.of(getActivity()).get(WhoAmIApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(getActivity()).get(WhoAmIApiViewModel.class);
 
         whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
                 new Observer<BaseApiResponseModel>() {
