@@ -167,9 +167,11 @@ dependencies {
 
     //firebase
     implementation 'com.google.firebase:firebase-core:17.2.1'
-    implementation 'com.google.firebase:firebase-messaging:20.0.1'
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
 
-    implementation 'com.google.firebase:firebase-perf:19.0.3'
+    implementation ('com.google.firebase:firebase-perf:19.0.3') {
+        exclude group: 'com.google.protobuf'
+    }
 
     //pubnub
     implementation 'com.pubnub:pubnub:4.2.0'
@@ -217,9 +219,7 @@ dependencies {
     implementation 'com.romainpiel.shimmer:library:1.4.0@aar'
 
     //Chat
-    implementation ('org.whispersystems:signal-protocol-android:2.7.1') {
-        exclude group: 'com.google.protobuf'
-    }
+    implementation ('org.whispersystems:signal-protocol-android:2.7.1')
 
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
 
