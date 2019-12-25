@@ -44,7 +44,7 @@ public class SplashActivity extends BaseActivity {
 
         splashIv = (ImageView) findViewById(R.id.splash_iv);
 
-        if (!appConfig.isStethio(this)) {
+        if (!appConfig.isOtherThanTelehealer(this)) {
             Glide.with(this).load(R.raw.app_splash).apply(new RequestOptions().placeholder(getDrawable(R.drawable.app_icon))).into(splashIv);
         }
 
