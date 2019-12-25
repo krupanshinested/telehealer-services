@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Telehealer</string>
-    <string name="opposite_app">Telehealer Medical</string>
-    <string name="organization_name">Telehealer</string>
+    <string name="app_name">PepTalk Health</string>
+    <string name="opposite_app">PepTalk MD</string>
+    <string name="organization_name">PepTalk</string>
     <string name="app_gradient_start">#3B9EFF</string>
     <string name="app_gradient_end">#38C9E5</string>
 </resources>
