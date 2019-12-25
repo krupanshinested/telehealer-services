@@ -212,7 +212,7 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
     }
 
     private void proceed() {
-        if (!appConfig.isStethio(getActivity())) {
+        if (!appConfig.isOtherThanTelehealer(getActivity())) {
             UserDetailPreferenceManager.setInstallType(appConfig.getInstallType(countyCode.getSelectedCountryEnglishName()));
             UserDetailPreferenceManager.setCountryCode(countyCode.getSelectedCountryNameCode());
         }
