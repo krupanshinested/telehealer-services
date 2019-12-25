@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PepTalk MD</string>
+    <string name="opposite_app">PepTalk Health</string>
+    <string name="organization_name">PepTalk</string>
+    <string name="app_gradient_start">#12B2B2</string>
+    <string name="app_gradient_end">#1FCCBB</string>
+</resources>

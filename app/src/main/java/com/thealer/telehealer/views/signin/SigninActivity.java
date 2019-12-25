@@ -330,7 +330,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         quickLoginTv = (TextView) findViewById(R.id.quick_login_tv);
         countryPicker = (CountryCodePicker) findViewById(R.id.country_picker);
 
-        if (!appConfig.isStethio(this)) {
+        if (!appConfig.isOtherThanTelehealer(this)) {
             countryPicker.setVisibility(View.VISIBLE);
             if (!appConfig.isLocaleIndia()) {
                 countryPicker.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {

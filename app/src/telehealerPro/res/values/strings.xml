@@ -3,4 +3,6 @@
     <string name="app_name">Telehealer Professional</string>
     <string name="opposite_app">Telehealer Patient</string>
     <string name="organization_name">Telehealer</string>
+    <string name="app_gradient_start">#FF8A14</string>
+    <string name="app_gradient_end">#FFA938</string>
 </resources>

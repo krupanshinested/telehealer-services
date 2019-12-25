@@ -33,8 +33,8 @@ public class AppConfig {
         this.context = context;
     }
 
-    public boolean isStethio(Context context) {
-        return context.getString(R.string.organization_name).equals("Steth IO");
+    public boolean isOtherThanTelehealer(Context context) {
+        return !context.getString(R.string.organization_name).equals("Telehealer");
     }
 
     public boolean isLocaleIndia() {
@@ -64,8 +64,8 @@ public class AppConfig {
     }
 
     public String getInstallType() {
-        if (isStethio(context)) {
-            return "stethio";
+        if (isOtherThanTelehealer(context)) {
+            return "peptalk";
         } else {
             String type = UserDetailPreferenceManager.getInstallType();
 
@@ -91,7 +91,7 @@ public class AppConfig {
 
     public List<Integer> getRemovedFeatures() {
         List<Integer> removedList;
-        if (isStethio(context)) {
+        if (isOtherThanTelehealer(context)) {
             removedList = new ArrayList<>();
         } else if (UserDetailPreferenceManager.getInstallType().equals(context.getString(R.string.install_type_india))) {
             removedList = new ArrayList<>(Arrays.asList(FEATURE_DOCTOR_SEARCH, FEATURE_PHARMACY_FAX, FEATURE_LICENSE, FEATURE_NPI, FEATURE_CCM, FEATURE_SPECIALIST,

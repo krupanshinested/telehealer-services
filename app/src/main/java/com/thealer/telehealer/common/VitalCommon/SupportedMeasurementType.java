@@ -87,11 +87,7 @@ public class SupportedMeasurementType {
 
 
     public static List<String> getItems() {
-        List<String> items = new ArrayList<>(Arrays.asList(bp, weight, temperature, gulcose, pulseOximeter));
-        if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_STETHOSCOPE)) {
-            items.add(stethoscope);
-        }
-        return items;
+        return new ArrayList<>(Arrays.asList(bp, weight, temperature, gulcose, pulseOximeter));
     }
 
 }

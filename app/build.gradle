@@ -42,23 +42,23 @@ android {
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
         }
-        stethioHealth {
+        pepTalkHealth {
             minSdkVersion 23
             targetSdkVersion 28
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
             versionCode 1
             versionName '1'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
-            applicationId 'com.stethio.health'
+            applicationId 'com.thealer'
         }
-        stethioMd {
+        pepTalkMd {
             minSdkVersion 23
             targetSdkVersion 28
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
             versionCode 1
             versionName '1'
             buildConfigField("String", "FLAVOR_TYPE", "\"doctor\"")
-            applicationId 'com.stethio.md'
+            applicationId 'com.thealer.pro'
         }
     }
 
@@ -74,18 +74,18 @@ android {
             res.srcDirs = ['src/patient/res', 'src/telehealer/res']
             assets.srcDirs = ['src/patient/assets', 'src/telehealer/assets']
         }
-        stethioHealth {
-            res.srcDirs = ['src/patient/res', 'src/stethioHealth/res']
+        pepTalkHealth {
+            res.srcDirs = ['src/patient/res', 'src/pepTalkHealth/res']
             java.srcDirs = ['src/patient/java']
             manifest.srcFile 'src/patient/AndroidManifest.xml'
             jniLibs.srcDirs = ['libs']
-            assets.srcDirs = ['src/doctor/assets', 'src/stethioHealth/assets']
+            assets.srcDirs = ['src/doctor/assets', 'src/pepTalkHealth/assets']
         }
-        stethioMd {
-            res.srcDirs = ['src/doctor/res', 'src/stethioMd/res']
+        pepTalkMd {
+            res.srcDirs = ['src/doctor/res', 'src/pepTalkMd/res']
             java.srcDirs = ['src/doctor/java']
             manifest.srcFile 'src/doctor/AndroidManifest.xml'
-            assets.srcDirs = ['src/doctor/assets', 'src/stethioMd/assets']
+            assets.srcDirs = ['src/doctor/assets', 'src/pepTalkoMd/assets']
         }
     }
 
@@ -112,7 +112,7 @@ dependencies {
     //implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.2.0-alpha02'
+    implementation 'com.google.android.material:material:1.2.0-alpha03'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'androidx.core:core:1.2.0-rc01'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
@@ -129,8 +129,8 @@ dependencies {
     implementation 'io.michaelrocks:libphonenumber-android:8.9.14'
 
     //Glide image loaded
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.3.0-alpha03'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-alpha03'
@@ -204,8 +204,8 @@ dependencies {
     implementation 'me.toptas.fancyshowcase:fancyshowcaseview:1.1.5'
 
     //kotlin support
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.3.60'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.60"
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.3.61'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61"
 
     //Image compression
     implementation 'id.zelory:compressor:2.1.0'
@@ -227,4 +227,7 @@ dependencies {
     //Google Fit
     patientImplementation "com.google.android.gms:play-services-fitness:18.0.0"
     patientImplementation "com.google.android.gms:play-services-auth:17.0.0"
+
+    pepTalkHealthImplementation "com.google.android.gms:play-services-fitness:18.0.0"
+    pepTalkHealthImplementation "com.google.android.gms:play-services-auth:17.0.0"
 }
