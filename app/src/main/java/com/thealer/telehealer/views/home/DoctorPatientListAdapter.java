@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -37,7 +38,6 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     private final int TYPE_ITEM = 2;
 
     private FragmentActivity fragmentActivity;
-    private List<CommonUserApiResponseModel> associationApiResponseModelResult;
     private OnActionCompleteInterface onActionCompleteInterface;
     private boolean isDietView;
     private Bundle bundle;
@@ -45,7 +45,6 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle) {
         fragmentActivity = activity;
-        associationApiResponseModelResult = new ArrayList<>();
         adapterListModels = new ArrayList<>();
         onActionCompleteInterface = (OnActionCompleteInterface) activity;
         this.isDietView = isDietView;
@@ -134,17 +133,6 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public void setData(List<CommonUserApiResponseModel> associationApiResponseModelResult, int page) {
-        if (page == 1) {
-            this.associationApiResponseModelResult = associationApiResponseModelResult;
-        } else {
-            this.associationApiResponseModelResult.addAll(associationApiResponseModelResult);
-        }
-
-        generateList();
-
-    }
-
-    private void generateList() {
         List<CommonUserApiResponseModel> favoriteList = new ArrayList<>();
         List<CommonUserApiResponseModel> otherList = new ArrayList<>();
         adapterListModels.clear();
@@ -175,6 +163,29 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
 
         notifyDataSetChanged();
     }
+
+    public void setData(List<DoctorGroupedAssociations> associationApiResponseModelResult) {
+        adapterListModels.clear();
+
+        boolean needHeader = true;
+        if (associationApiResponseModelResult.size() == 1 && associationApiResponseModelResult.get(0).getGroup_name().equals("Others")) {
+            needHeader = false;
+        }
+
+        for (int i = 0; i < associationApiResponseModelResult.size(); i++) {
+            DoctorGroupedAssociations associations = associationApiResponseModelResult.get(i);
+            if (needHeader) {
+                adapterListModels.add(new AssociationAdapterListModel(TYPE_HEADER, associations.getGroup_name()));
+            }
+
+            for (int j = 0; j < associations.getDoctors().size(); j++) {
+                adapterListModels.add(new AssociationAdapterListModel(TYPE_ITEM, associations.getDoctors().get(j)));
+            }
+        }
+
+        notifyDataSetChanged();
+    }
+
 
     public class HeaderHolder extends RecyclerView.ViewHolder {
         private TextView headerTv;
