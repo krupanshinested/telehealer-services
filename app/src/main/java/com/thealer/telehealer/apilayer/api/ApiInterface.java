@@ -4,6 +4,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileResponseModel;
+import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
@@ -230,6 +231,9 @@ public interface ApiInterface {
 
     @GET("api/associations")
     Observable<ArrayList<CommonUserApiResponseModel>> getAssociations(@Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String doctorGuid);
+
+    @GET("api/associated-doctors")
+    Observable<ArrayList<DoctorGroupedAssociations>> getDoctorGroupedAssociations();
 
     @GET("api/associations")
     Observable<ArrayList<CommonUserApiResponseModel>> getUserAssociationDetail(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
