@@ -3,16 +3,21 @@ package com.thealer.telehealer.views.home;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -25,6 +30,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -83,6 +89,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private boolean isDietView, isResumed;
     private String doctorGuid = null;
     private AssociationApiResponseModel associationApiResponseModel;
+    private ArrayList<DoctorGroupedAssociations> doctorGroupedAssociations;
     private ChangeTitleInterface changeTitleInterface;
 
     @Override
@@ -96,85 +103,27 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
 
         attachObserverInterface.attachObserver(associationApiViewModel);
+        associationApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+            @Override
+            public void onChanged(ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                doctorGroupedAssociations = new ArrayList(baseApiResponseModels);
+
+                didReceivedResult();
+            }
+        });
+
         associationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 doctorPatientListCrv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModel != null) {
-                    associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
 
-                    if (page == 1){
-                        String title;
-                        if (UserType.isUserPatient() || UserType.isUserAssistant()) {
-                            title = getString(R.string.Doctors);
-                        } else {
-                            title = getString(R.string.Patients);
-                        }
-
-                        changeTitleInterface.onTitleChange(Utils.getPaginatedTitle(title, associationApiResponseModel.getCount()));
+                    if (baseApiResponseModel instanceof AssociationApiResponseModel) {
+                        associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
                     }
 
-                    if (associationApiResponseModel.getResult().size() == 0) {
-
-                        doctorPatientListCrv.showOrhideEmptyState(true);
-
-                        if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION)) {
-
-                            appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION, true);
-
-                            DismissListener dismissListener = new DismissListener() {
-                                @Override
-                                public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
-
-                                }
-
-                                @Override
-                                public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
-
-                                }
-                            };
-
-                            if (UserType.isUserDoctor()) {
-                                Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_PATIENT, dismissListener);
-                            } else {
-                                Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_DOCTOR, dismissListener);
-                            }
-                        }
-                    }
-
-                    if (doctorPatientListAdapter != null) {
-
-                        doctorPatientListCrv.setNextPage(associationApiResponseModel.getNext());
-
-                        if (associationApiResponseModel.getResult().size() > 0) {
-                            doctorPatientListCrv.showOrhideEmptyState(false);
-                        }
-                        doctorPatientListAdapter.setData(associationApiResponseModel.getResult(), page);
-
-                        if (associationApiResponseModel.getResult().size() > 0) {
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable(Constants.USER_DETAIL, associationApiResponseModel.getResult().get(0));
-                            onOrientationChangeInterface.onDataReceived(bundle);
-                        }
-                        associationApiViewModel.baseApiResponseModelMutableLiveData.setValue(null);
-
-                    }
-
-                    if (UserType.isUserAssistant() && !associationApiResponseModel.getResult().isEmpty()) {
-                        List<String> doctorGuidList = new ArrayList<>();
-                        for (int i = 0; i < associationApiResponseModel.getResult().size(); i++) {
-                            if (!doctorGuidList.contains(associationApiResponseModel.getResult().get(i).getUser_guid())) {
-                                doctorGuidList.add(associationApiResponseModel.getResult().get(i).getUser_guid());
-                            }
-                        }
-                        String doctorGuids = doctorGuidList.toString().replace("[", "").replace("]", "").trim();
-                        appPreference.setString(PreferenceConstants.ASSOCIATION_GUID_LIST, doctorGuids);
-
-                    }
+                    didReceivedResult();
                 }
-                isApiRequested = false;
-                doctorPatientListCrv.setScrollable(true);
-                doctorPatientListCrv.hideProgressBar();
             }
         });
     }
@@ -320,8 +269,109 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         }
     }
 
+    private void didReceivedResult() {
+        if (page == 1) {
+            String title;
+            if (UserType.isUserPatient() || UserType.isUserAssistant()) {
+                title = getString(R.string.Doctors);
+            } else {
+                title = getString(R.string.Patients);
+            }
+
+            if (associationApiResponseModel != null) {
+                changeTitleInterface.onTitleChange(Utils.getPaginatedTitle(title, associationApiResponseModel.getCount()));
+            } else {
+                changeTitleInterface.onTitleChange(title);
+            }
+
+        }
+
+        boolean isItemsPresent = false;
+        if (associationApiResponseModel != null) {
+            isItemsPresent = associationApiResponseModel.getResult().size() != 0;
+        } else {
+            isItemsPresent = doctorGroupedAssociations.size() != 0;
+        }
+
+        if (!isItemsPresent) {
+
+            doctorPatientListCrv.showOrhideEmptyState(true);
+
+            if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION)) {
+
+                appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_ADD_ASSOCIATION, true);
+
+                DismissListener dismissListener = new DismissListener() {
+                    @Override
+                    public void onDismiss(@org.jetbrains.annotations.Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onSkipped(@org.jetbrains.annotations.Nullable String s) {
+
+                    }
+                };
+
+                if (UserType.isUserDoctor()) {
+                    Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_PATIENT, dismissListener);
+                } else {
+                    Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_DOCTOR, dismissListener);
+                }
+            }
+        }
+
+        if (doctorPatientListAdapter != null) {
+
+
+            if (isItemsPresent) {
+                doctorPatientListCrv.showOrhideEmptyState(false);
+            }
+
+            if (associationApiResponseModel != null) {
+                doctorPatientListCrv.setNextPage(associationApiResponseModel.getNext());
+                doctorPatientListAdapter.setData(associationApiResponseModel.getResult(), page);
+            } else {
+                doctorPatientListCrv.setNextPage(null);
+                doctorPatientListAdapter.setData(doctorGroupedAssociations);
+            }
+
+            if (isItemsPresent) {
+                CommonUserApiResponseModel firstObject = null;
+                if (associationApiResponseModel != null && associationApiResponseModel.getResult().size() > 0) {
+                    firstObject = associationApiResponseModel.getResult().get(0);
+                } else if (doctorGroupedAssociations != null && doctorGroupedAssociations.size() > 0) {
+                    firstObject = doctorGroupedAssociations.get(0).getDoctors().get(0);
+                }
+
+                if (firstObject != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Constants.USER_DETAIL, firstObject);
+                    onOrientationChangeInterface.onDataReceived(bundle);
+                }
+            }
+            associationApiViewModel.baseApiResponseModelMutableLiveData.setValue(null);
+
+        }
+
+        if (UserType.isUserAssistant() && associationApiResponseModel != null && !associationApiResponseModel.getResult().isEmpty()) {
+            List<String> doctorGuidList = new ArrayList<>();
+            for (int i = 0; i < associationApiResponseModel.getResult().size(); i++) {
+                if (!doctorGuidList.contains(associationApiResponseModel.getResult().get(i).getUser_guid())) {
+                    doctorGuidList.add(associationApiResponseModel.getResult().get(i).getUser_guid());
+                }
+            }
+            String doctorGuids = doctorGuidList.toString().replace("[", "").replace("]", "").trim();
+            appPreference.setString(PreferenceConstants.ASSOCIATION_GUID_LIST, doctorGuids);
+
+        }
+        isApiRequested = false;
+        doctorPatientListCrv.setScrollable(true);
+        doctorPatientListCrv.hideProgressBar();
+    }
+
     private void showSearchList(String search) {
-        if (associationApiResponseModel  == null || associationApiResponseModel.getResult() == null) {
+        if (associationApiResponseModel == null || associationApiResponseModel.getResult() == null) {
             return;
         }
 
@@ -371,7 +421,11 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private void getAssociationsList(String name, boolean isShowProgress) {
         if (!isApiRequested) {
             doctorPatientListCrv.showOrhideEmptyState(false);
-            associationApiViewModel.getAssociationList(name, page, doctorGuid, isShowProgress, false);
+            if (UserType.isUserPatient()) {
+                associationApiViewModel.getDoctorGroupedAssociations(isShowProgress);
+            } else {
+                associationApiViewModel.getAssociationList(name, page, doctorGuid, isShowProgress, false);
+            }
         }
     }
 
