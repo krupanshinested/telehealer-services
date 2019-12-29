@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
@@ -52,6 +53,26 @@ public class AssociationApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAListObserver<CommonUserApiResponseModel>(getProgress(showProgress)) {
                                 @Override
                                 public void onSuccess(ArrayList<CommonUserApiResponseModel> data) {
+                                    ArrayList<BaseApiResponseModel> responseModels = new ArrayList<>(data);
+                                    baseApiArrayListMutableLiveData.setValue(responseModels);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getDoctorGroupedAssociations(boolean showProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+
+                    getAuthApiService().getDoctorGroupedAssociations()
+                            .compose(applySchedulers())
+                            .subscribe(new RAListObserver<DoctorGroupedAssociations>(getProgress(showProgress)) {
+                                @Override
+                                public void onSuccess(ArrayList<DoctorGroupedAssociations> data) {
                                     ArrayList<BaseApiResponseModel> responseModels = new ArrayList<>(data);
                                     baseApiArrayListMutableLiveData.setValue(responseModels);
                                 }
