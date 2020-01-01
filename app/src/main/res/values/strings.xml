@@ -62,7 +62,7 @@
     <string name="add_document">Add document</string>
     <string name="password_requirements">Password Requirements</string>
     <string name="ok_got_it">OK, Got it</string>
-    <string name="done">done</string>
+    <string name="done">Done</string>
     <string name="what_is_your_name">What is your name?</string>
     <string name="search">Search</string>
     <string name="remember_me">Remember me</string>
@@ -615,7 +615,7 @@
     <string name="proceed">PROCEED</string>
     <string name="trial_period_expired_doc_sec_1">Thank you for using %s! \n\nUnfortunately, your free trial period has now ended. Please provide a payment method to continue using the platform. \n\nVisit </string>
     <string name="trial_period_expired_doc_sec_2">for details around pricing</string>
-    <string name="trial_period_expired_ma_sec_1">Thank you for using %1$s! \n\nUnfortunately, the free trial period has now ended. Please request %1$s to add a payment method to continue using the platform.</string>
+    <string name="trial_period_expired_ma_sec_1">Thank you for using %1$s! \n\nUnfortunately, the free trial period has now ended. Please request %2$s to add a payment method to continue using the platform.</string>
     <string name="payment_information_required">Payment Information Required</string>
     <string name="call">Call</string>
     <string name="ringing">Ringing...</string>
@@ -1325,4 +1325,20 @@
     <string name="diet_delete_failure">Your diet is not deleted successfully.</string>
     <string name="deleting_your_diet">Deleting your diet</string>
     <string name="unable_to_determine_patient_location">Unable to determine patient location.</string>
+    <string name="accept_connection_request">Accept Connection Requests</string>
+    <string name="no_educational_video">No Educational videos</string>
+    <string name="empty_educational_message">Add a Educational video by tapping the \'+\' button</string>
+    <string name="OVERLAY_NO_EDUCATIONAL_VIDEO">You can add your Educational video by tapping the \'+\' button</string>
+    <string name="description">DESCRIPTION</string>
+    <string name="record">Record</string>
+    <string name="educational_video">Educational Videos</string>
+    <string name="new_educational_video">New Educational Video</string>
+    <string name="update_educational_video">Update Educational Video</string>
+    <string name="remove">Remove</string>
+    <string name="unassociate_educational_video">Are you sure to remove this educational video for this user.</string>
+    <string name="delete_educational_video">Are you sure to Delete your educational video.</string>
+    <string name="empty_educational_message_1">Educational Video will eventually show up here</string>
+    <string name="doctor_unavailable">This doctor currently doesn’t accept connection requests. Please reach out directly to your doctor’s office to get connected with your doctor via the platform.</string>
+    <string name="empty_educational_new">There are no Educational video present. You can create one from settings page</string>
+    <string name="educational_video_created">Educational video is not created yet.Please try again after some time.</string>
 </resources>

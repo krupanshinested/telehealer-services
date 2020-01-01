@@ -386,8 +386,15 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     @Override
     public void onListItemSelected(int position, Bundle bundle) {
         this.selectedPosition = position;
-        if (bundle != null)
+        if (bundle == null) {
+            return;
+        }
+
+        if (bundle.getBoolean(ArgumentKeys.SHOW_CONNECTION_REQUEST_ALERT)) {
+                Utils.showAlertDialog(AddConnectionActivity.this,"",getString(R.string.doctor_unavailable),getString(R.string.ok),null,null,null);
+        } else {
             showDetailView(bundle);
+        }
     }
 
     private void showDetailView(Bundle bundle) {

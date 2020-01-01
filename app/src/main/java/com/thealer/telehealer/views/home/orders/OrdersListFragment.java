@@ -86,6 +86,9 @@ public class OrdersListFragment extends BaseFragment {
                 typesList.remove(OrderConstant.ORDER_DOCUMENTS);
             }
 
+            typesList.add(OrderConstant.ORDER_EDUCATIONAL_VIDEO);
+            imageList.add(R.drawable.ic_educational_video);
+
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
                 toolbarTitle.setText(getString(R.string.orders));

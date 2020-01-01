@@ -10,6 +10,7 @@ public class OverlayViewConstants {
     public static final int OVERLAY_NO_MEDICAL_ASSISTANT = R.string.OVERLAY_NO_MEDICAL_ASSISTANT_MESSAGE;
     public static final int OVERLAY_NO_DOCTOR = R.string.OVERLAY_NO_DOCTOR_MESSAGE;
     public static final int OVERLAY_NO_PATIENT = R.string.OVERLAY_NO_PATIENT_MESSAGE;
+    public static final int OVERLAY_NO_EDUCATIONAL_VIDEO = R.string.OVERLAY_NO_EDUCATIONAL_VIDEO;
     public static final int OVERLAY_NO_APPOINTMENT = R.string.OVERLAY_NO_APPOINTMENT_MESSAGE;
     public static final int OVERLAY_NO_BP = (UserType.isUserPatient() ? R.string.OVERLAY_NO_BP_MESSAGE : R.string.OVERLAY_NO_PATIENT_BP_MESSAGE);
     public static final int OVERLAY_NO_GLUCOSE = (UserType.isUserPatient() ? R.string.OVERLAY_NO_GLUCOSE_MESSAGE : R.string.OVERLAY_NO_PATIENT_GLUCOSE_MESSAGE);

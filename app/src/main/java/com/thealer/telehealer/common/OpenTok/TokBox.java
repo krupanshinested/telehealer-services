@@ -40,6 +40,7 @@ import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
@@ -134,7 +135,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private Boolean isPatientDisclaimerDismissed = false;
 
     @Nullable
-    private String doctor_guid, scheduleId;
+    private String doctor_guid, additionalId;
 
     private int callState = OpenTokConstants.idle;
     private Boolean isSubscriberAudioMuted = false, isSubscriberVideoMuted = false, isSubscriberQualityDegraded = false;
@@ -198,6 +199,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             sendBattery(level);
         }
     };
+
+    @Nullable
+    private CallInitiateModel callInitiateModel;
 
     public void didRecieveIncoming(APNSPayload apnsPayload) {
         EventRecorder.recordCallUpdates("CALL_RECEIVED",null);
@@ -330,6 +334,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         EventRecorder.recordLastUpdate("last_call_date");
         currentTranscript = "";
         isTranscriptSent = false;
+        this.callInitiateModel = callInitiateModel;
 
         this.token = callInitiateModel.getToken();
         this.sessionId = callInitiateModel.getSessionId();
@@ -337,7 +342,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         this.callType = callInitiateModel.getCallType();
         this.isCalling = isCalling;
         this.currentUUIDString = uuidString;
-        this.scheduleId = callInitiateModel.getScheduleId();
+        this.additionalId = callInitiateModel.getScheduleId();
         this.isPatientDisclaimerDismissed = false;
         this.otherPersonUserGuid = callInitiateModel.getToUserGuid();
         this.otherPersonBatteryLevel = null;
@@ -351,6 +356,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 customAudioDevice.setRendererMute(false);
                 AudioFocusRequest audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(this, new Handler()).build();
                 customAudioDevice.getAudioManager().requestAudioFocus(audioFocusRequest);
+            }
+        }
+
+        if (isCalling & !callType.equals(OpenTokConstants.education)) {
+            if (tokBoxUIInterface != null) {
+                tokBoxUIInterface.updateCallInfo(application.getString(R.string.trying_to_call));
             }
         }
 
@@ -404,8 +415,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void setup(ViewGroup remoteView, ViewGroup localView) {
-
-        if (callType.equals(OpenTokConstants.oneWay)) {
+        if (callType.equals(OpenTokConstants.oneWay) || callType.equals(OpenTokConstants.education)) {
             this.localView = remoteView;
             this.remoteView = localView;
         } else {
@@ -417,7 +427,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void setRemoteView(ViewGroup remoteView) {
-        if (callType.equals(OpenTokConstants.oneWay)) {
+        if (callType.equals(OpenTokConstants.oneWay) || callType.equals(OpenTokConstants.education)) {
             this.localView = remoteView;
             setupLocalFeedView();
         } else {
@@ -484,6 +494,11 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     @Nullable
+    public CallInitiateModel getCallInitiateModel() {
+        return callInitiateModel;
+    }
+
+    @Nullable
     public TokBoxUIInterface getTokBoxUIInterface() {
         return tokBoxUIInterface;
     }
@@ -523,7 +538,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void setZOrderTopForLocalView() {
-        if (callType.equals(OpenTokConstants.oneWay)) {
+        if (callType.equals(OpenTokConstants.oneWay) || callType.equals(OpenTokConstants.education)) {
             return;
         }
 
@@ -735,6 +750,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 mPublisher.setPublishAudio(true);
                 break;
             case OpenTokConstants.oneWay:
+            case OpenTokConstants.education:
                 mPublisher.setPublishVideo(true);
                 mPublisher.setPublishAudio(true);
                 break;
@@ -747,6 +763,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         if (mSession != null)
             mSession.publish(mPublisher);
+
+        if (tokBoxUIInterface != null)
+            tokBoxUIInterface.didPublishStarted();
     }
 
     private void startOutgoingTone() {
@@ -864,17 +883,21 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             application.unregisterReceiver(batteryReceiver);
         }
 
-        if (!TextUtils.isEmpty(sessionId)) {
-            if (isCalling) {
-                if (connectedDate == null) {
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put("no_answer", "true");
-                    updateCallStatus(sessionId, map);
-                    EventRecorder.recordCallUpdates("no_answer", null);
-                } else {
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put("end", "true");
-                    updateCallStatus(sessionId, map);
+        if (callType.equals(OpenTokConstants.education)) {
+            stopArchive(sessionId);
+        } else {
+            if (!TextUtils.isEmpty(sessionId)) {
+                if (isCalling) {
+                    if (connectedDate == null) {
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put("no_answer", "true");
+                        updateCallStatus(sessionId, map);
+                        EventRecorder.recordCallUpdates("no_answer", null);
+                    } else {
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put("end", "true");
+                        updateCallStatus(sessionId, map);
+                    }
                 }
             }
         }
@@ -896,7 +919,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         connectingDate = null;
         tempToken = null;
         doctor_guid = null;
-        scheduleId = null;
+        additionalId = null;
 
         isSubscriberVideoMuted = false;
         isSubscriberAudioMuted = false;
@@ -966,7 +989,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void sendEndCallNotification(String callRejectionReason) {
-        if (callType.equals(OpenTokConstants.oneWay)) {
+        if (callType.equals(OpenTokConstants.oneWay)  || callType.equals(OpenTokConstants.education)) {
             return;
         }
 
@@ -1125,7 +1148,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     //Api methods
 
     private void sendNotification(String sessionId, String toGuid) {
-        if (callType.equals(OpenTokConstants.oneWay)) {
+        if (callType.equals(OpenTokConstants.oneWay) || callType.equals(OpenTokConstants.education)) {
             return;
         }
 
@@ -1153,13 +1176,22 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     private void uploadScreenshot(String sessionId, Bitmap bitmap) {
-        openTokViewModel.updateScreenshot(sessionId, bitmap);
+        if (callType.equals(OpenTokConstants.education)) {
+           new EducationalVideoViewModel(application).uploadScreenshot(additionalId,bitmap);
+        } else {
+            openTokViewModel.updateScreenshot(sessionId, bitmap);
+        }
     }
 
     private void startArchive(String sessionId) {
         if (isCalling) {
             openTokViewModel.startArchieve(sessionId);
         }
+    }
+
+    private void stopArchive(String sessionId) {
+        Log.d("openTok", "stopArchive");
+        openTokViewModel.stopArchieve(sessionId);
     }
 
     private void updatePatientLocation() {
@@ -1480,7 +1512,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         detail.put("event", "onConnected");
         TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
 
-        if (this.isCalling) {
+        if (this.isCalling && !TokBox.shared.callType.equals(OpenTokConstants.education)) {
             final int interval = 30000; // 30 Second
             Handler handler = new Handler();
             TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
@@ -1507,7 +1539,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         doPublish();
 
-        if (callType.equals(OpenTokConstants.oneWay)) {
+        if (callType.equals(OpenTokConstants.oneWay) || callType.equals(OpenTokConstants.education)) {
             callStarted();
         }
     }
@@ -1573,17 +1605,36 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
 
     private void callStarted() {
-        if (!callType.equals(OpenTokConstants.oneWay) && !isBatteryObserverAdded){
+        if (!callType.equals(OpenTokConstants.oneWay) && !(callType.equals(OpenTokConstants.education)) && !isBatteryObserverAdded){
             isBatteryObserverAdded = true;
             Intent batteryStatus = application.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED) );
             if (batteryStatus != null)
                 sendBattery(batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1));
         }
 
-        connectedDate = new Date();
-
         if (mPublisher != null)
             mPublisher.getView().setVisibility(View.VISIBLE);
+
+        if (!callType.equals(OpenTokConstants.education)) {
+            if (isCalling) {
+                assignCallCapTimer();
+                HashMap<String, String> params = new HashMap<>();
+                params.put("start", "true");
+                updateCallStatus(sessionId, params);
+            }
+
+            startArchiving();
+        }
+
+
+    }
+
+    public void startArchiving() {
+        connectedDate = new Date();
+
+        if (isCalling) {
+            assignScreenCapturerTime();
+        }
 
         if (tokBoxUIInterface != null) {
             tokBoxUIInterface.updateCallInfo(application.getString(R.string.connected));
@@ -1591,15 +1642,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
 
         startArchive(sessionId);
-
-        if (isCalling) {
-            assignCallCapTimer();
-            assignScreenCapturerTime();
-            HashMap<String, String> params = new HashMap<>();
-            params.put("start", "true");
-            updateCallStatus(sessionId, params);
-        }
-
     }
 
     //SubscriberListener methods

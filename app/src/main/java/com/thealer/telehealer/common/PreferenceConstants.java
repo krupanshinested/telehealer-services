@@ -47,6 +47,7 @@ public class PreferenceConstants {
 
     public static final String IS_HISTORY_UPDATE_SHOWN = "update_history";
     public static final String IS_OVERLAY_ADD_ASSOCIATION = "association_add_overlay";
+    public static final String IS_OVERLAY_EDUCATIONAL_VIDEO = "educational_add_overlay";
     public static final String IS_OVERLAY_ADD_SCHEDULE = "add_schedule_overlay";
     public static final String IS_OVERLAY_ADD_VITALS = "add_vital_overlay";
     public static final String IS_OVERLAY_ADD_DOCUMENT = "add_document_overlay";

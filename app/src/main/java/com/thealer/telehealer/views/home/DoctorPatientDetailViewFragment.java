@@ -690,20 +690,34 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 actionBtn.setVisibility(View.GONE);
                 break;
             case Constants.CONNECTION_STATUS_OPEN:
-                actionBtn.setText(getString(R.string.add_connection_pending));
-                actionBtn.setEnabled(false);
+                if (resultBean.getRole().equals(Constants.ROLE_DOCTOR) && !resultBean.getConnection_requests()) {
+                    actionBtn.setVisibility(View.GONE);
+                } else {
+                    actionBtn.setText(getString(R.string.add_connection_pending));
+                    actionBtn.setEnabled(false);
+                }
                 break;
             default:
-                actionBtn.setText(getString(R.string.add_connection_connect));
-                actionBtn.setEnabled(true);
-                if (UserType.isUserPatient() && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                if (resultBean.getRole().equals(Constants.ROLE_DOCTOR) && !resultBean.getConnection_requests()) {
                     actionBtn.setVisibility(View.GONE);
+                } else {
+                    actionBtn.setText(getString(R.string.add_connection_connect));
+                    actionBtn.setEnabled(true);
+                    if (UserType.isUserPatient() && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                        actionBtn.setVisibility(View.GONE);
+                    }
                 }
         }
 
         if (view_type.equals(Constants.VIEW_CONNECTION) && !connection_status.equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
             userDetailTab.setVisibility(View.GONE);
-            actionBtn.setVisibility(View.VISIBLE);
+
+            if (resultBean.getRole().equals(Constants.ROLE_DOCTOR) && !resultBean.getConnection_requests()) {
+
+            } else {
+                actionBtn.setVisibility(View.VISIBLE);
+            }
+
             userDetailBnv.setVisibility(View.GONE);
             favoriteIv.setVisibility(View.GONE);
             addFab.hide();
