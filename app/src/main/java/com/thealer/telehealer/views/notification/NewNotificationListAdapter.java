@@ -29,6 +29,7 @@ import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.EducationalVideo.EducationalVideoDetailFragment;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
@@ -281,6 +282,13 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                         viewHolder.descriptionTv.setVisibility(View.VISIBLE);
                         viewHolder.bottomView.setVisibility(View.VISIBLE);
                         viewHolder.titleTv.setTextColor(activity.getColor(R.color.red));
+                        break;
+                    case NotificationConstants.EDUCATIONAL_VIDEO:
+                        title = activity.getString(R.string.educational_video).toUpperCase();
+                        description = resultModel.getMessage();
+                        viewHolder.descriptionTv.setVisibility(View.VISIBLE);
+                        viewHolder.bottomView.setVisibility(View.VISIBLE);
+                        viewHolder.titleTv.setTextColor(activity.getColor(R.color.app_gradient_start));
                         break;
                 }
 
@@ -538,6 +546,19 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                     }
                                 }
                                 break;
+                           case NotificationConstants.EDUCATIONAL_VIDEO:
+                               if (resultModel.getEntity_id() != null) {
+                                   EducationalVideoDetailFragment fragment = new EducationalVideoDetailFragment();
+                                   Bundle detail = new Bundle();
+                                   if (UserType.isUserAssistant()) {
+                                       detail.putString(ArgumentKeys.DOCTOR_GUID, resultModel.getDoctorModel().getUser_guid());
+                                   }
+                                   detail.putString(ArgumentKeys.USER_GUID,resultModel.getPatientModel().getUser_guid());
+                                   detail.putString(ArgumentKeys.EDUCATIONAL_VIDEO_ID,resultModel.getEntity_id()+"");
+                                   fragment.setArguments(detail);
+                                   showSubFragmentInterface.onShowFragment(fragment);
+                               }
+                               break;
                             default:
                                 showUserDetailView(resultModel, finalDoctorModel, finalPatientModel);
                         }

@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.call;
 
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
+import android.app.Application;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.telecom.Call;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
@@ -105,6 +107,7 @@ import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
+import static com.thealer.telehealer.common.ArgumentKeys.CALL_INITIATE_MODEL;
 
 /**
  * Created by rsekar on 12/25/18.
@@ -115,6 +118,14 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         VitalManagerInstance,
         LiveVitalCallBack,
         AttachObserverInterface {
+
+
+    public static Intent getIntent(Application application,CallInitiateModel callInitiateModel) {
+        Intent intent = new Intent(application, CallActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(CALL_INITIATE_MODEL, callInitiateModel);
+        return intent;
+    }
 
     private LinearLayout bigView;
     private FrameLayout smallView;
@@ -209,7 +220,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             callDidStarted();
         } else {
             recording_tv.stop();
-            profile_background.startRippleAnimation();
+            if (!TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+                profile_background.startRippleAnimation();
+            }
         }
 
         updateMinimizeButton(Constants.idle);
@@ -536,6 +549,30 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     private void updateUI() {
         switch (TokBox.shared.getCallState()) {
             case OpenTokConstants.waitingForUserAction:
+
+                if (TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+                    hang_iv.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
+                    hang_iv.setVisibility(View.GONE);
+                    answer_iv.setVisibility(View.GONE);
+                    call_type_tv.setText("");
+                    incoming_view.setVisibility(View.GONE);
+                    moveHangButtonToCenter();
+                } else {
+                    hang_iv.setVisibility(View.VISIBLE);
+                    answer_iv.setVisibility(View.VISIBLE);
+
+                    if (TokBox.shared.isVideoCall()) {
+                        call_type_tv.setText(String.format(getString(R.string.telehealer_video), getString(R.string.app_name)));
+                    } else {
+                        call_type_tv.setText(String.format(getString(R.string.telehealer_audio), getString(R.string.app_name)));
+                    }
+
+                    incoming_view.setVisibility(View.VISIBLE);
+
+                    Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+                    answer_iv.startAnimation(shake);
+                }
+
                 top_option.setVisibility(View.GONE);
                 recording_view.setVisibility(View.GONE);
                 vitalsView.setVisibility(View.GONE);
@@ -544,27 +581,25 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 smallView.setVisibility(View.GONE);
                 bigView.setVisibility(View.GONE);
 
-                hang_iv.setVisibility(View.VISIBLE);
-                answer_iv.setVisibility(View.VISIBLE);
-
                 user_info_lay.setVisibility(View.GONE);
-                incoming_view.setVisibility(View.VISIBLE);
 
                 if (otherPersonDetail != null) {
                     display_name.setText(otherPersonDetail.getDisplayName());
                 }
 
-                if (TokBox.shared.isVideoCall()) {
-                    call_type_tv.setText(String.format(getString(R.string.telehealer_video), getString(R.string.app_name)));
-                } else {
-                    call_type_tv.setText(String.format(getString(R.string.telehealer_audio), getString(R.string.app_name)));
-                }
-
-                Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-                answer_iv.startAnimation(shake);
-
                 break;
             case OpenTokConstants.outGoingCallGoingOn:
+
+                if (TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+                    hang_iv.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
+                    hang_iv.setVisibility(View.GONE);
+                    call_type_tv.setText("");
+                    moveHangButtonToCenter();
+                    profile_iv.setVisibility(View.GONE);
+                } else {
+                    hang_iv.setVisibility(View.VISIBLE);
+                }
+
                 answer_iv.clearAnimation();
 
                 top_option.setVisibility(View.VISIBLE);
@@ -579,7 +614,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 smallView.setVisibility(View.VISIBLE);
                 bigView.setVisibility(View.VISIBLE);
 
-                hang_iv.setVisibility(View.VISIBLE);
                 answer_iv.setVisibility(View.GONE);
 
                 user_info_lay.setVisibility(View.VISIBLE);
@@ -669,7 +703,10 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void showOtherPersonDetails() {
-        if (otherPersonDetail != null) {
+        if (TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+            name_tv.setText(TokBox.shared.getCallInitiateModel().getEducationTitle());
+            user_info_tv.setText(TokBox.shared.getCallInitiateModel().getEducationDescription());
+        } else if (otherPersonDetail != null) {
             name_tv.setText(otherPersonDetail.getDisplayName());
             user_info_tv.setText(otherPersonDetail.getDisplayInfo());
             Utils.setImageWithGlide(getApplicationContext(), profile_iv, otherPersonDetail.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
@@ -776,36 +813,47 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.hang_iv:
-                hang_iv.setClickable(false);
-                if (!TokBox.shared.getCalling() && TokBox.shared.getConnectedDate() == null) {
-                    TokBox.shared.endCall(OpenTokConstants.notPickedUp);
-                    EventRecorder.recordCallUpdates("declined_call", null);
 
-                    APNSPayload payload = new APNSPayload();
-                    HashMap<String, String> aps = new HashMap<>();
-                    if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
-                        aps.put(PubNubNotificationPayload.ALERT, getString(R.string.video_missed_call));
+                if (TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+
+                    if (TokBox.shared.getConnectedDate() == null) {
+                        hang_iv.setImageDrawable(getResources().getDrawable(R.drawable.ic_stop));
+                        TokBox.shared.startArchiving();
                     } else {
-                        aps.put(PubNubNotificationPayload.ALERT, getString(R.string.audio_missed_call));
+                        TokBox.shared.endCall(OpenTokConstants.endCallPressed);
                     }
-                    if (TokBox.shared.getOtherPersonDetail() != null) {
-                        aps.put(PubNubNotificationPayload.TITLE, TokBox.shared.getOtherPersonDetail().getDisplayName());
-                        aps.put(PubNubNotificationPayload.MEDIA_URL, TokBox.shared.getOtherPersonDetail().getUser_avatar());
-                    } else {
-                        aps.put(PubNubNotificationPayload.TITLE, "Missed");
-                    }
-                    payload.setAps(aps);
-
-                    Intent intent = new Intent(application, HomeActivity.class);
-                    intent.putExtra(ArgumentKeys.SELECTED_MENU_ITEM, R.id.menu_recent);
-
-                    Utils.createNotification(payload, intent);
 
                 } else {
-                    EventRecorder.recordCallUpdates("end_call_pressed", null);
-                    TokBox.shared.endCall(OpenTokConstants.endCallPressed);
-                }
+                    hang_iv.setClickable(false);
+                    if (!TokBox.shared.getCalling() && TokBox.shared.getConnectedDate() == null) {
+                        TokBox.shared.endCall(OpenTokConstants.notPickedUp);
+                        EventRecorder.recordCallUpdates("declined_call", null);
 
+                        APNSPayload payload = new APNSPayload();
+                        HashMap<String, String> aps = new HashMap<>();
+                        if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
+                            aps.put(PubNubNotificationPayload.ALERT, getString(R.string.video_missed_call));
+                        } else {
+                            aps.put(PubNubNotificationPayload.ALERT, getString(R.string.audio_missed_call));
+                        }
+                        if (TokBox.shared.getOtherPersonDetail() != null) {
+                            aps.put(PubNubNotificationPayload.TITLE, TokBox.shared.getOtherPersonDetail().getDisplayName());
+                            aps.put(PubNubNotificationPayload.MEDIA_URL, TokBox.shared.getOtherPersonDetail().getUser_avatar());
+                        } else {
+                            aps.put(PubNubNotificationPayload.TITLE, "Missed");
+                        }
+                        payload.setAps(aps);
+
+                        Intent intent = new Intent(application, HomeActivity.class);
+                        intent.putExtra(ArgumentKeys.SELECTED_MENU_ITEM, R.id.menu_recent);
+
+                        Utils.createNotification(payload, intent);
+
+                    } else {
+                        EventRecorder.recordCallUpdates("end_call_pressed", null);
+                        TokBox.shared.endCall(OpenTokConstants.endCallPressed);
+                    }
+                }
                 break;
             case R.id.answer_iv:
                 if (TokBox.shared.getCallState() == OpenTokConstants.waitingForUserAction) {
@@ -1122,7 +1170,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
             profile_iv.setVisibility(View.GONE);
             showVitalHeader();
-        } else if (TokBox.shared.getCallType().equals(OpenTokConstants.oneWay)) {
+        } else if (TokBox.shared.getCallType().equals(OpenTokConstants.oneWay) || TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
             profile_iv.setVisibility(View.GONE);
         }
 
@@ -1137,9 +1185,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         setToggleTimer();
 
         if (!UserType.isUserPatient()) {
-            name_arrow.setVisibility(View.VISIBLE);
-            name_arrow.setOnClickListener(this);
-            name_tv.setOnClickListener(this);
+            if (!TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+                name_arrow.setVisibility(View.VISIBLE);
+                name_arrow.setOnClickListener(this);
+                name_tv.setOnClickListener(this);
+            }
         } else {
             name_arrow.setVisibility(View.GONE);
         }
@@ -1192,6 +1242,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
     @Override
     public void didEndCall(String callRejectionReason) {
+        if (TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+            deinit();
+            finish();
+            return;
+        }
 
         try {
             ActivityManager mngr = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
@@ -1435,7 +1490,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void updateBatterInfo() {
-        if (TokBox.shared.isOtherPersonBatteryLow()) {
+        if (TokBox.shared.isOtherPersonBatteryLow() && !TokBox.shared.getCallType().equals(OpenTokConstants.education) && !TokBox.shared.getCallType().equals(OpenTokConstants.oneWay)) {
             String remoteuserDisplayName = otherPersonDetail != null ? otherPersonDetail.getDisplayName() : getString(R.string.other_person);
             audio_disabled_iv.setVisibility(View.VISIBLE);
             video_disabled_iv.setVisibility(View.GONE);
@@ -1503,6 +1558,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
         if (vitalCallAdapter != null)
             vitalCallAdapter.didReceivedVitalData(type, data);
+    }
+
+    @Override
+    public void didPublishStarted() {
+        hang_iv.setVisibility(View.VISIBLE);
     }
 
     @Override

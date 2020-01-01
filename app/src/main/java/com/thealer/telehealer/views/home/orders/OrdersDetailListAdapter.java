@@ -2,10 +2,13 @@ package com.thealer.telehealer.views.home.orders;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
+
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideo;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersCommonResultResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersPrescriptionApiResponseModel;
@@ -26,6 +31,7 @@ import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.EducationalVideo.EducationalVideoDetailFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.forms.EditableFormFragment;
 import com.thealer.telehealer.views.home.orders.labs.LabsDetailViewFragment;
@@ -141,17 +147,37 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
                 CommonUserApiResponseModel commonUserApiResponseModel = null;
 
-                if (UserType.isUserPatient()) {
+                if (ordersDetailListAdapterModel.getOtherImageUrl() != null) {
+                    Utils.setImageWithGlide(context, itemCiv, ordersDetailListAdapterModel.getOtherImageUrl(), context.getDrawable(R.drawable.profile_placeholder), true, true);
+                    itemCiv.setDisableCircularTransformation(true);
+                    itemCiv.setBackgroundColor(Color.LTGRAY);
+                } else if (UserType.isUserPatient()) {
+                    itemCiv.setBackgroundColor(Color.TRANSPARENT);
                     commonUserApiResponseModel = userDetailHashMap.get(childList.get(headerList.get(groupPosition)).get(childPosition).getCommonResultResponseModel().getDoctor().getUser_guid());
+                    itemCiv.setDisableCircularTransformation(false);
                     if (commonUserApiResponseModel != null) {
                         itemTitleTv.setText(commonUserApiResponseModel.getDoctorDisplayName());
                         Utils.setImageWithGlide(context, itemCiv, commonUserApiResponseModel.getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
                     }
                 } else {
+                    itemCiv.setBackgroundColor(Color.TRANSPARENT);
+                    itemCiv.setDisableCircularTransformation(false);
                     commonUserApiResponseModel = userDetailHashMap.get(childList.get(headerList.get(groupPosition)).get(childPosition).getCommonResultResponseModel().getPatient().getUser_guid());
                     if (commonUserApiResponseModel != null) {
                         itemTitleTv.setText(commonUserApiResponseModel.getUserDisplay_name());
                         Utils.setImageWithGlide(context, itemCiv, commonUserApiResponseModel.getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
+                    }
+                }
+
+                if (UserType.isUserPatient()) {
+                    commonUserApiResponseModel = userDetailHashMap.get(childList.get(headerList.get(groupPosition)).get(childPosition).getCommonResultResponseModel().getDoctor().getUser_guid());
+                    if (commonUserApiResponseModel != null) {
+                        itemTitleTv.setText(commonUserApiResponseModel.getDoctorDisplayName());
+                    }
+                } else {
+                    commonUserApiResponseModel = userDetailHashMap.get(childList.get(headerList.get(groupPosition)).get(childPosition).getCommonResultResponseModel().getPatient().getUser_guid());
+                    if (commonUserApiResponseModel != null) {
+                        itemTitleTv.setText(commonUserApiResponseModel.getUserDisplay_name());
                     }
                 }
 
@@ -165,7 +191,11 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
             int statusImage = 0;
 
-            if (ordersCommonResultResponseModel.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
+            if (ordersCommonResultResponseModel instanceof EducationalVideoOrder) {
+                if (((EducationalVideoOrder) ordersCommonResultResponseModel).isViewed() && !UserType.isUserPatient()) {
+                    statusImage = R.drawable.ic_eye;
+                }
+            } else if (!TextUtils.isEmpty(ordersCommonResultResponseModel.getStatus()) && ordersCommonResultResponseModel.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
 
                 statusImage = OrderStatus.getStatusImage(ordersCommonResultResponseModel.getStatus());
 
@@ -196,6 +226,9 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
                 fragment = new MiscellaneousDetailViewFragment();
 
+            } else if (ordersCommonResultResponseModel instanceof EducationalVideoOrder) {
+
+                fragment = new EducationalVideoDetailFragment();
             }
 
             if (statusImage != 0) {
@@ -203,7 +236,11 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                 if (statusImage == R.drawable.ic_status_pending) {
                     statusIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.app_gradient_start)));
                 }
+                statusIv.setVisibility(View.VISIBLE);
+            } else {
+                statusIv.setVisibility(View.GONE);
             }
+
             if (!UserType.isUserPatient()) {
                 key = ordersCommonResultResponseModel.getPatient().getUser_guid();
             } else {
@@ -248,9 +285,18 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
         itemTitleTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getSubTitle());
 
+        if (ordersDetailListAdapterModel.getOtherImageUrl() != null) {
+            Utils.setImageWithGlideWithoutDefaultPlaceholder(context, itemCiv, ordersDetailListAdapterModel.getOtherImageUrl(), null, true, true);
+            itemCiv.setDisableCircularTransformation(true);
+            itemCiv.setBackgroundColor(Color.LTGRAY);
+        } else if (key != null && userDetailHashMap.containsKey(key)) {
+            itemCiv.setBackgroundColor(Color.TRANSPARENT);
+            itemCiv.setDisableCircularTransformation(false);
+            Utils.setImageWithGlide(context, itemCiv, userDetailHashMap.get(key).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
+        }
+
         if (key != null && userDetailHashMap.containsKey(key)) {
             itemSubTitleTv.setText(userDetailHashMap.get(key).getUserDisplay_name());
-            Utils.setImageWithGlide(context, itemCiv, userDetailHashMap.get(key).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
         }
 
         itemCv.setOnClickListener(new View.OnClickListener() {
@@ -262,6 +308,10 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
 
                     if (ordersDetailListAdapterModel.isForm()) {
                         isPermissionGranted = PermissionChecker.with(context).checkPermission(PermissionConstants.PERMISSION_STORAGE);
+                    }
+
+                    if (ordersDetailListAdapterModel.getCommonResultResponseModel() instanceof EducationalVideoOrder) {
+                        bundle.putSerializable(ArgumentKeys.EDUCATIONAL_VIDEO,(EducationalVideoOrder) ordersDetailListAdapterModel.getCommonResultResponseModel());
                     }
 
                     if (isPermissionGranted) {

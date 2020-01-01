@@ -77,4 +77,10 @@ public class EmptyViewConstants {
     public static final String EMPTY_VITAL_FROM_TO = "empty_vital_from_to";
 
     public static final String EMPTY_GOOGLE_FIT_SOURCE = "empty_google_fit_source";
+
+    public static final String EMPTY_EDUCATIONAL_VIDEOS = "empty_educational_video";
+
+    public static final String EMPTY_EDUCATIONAL_VIDEO_ORDER = "empty_educational_video_order";
+    public static final String EMPTY_EDUCATIONAL_VIDEO_ORDER_WITH_BTN = "empty_educational_video_order_with_btn";
+    public static final String EMPTY_EDUCATIONAL_VIDEO_ORDER_NEW = "empty_educational_video_order_new";
 }

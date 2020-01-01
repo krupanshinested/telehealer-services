@@ -99,6 +99,29 @@ public class SignatureActivity extends BaseActivity implements View.OnClickListe
             isCreateUser = getIntent().getBooleanExtra(ArgumentKeys.IS_CREATE_USER, false);
             isShowSignatureProposer(showProposer);
         }
+
+        if (signaturepad.isEmpty()) {
+            saveBtn.setEnabled(false);
+        } else {
+            saveBtn.setEnabled(true);
+        }
+
+        signaturepad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+            @Override
+            public void onStartSigning() {
+
+            }
+
+            @Override
+            public void onSigned() {
+                saveBtn.setEnabled(true);
+            }
+
+            @Override
+            public void onClear() {
+                saveBtn.setEnabled(false);
+            }
+        });
     }
 
     @Override
@@ -108,6 +131,10 @@ public class SignatureActivity extends BaseActivity implements View.OnClickListe
                 signaturepad.clear();
                 break;
             case R.id.save_btn:
+                if (signaturepad.isEmpty()) {
+                    return;
+                }
+
                 if (isCreateUser) {
                     String signaturePath = CameraUtil.getBitmapFilePath(this, signaturepad.getSignatureBitmap());
                     Intent intent = new Intent();

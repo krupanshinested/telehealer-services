@@ -5,6 +5,12 @@ import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileResponseModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.DeleteEducationalVideoResponse;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalFetchModel;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoApiResponseModel;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoRequest;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoResponse;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
@@ -254,7 +260,7 @@ public interface ApiInterface {
     Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/unconnected-users")
-    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
+    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate,@Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
 
     @POST("api/requests")
     Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
@@ -401,6 +407,12 @@ public interface ApiInterface {
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_MISC)
     Observable<MiscellaneousApiResponseModel> getUserMiscellaneousList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
+    @GET("api/" + OrderConstant.ORDER_TYPE_EDUCATIONAL_VIDEO)
+    Observable<EducationalVideoApiResponseModel> getEducationalVideoList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize,@Query(ASSIGNOR) boolean assignor);
+
+    @GET("api/" + OrderConstant.ORDER_TYPE_EDUCATIONAL_VIDEO)
+    Observable<EducationalVideoApiResponseModel> getUserEducationalVideoList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid,@Query(ASSIGNOR) boolean assignor);
+
     @POST("api/referrals/" + OrderConstant.ORDER_TYPE_MISC)
     Observable<BaseApiResponseModel> createMiscellaneous(@Body CreateMiscellaneousRequestModel createMiscellaneousRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
@@ -476,6 +488,9 @@ public interface ApiInterface {
 
     @GET("api/archive/start")
     Observable<CommonUserApiResponseModel> startArchive(@Query(SESSION_ID) String sessionId);
+
+    @GET("api/archive/stop")
+    Observable<CommonUserApiResponseModel> stopArchive(@Query("orderId") String sessionId);
 
     @GET("api/session")
     Observable<TokenFetchModel> getSessionId(@Query(CALL_QUALITY) String call_quality);
@@ -601,4 +616,41 @@ public interface ApiInterface {
 
     @GET("api/log/requests-log")
     Observable<AccessLogApiResponseModel> getAccessLogs(@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query("method") String method);
+
+
+    @GET("api/educational-video")
+    Observable<EducationalVideoResponse> getEducationalVideo(@Query(PAGINATE) boolean paginate,@Query(DOCTOR_GUID) String user_guid,@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+
+    @GET("api/educational-video")
+    Observable<ArrayList<EducationalVideoOrder>> getEducationalVideos(@Query(ASSIGNOR) boolean assignor,@Query(FILTER_ID_IN) String ids,@Query(USER_GUID) String userGuid,@Query(DOCTOR_GUID) String doctorGuid);
+
+
+    @Multipart
+    @PATCH("api/educational-video/{id}")
+    Observable<BaseApiResponseModel> uploadVideoScreenshot(@Path(ID) String sessionId,@Part MultipartBody.Part file);
+
+
+    @POST("api/educational-video")
+    Observable<EducationalFetchModel> postEducationalVideo(@Body EducationalVideoRequest request);
+
+    @PATCH("api/educational-video/referral/{id}")
+    Observable<EducationalFetchModel> patchEducationalVideo(@Path(ID) String videoId,@Body HashMap<String,Object> item);
+
+    @Multipart
+    @PATCH("api/educational-video/{id}")
+    Observable<BaseApiResponseModel> updateEducationalVideo(@Path(ID) String sessionId,@Part("details") HashMap<String,Object> item);
+
+    @DELETE("api/educational-video/{id}")
+    Observable<DeleteEducationalVideoResponse> deleteEducationalVideo(@Path(ID) String sessionId);
+
+
+    @POST("api/educational-video/remove-user")
+    Observable<DeleteEducationalVideoResponse> unAssociateEducationalVideoOrder(@Query(DOCTOR_GUID) String doctorGuid, @Body HashMap<String,Object> item);
+
+
+    @POST("api/educational-video/assign-user")
+    Observable<BaseApiResponseModel> postEducationalOrder(@Query(DOCTOR_GUID) String doctorGuid,@Body HashMap<String,Object> item);
+
+
+
 }

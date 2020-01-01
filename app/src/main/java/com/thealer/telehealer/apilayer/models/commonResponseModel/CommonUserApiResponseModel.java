@@ -22,6 +22,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private String website;
     private boolean has_abnormal_vitals;
     private Boolean favorite;
+    private Boolean connection_requests;
 
     public CommonUserApiResponseModel() {
     }
@@ -228,5 +229,13 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             return R.drawable.gender_female;
         else
             return R.drawable.gender_others;
+    }
+
+    public Boolean getConnection_requests() {
+        return connection_requests;
+    }
+
+    public void setConnection_requests(Boolean connection_requests) {
+        this.connection_requests = connection_requests;
     }
 }

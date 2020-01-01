@@ -295,6 +295,11 @@ public class CallMinimizeService extends Service implements FloatingViewListener
     }
 
     @Override
+    public void didPublishStarted() {
+
+    }
+
+    @Override
     public void didChangedAudioInput(int type) {
         //do nothing
     }

@@ -128,7 +128,7 @@ public class BaseAdapter extends RecyclerView.Adapter {
             this.title = title;
         }
 
-        BaseAdapterModel(BaseAdapterObjectModel actualValue) {
+        public BaseAdapterModel(BaseAdapterObjectModel actualValue) {
             this.actualValue = actualValue;
         }
 
