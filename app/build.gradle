@@ -79,7 +79,7 @@ android {
             java.srcDirs = ['src/patient/java']
             manifest.srcFile 'src/patient/AndroidManifest.xml'
             jniLibs.srcDirs = ['libs']
-            assets.srcDirs = ['src/doctor/assets', 'src/pepTalkHealth/assets']
+            assets.srcDirs = ['src/patient/assets', 'src/pepTalkHealth/assets']
         }
         pepTalkMd {
             res.srcDirs = ['src/doctor/res', 'src/pepTalkMd/res']

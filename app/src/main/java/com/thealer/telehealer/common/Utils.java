@@ -392,6 +392,22 @@ public class Utils {
         }
     }
 
+    public static void setImageWithGlideWithoutDefaultPlaceholder(Context context, ImageView imageView, String path, Drawable placeHolder, boolean isUrlAuthNeeded, boolean decrypt) {
+        if (path != null && !path.isEmpty()) {
+            TeleCacheUrl glideUrl;
+            if (isUrlAuthNeeded) {
+                glideUrl = getGlideUrlWithAuth(context, path, decrypt);
+            } else {
+                glideUrl = new TeleCacheUrl(path);
+            }
+            if (placeHolder != null) {
+                Glide.with(context).load(glideUrl).apply(new RequestOptions().placeholder(placeHolder)).into(imageView);
+            } else {
+                Glide.with(context).load(glideUrl).into(imageView);
+            }
+        }
+    }
+
     public static TeleCacheUrl getGlideUrlWithAuth(Context context, String path, boolean decrypt) {
         /*if (path.contains("http:") || path.contains("https:")) {
 

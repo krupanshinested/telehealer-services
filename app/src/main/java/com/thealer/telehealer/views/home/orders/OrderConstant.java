@@ -16,6 +16,7 @@ public class OrderConstant {
     public static final String ORDER_RADIOLOGY = "Radiology";
     public static final String ORDER_DOCUMENTS = "Documents";
     public static final String ORDER_MISC = "Miscellaneous";
+    public static final String ORDER_EDUCATIONAL_VIDEO = "Educational Video";
 
     public static final String ORDER_TYPE_FORM = "forms";
     public static final String ORDER_TYPE_PRESCRIPTIONS = "prescriptions";
@@ -24,6 +25,7 @@ public class OrderConstant {
     public static final String ORDER_TYPE_X_RAY = "x-rays";
     public static final String ORDER_TYPE_FILES = "files";
     public static final String ORDER_TYPE_MISC = "miscellaneous";
+    public static final String ORDER_TYPE_EDUCATIONAL_VIDEO = "educational-video";
 
     public static String CALL_STATUS_STARTED = "STARTED";
     public static String CALL_STATUS_NO_ANSWER = "NOANSWER";
@@ -49,6 +51,8 @@ public class OrderConstant {
                 return context.getString(R.string.documents);
             case ORDER_MISC:
                 return context.getString(R.string.miscellaneous);
+            case ORDER_EDUCATIONAL_VIDEO:
+                return context.getString(R.string.educational_video);
         }
         return "";
     }

@@ -10,6 +10,7 @@ public class OpenTokConstants {
     public static final String audio = "audio";
     public static final String video = "video";
     public static final String oneWay = "oneWay";
+    public static final String education = "education";
 
     //Call Rejection Reason
     public static final String busyInAnotherLine = "busyInAnotherLine";

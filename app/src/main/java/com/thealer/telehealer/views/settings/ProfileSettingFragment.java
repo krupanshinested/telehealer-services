@@ -47,7 +47,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private ProfileCellView profile, medical_history, settings, email_id,
             phone_number, change_password,
-            feedback, terms_and_condition, privacy_policy, appointment_slots, payments_billings;
+            feedback, terms_and_condition, privacy_policy, appointment_slots, payments_billings,educational_video;
     private View signOut;
 
     private ProfileUpdate profileUpdate;
@@ -117,6 +117,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         payments_billings = baseView.findViewById(R.id.payments_billings);
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
+        educational_video = baseView.findViewById(R.id.educational_video);
         versionTv
                 = (TextView) baseView.findViewById(R.id.version_tv);
         lastLoginTv = (TextView) baseView.findViewById(R.id.last_login_tv);
@@ -180,6 +181,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             }
         });
 
+        educational_video.setOnClickListener(this);
         profile.setOnClickListener(this);
         documents.setOnClickListener(this);
         medical_history.setOnClickListener(this);
@@ -204,6 +206,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 change_password.hideSplitter(true);
                 payments_billings.setVisibility(View.GONE);
                 documents.setVisibility(View.VISIBLE);
+                educational_video.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
                 appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length() + "");
@@ -214,11 +217,13 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     payments_billings.setVisibility(View.GONE);
                 }
                 medicalAssistantLl.setVisibility(View.VISIBLE);
+                educational_video.setVisibility(View.VISIBLE);
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
                 medical_history.setVisibility(View.GONE);
                 appointment_slots.setVisibility(View.GONE);
                 payments_billings.setVisibility(View.GONE);
+                educational_video.setVisibility(View.GONE);
                 break;
         }
     }

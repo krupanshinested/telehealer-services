@@ -41,6 +41,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.EducationalVideo.EducationalListVideoFragment;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -286,6 +287,11 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
                 break;
             case R.id.appointment_slots:
+                break;
+            case R.id.educational_video:
+                bundle = new Bundle();
+                EducationalListVideoFragment educationalListVideoFragment = new EducationalListVideoFragment();
+                showSubFragment(educationalListVideoFragment);
                 break;
             case R.id.feedback:
                 bundle = new Bundle();
