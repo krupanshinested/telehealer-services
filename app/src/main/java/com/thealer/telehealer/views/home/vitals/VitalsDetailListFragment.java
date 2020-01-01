@@ -657,7 +657,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         startDate = bundle.getString(ArgumentKeys.START_DATE);
         endDate = bundle.getString(ArgumentKeys.END_DATE);
 
-        selectedItem = bundle.getString(Constants.SELECTED_ITEM);
+        String selectedItem = bundle.getString(Constants.SELECTED_ITEM);
         startDate = null;
         endDate = null;
 

@@ -127,6 +127,11 @@ public class EmptyStateUtil {
                 return context.getString(R.string.EMPTY_UNCONNECTED_USER);
             case EmptyViewConstants.EMPTY_GOOGLE_FIT_SOURCE:
                 return context.getString(R.string.no_source_found);
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEOS:
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER:
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_WITH_BTN:
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_NEW:
+                return context.getString(R.string.no_educational_video);
             default:
                 return null;
         }
@@ -267,6 +272,14 @@ public class EmptyStateUtil {
                 return context.getString(R.string.EMPTY_UNCONNECTED_USER_MESSAGE);
             case EmptyViewConstants.EMPTY_GOOGLE_FIT_SOURCE:
                 return context.getString(R.string.no_source_found_message);
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEOS:
+                return context.getString(R.string.empty_educational_message);
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER:
+                return context.getString(R.string.empty_educational_message_1);
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_WITH_BTN:
+                return context.getString(R.string.empty_educational_message);
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_NEW:
+                return context.getString(R.string.empty_educational_new);
             default:
                 return null;
         }
@@ -374,6 +387,11 @@ public class EmptyStateUtil {
                 return R.drawable.emptystate_no_vitals;
             case EmptyViewConstants.EMPTY_GOOGLE_FIT_SOURCE:
                 return R.drawable.emptystate_no_vitals;
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEOS:
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER:
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_WITH_BTN:
+            case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_NEW:
+                return R.drawable.emptystate_educational_video;
             default:
                 return 0;
         }

@@ -1,5 +1,7 @@
 package com.thealer.telehealer.views.home.orders;
 
+import androidx.annotation.Nullable;
+
 import com.thealer.telehealer.apilayer.models.orders.OrdersCommonResultResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 
@@ -13,6 +15,9 @@ public class OrdersDetailListAdapterModel {
     private OrdersCommonResultResponseModel commonResultResponseModel;
     private OrdersUserFormsApiResponseModel ordersUserFormsApiResponseModel;
     private boolean isForm;
+
+    @Nullable
+    private String otherImageUrl;
 
     public boolean isForm() {
         return isForm;
@@ -60,5 +65,22 @@ public class OrdersDetailListAdapterModel {
 
     public void setCommonResultResponseModel(OrdersCommonResultResponseModel commonResultResponseModel) {
         this.commonResultResponseModel = commonResultResponseModel;
+    }
+
+    public OrdersUserFormsApiResponseModel getOrdersUserFormsApiResponseModel() {
+        return ordersUserFormsApiResponseModel;
+    }
+
+    public void setOrdersUserFormsApiResponseModel(OrdersUserFormsApiResponseModel ordersUserFormsApiResponseModel) {
+        this.ordersUserFormsApiResponseModel = ordersUserFormsApiResponseModel;
+    }
+
+    @Nullable
+    public String getOtherImageUrl() {
+        return otherImageUrl;
+    }
+
+    public void setOtherImageUrl(@Nullable String otherImageUrl) {
+        this.otherImageUrl = otherImageUrl;
     }
 }

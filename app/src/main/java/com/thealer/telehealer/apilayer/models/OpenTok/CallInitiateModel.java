@@ -21,6 +21,10 @@ public class CallInitiateModel implements Serializable {
     private String tokBoxApiKey;
     private String callType;
 
+    private String educationTitle;
+    private String educationDescription;
+
+
     public CallInitiateModel(String toUserGuid, CommonUserApiResponseModel userData,
                              String doctorGuid, String doctorName, String scheduleId,String callType) {
         this.toUserGuid = toUserGuid;
@@ -107,5 +111,21 @@ public class CallInitiateModel implements Serializable {
 
     public void setCallType(String callType) {
         this.callType = callType;
+    }
+
+    public String getEducationTitle() {
+        return educationTitle;
+    }
+
+    public void setEducationTitle(String educationTitle) {
+        this.educationTitle = educationTitle;
+    }
+
+    public String getEducationDescription() {
+        return educationDescription;
+    }
+
+    public void setEducationDescription(String educationDescription) {
+        this.educationDescription = educationDescription;
     }
 }

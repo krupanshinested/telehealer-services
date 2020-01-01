@@ -18,6 +18,7 @@ import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.views.EducationalVideo.CreateEducationalVideoOrderFragment;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -136,6 +137,8 @@ public class CreateOrderActivity extends BaseActivity implements View.OnClickLis
                 return new CreateNewSpecialistFragment();
             case OrderConstant.ORDER_MISC:
                 return new CreateNewMiscellaneousFragment();
+            case OrderConstant.ORDER_EDUCATIONAL_VIDEO:
+                return new CreateEducationalVideoOrderFragment();
         }
         return null;
     }
