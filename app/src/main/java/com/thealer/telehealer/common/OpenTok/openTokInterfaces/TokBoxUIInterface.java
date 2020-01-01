@@ -38,6 +38,8 @@ public interface TokBoxUIInterface {
 
     void didReceiveVitalData(String data, String type);
 
+    void didPublishStarted();
+
     void didChangedAudioInput(int type);
 
     void assignTokBoxApiViewModel(OpenTokViewModel openTokViewModel);

@@ -266,8 +266,13 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 patientOcv.setTitleTv(patientName);
                 patientOcv.setSubtitleTv(patientDob);
 
-                if (Utils.isDateTimeExpired(resultBean.getEnd())) {
+                if (Utils.isDateTimeExpired(resultBean.getStart())) {
                     cancelLl.setVisibility(View.GONE);
+                } else {
+                    cancelLl.setVisibility(View.VISIBLE);
+                }
+
+                if (Utils.isDateTimeExpired(resultBean.getEnd())) {
                     doctorChatIv.setVisibility(View.GONE);
                     patientCallIv.setVisibility(View.GONE);
                     patientChatIv.setVisibility(View.GONE);

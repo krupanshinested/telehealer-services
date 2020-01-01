@@ -1,5 +1,6 @@
 package com.thealer.telehealer.apilayer.models.orders;
 
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 
 import java.io.Serializable;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Created by Aswin on 22,November,2018
  */
-public class OrdersCommonResultResponseModel implements Serializable {
+public class OrdersCommonResultResponseModel extends BaseApiResponseModel implements Serializable {
 
     private int referral_id;
     private int referred_by;

@@ -59,6 +59,7 @@ public class ArgumentKeys {
     public static final String SHARED_IMAGES = "shared_images";
     public static final String IS_SHARED_INTENT = "isShareIntent";
     public static final String SHOW_SIGNATURE_PROPOSER = "show_signature_proposer";
+    public static final String EDUCATIONAL_VIDEO = "educational_video";
 
     public static final int HISTORY_UPDATE = 0;
     public static final int LICENCE_UPDATE = 1;
@@ -205,5 +206,9 @@ public class ArgumentKeys {
     public static final String GOOGLE_FIT_DATA = "GOOGLE_FIT_DATA";
     public static final String GOOGLE_FIT_SOURCE = "GOOGLE_FIT_SOURCE";
     public static final String GOOGLE_FIT_CHANGE = "GOOGLE_FIT_CHANGE";
+
+    public static final String SHOW_CONNECTION_REQUEST_ALERT = "SHOW_CONNECTION_REQUEST_ALERT";
+    public static final String EDUCATIONAL_VIDEO_ID = "EDUCATIONAL_VIDEO_ID";
+
 
 }

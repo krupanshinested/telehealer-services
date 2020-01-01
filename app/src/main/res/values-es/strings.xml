@@ -576,9 +576,7 @@
     <string name="proceed">PROCEDER</string>
     <string name="trial_period_expired_doc_sec_1">¡Gracias por usar %s! \n\nDesafortunadamente, su período de prueba gratuito ya ha terminado. Por favor proporcione un método de pago para continuar usando la plataforma.\n\nVisitar</string>
     <string name="trial_period_expired_doc_sec_2">para detalles sobre precios</string>
-    <string name="trial_period_expired_ma_sec_1">¡Gracias por usar %1$s! \n\n Desafortunadamente, el período de prueba gratuito ya ha finalizado. Solicite %2$s para agregar un método de pago para continuar usando la plataforma.
-
- Desafortunadamente, el periodo de prueba gratuito ha finalizado. Solicite %3$s para agregar un método de pago para continuar usando la plataforma.</string>
+    <string name="trial_period_expired_ma_sec_1">¡Gracias por usar %1$ s! \ n \ n Desafortunadamente, el período de prueba gratuito ahora ha finalizado. Solicite %2$ s para agregar un método de pago para continuar usando la plataforma.</string>
     <string name="payment_information_required">Información de pago requerida</string>
     <string name="call">Llamada</string>
     <string name="ringing">Zumbido...</string>
@@ -1250,4 +1248,20 @@
     <string name="deleting_your_diet">Eliminar tu dieta</string>
 
     <string name="unable_to_determine_patient_location">No se puede determinar la ubicación del paciente.</string>
+    <string name="accept_connection_request">Aceptar solicitudes de conexión</string>
+    <string name="no_educational_video">No videos educativos</string>
+    <string name="empty_educational_message">Agregue un video educativo tocando el botón \'+\'</string>
+    <string name="OVERLAY_NO_EDUCATIONAL_VIDEO">Puede agregar un video educativo tocando el botón \'+\'</string>
+    <string name="description">DESCRIPTION</string>
+    <string name="record">Record</string>
+    <string name="educational_video">Educational Videos</string>
+    <string name="new_educational_video">New Educational Video</string>
+    <string name="update_educational_video">Update Educational Video</string>
+    <string name="remove">Remove</string>
+    <string name="unassociate_educational_video">Are you sure to remove this educational video for this user.</string>
+    <string name="delete_educational_video">Are you sure to Delete your educational video.</string>
+    <string name="empty_educational_message_1">Educational Video will eventually show up here</string>
+    <string name="doctor_unavailable">This doctor currently doesn’t accept connection requests. Please reach out directly to your doctor’s office to get connected with your doctor via the platform.</string>
+    <string name="empty_educational_new">There are no Educational video present. You can create one from settings page</string>
+    <string name="educational_video_created">Educational video is not created yet.Please try again after some time.</string>
 </resources>

@@ -23,7 +23,9 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.Animation.CustomUserListItemView;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -83,12 +85,17 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        if (apiResponseModelList.get(i).getConnection_status() == null ||
-                apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_REJECTED)) {
+        CommonUserApiResponseModel user = apiResponseModelList.get(i);
+
+        if (user.getRole().equals(Constants.ROLE_DOCTOR) && !user.getConnection_requests()) {
+            viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_info_32dp));
+            viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.app_gradient_start)));
+        } else if (user.getConnection_status() == null ||
+                user.getConnection_status().equals(Constants.CONNECTION_STATUS_REJECTED)) {
             viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_connect_user));
             viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.app_gradient_start)));
-        } else if (apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_OPEN) ||
-                apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_PENDING)) {
+        } else if (user.getConnection_status().equals(Constants.CONNECTION_STATUS_OPEN) ||
+                user.getConnection_status().equals(Constants.CONNECTION_STATUS_PENDING)) {
             Log.e("aswin", "onBindViewHolder: " + i);
             viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_status_pending));
             viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.color_green_light)));
@@ -96,7 +103,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             viewHolder.actionIv.setVisibility(View.GONE);
         }
 
-        Utils.setImageWithGlide(context, viewHolder.avatarCiv, apiResponseModelList.get(i).getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
+        Utils.setImageWithGlide(context, viewHolder.avatarCiv, user.getUser_avatar(), context.getDrawable(R.drawable.profile_placeholder), true, true);
 
         viewHolder.titleTv.setText(apiResponseModelList.get(i).getDisplayName());
         viewHolder.subTitleTv.setText(apiResponseModelList.get(i).getDisplayInfo());
@@ -114,9 +121,15 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         viewHolder.actionIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.vibrate(fragmentActivity);
-                if (apiResponseModelList.get(i).getConnection_status() == null ||
+                if (user.getRole().equals(Constants.ROLE_DOCTOR) && !user.getConnection_requests()) {
+                    selected_position = i;
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Constants.USER_DETAIL, user);
+                    bundle.putBoolean(ArgumentKeys.SHOW_CONNECTION_REQUEST_ALERT,true);
+                    onListItemSelectInterface.onListItemSelected(i, bundle);
+                } else if (apiResponseModelList.get(i).getConnection_status() == null ||
                         apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_REJECTED)) {
+                    Utils.vibrate(fragmentActivity);
                     selected_position = i;
                     onListItemSelectInterface.onListItemSelected(i, null);
                     Bundle bundle = new Bundle();

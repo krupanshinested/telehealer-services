@@ -20,6 +20,8 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoApiResponseModel;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoResponse;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersApiViewModel;
@@ -442,7 +444,60 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                     addToUserGuidList(miscellaneousApiResponseModel.getResult().get(i).getPatient().getUser_guid());
                 }
             }
-        }
+        } else if (baseApiResponseModel instanceof EducationalVideoApiResponseModel) {
+            EducationalVideoApiResponseModel educationalVideoResponse = (EducationalVideoApiResponseModel) baseApiResponseModel;
+                if (educationalVideoResponse.getCount() > 0) {
+                    orderDetailCelv.showOrhideEmptyState(false);
+                } else {
+                    orderDetailCelv.showOrhideEmptyState(true);
+                }
+                if (!UserType.isUserPatient() && page == 1 && educationalVideoResponse.getResult().size() == 0) {
+                    if (!appPreference.getBoolean(PreferenceConstants.IS_OVERLAY_EDUCATIONAL_VIDEO)) {
+                        appPreference.setBoolean(PreferenceConstants.IS_OVERLAY_EDUCATIONAL_VIDEO, true);
+                        orderDetailCelv.showOrHideMessage(false);
+                        Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_EDUCATIONAL_VIDEO, dismissListener);
+                    }
+                }
+
+                for (int i = 0; i < educationalVideoResponse.getResult().size(); i++) {
+
+                    String date = Utils.getDayMonthYear(educationalVideoResponse.getResult().get(i).getCreated_at());
+                    OrdersDetailListAdapterModel ordersDetailListAdapterModel = new OrdersDetailListAdapterModel();
+
+                    if (educationalVideoResponse.getResult().get(i).getVideo() != null) {
+                        ordersDetailListAdapterModel.setSubTitle(educationalVideoResponse.getResult().get(i).getVideo().getTitle());
+                    } else {
+                        ordersDetailListAdapterModel.setSubTitle("");
+                    }
+
+                    ordersDetailListAdapterModel.setCommonResultResponseModel(educationalVideoResponse.getResult().get(i));
+
+                    ordersDetailListAdapterModel.setOtherImageUrl(educationalVideoResponse.getResult().get(i).getVideo().getUrl());
+
+                    if (!headerList.contains(date)) {
+                        headerList.add(date);
+                    }
+
+                    List<OrdersDetailListAdapterModel> childListData = new ArrayList<>();
+
+                    if (childList.containsKey(date)) {
+                        childListData.addAll(childList.get(date));
+                    }
+
+                    childListData.add(ordersDetailListAdapterModel);
+
+                    childList.put(date, childListData);
+
+                    if (educationalVideoResponse.getResult().get(i).getDoctor() != null &&
+                            educationalVideoResponse.getResult().get(i).getDoctor().getUser_guid() != null) {
+                        addToUserGuidList(educationalVideoResponse.getResult().get(i).getDoctor().getUser_guid());
+                    }
+                    if (educationalVideoResponse.getResult().get(i).getPatient() != null &&
+                            educationalVideoResponse.getResult().get(i).getPatient().getUser_guid() != null) {
+                        addToUserGuidList(educationalVideoResponse.getResult().get(i).getPatient().getUser_guid());
+                    }
+                }
+            }
 
         ordersDetailListAdapter.setData(headerList, childList);
 
@@ -623,6 +678,14 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 ordersApiViewModel.getUserMiscellaneousList(userGuid, doctorGuid, page, isShowProgress);
             }
 
+        } else if (selectedItem.equals(OrderConstant.ORDER_EDUCATIONAL_VIDEO)) {
+
+            if (isFromHome) {
+                ordersApiViewModel.getEducationalVideoList(page, isShowProgress);
+            } else {
+                ordersApiViewModel.getUserEducationalVideoList(userGuid, doctorGuid, page, isShowProgress);
+            }
+
         }
     }
 
@@ -697,6 +760,14 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 emptyStateType = EmptyViewConstants.EMPTY_MISC;
             } else {
                 emptyStateType = EmptyViewConstants.EMPTY_MISC_WITH_BTN;
+            }
+        } else if (selectedItem.equals(OrderConstant.ORDER_EDUCATIONAL_VIDEO)) {
+
+            if (UserType.isUserPatient()) {
+                showOrHideFab(false);
+                emptyStateType = EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER;
+            } else {
+                emptyStateType = EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_WITH_BTN;
             }
         }
 
