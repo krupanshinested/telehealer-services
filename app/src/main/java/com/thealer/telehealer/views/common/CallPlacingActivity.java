@@ -30,6 +30,7 @@ import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
@@ -212,9 +213,9 @@ public class CallPlacingActivity extends BaseActivity {
 
             EventRecorder.recordCallUpdates("TRYING_AUDIO", null);
 
-            Intent intent = new Intent(application, CallActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(CALL_INITIATE_MODEL, callInitiateModel);
+
+
+            Intent intent = CallActivity.getIntent(application,callInitiateModel);
             application.startActivity(intent);
 
             didOpenCallKit();
@@ -231,9 +232,7 @@ public class CallPlacingActivity extends BaseActivity {
 
             EventRecorder.recordCallUpdates("TRYING_VIDEO", null);
 
-            Intent intent = new Intent(application, CallActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(CALL_INITIATE_MODEL, callInitiateModel);
+            Intent intent = CallActivity.getIntent(application,callInitiateModel);
             application.startActivity(intent);
 
             didOpenCallKit();
@@ -250,9 +249,7 @@ public class CallPlacingActivity extends BaseActivity {
 
             EventRecorder.recordCallUpdates("TRYING_ONE_WAY", null);
 
-            Intent intent = new Intent(application, CallActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(CALL_INITIATE_MODEL, callInitiateModel);
+            Intent intent = CallActivity.getIntent(application,callInitiateModel);
             application.startActivity(intent);
 
             didOpenCallKit();
@@ -346,7 +343,7 @@ public class CallPlacingActivity extends BaseActivity {
             intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
 
             String name = TextUtils.isEmpty(doctorName) ? getString(R.string.doctor) : doctorName;
-            String description = getString(R.string.trial_period_expired_ma_sec_1, name);
+            String description = getString(R.string.trial_period_expired_ma_sec_1, getString(R.string.organization_name),name);
 
             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
             requestId = CallPlacingActivity.MA_DOC_PAYMENT_REQUEST;

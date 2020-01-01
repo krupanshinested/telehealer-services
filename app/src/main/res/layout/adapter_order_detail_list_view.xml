@@ -83,13 +83,12 @@
 
             <ImageView
                 android:id="@+id/status_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:paddingEnd="@dimen/padding_default"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:src="@drawable/ic_close_red_24dp" />
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:src="@drawable/ic_status_pending" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.ihealth.communication.utils.Log;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.settings.ProfileUpdate;
@@ -57,7 +58,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 public class GeneralSettingsFragment extends BaseFragment implements View.OnClickListener {
 
-    private SettingsCellView checkCallQuality, presence, quickLogin,secure_message;
+    private SettingsCellView checkCallQuality, presence, quickLogin,secure_message,connection_request;
     private ProfileCellView signature;
     private LinearLayout deleteView;
 
@@ -84,6 +85,20 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
+        profileUpdate = new ViewModelProvider(this).get(ProfileUpdate.class);
+        
+        profileUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+                if (whoAmIApiResponseModel != null) {
+                    whoAmIApiResponseModel.setSecure_message(secure_message.getSwitchStatus());
+                    whoAmIApiResponseModel.setConnection_requests(connection_request.getSwitchStatus());
+                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                    GeneralSettingsFragment.this.whoAmIApiResponseModel = whoAmIApiResponseModel;
+                }
+            }
+        });
     }
 
     @Nullable
@@ -91,20 +106,6 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_general_settings, container, false);
         initView(view);
-
-        profileUpdate = new ViewModelProvider(this).get(ProfileUpdate.class);
-        profileUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
-                if (whoAmIApiResponseModel != null) {
-                    whoAmIApiResponseModel.setSecure_message(secure_message.getSwitchStatus());
-                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
-                }
-            }
-        });
-
-
         return view;
     }
 
@@ -112,6 +113,28 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     public void onResume() {
         super.onResume();
         notification.updateSwitch(isNotificationEnabled());
+
+        updateQuickLoginSwitch();
+
+        if (whoAmIApiResponseModel.getStatus().equals(Constants.AVAILABLE))
+            presence.updateSwitch(true);
+        else
+            presence.updateSwitch(false);
+
+        if (whoAmIApiResponseModel != null) {
+            Log.d("message ","secure "+whoAmIApiResponseModel.isSecure_message());
+            secure_message.updateSwitch(whoAmIApiResponseModel.isSecure_message());
+        } else {
+            secure_message.updateSwitch(false);
+        }
+
+
+        if (whoAmIApiResponseModel != null) {
+            Log.d("message ","connection "+whoAmIApiResponseModel.getConnection_requests());
+            connection_request.updateSwitch(whoAmIApiResponseModel.getConnection_requests());
+        } else {
+            connection_request.updateSwitch(false);
+        }
     }
 
     private void initView(View view) {
@@ -128,6 +151,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         privacy = (SettingsCellView) view.findViewById(R.id.privacy);
         logs = (SettingsCellView) view.findViewById(R.id.logs);
         secure_message = view.findViewById(R.id.secure_message);
+        connection_request = view.findViewById(R.id.connection_request);
 
         toolbarTitle.setText(getString(R.string.settings));
 
@@ -141,34 +165,25 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         privacy.setOnClickListener(this);
         logs.setOnClickListener(this);
         secure_message.setOnClickListener(this);
+        connection_request.setOnClickListener(this);
 
-        updateQuickLoginSwitch();
 
         switch (appPreference.getInt(Constants.USER_TYPE)) {
             case Constants.TYPE_PATIENT:
                 signature.setVisibility(View.GONE);
                 secure_message.setVisibility(View.GONE);
+                connection_request.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
+                secure_message.setVisibility(View.GONE);
                 signature.setVisibility(View.GONE);
+                connection_request.setVisibility(View.GONE);
                 break;
         }
 
-        whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
-
-        if (whoAmIApiResponseModel.getStatus().equals(Constants.AVAILABLE))
-            presence.updateSwitch(true);
-        else
-            presence.updateSwitch(false);
-
-        if (whoAmIApiResponseModel != null) {
-            secure_message.updateSwitch(whoAmIApiResponseModel.isSecure_message());
-        } else {
-            secure_message.updateSwitch(false);
-        }
-
+       whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
     }
 
     private void updateQuickLoginSwitch() {
@@ -248,6 +263,11 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_STORAGE)) {
                     showSignatureView();
                 }
+                break;
+
+            case R.id.connection_request:
+                connection_request.toggleSwitch();
+                profileUpdate.updateConnectionRequest(connection_request.getSwitchStatus());
                 break;
             case R.id.delete_view:
 

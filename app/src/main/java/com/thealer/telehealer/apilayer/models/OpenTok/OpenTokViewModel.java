@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.OpenTok;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -154,6 +155,26 @@ public class OpenTokViewModel extends BaseApiViewModel {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
 
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void stopArchieve(String sessionId) {
+        Log.d("openTok", "stopArchieve "+sessionId);
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    Log.d("openTok", "stopArchieve "+status);
+                    getAuthApiService().stopArchive(sessionId)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    Log.d("openTok", "stopArchieve onSuccess");
                                 }
                             });
                 }
