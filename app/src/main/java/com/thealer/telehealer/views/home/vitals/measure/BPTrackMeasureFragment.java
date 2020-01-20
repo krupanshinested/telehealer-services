@@ -250,9 +250,11 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
 
                             ArrayList<VitalsApiResponseModel> vitalApiRequestModels = new ArrayList<>();
                             ArrayList<BPTrack> tracks = new ArrayList<>(selectedList.subList(1,selectedList.size()));
+                            String bundleId = null;
                             for (BPTrack track1 : tracks) {
-                                VitalsApiResponseModel bpRequest = new VitalsApiResponseModel(SupportedMeasurementType.bp, track1.getSys() + "/" + track1.getDia(),null, VitalsConstant.VITAL_MODE_DEVICE, null, null);
-                                VitalsApiResponseModel hrRequest = new VitalsApiResponseModel(SupportedMeasurementType.heartRate, track1.getHeartRate() + "", null,VitalsConstant.VITAL_MODE_DEVICE, null, null);
+                                String date = Utils.getStringFromDate(track.getDate(),"yyyy-MM-dd HH:mm:ss.SSS");
+                                VitalsApiResponseModel bpRequest = new VitalsApiResponseModel(SupportedMeasurementType.bp, track1.getSys() + "/" + track1.getDia(),null, VitalsConstant.VITAL_MODE_DEVICE,date, bundleId);
+                                VitalsApiResponseModel hrRequest = new VitalsApiResponseModel(SupportedMeasurementType.heartRate, track1.getHeartRate() + "", null,VitalsConstant.VITAL_MODE_DEVICE, date, bundleId);
                                 vitalApiRequestModels.add(bpRequest);
                                 vitalApiRequestModels.add(hrRequest);
                             }

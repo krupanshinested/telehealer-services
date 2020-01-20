@@ -11,6 +11,8 @@ import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class BulkVitalUtil {
     public static BulkVitalUtil shared;
@@ -55,10 +57,16 @@ public class BulkVitalUtil {
             toCount = vitals.size();
             needNextIterate = false;
         }
-        ArrayList<VitalsApiResponseModel> toSendVitals = new ArrayList<>(vitals.subList(previousPostCount,toCount));
+
+        List<VitalsApiResponseModel> list = vitals.subList(previousPostCount,toCount);
+        ArrayList<VitalsApiResponseModel> toSendVitals = new ArrayList<>(list.size());
+        toSendVitals.addAll(list);
 
         Log.d("VitalBulkUtil","start postion "+ previousPostCount);
         Log.d("VitalBulkUtil","end postion"+ toCount);
+        Log.d("VitalBulkUtil","vitals "+vitals.size());
+        Log.d("VitalBulkUtil","list "+list.size());
+        Log.d("VitalBulkUtil","toSendVitals size "+toSendVitals.size());
 
         if (toSendVitals.size() > 0) {
             CreateVitalApiRequestModel createVitalApiRequestModel = new CreateVitalApiRequestModel(toSendVitals);
