@@ -88,7 +88,7 @@ public class TranscriptionPdfGenerator {
                 "                    <h4><font face=\"Helvetica Neue\" color=\"gray\">#CHAT_DATE#</font></h4>\n" +
                 "                </td>\n" +
                 "                <td width=\"40%\" align = \"right\">\n" +
-                "                    <table><tr><td><img src=\"#LOGO_DATA#\" alt=\"LOGO\" height=\"60\" width=\"60\"></td><td> <h2><b><font face=\"Helvetica Neue\">Telehealer</font><b></h2></td></tr></table>\n" +
+                "                    <table><tr><td><img src=\"#LOGO_DATA#\" alt=\"LOGO\" height=\"60\" width=\"60\"></td><td> <h2><b><font face=\"Helvetica Neue\">#APP_NAME#</font><b></h2></td></tr></table>\n" +
                 "                </td>\n" +
                 "            </tr>\n" +
                 "        </table>\n" +
@@ -160,6 +160,7 @@ public class TranscriptionPdfGenerator {
     private String SENDER = "#SENDER#";
     private String MESSAGE = "#MESSAGE#";
     private String TRANSCRIPTION_NOTE = "#TRANSCRIPT_NOTE#";
+    private String APP_NAME = "#APP_NAME#";
 
     private Context context;
 
@@ -219,7 +220,8 @@ public class TranscriptionPdfGenerator {
                 .replace(DURATION, duration)
                 .replace(TYPE, type)
                 .replace(PATIENT_NAME, patientName)
-                .replace(DOCTOR_NAME, doctorName);
+                .replace(DOCTOR_NAME, doctorName)
+                .replace(APP_NAME,context.getString(R.string.organization_name));
 
         return chatDetails;
     }
