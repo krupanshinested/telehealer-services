@@ -236,7 +236,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         }
                     } else {
                         if (baseApiResponseModel.isSuccess()) {
-                            if (currentUpdateType != null) {
+                            if (currentUpdateType != null && ordersIdListApiResponseModel != null) {
                                 switch (currentUpdateType) {
                                     case VisitDetailConstants.VISIT_TYPE_VITALS:
                                         visitDetailViewModel.removeVital();
