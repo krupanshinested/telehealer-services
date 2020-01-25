@@ -13,8 +13,8 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 17
-        versionName "2.1.0"
+        versionCode 19
+        versionName "2.2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -37,8 +37,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 28
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 17
-            versionName "2.1.0"
+            versionCode 19
+            versionName "2.2.0"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
         }
@@ -46,8 +46,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 28
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 1
-            versionName '1'
+            versionCode 19
+            versionName '2.2.0'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             applicationId 'com.thealer'
         }
@@ -55,8 +55,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 28
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 1
-            versionName '1'
+            versionCode 19
+            versionName '2.2.0'
             buildConfigField("String", "FLAVOR_TYPE", "\"doctor\"")
             applicationId 'com.thealer.pro'
         }
