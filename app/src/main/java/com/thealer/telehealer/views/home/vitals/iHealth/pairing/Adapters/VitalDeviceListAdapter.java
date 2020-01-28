@@ -17,6 +17,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private ArrayList<DataSource> sources = new ArrayList<>();
 
-    public VitalDeviceListAdapter(Context context,ArrayList<VitalDevice> connectedDevices,ArrayList<VitalDevice> unconnectedDevices) {
+    public VitalDeviceListAdapter(Context context,ArrayList<VitalDevice> connectedDevices,ArrayList<VitalDevice> unconnectedDevices,@Nullable String measurementType) {
         this.context = context;
         this.connectedDevices = connectedDevices;
         this.unconnectedDevices = unconnectedDevices;
@@ -69,7 +70,12 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
 
         }
-        sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.setup_new_devices),set_up_device));
+
+        if (measurementType != null && measurementType.equals(SupportedMeasurementType.height)) {
+
+        } else {
+            sources.add(new DataSource(null, data_without_subitem, context.getString(R.string.setup_new_devices), set_up_device));
+        }
 
         sources.add(new DataSource(null,empty_space,"",none));
         sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.manual_input),manual_entry_type));

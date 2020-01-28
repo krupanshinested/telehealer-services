@@ -22,6 +22,7 @@ public class EmptyViewConstants {
     public static final String EMPTY_BP = "empty_bt";
     public static final String EMPTY_BP_WITH_BTN = "empty_bp_with_btn";
     public static final String EMPTY_WEIGHT = "empty_weight";
+    public static final String EMPTY_HEIGHT = "empty_height";
     public static final String EMPTY_WEIGHT_WITH_BTN = "empty_weight_with_btn";
     public static final String EMPTY_GULCOSE = "empty_glucose";
     public static final String EMPTY_GULCOSE_WITH_BTN = "empty_glucose_with_btn";

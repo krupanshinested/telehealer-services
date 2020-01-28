@@ -130,7 +130,7 @@ public class VitalDeviceListFragment extends BaseFragment {
         recyclerView = baseView.findViewById(R.id.device_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        VitalDeviceListAdapter vitalDeviceListAdapter = new VitalDeviceListAdapter(getActivity(), connectedDevice, unconnectedDevice);
+        VitalDeviceListAdapter vitalDeviceListAdapter = new VitalDeviceListAdapter(getActivity(), connectedDevice, unconnectedDevice,measurementType);
         this.vitalDeviceListAdapter = vitalDeviceListAdapter;
         recyclerView.setAdapter(vitalDeviceListAdapter);
 

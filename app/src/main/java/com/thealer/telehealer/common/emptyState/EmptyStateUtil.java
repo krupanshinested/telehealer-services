@@ -42,6 +42,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_WEIGHT:
             case EmptyViewConstants.EMPTY_WEIGHT_WITH_BTN:
                 return context.getString(R.string.EMPTY_WEIGHT_TITLE);
+            case EmptyViewConstants.EMPTY_HEIGHT:
+                return context.getString(R.string.EMPTY_HEIGHT_TITLE);
             case EmptyViewConstants.EMPTY_GULCOSE:
             case EmptyViewConstants.EMPTY_GULCOSE_WITH_BTN:
                 return context.getString(R.string.EMPTY_GULCOSE_TITLE);
@@ -176,6 +178,8 @@ public class EmptyStateUtil {
                 return context.getString(R.string.EMPTY_WEIGHT_MESSAGE);
             case EmptyViewConstants.EMPTY_WEIGHT_WITH_BTN:
                 return context.getString(R.string.EMPTY_WEIGHT_WITH_BTN_MESSAGE);
+            case EmptyViewConstants.EMPTY_HEIGHT:
+                return context.getString(R.string.EMPTY_HEIGHT_MESSAGE);
             case EmptyViewConstants.EMPTY_GULCOSE:
                 return context.getString(R.string.EMPTY_GULCOSE_MESSAGE);
             case EmptyViewConstants.EMPTY_GULCOSE_WITH_BTN:
@@ -314,6 +318,7 @@ public class EmptyStateUtil {
                 return R.drawable.emptystate_no_vitals;
             case EmptyViewConstants.EMPTY_WEIGHT:
             case EmptyViewConstants.EMPTY_WEIGHT_WITH_BTN:
+            case EmptyViewConstants.EMPTY_HEIGHT:
                 return R.drawable.emptystate_no_vitals;
             case EmptyViewConstants.EMPTY_GULCOSE:
             case EmptyViewConstants.EMPTY_GULCOSE_WITH_BTN:
