@@ -1341,4 +1341,7 @@
     <string name="doctor_unavailable">This doctor currently doesn’t accept connection requests. Please reach out directly to your doctor’s office to get connected with your doctor via the platform.</string>
     <string name="empty_educational_new">There are no Educational video present. You can create one from settings page</string>
     <string name="educational_video_created">Educational video is not created yet.Please try again after some time.</string>
+    <string name="height">Height</string>
+    <string name="EMPTY_HEIGHT_TITLE">No Height values</string>
+    <string name="EMPTY_HEIGHT_MESSAGE">Height results will eventually show up here</string>
 </resources>

@@ -21,6 +21,8 @@ public class VitalsConstant {
     public static final String INPUT_SPO2 = "Spo2";
     public static final String INPUT_TEMPERATURE = "Temperature";
     public static final String INPUT_WEIGHT = "Weight";
+    public static final String INPUT_FEET = "Feet";
+    public static final String INPUT_INCHES = "Inches";
 
     public static final String SYSTOLE = "Systole";
     public static final String DIASTOLE = "Diastole";
@@ -107,12 +109,17 @@ public class VitalsConstant {
                 return 212;
             case INPUT_WEIGHT:
                 return 1500;
+            case INPUT_FEET:
+                return 10;
+            case INPUT_INCHES:
+                return 11;
         }
         return 0;
     }
 
     public static int getMinRange(String inputType) {
         switch (inputType) {
+            case INPUT_INCHES:
             case INPUT_SYSTOLE:
             case INPUT_DIASTOLE:
             case INPUT_GLUCOSE:
@@ -120,6 +127,7 @@ public class VitalsConstant {
             case INPUT_SPO2:
             case INPUT_TEMPERATURE:
             case INPUT_WEIGHT:
+            case INPUT_FEET:
             default:
                 return 0;
         }
