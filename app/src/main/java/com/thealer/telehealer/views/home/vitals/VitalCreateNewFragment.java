@@ -62,8 +62,10 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
     private AttachObserverInterface attachObserverInterface;
     private OnViewChangeInterface onViewChangeInterface;
     private ToolBarInterface toolBarInterface;
-    private String selectedItem = SupportedMeasurementType.bp, inputType, firstInputUnit, thirdInputUnit, hint1 = "";
+    private String selectedItem = SupportedMeasurementType.bp, inputType,secondInputType = VitalsConstant.INPUT_DIASTOLE, firstInputUnit, thirdInputUnit, hint1 = "";
     private boolean isFirstValid = false, isSecondValid = false, isThirdValid = false;
+
+    private String secondInputHint = VitalsConstant.INPUT_DIASTOLE_HINT;
 
     @Override
     public void onAttach(Context context) {
@@ -152,10 +154,21 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
 
                     inputType = VitalsConstant.INPUT_SYSTOLE;
                     hint1 = VitalsConstant.INPUT_SYSTOLE_HINT;
-                    vital2Til.setHint(VitalsConstant.INPUT_DIASTOLE_HINT);
+                    vital2Til.setHint(secondInputHint);
                     vital3Til.setHint(VitalsConstant.INPUT_PULSE);
 
                     thirdInputUnit = SupportedMeasurementType.getVitalUnit(SupportedMeasurementType.heartRate);
+                    break;
+                case SupportedMeasurementType.height:
+                    vital2Til.setVisibility(View.VISIBLE);
+
+                    firstInputUnit = " ";
+
+                    inputType = VitalsConstant.INPUT_FEET;
+                    hint1 = VitalsConstant.INPUT_FEET;
+                    secondInputHint = " ";
+                    vital2Til.setHint(VitalsConstant.INPUT_INCHES);
+                    secondInputType = VitalsConstant.INPUT_INCHES;
                     break;
             }
             vital1Til.setHint(hint1);
@@ -245,9 +258,9 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
                 public void onFocusChange(View v, boolean hasFocus) {
 
                     if (!hasFocus && vital2Et.getText().toString().isEmpty()) {
-                        vital2Til.setHint(VitalsConstant.INPUT_DIASTOLE_HINT);
+                        vital2Til.setHint(secondInputHint);
                     } else {
-                        vital2Til.setHint(VitalsConstant.INPUT_DIASTOLE_HINT.toUpperCase());
+                        vital2Til.setHint(secondInputHint.toUpperCase());
                     }
                     if (!vital2Et.getText().toString().isEmpty())
                         updateEditText(vital2Et, hasFocus, firstInputUnit);
@@ -348,8 +361,8 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
         isSecondValid = false;
 
         if (!data.isEmpty()) {
-            if (!isValidInput(data, VitalsConstant.INPUT_DIASTOLE)) {
-                vital2Til.setError(VitalsConstant.getInputError(getActivity(), VitalsConstant.INPUT_DIASTOLE));
+            if (!isValidInput(data, secondInputType)) {
+                vital2Til.setError(VitalsConstant.getInputError(getActivity(), secondInputType));
                 enableOrDisableSubmit(false);
             } else {
                 isSecondValid = true;
@@ -484,6 +497,11 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
                         case SupportedMeasurementType.temperature:
                         case SupportedMeasurementType.weight:
                             value = String.format("%.1f", vital1Value);
+                            break;
+                        case SupportedMeasurementType.height:
+                            int feet = ((int) vital1Value) * 12;
+                            int inches = Integer.parseInt(vital2Et.getText().toString().split(" ")[0]);
+                            value = String.valueOf(feet + inches);
                             break;
                         default:
                             value = String.valueOf((int) vital1Value);
