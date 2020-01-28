@@ -750,6 +750,9 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             case SupportedMeasurementType.weight:
                 emptyStateType = EmptyViewConstants.EMPTY_WEIGHT;
                 break;
+            case SupportedMeasurementType.height:
+                emptyStateType = EmptyViewConstants.EMPTY_HEIGHT;
+                break;
         }
         vitalDetailCrv.setEmptyState(emptyStateType);
     }

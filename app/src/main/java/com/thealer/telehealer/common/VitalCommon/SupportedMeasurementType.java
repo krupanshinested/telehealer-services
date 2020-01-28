@@ -21,7 +21,9 @@ public class SupportedMeasurementType {
     public static final String gulcose = "gulcose";
     public static final String pulseOximeter = "pulseOximeter";
     public static final String heartRate = "heartRate"; // ony used to save the heart rate which is calculated from bp or pulse machine
+    public static final String height = "height";
     public static final String stethoscope = "stethoscope";
+    public static final String bmi = "bmi";
 
 
     public static int getTitle(String type) {
@@ -40,6 +42,8 @@ public class SupportedMeasurementType {
                 return R.string.heartRate;
             case stethoscope:
                 return R.string.stethoscope;
+            case height:
+                return R.string.height;
             default:
                 return R.string.blood_pressure;
         }
@@ -61,6 +65,8 @@ public class SupportedMeasurementType {
                 return R.drawable.ic_vitals_heart;
             case stethoscope:
                 return R.drawable.ic_vitals_stethio;
+            case height:
+                return R.drawable.ic_vitals_height;
             default:
                 return 0;
         }
@@ -80,6 +86,10 @@ public class SupportedMeasurementType {
                 return "°F";
             case weight:
                 return "lbs";
+            case height:
+                return "inches";
+            case bmi:
+                return "kg/m²";
             default:
                 return "";
         }
@@ -87,7 +97,7 @@ public class SupportedMeasurementType {
 
 
     public static List<String> getItems() {
-        return new ArrayList<>(Arrays.asList(bp, weight, temperature, gulcose, pulseOximeter));
+        return new ArrayList<>(Arrays.asList(bp, weight,height,temperature, gulcose, pulseOximeter));
     }
 
 }
