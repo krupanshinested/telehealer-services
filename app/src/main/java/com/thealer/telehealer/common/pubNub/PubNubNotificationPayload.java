@@ -30,8 +30,8 @@ public class PubNubNotificationPayload {
         PushPayLoad pushPayLoad = new PushPayLoad();
         APNSPayload apnsPayload = new APNSPayload();
 
-        HashMap<String, String> aps = new HashMap<>();
-        aps.put(CONTENT_AVAILABLE, "1");
+        HashMap<String, Object> aps = new HashMap<>();
+        //aps.put(CONTENT_AVAILABLE, 1);
         aps.put("alert", "Call from " + displayName);
 
         apnsPayload.setAps(aps);
@@ -56,7 +56,7 @@ public class PubNubNotificationPayload {
         PushPayLoad pushPayLoad = new PushPayLoad();
         APNSPayload apnsPayload = new APNSPayload();
 
-        HashMap<String, String> aps = new HashMap<>();
+        HashMap<String, Object> aps = new HashMap<>();
         aps.put(TITLE, title);
         aps.put(ALERT, description);
         aps.put(MEDIA_URL, otherPersonAvatar);
@@ -73,9 +73,7 @@ public class PubNubNotificationPayload {
         PushPayLoad pushPayLoad = new PushPayLoad();
         APNSPayload apnsPayload = new APNSPayload();
 
-        HashMap<String, String> aps = new HashMap<>();
-        aps.put(CONTENT_AVAILABLE, "1");
-
+        HashMap<String, Object> aps = new HashMap<>();
         aps.put(TITLE, PushNotificationConstants.getTitle(PushNotificationConstants.PUSH_WAITING_ROOM));
         aps.put(ALERT, PushNotificationConstants.getMessage(PushNotificationConstants.PUSH_WAITING_ROOM, null));
         aps.put(MUTABLE_CONTENT, "1");
@@ -88,6 +86,34 @@ public class PubNubNotificationPayload {
         apnsPayload.setFrom(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         apnsPayload.setTo(to_guid);
         apnsPayload.setSessionId(scheduleId);
+
+        pushPayLoad.setPn_apns(apnsPayload);
+        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+
+        return pushPayLoad;
+    }
+
+    public static PushPayLoad getNewMessagePayload(String userGuid,
+                                         String message,
+                                         String from,
+                                         String date)  {
+
+        PushPayLoad pushPayLoad = new PushPayLoad();
+        APNSPayload apnsPayload = new APNSPayload();
+
+        String uuid = UUID.randomUUID().toString();
+        HashMap<String, Object> aps = new HashMap<>();
+        aps.put(CONTENT_AVAILABLE, 1);
+
+        apnsPayload.setAps(aps);
+        apnsPayload.setFrom(from);
+        apnsPayload.setTo(userGuid);
+        apnsPayload.setUuid(uuid);
+        apnsPayload.setIdentifier(uuid);
+        apnsPayload.setType(APNSPayload.liveMessage);
+        apnsPayload.setPn_push(APNSPayload.getPnPushObject());
+        apnsPayload.setContent(message);
+        apnsPayload.setCreatedAt(date);
 
         pushPayLoad.setPn_apns(apnsPayload);
         pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
