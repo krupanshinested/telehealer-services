@@ -19,9 +19,12 @@ import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.pubNub.models.GCMPayload;
+import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.home.HomeActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.application;
+import static com.thealer.telehealer.common.pubNub.PubNubNotificationPayload.CONTENT_AVAILABLE;
 
 import java.util.HashMap;
 
@@ -40,39 +43,27 @@ public class CallChannel {
     //values
     private final String end = "end";
 
-    public void startToListen() {
-        PubnubUtil.shared.subscribe(UserDetailPreferenceManager.getUser_guid()+channelName);
-    }
-
-    public void stopToListen() {
-        PubnubUtil.shared.unSubscribe(UserDetailPreferenceManager.getUser_guid()+channelName);
-    }
-
-    public void didReceiveMessage(PubNubMessage message) {
-        String type = (String) message.data.get(action);
-        if (type != null && type.equals(end)) {
-
-            String endReason = (String) message.data.get(reason);
-            if (TextUtils.isEmpty(endReason)) {
-                endReason = OpenTokConstants.other;
-            }
-
-            String callId = (String) message.data.get(uuid);
-            if (TextUtils.isEmpty(callId)) {
-                callId = "";
-            }
-
-            String from = (String) message.data.get(fromName);
-            if (TextUtils.isEmpty(from)) {
-                from = "";
-            }
-
-            String url = (String) message.data.get(mediaUrl);
-            if (TextUtils.isEmpty(url)) {
-                url = "";
-            }
-            dismissCall(callId,endReason,from,url);
+    public void didReceiveMessage(APNSPayload message) {
+        String endReason = message.getCall_rejection();
+        if (TextUtils.isEmpty(endReason)) {
+            endReason = OpenTokConstants.other;
         }
+
+        String callId =  message.getSessionId();
+        if (TextUtils.isEmpty(callId)) {
+            callId = "";
+        }
+
+        String from =  message.getFrom();
+        if (TextUtils.isEmpty(from)) {
+            from = "";
+        }
+
+        String url =  message.getMedia_url();
+        if (TextUtils.isEmpty(url)) {
+            url = "";
+        }
+        dismissCall(callId,endReason,from,url);
     }
 
     public void postEndCallToOtherPerson(String userGuid,
@@ -80,14 +71,30 @@ public class CallChannel {
                                          String from,
                                          String url,
                                          String callRejectionReason) {
-        HashMap<String,Object> data = new HashMap<>();
-        data.put(action,end);
-        data.put(reason,callRejectionReason);
-        data.put(uuid,callId);
-        data.put(fromName,from);
-        data.put(mediaUrl,url);
-        PubNubMessage message = new PubNubMessage(PubNubMessage.call,data);
-        PubnubUtil.shared.sendMessage(userGuid+channelName,message);
+
+        PushPayLoad pushPayLoad = new PushPayLoad();
+        APNSPayload apnsPayload = new APNSPayload();
+
+        HashMap<String, Object> aps = new HashMap<>();
+        aps.put(CONTENT_AVAILABLE, 1);
+
+        apnsPayload.setAps(aps);
+        apnsPayload.setFrom(from);
+        apnsPayload.setTo(userGuid);
+        apnsPayload.setUuid(callId);
+        apnsPayload.setIdentifier(callId);
+       // apnsPayload.setPn_ttl(20);
+        apnsPayload.setIs_conference(false);
+        apnsPayload.setType(APNSPayload.endCall);
+        apnsPayload.setSessionId(callId);
+        apnsPayload.setCall_rejection(callRejectionReason);
+        //apnsPayload.setMedia_url(url);
+        apnsPayload.setPn_push(APNSPayload.getPnPushObject());
+
+        pushPayLoad.setPn_apns(apnsPayload);
+        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+
+        PubnubUtil.shared.publishPushMessage(pushPayLoad,null);
     }
 
     private void dismissCall(String uuid,
@@ -110,7 +117,7 @@ public class CallChannel {
 
         if (!reason.equals(OpenTokConstants.busyInAnotherLine) && (TokBox.shared.getConnectingDate() == null && TokBox.shared.getConnectedDate() == null && !TokBox.shared.getCalling())) {
             APNSPayload payload = new APNSPayload();
-            HashMap<String, String> aps = new HashMap<>();
+            HashMap<String, Object> aps = new HashMap<>();
             if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
                 aps.put(PubNubNotificationPayload.ALERT, application.getString(R.string.video_missed_call));
             } else {

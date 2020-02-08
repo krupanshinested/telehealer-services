@@ -58,7 +58,13 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            APNSPayload data = mapper.readValue(message.get("body"), new TypeReference<APNSPayload>() {
+
+            Map<String, Object> mapFromString = new HashMap<>();
+            mapFromString = mapper.readValue(message.get("body"), new TypeReference<Map<String, Object>>() {
+            });
+            mapFromString.remove("pn_push");
+
+            APNSPayload data = mapper.readValue(mapper.writeValueAsString(mapFromString), new TypeReference<APNSPayload>() {
             });
             Log.e(TAG, "message " + data.getTo());
             extractMessage(data);
@@ -131,6 +137,9 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             case APNSPayload.openApp:
                 break;
             case APNSPayload.response:
+                break;
+            case APNSPayload.endCall:
+                CallChannel.shared.didReceiveMessage(data);
                 break;
             case APNSPayload.connection:
             case APNSPayload.schedule:
