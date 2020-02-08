@@ -2,7 +2,11 @@ package com.thealer.telehealer.common.pubNub.models;
 
 import androidx.annotation.Nullable;
 
+import com.thealer.telehealer.BuildConfig;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -25,9 +29,11 @@ public class APNSPayload implements Serializable {
     public static final String callHistory = "callHistory";
     public static final String openApp = "openApp";    // use this to just notify to other user of some activity, no specific action is done on open of app
     public static final String missedCall = "missedCall";
+    public static final String endCall = "endCall";
+    public static final String liveMessage = "liveMessage";
 
 
-    private HashMap<String, String> aps;
+    private HashMap<String, Object> aps;
     private String identifier;
     private String type;
     private String from;
@@ -58,8 +64,15 @@ public class APNSPayload implements Serializable {
 
     private String vital_type;
 
+    @Nullable
+    private String content;
+    @Nullable
+    private String createdAt;
 
-    public HashMap<String, String> getAps() {
+    private ArrayList<HashMap<String,Object>> pn_push;
+
+
+    public HashMap<String, Object> getAps() {
         return aps;
     }
 
@@ -129,7 +142,7 @@ public class APNSPayload implements Serializable {
     }
 
 
-    public void setAps(HashMap<String, String> aps) {
+    public void setAps(HashMap<String, Object> aps) {
         this.aps = aps;
     }
 
@@ -204,5 +217,45 @@ public class APNSPayload implements Serializable {
 
     public void setVital_type(String vital_type) {
         this.vital_type = vital_type;
+    }
+
+    public void setPn_push(HashMap<String, Object> pn_push) {
+        ArrayList<HashMap<String, Object>> item = new ArrayList<>();
+        item.add(pn_push);
+        this.pn_push = item;
+    }
+
+    @Nullable
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(@Nullable String content) {
+        this.content = content;
+    }
+
+    @Nullable
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(@Nullable String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public static HashMap<String,Object> getPnPushObject() {
+        HashMap<String,Object> item = new HashMap<>();
+        item.put("version","v2");
+
+        HashMap<String,String> patientTarget = new HashMap<>();
+        patientTarget.put("environment", BuildConfig.DEBUG ? "development" : "production");
+        patientTarget.put("topic","com.thealer");
+
+        HashMap<String,String> medicalTarget = new HashMap<>();
+        medicalTarget.put("environment",BuildConfig.DEBUG ? "development" : "production");
+        medicalTarget.put("topic","com.thealer.pro");
+
+        item.put("targets", Arrays.asList(patientTarget,medicalTarget));
+        return item;
     }
 }

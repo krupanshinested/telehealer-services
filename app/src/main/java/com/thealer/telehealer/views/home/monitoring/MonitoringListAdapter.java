@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import Flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
@@ -39,12 +40,26 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
     private List<Drawable> imageList;
     private Bundle bundle;
 
-    public MonitoringListAdapter(FragmentActivity activity, Bundle arguments) {
+    public MonitoringListAdapter(FragmentActivity activity,@Nullable Bundle arguments) {
         this.activity = activity;
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
         titleList = Arrays.asList(activity.getString(R.string.vitals), activity.getString(R.string.diet));
         imageList = Arrays.asList(activity.getDrawable(R.drawable.ic_vitals_heart), activity.getDrawable(R.drawable.ic_diet));
         this.bundle = arguments;
+
+        if (arguments != null) {
+            String openAutomaticType = arguments.getString(ArgumentKeys.OPEN_AUTOMATICALLY);
+            if (openAutomaticType != null) {
+                switch (openAutomaticType) {
+                    case MonitoringFragment.DIET_OPEN_TYPE:
+                        openFragment(1);
+                        break;
+                    case MonitoringFragment.VITAL_OPEN_TYPE:
+                        openFragment(0);
+                        break;
+                }
+            }
+        }
     }
 
     @NonNull
@@ -61,42 +76,7 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
         viewHolder.listCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = null;
-                if (bundle == null) {
-                    bundle = new Bundle();
-                }
-                bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
-
-                if (titleList.get(i).equals(activity.getString(R.string.vitals))) {
-                    if (UserType.isUserPatient()) {
-
-                        fragment = new VitalsListWithGoogleFitFragment();
-                        bundle.putBoolean(Constants.IS_FROM_HOME, true);
-                        fragment.setArguments(bundle);
-
-                    } else {
-                        fragment = new VitalReportFragment();
-                        bundle.putBoolean(ArgumentKeys.SHOW_PRINT_FILTER, false);
-                        fragment.setArguments(bundle);
-                    }
-                } else if (titleList.get(i).equals(activity.getString(R.string.medication))) {
-
-                    fragment = null;
-
-                } else if (titleList.get(i).equals(activity.getString(R.string.diet))) {
-
-                    if (UserType.isUserPatient()) {
-                        fragment = new DietDetailFragment();
-                    } else {
-                        fragment = new DietUserListingFragment();
-                        bundle.putBoolean(ArgumentKeys.SHOW_PRINT_FILTER, false);
-                        fragment.setArguments(bundle);
-                    }
-                }
-
-                if (fragment != null) {
-                    showSubFragmentInterface.onShowFragment(fragment);
-                }
+                openFragment(i);
             }
         });
     }
@@ -116,6 +96,45 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
             listIv = (ImageView) itemView.findViewById(R.id.list_iv);
             listTv = (TextView) itemView.findViewById(R.id.list_tv);
             listCv = (CardView) itemView.findViewById(R.id.list_cv);
+        }
+    }
+
+    private void openFragment(int i) {
+        Fragment fragment = null;
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
+
+        if (titleList.get(i).equals(activity.getString(R.string.vitals))) {
+            if (UserType.isUserPatient()) {
+
+                fragment = new VitalsListWithGoogleFitFragment();
+                bundle.putBoolean(Constants.IS_FROM_HOME, true);
+                fragment.setArguments(bundle);
+
+            } else {
+                fragment = new VitalReportFragment();
+                bundle.putBoolean(ArgumentKeys.SHOW_PRINT_FILTER, false);
+                fragment.setArguments(bundle);
+            }
+        } else if (titleList.get(i).equals(activity.getString(R.string.medication))) {
+
+            fragment = null;
+
+        } else if (titleList.get(i).equals(activity.getString(R.string.diet))) {
+
+            if (UserType.isUserPatient()) {
+                fragment = new DietDetailFragment();
+            } else {
+                fragment = new DietUserListingFragment();
+                bundle.putBoolean(ArgumentKeys.SHOW_PRINT_FILTER, false);
+                fragment.setArguments(bundle);
+            }
+        }
+
+        if (fragment != null) {
+            showSubFragmentInterface.onShowFragment(fragment);
         }
     }
 }

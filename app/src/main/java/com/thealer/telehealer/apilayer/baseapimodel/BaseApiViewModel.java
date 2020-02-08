@@ -16,6 +16,7 @@ import android.util.Log;
 
 import com.auth0.android.jwt.JWT;
 import com.google.gson.Gson;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.api.ApiInterface;
 import com.thealer.telehealer.apilayer.manager.RetrofitManager;
@@ -194,7 +195,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         Log.e(TAG, "makeRefreshTokenApiCall: api called");
         isRefreshToken = true;
         getAuthApiService()
-                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN),false)
+                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN),false, BuildConfig.VERSION_NAME)
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                     @Override

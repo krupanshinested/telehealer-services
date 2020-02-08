@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
@@ -43,7 +44,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
 
         if (BaseApiViewModel.isAuthExpired()) {
 
-            getAuthApiService().refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), true)
+            getAuthApiService().refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), true,BuildConfig.VERSION_NAME)
                     .compose(applySchedulers())
                     .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                         @Override

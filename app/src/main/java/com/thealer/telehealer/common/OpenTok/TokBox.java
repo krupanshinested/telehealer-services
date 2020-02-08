@@ -410,8 +410,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         patientLocationTracker = null;
 
         LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.CALL_STARTED_BROADCAST));
-
-        CallChannel.shared.startToListen();
     }
 
     public void setup(ViewGroup remoteView, ViewGroup localView) {
@@ -857,7 +855,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             CallActivity.openFeedBackIfNeeded(callRejectionReason, application);
         }
 
-        CallChannel.shared.stopToListen();
 
         if (TextUtils.isEmpty(sessionId)) {
             return;

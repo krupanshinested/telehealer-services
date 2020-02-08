@@ -137,9 +137,9 @@ dependencies {
 
     //Retrofit
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.6'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
 
@@ -150,7 +150,7 @@ dependencies {
     implementation files('libs/iHealthLibrary_2.4.4.jar')
 
     //view model and live data
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-rc03'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
     //pdf viewer
@@ -166,7 +166,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
 
     //firebase
-    implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-core:17.2.2'
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
 
     implementation ('com.google.firebase:firebase-perf:19.0.3') {
@@ -174,7 +174,7 @@ dependencies {
     }
 
     //pubnub
-    implementation 'com.pubnub:pubnub:4.2.0'
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '4.29.2'
 
     //calendar view
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
@@ -230,4 +230,8 @@ dependencies {
 
     pepTalkHealthImplementation "com.google.android.gms:play-services-fitness:18.0.0"
     pepTalkHealthImplementation "com.google.android.gms:play-services-auth:17.0.0"
+
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.9.8'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.8'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
 }
