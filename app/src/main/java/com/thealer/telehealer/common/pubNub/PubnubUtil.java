@@ -4,8 +4,9 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.callbacks.PNCallback;
@@ -17,16 +18,18 @@ import com.pubnub.api.models.consumer.presence.PNGetStateResult;
 import com.pubnub.api.models.consumer.presence.PNSetStateResult;
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
+import com.pubnub.api.models.consumer.pubsub.PNSignalResult;
+import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult;
+import com.pubnub.api.models.consumer.pubsub.objects.PNMembershipResult;
+import com.pubnub.api.models.consumer.pubsub.objects.PNSpaceResult;
+import com.pubnub.api.models.consumer.pubsub.objects.PNUserResult;
 import com.pubnub.api.models.consumer.push.PNPushAddChannelResult;
 import com.pubnub.api.models.consumer.push.PNPushRemoveAllChannelsResult;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.Pubnub.PubNubMessage;
 import com.thealer.telehealer.apilayer.models.Pubnub.PubNubViewModel;
-import com.thealer.telehealer.apilayer.models.Pubnub.PubnubChatModel;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Config;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
-import com.thealer.telehealer.common.Util.Call.CallChannel;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Utils;
@@ -34,6 +37,8 @@ import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.chat.GetStateInterface;
 import com.thealer.telehealer.views.home.chat.PubnubUserStatusInterface;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -169,6 +174,7 @@ public class PubnubUtil extends SubscribeCallback {
                             detail.put("reason", status.getErrorData().getInformation());
                             detail.put("event", "publishPushMessage");
 
+                            System.out.println("pub failed : " +status.getErrorData().getInformation());
                             TeleLogger.shared.log(TeleLogExternalAPI.pubnub, detail);
                         }
 
@@ -286,21 +292,21 @@ public class PubnubUtil extends SubscribeCallback {
     private void setState(int state, String toGuid, String userGuid) {
 
         String channel = getChatChannel(toGuid, userGuid);
-        getState(channel,new GetStateInterface() {
+        getState(toGuid,channel,new GetStateInterface() {
             @Override
-            public void getStateMap(Map<String, Object> stateMap) {
+            public void getStateMap(Map<String, JsonElement> stateMap) {
                 if (stateMap == null) {
                     stateMap = new HashMap<>();
                 }
-                Map<String, Integer> map = new ObjectMapper().convertValue(stateMap.get(channel), Map.class);
-                map.put(userGuid, state);
 
-                Log.e("aswin", "getStateMap: " + map.toString());
+                stateMap.put(userGuid, new JsonPrimitive(state));
+
+                Log.e("aswin", "getStateMap: " + stateMap.toString());
 
                 pubnub.setPresenceState()
                         .channels(new ArrayList<>(Collections.singletonList(channel)))
-                        .uuid(channel)
-                        .state(map)
+                        .uuid(userGuid)
+                        .state(stateMap)
                         .async(new PNCallback<PNSetStateResult>() {
                             @Override
                             public void onResponse(PNSetStateResult result, PNStatus status) {
@@ -312,11 +318,11 @@ public class PubnubUtil extends SubscribeCallback {
         });
     }
 
-    private void getState(String channel,
+    private void getState(String uuid,String channel,
                           GetStateInterface getStateInterface) {
         pubnub.getPresenceState()
                 .channels(new ArrayList<>(Collections.singletonList(channel)))
-                .uuid(channel)
+                .uuid(uuid)
                 .async(new PNCallback<PNGetStateResult>() {
                     @Override
                     public void onResponse(PNGetStateResult result, PNStatus status) {
@@ -333,15 +339,19 @@ public class PubnubUtil extends SubscribeCallback {
         String channel = getChatChannel(userGuid, UserDetailPreferenceManager.getUser_guid());
         pubnub.getPresenceState()
                 .channels(new ArrayList<>(Collections.singletonList(channel)))
-                .uuid(channel)
+                .uuid(userGuid)
                 .async(new PNCallback<PNGetStateResult>() {
                     @Override
                     public void onResponse(PNGetStateResult result, PNStatus status) {
                         if (result != null) {
                             try {
-                                Map<String, Integer> map = new ObjectMapper().convertValue(result.getStateByUUID().get(channel), Map.class);
-                                statusInterface.userStatus(map.get(userGuid));
+                                Log.e(TAG, "onResponse: " + result.getStateByUUID());
+                               int userStatus = result.getStateByUUID().get(channel).getAsJsonObject().get(userGuid).getAsInt();
+                                Log.e(TAG, "onResponse: userStatus " + userStatus);
+                                statusInterface.userStatus(userStatus);
                             } catch (Exception e) {
+                                Log.e(TAG, "onResponse: exception");
+                                e.printStackTrace();
                                 statusInterface.userStatus(PubnubUtil.CHAT_STATUS_INACTIVE);
                             }
                         }
@@ -363,65 +373,66 @@ public class PubnubUtil extends SubscribeCallback {
 
     public void sendPubnubMessage(String toGuid, String message) {
         String channel = getChatChannel(toGuid, UserDetailPreferenceManager.getUser_guid());
-        getState(channel,new GetStateInterface() {
-            @Override
-            public void getStateMap(Map<String, Object> stateMap) {
-                Map<String, Integer> map = new ObjectMapper().convertValue(stateMap.get(channel), Map.class);
+        Log.e(TAG, "getStateMap: 1");
 
-                if (map != null) {
-                    int status = CHAT_STATUS_BACKGROUND;
-                    if (map.containsKey(toGuid))
-                        status = map.get(toGuid);
+        PushPayLoad pushPayLoad = PubNubNotificationPayload.getNewMessagePayload(toGuid,message,UserDetailPreferenceManager.getUser_guid(),Utils.getCurrentUtcDate());
 
-                    Log.e(TAG, "status " + status);
-
-                    if (status == CHAT_STATUS_ACTIVE) {
-                        Log.e(TAG, "getStateMap: 1");
-                        PubnubChatModel pubnubChatModel = new PubnubChatModel(UserDetailPreferenceManager.getUser_guid(),
-                                message, Utils.getCurrentUtcDate());
-
-                        pubnub.publish()
-                                .message(pubnubChatModel)
-                                .channel(channel)
-                                .async(new PNCallback<PNPublishResult>() {
-                                    @Override
-                                    public void onResponse(PNPublishResult result, PNStatus status) {
-                                        Log.e(TAG, "onResponse: " + status.isError());
-                                    }
-                                });
-                    } else if (status == CHAT_STATUS_BACKGROUND) {
-
+        pubnub.publish()
+                .message(pushPayLoad)
+                .channel(channel)
+                .async(new PNCallback<PNPublishResult>() {
+                    @Override
+                    public void onResponse(PNPublishResult result, PNStatus status) {
+                        Log.e(TAG, "onResponse: " + status.isError());
                     }
-                }
-            }
-        });
+                });
     }
 
 
     //SubscribeCallback
     @Override
-    public void status(PubNub pubnub, PNStatus status) {
+    public void status(@NotNull PubNub pubnub, @NotNull PNStatus status) {
         if (callback != null) {
             callback.status(pubnub,status);
         }
     }
 
     @Override
-    public void message(PubNub pubnub, PNMessageResult message) {
-        PubNubMessage pubNubMessage = new Gson().fromJson(message.getMessage().toString(), PubNubMessage.class);
-
-        if (pubNubMessage.type.equals(PubNubMessage.call)) {
-            CallChannel.shared.didReceiveMessage(pubNubMessage);
-        } else if (callback != null) {
+    public void message(@NotNull PubNub pubnub, @NotNull PNMessageResult message) {
+        if (callback != null) {
             callback.message(pubnub,message);
         }
+    }
+
+    @Override
+    public void presence(@NotNull PubNub pubnub, @NotNull PNPresenceEventResult presence) {
+        if (callback != null) {
+            callback.presence(pubnub,presence);
+        }
+    }
+
+    @Override
+    public void signal(@NotNull PubNub pubnub, @NotNull PNSignalResult pnSignalResult) {
 
     }
 
     @Override
-    public void presence(PubNub pubnub, PNPresenceEventResult presence) {
-        if (callback != null) {
-            callback.presence(pubnub,presence);
-        }
+    public void user(@NotNull PubNub pubnub, @NotNull PNUserResult pnUserResult) {
+
+    }
+
+    @Override
+    public void space(@NotNull PubNub pubnub, @NotNull PNSpaceResult pnSpaceResult) {
+
+    }
+
+    @Override
+    public void membership(@NotNull PubNub pubnub, @NotNull PNMembershipResult pnMembershipResult) {
+
+    }
+
+    @Override
+    public void messageAction(@NotNull PubNub pubnub, @NotNull PNMessageActionResult pnMessageActionResult) {
+
     }
 }

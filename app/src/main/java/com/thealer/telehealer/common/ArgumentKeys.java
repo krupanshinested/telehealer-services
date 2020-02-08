@@ -209,6 +209,8 @@ public class ArgumentKeys {
 
     public static final String SHOW_CONNECTION_REQUEST_ALERT = "SHOW_CONNECTION_REQUEST_ALERT";
     public static final String EDUCATIONAL_VIDEO_ID = "EDUCATIONAL_VIDEO_ID";
+    public static final String OPEN_AUTOMATICALLY = "OPEN_AUTOMATICALLY";
+
 
 
 }

@@ -1115,8 +1115,8 @@ public class Utils {
 
     public static void createNotification(APNSPayload data, Intent intent) {
 
-        String title = data.getAps().get(PubNubNotificationPayload.TITLE);
-        String message = data.getAps().get(PubNubNotificationPayload.ALERT);
+        String title = (String) data.getAps().get(PubNubNotificationPayload.TITLE);
+        String message = (String) data.getAps().get(PubNubNotificationPayload.ALERT);
         String imageUrl = data.getMedia_url();
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

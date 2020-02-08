@@ -116,4 +116,12 @@ public class TeleHealerApplication extends Application implements LifecycleObser
             VitalsManager.getInstance().disconnectAll();
         }
     }
+
+    public void addShortCuts() {
+
+    }
+
+    public void removeShortCuts() {
+
+    }
 }
