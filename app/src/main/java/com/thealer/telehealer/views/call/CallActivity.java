@@ -830,7 +830,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                         EventRecorder.recordCallUpdates("declined_call", null);
 
                         APNSPayload payload = new APNSPayload();
-                        HashMap<String, String> aps = new HashMap<>();
+                        HashMap<String, Object> aps = new HashMap<>();
                         if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
                             aps.put(PubNubNotificationPayload.ALERT, getString(R.string.video_missed_call));
                         } else {

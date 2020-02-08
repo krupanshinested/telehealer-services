@@ -44,7 +44,7 @@ public class SigninApiViewModel extends BaseApiViewModel {
 
     public void refreshToken() {
         String refreshToken = TeleHealerApplication.appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN);
-        getAuthApiService().refreshToken(refreshToken,false)
+        getAuthApiService().refreshToken(refreshToken,false,BuildConfig.VERSION_NAME)
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                     @Override
