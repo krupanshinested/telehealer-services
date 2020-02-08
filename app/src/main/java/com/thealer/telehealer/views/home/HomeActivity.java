@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ShortcutManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -84,6 +86,8 @@ import Flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.application;
+import static java.util.Arrays.asList;
 
 public class HomeActivity extends BaseActivity implements AttachObserverInterface,
         OnActionCompleteInterface, NavigationView.OnNavigationItemSelectedListener, OnOrientationChangeInterface,
@@ -352,19 +356,24 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void attachView() {
-        switch (selecteMenuItem) {
-            case 0:
-            case R.id.menu_doctor:
-            case R.id.menu_patient:
-                navigationView.getMenu().getItem(0).setChecked(true);
-                showDoctorPatientList();
-                break;
-            case R.id.menu_recent:
-                showRecentView();
-                break;
-            case R.id.menu_schedules:
-                showSchedulesFragment(scheduleTypeCalendar);
-                break;
+        String openAutomaticType = getIntent().getStringExtra(ArgumentKeys.OPEN_AUTOMATICALLY);
+        if (openAutomaticType != null) {
+            showMonitoringView(openAutomaticType);
+        } else {
+            switch (selecteMenuItem) {
+                case 0:
+                case R.id.menu_doctor:
+                case R.id.menu_patient:
+                    navigationView.getMenu().getItem(0).setChecked(true);
+                    showDoctorPatientList();
+                    break;
+                case R.id.menu_recent:
+                    showRecentView();
+                    break;
+                case R.id.menu_schedules:
+                    showSchedulesFragment(scheduleTypeCalendar);
+                    break;
+            }
         }
 
         checkForDocumentUpload();
@@ -656,17 +665,24 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 showOrdersView();
                 break;
             case R.id.menu_monitoring:
-                showMonitoringView();
+                showMonitoringView(null);
                 break;
         }
         toggleDrawer();
         return true;
     }
 
-    private void showMonitoringView() {
+    private void showMonitoringView(@Nullable String openAutomatically) {
         helpContent = HelpContent.HELP_MONITORING;
         setToolbarTitle(getString(R.string.monitoring));
         MonitoringFragment monitoringFragment = new MonitoringFragment();
+
+        if (openAutomatically != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(ArgumentKeys.OPEN_AUTOMATICALLY,openAutomatically);
+            monitoringFragment.setArguments(bundle);
+        }
+
         setFragment(monitoringFragment);
     }
 
@@ -787,6 +803,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     protected void onResume() {
         super.onResume();
         checkNotification();
+
+        application.addShortCuts();
 
         if (UserType.isUserDoctor() && isCheckLicense && !appConfig.getInstallType().equals(getString(R.string.install_type_india)))
             checkIsLicenseExpired();

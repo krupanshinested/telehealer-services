@@ -16,6 +16,10 @@ import com.thealer.telehealer.views.base.BaseFragment;
  * Created by Aswin on 20,February,2019
  */
 public class MonitoringFragment extends BaseFragment {
+
+    public static final String VITAL_OPEN_TYPE = "vital_open_type";
+    public static final String DIET_OPEN_TYPE = "diet_open_type";
+
     private RecyclerView monitoringRv;
 
     @Nullable

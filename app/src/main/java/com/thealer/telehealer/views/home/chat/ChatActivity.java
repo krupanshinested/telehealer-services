@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.chat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,21 +16,25 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.callbacks.SubscribeCallback;
 import com.pubnub.api.models.consumer.PNStatus;
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
+import com.pubnub.api.models.consumer.pubsub.PNSignalResult;
+import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult;
+import com.pubnub.api.models.consumer.pubsub.objects.PNMembershipResult;
+import com.pubnub.api.models.consumer.pubsub.objects.PNSpaceResult;
+import com.pubnub.api.models.consumer.pubsub.objects.PNUserResult;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
-import com.thealer.telehealer.apilayer.models.Pubnub.PubnubChatModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatApiResponseModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatApiViewModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatMessageRequestModel;
@@ -50,9 +55,12 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
+import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -463,15 +471,23 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         if (userGuid != null)
             PubnubUtil.shared.createChatChannel(userGuid, UserDetailPreferenceManager.getUser_guid(), new SubscribeCallback() {
                 @Override
-                public void status(PubNub pubnub, PNStatus status) {
+                public void status(@NotNull PubNub pubnub, @NotNull PNStatus status) {
 
                 }
 
                 @Override
-                public void message(PubNub pubnub, PNMessageResult message) {
-                    PubnubChatModel pubnubChatModel = new Gson().fromJson(message.getMessage().toString(), PubnubChatModel.class);
+                public void message(@NotNull PubNub pubnub, @NotNull PNMessageResult message) {
+                    Log.d("ChatActivity","message "+message.getMessage().getAsJsonObject().toString());
+                    JsonObject root = message.getMessage().getAsJsonObject();
+                    APNSPayload pubnubChatModel;
+                    if (root.get("pn_apns") != null) {
+                        pubnubChatModel = new Gson().fromJson(root.get("pn_apns").getAsJsonObject().toString(), APNSPayload.class);
+                    } else {
+                        pubnubChatModel = new Gson().fromJson(root.toString(), APNSPayload.class);
+                    }
 
-                    if (!pubnubChatModel.getSender_uuid().equals(UserDetailPreferenceManager.getUser_guid())) {
+
+                    if (!pubnubChatModel.getFrom().equals(UserDetailPreferenceManager.getUser_guid())) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -482,15 +498,40 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 }
 
                 @Override
-                public void presence(PubNub pubnub, PNPresenceEventResult presence) {
+                public void presence(@NotNull PubNub pubnub,@NotNull  PNPresenceEventResult presence) {
+
+                }
+
+                @Override
+                public void signal(@NotNull PubNub pubnub, @NotNull PNSignalResult pnSignalResult) {
+
+                }
+
+                @Override
+                public void user(@NotNull PubNub pubnub, @NotNull PNUserResult pnUserResult) {
+
+                }
+
+                @Override
+                public void space(@NotNull PubNub pubnub, @NotNull PNSpaceResult pnSpaceResult) {
+
+                }
+
+                @Override
+                public void membership(@NotNull PubNub pubnub, @NotNull PNMembershipResult pnMembershipResult) {
+
+                }
+
+                @Override
+                public void messageAction(@NotNull PubNub pubnub, @NotNull PNMessageActionResult pnMessageActionResult) {
 
                 }
             });
     }
 
-    private void addMessage(PubnubChatModel pubnubChatModel) {
-        ChatApiResponseModel.ResultBean.UserBean userBean = new ChatApiResponseModel.ResultBean.UserBean(pubnubChatModel.getSender_uuid());
-        ChatApiResponseModel.ResultBean resultBean = new ChatApiResponseModel.ResultBean(pubnubChatModel.getContent(), pubnubChatModel.getDate(), userBean);
+    private void addMessage(APNSPayload pubnubChatModel) {
+        ChatApiResponseModel.ResultBean.UserBean userBean = new ChatApiResponseModel.ResultBean.UserBean(pubnubChatModel.getFrom());
+        ChatApiResponseModel.ResultBean resultBean = new ChatApiResponseModel.ResultBean(pubnubChatModel.getContent(), pubnubChatModel.getCreatedAt(), userBean);
         chatListAdapter.addMessage(resultBean);
         chatMessageCrv.getRecyclerView().smoothScrollToPosition(chatMessageCrv.getLayoutManager().getItemCount());
     }
