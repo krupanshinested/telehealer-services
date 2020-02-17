@@ -39,6 +39,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.thealer.telehealer.common.PreferenceConstants;
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
+
 /**
  * Created by rsekar on 12/25/18.
  */
@@ -85,7 +89,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             public void run() {
                 TelehealerFirebaseMessagingService.currentToken = currentToken;
 
-                if (UserDetailPreferenceManager.getUser_guid() != null && !UserDetailPreferenceManager.getUser_guid().isEmpty()) {
+                if (UserDetailPreferenceManager.getUser_guid() != null && !UserDetailPreferenceManager.getUser_guid().isEmpty() && appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
                     PubnubUtil.shared.grantPubNub(currentToken, UserDetailPreferenceManager.getUser_guid());
                 }
             }

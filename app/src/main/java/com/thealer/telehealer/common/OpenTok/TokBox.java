@@ -129,7 +129,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     @Nullable
     private ViewGroup localView;
     private String token = "", sessionId = "", apiKey = "",otherPersonUserGuid = "";
-    private String callType;
+    private String callType = "";
     private Boolean isCalling;
     private Boolean isBadConnection = false;
     private Boolean isPatientDisclaimerDismissed = false;
