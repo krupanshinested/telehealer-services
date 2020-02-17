@@ -61,7 +61,7 @@ public class TeleLogger {
     }
 
     public void log(String externalApi, HashMap<String, String> detail) {
-        if (TextUtils.isEmpty(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN))) {
+        if (TextUtils.isEmpty(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN)) && !appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
             return;
         }
 
