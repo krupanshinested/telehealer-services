@@ -106,6 +106,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private SignoutApiViewModel signoutApiViewModel;
     private ImageView favoriteIv;
     private CircleImageView statusCiv;
+    private boolean isSigningOutInProcess = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -133,6 +134,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         signoutApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                isSigningOutInProcess = false;
                 if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
                     appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
                     startActivity(new Intent(ProfileSettingsActivity.this, SigninActivity.class)
@@ -147,6 +149,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (errorModel != null) {
                     showToast(errorModel.getMessage());
                 }
+                isSigningOutInProcess = false;
             }
         });
     }
@@ -321,7 +324,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 showSubFragment(privacyFragment);
                 break;
             case R.id.signOut:
-                if (!TokBox.shared.isActiveCallPreset()) {
+                if (!isSigningOutInProcess && !TokBox.shared.isActiveCallPreset()) {
+                    isSigningOutInProcess = true;
                     signoutApiViewModel.signOut();
                 }
                 break;

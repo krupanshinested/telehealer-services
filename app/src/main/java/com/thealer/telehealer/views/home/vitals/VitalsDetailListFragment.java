@@ -344,71 +344,75 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             yAxis.setAxisMinimum(0f);
 
             for (int i = 0; i < responseModelList.size(); i++) {
+                try {
 
-                String value = responseModelList.get(i).getValue().toString()
-                        .replace(SupportedMeasurementType.getVitalUnit(selectedItem), "").trim();
+                    String value = responseModelList.get(i).getValue().toString()
+                            .replace(SupportedMeasurementType.getVitalUnit(selectedItem), "").trim();
 
-                String type = responseModelList.get(i).getType();
+                    String type = responseModelList.get(i).getType();
 
-                if (!value.isEmpty()) {
-                    if (selectedItem.equals(SupportedMeasurementType.bp)) {
+                    if (!value.isEmpty()) {
+                        if (selectedItem.equals(SupportedMeasurementType.bp)) {
 
-                        switch (type) {
-                            case SupportedMeasurementType.bp:
-                                try {
-                                    String[] values = value.split("/");
+                            switch (type) {
+                                case SupportedMeasurementType.bp:
+                                    try {
+                                        String[] values = value.split("/");
 
-                                    if (Float.parseFloat(values[0]) > maxVlaue) {
-                                        maxVlaue = Float.parseFloat(values[0]);
-                                    }
-                                    if (i == 1) {
-                                        minValue = Float.parseFloat(values[1]);
-                                    } else {
-                                        if (Float.parseFloat(values[0]) < minValue) {
+                                        if (Float.parseFloat(values[0]) > maxVlaue) {
                                             maxVlaue = Float.parseFloat(values[0]);
                                         }
-                                        if (Float.parseFloat(values[1]) < minValue) {
-                                            maxVlaue = Float.parseFloat(values[1]);
+                                        if (i == 1) {
+                                            minValue = Float.parseFloat(values[1]);
+                                        } else {
+                                            if (Float.parseFloat(values[0]) < minValue) {
+                                                maxVlaue = Float.parseFloat(values[0]);
+                                            }
+                                            if (Float.parseFloat(values[1]) < minValue) {
+                                                maxVlaue = Float.parseFloat(values[1]);
+                                            }
                                         }
-                                    }
 
-                                    line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0]), responseModelList.get(i).getMode()));
-                                    line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1]), responseModelList.get(i).getMode()));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                break;
-                            case SupportedMeasurementType.heartRate:
-                                if (!value.isEmpty()) {
-                                    if (Float.parseFloat(value) > maxVlaue) {
-                                        maxVlaue = Float.parseFloat(value);
+                                        line1Entry.add(new Entry(i + 1, Float.parseFloat(values[0]), responseModelList.get(i).getMode()));
+                                        line2Entry.add(new Entry(i + 1, Float.parseFloat(values[1]), responseModelList.get(i).getMode()));
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
-                                    if (i == 1) {
-                                        minValue = Float.parseFloat(value);
-                                    } else {
-                                        if (Float.parseFloat(value) < minValue) {
+                                    break;
+                                case SupportedMeasurementType.heartRate:
+                                    if (!value.isEmpty()) {
+                                        if (Float.parseFloat(value) > maxVlaue) {
+                                            maxVlaue = Float.parseFloat(value);
+                                        }
+                                        if (i == 1) {
                                             minValue = Float.parseFloat(value);
+                                        } else {
+                                            if (Float.parseFloat(value) < minValue) {
+                                                minValue = Float.parseFloat(value);
+                                            }
                                         }
+                                        line3Entry.add(new Entry(i + 1, Float.parseFloat(value), responseModelList.get(i).getMode()));
                                     }
-                                    line3Entry.add(new Entry(i + 1, Float.parseFloat(value), responseModelList.get(i).getMode()));
-                                }
-                                break;
-                        }
-                    } else {
-                        if (Float.parseFloat(value) > maxVlaue) {
-                            maxVlaue = Float.parseFloat(value);
-                        }
-                        if (i == 1) {
-                            minValue = Float.parseFloat(value);
-                        } else {
-                            if (Float.parseFloat(value) < minValue) {
-                                minValue = Float.parseFloat(value);
+                                    break;
                             }
+                        } else {
+                            if (Float.parseFloat(value) > maxVlaue) {
+                                maxVlaue = Float.parseFloat(value);
+                            }
+                            if (i == 1) {
+                                minValue = Float.parseFloat(value);
+                            } else {
+                                if (Float.parseFloat(value) < minValue) {
+                                    minValue = Float.parseFloat(value);
+                                }
+                            }
+                            line1Entry.add(new Entry(i + 1, Float.parseFloat(value), responseModelList.get(i).getMode()));
                         }
-                        line1Entry.add(new Entry(i + 1, Float.parseFloat(value), responseModelList.get(i).getMode()));
-                    }
 
-                    xaxisLables.put(Float.valueOf(i + 1), responseModelList.get(i).getCreated_at());
+                        xaxisLables.put(Float.valueOf(i + 1), responseModelList.get(i).getCreated_at());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -633,7 +637,9 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             if (!isFromHome) {
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
-                userGuid = commonUserApiResponseModel.getUser_guid();
+                if (commonUserApiResponseModel != null) {
+                    userGuid = commonUserApiResponseModel.getUser_guid();
+                }
             }
 
             doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
