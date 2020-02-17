@@ -87,6 +87,8 @@ public class VitalCreationActivity extends BaseActivity implements
 
         measurementType = getIntent().getStringExtra(ArgumentKeys.SELECTED_VITAL_TYPE);
 
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         initView();
 
         if (savedInstanceState != null) {
@@ -143,6 +145,7 @@ public class VitalCreationActivity extends BaseActivity implements
     public void onDestroy() {
         super.onDestroy();
 
+        getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
