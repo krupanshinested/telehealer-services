@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,12 +26,15 @@ import com.thealer.telehealer.views.base.BaseActivity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import Flavor.GoogleFit.Adapter.GoogleFitSourceAdapter;
 import Flavor.GoogleFit.GoogleFitDefaults;
 import Flavor.GoogleFit.GoogleFitManager;
 import Flavor.GoogleFit.Interface.GoogleFitResultFetcher;
+import Flavor.GoogleFit.Interface.GoogleFitSourceInterface;
 import Flavor.GoogleFit.Models.GoogleFitData;
 import Flavor.GoogleFit.Models.GoogleFitSource;
 import androidx.annotation.Nullable;
@@ -42,10 +47,11 @@ public class GoogleFitSourceSelectionActivity extends BaseActivity implements Vi
     private Toolbar toolbar;
     private ImageView closeButton,backIv;
     private TextView toolbarTitle,message_tv;
-    private CustomButton submit_btn;
+    private Button submit_btn;
     private CustomRecyclerView container;
 
-    private ArrayList<GoogleFitSource> sources;
+    private ArrayList<GoogleFitSource> sources = new ArrayList<>();
+    private ArrayList<GoogleFitSource> previousFetchedSources = new ArrayList<>();
     private ArrayList<GoogleFitData> data;
 
     private GoogleFitManager googleFitManager;
@@ -63,12 +69,15 @@ public class GoogleFitSourceSelectionActivity extends BaseActivity implements Vi
             sources = new ArrayList<>();
         }
 
+        Collections.sort(sources);
+
         if (data == null) {
             data = new ArrayList<>();
         }
 
         initView();
         fillWithData();
+        updateSubmitButton();
     }
 
     /*
@@ -103,6 +112,28 @@ public class GoogleFitSourceSelectionActivity extends BaseActivity implements Vi
         container.getSwipeLayout().setEnabled(false);
     }
 
+    private void updateSubmitButton() {
+        ArrayList<GoogleFitSource> previousFetchedSources = this.previousFetchedSources;
+
+        if (previousFetchedSources.size() != sources.size()) {
+            submit_btn.setEnabled(true);
+            Log.d("Googlefit","updateSubmitButton true");
+            return;
+        } else {
+            Collections.sort(previousFetchedSources);
+            for (int i = 0;i<previousFetchedSources.size();i++) {
+                if (previousFetchedSources.get(i).getBundleId().equals(sources.get(i).getBundleId()) && previousFetchedSources.get(i).isSelected() != sources.get(i).isSelected()) {
+                    submit_btn.setEnabled(true);
+                    Log.d("Googlefit","updateSubmitButton true");
+                    return;
+                }
+            }
+        }
+
+        submit_btn.setEnabled(false);
+        Log.d("Googlefit","updateSubmitButton false");
+    }
+
     private void fillWithData() {
         if (sources.size() == 0) {
             submit_btn.setVisibility(View.GONE);
@@ -126,12 +157,20 @@ public class GoogleFitSourceSelectionActivity extends BaseActivity implements Vi
         container.getRecyclerView().setAdapter(googleFitSourceAdapter);
         container.setEmptyState(EmptyViewConstants.EMPTY_GOOGLE_FIT_SOURCE);
         container.updateView();
+        googleFitSourceAdapter.setFitSourceInterface(new GoogleFitSourceInterface() {
+            @Override
+            public void didSourceChanged() {
+                updateSubmitButton();
+            }
+        });
+        previousFetchedSources = GoogleFitDefaults.getPreviousFetchedSources();
         GoogleFitDefaults.setPreviousFetchedSources(sources);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.close_iv:
             case R.id.submit_btn:
                 GoogleFitDefaults.setPreviousFetchedSources(sources);
 
@@ -169,9 +208,6 @@ public class GoogleFitSourceSelectionActivity extends BaseActivity implements Vi
                     }
                 });
 
-                finish();
-                break;
-            case R.id.close_iv:
                 finish();
                 break;
         }

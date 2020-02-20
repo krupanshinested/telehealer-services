@@ -10,9 +10,16 @@ import android.view.View;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.PermissionChecker;
+import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.views.call.CallActivity;
+import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 
@@ -23,6 +30,8 @@ import Flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity;
 import Flavor.GoogleFit.Interface.GoogleFitResultFetcher;
 import Flavor.GoogleFit.Models.GoogleFitData;
 import Flavor.GoogleFit.Models.GoogleFitSource;
+
+import static com.thealer.telehealer.TeleHealerApplication.application;
 
 public class VitalsListWithGoogleFitFragment extends VitalsListFragment implements GoogleFitResultFetcher {
     GoogleFitManager googleFitManager;
@@ -39,9 +48,10 @@ public class VitalsListWithGoogleFitFragment extends VitalsListFragment implemen
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("VitalsListFitFragment", "account not already present");
+        Log.e("VitalsListFitFragment", "onActivityResult "+requestCode+" "+resultCode);
         switch (requestCode) {
             case GoogleFitManager.REQUEST_OAUTH_REQUEST_CODE:
+            case PermissionConstants.PERMISSION_GOOGLE_FIT:
                 if (googleFitManager.isPermitted()) {
 
                     openSuccessFragment();
@@ -87,19 +97,30 @@ public class VitalsListWithGoogleFitFragment extends VitalsListFragment implemen
     protected void runAfterKnowYourNumber() {
         super.runAfterKnowYourNumber();
 
-        if (!googleFitManager.isPermitted() && !isAskedForPermission) {
-            Log.d("GoogleFitFragment","first level");
-            this.isAskedForPermission = true;
-            googleFitManager.read(this);
-        } else if (googleFitManager.isPermitted() && GoogleFitDefaults.getPreviousFetchedSources().size() == 0 && GoogleFitDefaults.getPreviousFetchedData() == null && !isAskedForPermission) {
-            Log.d("GoogleFitFragment","second level");
-            openSuccessFragment();
-            this.isAskedForPermission = true;
-            googleFitManager.read(this);
+        Log.d("VitalsListFitFragment", "runAfterKnowYourNumber");
+        boolean isShowed = TeleHealerApplication.appPreference.getBoolean(ArgumentKeys.GOOGLE_FIT_PROPOSER_SHOWED);
+
+        if (!isShowed) {
+            Log.d("VitalsListFitFragment", "isShowed");
+            TeleHealerApplication.appPreference.setBoolean(ArgumentKeys.GOOGLE_FIT_PROPOSER_SHOWED,true);
+
+            if (PermissionChecker.with(getActivity()).checkPermissionForFragment(PermissionConstants.PERMISSION_GOOGLE_FIT, this)) {
+                if (!googleFitManager.isPermitted() && !isAskedForPermission) {
+                    Log.d("VitalsListFitFragment", "first level");
+                    this.isAskedForPermission = true;
+                    googleFitManager.read(this);
+                } else if (googleFitManager.isPermitted() && GoogleFitDefaults.getPreviousFetchedSources().size() == 0 && GoogleFitDefaults.getPreviousFetchedData() == null && !isAskedForPermission) {
+                    Log.d("VitalsListFitFragment", "second level");
+                    openSuccessFragment();
+                    this.isAskedForPermission = true;
+                    googleFitManager.read(this);
+                }
+            }
         }
     }
 
     private void openSuccessFragment() {
+        Log.d("VitalsListFitFragment", "openSuccessFragment");
         SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
@@ -115,6 +136,7 @@ public class VitalsListWithGoogleFitFragment extends VitalsListFragment implemen
     //GoogleFitResultFetcher
     @Override
     public void didFinishFetch(ArrayList<GoogleFitData> fitData) {
+        Log.d("VitalsListFitFragment", "didFinishFetch");
         this.fitData = fitData;
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
@@ -131,7 +153,7 @@ public class VitalsListWithGoogleFitFragment extends VitalsListFragment implemen
 
     @Override
     public void didFailedToFetch(Exception e) {
-        Log.d("PatientApplication", "Error while fetching google fit data " + e.getLocalizedMessage());
+        Log.d("VitalsListFitFragment", "Error while fetching google fit data " + e.getLocalizedMessage());
     }
 }
 

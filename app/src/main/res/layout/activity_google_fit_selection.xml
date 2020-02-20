@@ -40,12 +40,11 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/message_tv" />
 
-    <com.thealer.telehealer.common.CustomButton
+    <Button
         android:id="@+id/submit_btn"
+        style="@style/button_app_background_white_text"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        app:app_gradient="true"
-        app:text_color="@color/colorWhite"
         android:text="@string/submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

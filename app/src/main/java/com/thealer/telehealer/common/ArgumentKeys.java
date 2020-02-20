@@ -206,6 +206,7 @@ public class ArgumentKeys {
     public static final String GOOGLE_FIT_DATA = "GOOGLE_FIT_DATA";
     public static final String GOOGLE_FIT_SOURCE = "GOOGLE_FIT_SOURCE";
     public static final String GOOGLE_FIT_CHANGE = "GOOGLE_FIT_CHANGE";
+    public static final String GOOGLE_FIT_PROPOSER_SHOWED = "GOOGLE_FIT_PROPOSER_SHOWED";
 
     public static final String SHOW_CONNECTION_REQUEST_ALERT = "SHOW_CONNECTION_REQUEST_ALERT";
     public static final String EDUCATIONAL_VIDEO_ID = "EDUCATIONAL_VIDEO_ID";
