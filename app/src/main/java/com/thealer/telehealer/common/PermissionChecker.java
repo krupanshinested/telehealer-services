@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -17,6 +18,9 @@ import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogCapability;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.views.proposer.ProposerActivity;
+
+import Flavor.GoogleFit.GoogleFitManager;
+
 
 /**
  * Created by Aswin on 08,November,2018
@@ -96,6 +100,9 @@ public class PermissionChecker {
                 break;
             case PermissionConstants.PERMISSION_CONTACTS:
                 return isContactsPermissionGranted();
+            case PermissionConstants.PERMISSION_GOOGLE_FIT:
+                return (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION)
+                        == PackageManager.PERMISSION_GRANTED);
         }
 
         return false;
@@ -227,6 +234,8 @@ public class PermissionChecker {
                 return String.format(context.getString(R.string.permission_storage_vitals_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_CONTACTS:
                 return String.format(context.getString(R.string.permission_contact_message), context.getString(R.string.app_name));
+             case PermissionConstants.PERMISSION_GOOGLE_FIT:
+                 return String.format(context.getString(R.string.permission_google_fit), context.getString(R.string.app_name));
         }
         return null;
     }
@@ -266,6 +275,8 @@ public class PermissionChecker {
                 return context.getString(R.string.permission_storage_title);
             case PermissionConstants.PERMISSION_CONTACTS:
                 return context.getString(R.string.permission_contact_title);
+            case PermissionConstants.PERMISSION_GOOGLE_FIT:
+                return context.getString(R.string.permission_google_fit_title);
         }
         return null;
     }
@@ -304,12 +315,13 @@ public class PermissionChecker {
                 return R.drawable.permission_location;
             case PermissionConstants.PERMISSION_CONTACTS:
                 return R.drawable.permission_contacts;
+            case PermissionConstants.PERMISSION_GOOGLE_FIT:
+                return R.drawable.permission_health;
         }
         return 0;
     }
 
     public void requestPermission(int permissionFor) {
-
         String[] permissions = getPermissions(permissionFor);
         int requestCode = getRequestCode(permissionFor);
         ActivityCompat.requestPermissions(((Activity) context), permissions, requestCode);
@@ -333,6 +345,8 @@ public class PermissionChecker {
                 return PermissionConstants.STORAGE_REQUEST_CODE;
             case PermissionConstants.PERMISSION_CONTACTS:
                 return PermissionConstants.CONTACTS_REQUEST_CODE;
+            case PermissionConstants.PERMISSION_GOOGLE_FIT:
+                return GoogleFitManager.REQUEST_OAUTH_REQUEST_CODE;
         }
         return 0;
     }
@@ -358,6 +372,9 @@ public class PermissionChecker {
                 return new String[]{Manifest.permission.RECORD_AUDIO};
             case PermissionConstants.PERMISSION_CONTACTS:
                 return new String[]{Manifest.permission.READ_CONTACTS};
+            case PermissionConstants.PERMISSION_GOOGLE_FIT:
+                return new String[]{Manifest.permission.ACTIVITY_RECOGNITION};
+
         }
         return new String[0];
     }

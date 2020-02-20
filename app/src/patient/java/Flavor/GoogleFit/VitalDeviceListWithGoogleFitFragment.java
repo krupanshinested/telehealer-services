@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.PermissionChecker;
+import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.VitalDeviceListFragment;
 
 import Flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity;
@@ -15,14 +17,17 @@ public class VitalDeviceListWithGoogleFitFragment extends VitalDeviceListFragmen
 
     @Override
     public void openGoogleFitSourceActivity() {
-        if (googleFitManager == null) {
-            googleFitManager = new GoogleFitManager(this);
-        }
+        if (PermissionChecker.with(getActivity()).checkPermissionForFragment(PermissionConstants.PERMISSION_GOOGLE_FIT, this)) {
 
-        if (googleFitManager.isPermitted()) {
-            openSourceActivity();
-        } else {
-            googleFitManager.requestPermission();
+            if (googleFitManager == null) {
+                googleFitManager = new GoogleFitManager(this);
+            }
+
+            if (googleFitManager.isPermitted()) {
+                openSourceActivity();
+            } else {
+                googleFitManager.requestPermission();
+            }
         }
     }
 

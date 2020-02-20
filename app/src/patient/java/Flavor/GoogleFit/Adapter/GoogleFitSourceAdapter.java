@@ -10,12 +10,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
 
 
+import Flavor.GoogleFit.Interface.GoogleFitSourceInterface;
 import Flavor.GoogleFit.Models.GoogleFitSource;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +26,8 @@ public class GoogleFitSourceAdapter extends RecyclerView.Adapter<GoogleFitSource
 
     ArrayList<GoogleFitSource> sources = new ArrayList<>();
     private Context context;
+    @Nullable
+    private GoogleFitSourceInterface fitSourceInterface;
 
     public GoogleFitSourceAdapter(ArrayList<GoogleFitSource> sources, Context context) {
         this.sources = sources;
@@ -46,6 +51,9 @@ public class GoogleFitSourceAdapter extends RecyclerView.Adapter<GoogleFitSource
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 source.setSelected(isChecked);
+                if (fitSourceInterface != null) {
+                    fitSourceInterface.didSourceChanged();
+                }
             }
         });
 
@@ -54,6 +62,10 @@ public class GoogleFitSourceAdapter extends RecyclerView.Adapter<GoogleFitSource
     @Override
     public int getItemCount() {
         return sources.size();
+    }
+
+    public void setFitSourceInterface(@Nullable GoogleFitSourceInterface fitSourceInterface) {
+        this.fitSourceInterface = fitSourceInterface;
     }
 
     class DataHolder extends RecyclerView.ViewHolder {
