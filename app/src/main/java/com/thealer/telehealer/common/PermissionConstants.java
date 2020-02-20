@@ -27,6 +27,7 @@ public class PermissionConstants {
     public static final int PERMISSION_LOCATION_VITALS = 14;
     public static final int PERMISSION_WRITE_STORAGE_VITALS = 15;
     public static final int PERMISSION_CONTACTS = 16;
+    public static final int PERMISSION_GOOGLE_FIT = 17;
 
     public static int CAMERA_REQUEST_CODE = 300;
     public static int GALLERY_REQUEST_CODE = 301;

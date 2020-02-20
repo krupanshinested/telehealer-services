@@ -2,7 +2,7 @@ package Flavor.GoogleFit.Models;
 
 import java.io.Serializable;
 
-public class GoogleFitSource implements Serializable {
+public class GoogleFitSource implements Serializable,Comparable<GoogleFitSource> {
     private String appName;
     private String bundleId;
     private boolean isSelected;
@@ -27,5 +27,10 @@ public class GoogleFitSource implements Serializable {
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    @Override
+    public int compareTo(GoogleFitSource o) {
+        return o.bundleId.compareTo(bundleId);
     }
 }
