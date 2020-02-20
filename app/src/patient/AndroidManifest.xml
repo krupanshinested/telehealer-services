@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.thealer.telehealer">
 
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+
     <application
         android:name="Flavor.Utils.PatientApplication"
         android:allowBackup="true"

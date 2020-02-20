@@ -9,16 +9,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
+
+import Flavor.GoogleFit.GoogleFitManager;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -33,6 +38,8 @@ public class ProposerActivity extends BaseActivity {
     private CustomButton allowBtn;
     private int permissionFor;
     private boolean isPermissionDenied = false;
+    @Nullable
+    private GoogleFitManager googleFitManager = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -114,7 +121,7 @@ public class ProposerActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
+        Log.d("ProposerActivity", "onRequestPermissionsResult "+requestCode);
         for (String permission :
                 permissions) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
@@ -131,9 +138,33 @@ public class ProposerActivity extends BaseActivity {
             }
         }
 
-        sendProposerResultBroadCast(resultCode);
-        setResult(resultCode);
-        finish();
+        if (requestCode ==  GoogleFitManager.REQUEST_OAUTH_REQUEST_CODE) {
+            Log.d("ProposerActivity", "googleFitManager req");
+            googleFitManager = new GoogleFitManager(this);
+            googleFitManager.requestPermission();
+        } else {
+            sendProposerResultBroadCast(resultCode);
+            setResult(resultCode);
+            finish();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("ProposerActivity", "onActivityResult requestCode "+requestCode+" "+resultCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case GoogleFitManager.REQUEST_OAUTH_REQUEST_CODE:
+                int code = RESULT_OK;
+                if (googleFitManager != null && googleFitManager.isPermitted()) {
+                    code  = RESULT_OK;
+                } else {
+                    code  = RESULT_CANCELED;
+                }
+                sendProposerResultBroadCast(code);
+                setResult(resultCode);
+                finish();
+        }
     }
 
 }
