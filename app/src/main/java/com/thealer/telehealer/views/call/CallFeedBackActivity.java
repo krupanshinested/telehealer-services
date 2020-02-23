@@ -186,39 +186,39 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         } else {
             ccm_view.setVisibility(View.VISIBLE);
 
-            ccm_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.CCM_20), false);
+            ccm_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.CCM_G2065), false);
             ccm_item.setOnClickListener(this);
             ccm_item.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(ProcedureConstants.CCM_20);
+                    showDetailDialog(ProcedureConstants.CCM_G2065);
                 }
             });
 
-            rpm_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.RPM_20), false);
+            rpm_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.RPM_99458), false);
             rpm_item.setOnClickListener(this);
             rpm_item.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(ProcedureConstants.RPM_20);
+                    showDetailDialog(ProcedureConstants.RPM_99458);
                 }
             });
 
-            bhi_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.BHI_20), false);
+            bhi_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.BHI_99484), false);
             bhi_item.setOnClickListener(this);
             bhi_item.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(ProcedureConstants.BHI_20);
+                    showDetailDialog(ProcedureConstants.BHI_99484);
                 }
             });
 
-            telehealthItem.update(ProcedureConstants.getTitle(this, ProcedureConstants.TELEHEALTH), true);
+            telehealthItem.update(ProcedureConstants.getTitle(this, ProcedureConstants.TELEHEALTH_G2088), true);
             telehealthItem.setOnClickListener(this);
             telehealthItem.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(ProcedureConstants.TELEHEALTH);
+                    showDetailDialog(ProcedureConstants.TELEHEALTH_G2088);
                 }
             });
 
@@ -229,7 +229,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                 }
             });
 
-            selectedItem = ProcedureConstants.TELEHEALTH;
+            selectedItem = ProcedureConstants.TELEHEALTH_G2088;
 
             moreTv.setOnClickListener(this);
         }
@@ -284,19 +284,19 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.ccm_item:
                 setSelected(ccm_item);
-                selectedItem = ProcedureConstants.CCM_20;
+                selectedItem = ProcedureConstants.CCM_G2065;
                 break;
             case R.id.bhi_item:
                 setSelected(bhi_item);
-                selectedItem = ProcedureConstants.BHI_20;
+                selectedItem = ProcedureConstants.BHI_99484;
                 break;
             case R.id.rpm_item:
                 setSelected(rpm_item);
-                selectedItem = ProcedureConstants.RPM_20;
+                selectedItem = ProcedureConstants.RPM_99458;
                 break;
             case R.id.telehealth_item:
                 setSelected(telehealthItem);
-                selectedItem = ProcedureConstants.TELEHEALTH;
+                selectedItem = ProcedureConstants.TELEHEALTH_G2088;
                 break;
             case R.id.more_tv:
                 selectProcedureBottomSheetDialogFragment = new SelectProcedureBottomSheetDialogFragment();
@@ -329,16 +329,16 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         selectedItem = ProcedureConstants.getItems().get(position);
 
         switch (selectedItem) {
-            case ProcedureConstants.TELEHEALTH:
+            case ProcedureConstants.TELEHEALTH_G2088:
                 setSelected(telehealthItem);
                 break;
-            case ProcedureConstants.CCM_20:
+            case ProcedureConstants.CCM_G2065:
                 setSelected(ccm_item);
                 break;
-            case ProcedureConstants.BHI_20:
+            case ProcedureConstants.BHI_99484:
                 setSelected(bhi_item);
                 break;
-            case ProcedureConstants.RPM_20:
+            case ProcedureConstants.RPM_99458:
                 setSelected(rpm_item);
                 break;
             default:
