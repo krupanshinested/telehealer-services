@@ -227,7 +227,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
             finish();
         } else {
-            appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
+            UserDetailPreferenceManager.didUserLoggedIn();
             Utils.updateLastLogin();
             startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
             finish();

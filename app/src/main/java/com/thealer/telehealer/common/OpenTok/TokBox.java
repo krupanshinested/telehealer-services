@@ -1,5 +1,9 @@
 package com.thealer.telehealer.common.OpenTok;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -22,6 +26,7 @@ import android.os.Looper;
 import android.os.Vibrator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -53,6 +58,7 @@ import com.thealer.telehealer.common.LocationTracker;
 import com.thealer.telehealer.common.LocationTrackerInterface;
 import com.thealer.telehealer.common.OpenTok.Renders.BasicCustomVideoRenderer;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.AudioInterface;
+import com.thealer.telehealer.common.OpenTok.openTokInterfaces.CallReceiveInterface;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OnDSListener;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.ScreenCapturerInterface;
@@ -89,6 +95,7 @@ import java.util.List;
 import static android.media.AudioManager.GET_DEVICES_OUTPUTS;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
+import static com.thealer.telehealer.views.call.CallActivity.firebaseMessagingService;
 import static org.webrtc.ContextUtils.getApplicationContext;
 
 /**
@@ -203,7 +210,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     @Nullable
     private CallInitiateModel callInitiateModel;
 
-    public void didRecieveIncoming(APNSPayload apnsPayload) {
+    public void didRecieveIncoming(APNSPayload apnsPayload, CallReceiveInterface callReceiveInterface) {
         EventRecorder.recordCallUpdates("CALL_RECEIVED",null);
         this.sessionId = apnsPayload.getSessionId();
 
@@ -238,9 +245,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                             tokBoxUIInterface.didReceivedOtherUserDetails(commonUserApiResponseModel);
                         }
 
-                        Intent intent = new Intent(application, CallActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(ArgumentKeys.TRIGGER_ANSWER,isInWaitingRoom);
 
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
@@ -248,7 +252,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        application.startActivity(intent);
+                                        callReceiveInterface.didFetchedAllRequiredData(isInWaitingRoom,commonUserApiResponseModel.getDoctorDisplayName());
                                     }
                                 }, 100);
 
@@ -838,6 +842,11 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         if (!isActiveCallPreset()) {
             Log.d("openTok", "*********Call end called already, returing back");
             return;
+        }
+
+        if (CallActivity.firebaseMessagingService != null) {
+            CallActivity.firebaseMessagingService.stopForeground(true);
+            CallActivity.firebaseMessagingService = null;
         }
 
         Log.d("openTok", "endCall");
