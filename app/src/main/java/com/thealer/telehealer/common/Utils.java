@@ -1132,9 +1132,14 @@ public class Utils {
 
                         FutureTarget<Bitmap> futureTarget = Glide.with(application).asBitmap().load(glideUrl).submit();
 
-                        Bitmap imageBitmap = futureTarget.get();
+                        try {
+                            Bitmap imageBitmap = futureTarget.get();
+                            displyNotification(title, message, imageBitmap, intent);
+                        } catch (Exception e) {
+                            displyNotification(title, message, null, intent);
+                        }
 
-                        displyNotification(title, message, imageBitmap, intent);
+
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1156,11 +1161,14 @@ public class Utils {
                 .setSmallIcon(R.drawable.app_icon_notification)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setLargeIcon(imageBitmap)
                 .setAutoCancel(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+
+        if (imageBitmap != null) {
+            notification.setLargeIcon(imageBitmap);
+        }
 
         if (intent != null) {
 

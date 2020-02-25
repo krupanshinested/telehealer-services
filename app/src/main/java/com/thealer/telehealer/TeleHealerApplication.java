@@ -3,10 +3,14 @@ package com.thealer.telehealer;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+
+import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
+
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +23,7 @@ import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
+import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.call.CallActivity;
 
 import java.util.HashSet;
@@ -74,6 +79,14 @@ public class TeleHealerApplication extends Application implements LifecycleObser
                     NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(callNotification);
 
+            NotificationChannel channel = new NotificationChannel(
+                    "thealer-call-voip", "Call-voip",
+                    NotificationManager.IMPORTANCE_HIGH);
+            channel.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+            channel.setImportance(NotificationManager.IMPORTANCE_HIGH);
+            channel.enableLights(true);
+            channel.setBypassDnd(true);
+            notificationManager.createNotificationChannel(channel);
         }
 
     }
