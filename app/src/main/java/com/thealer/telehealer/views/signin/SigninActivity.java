@@ -65,6 +65,8 @@ import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import com.thealer.telehealer.views.signup.OtpVerificationFragment;
 
+import org.whispersystems.libsignal.logging.Log;
+
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
@@ -143,7 +145,6 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                         }
 
                         UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
-                        TelehealerFirebaseMessagingService.refresh();
                         appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, authToken);
                         appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, refreshToken);
                         appPreference.setInt(PreferenceConstants.USER_TYPE, Utils.getUserTypeFromRole(whoAmIApiResponseModel.getRole()));
@@ -274,14 +275,13 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
     private void proceedLoginSuccess() {
         if (isQuickLogin) {
-            appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
             goToMainActivity();
         } else {
-
+            Log.d("SignInActivity","proceedLoginSuccess");
             if (quickLoginType == -1) {
                 startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class));
             } else {
-                startActivity(new Intent(SigninActivity.this, HomeActivity.class));
+                goToMainActivity();
             }
 
             finish();
@@ -455,7 +455,8 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void goToMainActivity() {
-        appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
+        Log.d("SignInActivity","goToMainActivity");
+        UserDetailPreferenceManager.didUserLoggedIn();
         startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
     }

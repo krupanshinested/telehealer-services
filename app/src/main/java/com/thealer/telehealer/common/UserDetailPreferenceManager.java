@@ -13,6 +13,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Util.TeleCacheUrl;
+import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -26,6 +27,12 @@ import static com.thealer.telehealer.TeleHealerApplication.application;
  * Created by Aswin on 04,December,2018
  */
 public class UserDetailPreferenceManager {
+
+    public static void didUserLoggedIn() {
+        appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
+        TelehealerFirebaseMessagingService.refresh();
+    }
+
 
     public static String getUserDisplayName() {
         if (UserType.isUserDoctor()) {

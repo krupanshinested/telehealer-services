@@ -4,6 +4,8 @@ import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.Application;
 import android.app.Dialog;
+import android.app.KeyguardManager;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -82,6 +84,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -119,6 +122,10 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         LiveVitalCallBack,
         AttachObserverInterface {
 
+
+    public static final int VOIP_NOTIFICATION_ID = 303030303;
+    @Nullable
+    public static TelehealerFirebaseMessagingService firebaseMessagingService;
 
     public static Intent getIntent(Application application,CallInitiateModel callInitiateModel) {
         Intent intent = new Intent(application, CallActivity.class);
@@ -179,24 +186,47 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         super.onCreate(savedInstanceState);
 
         //requestFullScreenMode();
-        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorBlack));
 
-        this.getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1)
+        {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+            KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+            if(keyguardManager!=null)
+                keyguardManager.requestDismissKeyguard(this, null);
+        }
+        else
+        {
+            this.getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+        }
 
 
         setContentView(R.layout.activity_call);
         otherPersonDetail = TokBox.shared.getOtherPersonDetail();
+
+        if (firebaseMessagingService != null) {
+            firebaseMessagingService.stopForeground(true);
+            firebaseMessagingService = null;
+        }
+        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null)
+            notificationManager.cancel(VOIP_NOTIFICATION_ID);
+
 
         Object object = getIntent().getSerializableExtra(ArgumentKeys.CALL_INITIATE_MODEL);
         if (object != null) {
@@ -266,6 +296,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             getIntent().putExtra(ArgumentKeys.TRIGGER_ANSWER, false);
             triggerAnswer = false;
             answerTheCall();
+        } else if (getIntent().getBooleanExtra(ArgumentKeys.TRIGGER_END,false)) {
+            TokBox.shared.endCall(OpenTokConstants.endCallPressed);
+            Log.d("CallActivity", "TRIGGER_END true");
         } else {
             Log.d("CallActivity", "triggerAnswer false");
         }
