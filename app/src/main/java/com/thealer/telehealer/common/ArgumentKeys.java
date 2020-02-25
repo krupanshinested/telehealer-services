@@ -200,6 +200,7 @@ public class ArgumentKeys {
     public static final String BRAIN_TREE_CUSTOMER = "BRAIN_TREE_CUSTOMER";
 
     public static final String TRIGGER_ANSWER = "TRIGGER_ANSWER";
+    public static final String TRIGGER_END = "TRIGGER_END";
     public static final String FROM_CALL = "FROM_CALL";
     public static final String DOCUMENT_DETAIL = "document_detail";
 
