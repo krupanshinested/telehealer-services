@@ -225,14 +225,14 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                         appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, otpVerificationResponseModel.getData().getRefresh_token());
                         appPreference.setString(PreferenceConstants.USER_NAME, otpVerificationResponseModel.getData().getName());
                         appPreference.setBoolean(PreferenceConstants.IS_USER_ACTIVATED, false);
-                        appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, true);
                         appPreference.setString(PreferenceConstants.USER_EMAIL, email);
                         appPreference.setInt(PreferenceConstants.USER_TYPE, userType);
                         UserDetailPreferenceManager.setUser_guid(otpVerificationResponseModel.getData().getUser_guid());
                         UserDetailPreferenceManager.setFirst_name(otpVerificationResponseModel.getData().getName());
 
-                        TelehealerFirebaseMessagingService.refresh();
                         EventRecorder.updateUserId(otpVerificationResponseModel.getData().getUser_guid());
+
+                        UserDetailPreferenceManager.didUserLoggedIn();
 
                         Utils.updateLastLogin();
 
