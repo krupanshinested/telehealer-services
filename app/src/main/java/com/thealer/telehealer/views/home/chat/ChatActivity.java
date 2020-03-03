@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.chat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -462,9 +463,21 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     protected void onResume() {
         super.onResume();
         createChannel();
+        Log.d("ChatActivity","onResume");
         if (UserType.isUserPatient()){
             showSnack(findViewById(R.id.rootLayout), getString(R.string.chat_disclaimer), 2000).show();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Log.d("ChatActivity","onPause");
+        if (!TextUtils.isEmpty(UserDetailPreferenceManager.getUser_guid())) {
+            unSubscribeChannel();
+        }
+
     }
 
     private void createChannel() {
