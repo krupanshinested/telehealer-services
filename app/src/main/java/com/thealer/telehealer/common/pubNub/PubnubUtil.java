@@ -285,11 +285,13 @@ public class PubnubUtil extends SubscribeCallback {
     }
 
     public void unSubscribeChatChannel(String toGuid, String userGuid) {
+        Log.d("Pubnubutil","unSubscribeChatChannel");
         unSubscribe(getChatChannel(toGuid, userGuid));
         setState(CHAT_STATUS_BACKGROUND, toGuid, userGuid);
     }
 
-    private void setState(int state, String toGuid, String userGuid) {
+    public void setState(int state, String toGuid, String userGuid) {
+        Log.d("Pubnubutil","setState");
 
         String channel = getChatChannel(toGuid, userGuid);
         getState(toGuid,channel,new GetStateInterface() {
