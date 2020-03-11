@@ -1295,4 +1295,8 @@
     <string name="t_99423_title">Digital E/M - Physician (21 mins or more)</string>
     <string name="t_99422_title">Digital E/M - Physician (11-20 mins)</string>
     <string name="t_99421_title">Digital E/M - Physician (5-10 mins)</string>
+    <string name="select_all">Select All</string>
+    <string name="un_select_all">UnSelect All</string>
+    <string name="select_readings">Select the readings to upload.</string>
+    <string name="sync_track_message">Press Sync to fetch the track data.</string>
 </resources>
