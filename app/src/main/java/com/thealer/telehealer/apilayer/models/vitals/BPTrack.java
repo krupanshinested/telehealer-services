@@ -5,6 +5,8 @@ import com.thealer.telehealer.common.BaseAdapterObjectModel;
 import com.thealer.telehealer.common.Utils;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -85,6 +87,12 @@ public class BPTrack extends BaseAdapterObjectModel implements Serializable {
 
     public Date getDate() {
         return date;
+    }
+
+    public String postDateInString() {
+        DateFormat outputFormat = new SimpleDateFormat(Utils.UTCFormat);
+        outputFormat.setTimeZone(Utils.UtcTimezone);
+        return outputFormat.format(this.date);
     }
 
     public String getDataID() {

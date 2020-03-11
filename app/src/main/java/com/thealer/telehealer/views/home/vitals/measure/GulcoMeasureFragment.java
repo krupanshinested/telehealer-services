@@ -246,7 +246,7 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
                         startMeasure();
                         break;
                     case MeasureState.ended:
-                        sendVitals(SupportedMeasurementType.gulcose,finalGulcoValue,null,null);
+                        sendVitals(SupportedMeasurementType.gulcose,finalGulcoValue,null,null,null);
                         break;
                 }
                 break;

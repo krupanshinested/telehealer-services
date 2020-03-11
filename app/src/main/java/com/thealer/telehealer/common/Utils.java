@@ -426,6 +426,10 @@ public class Utils {
     }
 
     public static void setGenderImage(Context context, ImageView genderIv, String gender) {
+        if (TextUtils.isEmpty(gender)) {
+            genderIv.setImageDrawable(context.getDrawable(R.drawable.gender_others));
+            return;
+        }
 
         switch (gender.toLowerCase()) {
             case Constants.GENDER_MALE:
@@ -716,13 +720,17 @@ public class Utils {
     }
 
     public static void hideKeyboard(Activity activity) {
-        View view = activity.getCurrentFocus();
-        if (view == null) {
-            return;
-        }
-        if (view.hasFocus()) {
-            view.clearFocus();
-            hideKeyboardFrom(activity, view);
+        try {
+            View view = activity.getCurrentFocus();
+            if (view == null) {
+                return;
+            }
+            if (view.hasFocus()) {
+                view.clearFocus();
+                hideKeyboardFrom(activity, view);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

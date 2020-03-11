@@ -713,7 +713,9 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             isApiRequested = true;
             if (selectedItem != null) {
                 if (!isFromHome) {
-                    vitalsApiViewModel.getUserVitals(getCurrentVitalType(), commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress, page);
+                    if (commonUserApiResponseModel != null) {
+                        vitalsApiViewModel.getUserVitals(getCurrentVitalType(), commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress, page);
+                    }
                 } else {
                     vitalsApiViewModel.getVitals(getCurrentVitalType(), page, isShowProgress);
                 }

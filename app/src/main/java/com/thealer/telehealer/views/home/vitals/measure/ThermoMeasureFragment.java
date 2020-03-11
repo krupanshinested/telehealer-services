@@ -193,7 +193,7 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
                         break;
                     case MeasureState.ended:
                         if (!isPresentedInsideCallActivity()) {
-                            sendVitals(SupportedMeasurementType.temperature, finalThermoValue,null,null);
+                            sendVitals(SupportedMeasurementType.temperature, finalThermoValue,null,null,null);
                         } else {
                             onClick(close_bt);
                         }
@@ -232,7 +232,7 @@ public class ThermoMeasureFragment extends VitalMeasureBaseFragment implements
 
         if (isPresentedInsideCallActivity()) {
             if (UserType.isUserPatient() && vitalManagerInstance != null) {
-                sendVitals(SupportedMeasurementType.temperature, finalThermoValue,null,null);
+                sendVitals(SupportedMeasurementType.temperature, finalThermoValue,null,null,null);
             }
         }
     }
