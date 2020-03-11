@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.gson.internal.LinkedTreeMap;
@@ -59,9 +60,11 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
 
     private CustomRecyclerView recyclerView;
     private TextView message_tv, title_tv;
+    private Button select_all_bt;
     private CustomButton sync_bt;
     private ConstraintLayout main_container;
     private String finalBPValue = "", finalHeartRateValue = "";
+    private TextView hint_tv;
 
     @Nullable
     public CallVitalPagerInterFace callVitalPagerInterFace;
@@ -69,6 +72,7 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
     private boolean isModelLoadInitially, isDataFetched;
     private ArrayList<BPTrack> selectedList = new ArrayList<>();
     private ArrayList<BPTrack> tracks = new ArrayList<>();
+    private boolean isSelectAllPressed = false;
 
     @Nullable
     private TrackBPAdapter adapter;
@@ -169,6 +173,11 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
         main_container = baseView.findViewById(R.id.main_container);
         title_tv = baseView.findViewById(R.id.title_tv);
         recyclerView = baseView.findViewById(R.id.rv);
+        select_all_bt = baseView.findViewById(R.id.select_all_bt);
+        select_all_bt.setOnClickListener(this);
+
+        hint_tv = baseView.findViewById(R.id.hint_tv);
+        hint_tv.setText(getString(R.string.sync_track_message));
 
         sync_bt = baseView.findViewById(R.id.sync_bt);
         sync_bt.setOnClickListener(this);
@@ -241,11 +250,11 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
                         if (selectedList.size() == 1) {
                             Log.d("BPTrack","uploading one");
                             BPTrack track = selectedList.get(0);
-                            sendVitals(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), SupportedMeasurementType.heartRate, track.getHeartRate() + "");
+                            sendVitals(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), SupportedMeasurementType.heartRate, track.getHeartRate() + "",track.postDateInString());
                         } else if (selectedList.size() > 1) {
                             Log.d("BPTrack","uploading many");
                             BPTrack track = selectedList.get(0);
-                            sendVitals(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), SupportedMeasurementType.heartRate, track.getHeartRate() + "");
+                            sendVitals(SupportedMeasurementType.bp, track.getSys() + "/" + track.getDia(), SupportedMeasurementType.heartRate, track.getHeartRate() + "",track.postDateInString());
                             Log.d("BPTrack","uploading first");
 
                             ArrayList<VitalsApiResponseModel> vitalApiRequestModels = new ArrayList<>();
@@ -271,6 +280,20 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
                     }
 
                 }
+                break;
+            case R.id.select_all_bt:
+                if (isSelectAllPressed) {
+                    isSelectAllPressed = false;
+                    select_all_bt.setText(getString(R.string.select_all));
+                    selectedList.clear();
+                } else {
+                    isSelectAllPressed = true;
+                    select_all_bt.setText(getString(R.string.un_select_all));
+                    selectedList.clear();
+                    selectedList.addAll(tracks);
+                }
+                if (adapter != null)
+                    adapter.notifyDataSetChanged();
                 break;
         }
 
@@ -336,6 +359,14 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
             recyclerView.getRecyclerView().setAdapter(adapter);
             recyclerView.setEmptyState(EmptyViewConstants.EMPTY_BP_TRACK_VALUE);
             recyclerView.updateView();
+
+            if (tracks.size() > 0) {
+                hint_tv.setText(getString(R.string.select_readings));
+                select_all_bt.setVisibility(View.VISIBLE);
+            } else {
+                hint_tv.setText("");
+                select_all_bt.setVisibility(View.GONE);
+            }
 
             Log.d("BPTrackMeasureFragment", "tracks not null");
         } else {

@@ -275,7 +275,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
                         break;
                     case MeasureState.ended:
                         if (!isPresentedInsideCallActivity()) {
-                            sendVitals(SupportedMeasurementType.pulseOximeter, finalPulseValue,SupportedMeasurementType.heartRate, finalHeartRate);
+                            sendVitals(SupportedMeasurementType.pulseOximeter, finalPulseValue,SupportedMeasurementType.heartRate, finalHeartRate,null);
                         } else {
                             onClick(close_bt);
                         }
@@ -332,7 +332,7 @@ public class PulseMeasureFragment extends VitalMeasureBaseFragment implements
 
         if (isPresentedInsideCallActivity()) {
             if (UserType.isUserPatient() && vitalManagerInstance != null) {
-                sendVitals(SupportedMeasurementType.pulseOximeter, finalPulseValue,SupportedMeasurementType.heartRate, finalHeartRate);
+                sendVitals(SupportedMeasurementType.pulseOximeter, finalPulseValue,SupportedMeasurementType.heartRate, finalHeartRate,null);
             }
         }
     }

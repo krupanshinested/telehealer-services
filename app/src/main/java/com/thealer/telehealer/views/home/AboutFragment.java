@@ -48,6 +48,8 @@ import com.thealer.telehealer.views.signup.patient.InsuranceViewPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import config.AppConfig;
+
 /**
  * Created by Aswin on 14,November,2018
  */
@@ -197,7 +199,8 @@ public class AboutFragment extends BaseFragment {
                         if (userDetail.getUser_detail() != null &&
                                 userDetail.getUser_detail().getData() != null) {
 
-                            if (userDetail.getUser_detail().getData().getOtherInformation() == null) {
+                            AppConfig appConfig = new AppConfig(getActivity());
+                            if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_NPI)) {
 
                                 npiTv.setText(userDetail.getUser_detail().getData().getNpi());
                                 doctorBioTv.setText(userDetail.getUser_detail().getData().getBio());
@@ -214,7 +217,7 @@ public class AboutFragment extends BaseFragment {
                                     licenseTv.setText(license.toString());
                                 }
 
-                            } else {
+                            } else if (userDetail.getUser_detail().getData().getOtherInformation() != null) {
                                 doctorDetailCl.setVisibility(View.GONE);
                                 indianDocDetailCl.setVisibility(View.VISIBLE);
 
@@ -242,11 +245,7 @@ public class AboutFragment extends BaseFragment {
                                     }
                                 });
 
-                                if (userDetail.getUser_detail().getData().getPractices().get(0).getPhones() != null &&
-                                        userDetail.getUser_detail().getData().getPractices().get(0).getPhones().size() > 0) {
-                                    phoneCv.setVisibility(View.VISIBLE);
-                                    userPhoneTv.setText(userDetail.getUser_detail().getData().getPractices().get(0).getPhones().get(0).getNumber());
-                                }
+
                                 clinicAddressTv.setText(clinicAddress);
                             }
 
@@ -412,16 +411,40 @@ public class AboutFragment extends BaseFragment {
                 }
             });
 
-            if (userDetail != null) {
-                userPhoneTv.setText(userDetail.getPhone());
+            if (getPhoneNumber() != null) {
+                phoneCv.setVisibility(View.VISIBLE);
+                userPhoneTv.setText(getPhoneNumber());
                 phoneCv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Uri uri = Uri.parse("tel:" + userDetail.getPhone());
+                        Uri uri = Uri.parse("tel:" + getPhoneNumber());
                         startActivity(new Intent(Intent.ACTION_DIAL, uri));
                     }
                 });
+            } else {
+                phoneCv.setVisibility(View.GONE);
             }
+        }
+    }
+
+    @Nullable
+    private String getPhoneNumber() {
+        if (userDetail == null) {
+            return null;
+        }
+        switch (userDetail.getRole()) {
+            case Constants.ROLE_DOCTOR:
+                if (userDetail.getUser_detail().getData().getPractices().get(0).getPhones() != null &&
+                        userDetail.getUser_detail().getData().getPractices().get(0).getPhones().size() > 0) {
+                    return userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone();
+                } else {
+                    return null;
+                }
+            case Constants.ROLE_PATIENT:
+            case Constants.ROLE_ASSISTANT:
+                return userDetail.getPhone();
+            default:
+                return null;
         }
     }
 

@@ -188,7 +188,7 @@ public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
                         break;
                     case MeasureState.ended:
                         if (!isPresentedInsideCallActivity()) {
-                            sendVitals(SupportedMeasurementType.weight, finalWeightValue,null,null);
+                            sendVitals(SupportedMeasurementType.weight, finalWeightValue,null,null,null);
                         } else {
                             onClick(close_bt);
                         }
@@ -252,7 +252,7 @@ public class WeightMeasureFragment extends VitalMeasureBaseFragment implements
 
         if (isPresentedInsideCallActivity()) {
             if (UserType.isUserPatient() && vitalManagerInstance != null) {
-                sendVitals(SupportedMeasurementType.weight, finalWeightValue,null,null);
+                sendVitals(SupportedMeasurementType.weight, finalWeightValue,null,null,null);
             }
         }
 
