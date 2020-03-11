@@ -312,7 +312,7 @@ public class PubnubUtil extends SubscribeCallback {
                         .async(new PNCallback<PNSetStateResult>() {
                             @Override
                             public void onResponse(PNSetStateResult result, PNStatus status) {
-                                Log.e("aswin", "onResponse: " + result.getState().toString());
+                               
                             }
                         });
 

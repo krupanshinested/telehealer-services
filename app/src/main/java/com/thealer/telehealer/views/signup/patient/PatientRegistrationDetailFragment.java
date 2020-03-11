@@ -551,7 +551,9 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         switch (v.getId()) {
             case R.id.dob_et:
                 if (currentDisplayType == Constants.VIEW_MODE) {
-                    dobEt.clearFocus();
+                    if (hasFocus) {
+                        dobEt.clearFocus();
+                    }
                     return;
                 }
 
@@ -562,9 +564,10 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                     bundle.putInt(Constants.DATE_PICKER_TYPE, TYPE_DOB);
                     datePickerDialogFragment.setArguments(bundle);
                     datePickerDialogFragment.show(getActivity().getSupportFragmentManager(), DatePickerDialogFragment.class.getSimpleName());
+                    dobEt.clearFocus();
                 }
 
-                dobEt.clearFocus();
+
                 break;
         }
     }

@@ -50,6 +50,9 @@ public class VitalsSendBaseFragment extends BaseFragment {
 
     private String currentPostingMeasurementType = SupportedMeasurementType.bp;
 
+    @Nullable
+    private String postDate;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +64,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
                 if(!TextUtils.isEmpty(nextPostMeasurementType) && !TextUtils.isEmpty(nextPostValue)) {
                     previousResponse = (VitalsCreateApiResponseModel) baseApiResponseModel;
 
-                    postVitals(nextPostMeasurementType,nextPostValue);
+                    postVitals(nextPostMeasurementType,nextPostValue,postDate);
                     nextPostValue = null;
                     nextPostMeasurementType = null;
                     Log.v("VitalsSendBaseFragment","posting next value");
@@ -165,9 +168,10 @@ public class VitalsSendBaseFragment extends BaseFragment {
         return !isPresentedInsideCallActivity();
     }
 
-    public void sendVitals(String measurementType_1,@Nullable String value_1,String measurementType_2,@Nullable String value_2) {
+    public void sendVitals(String measurementType_1,@Nullable String value_1,String measurementType_2,@Nullable String value_2,@Nullable String postDate) {
         showSuccessState();
         String measurementType,value;
+        this.postDate = postDate;
 
         if (!TextUtils.isEmpty(value_1)) {
             measurementType = measurementType_1;
@@ -193,14 +197,14 @@ public class VitalsSendBaseFragment extends BaseFragment {
             captureSuccessMessage = getString(SupportedMeasurementType.getTitle(measurementType_2)) + " " + getString(R.string.captured);
         }
 
-        postVitals(measurementType,value);
+        postVitals(measurementType,value,postDate);
     }
 
     public Boolean isPresentedInsideCallActivity() {
         return getActivity() instanceof CallActivity;
     }
 
-    private void postVitals(String measurementType,String value) {
+    private void postVitals(String measurementType,String value,@Nullable String date) {
         CreateVitalApiRequestModel vitalApiRequestModel = new CreateVitalApiRequestModel();
         vitalApiRequestModel.setType(measurementType);
         vitalApiRequestModel.setMode(VitalsConstant.VITAL_MODE_DEVICE);
@@ -209,6 +213,10 @@ public class VitalsSendBaseFragment extends BaseFragment {
         if ((BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) && getArguments().getSerializable(Constants.USER_DETAIL) != null)  {
             CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             vitalApiRequestModel.setUser_guid(commonUserApiResponseModel.getUser_guid());
+        }
+
+        if (date != null) {
+            vitalApiRequestModel.setDate(date);
         }
 
         String doctorGuid = null;
