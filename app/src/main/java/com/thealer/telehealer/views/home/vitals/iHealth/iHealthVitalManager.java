@@ -176,6 +176,11 @@ public class iHealthVitalManager extends VitalsManager {
 
                 if (vitalPairInterface != null)
                     vitalPairInterface.didConnected(deviceType,mac);
+
+                if (deviceType.equals(iHealthDevicesManager.TYPE_550BT)) {
+                    bpControl.syncTimeForTrack(mac);
+                }
+
             } else if (status == iHealthDevicesManager.DEVICE_STATE_DISCONNECTED) {
 
                 EventRecorder.recordVitals("DEVICE_CONNECT_FAIL", deviceType);
