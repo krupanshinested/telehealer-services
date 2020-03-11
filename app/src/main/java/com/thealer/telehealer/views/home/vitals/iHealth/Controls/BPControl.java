@@ -15,6 +15,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.BatteryResult;
+import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalBatteryFetcher;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.BPMeasureInterface;
 
@@ -100,11 +101,12 @@ public class BPControl {
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject obj = array.getJSONObject(i);
 
-                            Date createdDate = new Date();
-                            String date = obj.getString(BpProfile.MEASUREMENT_DATE_BP);
 
-                            if (Utils.getDateFromPossibleFormat(date) != null) {
-                                createdDate = Utils.getDateFromPossibleFormat(date);
+                            String date = obj.getString(BpProfile.MEASUREMENT_DATE_BP);
+                            Date createdDate = Utils.getDateFromString(date,"yyyy-MM-dd HH:mm:ss");
+
+                            if (createdDate == null) {
+                                createdDate = new Date();
                             }
 
                             double sys = obj.getDouble(BpProfile.HIGH_BLOOD_PRESSURE_BP);
@@ -390,10 +392,19 @@ public class BPControl {
         Object object = getInstance(deviceType, deviceMac);
         if (object != null) {
             bp550BTControl = (Bp550BTControl) object;
+            bp550BTControl.getFunctionInfo();
             bp550BTControl.getOfflineData();
             bpMeasureInterface.didStartBPMesure(deviceType);
         } else {
             bpMeasureInterface.didFailBPMesure(deviceType,context.getString(R.string.unable_to_connect));
+        }
+    }
+
+    public void syncTimeForTrack(String deviceMac) {
+        Object object = getInstance(iHealthDevicesManager.TYPE_550BT, deviceMac);
+        if (object != null) {
+            Bp550BTControl bp550BTControl = (Bp550BTControl) object;
+            bp550BTControl.getFunctionInfo();
         }
     }
 

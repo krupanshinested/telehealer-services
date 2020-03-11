@@ -307,7 +307,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
                         break;
                     case MeasureState.ended:
                         if (!isPresentedInsideCallActivity()) {
-                            sendVitals(SupportedMeasurementType.bp,finalBPValue,SupportedMeasurementType.heartRate, finalHeartRateValue);
+                            sendVitals(SupportedMeasurementType.bp,finalBPValue,SupportedMeasurementType.heartRate, finalHeartRateValue,null);
                         } else {
                             onClick(close_bt);
                         }
@@ -384,7 +384,7 @@ public class BPMeasureFragment extends VitalMeasureBaseFragment implements
 
         if (isPresentedInsideCallActivity()) {
             if (UserType.isUserPatient() && vitalManagerInstance != null) {
-                sendVitals(SupportedMeasurementType.bp,finalBPValue,SupportedMeasurementType.heartRate, finalHeartRateValue);
+                sendVitals(SupportedMeasurementType.bp,finalBPValue,SupportedMeasurementType.heartRate, finalHeartRateValue,null);
             }
         }
 

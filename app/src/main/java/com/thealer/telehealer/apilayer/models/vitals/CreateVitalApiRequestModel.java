@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
+import androidx.annotation.Nullable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -14,6 +16,7 @@ public class CreateVitalApiRequestModel implements Cloneable, Serializable {
     private String display_name;
     private String user_guid;
     private String order_id;
+    @Nullable private String date;
     private ArrayList<VitalsApiResponseModel> vitals;
 
     public CreateVitalApiRequestModel(String type, String value, String mode, String display_name, String user_guid) {
@@ -78,5 +81,14 @@ public class CreateVitalApiRequestModel implements Cloneable, Serializable {
 
     public void setOrder_id(String order_id) {
         this.order_id = order_id;
+    }
+
+    @Nullable
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(@Nullable String date) {
+        this.date = date;
     }
 }
