@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.recents;
 
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,7 +91,7 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 boolean isChat = resultBean.getCorr_type().equals(OrderConstant.RECENT_TYPE_CHAT);
 
                 if (!isChat) {
-                    if (resultBean.getType().equals(OrderConstant.RECENT_TYPE_AUDIO)) {
+                    if (!TextUtils.isEmpty(resultBean.getType()) && resultBean.getType().equals(OrderConstant.RECENT_TYPE_AUDIO)) {
                         if (UserType.isUserPatient()) {
                             itemHolder.timeTv.setCompoundDrawablesRelativeWithIntrinsicBounds(activity.getDrawable(R.drawable.ic_call_incoming), null, null, null);
                         } else {
@@ -217,6 +218,9 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (page == 1) {
             this.recentList = recentList;
         } else {
+            if (this.recentList == null) {
+                this.recentList = new ArrayList<>();
+            }
             this.recentList.addAll(recentList);
         }
         this.isCalls = isCalls;

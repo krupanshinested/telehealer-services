@@ -86,7 +86,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             });
             Log.e(TAG, "message " + data.getTo());
             extractMessage(data);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
