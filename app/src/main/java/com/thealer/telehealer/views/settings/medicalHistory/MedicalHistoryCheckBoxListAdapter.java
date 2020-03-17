@@ -783,7 +783,12 @@ public class MedicalHistoryCheckBoxListAdapter extends RecyclerView.Adapter<Medi
 
         selectedItem.put(title, relations);
 
-        List<String> relationsList = new ArrayList<>(selectedRelations);
+        List<String> relationsList;
+        if (selectedRelations != null) {
+            relationsList = new ArrayList<>(selectedRelations);
+        } else {
+            relationsList = new ArrayList<>();
+        }
 
         FamilyHistoryModel familyHistoryModel = new FamilyHistoryModel();
         familyHistoryModel.setTitle(title);

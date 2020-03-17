@@ -150,7 +150,11 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
 
     @Override
     public int getItemCount() {
-        return apiResponseModelList.size();
+        if (apiResponseModelList != null) {
+            return apiResponseModelList.size();
+        } else {
+            return 0;
+        }
     }
 
     public void setData(List<CommonUserApiResponseModel> commonUserApiResponseModelList, int selectedPosition) {

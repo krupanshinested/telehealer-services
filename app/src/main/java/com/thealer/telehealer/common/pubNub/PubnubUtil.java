@@ -348,7 +348,7 @@ public class PubnubUtil extends SubscribeCallback {
                         if (result != null) {
                             try {
                                 Log.e(TAG, "onResponse: " + result.getStateByUUID());
-                               int userStatus = result.getStateByUUID().get(channel).getAsJsonObject().get(userGuid).getAsInt();
+                                int userStatus = result.getStateByUUID().get(channel).getAsJsonObject().get(userGuid).getAsInt();
                                 Log.e(TAG, "onResponse: userStatus " + userStatus);
                                 statusInterface.userStatus(userStatus);
                             } catch (Exception e) {
