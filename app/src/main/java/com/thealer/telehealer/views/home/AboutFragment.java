@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -434,15 +435,23 @@ public class AboutFragment extends BaseFragment {
         }
         switch (userDetail.getRole()) {
             case Constants.ROLE_DOCTOR:
-                if (userDetail.getUser_detail().getData().getPractices().get(0).getPhones() != null &&
-                        userDetail.getUser_detail().getData().getPractices().get(0).getPhones().size() > 0) {
-                    return userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone();
-                } else {
-                    return null;
+                if ((userDetail.getUser_detail() != null) && (userDetail.getUser_detail().getData() != null) && (userDetail.getUser_detail().getData().getPractices() != null) && !((userDetail.getUser_detail().getData().getPractices().isEmpty()))) {
+                    if (userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone() != null &&
+                            userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone().length() > 0) {
+                        return userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone();
+                    } else {
+                        return null;
+                    }
+                }else{
+                        return null;
                 }
             case Constants.ROLE_PATIENT:
-            case Constants.ROLE_ASSISTANT:
                 return userDetail.getPhone();
+            case Constants.ROLE_ASSISTANT:
+                if (UserType.isUserDoctor())
+                    return userDetail.getPhone();
+                else
+                    return null;
             default:
                 return null;
         }
