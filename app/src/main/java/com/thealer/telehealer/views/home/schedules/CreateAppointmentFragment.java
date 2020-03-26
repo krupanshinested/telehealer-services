@@ -672,11 +672,20 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                     break;
                 case RequestID.REQ_SELECT_ASSOCIATION_DOCTOR:
                     if (data != null && data.getExtras() != null) {
-                        doctorDetailCommonModel = (CommonUserApiResponseModel) data.getExtras().getSerializable(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL);
-                        doctorSchedulesTimeList.clear();
-                        createScheduleViewModel.setDoctorCommonModel(doctorDetailCommonModel);
-                        createScheduleViewModel.getTimeSlots().setValue(new ArrayList<>());
-                        enableOrDisableBtn();
+
+                        CommonUserApiResponseModel doctor = (CommonUserApiResponseModel) data.getExtras().getSerializable(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL);
+
+                        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) && !doctor.getAppt_requests()) {
+                            Utils.showAlertDialog(getActivity(),getString(R.string.no_new_appointment),String.format(getString(R.string.appointment_not_allowed_create),doctor.getDisplayName()),getString(R.string.ok),null
+                                    ,null,null);
+                        } else {
+                            doctorDetailCommonModel = doctor;
+                                    doctorSchedulesTimeList.clear();
+                            createScheduleViewModel.setDoctorCommonModel(doctorDetailCommonModel);
+                            createScheduleViewModel.getTimeSlots().setValue(new ArrayList<>());
+                            enableOrDisableBtn();
+                        }
+
                     }
                     break;
                 case RequestID.REQ_PROFILE_UPDATE:

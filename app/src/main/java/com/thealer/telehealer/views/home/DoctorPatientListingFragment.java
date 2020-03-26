@@ -122,6 +122,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                         associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
                     }
 
+
                     didReceivedResult();
                 }
             }
@@ -243,6 +244,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         doctorPatientListCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                page = 1;
                 getAssociationsList(null, false);
             }
         });

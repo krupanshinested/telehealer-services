@@ -905,11 +905,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void printPdf() {
-        if (visitsDetailApiResponseModel.getResult().getVisit_summary() == null) {
-            visitsApiViewModel.getVisitSummary(recentDetail.getOrder_id(), true);
-        } else {
-            showPdfViewFragment(visitsDetailApiResponseModel.getResult().getVisit_summary());
-        }
+        visitsApiViewModel.getVisitSummary(recentDetail.getOrder_id(), true);
     }
 
     private void showPdfViewFragment(String pdfUrl) {
