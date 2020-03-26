@@ -58,7 +58,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 public class GeneralSettingsFragment extends BaseFragment implements View.OnClickListener {
 
-    private SettingsCellView checkCallQuality, presence, quickLogin,secure_message,connection_request;
+    private SettingsCellView checkCallQuality, presence, quickLogin,secure_message,connection_request,appointment_request;
     private ProfileCellView signature;
     private LinearLayout deleteView;
 
@@ -94,6 +94,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 if (whoAmIApiResponseModel != null) {
                     whoAmIApiResponseModel.setSecure_message(secure_message.getSwitchStatus());
                     whoAmIApiResponseModel.setConnection_requests(connection_request.getSwitchStatus());
+                    whoAmIApiResponseModel.setAppt_requests(appointment_request.getSwitchStatus());
                     UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
                     GeneralSettingsFragment.this.whoAmIApiResponseModel = whoAmIApiResponseModel;
                 }
@@ -135,6 +136,13 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         } else {
             connection_request.updateSwitch(false);
         }
+
+        if (whoAmIApiResponseModel != null) {
+            appointment_request.updateSwitch(whoAmIApiResponseModel.getAppt_requests());
+        } else {
+            appointment_request.updateSwitch(false);
+        }
+
     }
 
     private void initView(View view) {
@@ -152,6 +160,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         logs = (SettingsCellView) view.findViewById(R.id.logs);
         secure_message = view.findViewById(R.id.secure_message);
         connection_request = view.findViewById(R.id.connection_request);
+        appointment_request = view.findViewById(R.id.appointment_request);
 
         toolbarTitle.setText(getString(R.string.settings));
 
@@ -166,13 +175,14 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         logs.setOnClickListener(this);
         secure_message.setOnClickListener(this);
         connection_request.setOnClickListener(this);
-
+        appointment_request.setOnClickListener(this);
 
         switch (appPreference.getInt(Constants.USER_TYPE)) {
             case Constants.TYPE_PATIENT:
                 signature.setVisibility(View.GONE);
                 secure_message.setVisibility(View.GONE);
                 connection_request.setVisibility(View.GONE);
+                appointment_request.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
                 break;
@@ -180,6 +190,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 secure_message.setVisibility(View.GONE);
                 signature.setVisibility(View.GONE);
                 connection_request.setVisibility(View.GONE);
+                appointment_request.setVisibility(View.GONE);
                 break;
         }
 
@@ -268,6 +279,10 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             case R.id.connection_request:
                 connection_request.toggleSwitch();
                 profileUpdate.updateConnectionRequest(connection_request.getSwitchStatus());
+                break;
+            case R.id.appointment_request:
+                appointment_request.toggleSwitch();
+                profileUpdate.updateAppointmentRequest(appointment_request.getSwitchStatus());
                 break;
             case R.id.delete_view:
 

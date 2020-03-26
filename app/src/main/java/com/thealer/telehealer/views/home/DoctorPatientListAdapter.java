@@ -135,7 +135,10 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     public void setData(List<CommonUserApiResponseModel> associationApiResponseModelResult, int page) {
         List<CommonUserApiResponseModel> favoriteList = new ArrayList<>();
         List<CommonUserApiResponseModel> otherList = new ArrayList<>();
-        adapterListModels.clear();
+
+        if (page == 1) {
+            adapterListModels.clear();
+        }
 
         for (int i = 0; i < associationApiResponseModelResult.size(); i++) {
             if (associationApiResponseModelResult.get(i).getFavorite() != null && associationApiResponseModelResult.get(i).getFavorite()) {
