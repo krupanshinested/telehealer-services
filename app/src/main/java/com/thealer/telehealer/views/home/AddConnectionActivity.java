@@ -100,20 +100,29 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
-                    intent.putExtra(Constants.SUCCESS_VIEW_STATUS, baseApiResponseModel.isSuccess());
 
-                    if (baseApiResponseModel.isSuccess()) {
-                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_success), connectionListResponseModel.getResult().get(selectedPosition).getFirst_name()));
-
-                        connectionListAdapter.setData(commonUserApiResponseModelList, selectedPosition);
-                    } else {
-                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_failure), connectionListResponseModel.getResult().get(selectedPosition).getFirst_name()));
+                    if (selectedPosition < 0) {
+                        return;
                     }
 
-                    LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
+                    if (connectionListResponseModel.getResult().size() > selectedPosition) {
+
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, baseApiResponseModel.isSuccess());
+
+                        if (baseApiResponseModel.isSuccess()) {
+                            intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                            intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_success),
+                                    connectionListResponseModel.getResult().get(selectedPosition).getFirst_name()));
+
+                            connectionListAdapter.setData(commonUserApiResponseModelList, selectedPosition);
+                        } else {
+                            intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                            intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_failure), connectionListResponseModel.getResult().get(selectedPosition).getFirst_name()));
+                        }
+
+                        LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
+                    }
                 }
             }
         });

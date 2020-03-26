@@ -39,7 +39,7 @@ public class SignalKeyManager {
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel instanceof UserKeysApiResponseModel) {
                         onDataReceived((UserKeysApiResponseModel) baseApiResponseModel);
-                    } else if (signalKeyManager.isPostingKey) {
+                    } else if (signalKeyManager != null && signalKeyManager.isPostingKey) {
                         signalKeyManager.isPostingKey = false;
                         UserKeysApiResponseModel userKeysApiResponseModel = new UserKeysApiResponseModel();
                         SignalKey signalKey = new SignalKey(signalKeyManager.signalKey.getDevice_id(),
