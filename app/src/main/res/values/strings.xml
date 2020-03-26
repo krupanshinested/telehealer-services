@@ -677,6 +677,8 @@
     <string name="patient_video_feed_description">Inorder to enable the video feed, remind your patient to click on the \'%s button\' on the right top corner of their locked screen.</string>
     <string name="do_not_show_again">Do not show this message again.</string>
     <string name="enable_video_feed">Enable your video feed</string>
+    <string name="helpmail_note_message">NOTE : PLS DO NOT POST ANY HEALTH-RELATED OR SCHEDULING QUERIES HERE. USE THIS ONLY IF YOU NEED TECHNICAL SUPPORT WITH THE APP/PLATFORM.</string>
+    <string name="non_medical_queries">To be used only for non-medical related queries.</string>
     <string name="video_feed_description">When answering your doctor\'s video calls from the locked screen, remember to click the \'%s button\' on the right top corner to enable your video feed.</string>
     <string name="ccm">CCM</string>
     <string name="rpm">RPM</string>
