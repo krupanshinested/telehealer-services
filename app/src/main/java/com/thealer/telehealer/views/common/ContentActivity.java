@@ -28,7 +28,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ContentActivity extends BaseActivity implements View.OnClickListener {
 
     private ImageView icon, close_iv;
-    private TextView title_tv, sub_title_tv;
+    private TextView title_tv, sub_title_tv, bottom_tv;
     private CustomButton action_btn;
     private Button skip_btn;
     private CheckBox check_box;
@@ -62,6 +62,7 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
         userAvatarCiv = (CircleImageView) findViewById(R.id.user_avatar_civ);
         userNameTv = (TextView) findViewById(R.id.user_name_tv);
         helpTv = (TextView) findViewById(R.id.help_tv);
+        bottom_tv = (TextView) findViewById(R.id.bottom_tv);
 
         close_iv.setOnClickListener(this);
         action_btn.setOnClickListener(this);
@@ -143,6 +144,12 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
             helpTv.setVisibility(View.VISIBLE);
         } else {
             helpTv.setVisibility(View.GONE);
+        }
+
+        if (getIntent().getBooleanExtra(ArgumentKeys.IS_BOTTOM_TEXT_NEEDED,false)) {
+            bottom_tv.setVisibility(View.VISIBLE);
+        } else {
+            bottom_tv.setVisibility(View.GONE);
         }
 
         sub_title_tv.post(new Runnable() {

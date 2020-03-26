@@ -23,6 +23,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable false
         }
+        debug {
+            FirebasePerformance {
+             instrumentationEnabled false
+            }
+        }
     }
     compileOptions {
         sourceCompatibility = '1.8'
