@@ -184,7 +184,7 @@ public class RecentFragment extends BaseFragment {
                             isCalls = true;
                         }
 
-                        if (UserType.isUserPatient()){
+                        if (UserType.isUserPatient() && userGuid == null){
                             userGuid = doctorGuid;
                             doctorGuid = null;
                         }

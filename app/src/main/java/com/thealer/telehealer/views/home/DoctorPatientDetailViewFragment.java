@@ -38,6 +38,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.ihealth.communication.base.statistical.litepal.util.Const;
+import com.pubnub.api.models.consumer.access_manager.v3.User;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
@@ -45,6 +46,7 @@ import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiView
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.associationlist.UpdateAssociationRequestModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -105,13 +107,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private ViewPagerAdapter viewPagerAdapter;
     private FloatingActionButton addFab;
 
+    private GetUsersApiViewModel getUsersApiViewModel;
     private CommonUserApiResponseModel resultBean, doctorModel;
     private OnCloseActionInterface onCloseActionInterface;
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private OnActionCompleteInterface onActionCompleteInterface;
     private AttachObserverInterface attachObserverInterface;
-    private ConnectionStatusApiViewModel connectionStatusApiViewModel;
-    private ConnectionStatusApiResponseModel connectionStatusApiResponseModel;
     private AssociationApiViewModel associationApiViewModel;
 
     private List<Fragment> fragmentList;
@@ -122,10 +123,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private BottomNavigationView userDetailBnv;
     private String view_type;
     private String doctorGuid = null, userGuid = null;
-    private boolean isConnectionStatusChecked = false;
-    private boolean checkStatus, isUserDataFetched = false;
+    private boolean isUserDataFetched = false;
     private ImageView favoriteIv;
     private CircleImageView statusCiv;
+
+    private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
+            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7;
 
     @Override
     public void onAttach(Context context) {
@@ -134,29 +137,23 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
 
-        addConnectionApiViewModel = new ViewModelProvider(getActivity()).get(AddConnectionApiViewModel.class);
-        connectionStatusApiViewModel = new ViewModelProvider(this).get(ConnectionStatusApiViewModel.class);
-
-        attachObserverInterface.attachObserver(connectionStatusApiViewModel);
-
-        connectionStatusApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+        getUsersApiViewModel = new ViewModelProvider(this).get(GetUsersApiViewModel.class);
+        getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    isConnectionStatusChecked = true;
-                    connectionStatusApiResponseModel = (ConnectionStatusApiResponseModel) baseApiResponseModel;
-                    if (connectionStatusApiResponseModel.getConnection_status() == null || !connectionStatusApiResponseModel.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
-                        view_type = Constants.VIEW_CONNECTION;
-                    } else {
-                        view_type = Constants.VIEW_ASSOCIATION_DETAIL;
-                    }
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
+                resultBean = model;
+                if (doctorGuid!=null){
+                    Set<String> set = new HashSet<>();
+                    set.add(doctorGuid);
+                    getUserDetail(set);
+                }
+                else {
                     updateView(resultBean);
-                    updateDateConnectionStatus(connectionStatusApiResponseModel.getConnection_status());
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Constants.CONNECTION_STATUS_RECEIVER).putExtra(ArgumentKeys.CONNECTION_STATUS, connectionStatusApiResponseModel.getConnection_status()));
                 }
             }
         });
-
+        addConnectionApiViewModel = new ViewModelProvider(this).get(AddConnectionApiViewModel.class);
         addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -277,8 +274,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                                 startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
                             } else {
 
-                                Utils.showAlertDialog(getActivity(),getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create),resultBean.getDisplayName()),getString(R.string.ok),null
-                                ,null,null);
+                                Utils.showAlertDialog(getActivity(), getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create), resultBean.getDisplayName()), getString(R.string.ok), null
+                                        , null, null);
                             }
 
                         } else {
@@ -365,10 +362,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     Utils.showInviteAlert(getActivity(), getArguments());
                 }
             });
-
-            userDetailBnv.setVisibility(View.GONE);
-        } else {
-            userDetailBnv.setVisibility(View.VISIBLE);
         }
 
         appbarLayout.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {
@@ -395,38 +388,18 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         if (getArguments() != null) {
 
             view_type = getArguments().getString(Constants.VIEW_TYPE);
-            checkStatus = getArguments().getBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, false);
 
             if (getArguments().getSerializable(Constants.USER_DETAIL) != null &&
                     getArguments().getSerializable(Constants.USER_DETAIL) instanceof CommonUserApiResponseModel) {
 
-                resultBean = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
-                doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
-
-                updateView(resultBean);
-
-                if (checkStatus) {
-                    checkConnectionStatus();
-                } else {
-                    if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
-//                        Set<String> set = new HashSet<>();
-//                        set.add(resultBean.getUser_guid());
-                        Log.e(TAG, "initView: need to get user detail");
-//                        getUserDetail(set);
-                    }
-                }
-
+                userGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL)).getUser_guid();
+                if (getArguments().getSerializable(Constants.DOCTOR_DETAIL) != null)
+                    doctorGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_guid();
             } else {
                 userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
                 doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
-
-                Set<String> set = new HashSet<>();
-                if (doctorGuid != null) {
-                    set.add(doctorGuid);
-                }
-                set.add(userGuid);
-                getUserDetail(set);
             }
+                getUsersApiViewModel.getUserDetail(userGuid, null);
         }
 
         backIv = (ImageView) view.findViewById(R.id.back_iv);
@@ -467,24 +440,13 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                                 }
                             }
                         }
-                        if (checkStatus) {
                             if (!UserType.isUserPatient()) {
                                 associationApiViewModel.getUserAssociationDetail(userGuid, doctorGuid, true);
-                            } else {
-                                checkConnectionStatus();
                             }
-                        } else {
                             updateView(resultBean);
-                        }
                     }
                 }
             });
-        }
-    }
-
-    private void checkConnectionStatus() {
-        if (!isConnectionStatusChecked) {
-            connectionStatusApiViewModel.getConnectionStatus(userGuid, doctorGuid, true);
         }
     }
 
@@ -567,7 +529,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             switch (resultBean.getRole()) {
                 case Constants.ROLE_PATIENT:
                     userDetailBnv.getMenu().findItem(R.id.menu_upload).setVisible(true);
-                    userDetailBnv.setVisibility(View.VISIBLE);
                     userDetailTab.setTabMode(TabLayout.MODE_SCROLLABLE);
                     break;
                 case Constants.ROLE_DOCTOR:
@@ -577,118 +538,171 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     }
                     break;
                 case Constants.ROLE_ASSISTANT:
-                    userDetailBnv.setVisibility(View.GONE);
-                    userDetailTab.setVisibility(View.GONE);
+                    if(UserType.isUserPatient()) {
+                        userDetailTab.setVisibility(View.GONE);
+                        userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(false);
+                        userDetailBnv.getMenu().findItem(R.id.menu_schedules).setVisible(false);
+                    } else {
+                        userDetailTab.setVisibility(View.GONE);
+                    }
                     break;
             }
+
+            if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+                userDetailBnv.setVisibility(View.GONE);
+            } else if (resultBean.getConnection_status() != null && resultBean.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
+                userDetailBnv.setVisibility(View.VISIBLE);
+            } else if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_PATIENT)){
+                userDetailBnv.setVisibility(View.VISIBLE);
+            } else {
+                userDetailBnv.setVisibility(View.GONE);
+            }
+
 
             if (doctorModel != null) {
                 doctorGuid = doctorModel.getUser_guid();
             }
 
-
             fragmentList = new ArrayList<>();
             titleList = new ArrayList<String>();
 
-            AboutFragment aboutFragment = new AboutFragment();
-            addFragment(getString(R.string.about), aboutFragment);
+            ArrayList<Integer> tabs = new ArrayList<>();
 
             if (view_type != null) {
                 if (view_type.equals(Constants.VIEW_CONNECTION)) {
-
+                    userDetailTab.setVisibility(View.GONE);
+                    userDetailBnv.setVisibility(View.GONE);
+                    tabs.add(aboutTab);
                     updateDateConnectionStatus(resultBean.getConnection_status());
 
                 } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {
-                    Bundle bundle;
 
-                    if (!UserType.isUserPatient()) {
-                        VitalsListFragment vitalsFragment = new VitalsListWithGoogleFitFragment();
-                        addFragment(getString(R.string.vitals), vitalsFragment);
-                    }
+                    switch (resultBean.getRole()) {
 
-                    if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-                        fragmentList.clear();
-                        titleList.clear();
+                        case Constants.ROLE_PATIENT:
+                            if (UserType.isUserDoctor()) {
+                                tabs.add(aboutTab);
+                                tabs.add(vitalTab);
+                                tabs.add(documentTab);
+                                tabs.add(visitTab);
+                                tabs.add(orderTab);
+                            } else if (UserType.isUserAssistant()) {
+                                tabs.add(aboutTab);
+                                tabs.add(vitalTab);
+                                tabs.add(documentTab);
+                                tabs.add(visitTab);
+                                tabs.add(orderTab);
+                            }
+                            break;
 
-                        bundle = new Bundle();
-                        bundle.putBoolean(ArgumentKeys.HIDE_ADD, true);
+                        case Constants.ROLE_DOCTOR:
+                            if (UserType.isUserAssistant()) {
+                                tabs.add(schedulesTab);
+                                tabs.add(patientTab);
+                                tabs.add(visitTab);
+                                tabs.add(orderTab);
+                                tabs.add(monitorTab);
+                            } else if (UserType.isUserPatient()) {
+                                tabs.add(aboutTab);
+                                tabs.add(visitTab);
+                                tabs.add(orderTab);
+                            }
+                            break;
 
-                        SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
-                        schedulesListFragment.setArguments(bundle);
-                        addFragment(getString(R.string.schedules), schedulesListFragment);
-
-                        bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
-
-                        DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
-                        doctorPatientListingFragment.setArguments(bundle);
-                        addFragment(getString(R.string.patients), doctorPatientListingFragment);
-                    }
-
-                    if (resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
-                        DocumentListFragment documentListFragment = new DocumentListFragment();
-                        bundle = new Bundle();
-                        bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
-                        documentListFragment.setArguments(bundle);
-                        addFragment(getString(R.string.documents), documentListFragment);
-                    }
-
-                    RecentFragment recentFragment = new RecentFragment();
-                    addFragment(getString(R.string.visits), recentFragment);
-
-                    OrdersListFragment ordersFragment = new OrdersListFragment();
-                    addFragment(getString(R.string.orders), ordersFragment);
-
-                    if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-                        MonitoringFragment monitoringFragment = new MonitoringFragment();
-                        addFragment(getString(R.string.monitoring), monitoringFragment);
-                    }
-
-                    if (resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
-                        userDetailTab.setVisibility(View.GONE);
-                        userDetailBnv.setVisibility(View.GONE);
-                        fragmentList.clear();
-                        titleList.clear();
-                        addFragment(getString(R.string.about), aboutFragment);
+                        case Constants.ROLE_ASSISTANT:
+                            if (UserType.isUserPatient()) {
+                                tabs.add(visitTab);
+                            } else if (UserType.isUserDoctor()) {
+                                tabs.add(aboutTab);
+                            }
+                            break;
                     }
                 }
 
-                viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);
-                viewPager.setAdapter(viewPagerAdapter);
-                viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                    @Override
-                    public void onPageScrolled(int i, float v, int i1) {
+                Bundle bundle;
+                for (Integer tab : tabs) {
+                    switch (tab) {
+                        case aboutTab:
+                            AboutFragment aboutFragment = new AboutFragment();
+                            addFragment(getString(R.string.about), aboutFragment);
+                            break;
+                        case vitalTab:
+                            VitalsListFragment vitalsFragment = new VitalsListWithGoogleFitFragment();
+                            addFragment(getString(R.string.vitals), vitalsFragment);
+                            break;
+                        case schedulesTab:
+                            bundle = new Bundle();
+                            bundle.putBoolean(ArgumentKeys.HIDE_ADD, true);
 
+                            SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
+                            schedulesListFragment.setArguments(bundle);
+                            addFragment(getString(R.string.schedules), schedulesListFragment);
+                            break;
+                        case patientTab:
+                            bundle = new Bundle();
+                            bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
+
+                            DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
+                            doctorPatientListingFragment.setArguments(bundle);
+                            addFragment(getString(R.string.patients), doctorPatientListingFragment);
+                            break;
+                        case documentTab:
+                            DocumentListFragment documentListFragment = new DocumentListFragment();
+                            bundle = new Bundle();
+                            bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
+                            documentListFragment.setArguments(bundle);
+                            addFragment(getString(R.string.documents), documentListFragment);
+                            break;
+                        case visitTab:
+                            RecentFragment recentFragment = new RecentFragment();
+                            addFragment(getString(R.string.visits), recentFragment);
+                            break;
+                        case orderTab:
+                            OrdersListFragment ordersFragment = new OrdersListFragment();
+                            addFragment(getString(R.string.orders), ordersFragment);
+                            break;
+                        case monitorTab:
+                            MonitoringFragment monitoringFragment = new MonitoringFragment();
+                            addFragment(getString(R.string.monitoring), monitoringFragment);
+                            break;
                     }
-
-                    @Override
-                    public void onPageSelected(int i) {
-                        viewPager.setCurrentItem(i);
-                    }
-
-                    @Override
-                    public void onPageScrollStateChanged(int i) {
-
-                    }
-                });
-                userDetailTab.setupWithViewPager(viewPager);
-                userDetailTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                    @Override
-                    public void onTabSelected(TabLayout.Tab tab) {
-                        viewPager.setCurrentItem(tab.getPosition());
-                    }
-
-                    @Override
-                    public void onTabUnselected(TabLayout.Tab tab) {
-
-                    }
-
-                    @Override
-                    public void onTabReselected(TabLayout.Tab tab) {
-
-                    }
-                });
-
+                }
             }
+            viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);
+            viewPager.setAdapter(viewPagerAdapter);
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int i, float v, int i1) {
+
+                }
+
+                @Override
+                public void onPageSelected(int i) {
+                    viewPager.setCurrentItem(i);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int i) {
+
+                }
+            });
+            userDetailTab.setupWithViewPager(viewPager);
+            userDetailTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    viewPager.setCurrentItem(tab.getPosition());
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
         }
     }
 
@@ -698,6 +712,16 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
     private void updateDateConnectionStatus(String connection_status) {
         Log.e(TAG, "updateDateConnectionStatus: " + connection_status + " " + view_type);
+
+        if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
+            actionBtn.setVisibility(View.GONE);
+            return;
+        }
+
+        if (UserType.isUserPatient() && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+            actionBtn.setVisibility(View.GONE);
+            return;
+        }
 
         if (connection_status == null) {
             connection_status = "";
@@ -722,6 +746,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     actionBtn.setText(getString(R.string.add_connection_connect));
                     actionBtn.setEnabled(true);
                     if (UserType.isUserPatient() && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                        actionBtn.setVisibility(View.GONE);
+                    }
+                    if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
                         actionBtn.setVisibility(View.GONE);
                     }
                 }
