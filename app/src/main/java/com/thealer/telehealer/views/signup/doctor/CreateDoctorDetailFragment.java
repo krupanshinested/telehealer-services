@@ -1167,7 +1167,6 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
 
         createUserRequestModel.getUser_detail().getData().setWebsite(websiteEt.getText().toString());
 
-        Log.e(TAG, "practices: " + new Gson().toJson(createUserRequestModel.getUser_detail().getData().getPractices()));
         ClinicBean clinicBean = new ClinicBean();
         clinicBean.setName(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getName());
         clinicBean.setState(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getState());
