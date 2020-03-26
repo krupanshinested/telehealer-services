@@ -165,4 +165,28 @@ public class ProfileUpdate extends BaseApiViewModel {
             }
         });
     }
+
+    public void updateAppointmentRequest(boolean request) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+
+                    HashMap<String, Boolean> key = new HashMap<>();
+                    key.put("appt_requests", request);
+
+                    RequestBody body = FormBody.create(MediaType.parse("application/form-data"), new Gson().toJson(key));
+
+                    getAuthApiService().updateUserDetail(body)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
 }

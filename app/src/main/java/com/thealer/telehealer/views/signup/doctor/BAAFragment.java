@@ -152,11 +152,14 @@ public class BAAFragment extends BaseFragment implements DoCurrentTransactionInt
         String DATE = "#DATE#";
         String Company_NAME = "#COMPANY_NAME#";
 
-        baaHtmlContent = baaHtmlContent.replace(CLINIC_NAME, createUserRequestModel.getUser_detail().getData().getClinic().getName())
-                .replace(STATE, createUserRequestModel.getUser_detail().getData().getClinic().getState())
-                .replace(DATE, Utils.getCurrentFomatedDate())
-        .replace(Company_NAME, getString(R.string.organization_name));
-
+        try {
+            baaHtmlContent = baaHtmlContent.replace(CLINIC_NAME, createUserRequestModel.getUser_detail().getData().getClinic().getName())
+                    .replace(STATE, createUserRequestModel.getUser_detail().getData().getClinic().getState())
+                    .replace(DATE, Utils.getCurrentFomatedDate())
+                    .replace(Company_NAME, getString(R.string.organization_name));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return baaHtmlContent;
     }
 

@@ -23,6 +23,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private boolean has_abnormal_vitals;
     private Boolean favorite;
     private Boolean connection_requests;
+    private Boolean appt_requests = false;
 
     public CommonUserApiResponseModel() {
     }
@@ -233,6 +234,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public Boolean getConnection_requests() {
         return connection_requests;
+    }
+
+    public Boolean getAppt_requests() {
+        return appt_requests;
+    }
+
+    public void setAppt_requests(Boolean appt_requests) {
+        this.appt_requests = appt_requests;
     }
 
     public void setConnection_requests(Boolean connection_requests) {

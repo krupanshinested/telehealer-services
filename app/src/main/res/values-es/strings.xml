@@ -1299,4 +1299,7 @@
     <string name="un_select_all">UnSelect All</string>
     <string name="select_readings">Select the readings to upload.</string>
     <string name="sync_track_message">Press Sync to fetch the track data.</string>
+    <string name="accept_appointment_request">Create Appointment Requests</string>
+    <string name="no_new_appointment">No new Appointment request</string>
+    <string name="appointment_not_allowed_create">%s does not currently accept appointment requests. Please check back at a later time.</string>
 </resources>
