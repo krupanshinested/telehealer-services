@@ -37,6 +37,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.ihealth.communication.base.statistical.litepal.util.Const;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
@@ -53,8 +54,10 @@ import com.thealer.telehealer.common.OnUpdateListener;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
@@ -266,7 +269,22 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                         startActivity(new Intent(getActivity(), ChatActivity.class).putExtras(bundle));
                         break;
                     case R.id.menu_schedules:
-                        startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+
+                        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) &&
+                                resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+
+                            if (resultBean.getAppt_requests()) {
+                                startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+                            } else {
+
+                                Utils.showAlertDialog(getActivity(),getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create),resultBean.getDisplayName()),getString(R.string.ok),null
+                                ,null,null);
+                            }
+
+                        } else {
+                            startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+                        }
+
                         break;
                     case R.id.menu_call:
                         if (TokBox.shared.isActiveCallPreset()) {
