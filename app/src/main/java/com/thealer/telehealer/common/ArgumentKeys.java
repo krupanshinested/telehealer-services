@@ -160,6 +160,7 @@ public class ArgumentKeys {
 
     public static final String TITLE = "TITLE";
     public static final String DESCRIPTION = "DESCRIPTION";
+    public static final String IS_BOTTOM_TEXT_NEEDED = "BOTTOM_TEXT";
     public static final String IS_ATTRIBUTED_DESCRIPTION = "IS_ATTRIBUTED_DESCRIPTION";
     public static final String RESOURCE_ICON = "RESOURCE_ICON";
     public static final String IS_SKIP_NEEDED = "IS_SKIP_NEEDED";

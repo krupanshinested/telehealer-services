@@ -8,6 +8,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -1453,17 +1454,25 @@ public class Utils {
     }
 
     public static void sendHelpEmail(Context context) {
-        String phoneNumber = "", userName = "";
+        String phoneNumber = "", userName = "",appName = "", noteMessage = "";
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
         if (whoAmIApiResponseModel != null) {
             phoneNumber = whoAmIApiResponseModel.getPhone();
             userName = whoAmIApiResponseModel.getUserDisplay_name();
         }
+        appName = application.getString(R.string.app_name);
+        noteMessage = application.getString(R.string.helpmail_note_message);
+
         Intent intent = new Intent(Intent.ACTION_SENDTO);
-        String mailto = "mailto:support@telehealer.com" +
-                "?cc=" +
-                "&subject=" +
-                "&body=" + Uri.encode(String.format("Issue :\n\nPhone Number : %s\n\nName : %s\n\n\n\nApp Version : " + BuildConfig.VERSION_NAME + "\nDevice Type : " + Build.MODEL + "\nOS Details : " + Build.VERSION.RELEASE + "\nRegion : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "\n\nCheers!\n%s", phoneNumber, userName, userName));
+        String mailto = null;
+        try {
+            mailto = "mailto:support@telehealer.com" +
+                    "?cc=" +
+                    "&subject=" +
+                    "&body=" + Uri.encode(String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName+ "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ",noteMessage, phoneNumber,appName));
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         intent.setData(Uri.parse(mailto));
 
         context.startActivity(intent);

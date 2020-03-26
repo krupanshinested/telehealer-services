@@ -495,6 +495,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
         bundle.putBoolean(ArgumentKeys.IS_BUTTON_NEEDED, false);
         bundle.putBoolean(ArgumentKeys.IS_SHOW_HELP, true);
+        bundle.putBoolean(ArgumentKeys.IS_BOTTOM_TEXT_NEEDED, true);
 
         startActivity(new Intent(this, ContentActivity.class).putExtras(bundle));
     }
