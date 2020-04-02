@@ -15,6 +15,10 @@ public class ArgumentKeys {
     public static final String SHOW_NEXT = "SHOW_NEXT";
     public static final String SHOW_BACK = "SHOW_BACK";
 
+    public static final String HEADER = "HEADER";
+    public static final String PAGEHINT = "PAGEHINT";
+    public static final String URL = "URL";
+
     public static final String VIEW_TYPE = "VIEW_TYPE";
     public static final String VIEW_TITLE = "VIEW_TITLE";
 

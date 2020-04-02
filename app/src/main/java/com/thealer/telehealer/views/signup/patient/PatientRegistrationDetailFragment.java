@@ -671,7 +671,12 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                 break;
             case Constants.CREATE_MODE:
                 updateUserRequestModel();
-                onActionCompleteInterface.onCompletionResult(RequestID.PROFILE_UPDATED, true, null);
+                bundle = new Bundle();
+                bundle.putString(ArgumentKeys.HEADER, getResources().getString(R.string.terms_and_conditions));
+                bundle.putString(ArgumentKeys.PAGEHINT, getResources().getString(R.string.terms_and_conditions_info));
+                bundle.putString(ArgumentKeys.URL, getResources().getString(R.string.terms_and_conditions_url));
+
+                onActionCompleteInterface.onCompletionResult(RequestID.PROFILE_UPDATED, true, bundle);
                 break;
         }
     }

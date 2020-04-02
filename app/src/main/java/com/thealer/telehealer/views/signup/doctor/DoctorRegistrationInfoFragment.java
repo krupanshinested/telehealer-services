@@ -15,6 +15,7 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
@@ -60,7 +61,12 @@ public class DoctorRegistrationInfoFragment extends BaseFragment implements DoCu
         acceptBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onActionCompleteInterface.onCompletionResult(null, true, null);
+                Bundle bundle = new Bundle();
+                bundle.putString(ArgumentKeys.HEADER, getResources().getString(R.string.terms_and_conditions));
+                bundle.putString(ArgumentKeys.PAGEHINT, getResources().getString(R.string.terms_and_conditions_info));
+                bundle.putString(ArgumentKeys.URL, getResources().getString(R.string.terms_and_conditions_url));
+
+                onActionCompleteInterface.onCompletionResult(null, true, bundle);
             }
         });
 
