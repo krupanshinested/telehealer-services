@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="terms_and_conditions_url">http://telehealer.com/t_c_doc/</string>
+    <string name="notice_to_consumers_url">http://telehealer.com/notice_patient/</string>
     <string name="install_type">telehealer</string>
     <string name="install_type_india">telehealer-india</string>
 </resources>

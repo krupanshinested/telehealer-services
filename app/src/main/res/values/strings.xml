@@ -510,6 +510,8 @@
     <string name="blood_pressure">Blood Pressure</string>
     <string name="blood_pressure_heart_rate">BP &amp; Pulse Rate</string>
     <string name="weight">Weight</string>
+    <string name="notice_to_consumer_info">By creating an account, you also agree to the notice stated here</string>
+    <string name="notice_to_consumer">Notice to Consumers</string>
     <string name="bodyTemperature">Body Temperature</string>
     <string name="bloodGlucose">Blood Glucose</string>
     <string name="pulseOximeter">Pulse Oximeter</string>
