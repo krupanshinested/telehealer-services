@@ -503,7 +503,12 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
                 break;
             case Constants.CREATE_MODE:
                 createUserRequestModel();
-                onActionCompleteInterface.onCompletionResult(null, true, null);
+                Bundle bundle = new Bundle();
+                bundle.putString(ArgumentKeys.HEADER, getResources().getString(R.string.terms_and_conditions));
+                bundle.putString(ArgumentKeys.PAGEHINT, getResources().getString(R.string.terms_and_conditions_info));
+                bundle.putString(ArgumentKeys.URL, getResources().getString(R.string.terms_and_conditions_url));
+
+                onActionCompleteInterface.onCompletionResult(null, true, bundle);
                 break;
         }
     }

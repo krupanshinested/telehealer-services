@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.signup;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
@@ -34,6 +34,7 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.signup.doctor.BAAFragment;
@@ -149,6 +150,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     }
 
     private Fragment getFrament() {
+        Bundle bundle = new Bundle();
         closeIv.setVisibility(View.GONE);
         if (isUserPatient()) {
             switch (currentStep) {
@@ -166,14 +168,17 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     return new PatientRegistrationDetailFragment();
                 case 5:
                     viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
-                    return new TermsAndConditionFragment();
+                     return new AgreementFragment();
                 case 6:
+                    viewInfoStack.push(getResources().getString(R.string.notice_to_consumer_info));
+                    return new AgreementFragment();
+                case 7:
                     viewInfoStack.push(getResources().getString(R.string.payment_info));
                     return new PatientChoosePaymentFragment();
-                case 7:
+                case 8:
                     viewInfoStack.push(getResources().getString(R.string.password_info));
                     return new CreatePasswordFragment();
-                case 8:
+                case 9:
                     viewInfoStack.push(getResources().getString(R.string.otp_info));
                     return new OtpVerificationFragment();
                 default:
@@ -201,7 +206,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             return new MedicalAssistantDetailFragment();
                         case 6:
                             viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
-                            return new TermsAndConditionFragment();
+                            return new AgreementFragment();
                         case 7:
                             viewInfoStack.push(getResources().getString(R.string.ma_certificate_info));
                             return new MedicalAssistantCertificateUploadFragment();
@@ -251,7 +256,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             return new DoctorRegistrationInfoFragment();
                         case 11:
                             viewInfoStack.push(getResources().getString(R.string.terms_and_conditions_info));
-                            return new TermsAndConditionFragment();
+                            return new AgreementFragment();
                         case 12:
                             viewInfoStack.push(getResources().getString(R.string.password_info));
                             return new CreatePasswordFragment();
