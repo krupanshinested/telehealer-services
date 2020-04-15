@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.Constants;
@@ -73,7 +74,7 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         if (measurementType != null && measurementType.equals(SupportedMeasurementType.height)) {
 
-        } else {
+        } else if (TeleHealerApplication.appConfig.getVitalPemFileName() != null) {
             sources.add(new DataSource(null, data_without_subitem, context.getString(R.string.setup_new_devices), set_up_device));
         }
 

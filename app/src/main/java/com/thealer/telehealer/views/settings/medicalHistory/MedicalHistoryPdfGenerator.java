@@ -75,7 +75,7 @@ public class MedicalHistoryPdfGenerator {
             "                </td>\n" +
             "                <td width=\"40%\" align = \"right\">\n" +
             "                \n" +
-            "                <table><tr><td><img src=\"#ICON_DATA#\" alt=\"LOGO\" height=\"60\" width=\"60\"></td><td> <h2><b><font face=\"Helvetica Neue\">Telehealer</font><b></h2></td></tr></table>\n" +
+            "                <table><tr><td><img src=\"#ICON_DATA#\" alt=\"LOGO\" height=\"60\" width=\"60\"></td><td> <h2><b><font face=\"Helvetica Neue\">#APP_NAME#</font><b></h2></td></tr></table>\n" +
             "                </td>\n" +
             "            </tr>\n" +
             "        </table>\n" +
@@ -117,6 +117,7 @@ public class MedicalHistoryPdfGenerator {
     private final String PDF_BODY = "#BODY#";
     private final String CATEGORY_TITLE = "#CATEGORY_TITLE#";
     private final String DETAIL = "#DETAIL#";
+    private final String APP_NAME = "#APP_NAME#";
 
     private QuestionnaireBean questionnaireBean;
     private CommonUserApiResponseModel userModel;
@@ -316,6 +317,7 @@ public class MedicalHistoryPdfGenerator {
                 .replace(PATIENT_GENDER_LABLE, genderLable)
                 .replace(PATIENT_NAME, name)
                 .replace(PATIENT_DOB, dob)
-                .replace(PATIENT_GENDER, gender);
+                .replace(PATIENT_GENDER, gender)
+                .replace(APP_NAME,context.getString(R.string.app_name));
     }
 }
