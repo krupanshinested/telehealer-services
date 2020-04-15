@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -176,10 +177,10 @@ public class CallMinimizeService extends Service implements FloatingViewListener
     }
 
     private static Notification createNotification(Context context) {
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "thealer-call");
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, TeleHealerApplication.appConfig.getCallChannel());
         builder.setWhen(System.currentTimeMillis());
         builder.setSmallIcon(R.drawable.app_icon);
-        builder.setContentTitle("Telehealer Call");
+        builder.setContentTitle(context.getString(R.string.app_name)+" Call");
         if (TokBox.shared.getCallType().equals(OpenTokConstants.audio)) {
             builder.setContentText("Audio call is going on");
         } else {

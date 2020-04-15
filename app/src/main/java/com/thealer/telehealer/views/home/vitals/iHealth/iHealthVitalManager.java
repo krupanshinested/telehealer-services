@@ -13,6 +13,7 @@ import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.ihealth.communication.manager.iHealthDevicesUpgradeManager;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
@@ -35,6 +36,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import config.AppConfig;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -78,13 +81,10 @@ public class iHealthVitalManager extends VitalsManager {
         iHealthDevicesManager.getInstance().init(getApplication(), Log.VERBOSE, Log.VERBOSE);
         callbackId = iHealthDevicesManager.getInstance().registerClientCallback(miHealthDevicesCallback);
 
-        String fileName;
-        if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-            fileName = "com_thealer_android.pem";
-        } else {
-            fileName = "com_thealer_pro_android_med.pem";
+        String fileName = TeleHealerApplication.appConfig.getVitalPemFileName();
+        if (fileName == null) {
+            return;
         }
-
         try {
             InputStream is = getApplication().getAssets().open(fileName);
             int size = is.available();
