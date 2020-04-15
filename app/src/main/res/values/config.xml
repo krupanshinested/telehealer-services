@@ -8,7 +8,8 @@
     <string name="feedback_url">https://telehealer.freshdesk.com/support/tickets/new</string>
     <string name="privacy_url">http://telehealer.com/privacy/</string>
     <string name="vital_devices_url">http://telehealer.com/vitals-devices/</string>
-
+    <string name="doctor_onboard_url">https://vimeo.com/278934065</string>
+    <string name="pricing_url">https://telehealer.com/product/doctors/#pricing</string>
     //Food Api service
     <string name="food_api_base_url">https://api.edamam.com</string>
 
@@ -20,4 +21,7 @@
     //Service api
     <string name="service_api_base_url">https://services.telehealer.com</string>
     <string name="service_api_key">ezuGJrW9O24Ran2gZaF7m2Ro13RTvD1q26IKTj4m</string>
+
+    //mail
+    <string name ="mail_to">support@telehealer.com</string>
 </resources>

@@ -3,6 +3,8 @@ package com.thealer.telehealer.common;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.thealer.telehealer.TeleHealerApplication;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +20,8 @@ public class AppPreference {
 
     private AppPreference(Context context) {
         this.context = context;
-        sharedPreferences = context.getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(TeleHealerApplication.appConfig.getAppPreference(),
+                Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.apply();
     }

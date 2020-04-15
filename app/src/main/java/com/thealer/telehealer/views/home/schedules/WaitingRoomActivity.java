@@ -211,7 +211,7 @@ public class WaitingRoomActivity extends BaseActivity {
         playerView.setPlayer(simpleExoPlayer);
         playerView.setShowShuffleButton(false);
         DefaultHttpDataSourceFactory dataSource = new DefaultHttpDataSourceFactory(
-                Util.getUserAgent(this, "telehealer"));
+                Util.getUserAgent(this, getString(R.string.app_name)));
         ExtractorMediaSource mediaSource = new ExtractorMediaSource.Factory(dataSource)
                 .createMediaSource(uri);
         simpleExoPlayer.prepare(mediaSource);

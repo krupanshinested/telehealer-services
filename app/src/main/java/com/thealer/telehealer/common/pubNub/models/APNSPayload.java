@@ -3,6 +3,7 @@ package com.thealer.telehealer.common.pubNub.models;
 import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.BuildConfig;
+import com.thealer.telehealer.TeleHealerApplication;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -247,15 +248,15 @@ public class APNSPayload implements Serializable {
         HashMap<String,Object> item = new HashMap<>();
         item.put("version","v2");
 
-        HashMap<String,String> patientTarget = new HashMap<>();
-        patientTarget.put("environment", BuildConfig.DEBUG ? "development" : "production");
-        patientTarget.put("topic","com.thealer");
+        ArrayList<HashMap<String,String >> targets = new ArrayList<>();
+        for (String bundleId :TeleHealerApplication.appConfig.getOtherParentBundleIds()) {
+            HashMap<String,String> target = new HashMap<>();
+            target.put("environment", BuildConfig.DEBUG ? "development" : "production");
+            target.put("topic",bundleId);
+            targets.add(target);
+        }
 
-        HashMap<String,String> medicalTarget = new HashMap<>();
-        medicalTarget.put("environment",BuildConfig.DEBUG ? "development" : "production");
-        medicalTarget.put("topic","com.thealer.pro");
-
-        item.put("targets", Arrays.asList(patientTarget,medicalTarget));
+        item.put("targets", targets);
         return item;
     }
 }

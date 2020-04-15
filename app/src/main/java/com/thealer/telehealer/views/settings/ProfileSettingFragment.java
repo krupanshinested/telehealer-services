@@ -22,6 +22,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.settings.ProfileUpdate;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.common.Config;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -129,7 +130,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
         try {
             String versionString = getString(R.string.version) + " " + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
-            if (getResources().getString(R.string.api_base_url).equals("https://api.dev.telehealer.com/")) {
+            if (Config.isDev()) {
                 versionString += " DEV";
             }
 

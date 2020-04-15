@@ -1466,7 +1466,7 @@ public class Utils {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         String mailto = null;
         try {
-            mailto = "mailto:support@telehealer.com" +
+            mailto = "mailto:"+ context.getString(R.string.mail_to) +
                     "?cc=" +
                     "&subject=" +
                     "&body=" + Uri.encode(String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName+ "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ",noteMessage, phoneNumber,appName));

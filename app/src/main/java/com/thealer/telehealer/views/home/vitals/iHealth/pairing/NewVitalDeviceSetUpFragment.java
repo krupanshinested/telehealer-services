@@ -136,7 +136,7 @@ public class NewVitalDeviceSetUpFragment extends BaseFragment {
         learMoreTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://telehealer.com/vitals-devices/"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vital_devices_url)));
                 startActivity(browserIntent);
             }
         });

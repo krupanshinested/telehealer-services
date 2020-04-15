@@ -52,6 +52,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.thealer.telehealer.common.PreferenceConstants;
+
+import config.AppConfig;
+
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 
@@ -251,7 +254,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                                 rejectScreenIntent, PendingIntent.FLAG_ONE_SHOT);
 
                         NotificationCompat.Builder notificationBuilder =
-                                new NotificationCompat.Builder(TelehealerFirebaseMessagingService.this, "thealer-call-voip")
+                                new NotificationCompat.Builder(TelehealerFirebaseMessagingService.this, TeleHealerApplication.appConfig.getVoipChannel())
                                         .setSmallIcon(R.drawable.app_icon)
                                         .setContentTitle(getString(R.string.app_name)+" Incoming call")
                                         .setContentText(doctorName)
