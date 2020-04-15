@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.example.smartlinklib.MainActivity;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
@@ -134,7 +135,7 @@ public class PatientApplication extends TeleHealerApplication implements GoogleF
             Intent vitalIntent = new Intent(this, MainActivity.class);
             vitalIntent.setAction(Intent.ACTION_VIEW);
             vitalIntent.setClassName(application,"com.thealer.telehealer.views.home.HomeActivity");
-            vitalIntent.setPackage("com.thealer");
+            vitalIntent.setPackage(BuildConfig.APPLICATION_ID);
             vitalIntent.putExtra(ArgumentKeys.OPEN_AUTOMATICALLY, MonitoringFragment.VITAL_OPEN_TYPE);
             ShortcutInfo vitalShortcut = new ShortcutInfo.Builder(application, MonitoringFragment.VITAL_OPEN_TYPE)
                     .setShortLabel(application.getString(R.string.vitals))
@@ -147,7 +148,7 @@ public class PatientApplication extends TeleHealerApplication implements GoogleF
             dietIntent.setAction(Intent.ACTION_VIEW);
             dietIntent.putExtra(ArgumentKeys.OPEN_AUTOMATICALLY, MonitoringFragment.DIET_OPEN_TYPE);
             dietIntent.setClassName(application,"com.thealer.telehealer.views.home.HomeActivity");
-            dietIntent.setPackage("com.thealer");
+            dietIntent.setPackage(BuildConfig.APPLICATION_ID);
             ShortcutInfo dietShortcut = new ShortcutInfo.Builder(application, MonitoringFragment.DIET_OPEN_TYPE)
                     .setShortLabel(application.getString(R.string.diet))
                     .setLongLabel(application.getString(R.string.diet))

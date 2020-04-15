@@ -18,7 +18,6 @@ public class Constants {
     public final static int AUDIO_BEEP_DISABLED_TIMEOUT = 30000;
 
 
-    public static final String PREFERENCE_NAME = "thealer";
     public static final String HEADER_AUTH_TOKEN = "X-Access-Token";
 
     public static final String BUILD_PATIENT = "patient";
