@@ -40,7 +40,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
     public static AppPreference appPreference;
     public static TeleHealerApplication application;
-    public static final String notificationChannelId = "thealer";
+    public static String notificationChannelId = "";
     public FirebaseAnalytics firebaseAnalytics;
     public static Set<Integer> popUpSchedulesId = new HashSet<>();
     public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false;
@@ -51,8 +51,9 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         super.onCreate();
 
         application = this;
-        appPreference = AppPreference.getInstance(this);
         appConfig = new AppConfig(this);
+        appPreference = AppPreference.getInstance(this);
+        notificationChannelId = appConfig.getApnsChannel();
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Fabric.with(this, new Crashlytics());
 
@@ -74,13 +75,13 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
             notificationManager.createNotificationChannel(notificationChannel);
 
-            NotificationChannel callNotification = new NotificationChannel("thealer-call",
+            NotificationChannel callNotification = new NotificationChannel(appConfig.getCallChannel(),
                     "Call",
                     NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(callNotification);
 
             NotificationChannel channel = new NotificationChannel(
-                    "thealer-call-voip", "Call-voip",
+                    appConfig.getVoipChannel(), "Call-voip",
                     NotificationManager.IMPORTANCE_HIGH);
             channel.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
             channel.setImportance(NotificationManager.IMPORTANCE_HIGH);

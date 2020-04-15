@@ -131,7 +131,7 @@ public class DoctorOnBoardingActivity extends BaseActivity {
         videoLinkTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "https://vimeo.com/278934065";
+                String url = getString(R.string.doctor_onboard_url);
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);

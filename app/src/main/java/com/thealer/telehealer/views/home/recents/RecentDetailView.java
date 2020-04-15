@@ -258,7 +258,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
 
         playerView.setShowShuffleButton(false);
         DefaultHttpDataSourceFactory dataSource = new DefaultHttpDataSourceFactory(
-                Util.getUserAgent(getActivity(), "telehealer"));
+                Util.getUserAgent(getActivity(), getString(R.string.app_name)));
         ExtractorMediaSource mediaSource = new ExtractorMediaSource.Factory(dataSource)
                 .createMediaSource(uri);
 

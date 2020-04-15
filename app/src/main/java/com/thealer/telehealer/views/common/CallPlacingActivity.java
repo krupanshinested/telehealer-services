@@ -327,7 +327,8 @@ public class CallPlacingActivity extends BaseActivity {
             intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
 
             String description = String.format(getString(R.string.trial_period_expired_doc_sec_1), getString(R.string.app_name));
-            description += " <a href=\"https://telehealer.com/product/doctors/#pricing\">https://telehealer.com/product/doctors/#pricing</a> ";
+            String url = getString(R.string.pricing_url);
+            description += " <a href=\""+url+"\">"+url+"</a> ";
             description += getString(R.string.trial_period_expired_doc_sec_2);
 
             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
