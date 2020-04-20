@@ -17,6 +17,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private String connection_status;
     private QuestionnaireBean questionnaire;
     private List<HistoryBean> history;
+    private AppDetailBean app_details;
     private UserDetailBean user_detail;
     private boolean email_verified;
     private String website;
@@ -30,13 +31,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public CommonUserApiResponseModel(String first_name, String last_name, String status, String email, String user_guid, int user_id,
                                       String user_avatar, String role, String phone, String gender, String dob, int appt_length, String name,
-                                      String connection_status, QuestionnaireBean questionnaire, List<HistoryBean> history,
+                                      String connection_status, QuestionnaireBean questionnaire, List<HistoryBean> history, AppDetailBean appDetail,
                                       UserDetailBean user_detail) {
         super(user_id, user_guid, first_name, last_name, email, user_avatar, role, dob, status, phone, gender, name);
         this.appt_length = appt_length;
         this.connection_status = connection_status;
         this.questionnaire = questionnaire;
         this.history = history;
+        this.app_details = appDetail;
         this.user_detail = user_detail;
     }
 
@@ -156,6 +158,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public void setQuestionnaire(QuestionnaireBean questionnaire) {
         this.questionnaire = questionnaire;
+    }
+
+    public AppDetailBean getApp_details() {
+        return app_details;
+    }
+
+    public void setApp_details(AppDetailBean app_details) {
+        this.app_details = app_details;
     }
 
     public List<HistoryBean> getHistory() {
