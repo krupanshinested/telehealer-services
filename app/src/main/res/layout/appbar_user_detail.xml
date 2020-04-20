@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginLeft="5dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="30dp"
                 android:layout_toLeftOf="@+id/gender_iv"
                 android:layout_toEndOf="@+id/status_civ"
                 android:drawablePadding="10dp"
@@ -97,6 +97,30 @@
                 android:textSize="@dimen/toolbar_subtitle" />
 
             <ImageView
+                android:id="@+id/platform_iv"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:visibility="gone"
+                android:layout_below="@id/status_civ"
+                android:layout_alignBottom="@+id/version_tv"
+                android:src="@drawable/android_icon" />
+
+            <TextView
+                android:id="@+id/version_tv"
+                style="@style/text_sub_title_lignt_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@+id/platform_iv"
+                android:drawablePadding="10dp"
+                android:visibility="gone"
+                android:gravity="center|left"
+                android:text="@string/dummy_text"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/toolbar_subtitle" />
+
+               <ImageView
                 android:id="@+id/favorite_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

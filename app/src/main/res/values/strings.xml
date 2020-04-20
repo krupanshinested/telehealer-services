@@ -102,6 +102,7 @@
     <string name="doctor_agreement_hint">By creating an account, you agree to all the info release stated here</string>
     <string name="address">Address</string>
 
+    <string name="version_label">App version :\t</string>
 
     <string-array name="onboarding_list">
         <item>Visit doctors remotely through a private and secure video call</item>
@@ -160,16 +161,16 @@
 
     <!--Appointment list-->
     <string-array name="doctor_appointment_slots">
-        <item>15</item>
-        <item>20</item>
-        <item>25</item>
-        <item>30</item>
-        <item>35</item>
-        <item>40</item>
-        <item>45</item>
-        <item>50</item>
-        <item>55</item>
-        <item>60</item>
+        <item>15 mins</item>
+        <item>20 mins</item>
+        <item>25 mins</item>
+        <item>30 mins</item>
+        <item>35 mins</item>
+        <item>40 mins</item>
+        <item>45 mins</item>
+        <item>50 mins</item>
+        <item>55 mins</item>
+        <item>60 mins</item>
     </string-array>
 
     <string name="digitsAlphaNumberic">abcdefghijklmnopqrstuvwxyzQWERTYUIOPASDFGHJKLZXCVBNM1234567890</string>
@@ -340,7 +341,7 @@
     <string name="settings">Settings</string>
     <string name="phone_number">Phone Number</string>
     <string name="change_password">Change Password</string>
-    <string name="appointment_slots">Appointment Slots</string>
+    <string name="appointment_slots">Appointment Duration</string>
     <string name="feedback">Feedback</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="ok">Ok</string>
@@ -683,6 +684,7 @@
     <string name="patient_video_feed_description">Inorder to enable the video feed, remind your patient to click on the \'%s button\' on the right top corner of their locked screen.</string>
     <string name="do_not_show_again">Do not show this message again.</string>
     <string name="enable_video_feed">Enable your video feed</string>
+    <string name="splash_screen_text">Do not use in case of a medical emergency</string>
     <string name="helpmail_note_message">NOTE : PLS DO NOT POST ANY HEALTH-RELATED OR SCHEDULING QUERIES HERE. USE THIS ONLY IF YOU NEED TECHNICAL SUPPORT WITH THE APP/PLATFORM.</string>
     <string name="non_medical_queries">To be used only for non-medical related queries.</string>
     <string name="video_feed_description">When answering your doctor\'s video calls from the locked screen, remember to click the \'%s button\' on the right top corner to enable your video feed.</string>
@@ -1333,7 +1335,7 @@
     <string name="diet_delete_failure">Your diet is not deleted successfully.</string>
     <string name="deleting_your_diet">Deleting your diet</string>
     <string name="unable_to_determine_patient_location">Unable to determine patient location.</string>
-    <string name="accept_connection_request">Accept Connection Requests</string>
+    <string name="accept_connection_request">Connection Requests</string>
     <string name="no_educational_video">No Educational videos</string>
     <string name="empty_educational_message">Add a Educational video by tapping the \'+\' button</string>
     <string name="OVERLAY_NO_EDUCATIONAL_VIDEO">You can add your Educational video by tapping the \'+\' button</string>
@@ -1386,7 +1388,7 @@
     <string name="un_select_all">UnSelect All</string>
     <string name="select_readings">Select the readings to upload.</string>
     <string name="sync_track_message">Press Sync to fetch the track data.</string>
-    <string name="accept_appointment_request">Create Appointment Requests</string>
+    <string name="accept_appointment_request">Appointment Requests</string>
     <string name="no_new_appointment">No new Appointment request</string>
     <string name="appointment_not_allowed_create">%s does not currently accept appointment requests. Please check back at a later time.</string>
     <string name="registration_is_on_process">Registration is on process.</string>
