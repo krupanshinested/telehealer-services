@@ -249,7 +249,7 @@ public class Utils {
     }
 
     public static boolean isEmailValid(String email) {
-        String emailPattern = "[A-Z0-9a-z-._+-]+@[A-Za-z0-9-]+\\.[A-Za-z]{2,64}";
+        String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         return Pattern.matches(emailPattern, email);
     }
 
@@ -443,6 +443,22 @@ public class Utils {
                 break;
             case Constants.GENDER_OTHERS:
                 genderIv.setImageDrawable(context.getDrawable(R.drawable.gender_others));
+                break;
+        }
+    }
+
+    public static void setPlatformImage(Context context, ImageView PlatoformIv, String platform) {
+        if (TextUtils.isEmpty(platform)) {
+            PlatoformIv.setImageDrawable(context.getDrawable(R.drawable.android_icon));
+            return;
+        }
+
+        switch (platform.toLowerCase()) {
+            case Constants.ANDROID:
+                PlatoformIv.setImageDrawable(context.getDrawable(R.drawable.android_icon));
+                break;
+            case Constants.IOS:
+                PlatoformIv.setImageDrawable(context.getDrawable(R.drawable.ic_apple));
                 break;
         }
     }

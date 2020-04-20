@@ -172,9 +172,9 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     isSlotLoaded = true;
                 } else {
                     selectedItem = parent.getItemAtPosition(position).toString();
-                    profileUpdate.updateAppointmentSlot(selectedItem);
+                    String[] v = selectedItem.split("\\s", 2);
+                    profileUpdate.updateAppointmentSlot(v[0]);
                 }
-
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
