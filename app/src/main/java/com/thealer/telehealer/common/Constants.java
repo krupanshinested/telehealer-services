@@ -45,6 +45,9 @@ public class Constants {
     public static final String GENDER_FEMALE = "female";
     public static final String GENDER_OTHERS = "others";
 
+    public static final String ANDROID = "android";
+    public static final String IOS = "ios";
+
     //Date picker
     public static final String DATE_PICKER_TYPE = "date_picker_type";
     public static final int TYPE_DOB = 1;

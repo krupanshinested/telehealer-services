@@ -18,4 +18,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_max="@dimen/max_width" />
+
+    <TextView
+        android:id="@+id/splash_tv"
+        style="@style/text_sub_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/list_subtitle_size"
+        android:text="@string/splash_screen_text"
+        android:textColor="@color/colorGrey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

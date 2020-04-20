@@ -45,6 +45,7 @@ import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.associationlist.UpdateAssociationRequestModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.AppDetailBean;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
@@ -97,6 +98,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private TextView toolbarTitle;
     private ImageView userProfileIv;
     private ImageView genderIv;
+    private ImageView appPlatform;
+    private TextView appVersion;
     private TextView userNameTv;
     private TextView userDobTv;
     private RelativeLayout collapseBackgroundRl;
@@ -235,6 +238,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         toolbarTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         userProfileIv = (ImageView) view.findViewById(R.id.user_profile_iv);
         genderIv = (ImageView) view.findViewById(R.id.gender_iv);
+        appPlatform = (ImageView) view.findViewById(R.id.platform_iv);
+        appVersion = (TextView) view.findViewById(R.id.version_tv);
         userNameTv = (TextView) view.findViewById(R.id.user_name_tv);
         userDobTv = (TextView) view.findViewById(R.id.user_dob_tv);
         collapseBackgroundRl = (RelativeLayout) view.findViewById(R.id.collapse_background_rl);
@@ -440,9 +445,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                                 }
                             }
                         }
-                            if (!UserType.isUserPatient()) {
-                                associationApiViewModel.getUserAssociationDetail(userGuid, doctorGuid, true);
-                            }
                             updateView(resultBean);
                     }
                 }
@@ -506,7 +508,20 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             userNameTv.setText(resultBean.getUserDisplay_name());
             userDobTv.setText(resultBean.getDisplayInfo());
             Utils.setGenderImage(getActivity(), genderIv, resultBean.getGender());
+
+            if (resultBean.getRole().equals(Constants.ROLE_PATIENT) && resultBean.getApp_details() != null) {
+                appPlatform.setVisibility(View.VISIBLE);
+                appVersion.setVisibility(View.VISIBLE);
+                appVersion.setText(getString(R.string.version_label)+resultBean.getApp_details().getVersion());
+                Utils.setPlatformImage(getActivity(), appPlatform, resultBean.getApp_details().displayPlatform());
+            } else {
+                appPlatform.setVisibility(View.GONE);
+                appVersion.setVisibility(View.GONE);
+            }
+
+
             Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
+
 
             updateUserStatus(resultBean);
             if (getArguments().getBoolean(ArgumentKeys.SHOW_FAVORITES, false) && resultBean.getFavorite() != null) {
