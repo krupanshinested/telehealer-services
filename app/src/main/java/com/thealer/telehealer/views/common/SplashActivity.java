@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -34,6 +35,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 public class SplashActivity extends BaseActivity {
     private boolean isSplashCreated;
     private ImageView splashIv;
+    private TextView splashTv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
 
         splashIv = (ImageView) findViewById(R.id.splash_iv);
+        splashTv = (TextView) findViewById(R.id.splash_tv);
 
         if (!appConfig.isOtherThanTelehealer(this)) {
             Glide.with(this).load(R.raw.app_splash).apply(new RequestOptions().placeholder(getDrawable(R.drawable.app_icon))).into(splashIv);
