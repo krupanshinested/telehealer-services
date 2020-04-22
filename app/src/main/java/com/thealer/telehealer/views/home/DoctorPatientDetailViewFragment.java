@@ -519,9 +519,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                 appVersion.setVisibility(View.GONE);
             }
 
+            if (getArguments() != null) {
+                getArguments().putSerializable(Constants.USER_DETAIL,resultBean);
+            }
 
             Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
-
 
             updateUserStatus(resultBean);
             if (getArguments().getBoolean(ArgumentKeys.SHOW_FAVORITES, false) && resultBean.getFavorite() != null) {
