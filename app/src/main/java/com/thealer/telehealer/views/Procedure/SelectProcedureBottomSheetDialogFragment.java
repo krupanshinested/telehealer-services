@@ -47,7 +47,10 @@ public class SelectProcedureBottomSheetDialogFragment extends BaseBottomSheetDia
         ArrayList<String> selectedItems = new ArrayList<>();
 
         if (getArguments() != null) {
-            selectedItems.add(getArguments().getString(ArgumentKeys.SELECTED_ITEMS));
+            String selectedItem = getArguments().getString(ArgumentKeys.SELECTED_ITEMS);
+            if (selectedItem != null) {
+                selectedItems.add(selectedItem);
+            }
         }
 
         List<String> CPT_CODE_LIST = ProcedureConstants.getItems();

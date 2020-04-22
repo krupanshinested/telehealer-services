@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -51,9 +50,8 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     private RatingBar rating_bar;
     private EditText rating_et;
     private ConstraintLayout ccm_view;
-    private CCMItemView ccm_item, rpm_item, bhi_item;
+    private CCMItemView first_item, second_item, third_item,fourth_item;
     private CustomButton submit_btn;
-    private CCMItemView telehealthItem;
     private CCMItemView newItem;
     private TextView moreTv;
 
@@ -64,6 +62,8 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     private SelectProcedureBottomSheetDialogFragment selectProcedureBottomSheetDialogFragment;
 
     private VisitsApiViewModel visitsApiViewModel;
+
+    private ArrayList<String> defaultCPTCodes = ProcedureConstants.getDefaultItems();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -150,10 +150,10 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         ccm_view = findViewById(R.id.ccm_view);
         submit_btn = findViewById(R.id.submit_btn);
 
-        ccm_item = findViewById(R.id.ccm_item);
-        rpm_item = findViewById(R.id.rpm_item);
-        bhi_item = findViewById(R.id.bhi_item);
-        telehealthItem = (CCMItemView) findViewById(R.id.telehealth_item);
+        fourth_item = (CCMItemView) findViewById(R.id.fourth_item);
+        first_item = findViewById(R.id.first_item);
+        second_item = findViewById(R.id.second_item);
+        third_item = findViewById(R.id.third_item);
         newItem = (CCMItemView) findViewById(R.id.new_item);
         moreTv = (TextView) findViewById(R.id.more_tv);
 
@@ -186,39 +186,39 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         } else {
             ccm_view.setVisibility(View.VISIBLE);
 
-            ccm_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.CCM_G2065), false);
-            ccm_item.setOnClickListener(this);
-            ccm_item.setListenerForInfo(new View.OnClickListener() {
+            first_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.getDefaultItems().get(0)), false);
+            first_item.setOnClickListener(this);
+            first_item.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(ProcedureConstants.CCM_G2065);
+                    showDetailDialog(ProcedureConstants.getDefaultItems().get(0));
                 }
             });
 
-            rpm_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.RPM_99458), false);
-            rpm_item.setOnClickListener(this);
-            rpm_item.setListenerForInfo(new View.OnClickListener() {
+            second_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.getDefaultItems().get(1)), false);
+            second_item.setOnClickListener(this);
+            second_item.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(ProcedureConstants.RPM_99458);
+                    showDetailDialog(ProcedureConstants.getDefaultItems().get(1));
                 }
             });
 
-            bhi_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.BHI_99484), false);
-            bhi_item.setOnClickListener(this);
-            bhi_item.setListenerForInfo(new View.OnClickListener() {
+            third_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.getDefaultItems().get(2)), false);
+            third_item.setOnClickListener(this);
+            third_item.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(ProcedureConstants.BHI_99484);
+                    showDetailDialog(ProcedureConstants.getDefaultItems().get(2));
                 }
             });
 
-            telehealthItem.update(ProcedureConstants.getTitle(this, ProcedureConstants.TELEHEALTH_G2088), true);
-            telehealthItem.setOnClickListener(this);
-            telehealthItem.setListenerForInfo(new View.OnClickListener() {
+            fourth_item.update(ProcedureConstants.getTitle(this, ProcedureConstants.getDefaultItems().get(3)), false);
+            fourth_item.setOnClickListener(this);
+            fourth_item.setListenerForInfo(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDetailDialog(ProcedureConstants.TELEHEALTH_G2088);
+                    showDetailDialog(ProcedureConstants.getDefaultItems().get(3));
                 }
             });
 
@@ -229,7 +229,6 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                 }
             });
 
-            selectedItem = ProcedureConstants.TELEHEALTH_G2088;
 
             moreTv.setOnClickListener(this);
         }
@@ -282,21 +281,21 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             case R.id.close_iv:
                 finish();
                 break;
-            case R.id.ccm_item:
-                setSelected(ccm_item);
-                selectedItem = ProcedureConstants.CCM_G2065;
+            case R.id.first_item:
+                setSelected(first_item);
+                selectedItem = ProcedureConstants.getDefaultItems().get(0);
                 break;
-            case R.id.bhi_item:
-                setSelected(bhi_item);
-                selectedItem = ProcedureConstants.BHI_99484;
+            case R.id.second_item:
+                setSelected(second_item);
+                selectedItem = ProcedureConstants.getDefaultItems().get(1);
                 break;
-            case R.id.rpm_item:
-                setSelected(rpm_item);
-                selectedItem = ProcedureConstants.RPM_99458;
+            case R.id.third_item:
+                setSelected(third_item);
+                selectedItem = ProcedureConstants.getDefaultItems().get(2);
                 break;
-            case R.id.telehealth_item:
-                setSelected(telehealthItem);
-                selectedItem = ProcedureConstants.TELEHEALTH_G2088;
+            case R.id.fourth_item:
+                setSelected(fourth_item);
+                selectedItem = ProcedureConstants.getDefaultItems().get(3);
                 break;
             case R.id.more_tv:
                 selectProcedureBottomSheetDialogFragment = new SelectProcedureBottomSheetDialogFragment();
@@ -309,10 +308,10 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void setSelected(CCMItemView view) {
-        telehealthItem.update(false);
-        ccm_item.update(false);
-        rpm_item.update(false);
-        bhi_item.update(false);
+        fourth_item.update(false);
+        first_item.update(false);
+        second_item.update(false);
+        third_item.update(false);
         newItem.update(false);
 
         view.update(true);
@@ -328,23 +327,17 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     public void onListItemSelected(int position, Bundle bundle) {
         selectedItem = ProcedureConstants.getItems().get(position);
 
-        switch (selectedItem) {
-            case ProcedureConstants.TELEHEALTH_G2088:
-                setSelected(telehealthItem);
-                break;
-            case ProcedureConstants.CCM_G2065:
-                setSelected(ccm_item);
-                break;
-            case ProcedureConstants.BHI_99484:
-                setSelected(bhi_item);
-                break;
-            case ProcedureConstants.RPM_99458:
-                setSelected(rpm_item);
-                break;
-            default:
-                setSelected(newItem);
-                newItem.update(ProcedureConstants.getTitle(this, selectedItem), true);
-                break;
+        if (selectedItem.equals(ProcedureConstants.getDefaultItems().get(0))) {
+            setSelected(first_item);
+        } else if (selectedItem.equals(ProcedureConstants.getDefaultItems().get(1))) {
+            setSelected(second_item);
+        } else if (selectedItem.equals(ProcedureConstants.getDefaultItems().get(2))) {
+            setSelected(third_item);
+        } else if (selectedItem.equals(ProcedureConstants.getDefaultItems().get(3))) {
+            setSelected(fourth_item);
+        } else {
+            setSelected(newItem);
+            newItem.update(ProcedureConstants.getTitle(this, selectedItem), true);
         }
 
         selectProcedureBottomSheetDialogFragment.dismiss();
