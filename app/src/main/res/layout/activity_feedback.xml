@@ -133,7 +133,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <com.thealer.telehealer.views.common.CCMItemView
-                        android:id="@+id/telehealth_item"
+                        android:id="@+id/first_item"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -142,28 +142,28 @@
                         app:layout_constraintTop_toBottomOf="@+id/ccm_tv" />
 
                     <com.thealer.telehealer.views.common.CCMItemView
-                        android:id="@+id/ccm_item"
+                        android:id="@+id/second_item"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/telehealth_item" />
+                        app:layout_constraintTop_toBottomOf="@+id/first_item" />
 
                     <com.thealer.telehealer.views.common.CCMItemView
-                        android:id="@+id/rpm_item"
+                        android:id="@+id/third_item"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/ccm_item" />
+                        app:layout_constraintTop_toBottomOf="@+id/second_item" />
 
                     <com.thealer.telehealer.views.common.CCMItemView
-                        android:id="@+id/bhi_item"
+                        android:id="@+id/fourth_item"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/rpm_item" />
+                        app:layout_constraintTop_toBottomOf="@+id/third_item" />
 
                     <com.thealer.telehealer.views.common.CCMItemView
                         android:id="@+id/new_item"
@@ -172,7 +172,7 @@
                         android:visibility="gone"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/bhi_item" />
+                        app:layout_constraintTop_toBottomOf="@+id/fourth_item" />
 
                     <TextView
                         android:id="@+id/more_tv"

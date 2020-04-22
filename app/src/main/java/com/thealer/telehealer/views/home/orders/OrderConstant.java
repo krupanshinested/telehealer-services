@@ -107,5 +107,13 @@ public class OrderConstant {
             "Urine microalbumin, quantitative",
             "Vitamin D, 25-Hydroxy",
             "Tissue pathology",
+            "Chlamydia/Gonorrhea, Urine test",
+            "Chlamydia amplified, DNA probe",
+            "Hepatitis panel",
+            "HIV",
+            "HPV",
+            "HSV culture and typing",
+            "HSV, type II Ab",
+            "RPR, Qualitative",
             "Other"};
 }
