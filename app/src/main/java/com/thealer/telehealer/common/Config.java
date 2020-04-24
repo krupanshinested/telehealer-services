@@ -65,7 +65,7 @@ public class Config {
             if (BuildConfig.BUILD_TYPE.equals(Constants.BUILD_TYPE_DEBUG)) {
                 return "sub-c-e3a69658-7228-11ea-a44c-76a98e4db888";
             } else {
-                return "sub-c-722f369a-722a-11ea-a7c4-5e95b827fd71b";
+                return "sub-c-722f369a-722a-11ea-a7c4-5e95b827fd71";
             }
         } else {
             if (BuildConfig.BUILD_TYPE.equals(Constants.BUILD_TYPE_DEBUG)) {

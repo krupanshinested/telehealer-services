@@ -186,8 +186,11 @@ public class MedicationListAdapter extends RecyclerView.Adapter<MedicationListAd
 
             @Override
             public void afterTextChanged(Editable s) {
-                medicalHistoryViewModel.getMedicationListMutableLiveData().getValue().get(i).setStrength(s.toString());
-                medicationModelList.get(i).setStrength(s.toString());
+                if (medicalHistoryViewModel.getMedicationListMutableLiveData().getValue() != null &&
+                        i >= 0 && medicalHistoryViewModel.getMedicationListMutableLiveData().getValue().size() > i) {
+                    medicalHistoryViewModel.getMedicationListMutableLiveData().getValue().get(i).setStrength(s.toString());
+                    medicationModelList.get(i).setStrength(s.toString());
+                }
             }
         });
 

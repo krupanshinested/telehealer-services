@@ -74,11 +74,9 @@ public class AppConfig {
         String fileName = null;
         if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             fileName = "com_thealer_android.pem";
-        } else if (!BuildConfig.PARENT_APP.equals(PEPTALK_PARENT)) {
-            fileName = "com_thealer_pro_android_med.pem";
         } else {
-            fileName = null;
-        }
+            fileName = "com_thealer_pro_android_med.pem";
+        } 
         return fileName;
     }
 

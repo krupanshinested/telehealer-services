@@ -500,7 +500,12 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
                             break;
                         case SupportedMeasurementType.height:
                             int feet = ((int) vital1Value) * 12;
-                            int inches = Integer.parseInt(vital2Et.getText().toString().split(" ")[0]);
+                            int inches = 0;
+                            try {
+                                inches = Integer.parseInt(vital2Et.getText().toString().split(" ")[0]);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             value = String.valueOf(feet + inches);
                             break;
                         default:
