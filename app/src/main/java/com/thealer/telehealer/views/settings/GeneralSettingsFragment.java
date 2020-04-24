@@ -117,7 +117,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
 
         updateQuickLoginSwitch();
 
-        if (whoAmIApiResponseModel.getStatus().equals(Constants.AVAILABLE))
+        if (whoAmIApiResponseModel != null && whoAmIApiResponseModel.getStatus().equals(Constants.AVAILABLE))
             presence.updateSwitch(true);
         else
             presence.updateSwitch(false);
