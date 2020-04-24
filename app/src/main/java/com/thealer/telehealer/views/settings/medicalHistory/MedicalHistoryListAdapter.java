@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
 import java.util.ArrayList;
@@ -32,11 +31,9 @@ public class MedicalHistoryListAdapter extends RecyclerView.Adapter<MedicalHisto
     private Fragment fragment;
 
     private ShowSubFragmentInterface showSubFragmentInterface;
-    private ChangeTitleInterface changeTitleInterface;
 
     public MedicalHistoryListAdapter(FragmentActivity activity, Bundle arguments, MedicalHistoryList medicalHistoryList) {
         this.fragmentActivity = activity;
-        changeTitleInterface = (ChangeTitleInterface) activity;
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
         typeList = MedicalHistoryConstants.itemList;
         for (String type : typeList) {
@@ -62,7 +59,6 @@ public class MedicalHistoryListAdapter extends RecyclerView.Adapter<MedicalHisto
         viewHolder.itemCl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                changeTitleInterface.onTitleChange(listItem[i]);
 
                 MedicalHistoryEditFragment medicalHistoryEditFragment = new MedicalHistoryEditFragment();
                 bundle.putString(ArgumentKeys.HISTORY_TYPE, typeList[i]);
