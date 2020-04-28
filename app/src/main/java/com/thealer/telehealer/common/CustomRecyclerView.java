@@ -83,10 +83,10 @@ public class CustomRecyclerView extends ConstraintLayout {
                             showProgressBar();
                         }
                     } else {
-                        hideProgressBar();
+                       // hideProgressBar();
                     }
                 } else {
-                    hideProgressBar();
+                    //hideProgressBar();
                 }
 
                 updateView();

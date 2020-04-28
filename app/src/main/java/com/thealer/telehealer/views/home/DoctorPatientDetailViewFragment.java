@@ -6,6 +6,7 @@ import Flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -64,10 +65,12 @@ import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
+import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
 import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
@@ -90,12 +93,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Aswin on 14,November,2018
  */
-public class DoctorPatientDetailViewFragment extends BaseFragment {
+public class DoctorPatientDetailViewFragment extends BaseFragment implements View.OnClickListener {
 
     private AppBarLayout appbarLayout;
     private CollapsingToolbarLayout collapsingToolbar;
     private Toolbar toolbar;
     private TextView toolbarTitle;
+    private ImageView toolbarSearch;
     private ImageView userProfileIv;
     private ImageView genderIv;
     private ImageView appPlatform;
@@ -127,8 +131,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     private String view_type;
     private String doctorGuid = null, userGuid = null;
     private boolean isUserDataFetched = false;
-    private ImageView favoriteIv;
+    private ImageView favoriteIv, searchIV;
     private CircleImageView statusCiv;
+    private ShowSubFragmentInterface showSubFragmentInterface;
 
     private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
             orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7;
@@ -136,6 +141,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
@@ -236,6 +242,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         collapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbarTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        toolbarSearch = (ImageView) toolbar.findViewById(R.id.toolbar_search_iv);
         userProfileIv = (ImageView) view.findViewById(R.id.user_profile_iv);
         genderIv = (ImageView) view.findViewById(R.id.gender_iv);
         appPlatform = (ImageView) view.findViewById(R.id.platform_iv);
@@ -252,6 +259,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
         bottomView = (LinearLayout) view.findViewById(R.id.bottom_view);
         userDetailBnv = (BottomNavigationView) view.findViewById(R.id.user_detail_bnv);
         favoriteIv = (ImageView) view.findViewById(R.id.favorite_iv);
+        searchIV = (ImageView) view.findViewById(R.id.search_iv);
         statusCiv = (CircleImageView) view.findViewById(R.id.status_civ);
 
         userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
@@ -377,14 +385,27 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
                     // Collapsed
                     toolbarTitle.setVisibility(View.VISIBLE);
                     collapseBackgroundRl.setVisibility(View.INVISIBLE);
+                    if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR) && viewPager.getCurrentItem() == 1){
+                        toolbarSearch.setVisibility(View.VISIBLE);
+                    }
+                    else
+                        toolbarSearch.setVisibility(View.GONE);
 
                 } else if (verticalOffset == 0) {
                     // Expanded
                     toolbarTitle.setVisibility(View.GONE);
+                    toolbarSearch.setVisibility(View.GONE);
                     collapseBackgroundRl.setVisibility(View.VISIBLE);
+                    if (UserType.isUserAssistant() && resultBean!=null && viewPager.getCurrentItem() == 1){
+                        if (resultBean.getRole().equals(Constants.ROLE_DOCTOR))
+                            searchIV.setVisibility(View.VISIBLE);
+                    }
+                    else
+                        searchIV.setVisibility(View.GONE);
                 } else {
                     // Somewhere in between
                     toolbarTitle.setVisibility(View.GONE);
+                    toolbarSearch.setVisibility(View.GONE);
                     collapseBackgroundRl.setVisibility(View.VISIBLE);
                 }
             }
@@ -687,6 +708,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
             }
             viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);
             viewPager.setAdapter(viewPagerAdapter);
+            searchIV.setOnClickListener(this);
+            toolbarSearch.setOnClickListener(this);
             viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int i, float v, int i1) {
@@ -720,6 +743,40 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
                 }
             });
+        }
+    }
+
+    private void showAssociationSelection(int requestCode, String searchType, String user_guid) {
+        Bundle bundle = getArguments();
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putString(ArgumentKeys.SEARCH_TYPE, searchType);
+        bundle.putString(ArgumentKeys.DOCTOR_GUID, user_guid);
+        bundle.putBoolean(ArgumentKeys.IS_SHOW_TOOLBAR, true);
+        bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, false);
+        bundle.putString(ArgumentKeys.USER_NAME, resultBean.getUserDisplay_name());
+
+        SelectAssociationFragment selectAssociationFragment = new SelectAssociationFragment();
+        selectAssociationFragment.setArguments(bundle);
+        selectAssociationFragment.setTargetFragment(this, requestCode);
+        showSubFragmentInterface.onShowFragment(selectAssociationFragment);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == RequestID.REQ_SELECT_PATIENT) {
+                if (data != null && data.getExtras() != null) {
+                    DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Constants.VIEW_TYPE,Constants.VIEW_ASSOCIATION_DETAIL);
+                    bundle.putSerializable(Constants.USER_DETAIL,data.getSerializableExtra(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL));
+                    doctorPatientDetailViewFragment.setArguments(bundle);
+                    showSubFragmentInterface.onShowFragment(doctorPatientDetailViewFragment);
+                }
+            }
         }
     }
 
@@ -822,5 +879,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment {
 
         fragmentList.add(fragment);
         titleList.add(title);
+    }
+    @Override
+    public void onClick(View v) {
+        showAssociationSelection(RequestID.REQ_SELECT_PATIENT, ArgumentKeys.SEARCH_ASSOCIATION, resultBean.getUser_guid());
     }
 }
