@@ -42,13 +42,12 @@ public class AssociationApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getAssociationList(boolean showProgress, String doctorGuid) {
+    public void getAssociationList(@NonNull String search, boolean showProgress, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-
-                    getAuthApiService().getAssociations(false, doctorGuid)
+                    getAuthApiService().getAssociations(search, false, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAListObserver<CommonUserApiResponseModel>(getProgress(showProgress)) {
                                 @Override
