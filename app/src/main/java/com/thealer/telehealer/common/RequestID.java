@@ -14,6 +14,7 @@ public class RequestID {
     public static final int REQ_SELECT_ASSOCIATION = 5002;
     public static final int REQ_SEND_FAX = 5003;
     public static final int REQ_SELECT_ASSOCIATION_PATIENT = 5004;
+    public static final int REQ_SELECT_PATIENT = 4004;
     public static final int REQ_SELECT_ASSOCIATION_DOCTOR = 5005;
     public static final int REQ_SELECT_ICD_CODE = 5006;
     public static final int REQ_PROFILE_UPDATE = 5007;
