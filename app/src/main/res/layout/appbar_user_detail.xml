@@ -25,13 +25,21 @@
             <TextView
                 android:id="@+id/toolbar_title"
                 style="@style/text_title_lignt_bold"
-                android:layout_width="match_parent"
+                android:layout_width="320dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/dummy_text"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/toolbar_title"
                 android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/toolbar_search_iv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_toLeftOf="@id/favorite_iv"
+                android:src="@drawable/ic_search_grey_24dp" />
         </androidx.appcompat.widget.Toolbar>
 
         <RelativeLayout
@@ -129,6 +137,16 @@
                 android:padding="8dp"
                 android:src="@drawable/ic_drawable_favorite"
                 android:visibility="visible"
+                app:layout_collapseMode="pin" />
+
+            <ImageView
+                android:id="@+id/search_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/favorite_iv"
+                android:visibility="gone"
+                android:padding="16dp"
+                android:src="@drawable/ic_search_grey_24dp"
                 app:layout_collapseMode="pin" />
 
         </RelativeLayout>

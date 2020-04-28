@@ -17,7 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -32,6 +35,8 @@ import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.Util.TimerInterface;
 import com.thealer.telehealer.common.Util.TimerRunnable;
+import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -49,6 +54,9 @@ import java.util.List;
 public class SelectAssociationFragment extends BaseFragment implements OnListItemSelectInterface {
 
     private EditText searchEt;
+    private TextView titleTv;
+    private ImageView backIv;
+    private AppBarLayout appBarLayout;
     private CustomRecyclerView associationRv;
 
     private ChangeTitleInterface changeTitleInterface;
@@ -63,8 +71,9 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
     private GetDoctorsApiResponseModel getDoctorsApiResponseModel;
     private List<GetDoctorsApiResponseModel.DataBean> doctorsDataList = new ArrayList<>();
     private int page = 1;
-    private boolean isFromHome;
-    private String selectionType;
+    private boolean isFromHome,isShowToolbar,isCloseNeeded;
+    private String selectionType, userName;
+    private ImageView searchClearIv;
 
     @Nullable
     private TimerRunnable uiToggleTimer;
@@ -91,6 +100,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
 
                     associationListAdapter.setCommonUserApiResponseModelList(associationApiResponseModel.getResult(), page);
                 }
+                associationRv.updateView();
                 associationRv.setScrollable(true);
                 associationRv.hideProgressBar();
             }
@@ -105,6 +115,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                     List<CommonUserApiResponseModel> responseModelList = new ArrayList<>(commonUserApiResponseModelArrayList);
                     associationListAdapter.setCommonUserApiResponseModelList(responseModelList, page);
                 }
+                associationRv.updateView();
                 associationRv.setScrollable(true);
                 associationRv.hideProgressBar();
             }
@@ -126,6 +137,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                         associationRv.showOrhideEmptyState(true);
                     }
                 }
+                associationRv.updateView();
                 associationRv.setScrollable(true);
                 associationRv.hideProgressBar();
             }
@@ -163,8 +175,18 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
 
     private void initView(View view) {
         searchEt = (EditText) view.findViewById(R.id.search_et);
+        appBarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
+        titleTv = (TextView) view.findViewById(R.id.toolbar_title);
         associationRv = (CustomRecyclerView) view.findViewById(R.id.association_rv);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        searchClearIv = (ImageView) view.findViewById(R.id.search_clear_iv);
 
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCloseActionInterface.onClose(false);
+            }
+        });
 
         associationRv.getSwipeLayout().setEnabled(false);
         associationRv.setOnPaginateInterface(new OnPaginateInterface() {
@@ -177,7 +199,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                 if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR) || selectionType.equals(ArgumentKeys.SEARCH_COPY_TO)) {
                     getSpecialist(null, false);
                 } else {
-                    getAssociationList(false);
+                    getAssociationList(null,false);
                 }
             }
         });
@@ -216,11 +238,25 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                         handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                     }
                 } else {
-                    getAssociationList(false);
+                    if (!s.toString().isEmpty()) {
+                        associationRv.setScrollable(false);
+                        searchClearIv.setVisibility(View.VISIBLE);
+                        getAssociationList(searchEt.getText().toString(),true);
+                    }else {
+                        searchClearIv.setVisibility(View.GONE);
+                        getAssociationList(null,false);
+                    }
                 }
             }
         });
 
+        searchClearIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchEt.setText("");
+            }
+        });
+        
         associationApiResponseModel = new AssociationApiResponseModel();
 
         if (getArguments() != null) {
@@ -228,7 +264,14 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             Bundle bundle = getArguments();
 
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
+            isShowToolbar = getArguments().getBoolean(ArgumentKeys.IS_SHOW_TOOLBAR,false);
+            isCloseNeeded = getArguments().getBoolean(ArgumentKeys.IS_CLOSE_NEEDED,true);
+            userName = getArguments().getString(ArgumentKeys.USER_NAME);
 
+            if (isShowToolbar){
+                appBarLayout.setVisibility(View.VISIBLE);
+                titleTv.setText(Utils.getPaginatedTitle(userName,associationApiResponseModel.getCount()));
+            }
             if (!isFromHome) {
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             }
@@ -254,13 +297,13 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                     case ArgumentKeys.SEARCH_ASSOCIATION:
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_PATIENT_SEARCH);
                         changeTitleInterface.onTitleChange(getString(R.string.choose_patient));
-                        getAssociationList(true);
+                        getAssociationList(null,true);
                         break;
                     case ArgumentKeys.SEARCH_ASSOCIATION_DOCTOR:
                         changeTitleInterface.onTitleChange(getString(R.string.choose_doctor));
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_SPECIALIST);
                         searchEt.setHint(getString(R.string.search_doctors));
-                        getAssociationList(true);
+                        getAssociationList(null,true);
                         break;
                 }
 
@@ -282,17 +325,19 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
         getDoctorsApiViewModel.getDoctorsDetailList(page, name, isShowProgress);
     }
 
-    private void getAssociationList(boolean isShowProgress) {
+    private void getAssociationList(String search, boolean isShowProgress) {
         String doctorGuid = null;
         if (getArguments() != null && getArguments().getString(ArgumentKeys.DOCTOR_GUID) != null) {
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
         }
-        associationApiViewModel.getAssociationList(isShowProgress, doctorGuid);
+        associationApiViewModel.getAssociationList(search,page, doctorGuid, isShowProgress,false);
     }
 
     @Override
     public void onListItemSelected(int position, Bundle bundle) {
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent().putExtras(bundle));
-        onCloseActionInterface.onClose(false);
+        if (isCloseNeeded) {
+            onCloseActionInterface.onClose(false);
+        } 
     }
 }

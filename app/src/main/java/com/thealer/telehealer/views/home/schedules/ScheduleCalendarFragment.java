@@ -700,7 +700,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
     }
 
     private void getDoctorsList() {
-        associationApiViewModel.getAssociationList(true, null);
+        associationApiViewModel.getAssociationList(null,true, null);
     }
 
 }

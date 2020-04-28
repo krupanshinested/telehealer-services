@@ -126,6 +126,7 @@ public interface ApiInterface {
     String ID = "id";
     String CANCEL = "cancel";
     String SEARCH = "search";
+    String SEARCH_FILTER = "filter_fullname__icontains";
     String NAME = "name";
     String FIELDS = "fields";
     String EMAIL = "email";
@@ -242,7 +243,7 @@ public interface ApiInterface {
     Observable<AssociationApiResponseModel> getAssociations(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/associations")
-    Observable<ArrayList<CommonUserApiResponseModel>> getAssociations(@Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<ArrayList<CommonUserApiResponseModel>> getAssociations(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/associated-doctors")
     Observable<ArrayList<DoctorGroupedAssociations>> getDoctorGroupedAssociations();
