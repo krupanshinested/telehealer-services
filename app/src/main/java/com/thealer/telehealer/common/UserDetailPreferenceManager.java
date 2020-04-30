@@ -420,6 +420,6 @@ public class UserDetailPreferenceManager {
 
     public static boolean isProfileInComplete() {
         WhoAmIApiResponseModel whoAmIApiResponseModel = getWhoAmIResponse();
-        return whoAmIApiResponseModel.getStatus() != null && whoAmIApiResponseModel.getStatus().equals(PROFILE_INCOMPLETE);
+        return whoAmIApiResponseModel != null &&  whoAmIApiResponseModel.getStatus() != null && whoAmIApiResponseModel.getStatus().equals(PROFILE_INCOMPLETE);
     }
 }
