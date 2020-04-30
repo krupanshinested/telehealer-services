@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.appbar.AppBarLayout;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.view.LayoutInflater;
@@ -143,7 +144,7 @@ public class PatientChoosePaymentFragment extends SignupBaseFragment implements 
                         dialog.dismiss();
                         switch (currentScreenType) {
                             case Constants.forRegistration:
-                                CreateUserRequestModel createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+                                CreateUserRequestModel createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
                                 postPatientDetail(createUserRequestModel);
                                 break;
                             case Constants.forProfileUpdate:

@@ -123,6 +123,8 @@ public class UpdateProfileModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
 
+                    createUserRequestModel.getUser_data().setRole(null);
+
                     MultipartBody.Part user_avatar = null;
                     if (createUserRequestModel.getUser_avatar_path() != null) {
                         user_avatar = getMultipartFile("user_avatar", createUserRequestModel.getUser_avatar_path());

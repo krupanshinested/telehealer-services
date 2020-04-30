@@ -123,7 +123,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
 
-        createUserRequestModel = new ViewModelProvider(this).get(CreateUserRequestModel.class);
+        createUserRequestModel = new ViewModelProvider(getActivity()).get(CreateUserRequestModel.class);
         updateProfileModel = new ViewModelProvider(this).get(UpdateProfileModel.class);
         whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
 
