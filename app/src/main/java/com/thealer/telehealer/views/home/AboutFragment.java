@@ -433,27 +433,31 @@ public class AboutFragment extends BaseFragment {
         if (userDetail == null) {
             return null;
         }
-        switch (userDetail.getRole()) {
-            case Constants.ROLE_DOCTOR:
-                if ((userDetail.getUser_detail() != null) && (userDetail.getUser_detail().getData() != null) && (userDetail.getUser_detail().getData().getPractices() != null) && !((userDetail.getUser_detail().getData().getPractices().isEmpty()))) {
-                    if (userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone() != null &&
-                            userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone().length() > 0) {
-                        return userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone();
+        try {
+            switch (userDetail.getRole()) {
+                case Constants.ROLE_DOCTOR:
+                    if ((userDetail.getUser_detail() != null) && (userDetail.getUser_detail().getData() != null) && (userDetail.getUser_detail().getData().getPractices() != null) && !((userDetail.getUser_detail().getData().getPractices().isEmpty()))) {
+                        if (userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone() != null &&
+                                userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone().length() > 0) {
+                            return userDetail.getUser_detail().getData().getPractices().get(0).getOfficePhone();
+                        } else {
+                            return null;
+                        }
                     } else {
                         return null;
                     }
-                }else{
-                        return null;
-                }
-            case Constants.ROLE_PATIENT:
-                return userDetail.getPhone();
-            case Constants.ROLE_ASSISTANT:
-                if (UserType.isUserDoctor())
+                case Constants.ROLE_PATIENT:
                     return userDetail.getPhone();
-                else
+                case Constants.ROLE_ASSISTANT:
+                    if (UserType.isUserDoctor())
+                        return userDetail.getPhone();
+                    else
+                        return null;
+                default:
                     return null;
-            default:
-                return null;
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 
