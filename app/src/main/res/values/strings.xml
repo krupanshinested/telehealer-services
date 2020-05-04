@@ -567,6 +567,7 @@
     <string name="transcript_file">Transcript File</string>
 
 
+    <string name="precanned_hint_text">Your provider has restricted chat functionality and only includes the following pre-canned options</string>
     <string name="schedules">Schedules</string>
     <string name="appointment_time">Appointment Time</string>
     <string name="patient_detail">Patient Details</string>

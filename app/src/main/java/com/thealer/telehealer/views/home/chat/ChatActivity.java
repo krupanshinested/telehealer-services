@@ -465,7 +465,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         createChannel();
         Log.d("ChatActivity","onResume");
         if (UserType.isUserPatient()){
-            showSnack(findViewById(R.id.rootLayout), getString(R.string.chat_disclaimer), 2000).show();
+            showSnack(findViewById(R.id.rootLayout), getString(R.string.chat_disclaimer), 5000).show();
         }
     }
 
