@@ -33,6 +33,7 @@ import java.util.List;
 public class ChatMessageSelectionBottomSheet extends BaseBottomSheetDialogFragment {
     private TextView cancelTv;
     private TextView doneTv;
+    private TextView hintTV;
     private RecyclerView chooseMessageRv;
 
     private ChooseMessageListAdapter chooseMessageListAdapter;
@@ -63,12 +64,14 @@ public class ChatMessageSelectionBottomSheet extends BaseBottomSheetDialogFragme
     private void initView(View view) {
         cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
         doneTv = (TextView) view.findViewById(R.id.done_tv);
+        hintTV = (TextView) view.findViewById(R.id.hint_tv);
         chooseMessageRv = (RecyclerView) view.findViewById(R.id.choose_message_rv);
         searchEt = (EditText) view.findViewById(R.id.search_et);
         searchClearIv = (ImageView) view.findViewById(R.id.search_clear_iv);
         bottomView = (View) view.findViewById(R.id.bottom_view);
         bottomView.setVisibility(View.VISIBLE);
 
+        hintTV.setText(R.string.precanned_hint_text);
         searchEt.setHint(getString(R.string.search_messages));
         searchEt.addTextChangedListener(new TextWatcher() {
             @Override
