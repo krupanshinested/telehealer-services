@@ -301,7 +301,7 @@ public class CreateNewLabFragment extends OrdersBaseFragment implements View.OnC
 
     @Override
     public void onAuthenticated() {
-        createNewLabOrder(getLabRequestModel(), commonUserApiResponseModel.getUserDisplay_name(), doctorGuid, false);
+        createNewLabOrder(false,getLabRequestModel(), commonUserApiResponseModel.getUserDisplay_name(), doctorGuid, false);
     }
 
     @Override

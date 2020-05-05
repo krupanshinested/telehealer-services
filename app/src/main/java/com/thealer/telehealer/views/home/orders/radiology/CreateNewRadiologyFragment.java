@@ -329,7 +329,7 @@ public class CreateNewRadiologyFragment extends OrdersBaseFragment implements Vi
 
     @Override
     public void onAuthenticated() {
-        createNewRadiologyOrder(getRequest(), userModel.getUserDisplay_name(), doctorGuid, false);
+        createNewRadiologyOrder(false,getRequest(), userModel.getUserDisplay_name(), doctorGuid, false);
     }
 
     @Override

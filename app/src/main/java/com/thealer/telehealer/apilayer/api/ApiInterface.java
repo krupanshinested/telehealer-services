@@ -118,6 +118,7 @@ public interface ApiInterface {
     String USER_DATA = "user_data";
     String USER_DETAIL = "user_detail";
     String PAGINATE = "paginate";
+    String SYNC_CREATE = "sync_create";
     String PAGE = "page";
     String PAGE_SIZE = "page_size";
     String START_KEY = "start_key";
@@ -304,7 +305,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> cancelOrder(@Path("type") String type, @Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Query(CANCEL) boolean cancel);
 
     @POST("api/referrals/" + OrderConstant.ORDER_TYPE_PRESCRIPTIONS)
-    Observable<OrdersBaseApiResponseModel> createPrescription(@Body CreatePrescriptionRequestModel createPrescriptionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<OrdersBaseApiResponseModel> createPrescription(@Query(SYNC_CREATE) boolean sync_create, @Body CreatePrescriptionRequestModel createPrescriptionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/users")
     Observable<ArrayList<CommonUserApiResponseModel>> getUsersByGuid(@Query(FILTER_USER_GUID_IN) String data);
@@ -361,7 +362,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> updateForm(@Path(ID) int id, @Part("data") RequestBody data);
 
     @POST("api/referrals/" + OrderConstant.ORDER_TYPE_SPECIALIST)
-    Observable<OrdersBaseApiResponseModel> assignSpecialist(@Body AssignSpecialistRequestModel assignSpecialistRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<OrdersBaseApiResponseModel> assignSpecialist(@Query(SYNC_CREATE) boolean sync_create,@Body AssignSpecialistRequestModel assignSpecialistRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
     @POST("api/users/" + OrderConstant.ORDER_TYPE_FILES)
@@ -386,7 +387,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> sendFax(@Body SendFaxRequestModel sendFaxRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @POST("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
-    Observable<OrdersBaseApiResponseModel> createLabOrder(@Body CreateTestApiRequestModel createTestApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<OrdersBaseApiResponseModel> createLabOrder(@Query(SYNC_CREATE) boolean sync_create,@Body CreateTestApiRequestModel createTestApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/download")
     Observable<Response<ResponseBody>> getPdfFile(@Query("path") String path, @Query("decrypt") boolean isDecrypt);
@@ -398,7 +399,7 @@ public interface ApiInterface {
     Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check,@Query("version") String version);
 
     @POST("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
-    Observable<OrdersBaseApiResponseModel> createRadiology(@Body CreateRadiologyRequestModel createRadiologyRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<OrdersBaseApiResponseModel> createRadiology(@Query(SYNC_CREATE) boolean sync_create,@Body CreateRadiologyRequestModel createRadiologyRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
     Observable<GetRadiologyResponseModel> getRadiologyList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);

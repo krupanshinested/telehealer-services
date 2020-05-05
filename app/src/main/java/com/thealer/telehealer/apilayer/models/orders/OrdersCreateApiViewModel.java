@@ -49,12 +49,12 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void assignSpecialist(AssignSpecialistRequestModel assignSpecialistRequestModel, String doctorGuid, boolean isProgressVisibile) {
+    public void assignSpecialist(boolean sync_create,AssignSpecialistRequestModel assignSpecialistRequestModel, String doctorGuid, boolean isProgressVisibile) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().assignSpecialist(assignSpecialistRequestModel, doctorGuid)
+                    getAuthApiService().assignSpecialist(sync_create,assignSpecialistRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisibile)) {
                                 @Override
@@ -94,12 +94,12 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createPrescription(CreatePrescriptionRequestModel createPrescriptionRequestModel, String doctorGuid) {
+    public void createPrescription(boolean sync_create,CreatePrescriptionRequestModel createPrescriptionRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createPrescription(createPrescriptionRequestModel, doctorGuid)
+                    getAuthApiService().createPrescription(sync_create,createPrescriptionRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
@@ -130,12 +130,12 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createLabOrder(CreateTestApiRequestModel createTestApiRequestModel, String doctorGuid) {
+    public void createLabOrder(boolean sync_create,CreateTestApiRequestModel createTestApiRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createLabOrder(createTestApiRequestModel, doctorGuid)
+                    getAuthApiService().createLabOrder(sync_create,createTestApiRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
@@ -148,12 +148,12 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createRadiologyOrder(CreateRadiologyRequestModel createRadiologyRequestModel, String doctorGuid) {
+    public void createRadiologyOrder(boolean sync_create, CreateRadiologyRequestModel createRadiologyRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createRadiology(createRadiologyRequestModel, doctorGuid)
+                    getAuthApiService().createRadiology(sync_create,createRadiologyRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
