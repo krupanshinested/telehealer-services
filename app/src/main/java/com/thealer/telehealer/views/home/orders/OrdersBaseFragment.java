@@ -302,17 +302,17 @@ public class OrdersBaseFragment extends BaseFragment {
         showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
     }
 
-    public void assignSpecialist(AssignSpecialistRequestModel requestModel, String userName, String doctorGuid, boolean sendFax) {
+    public void assignSpecialist(Boolean status,AssignSpecialistRequestModel requestModel, String userName, String doctorGuid, boolean sendFax) {
         currentOrder = OrderConstant.ORDER_REFERRALS;
         patientName = userName;
         isSendFax = sendFax;
 
         showSuccessView();
 
-        ordersCreateApiViewModel.assignSpecialist(requestModel, doctorGuid, false);
+        ordersCreateApiViewModel.assignSpecialist(status,requestModel, doctorGuid, false);
     }
 
-    public void createPrescription(CreatePrescriptionRequestModel prescriptionModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
+    public void createPrescription(Boolean status,CreatePrescriptionRequestModel prescriptionModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
 
         currentOrder = OrderConstant.ORDER_PRESCRIPTIONS;
         patientName = userDisplay_name;
@@ -320,20 +320,20 @@ public class OrdersBaseFragment extends BaseFragment {
 
         showSuccessView();
 
-        ordersCreateApiViewModel.createPrescription(prescriptionModel, doctorGuid);
+        ordersCreateApiViewModel.createPrescription(status, prescriptionModel, doctorGuid);
     }
 
-    public void createNewRadiologyOrder(CreateRadiologyRequestModel requestModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
+    public void createNewRadiologyOrder(Boolean status,CreateRadiologyRequestModel requestModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
         currentOrder = OrderConstant.ORDER_RADIOLOGY;
         patientName = userDisplay_name;
         isSendFax = sendFax;
 
         showSuccessView();
 
-        ordersCreateApiViewModel.createRadiologyOrder(requestModel, doctorGuid);
+        ordersCreateApiViewModel.createRadiologyOrder(status,requestModel, doctorGuid);
     }
 
-    public void createNewLabOrder(CreateTestApiRequestModel createTestApiRequestModel, String username, String doctorGuid, boolean sendFax) {
+    public void createNewLabOrder(Boolean status,CreateTestApiRequestModel createTestApiRequestModel, String username, String doctorGuid, boolean sendFax) {
 
         currentOrder = OrderConstant.ORDER_LABS;
         patientName = username;
@@ -341,7 +341,7 @@ public class OrdersBaseFragment extends BaseFragment {
 
         showSuccessView();
 
-        ordersCreateApiViewModel.createLabOrder(createTestApiRequestModel, doctorGuid);
+        ordersCreateApiViewModel.createLabOrder(status,createTestApiRequestModel, doctorGuid);
     }
 
     public void createNewMiscellaneousOrder(CreateMiscellaneousRequestModel miscellaneousOrderRequest, String userDisplay_name, String doctorGuid, boolean sendFax) {

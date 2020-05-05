@@ -210,18 +210,18 @@ public class SendFaxByNumberFragment extends OrdersBaseFragment implements View.
 
             if (requestData instanceof AssignSpecialistRequestModel) {
 
-                assignSpecialist((AssignSpecialistRequestModel) requestData, userName, doctorGuid, true);
+                assignSpecialist(true,(AssignSpecialistRequestModel) requestData, userName, doctorGuid, true);
 
             } else if (requestData instanceof CreateRadiologyRequestModel) {
 
-                createNewRadiologyOrder((CreateRadiologyRequestModel) requestData, userName, doctorGuid, true);
+                createNewRadiologyOrder(true,(CreateRadiologyRequestModel) requestData, userName, doctorGuid, true);
 
             } else if (requestData instanceof CreateTestApiRequestModel) {
 
-                createNewLabOrder((CreateTestApiRequestModel) requestData, userName, doctorGuid, true);
+                createNewLabOrder(true, (CreateTestApiRequestModel) requestData, userName, doctorGuid, true);
 
             } else if (requestData instanceof CreatePrescriptionRequestModel) {
-                createPrescription((CreatePrescriptionRequestModel) requestData, userName, doctorGuid, true);
+                createPrescription(true, (CreatePrescriptionRequestModel) requestData, userName, doctorGuid, true);
             }
         } else {
             sendFax(refferralId, false, true);
