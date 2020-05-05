@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.R;
@@ -22,6 +23,7 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.application;
 
 public class SignupBaseFragment extends BaseFragment {
 
@@ -32,10 +34,11 @@ public class SignupBaseFragment extends BaseFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        whoAmIApiViewModel = ViewModelProviders.of(this).get(WhoAmIApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                android.util.Log.e(TAG, "whoAmIApiViewModel response");
                 if (baseApiResponseModel != null){
                     whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
@@ -49,10 +52,11 @@ public class SignupBaseFragment extends BaseFragment {
                 showToast(errorModel.getMessage());
             }
         });
-        updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
+        updateProfileModel = new ViewModelProvider(this).get(UpdateProfileModel.class);
         updateProfileModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                android.util.Log.e(TAG, "updateProfileModel response");
                 if (baseApiResponseModel != null){
                     UpdateProfileApiResponseModel updateProfileApiResponseModel = (UpdateProfileApiResponseModel) baseApiResponseModel;
                     appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, updateProfileApiResponseModel.getData().getToken());
@@ -86,6 +90,7 @@ public class SignupBaseFragment extends BaseFragment {
 
     public void postPatientDetail(CreateUserRequestModel createUserRequestModel){
         showSuccessView();
+        application.isFromRegistration = true;
         updateProfileModel.updatePatient(createUserRequestModel, true);
     }
 

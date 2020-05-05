@@ -43,7 +43,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public static String notificationChannelId = "";
     public FirebaseAnalytics firebaseAnalytics;
     public static Set<Integer> popUpSchedulesId = new HashSet<>();
-    public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false;
+    public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false, isFromRegistration;
     public static AppConfig appConfig;
 
     @Override
@@ -121,7 +121,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         // app moved to background
         Log.e("aswin", "onMoveToBackground: ");
         isInForeGround = false;
-
+        isFromRegistration = false;
         if (isVitalDeviceConnectionShown) {
             isVitalDeviceConnectionShown = false;
         }
