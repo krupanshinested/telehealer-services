@@ -196,7 +196,7 @@ public class CreateNewSpecialistFragment extends OrdersBaseFragment implements V
 
     @Override
     public void onAuthenticated() {
-        assignSpecialist(getRequestModel(), patientModel.getDisplayName(), doctorGuid, false);
+        assignSpecialist(false,getRequestModel(), patientModel.getDisplayName(), doctorGuid, false);
     }
 
     private AssignSpecialistRequestModel getRequestModel() {

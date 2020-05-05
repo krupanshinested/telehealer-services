@@ -411,7 +411,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
 
     @Override
     public void onAuthenticated() {
-        createPrescription(getPrescriptionModel(), commonUserApiResponseModel.getUserDisplay_name(), doctorGuid, false);
+        createPrescription(false, getPrescriptionModel(), commonUserApiResponseModel.getUserDisplay_name(), doctorGuid, false);
     }
 
     private CreatePrescriptionRequestModel getPrescriptionModel() {
