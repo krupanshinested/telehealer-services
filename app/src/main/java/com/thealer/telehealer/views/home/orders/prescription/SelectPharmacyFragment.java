@@ -262,7 +262,7 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
     @Override
     public void onAuthenticated() {
         if (isSaveAndFax) {
-            createPrescription(createPrescriptionRequestModel, userName, doctorGuid, true);
+            createPrescription(true, createPrescriptionRequestModel, userName, doctorGuid, true);
         } else {
             sendFax(referralId, false, true);
         }
