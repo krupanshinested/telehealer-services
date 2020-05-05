@@ -227,31 +227,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 return false;
             }
         }
-
-        if (UserDetailPreferenceManager.getWhoAmIResponse() == null ||
-                !UserDetailPreferenceManager.getWhoAmIResponse().isEmail_verified()) {
-            Calendar currentTime = Calendar.getInstance();
-            Calendar updateTime;
-            boolean show = false;
-
-            if (appPreference.getString(PreferenceConstants.EMAIL_VERIFICATION_SHOWN_TIME).isEmpty()) {
-
-                show = true;
-            } else {
-                updateTime = Calendar.getInstance();
-                updateTime.setTimeInMillis(Long.parseLong(appPreference.getString(PreferenceConstants.EMAIL_VERIFICATION_SHOWN_TIME)));
-
-                if ((currentTime.get(Calendar.DAY_OF_MONTH) > updateTime.get(Calendar.DAY_OF_MONTH)) ||
-                        (currentTime.get(Calendar.MONTH) > updateTime.get(Calendar.MONTH))) {
-                    show = true;
-                }
-            }
-
-            if (show) {
-                appPreference.setString(PreferenceConstants.EMAIL_VERIFICATION_SHOWN_TIME, String.valueOf(Calendar.getInstance().getTimeInMillis()));
-                startActivity(new Intent(this, EmailVerificationActivity.class));
-            }
-        }
         return true;
     }
 
@@ -321,8 +296,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC))
             attachView();
-
-        checkForMedicalHistory();
     }
 
     private void checkForMedicalHistory() {
@@ -805,12 +778,41 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         super.onResume();
         checkNotification();
 
+        showContent();
         application.addShortCuts();
 
         if (UserType.isUserDoctor() && isCheckLicense && !appConfig.getInstallType().equals(getString(R.string.install_type_india)))
             checkIsLicenseExpired();
         else
             isCheckLicense = true;
+    }
+
+    private void showContent() {
+        if (UserDetailPreferenceManager.getWhoAmIResponse() == null ||
+                !UserDetailPreferenceManager.getWhoAmIResponse().isEmail_verified()) {
+            Calendar currentTime = Calendar.getInstance();
+            Calendar updateTime;
+            boolean show = false;
+
+            if (appPreference.getString(PreferenceConstants.EMAIL_VERIFICATION_SHOWN_TIME).isEmpty()) {
+
+                show = true;
+            } else {
+                updateTime = Calendar.getInstance();
+                updateTime.setTimeInMillis(Long.parseLong(appPreference.getString(PreferenceConstants.EMAIL_VERIFICATION_SHOWN_TIME)));
+
+                if ((currentTime.get(Calendar.DAY_OF_MONTH) > updateTime.get(Calendar.DAY_OF_MONTH)) ||
+                        (currentTime.get(Calendar.MONTH) > updateTime.get(Calendar.MONTH))) {
+                    show = true;
+                }
+            }
+            if ((!application.isFromRegistration) && show) {
+                appPreference.setString(PreferenceConstants.EMAIL_VERIFICATION_SHOWN_TIME, String.valueOf(Calendar.getInstance().getTimeInMillis()));
+                startActivity(new Intent(this, EmailVerificationActivity.class));
+            }
+        }
+        if ((!application.isFromRegistration)){
+            checkForMedicalHistory();}
     }
 
     private void checkIsLicenseExpired() {
