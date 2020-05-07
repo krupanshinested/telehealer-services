@@ -13,8 +13,8 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 22
-        versionName "2.5.0"
+        versionCode 25
+        versionName "2.7.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -43,8 +43,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 28
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 22
-            versionName "2.5.0"
+            versionCode 25
+            versionName "2.7.0"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"telehealer\"")
@@ -53,8 +53,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 28
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 19
-            versionName '2.2.0'
+            versionCode 3
+            versionName '2.7.0'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"peptalk\"")
             applicationId 'com.peptalkhealth.patient'
@@ -63,8 +63,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 28
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 19
-            versionName '2.2.0'
+            versionCode 3
+            versionName '2.7.0'
             buildConfigField("String", "FLAVOR_TYPE", "\"doctor\"")
             buildConfigField("String", "PARENT_APP", "\"peptalk\"")
             applicationId 'com.peptalkhealth.doctor'
