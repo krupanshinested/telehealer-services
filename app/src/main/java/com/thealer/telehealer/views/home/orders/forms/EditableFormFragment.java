@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.appbar.AppBarLayout;
 import androidx.appcompat.widget.Toolbar;
+
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -36,6 +38,8 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomSpinnerView;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -280,7 +284,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
 
                                 @Override
                                 public void afterTextChanged(Editable s) {
-                                    dynamicFormDataBean.getData().get(finalK1).getItems().get(finalI1).setValue(s.toString());
+                                   dynamicFormDataBean.getData().get(finalK1).getItems().get(finalI1).setValue(s.toString());
                                 }
                             });
 
@@ -312,7 +316,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
 
                                 @Override
                                 public void afterTextChanged(Editable s) {
-                                    dynamicFormDataBean.getData().get(finalK2).getItems().get(finalI2).setValue(s.toString());
+                                   dynamicFormDataBean.getData().get(finalK2).getItems().get(finalI2).setValue(s.toString());
                                 }
                             });
                             if (itemsBean.getValue() != null) {

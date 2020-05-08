@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -38,6 +39,8 @@ import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -85,6 +88,9 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     private List<String> filterList;
     private String speciality;
     private int selectedFilterPosition = -1;
+
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -252,7 +258,20 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                 if (!s.toString().isEmpty()) {
                     connectionListCrv.setScrollable(false);
                     searchClearIv.setVisibility(View.VISIBLE);
-                    showSearchResult(s.toString().toLowerCase());
+                    if (uiToggleTimer != null) {
+                        uiToggleTimer.setStopped(true);
+                        uiToggleTimer = null;
+                    }
+
+                    Handler handler = new Handler();
+                    TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                        @Override
+                        public void run() {
+                            showSearchResult(searchEt.getText().toString().toLowerCase());
+                        }
+                    });
+                    uiToggleTimer = runnable;
+                    handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                 } else {
                     searchClearIv.setVisibility(View.GONE);
                     connectionListAdapter.setData(commonUserApiResponseModelList, -1);

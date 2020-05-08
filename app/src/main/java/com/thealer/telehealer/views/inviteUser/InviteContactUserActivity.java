@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import androidx.annotation.Nullable;
 import com.google.android.material.appbar.AppBarLayout;
@@ -32,10 +33,13 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteUserApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 
@@ -76,6 +80,9 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
     private RecyclerView selectedContactsRv;
     private TextView emptyTv;
     private String doctorGuid = null;
+
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -191,7 +198,20 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
                     searchClearIv.setVisibility(View.VISIBLE);
-                    getSearchList(s.toString());
+                    if (uiToggleTimer != null) {
+                        uiToggleTimer.setStopped(true);
+                        uiToggleTimer = null;
+                    }
+
+                    Handler handler = new Handler();
+                    TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                        @Override
+                        public void run() {
+                            getSearchList(searchEt.getText().toString());
+                        }
+                    });
+                    uiToggleTimer = runnable;
+                    handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                 } else {
                     searchClearIv.setVisibility(View.GONE);
                     if (inviteContactUserAdapter != null) {

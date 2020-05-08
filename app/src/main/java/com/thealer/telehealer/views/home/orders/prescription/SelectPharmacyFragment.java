@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -39,6 +40,8 @@ import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
@@ -84,6 +87,8 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
         }
     };
     private TextView nextTv;
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onAttach(Context context) {
@@ -145,7 +150,20 @@ public class SelectPharmacyFragment extends OrdersBaseFragment implements View.O
             @Override
             public void afterTextChanged(Editable s) {
                 nextPage = 1;
-                getPharmacies(s.toString(), null, true);
+                if (uiToggleTimer != null) {
+                    uiToggleTimer.setStopped(true);
+                    uiToggleTimer = null;
+                }
+
+                Handler handler = new Handler();
+                TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                    @Override
+                    public void run() {
+                        getPharmacies(searchEt.getText().toString(), null, true);
+                    }
+                });
+                uiToggleTimer = runnable;
+                handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                 pharmacyListAdapter.removeSelected();
                 selectedPharmacy = null;
                 enableOrDisableNext();

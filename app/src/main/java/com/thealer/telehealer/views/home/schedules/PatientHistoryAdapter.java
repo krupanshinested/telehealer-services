@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.schedules;
 
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -18,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.common.CustomEditText;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +45,7 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
     private List<HistoryBean> patientHistory;
     private CreateScheduleViewModel createScheduleViewModel;
     private boolean isEditmode = true;
+
 
     public PatientHistoryAdapter(FragmentActivity activity) {
         this.activity = activity;
@@ -106,7 +111,8 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
             @Override
             public void afterTextChanged(Editable s) {
                 if (createScheduleViewModel != null) {
-                    createScheduleViewModel.getPatientHistory().get(i).setReason(s.toString());
+                   createScheduleViewModel.getPatientHistory().get(i).setReason(s.toString());
+
                 }
             }
         });

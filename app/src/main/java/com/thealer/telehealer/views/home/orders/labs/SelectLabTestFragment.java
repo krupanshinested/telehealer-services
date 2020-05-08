@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,7 +22,10 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -47,6 +52,9 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
     private ShowSubFragmentInterface showSubFragmentInterface;
     private OnCloseActionInterface onCloseActionInterface;
     private LabTestDataViewModel labTestDataViewModel;
+
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onAttach(Context context) {
@@ -94,7 +102,20 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
                 if (s.toString().isEmpty()) {
                     selectLabTestAdapter.setTestList(testList);
                 } else {
-                    selectLabTestAdapter.setTestList(getFilteredList(s.toString()));
+                    if (uiToggleTimer != null) {
+                        uiToggleTimer.setStopped(true);
+                        uiToggleTimer = null;
+                    }
+
+                    Handler handler = new Handler();
+                    TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                        @Override
+                        public void run() {
+                            selectLabTestAdapter.setTestList(getFilteredList(searchEt.toString()));
+                        }
+                    });
+                    uiToggleTimer = runnable;
+                    handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                 }
             }
         });
