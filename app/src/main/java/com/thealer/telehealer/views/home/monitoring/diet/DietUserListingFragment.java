@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.monitoring.diet;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -33,6 +34,8 @@ import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewMode
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -74,6 +77,9 @@ public class DietUserListingFragment extends BaseFragment {
     private String endDate = null;
     private String selectedItem;
     private List<UserBean> searchList = new ArrayList<>();
+
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onAttach(Context context) {
@@ -168,11 +174,23 @@ public class DietUserListingFragment extends BaseFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!s.toString().isEmpty()) {
-                    for (int i = 0; i < dietUserListApiResponseModel.getResult().size(); i++) {
-                        if (dietUserListApiResponseModel.getResult().get(i).getName().toLowerCase().trim().contains(s.toString().toLowerCase().trim())) {
-                            searchList.add(dietUserListApiResponseModel.getResult().get(i));
-                        }
+                    if (uiToggleTimer != null) {
+                        uiToggleTimer.setStopped(true);
+                        uiToggleTimer = null;
                     }
+
+                    Handler handler = new Handler();
+                    TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < dietUserListApiResponseModel.getResult().size(); i++) {
+                                if (dietUserListApiResponseModel.getResult().get(i).getName().toLowerCase().trim().contains(searchEt.getText().toString().toLowerCase().trim())) {
+                                    searchList.add(dietUserListApiResponseModel.getResult().get(i));
+                                }
+                            }                        }
+                    });
+                    uiToggleTimer = runnable;
+                    handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
 
                     setAdapterData(searchList);
                 } else {

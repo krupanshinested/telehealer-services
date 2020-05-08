@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.home.orders.labs;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -31,6 +32,8 @@ import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -68,7 +71,8 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle;
-
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onAttach(Context context) {
@@ -172,11 +176,22 @@ public class SelectIcdCodeFragment extends OrdersBaseFragment implements View.On
             public void afterTextChanged(Editable s) {
                 startKey = 1;
 
-                String key = null;
                 if (!s.toString().isEmpty()) {
-                    key = s.toString();
+                    if (uiToggleTimer != null) {
+                        uiToggleTimer.setStopped(true);
+                        uiToggleTimer = null;
+                    }
+
+                    Handler handler = new Handler();
+                    TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                        @Override
+                        public void run() {
+                            getIcdCodes(searchEt.getText().toString(), true);
+                        }
+                    });
+                    uiToggleTimer = runnable;
+                    handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                 }
-                getIcdCodes(key, true);
             }
         });
 

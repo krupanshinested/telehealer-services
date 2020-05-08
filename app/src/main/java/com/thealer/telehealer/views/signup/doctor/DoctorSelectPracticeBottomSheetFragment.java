@@ -5,6 +5,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -17,7 +19,10 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.views.base.BaseBottomSheetDialogFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 
@@ -38,6 +43,9 @@ public class DoctorSelectPracticeBottomSheetFragment extends BaseBottomSheetDial
     private int position;
     private List<PracticesBean> practicesBeanList = new ArrayList<>();
     private DoctorPracticeSelectAdapter doctorPracticeSelectAdapter;
+
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -96,7 +104,20 @@ public class DoctorSelectPracticeBottomSheetFragment extends BaseBottomSheetDial
 
             @Override
             public void afterTextChanged(Editable text) {
-                searchList(text.toString());
+                if (uiToggleTimer != null) {
+                    uiToggleTimer.setStopped(true);
+                    uiToggleTimer = null;
+                }
+
+                Handler handler = new Handler();
+                TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                    @Override
+                    public void run() {
+                        searchList(searchEt.getText().toString());
+                    }
+                });
+                uiToggleTimer = runnable;
+                handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
             }
         });
 

@@ -68,6 +68,7 @@ public class ArgumentKeys {
 
     public static final int HISTORY_UPDATE = 0;
     public static final int LICENCE_UPDATE = 1;
+    public static final int SEARCH_INTERVAL = 1500;
     public static final String VIEW_ABNORMAL_VITAL = "abnormalVital";
     public static final String IS_MEDICAL_ASSISTANT = "isMedicalAssistant";
     public static final String SHOW_TOOLBAR = "showToolbar";
