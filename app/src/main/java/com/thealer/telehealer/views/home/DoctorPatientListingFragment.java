@@ -18,8 +18,10 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,8 @@ import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -91,6 +95,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private AssociationApiResponseModel associationApiResponseModel;
     private ArrayList<DoctorGroupedAssociations> doctorGroupedAssociations;
     private ChangeTitleInterface changeTitleInterface;
+
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onAttach(Context context) {
@@ -177,7 +184,21 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 if (!s.toString().isEmpty()) {
                     searchClearIv.setVisibility(View.VISIBLE);
                     doctorPatientListCrv.setScrollable(false);
-                    showSearchList(s.toString().toLowerCase());
+                        if (uiToggleTimer != null) {
+                            uiToggleTimer.setStopped(true);
+                            uiToggleTimer = null;
+                        }
+
+                        Handler handler = new Handler();
+                        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                            @Override
+                            public void run() {
+                                showSearchList(searchEt.getText().toString().toLowerCase());
+
+                            }
+                        });
+                        uiToggleTimer = runnable;
+                        handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                 } else {
                     searchClearIv.setVisibility(View.GONE);
                     doctorPatientListCrv.setScrollable(true);

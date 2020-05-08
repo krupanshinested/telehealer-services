@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.chat;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.views.base.BaseBottomSheetDialogFragment;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -45,6 +48,9 @@ public class ChatMessageSelectionBottomSheet extends BaseBottomSheetDialogFragme
     private EditText searchEt;
     private ImageView searchClearIv;
     private View bottomView;
+
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onAttach(Context context) {
@@ -92,12 +98,24 @@ public class ChatMessageSelectionBottomSheet extends BaseBottomSheetDialogFragme
                 } else {
                     searchClearIv.setVisibility(View.VISIBLE);
                     List<String> searchedList = new ArrayList<>();
-                    for (int i = 0; i < messageList.size(); i++) {
-                        if (messageList.get(i).toLowerCase().contains(s.toString().toLowerCase())) {
-                            searchedList.add(messageList.get(i));
-                        }
+                    if (uiToggleTimer != null) {
+                        uiToggleTimer.setStopped(true);
+                        uiToggleTimer = null;
                     }
 
+                    Handler handler = new Handler();
+                    TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < messageList.size(); i++) {
+                                if (messageList.get(i).toLowerCase().contains(searchEt.toString().toLowerCase())) {
+                                    searchedList.add(messageList.get(i));
+                                }
+                            }
+                        }
+                    });
+                    uiToggleTimer = runnable;
+                    handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                     chooseMessageListAdapter.setData(searchedList);
                 }
             }

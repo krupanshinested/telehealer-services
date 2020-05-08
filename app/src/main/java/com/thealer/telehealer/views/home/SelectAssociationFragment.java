@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,6 +30,8 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -61,6 +65,9 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
     private int page = 1;
     private boolean isFromHome;
     private String selectionType;
+
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -193,7 +200,20 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                     if (s.toString().isEmpty()) {
                         getSpecialist(null, false);
                     } else {
-                        getSpecialist(s.toString(), false);
+                        if (uiToggleTimer != null) {
+                            uiToggleTimer.setStopped(true);
+                            uiToggleTimer = null;
+                        }
+
+                        Handler handler = new Handler();
+                        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                            @Override
+                            public void run() {
+                                getSpecialist(searchEt.getText().toString(), false);
+                            }
+                        });
+                        uiToggleTimer = runnable;
+                        handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                     }
                 } else {
                     getAssociationList(false);

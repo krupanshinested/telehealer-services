@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -19,6 +21,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.orders.OrdersBaseFragment;
 
@@ -42,6 +47,9 @@ public class SelectRadiologyTestFragment extends OrdersBaseFragment implements V
 
     private List<RadiologyListModel> radiologyModelList = new ArrayList<>();
     private List<String> selectedIdList = new ArrayList<>();
+
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onAttach(Context context) {
@@ -105,7 +113,20 @@ public class SelectRadiologyTestFragment extends OrdersBaseFragment implements V
             @Override
             public void afterTextChanged(Editable s) {
                 if (!s.toString().isEmpty()) {
-                    radiologyModelList = new RadiologyConstants().getRadiologyListModel(s.toString().toLowerCase());
+                    if (uiToggleTimer != null) {
+                        uiToggleTimer.setStopped(true);
+                        uiToggleTimer = null;
+                    }
+
+                    Handler handler = new Handler();
+                    TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                        @Override
+                        public void run() {
+                            radiologyModelList = new RadiologyConstants().getRadiologyListModel(searchEt.getText().toString().toLowerCase());
+                        }
+                    });
+                    uiToggleTimer = runnable;
+                    handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                 } else {
                     radiologyModelList = new RadiologyConstants().getRadiologyListModel();
                 }

@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.vitals.vitalReport;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -31,6 +32,8 @@ import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewMode
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -74,6 +77,8 @@ public class VitalReportFragment extends BaseFragment {
     private String doctorGuid;
     private ShowSubFragmentInterface showSubFragmentInterface;
 
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onAttach(Context context) {
@@ -172,11 +177,25 @@ public class VitalReportFragment extends BaseFragment {
             public void afterTextChanged(Editable s) {
                 if (!s.toString().isEmpty()) {
                     if (vitalReportApiReponseModel != null) {
-                        for (int i = 0; i < vitalReportApiReponseModel.getResult().size(); i++) {
-                            if (vitalReportApiReponseModel.getResult().get(i).getUserDisplay_name().toLowerCase().contains(s.toString())) {
-                                searchList.add(vitalReportApiReponseModel.getResult().get(i));
+
+                        if (uiToggleTimer != null) {
+                        uiToggleTimer.setStopped(true);
+                        uiToggleTimer = null;
+                    }
+
+                    Handler handler = new Handler();
+                    TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < vitalReportApiReponseModel.getResult().size(); i++) {
+                                if (vitalReportApiReponseModel.getResult().get(i).getUserDisplay_name().toLowerCase().contains(searchEt.getText().toString())) {
+                                    searchList.add(vitalReportApiReponseModel.getResult().get(i));
+                                }
                             }
                         }
+                    });
+                    uiToggleTimer = runnable;
+                    handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
 
                         if (searchList.size() > 0) {
                             if (vitalReportUserListAdapter != null) {
