@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -47,6 +48,8 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -97,7 +100,8 @@ public class MedicalHistoryEditFragment extends BaseFragment implements DoCurren
     private ShowSubFragmentInterface showSubFragmentInterface;
     private TextView nextTv;
     private ImageView closeIv;
-
+    @Nullable
+    private TimerRunnable uiToggleTimer;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

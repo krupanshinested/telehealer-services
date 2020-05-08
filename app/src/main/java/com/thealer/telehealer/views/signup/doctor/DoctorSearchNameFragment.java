@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -23,8 +25,11 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiViewModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.TypeAHeadResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -54,6 +59,9 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
     private List<String> doctorsNameList = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
     private ImageView throbber;
+
+    @Nullable
+    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onAttach(Context context) {
@@ -139,7 +147,20 @@ public class DoctorSearchNameFragment extends BaseFragment implements DoCurrentT
                         searchListAdapter.setData(new ArrayList<>());
                     }
                     if (!s.toString().isEmpty()) {
-                        makeApiCall(s.toString());
+                        if (uiToggleTimer != null) {
+                            uiToggleTimer.setStopped(true);
+                            uiToggleTimer = null;
+                        }
+
+                        Handler handler = new Handler();
+                        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                            @Override
+                            public void run() {
+                                makeApiCall(searchEt.getText().toString());
+                            }
+                        });
+                        uiToggleTimer = runnable;
+                        handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
                         onViewChangeInterface.enableNext(true);
                     } else {
                         onViewChangeInterface.enableNext(false);

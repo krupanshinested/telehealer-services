@@ -5,9 +5,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.textfield.TextInputLayout;
+
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -22,6 +26,8 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.medicalHistory.MedicalHistoryViewModel;
 import com.thealer.telehealer.apilayer.models.medicalHistory.MedicationModel;
 import com.thealer.telehealer.common.CustomSpinnerView;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
