@@ -155,11 +155,11 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 if (baseApiResponseModel != null) {
 
                     WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
-                    whoAmIApiResponseModel.setAppt_length(Integer.parseInt(selectedItem));
+                    whoAmIApiResponseModel.setAppt_length(Integer.parseInt(getAppointmentSlotValue(selectedItem)));
                     UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
 
                     appointment_slots.updateUI(false);
-                    appointment_slots.updateValue(selectedItem);
+                    appointment_slots.updateValue(getAppointmentSlotValue(selectedItem));
 
                 }
             }
@@ -172,8 +172,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     isSlotLoaded = true;
                 } else {
                     selectedItem = parent.getItemAtPosition(position).toString();
-                    String[] v = selectedItem.split("\\s", 2);
-                    profileUpdate.updateAppointmentSlot(v[0]);
+                    profileUpdate.updateAppointmentSlot(getAppointmentSlotValue(selectedItem));
                 }
             }
 
@@ -227,5 +226,9 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 educational_video.setVisibility(View.GONE);
                 break;
         }
+    }
+    private String getAppointmentSlotValue(String selectedItem){
+        String[] value = selectedItem.split("\\s", 2);
+        return value[0];
     }
 }

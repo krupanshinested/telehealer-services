@@ -1,5 +1,7 @@
 package com.thealer.telehealer.views.home.recents;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -23,6 +25,7 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
+import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 
 import java.util.ArrayList;
@@ -124,6 +127,9 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
                             bundle.putSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL, resultBean);
                             visitsDetailFragment.setArguments(bundle);
                             showSubFragmentInterface.onShowFragment(visitsDetailFragment);
+                        }
+                        else {
+                            activity.startActivity(new Intent(activity, ChatActivity.class).putExtra(ArgumentKeys.USER_GUID, UserType.isUserPatient() ? resultBean.getDoctor().getUser_guid() : resultBean.getPatient().getUser_guid()));
                         }
                     }
                 });
