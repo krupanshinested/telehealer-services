@@ -418,8 +418,14 @@ public class AboutFragment extends BaseFragment {
                 phoneCv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Uri uri = Uri.parse("tel:" + getPhoneNumber());
+                        if (UserType.isUserPatient()){
+                            Uri uri = Uri.parse("tel:" + getPhoneNumber());
+                            startActivity(new Intent(Intent.ACTION_DIAL, uri));
+                        } else {
+                        String phone_number = getPhoneNumber().replaceAll("\\+1","*67");
+                        Uri uri = Uri.parse("tel:" + phone_number);
                         startActivity(new Intent(Intent.ACTION_DIAL, uri));
+                    }
                     }
                 });
             } else {
