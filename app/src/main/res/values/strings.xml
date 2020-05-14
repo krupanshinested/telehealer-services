@@ -1263,7 +1263,7 @@
     <string name="last_login">Last Login : %s</string>
     <string name="quit" translatable="false">Quit</string>
     <string name="times_in_a_week" translatable="false">times in a week</string>
-    <string name="litres" translatable="false">litres</string>
+    <string name="drinks" translatable="false">drinks</string>
     <string name="years" translatable="false">years</string>
     <string name="add_diagnosis">Add Diagnosis</string>
     <string name="view_message">View Message</string>
