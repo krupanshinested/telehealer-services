@@ -38,7 +38,7 @@ public class UserDetailPreferenceManager {
 
     public static String getUserDisplayName() {
         if (UserType.isUserDoctor()) {
-            return "Dr. " + getFirst_name() + " " + getLast_name() + " " + getTitle();
+            return getFirst_name() + " " + getLast_name() + " " + getTitle();
         } else {
             return getFirst_name() + " " + getLast_name();
         }

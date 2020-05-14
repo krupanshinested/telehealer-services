@@ -34,11 +34,11 @@ public class OrdersPrescriptionApiResponseModel extends OrdersApiResponseModel {
             private String directions_select_two;
             private boolean label;
             private String directions_select_one;
-            private int rx_strength;
+            private float rx_strength;
             private String rx_drug_name;
             private String rx_form;
-            private int directions_quantity;
-            private int dispense_quantity;
+            private float directions_quantity;
+            private float dispense_quantity;
             private boolean do_not_substitute;
             private int refill_quantity;
             private String rx_metric;
@@ -67,7 +67,7 @@ public class OrdersPrescriptionApiResponseModel extends OrdersApiResponseModel {
                 this.directions_select_one = directions_select_one;
             }
 
-            public int getRx_strength() {
+            public float getRx_strength() {
                 return rx_strength;
             }
 
@@ -91,7 +91,7 @@ public class OrdersPrescriptionApiResponseModel extends OrdersApiResponseModel {
                 this.rx_form = rx_form;
             }
 
-            public int getDirections_quantity() {
+            public float getDirections_quantity() {
                 return directions_quantity;
             }
 
@@ -99,7 +99,7 @@ public class OrdersPrescriptionApiResponseModel extends OrdersApiResponseModel {
                 this.directions_quantity = directions_quantity;
             }
 
-            public int getDispense_quantity() {
+            public float getDispense_quantity() {
                 return dispense_quantity;
             }
 

@@ -460,10 +460,10 @@ public class MedicalHistoryCheckBoxListAdapter extends RecyclerView.Adapter<Medi
 
 
                                                                 if (answers[0] != null && !answers[0].trim().isEmpty()) {
-                                                                    detailBean.setAlcohol_Often(answers[0] + " " + activity.getString(R.string.times_in_a_week));
+                                                                    detailBean.setAlcohol_Quantity(answers[0] + " " + activity.getString(R.string.drinks));
                                                                 }
                                                                 if (answers[1] != null && !answers[1].trim().isEmpty()) {
-                                                                    detailBean.setAlcohol_Quantity(answers[1] + " " + activity.getString(R.string.litres));
+                                                                    detailBean.setAlcohol_Often(answers[1] + " " + activity.getString(R.string.times_in_a_week));
                                                                 }
                                                                 if (answers[2] != null && !answers[2].trim().isEmpty()) {
                                                                     detailBean.setAlcohol_Felt_Cut_Down_Drinking(answers[2]);

@@ -606,7 +606,7 @@ public class Utils {
     }
 
     public static String getDoctorDisplayName(String first_name, String last_name, String title) {
-        return "Dr. " + first_name + " " + last_name + " " + ((title != null) ? title : "");
+        return first_name + " " + last_name + " " + ((title != null) ? title : "");
     }
 
     public static String getPatientDisplayName(String first_name, String last_name) {

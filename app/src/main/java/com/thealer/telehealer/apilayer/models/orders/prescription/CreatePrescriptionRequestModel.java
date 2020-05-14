@@ -55,26 +55,26 @@ public class CreatePrescriptionRequestModel implements Serializable {
     public static class DetailBean implements Serializable {
 
         private String rx_drug_name;
-        private int rx_strength;
+        private float rx_strength;
         private String rx_metric;
         private String rx_form;
-        private int directions_quantity;
+        private float directions_quantity;
         private String directions_select_one;
         private String directions_select_two;
-        private int dispense_quantity;
+        private float dispense_quantity;
         private int refill_quantity;
         private boolean do_not_substitute;
         private boolean label;
 
         public DetailBean(String rx_drug_name, String rx_strength, String rx_metric, String rx_form, String directions_quantity, String directions_select_one, String directions_select_two, String dispense_quantity, String refill_quantity, boolean do_not_substitute, boolean label) {
             this.rx_drug_name = rx_drug_name;
-            this.rx_strength = Integer.parseInt(rx_strength);
+            this.rx_strength = Float.parseFloat(rx_strength);
             this.rx_metric = rx_metric;
             this.rx_form = rx_form;
-            this.directions_quantity = Integer.parseInt(directions_quantity);
+            this.directions_quantity = Float.parseFloat(directions_quantity);
             this.directions_select_one = directions_select_one;
             this.directions_select_two = directions_select_two;
-            this.dispense_quantity = Integer.parseInt(dispense_quantity);
+            this.dispense_quantity = Float.parseFloat(dispense_quantity);
             this.refill_quantity = Integer.parseInt(refill_quantity);
             this.do_not_substitute = do_not_substitute;
             this.label = label;
@@ -120,7 +120,7 @@ public class CreatePrescriptionRequestModel implements Serializable {
             this.directions_select_two = directions_select_two;
         }
 
-        public int getRx_strength() {
+        public float getRx_strength() {
             return rx_strength;
         }
 
@@ -128,7 +128,7 @@ public class CreatePrescriptionRequestModel implements Serializable {
             this.rx_strength = rx_strength;
         }
 
-        public int getDirections_quantity() {
+        public float getDirections_quantity() {
             return directions_quantity;
         }
 
@@ -136,7 +136,7 @@ public class CreatePrescriptionRequestModel implements Serializable {
             this.directions_quantity = directions_quantity;
         }
 
-        public int getDispense_quantity() {
+        public float getDispense_quantity() {
             return dispense_quantity;
         }
 

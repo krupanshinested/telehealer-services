@@ -160,7 +160,7 @@ public class MedicalHistoryConstants {
     public static final String NO_OF_CIGRATTES = "Number of cigarettes each day?";
     public static final String HOW_MANY_YEARS = "For how many years?";
     public static final String OTHER_FORMS_OF_TOBACCO = "Other forms of tobacco used?";
-    public static final String HOW_MUCH = "How much? ( in litres )";
+    public static final String HOW_MUCH = "How much? ( in drinks )";
     public static final String HOW_OFTEN = "How often? ( in weeks )";
     public static final String CUT_DOWN = "Have you ever felt that you should cut down on your drinking?";
     public static final String STILL_USING = "If yes, are you still using them?";
