@@ -153,10 +153,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
         }
 
         StringBuilder name = new StringBuilder();
-        if (getRole().equals(Constants.ROLE_DOCTOR)) {
-            name = name.append("Dr. ");
-        }
-
+        
         name = name.append(getFirst_name()).append(" ").append(getLast_name());
 
         return name.toString();
@@ -165,7 +162,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
 
     public String getDisplayName() {
         if (getRole().equals(Constants.ROLE_DOCTOR)) {
-            return "Dr. " + getFirst_name() + " " + getLast_name();
+            return getFirst_name() + " " + getLast_name();
         } else {
             return getFirst_name() + " " + getLast_name();
         }

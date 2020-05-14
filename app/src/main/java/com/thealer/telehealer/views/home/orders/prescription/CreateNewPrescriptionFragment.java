@@ -215,7 +215,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
                     } else {
                         setError(editText);
                     }
-                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 }
                 break;
         }
