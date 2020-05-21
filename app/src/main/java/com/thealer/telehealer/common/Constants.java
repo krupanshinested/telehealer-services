@@ -79,6 +79,7 @@ public class Constants {
     public static final String SUCCESS_VIEW_STATUS = "success_view_status";
     public static final String SUCCESS_VIEW_TITLE = "success_view_title";
     public static final String SUCCESS_VIEW_DESCRIPTION = "success_view_description";
+    public static final String SUCCESS_VITAL_VIEW_DESCRIPTION = "success_vital_view_description";
     public static final String SUCCESS_VIEW_SUCCESS_IMAGE = "SUCCESS_VIEW_SUCCESS_IMAGE";
     public static final String SUCCESS_VIEW_SUCCESS_IMAGE_TINT = "SUCCESS_VIEW_SUCCESS_IMAGE_TINT";
 
@@ -129,6 +130,10 @@ public class Constants {
     public static final String EMAIL = "email";
     public static final String USER_DETAIL = "user_detail";
     public static final String DOCTOR_DETAIL = "doctor_detail";
+
+    public static final String VITAL_DETAIL = "VITAL_DETAIL";
+
+
 
     public static final int CREATE_MODE = 0;
     public static final int EDIT_MODE = 1;

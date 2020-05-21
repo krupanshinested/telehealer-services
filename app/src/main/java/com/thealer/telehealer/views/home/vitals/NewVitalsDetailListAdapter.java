@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.vitals;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +15,22 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.StethBean;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsDetailBean;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.VitalThresholdDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,12 +47,13 @@ public class NewVitalsDetailListAdapter extends RecyclerView.Adapter<RecyclerVie
     private List<VitalAdapterModel> adapterModelList = new ArrayList<>();
     private FragmentActivity activity;
     private List<VitalsApiResponseModel> vitalsApiResponseModelList = new ArrayList<>();
-    private boolean imageVisible;
+    private boolean imageVisible, isOpenVitalMessage;
     private int mode;
     private OnListItemSelectInterface onListItemSelectInterface;
 
-    public NewVitalsDetailListAdapter(FragmentActivity activity) {
+    public NewVitalsDetailListAdapter(FragmentActivity activity, boolean isOpenVitalMessage) {
         this.activity = activity;
+        this.isOpenVitalMessage = isOpenVitalMessage;
     }
 
     public NewVitalsDetailListAdapter(FragmentActivity activity, boolean imageVisible, int mode, OnListItemSelectInterface onListItemSelectInterface) {
@@ -83,10 +90,37 @@ public class NewVitalsDetailListAdapter extends RecyclerView.Adapter<RecyclerVie
 
 
                 VitalsApiResponseModel vitalsApiResponseModel = adapterModelList.get(i).getVitalsApiResponseModel();
+                ShowSubFragmentInterface showSubFragmentInterface = (ShowSubFragmentInterface) activity;
 
                 itemHolder.timeTv.setText(Utils.getFormatedTime(vitalsApiResponseModel.getCreated_at()));
                 itemHolder.descriptionTv.setText(vitalsApiResponseModel.getCapturedBy(activity));
 
+                if (UserType.isUserPatient() && isOpenVitalMessage){
+                    itemHolder.vitalRootCl.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                            bundle.putString(Constants.SUCCESS_VIEW_TITLE,activity.getString(SupportedMeasurementType.getTitle(vitalsApiResponseModel.getType())) + " " + activity.getString((R.string.captured)));
+
+                            if (UserType.isUserPatient()) {
+                                bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE, SupportedMeasurementType.getDrawable(vitalsApiResponseModel.getType()));
+                                bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE_TINT, vitalsApiResponseModel.isAbnormal()?R.color.red:R.color.vital_good);
+                                bundle.putSerializable(Constants.VITAL_DETAIL,vitalsApiResponseModel.getDetail());
+                            }
+
+                            if (vitalsApiResponseModel.getDetail()!=null) {
+                                if (vitalsApiResponseModel.getDetail().size() == 0) {
+                                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, vitalsApiResponseModel.getMessage());
+                                }
+                            }
+
+                            VitalThresholdDialogFragment vitalThresholdDialogFragment = new VitalThresholdDialogFragment();
+                             vitalThresholdDialogFragment.setArguments(bundle);
+                             vitalThresholdDialogFragment.show(activity.getSupportFragmentManager(), vitalThresholdDialogFragment.getClass().getSimpleName());
+                        }
+                    });
+                }
                 if (!vitalsApiResponseModel.getType().equals(SupportedMeasurementType.stethoscope)) {
                     itemHolder.valueTv.setText(vitalsApiResponseModel.getValue().toString());
                     itemHolder.unitTv.setText(SupportedMeasurementType.getVitalUnit(vitalsApiResponseModel.getType()));
@@ -101,7 +135,6 @@ public class NewVitalsDetailListAdapter extends RecyclerView.Adapter<RecyclerVie
                     itemHolder.vitalIv.setImageDrawable(activity.getDrawable(vitalsApiResponseModel.getStethIoImage()));
                     itemHolder.vitalIv.setVisibility(View.VISIBLE);
 
-                    ShowSubFragmentInterface showSubFragmentInterface = (ShowSubFragmentInterface) activity;
 
                     itemHolder.itemCv.setOnClickListener(new View.OnClickListener() {
                         @Override

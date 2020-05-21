@@ -14,6 +14,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
@@ -23,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -30,32 +33,33 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.views.base.BaseDialogFragment;
 
+import java.util.ArrayList;
+
 /**
  * Created by Aswin on 01,November,2018
  */
 public class SuccessViewDialogFragment extends BaseDialogFragment {
-    private SuccessViewInterface successViewInterface;
-    private ImageView loaderIv;
-    private TextView titleTv;
-    private TextView messageTv;
-    private CustomButton doneBtn;
-    private boolean status;
-    private String title;
-    private String message;
-    private Animatable2 animatable2;
-    private ImageView preloaderIv;
-    private boolean isDataReceived = false;
-    private boolean auto_dismiss = false;
-    private boolean isAnimationEnd = false;
-
-    private boolean needToShowDoneButtonOnResultFetched = true;
+    protected SuccessViewInterface successViewInterface;
+    protected ImageView loaderIv;
+    protected TextView titleTv;
+    protected TextView messageTv;
+    protected CustomButton doneBtn;
+    protected boolean status;
+    protected String title;
+    protected String message;
+    protected Animatable2 animatable2;
+    protected ImageView preloaderIv;
+    protected boolean isDataReceived = false;
+    protected boolean auto_dismiss = false;
+    protected boolean isAnimationEnd = false;
+    protected boolean needToShowDoneButtonOnResultFetched = true;
 
     @Nullable
-    private Integer successReplaceDrawableId = null;
+    protected Integer successReplaceDrawableId = null;
     @Nullable
-    private Integer successReplaceTintColor = null;
+    protected Integer successReplaceTintColor = null;
 
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    protected BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e("aswin", "onReceive: ");
@@ -77,8 +81,7 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         initView(view);
         return view;
     }
-
-    private void initView(View view) {
+    protected void initView(View view) {
         loaderIv = (ImageView) view.findViewById(R.id.loader_iv);
         titleTv = (TextView) view.findViewById(R.id.title_tv);
         messageTv = (TextView) view.findViewById(R.id.message_tv);
@@ -104,7 +107,7 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         });
     }
 
-    public void onDataUpdated(Bundle bundle) {
+    protected void onDataUpdated(Bundle bundle) {
         if (bundle != null) {
             title = bundle.getString(Constants.SUCCESS_VIEW_TITLE);
             message = bundle.getString(Constants.SUCCESS_VIEW_DESCRIPTION);
@@ -157,7 +160,7 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         }
     }
 
-    private void animatePreLoader() {
+    protected void animatePreLoader() {
         Animation animation = new TranslateAnimation(0, 0, 500, 0);
         animation.setDuration(1250);
         preloaderIv.startAnimation(animation);
@@ -231,7 +234,7 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         animatable2.start();
     }
 
-    private void stopLoaderAnimation(boolean status) {
+    protected void stopLoaderAnimation(boolean status) {
         if (getActivity() == null) {
             return;
         }
@@ -271,8 +274,12 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter(getString(R.string.success_broadcast_receiver)));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,getIntentFilterKey());
         Log.e("aswin", "onResume: ");
         animatePreLoader();
+    }
+
+    protected IntentFilter getIntentFilterKey() {
+        return new IntentFilter(getString(R.string.success_broadcast_receiver));
     }
 }

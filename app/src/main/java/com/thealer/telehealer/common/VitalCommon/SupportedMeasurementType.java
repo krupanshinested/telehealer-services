@@ -18,7 +18,7 @@ public class SupportedMeasurementType {
     public static final String bp = "bp";
     public static final String weight = "weight";
     public static final String temperature = "temperature";
-    public static final String gulcose = "gulcose";
+    public static final String gulcose = "glucose";
     public static final String pulseOximeter = "pulseOximeter";
     public static final String heartRate = "heartRate"; // ony used to save the heart rate which is calculated from bp or pulse machine
     public static final String height = "height";

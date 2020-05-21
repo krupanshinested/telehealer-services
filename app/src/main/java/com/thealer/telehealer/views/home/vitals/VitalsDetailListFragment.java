@@ -125,7 +125,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private CustomRecyclerView vitalDetailCrv;
     private boolean isGetType;
     private String filter, startDate, endDate;
-
+    private boolean isOpenVitalMessage = false;
 
     @Override
     public void onAttach(Context context) {
@@ -692,7 +692,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 toolbar.getMenu().clear();
                 addFab.hide();
             }
-            vitalsDetailListAdapter = new NewVitalsDetailListAdapter(getActivity());
+            isOpenVitalMessage = true;
+            vitalsDetailListAdapter = new NewVitalsDetailListAdapter(getActivity(), isOpenVitalMessage);
             vitalDetailCrv.getRecyclerView().setAdapter(vitalsDetailListAdapter);
 
 

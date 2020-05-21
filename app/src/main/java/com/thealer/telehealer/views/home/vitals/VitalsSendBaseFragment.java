@@ -20,6 +20,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalsDetailBean;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
@@ -29,6 +30,9 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
+import com.thealer.telehealer.views.common.VitalThresholdSuccessViewDialogFragment;
+
+import java.util.ArrayList;
 
 public class VitalsSendBaseFragment extends BaseFragment {
 
@@ -77,8 +81,9 @@ public class VitalsSendBaseFragment extends BaseFragment {
 
                     VitalsCreateApiResponseModel vitalsCreateApiResponseModel = (VitalsCreateApiResponseModel) baseApiResponseModel;
                     String message = "";
-
                     boolean isAbnormal = false;
+
+                    ArrayList<VitalsDetailBean> detail = new ArrayList<>();
 
                     if (UserType.isUserPatient()) {
                         if (previousResponse != null) {
@@ -90,6 +95,21 @@ public class VitalsSendBaseFragment extends BaseFragment {
                             if (previousResponse.isAbnormal()) {
                                 isAbnormal = true;
                             }
+
+                            if (vitalsCreateApiResponseModel != null) {
+                                for (int i = 0; i < previousResponse.getDetail().size();i++) {
+                                    VitalsDetailBean previous = previousResponse.getDetail().get(i);
+                                    for (int j=0;j<vitalsCreateApiResponseModel.getDetail().size();j++) {
+                                        VitalsDetailBean current = vitalsCreateApiResponseModel.getDetail().get(j);
+                                        if (previous.getDoctor_guid().equals(current.getDoctor_guid())) {
+                                            current.setMessage(current.getMessage()+"<br><br>"+previous.getMessage());
+                                            current.setAbnormal(current.isAbnormal() || previous.isAbnormal());
+                                            break;
+                                        }
+                                    }
+
+                                }
+                            }
                         }
 
                         if (vitalsCreateApiResponseModel != null) {
@@ -100,8 +120,13 @@ public class VitalsSendBaseFragment extends BaseFragment {
                             if (vitalsCreateApiResponseModel.isAbnormal()) {
                                 isAbnormal = true;
                             }
+                            if (vitalsCreateApiResponseModel.getDetail()!= null){
+                                detail = vitalsCreateApiResponseModel.getDetail();
+                            }
 
                         }
+
+
                     }
 
                     if (TextUtils.isEmpty(message)) {
@@ -115,12 +140,15 @@ public class VitalsSendBaseFragment extends BaseFragment {
                     if (UserType.isUserPatient()) {
                         bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE, SupportedMeasurementType.getDrawable(currentPostingMeasurementType));
                         bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE_TINT,isAbnormal ? R.color.red : R.color.vital_good);
+                        bundle.putSerializable(Constants.VITAL_DETAIL,detail);
                     }
 
-                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, message);
+                    if (detail.size() == 0){
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, message);
+                    }
                     LocalBroadcastManager
                             .getInstance(getActivity())
-                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                            .sendBroadcast(new Intent(getString(R.string.success_vital_broadcast_receiver))
                                     .putExtras(bundle));
 
                     Log.v("VitalsSendBaseFragment","not present in call kit");
@@ -255,7 +283,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
         }
 
         if (vitalApiRequestModel_1 != null && vitalApiRequestModel_2 != null) {
-            captureSuccessMessage = getString(SupportedMeasurementType.getTitle(vitalApiRequestModel_1.getType())) + " " + getString(R.string.and) + " " + getString(SupportedMeasurementType.getTitle(vitalApiRequestModel_2.getType())) + " " + getString(R.string.captured);
+            captureSuccessMessage = getString(SupportedMeasurementType.getTitle(vitalApiRequestModel_1.getType())) + " "  + getString(R.string.captured);
         } else if (vitalApiRequestModel_1 != null) {
             captureSuccessMessage = getString(SupportedMeasurementType.getTitle(vitalApiRequestModel_1.getType())) + " " + getString(R.string.captured);
         } else   {
@@ -270,7 +298,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
 
     private void showSuccessState() {
         if (!isPresentedInsideCallActivity()) {
-            SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+            VitalThresholdSuccessViewDialogFragment successViewDialogFragment = new VitalThresholdSuccessViewDialogFragment();
             successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
             successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
         }
