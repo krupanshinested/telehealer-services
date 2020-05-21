@@ -9,6 +9,8 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 
+import java.util.ArrayList;
+
 /**
  * Created by Aswin on 21,November,2018
  */
@@ -29,7 +31,17 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
     private String date;
     private String bundle_id;
 
-    public VitalsApiResponseModel(String type,String value,String display_name, String mode,String date,String bundle_id) {
+    private ArrayList<VitalsDetailBean> detail;
+
+    public ArrayList<VitalsDetailBean> getDetail() {
+        return detail;
+    }
+
+    public void setDetail(ArrayList<VitalsDetailBean> detail) {
+        this.detail = detail;
+    }
+
+    public VitalsApiResponseModel(String type, String value, String display_name, String mode, String date, String bundle_id) {
         this.type = type;
         this.display_name = display_name;
         this.value = value;
@@ -43,7 +55,16 @@ public class VitalsApiResponseModel extends BaseApiResponseModel {
     }
 
     public boolean isAbnormal() {
-        return abnormal;
+        if (getDetail()!=null) {
+            if (getDetail().size() != 0) {
+                for (int j = 0; j < getDetail().size(); j++) {
+                    if (detail.get(j).isAbnormal()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public void setAbnormal(boolean abnormal) {
