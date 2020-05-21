@@ -212,6 +212,8 @@
     <string name="success_title_pin">You’ve set up your login PIN</string>
     <string name="success_message_pin">We saved your Email Id on this device so you can use your PIN to login next time</string>
     <string name="success_broadcast_receiver">SuccessBroadcastReceiver</string>
+    <string name="success_vital_broadcast_receiver">SuccessVitalBroadcastReceiver</string>
+    <string name="vital_broadcast_receiver">VitalBroadcastReceiver</string>
     <string name="doctor_search_name_info">Enter your name</string>
     <string name="doctor_select_profile_info">Select your profile</string>
     <string name="doctor_detail_info">Doctor Registration</string>
@@ -370,6 +372,9 @@
     <string name="profile_settings">Profile Settings</string>
     <string name="submit">submit</string>
     <string name="time">time</string>
+    <string name="vitals_patient_bottom_hint_1">Your doctor\'s office may be  </string>
+    <string name="not">NOT</string>
+    <string name="vitals_patient_bottom_hint_2">reviewing this immediately.  Contact your doctor\'s office is you have concerns with these results.</string>
     <string name="search_associations">Search Associations</string>
     <string name="search_notification">Search Notification</string>
     <string name="go_to_settings">Go to settings</string>
