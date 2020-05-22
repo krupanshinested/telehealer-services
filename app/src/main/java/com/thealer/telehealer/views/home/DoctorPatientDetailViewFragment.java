@@ -679,7 +679,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         case patientTab:
                             bundle = new Bundle();
                             bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
-
+                            bundle.putBoolean(ArgumentKeys.SHOW_FAB_ADD, false);
                             DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
                             doctorPatientListingFragment.setArguments(bundle);
                             addFragment(getString(R.string.patients), doctorPatientListingFragment);
