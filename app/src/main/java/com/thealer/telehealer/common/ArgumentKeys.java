@@ -14,6 +14,7 @@ public class ArgumentKeys {
     public static final String CURRENT_STEP_INFO = "CURRENT_STEP_INFO";
     public static final String SHOW_NEXT = "SHOW_NEXT";
     public static final String SHOW_BACK = "SHOW_BACK";
+    public static final String SHOW_FAB_ADD = "SHOW_FAB_ADD";
 
     public static final String HEADER = "HEADER";
     public static final String PAGEHINT = "PAGEHINT";
