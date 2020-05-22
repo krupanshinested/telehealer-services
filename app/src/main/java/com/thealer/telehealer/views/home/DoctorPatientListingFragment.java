@@ -235,6 +235,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)) {
                 searchLl.setVisibility(View.GONE);
             }
+            if (!getArguments().getBoolean(ArgumentKeys.SHOW_FAB_ADD, true)){
+                addFab.setVisibility(View.GONE);
+            }
             if (isDietView || getArguments().getBoolean(ArgumentKeys.HIDE_ADD)) {
                 addFab.hide();
             }
