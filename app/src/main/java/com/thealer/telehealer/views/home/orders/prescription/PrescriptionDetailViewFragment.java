@@ -178,6 +178,11 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
             pharmacyOcv.setTitleTv("-");
 
             if (ordersResultBean != null) {
+                if (UserType.isUserPatient()){
+                    patientOcv.setLabelTv(getString(R.string.doctor));
+                } else {
+                    patientOcv.setLabelTv(getString(R.string.patient));
+                }
                 setData(ordersResultBean);
                 setUserDetail();
             } else {

@@ -71,7 +71,7 @@ public class RegistrationEmailFragment extends BaseFragment implements DoCurrent
                         if (whereFrom.equals(ForgotPassword.class.getSimpleName())) {
 
                             if (!checkUserEmailMobileResponseModel.isUser_exists()) {
-                                setEmailError(String.format(getString(R.string.user_not_allowed_error), getString(R.string.app_name), getString(R.string.app_name)));
+                                setEmailError(String.format(getString(R.string.user_not_allowed_error), getString(R.string.app_name), getString(R.string.opposite_app)));
                             } else {
                                 ResetPasswordRequestModel resetPasswordRequestModel = new ViewModelProvider(getActivity()).get(ResetPasswordRequestModel.class);
                                 resetPasswordRequestModel.setEmail(emailEt.getText().toString());

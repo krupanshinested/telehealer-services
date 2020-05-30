@@ -175,9 +175,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         favoriteIv.setVisibility(View.GONE);
 
         nextTv = findViewById(R.id.next_tv);
-        toolbar.setTitle(getResources().getString(R.string.settings));
-        setSupportActionBar(toolbar);
-
+      
         updateProfile();
 
         appbarLayout.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {

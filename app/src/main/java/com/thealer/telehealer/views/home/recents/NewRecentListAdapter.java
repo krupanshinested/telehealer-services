@@ -75,6 +75,15 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     @Override
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder instanceof ItemHolder) {
+            ItemHolder viewHolder = (ItemHolder) holder;
+            viewHolder.userNameTv.setTextColor(ColorStateList.valueOf(activity.getColor(R.color.colorBlack)));
+        }
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
         RecentListAdapterModel adapterModel = adapterModelList.get(i);
 
@@ -121,15 +130,15 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 itemHolder.itemCv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!isChat && resultBean.getDurationInSecs() > 0) {
+                        if (isChat){
+                            activity.startActivity(new Intent(activity, ChatActivity.class).putExtra(ArgumentKeys.USER_GUID, UserType.isUserPatient() ? resultBean.getDoctor().getUser_guid() : resultBean.getPatient().getUser_guid()));
+                        }
+                        else if (resultBean.getDurationInSecs() > 0) {
                             VisitsDetailFragment visitsDetailFragment = new VisitsDetailFragment();
                             Bundle bundle = new Bundle();
                             bundle.putSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL, resultBean);
                             visitsDetailFragment.setArguments(bundle);
                             showSubFragmentInterface.onShowFragment(visitsDetailFragment);
-                        }
-                        else {
-                            activity.startActivity(new Intent(activity, ChatActivity.class).putExtra(ArgumentKeys.USER_GUID, UserType.isUserPatient() ? resultBean.getDoctor().getUser_guid() : resultBean.getPatient().getUser_guid()));
                         }
                     }
                 });
