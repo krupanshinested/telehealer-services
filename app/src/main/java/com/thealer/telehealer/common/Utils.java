@@ -249,7 +249,7 @@ public class Utils {
     }
 
     public static boolean isEmailValid(String email) {
-        String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        String emailPattern = "^[_A-Za-z0-9._\\+]+(\\.[_A-Za-z0-9._-]+)*@[A-Za-z0-9._-]+(\\.[A-Za-z0-9._]+)*(\\.[A-Za-z]{2,})$";
         return Pattern.matches(emailPattern, email);
     }
 
