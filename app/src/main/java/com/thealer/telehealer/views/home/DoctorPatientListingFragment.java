@@ -11,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.exoplayer2.audio.AudioCapabilitiesReceiver;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -22,9 +23,11 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,6 +60,8 @@ import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
+import com.thealer.telehealer.views.common.SearchCellView;
+import com.thealer.telehealer.views.common.SearchInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,21 +85,19 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private boolean isApiRequested = false;
     private FloatingActionButton addFab;
     private View topView;
-    private EditText searchEt;
     private View bottomView;
-    private ImageView searchClearIv;
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle;
-    private LinearLayout searchLl;
-    private CardView searchCv;
     private OnCloseActionInterface onCloseActionInterface;
     private boolean isDietView, isResumed;
     private String doctorGuid = null;
     private AssociationApiResponseModel associationApiResponseModel;
     private ArrayList<DoctorGroupedAssociations> doctorGroupedAssociations;
     private ChangeTitleInterface changeTitleInterface;
+    @Nullable
+    private SearchCellView search_view;
 
     @Nullable
     private TimerRunnable uiToggleTimer;
@@ -154,66 +157,27 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
 
         topView = (View) view.findViewById(R.id.top_view);
-        searchLl = view.findViewById(R.id.search_ll);
-        searchEt = (EditText) view.findViewById(R.id.search_et);
         bottomView = (View) view.findViewById(R.id.bottom_view);
-        searchClearIv = (ImageView) view.findViewById(R.id.search_clear_iv);
+        search_view = view.findViewById(R.id.search_view);
 
         topView.setVisibility(View.GONE);
         bottomView.setVisibility(View.GONE);
 
-        searchClearIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchEt.setText(null);
-            }
-        });
-
-        searchEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().isEmpty()) {
-                    searchClearIv.setVisibility(View.VISIBLE);
-                    doctorPatientListCrv.setScrollable(false);
-                        if (uiToggleTimer != null) {
-                            uiToggleTimer.setStopped(true);
-                            uiToggleTimer = null;
-                        }
-
-                        Handler handler = new Handler();
-                        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
-                            @Override
-                            public void run() {
-                                showSearchList(searchEt.getText().toString().toLowerCase());
-
-                            }
-                        });
-                        uiToggleTimer = runnable;
-                        handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
-                } else {
-                    searchClearIv.setVisibility(View.GONE);
-                    doctorPatientListCrv.setScrollable(true);
-                    if (associationApiResponseModel != null &&
-                            associationApiResponseModel.getResult().size() > 0) {
-                        doctorPatientListAdapter.setData(associationApiResponseModel.getResult(), page);
-                        doctorPatientListCrv.showOrhideEmptyState(false);
-                    } else {
-                        doctorPatientListCrv.showOrhideEmptyState(true);
-                    }
-                }
-            }
-        });
-
         addFab.setOnClickListener(this);
+
+        if (UserType.isUserPatient()){
+            search_view.setSearchHint(getString(R.string.search_doctors));
+        }
+        else {
+            search_view.setSearchHint(getString(R.string.search_associations));
+        }
+
+        search_view.setSearchInterface(new SearchInterface() {
+            @Override
+            public void doSearch() {
+                getAssociationsList(true);
+            }
+        });
 
         if (getArguments() != null) {
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
@@ -233,7 +197,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 doctorGuid = commonUserApiResponseModel.getUser_guid();
             }
             if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)) {
-                searchLl.setVisibility(View.GONE);
+                search_view.setVisibility(View.GONE);
             }
             if (!getArguments().getBoolean(ArgumentKeys.SHOW_FAB_ADD, true)){
                 addFab.setVisibility(View.GONE);
@@ -259,7 +223,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             @Override
             public void onPaginate() {
                 page = page + 1;
-                getAssociationsList(null, false);
+                getAssociationsList( false);
                 isApiRequested = true;
                 doctorPatientListCrv.setScrollable(false);
             }
@@ -269,14 +233,14 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             @Override
             public void onRefresh() {
                 page = 1;
-                getAssociationsList(null, false);
+                getAssociationsList( false);
             }
         });
 
         doctorPatientListCrv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getAssociationsList(null, true);
+                getAssociationsList( true);
             }
         });
 
@@ -291,7 +255,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         isApiRequested = false;
 
         if (isVisibleToUser && isResumed) {
-            getAssociationsList(null, true);
+            getAssociationsList( true);
         }
     }
 
@@ -396,26 +360,6 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         doctorPatientListCrv.hideProgressBar();
     }
 
-    private void showSearchList(String search) {
-        if (associationApiResponseModel == null || associationApiResponseModel.getResult() == null) {
-            return;
-        }
-
-        List<CommonUserApiResponseModel> searchList = new ArrayList<>();
-        for (CommonUserApiResponseModel usermodel : associationApiResponseModel.getResult()) {
-            if (usermodel.getUserDisplay_name().toLowerCase().contains(search)) {
-                searchList.add(usermodel);
-            }
-        }
-
-        if (searchList.size() > 0) {
-            doctorPatientListCrv.showOrhideEmptyState(false);
-            doctorPatientListAdapter.setData(searchList, 1);
-        } else {
-            doctorPatientListCrv.showOrhideEmptyState(true);
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -444,13 +388,14 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         }
     }
 
-    private void getAssociationsList(String name, boolean isShowProgress) {
+    private void getAssociationsList(boolean isShowProgress) {
         if (!isApiRequested) {
+            doctorPatientListCrv.setScrollable(true);
             doctorPatientListCrv.showOrhideEmptyState(false);
             if (UserType.isUserPatient()) {
                 associationApiViewModel.getDoctorGroupedAssociations(isShowProgress);
             } else {
-                associationApiViewModel.getAssociationList(name, page, doctorGuid, isShowProgress, false);
+                associationApiViewModel.getAssociationList(search_view.getCurrentSearchResult(), page, doctorGuid, isShowProgress, false);
             }
         }
     }
@@ -476,6 +421,6 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
     @Override
     public void doCurrentTransaction() {
-        getAssociationsList(null, false);
+        getAssociationsList( false);
     }
 }

@@ -2,11 +2,18 @@ package com.thealer.telehealer.views.home.recents;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +41,8 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
+import com.thealer.telehealer.views.common.SearchCellView;
+import com.thealer.telehealer.views.common.SearchInterface;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -53,6 +62,8 @@ public class RecentFragment extends BaseFragment {
     private ImageView throbberIv;
     private CustomRecyclerView recentsCrv;
     private boolean isCalls;
+    @Nullable
+    private SearchCellView searchView;
 
     @Override
     public void onAttach(Context context) {
@@ -110,18 +121,26 @@ public class RecentFragment extends BaseFragment {
     private void initView(View view) {
         recentsCrv = (CustomRecyclerView) view.findViewById(R.id.recents_crv);
         throbberIv = (ImageView) view.findViewById(R.id.throbber_iv);
-
+        searchView = view.findViewById(R.id.search_view);
         Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(throbberIv);
 
         recentsCrv.setEmptyState(EmptyViewConstants.EMPTY_CALLS);
 
         recentsCrv.hideEmptyState();
 
+        searchView.setSearchHint(getString(R.string.search_contact));
+
         if (getUserVisibleHint()) {
             makeApiCall(true);
         }
         recentListAdapter = new NewRecentListAdapter(getActivity());
         recentsCrv.getRecyclerView().setAdapter(recentListAdapter);
+
+        if (getArguments() != null) {
+            if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)){
+                searchView.setVisibility(View.GONE);
+            }
+        }
 
         recentsCrv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
@@ -166,7 +185,14 @@ public class RecentFragment extends BaseFragment {
                             doctorGuid = appPreference.getString(PreferenceConstants.ASSOCIATION_GUID_LIST);
                             doctorGuid = doctorGuid.concat("," + UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
                         }
-                        recentsApiViewModel.getMyCorrespondentList(page, doctorGuid, isShowProgress);
+
+                        String finalDoctorGuid = doctorGuid;
+                        searchView.setSearchInterface(new SearchInterface() {
+                            @Override
+                            public void doSearch() {
+                                recentsApiViewModel.getMyCorrespondentList(searchView.getCurrentSearchResult(), page, finalDoctorGuid, isShowProgress);
+                            }
+                        });
                     } else {
 
                         CommonUserApiResponseModel userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);

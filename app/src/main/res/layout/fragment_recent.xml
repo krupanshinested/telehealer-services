@@ -11,6 +11,14 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
+        <com.thealer.telehealer.views.common.SearchCellView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/search_view" />
+
         <com.thealer.telehealer.common.CustomRecyclerView
             android:id="@+id/recents_crv"
             android:layout_width="match_parent"
@@ -19,7 +27,7 @@
             app:layout_constraintBottom_toTopOf="@+id/throbber_iv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/search_view" />
 
         <ImageView
             android:id="@+id/throbber_iv"

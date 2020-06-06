@@ -13,9 +13,11 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -43,6 +45,8 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.common.SearchCellView;
+import com.thealer.telehealer.views.common.SearchInterface;
 import com.thealer.telehealer.views.home.orders.AssociationListAdapter;
 
 import java.util.ArrayList;
@@ -53,7 +57,6 @@ import java.util.List;
  */
 public class SelectAssociationFragment extends BaseFragment implements OnListItemSelectInterface {
 
-    private EditText searchEt;
     private TextView titleTv;
     private ImageView backIv;
     private AppBarLayout appBarLayout;
@@ -73,8 +76,8 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
     private int page = 1;
     private boolean isFromHome,isShowToolbar,isCloseNeeded;
     private String selectionType, userName;
-    private ImageView searchClearIv;
-
+    @Nullable
+    private SearchCellView searchView;
     @Nullable
     private TimerRunnable uiToggleTimer;
 
@@ -174,12 +177,11 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
     }
 
     private void initView(View view) {
-        searchEt = (EditText) view.findViewById(R.id.search_et);
         appBarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
         titleTv = (TextView) view.findViewById(R.id.toolbar_title);
         associationRv = (CustomRecyclerView) view.findViewById(R.id.association_rv);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
-        searchClearIv = (ImageView) view.findViewById(R.id.search_clear_iv);
+        searchView = view.findViewById(R.id.search_view);
 
         backIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,6 +190,11 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             }
         });
 
+        if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR) || selectionType.equals(ArgumentKeys.SEARCH_COPY_TO)) {
+            searchView.setSearchHint(getString(R.string.search_doctors));
+        } else {
+            searchView.setSearchHint(getString(R.string.search_associations));
+        }
         associationRv.getSwipeLayout().setEnabled(false);
         associationRv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
@@ -196,67 +203,10 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                 page = page + 1;
                 associationRv.showProgressBar();
 
-                if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR) || selectionType.equals(ArgumentKeys.SEARCH_COPY_TO)) {
-                    getSpecialist(null, false);
-                } else {
-                    getAssociationList(null,false);
-                }
+                fetch();
             }
         });
 
-        searchEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                page = 1;
-                if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR) || selectionType.equals(ArgumentKeys.SEARCH_COPY_TO)) {
-                    if (s.toString().isEmpty()) {
-                        getSpecialist(null, false);
-                    } else {
-                        if (uiToggleTimer != null) {
-                            uiToggleTimer.setStopped(true);
-                            uiToggleTimer = null;
-                        }
-
-                        Handler handler = new Handler();
-                        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
-                            @Override
-                            public void run() {
-                                getSpecialist(searchEt.getText().toString(), false);
-                            }
-                        });
-                        uiToggleTimer = runnable;
-                        handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
-                    }
-                } else {
-                    if (!s.toString().isEmpty()) {
-                        associationRv.setScrollable(false);
-                        searchClearIv.setVisibility(View.VISIBLE);
-                        getAssociationList(searchEt.getText().toString(),true);
-                    }else {
-                        searchClearIv.setVisibility(View.GONE);
-                        getAssociationList(null,false);
-                    }
-                }
-            }
-        });
-
-        searchClearIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchEt.setText("");
-            }
-        });
-        
         associationApiResponseModel = new AssociationApiResponseModel();
 
         if (getArguments() != null) {
@@ -276,6 +226,12 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             }
 
+            searchView.setSearchInterface(new SearchInterface() {
+                @Override
+                public void doSearch() {
+                    fetch();
+                }
+            });
             selectionType = getArguments().getString(ArgumentKeys.SEARCH_TYPE);
             Log.e(TAG, "initView: " + selectionType);
 
@@ -285,25 +241,22 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
                     case ArgumentKeys.SEARCH_COPY_TO:
                         changeTitleInterface.onTitleChange(getString(R.string.copy_to));
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_SPECIALIST);
-                        searchEt.setHint(getString(R.string.search_doctors));
-                        getSpecialist(null, true);
+                        fetch();
                         break;
                     case ArgumentKeys.SEARCH_DOCTOR:
                         changeTitleInterface.onTitleChange(getString(R.string.specialist));
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_SPECIALIST);
-                        searchEt.setHint(getString(R.string.search_doctors));
-                        getSpecialist(null, true);
+                        fetch();
                         break;
                     case ArgumentKeys.SEARCH_ASSOCIATION:
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_PATIENT_SEARCH);
                         changeTitleInterface.onTitleChange(getString(R.string.choose_patient));
-                        getAssociationList(null,true);
+                        fetch();
                         break;
                     case ArgumentKeys.SEARCH_ASSOCIATION_DOCTOR:
                         changeTitleInterface.onTitleChange(getString(R.string.choose_doctor));
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_SPECIALIST);
-                        searchEt.setHint(getString(R.string.search_doctors));
-                        getAssociationList(null,true);
+                        fetch();
                         break;
                 }
 
@@ -321,16 +274,24 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
 
     }
 
-    private void getSpecialist(String name, boolean isShowProgress) {
-        getDoctorsApiViewModel.getDoctorsDetailList(page, name, isShowProgress);
+    private void fetch() {
+        if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR) || selectionType.equals(ArgumentKeys.SEARCH_COPY_TO)) {
+            getSpecialist(false);
+        } else {
+            getAssociationList(true);
+        }
     }
 
-    private void getAssociationList(String search, boolean isShowProgress) {
+    private void getSpecialist(boolean isShowProgress) {
+        getDoctorsApiViewModel.getDoctorsDetailList(page, searchView.getCurrentSearchResult(), isShowProgress);
+    }
+
+    private void getAssociationList(boolean isShowProgress) {
         String doctorGuid = null;
         if (getArguments() != null && getArguments().getString(ArgumentKeys.DOCTOR_GUID) != null) {
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
         }
-        associationApiViewModel.getAssociationList(search,page, doctorGuid, isShowProgress,false);
+        associationApiViewModel.getAssociationList(searchView.getCurrentSearchResult(),page, doctorGuid, isShowProgress,false);
     }
 
     @Override

@@ -201,7 +201,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             }
         });
 
-        notificationApiViewModel.getNotifications(1, false, null, null);
+        notificationApiViewModel.getNotifications(null, 1, false, null, null);
     }
 
     private void showOrHideNotificationCount(boolean isShow, int unread_count) {

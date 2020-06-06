@@ -662,6 +662,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         case schedulesTab:
                             bundle = new Bundle();
                             bundle.putBoolean(ArgumentKeys.HIDE_ADD, true);
+                            bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
 
                             SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
                             schedulesListFragment.setArguments(bundle);
@@ -683,7 +684,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             addFragment(getString(R.string.documents), documentListFragment);
                             break;
                         case visitTab:
+                            bundle = new Bundle();
+                            bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
                             RecentFragment recentFragment = new RecentFragment();
+                            recentFragment.setArguments(bundle);
                             addFragment(getString(R.string.visits), recentFragment);
                             break;
                         case orderTab:

@@ -3,10 +3,16 @@ package com.thealer.telehealer.views.home.orders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,6 +46,8 @@ import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Util.TimerInterface;
+import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -47,6 +55,8 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
+import com.thealer.telehealer.views.common.SearchCellView;
+import com.thealer.telehealer.views.common.SearchInterface;
 import com.thealer.telehealer.views.settings.SignatureActivity;
 
 import java.util.ArrayList;
@@ -84,6 +94,8 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
     private Set<String> userGuidSet = new HashSet<>();
     private HashMap<String, CommonUserApiResponseModel> userDetailHashMap = new HashMap<>();
     private String userGuid, doctorGuid;
+    @Nullable
+    private SearchCellView searchView;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -552,6 +564,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
     }
 
     private void initView(View view) {
+        searchView = view.findViewById(R.id.search_view);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         orderDetailCelv = (CustomExpandableListView) view.findViewById(R.id.order_detail_celv);
@@ -576,6 +589,26 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                     doctorGuid = doctorModel.getUser_guid();
 
             }
+            searchView.setSearchInterface(new SearchInterface() {
+                @Override
+                public void doSearch() {
+                    if (selectedItem.equals(OrderConstant.ORDER_PRESCRIPTIONS)) {
+                        ordersApiViewModel.getPrescriptionOrders(searchView.getCurrentSearchResult(),page,true);
+                    } else if (selectedItem.equals(OrderConstant.ORDER_REFERRALS)) {
+                        ordersApiViewModel.getSpecialist(searchView.getCurrentSearchResult(), page, true);
+                    }  else if (selectedItem.equals(OrderConstant.ORDER_LABS)) {
+                        ordersApiViewModel.getLabOrders(searchView.getCurrentSearchResult(), page, true);
+                    } else if (selectedItem.equals(OrderConstant.ORDER_FORM)) {
+                        ordersApiViewModel.getForms(searchView.getCurrentSearchResult(),true);
+                    } else if (selectedItem.equals(OrderConstant.ORDER_RADIOLOGY)) {
+                        ordersApiViewModel.getRadiologyList(searchView.getCurrentSearchResult(), page, true);
+                    } else if (selectedItem.equals(OrderConstant.ORDER_MISC)) {
+                        ordersApiViewModel.getMiscellaneousList(searchView.getCurrentSearchResult(), page, true);
+                    } else if (selectedItem.equals(OrderConstant.ORDER_EDUCATIONAL_VIDEO)) {
+                        ordersApiViewModel.getEducationalVideoList(searchView.getCurrentSearchResult(), page, true);
+                    }
+                }
+            });
 
             if (selectedItem != null) {
 
@@ -617,7 +650,6 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 makeApiCall(true);
             }
         });
-
         orderDetailCelv.setErrorModel(this, ordersApiViewModel.getErrorModelLiveData());
     }
 
@@ -633,55 +665,56 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
         if (selectedItem.equals(OrderConstant.ORDER_DOCUMENTS)) {
 
         } else if (selectedItem.equals(OrderConstant.ORDER_FORM)) {
+            searchView.setSearchHint(getString(R.string.search_form));
             if (isFromHome) {
-                ordersApiViewModel.getForms(isShowProgress);
+                ordersApiViewModel.getForms(searchView.getCurrentSearchResult(),isShowProgress);
             } else {
                 ordersApiViewModel.getUserForms(userGuid, doctorGuid, isShowProgress, !UserType.isUserPatient());
             }
         } else if (selectedItem.equals(OrderConstant.ORDER_LABS)) {
-
+            searchView.setSearchHint(getString(R.string.search_lab));
             if (isFromHome) {
-                ordersApiViewModel.getLabOrders(page, isShowProgress);
+                ordersApiViewModel.getLabOrders(searchView.getCurrentSearchResult(), page, isShowProgress);
             } else {
                 ordersApiViewModel.getUserLabOrders(userGuid, doctorGuid, page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_PRESCRIPTIONS)) {
-
+            searchView.setSearchHint(getString(R.string.search_prescription));
             if (isFromHome) {
-                ordersApiViewModel.getPrescriptionOrders(page, isShowProgress);
-            } else {
+                ordersApiViewModel.getPrescriptionOrders(searchView.getCurrentSearchResult(), page, isShowProgress);
+             } else {
                 ordersApiViewModel.getUserPrescriptionOrders(userGuid, doctorGuid, page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_RADIOLOGY)) {
-
+            searchView.setSearchHint(getString(R.string.search_radiology));
             if (isFromHome) {
-                ordersApiViewModel.getRadiologyList(page, isShowProgress);
+                ordersApiViewModel.getRadiologyList(searchView.getCurrentSearchResult(), page, isShowProgress);
             } else {
                 ordersApiViewModel.getUserRadiologyList(userGuid, doctorGuid, page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_REFERRALS)) {
-
+            searchView.setSearchHint(getString(R.string.search_referral));
             if (isFromHome) {
-                ordersApiViewModel.getSpecialist(page, isShowProgress);
+                ordersApiViewModel.getSpecialist(searchView.getCurrentSearchResult(), page, isShowProgress);
             } else {
                 ordersApiViewModel.getUserSpecialist(userGuid, doctorGuid, page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_MISC)) {
-
+            searchView.setSearchHint(getString(R.string.search_misc));
             if (isFromHome) {
-                ordersApiViewModel.getMiscellaneousList(page, isShowProgress);
+                ordersApiViewModel.getMiscellaneousList(searchView.getCurrentSearchResult(), page, isShowProgress);
             } else {
                 ordersApiViewModel.getUserMiscellaneousList(userGuid, doctorGuid, page, isShowProgress);
             }
 
         } else if (selectedItem.equals(OrderConstant.ORDER_EDUCATIONAL_VIDEO)) {
-
+            searchView.setSearchHint(getString(R.string.search_educational_video));
             if (isFromHome) {
-                ordersApiViewModel.getEducationalVideoList(page, isShowProgress);
+                ordersApiViewModel.getEducationalVideoList(searchView.getCurrentSearchResult(), page, isShowProgress);
             } else {
                 ordersApiViewModel.getUserEducationalVideoList(userGuid, doctorGuid, page, isShowProgress);
             }

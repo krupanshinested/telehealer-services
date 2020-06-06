@@ -127,6 +127,14 @@ public interface ApiInterface {
     String CANCEL = "cancel";
     String SEARCH = "search";
     String SEARCH_FILTER = "filter_fullname__icontains";
+    String SEARCH_TITLE_FILTER = "filter_title__icontains";
+    String SEARCH_FILTER_PRESCIPTION = "filter_drug_name__icontains";
+    String SEARCH_FILTER_REFERRAL = "filter_specialist_name__icontains";
+    String SEARCH_FILTER_LAB = "filter_lab_description__icontains";
+    String SEARCH_FILTER_XRAY = "filter_xray_name__icontains";
+    String SEARCH_FILTER_NAME = "filter_name__icontains";
+    String SEARCH_FILTER_NOTES = "filter_notes__icontains";
+    String SEARCH_FILTER_TITLE= "filter_title__icontains";
     String NAME = "name";
     String FIELDS = "fields";
     String EMAIL = "email";
@@ -240,7 +248,7 @@ public interface ApiInterface {
     Observable<WhoAmIApiResponseModel> whoAmI();
 
     @GET("api/associations")
-    Observable<AssociationApiResponseModel> getAssociations(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<AssociationApiResponseModel> getAssociations(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/associations")
     Observable<ArrayList<CommonUserApiResponseModel>> getAssociations(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String doctorGuid);
@@ -264,7 +272,7 @@ public interface ApiInterface {
     Observable<RecentsApiResponseModel> getUserCorrespondentHistory(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(MONTH) String month, @Query(CALLS) boolean calls, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/correspondence-history")
-    Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(SEARCH_FILTER) String search, @Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/unconnected-users")
     Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate,@Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
@@ -288,7 +296,7 @@ public interface ApiInterface {
     Observable<OrdersLabApiResponseModel> getUserLabOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
-    Observable<OrdersLabApiResponseModel> getLabOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<OrdersLabApiResponseModel> getLabOrders(@Query(SEARCH_FILTER_LAB) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("icd-codes")
     Observable<IcdCodeApiResponseModel> getFilteredIcdCodes(@Query(FILTER_CODE_IN) String data);
@@ -300,7 +308,7 @@ public interface ApiInterface {
     Observable<OrdersPrescriptionApiResponseModel> getUserPrescriptionsOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_PRESCRIPTIONS)
-    Observable<OrdersPrescriptionApiResponseModel> getPrescriptionsOrders(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<OrdersPrescriptionApiResponseModel> getPrescriptionsOrders(@Query(SEARCH_FILTER_PRESCIPTION) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @PATCH("api/referrals/{type}/{id}")
     Observable<BaseApiResponseModel> cancelOrder(@Path("type") String type, @Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Query(CANCEL) boolean cancel);
@@ -315,7 +323,7 @@ public interface ApiInterface {
     Observable<OrdersSpecialistApiResponseModel> getUserSpecialistList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_SPECIALIST)
-    Observable<OrdersSpecialistApiResponseModel> getSpecialistList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<OrdersSpecialistApiResponseModel> getSpecialistList(@Query(SEARCH_FILTER_REFERRAL) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @DELETE("api/users")
     Observable<BaseApiResponseModel> deleteAccount();
@@ -353,7 +361,7 @@ public interface ApiInterface {
     Observable<ArrayList<OrdersUserFormsApiResponseModel>> getAllForms();
 
     @GET("api/" + OrderConstant.ORDER_TYPE_FORM)
-    Observable<ArrayList<OrdersUserFormsApiResponseModel>> getForms(@Query(ASSIGNOR) boolean assignor);
+    Observable<ArrayList<OrdersUserFormsApiResponseModel>> getForms(@Query(SEARCH_FILTER_NAME) String search, @Query(ASSIGNOR) boolean assignor);
 
     @POST("api/" + OrderConstant.ORDER_TYPE_FORM)
     Observable<BaseApiResponseModel> createForms(@Body CreateFormRequestModel createFormRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
@@ -403,19 +411,19 @@ public interface ApiInterface {
     Observable<OrdersBaseApiResponseModel> createRadiology(@Query(SYNC_CREATE) boolean sync_create,@Body CreateRadiologyRequestModel createRadiologyRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
-    Observable<GetRadiologyResponseModel> getRadiologyList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<GetRadiologyResponseModel> getRadiologyList(@Query(SEARCH_FILTER_XRAY) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
     Observable<GetRadiologyResponseModel> getUserRadiologyList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_MISC)
-    Observable<MiscellaneousApiResponseModel> getMiscellaneousList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<MiscellaneousApiResponseModel> getMiscellaneousList(@Query(SEARCH_FILTER_NOTES) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_MISC)
     Observable<MiscellaneousApiResponseModel> getUserMiscellaneousList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/" + OrderConstant.ORDER_TYPE_EDUCATIONAL_VIDEO)
-    Observable<EducationalVideoApiResponseModel> getEducationalVideoList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize,@Query(ASSIGNOR) boolean assignor);
+    Observable<EducationalVideoApiResponseModel> getEducationalVideoList(@Query(SEARCH_FILTER_TITLE) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize,@Query(ASSIGNOR) boolean assignor);
 
     @GET("api/" + OrderConstant.ORDER_TYPE_EDUCATIONAL_VIDEO)
     Observable<EducationalVideoApiResponseModel> getUserEducationalVideoList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid,@Query(ASSIGNOR) boolean assignor);
@@ -433,7 +441,7 @@ public interface ApiInterface {
     Observable<ArrayList<OrdersUserFormsApiResponseModel>> getFormDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
 
     @GET("api/schedule")
-    Observable<SchedulesApiResponseModel> getSchedules(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuidList);
+    Observable<SchedulesApiResponseModel> getSchedules(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuidList);
 
     @POST("api/requests")
     Observable<BaseApiResponseModel> createSchedules(@Query(DOCTOR_GUID) String doctorGuidList, @Body SchedulesCreateRequestModel createRequestModel);
@@ -472,7 +480,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> getExperimentalFeature(@Path(ID) String id);
 
     @GET("api/requests")
-    Observable<NotificationApiResponseModel> getNotifications(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuid, @Query(TYPE) String filters);
+    Observable<NotificationApiResponseModel> getNotifications(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuid, @Query(TYPE) String filters);
 
     @PUT("api/requests")
     Observable<BaseApiResponseModel> setNotificationsRead(@Body Map<String, String> body);
@@ -626,7 +634,7 @@ public interface ApiInterface {
 
 
     @GET("api/educational-video")
-    Observable<EducationalVideoResponse> getEducationalVideo(@Query(PAGINATE) boolean paginate,@Query(DOCTOR_GUID) String user_guid,@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<EducationalVideoResponse> getEducationalVideo(@Query(SEARCH_TITLE_FILTER) String search, @Query(PAGINATE) boolean paginate,@Query(DOCTOR_GUID) String user_guid,@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/educational-video")
     Observable<ArrayList<EducationalVideoOrder>> getEducationalVideos(@Query(ASSIGNOR) boolean assignor,@Query(FILTER_ID_IN) String ids,@Query(USER_GUID) String userGuid,@Query(DOCTOR_GUID) String doctorGuid);
