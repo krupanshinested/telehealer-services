@@ -23,13 +23,13 @@ public class AssociationApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getAssociationList(String name, int page, String doctorGuid, boolean showProgress, boolean isMedicalAssistant) {
+    public void getAssociationList(String search, int page, String doctorGuid, boolean showProgress, boolean isMedicalAssistant) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
 
-                    getAuthApiService().getAssociations(true, page, Constants.PAGINATION_SIZE, name, isMedicalAssistant, doctorGuid)
+                    getAuthApiService().getAssociations(search, true, page, Constants.PAGINATION_SIZE,  isMedicalAssistant, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
                                 @Override

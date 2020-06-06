@@ -23,12 +23,12 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getSchedule(int page, boolean isShowProgress, String doctorGuidList) {
+    public void getSchedule(String search, int page, boolean isShowProgress, String doctorGuidList) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getSchedules(true, page, Constants.PAGINATION_SIZE, doctorGuidList)
+                    getAuthApiService().getSchedules(search,true, page, Constants.PAGINATION_SIZE, doctorGuidList)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

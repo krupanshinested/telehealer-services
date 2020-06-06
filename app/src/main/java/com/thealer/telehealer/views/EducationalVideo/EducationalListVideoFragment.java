@@ -33,6 +33,8 @@ import com.thealer.telehealer.views.EducationalVideo.Adapter.EducationListAdapte
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
+import com.thealer.telehealer.views.common.SearchCellView;
+import com.thealer.telehealer.views.common.SearchInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.quickLogin.QuickLoginPinFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
@@ -56,7 +58,8 @@ public class EducationalListVideoFragment extends BaseFragment {
     private int page = 1;
     @Nullable
     private EducationListAdapter educationListAdapter;
-
+    @Nullable
+    private SearchCellView searchView;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -79,9 +82,18 @@ public class EducationalListVideoFragment extends BaseFragment {
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        searchView = view.findViewById(R.id.search_view);
         view.findViewById(R.id.next_tv).setVisibility(View.GONE);
         toolbarTitle.setText(getString(R.string.educational_video));
         initListeners();
+
+        searchView.setSearchHint(getString(R.string.search_educational_video));
+        searchView.setSearchInterface(new SearchInterface() {
+            @Override
+            public void doSearch() {
+                getEducationalVideos();
+            }
+        });
 
         if (getActivity() instanceof AttachObserverInterface) {
             ((AttachObserverInterface)getActivity()).attachObserver(educationalVideoViewModel);
@@ -189,7 +201,7 @@ public class EducationalListVideoFragment extends BaseFragment {
     }
 
     private void getEducationalVideos() {
-        educationalVideoViewModel.getEducationalVideo(null,page);
+        educationalVideoViewModel.getEducationalVideo(searchView.getCurrentSearchResult(),null,page);
     }
 
     private void initListeners() {

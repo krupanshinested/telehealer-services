@@ -2,10 +2,16 @@ package com.thealer.telehealer.views.notification;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +39,8 @@ import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
+import com.thealer.telehealer.views.common.SearchCellView;
+import com.thealer.telehealer.views.common.SearchInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +67,8 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
     private Map<String, List<NotificationApiResponseModel.ResultBean.RequestsBean>> childList = new HashMap<>();
 
     private String selectedFilterTypes = null;
+    @Nullable
+    private SearchCellView searchView;
 
     @Override
     public void onAttach(Context context) {
@@ -164,9 +174,16 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
 
     private void initView(View view) {
         notificationCrv = (CustomRecyclerView) view.findViewById(R.id.notification_crv);
+        searchView = view.findViewById(R.id.search_view);
         notificationCrv.setEmptyState(EmptyViewConstants.EMPTY_NOTIFICATIONS);
         notificationCrv.setScrollable(true);
 
+        searchView.setSearchInterface(new SearchInterface() {
+            @Override
+            public void doSearch() {
+                getNotification(true);
+            }
+        });
         notificationCrv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
             public void onPaginate() {
@@ -177,6 +194,7 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
             }
         });
 
+        searchView.setSearchHint(getString(R.string.search_notification));
         notificationCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -192,7 +210,7 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
         notificationCrv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNotification(true);
+                getNotification( true);
             }
         });
 
@@ -205,7 +223,7 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
             associationGuids = appPreference.getString(PreferenceConstants.ASSOCIATION_GUID_LIST);
             associationGuids = associationGuids.concat(",").concat(UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
         }
-        notificationApiViewModel.getNotifications(page, isShowProgress, associationGuids, selectedFilterTypes);
+        notificationApiViewModel.getNotifications(searchView.getCurrentSearchResult(), page, isShowProgress, associationGuids, selectedFilterTypes);
     }
 
 

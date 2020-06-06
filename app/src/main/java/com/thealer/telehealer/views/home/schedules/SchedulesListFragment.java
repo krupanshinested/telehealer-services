@@ -9,10 +9,18 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -31,6 +39,8 @@ import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
+import com.thealer.telehealer.views.common.SearchCellView;
+import com.thealer.telehealer.views.common.SearchInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +68,8 @@ public class SchedulesListFragment extends BaseFragment {
     private SchedulesListAdapter schedulesListAdapter;
     private String doctorGuidList;
     private boolean isResumed = false;
+    @Nullable
+    private SearchCellView searchView;
 
     @Override
     public void onAttach(Context context) {
@@ -95,18 +107,24 @@ public class SchedulesListFragment extends BaseFragment {
     private void initView(View view) {
         schedulesElv = (CustomExpandableListView) view.findViewById(R.id.schedules_elv);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
-
+        searchView = view.findViewById(R.id.search_view);
         schedulesElv.setEmptyState(EmptyViewConstants.EMPTY_APPOINTMENTS_WITH_BTN);
 
+        searchView.setSearchHint(getString(R.string.search_schedules));
+        searchView.setSearchInterface(new SearchInterface() {
+            @Override
+            public void doSearch() {
+                getSchedulesList(page,true);
+            }
+        });
         schedulesElv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
             public void onPaginate() {
                 page = page + 1;
-                getSchedulesList(page, true);
+                getSchedulesList( page, true);
                 schedulesElv.showProgressBar();
             }
         });
-
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,14 +140,14 @@ public class SchedulesListFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 page = 1;
-                getSchedulesList(page, false);
+                getSchedulesList( page, false);
             }
         });
 
         schedulesElv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSchedulesList(page, true);
+                getSchedulesList( page, true);
             }
         });
 
@@ -141,6 +159,9 @@ public class SchedulesListFragment extends BaseFragment {
             CommonUserApiResponseModel doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
             if (getArguments().getBoolean(ArgumentKeys.HIDE_ADD)) {
                 addFab.hide();
+            }
+            if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)){
+                searchView.setVisibility(View.GONE);
             }
 
             if (doctorDetail != null) {
@@ -204,7 +225,7 @@ public class SchedulesListFragment extends BaseFragment {
         if (!isApiRequested) {
             schedulesElv.hideEmptyState();
             isApiRequested = true;
-            schedulesApiViewModel.getSchedule(page, isShowProgress, doctorGuidList.toString());
+            schedulesApiViewModel.getSchedule(searchView.getCurrentSearchResult(), page, isShowProgress, doctorGuidList.toString());
         }
     }
 
@@ -223,7 +244,7 @@ public class SchedulesListFragment extends BaseFragment {
     }
 
     private void makeApiCall() {
-        getSchedulesList(page, true);
+        getSchedulesList( page, true);
     }
 
     @Override

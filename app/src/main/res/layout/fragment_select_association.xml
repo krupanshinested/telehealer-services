@@ -13,17 +13,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/search_view"
+    <com.thealer.telehealer.views.common.SearchCellView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appbar">
-
-        <include layout="@layout/layout_search_view" />
-
-    </LinearLayout>
+        android:background="@drawable/app_background_gradient"
+        app:layout_constraintTop_toBottomOf="@+id/appbar"
+        android:id="@+id/search_view" />
 
      <com.thealer.telehealer.common.CustomRecyclerView
         android:id="@+id/association_rv"
