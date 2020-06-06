@@ -29,6 +29,8 @@ import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.SearchCellView;
+import com.thealer.telehealer.views.common.SearchInterface;
 import com.thealer.telehealer.views.home.AddConnectionActivity;
 import com.thealer.telehealer.views.home.DoctorPatientListAdapter;
 
@@ -51,7 +53,8 @@ public class MedicalAssistantListFragment extends BaseFragment {
     private AttachObserverInterface attachObserverInterface;
     private AssociationApiResponseModel associationApiResponseModel;
     private OnCloseActionInterface onCloseActionInterface;
-
+    @Nullable
+    private SearchCellView searchView;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -89,7 +92,16 @@ public class MedicalAssistantListFragment extends BaseFragment {
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         medicalAssistantCrv = (CustomRecyclerView) view.findViewById(R.id.medical_assistant_crv);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
+        searchView = view.findViewById(R.id.search_view);
 
+        searchView.setSearchInterface(new SearchInterface() {
+            @Override
+            public void doSearch() {
+                getMAList(true);
+            }
+        });
+
+        searchView.setSearchHint(getString(R.string.search_ma));
         toolbarTitle.setText(getString(R.string.medical_assistant));
 
         backIv.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +147,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
     private void getMAList(boolean isShowProgress) {
         if (!isApiRequested) {
             isApiRequested = true;
-            associationApiViewModel.getAssociationList(null, page, null, isShowProgress, true);
+            associationApiViewModel.getAssociationList(searchView.getCurrentSearchResult(), page, null, isShowProgress, true);
         }
     }
 

@@ -220,7 +220,7 @@ public class CreateEducationalVideoOrderFragment extends OrdersBaseFragment {
     }
 
     private void getEducationalVideos() {
-        educationalVideoViewModel.getEducationalVideo(doctorGuid,page);
+        educationalVideoViewModel.getEducationalVideo(null, doctorGuid,page);
     }
 
     private void updateButtonEnable() {
