@@ -503,6 +503,7 @@
     <string name="certificate">प्रमाणपत्र</string>
     <string name="medical_school_certificate">मेडिकल स्कूल डिप्लोमा / प्रमाण पत्र</string>
     <string name="profile_picture_updated">profile_picture_updated</string>
+    <string name="app_state_changed">APP_STATE_CHANGED</string>
     <string name="insurance_sentenceCase">बीमा</string>
     <string name="payment_methods">भुगतान की विधि</string>
     <string name="email">ईमेल</string>

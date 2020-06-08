@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import flavor.GoogleFit.VitalDeviceListWithGoogleFitFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,6 +38,8 @@ import com.thealer.telehealer.views.home.vitals.iHealth.pairing.Adapters.VitalDe
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
+
+import flavor.GoogleFit.VitalDeviceListWithGoogleFitFragment;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
