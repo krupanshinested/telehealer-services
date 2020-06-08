@@ -1,11 +1,11 @@
-package Flavor.GoogleFit;
+package flavor.GoogleFit;
 
 import android.app.Activity;
 import android.content.Context;
 
-import Flavor.GoogleFit.Interface.GoogleFitResultFetcher;
-import Flavor.GoogleFit.Models.GoogleFitData;
-import Flavor.GoogleFit.Models.GoogleFitSource;
+import flavor.GoogleFit.Interface.GoogleFitResultFetcher;
+import flavor.GoogleFit.Models.GoogleFitData;
+import flavor.GoogleFit.Models.GoogleFitSource;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 

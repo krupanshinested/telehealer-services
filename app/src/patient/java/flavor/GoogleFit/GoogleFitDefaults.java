@@ -1,4 +1,4 @@
-package Flavor.GoogleFit;
+package flavor.GoogleFit;
 
 import android.text.TextUtils;
 
@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 
-import Flavor.GoogleFit.Models.GoogleFitSource;
+import flavor.GoogleFit.Models.GoogleFitSource;
 import androidx.annotation.Nullable;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;

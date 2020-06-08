@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
@@ -37,6 +39,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.ResultFetcher;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -47,6 +50,7 @@ import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
+import com.thealer.telehealer.views.notification.NotificationDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +58,7 @@ import java.util.List;
 /**
  * Created by Aswin on 18,December,2018
  */
-public class ScheduleDetailViewFragment extends BaseFragment implements View.OnClickListener {
+public class ScheduleDetailViewFragment extends BaseFragment implements View.OnClickListener{
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
@@ -82,6 +86,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private String userGuid = null, doctorGuid = null, doctorName = null;
     private Button waitingRoomBtn;
     private TextView historyLabel;
+    boolean cancelIsClicked=false;
 
     @Override
     public void onAttach(Context context) {
@@ -96,18 +101,25 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                     @Override
                     public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                         if (baseApiResponseModel != null) {
-                            if (baseApiResponseModel.isSuccess()) {
-                                Utils.showAlertDialog(getActivity(), getString(R.string.success).toUpperCase(), getString(R.string.schedule_deleted), getString(R.string.ok).toUpperCase(), null,
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                onCloseActionInterface.onClose(true);
-                                            }
-                                        }, null);
+                            if (baseApiResponseModel instanceof SchedulesApiResponseModel.ResultBean) {
+                                scheduleDetails(baseApiResponseModel);
+                            } else {
+                                if (baseApiResponseModel.isSuccess()) {
+                                    Utils.showAlertDialog(getActivity(), getString(R.string.success).toUpperCase(), getString(R.string.schedule_deleted), getString(R.string.ok).toUpperCase(), null,
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    onCloseActionInterface.onClose(true);
+                                                }
+                                            }, null);
+                                }
                             }
+
                         }
+
                     }
                 });
+
     }
 
     @Nullable
@@ -185,6 +197,9 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         }
 
         waitingRoomBtn.setVisibility(View.GONE);
+
+
+
         if (getArguments() != null) {
             resultBean = (SchedulesApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SCHEDULE_DETAIL);
 
@@ -192,98 +207,11 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 doctorGuid = resultBean.getDoctor().getUser_guid();
                 doctorName = resultBean.getDoctor().getUserDisplay_name();
             }
+
             if (resultBean != null) {
-                userGuid = resultBean.getPatient().getUser_guid();
-
-                if (UserType.isUserPatient() && resultBean.isStartAndEndBetweenCurrentTime()) {
-                    waitingRoomBtn.setVisibility(View.VISIBLE);
-                }
-
-                String statusInfo = getString(R.string.patient_has_been_updated);
-                String detail = "";
-                if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isChange_demographic() && resultBean.getDetail().isInsurance_to_date()) {
-                    detail = getString(R.string.demographic_history_insurance);
-                } else if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isChange_demographic()) {
-                    detail = getString(R.string.demographic_history);
-                } else if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isInsurance_to_date()) {
-                    detail = getString(R.string.history_insurance);
-                } else if (resultBean.getDetail().isChange_demographic() && resultBean.getDetail().isInsurance_to_date()) {
-                    detail = getString(R.string.demographic_insurance);
-                } else if (resultBean.getDetail().isChange_medical_info()) {
-                    detail = getString(R.string.history);
-                } else if (resultBean.getDetail().isChange_demographic()) {
-                    detail = getString(R.string.demographic);
-                } else if (resultBean.getDetail().isInsurance_to_date()) {
-                    detail = getString(R.string.insurance);
-                }
-
-                if (!detail.isEmpty()) {
-                    statusInfo = String.format(statusInfo, detail);
-                    statusTv.setText(statusInfo);
-                    statusTv.setVisibility(View.VISIBLE);
-
-                    List<HistoryBean> historyList = new ArrayList<>();
-                    if (resultBean.getScheduled_with_user().getRole().equals(Constants.ROLE_PATIENT)) {
-                        historyList = resultBean.getScheduled_with_user().getHistory();
-                    } else if (resultBean.getScheduled_by_user().getRole().equals(Constants.ROLE_PATIENT)) {
-                        historyList = resultBean.getScheduled_by_user().getHistory();
-                    }
-                    patientHistoryRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    PatientHistoryAdapter patientHistoryAdapter = new PatientHistoryAdapter(getActivity(), false, historyList);
-                    patientHistoryRv.setAdapter(patientHistoryAdapter);
-                    historyLabel.setVisibility(View.VISIBLE);
-                    patientHistoryRv.setVisibility(View.VISIBLE);
-                } else {
-                    historyLabel.setVisibility(View.GONE);
-                    patientHistoryRv.setVisibility(View.GONE);
-                }
-
-                reasonOcv.setTitleTv(resultBean.getDetail().getReason());
-                appointmentTimeOcv.setTitleTv(Utils.getDayMonth(resultBean.getStart()) + " - " + Utils.getFormatedTime(resultBean.getStart()));
-
-                String doctorName = null, doctorSpecialist = null, patientName = null, patientDob = null;
-
-                CommonUserApiResponseModel scheduleWith = resultBean.getScheduled_with_user();
-                CommonUserApiResponseModel scheduleBy = resultBean.getScheduled_by_user();
-
-                if (scheduleWith.getRole().equals(Constants.ROLE_PATIENT)) {
-                    patientName = scheduleWith.getUserDisplay_name();
-                    patientDob = scheduleWith.getDob();
-                } else {
-                    doctorName = scheduleWith.getDoctorDisplayName();
-                    doctorSpecialist = scheduleWith.getDoctorSpecialist();
-                }
-                if (scheduleBy.getRole().equals(Constants.ROLE_PATIENT)) {
-                    patientName = scheduleBy.getUserDisplay_name();
-                    patientDob = scheduleBy.getDob();
-                } else {
-                    doctorName = scheduleBy.getDoctorDisplayName();
-                    doctorSpecialist = scheduleBy.getDoctorSpecialist();
-                }
-
-                doctorOcv.setTitleTv(doctorName);
-                doctorOcv.setSubtitleTv(doctorSpecialist);
-                patientOcv.setTitleTv(patientName);
-                patientOcv.setSubtitleTv(patientDob);
-
-                if (Utils.isDateTimeExpired(resultBean.getStart())) {
-                    cancelLl.setVisibility(View.GONE);
-                } else {
-                    cancelLl.setVisibility(View.VISIBLE);
-                }
-
-                if (Utils.isDateTimeExpired(resultBean.getEnd())) {
-                    doctorChatIv.setVisibility(View.GONE);
-                    patientCallIv.setVisibility(View.GONE);
-                    patientChatIv.setVisibility(View.GONE);
-                    waitingRoomBtn.setVisibility(View.GONE);
-                } else if (!UserType.isUserPatient()) {
-                    if (resultBean.getPatient().isAvailable()) {
-                        patientCallIv.setVisibility(View.VISIBLE);
-                    }
-                }
-
+                schedulesApiViewModel.getScheduleDetail(resultBean.getSchedule_id(), doctorGuid, true);
             }
+
         }
 
     }
@@ -306,6 +234,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
+                cancelIsClicked=false;
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.cancel_tv:
@@ -313,6 +242,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                cancelIsClicked=true;
                                 dialog.dismiss();
                                 schedulesApiViewModel.deleteSchedule(resultBean.getSchedule_id(), resultBean.getStart(), resultBean.getScheduled_by_user().getUser_guid(), doctorGuid, true);
                             }
@@ -373,6 +303,103 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 waitingRoomIntent.putExtra(ArgumentKeys.SCHEDULE_DETAIL, resultBean);
                 startActivity(waitingRoomIntent);
                 break;
+        }
+    }
+
+    public void scheduleDetails(BaseApiResponseModel baseApiResponseModel) {
+        SchedulesApiResponseModel.ResultBean resultBean=(SchedulesApiResponseModel.ResultBean) baseApiResponseModel;
+         Log.d("Received_schedule",""+resultBean.getSchedule_id());
+        if (resultBean != null) {
+            userGuid = resultBean.getPatient().getUser_guid();
+
+            if (UserType.isUserPatient() && resultBean.isStartAndEndBetweenCurrentTime()) {
+                waitingRoomBtn.setVisibility(View.VISIBLE);
+            }
+
+            String statusInfo = getString(R.string.patient_has_been_updated);
+            String detail = "";
+            if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isChange_demographic() && resultBean.getDetail().isInsurance_to_date()) {
+                detail = getString(R.string.demographic_history_insurance);
+            } else if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isChange_demographic()) {
+                detail = getString(R.string.demographic_history);
+            } else if (resultBean.getDetail().isChange_medical_info() && resultBean.getDetail().isInsurance_to_date()) {
+                detail = getString(R.string.history_insurance);
+            } else if (resultBean.getDetail().isChange_demographic() && resultBean.getDetail().isInsurance_to_date()) {
+                detail = getString(R.string.demographic_insurance);
+            } else if (resultBean.getDetail().isChange_medical_info()) {
+                detail = getString(R.string.history);
+            } else if (resultBean.getDetail().isChange_demographic()) {
+                detail = getString(R.string.demographic);
+            } else if (resultBean.getDetail().isInsurance_to_date()) {
+                detail = getString(R.string.insurance);
+            }
+
+            if (!detail.isEmpty()) {
+                statusInfo = String.format(statusInfo, detail);
+                statusTv.setText(statusInfo);
+                statusTv.setVisibility(View.VISIBLE);
+
+                List<HistoryBean> historyList = new ArrayList<>();
+                if (resultBean.getScheduled_with_user().getRole().equals(Constants.ROLE_PATIENT)) {
+                    historyList = resultBean.getScheduled_with_user().getHistory();
+                } else if (resultBean.getScheduled_by_user().getRole().equals(Constants.ROLE_PATIENT)) {
+                    historyList = resultBean.getScheduled_by_user().getHistory();
+                }
+                patientHistoryRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+                PatientHistoryAdapter patientHistoryAdapter = new PatientHistoryAdapter(getActivity(), false, historyList);
+                patientHistoryRv.setAdapter(patientHistoryAdapter);
+                historyLabel.setVisibility(View.VISIBLE);
+                patientHistoryRv.setVisibility(View.VISIBLE);
+            } else {
+                historyLabel.setVisibility(View.GONE);
+                patientHistoryRv.setVisibility(View.GONE);
+            }
+
+            reasonOcv.setTitleTv(resultBean.getDetail().getReason());
+            appointmentTimeOcv.setTitleTv(Utils.getDayMonth(resultBean.getStart()) + " - " + Utils.getFormatedTime(resultBean.getStart()));
+
+            String doctorName = null, doctorSpecialist = null, patientName = null, patientDob = null;
+
+            CommonUserApiResponseModel scheduleWith = resultBean.getScheduled_with_user();
+            CommonUserApiResponseModel scheduleBy = resultBean.getScheduled_by_user();
+
+            if (scheduleWith.getRole().equals(Constants.ROLE_PATIENT)) {
+                patientName = scheduleWith.getUserDisplay_name();
+                patientDob = scheduleWith.getDob();
+            } else {
+                doctorName = scheduleWith.getDoctorDisplayName();
+                doctorSpecialist = scheduleWith.getDoctorSpecialist();
+            }
+            if (scheduleBy.getRole().equals(Constants.ROLE_PATIENT)) {
+                patientName = scheduleBy.getUserDisplay_name();
+                patientDob = scheduleBy.getDob();
+            } else {
+                doctorName = scheduleBy.getDoctorDisplayName();
+                doctorSpecialist = scheduleBy.getDoctorSpecialist();
+            }
+
+            doctorOcv.setTitleTv(doctorName);
+            doctorOcv.setSubtitleTv(doctorSpecialist);
+            patientOcv.setTitleTv(patientName);
+            patientOcv.setSubtitleTv(patientDob);
+
+            if (Utils.isDateTimeExpired(resultBean.getStart())) {
+                cancelLl.setVisibility(View.GONE);
+            } else {
+                cancelLl.setVisibility(View.VISIBLE);
+            }
+
+            if (Utils.isDateTimeExpired(resultBean.getEnd())) {
+                doctorChatIv.setVisibility(View.GONE);
+                patientCallIv.setVisibility(View.GONE);
+                patientChatIv.setVisibility(View.GONE);
+                waitingRoomBtn.setVisibility(View.GONE);
+            } else if (!UserType.isUserPatient()) {
+                if (resultBean.getPatient().isAvailable()) {
+                    patientCallIv.setVisibility(View.VISIBLE);
+                }
+            }
+
         }
     }
 }

@@ -1,4 +1,4 @@
-package Flavor.GoogleFit;
+package flavor.GoogleFit;
 
 import android.app.Activity;
 import android.content.Context;

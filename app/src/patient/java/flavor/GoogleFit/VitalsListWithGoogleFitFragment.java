@@ -1,9 +1,8 @@
-package Flavor.GoogleFit;
+package flavor.GoogleFit;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -13,25 +12,19 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.FireBase.EventRecorder;
-import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.views.call.CallActivity;
-import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-import Flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity;
-import Flavor.GoogleFit.Interface.GoogleFitResultFetcher;
-import Flavor.GoogleFit.Models.GoogleFitData;
-import Flavor.GoogleFit.Models.GoogleFitSource;
-
-import static com.thealer.telehealer.TeleHealerApplication.application;
+import flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity;
+import flavor.GoogleFit.Interface.GoogleFitResultFetcher;
+import flavor.GoogleFit.Models.GoogleFitData;
+import flavor.GoogleFit.Models.GoogleFitSource;
 
 public class VitalsListWithGoogleFitFragment extends VitalsListFragment implements GoogleFitResultFetcher {
     GoogleFitManager googleFitManager;

@@ -3,7 +3,7 @@ package com.thealer.telehealer.views.home.monitoring;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import Flavor.GoogleFit.VitalsListWithGoogleFitFragment;
+import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;

@@ -1,8 +1,8 @@
-package Flavor.GoogleFit.Interface;
+package flavor.GoogleFit.Interface;
 
 import java.util.ArrayList;
 
-import Flavor.GoogleFit.Models.GoogleFitData;
+import flavor.GoogleFit.Models.GoogleFitData;
 
 
 public interface GoogleFitResultFetcher {
