@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -19,7 +18,7 @@ import com.thealer.telehealer.common.Util.InternalLogging.TeleLogCapability;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.views.proposer.ProposerActivity;
 
-import Flavor.GoogleFit.GoogleFitManager;
+import flavor.GoogleFit.GoogleFitManager;
 
 
 /**

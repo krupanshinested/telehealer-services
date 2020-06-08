@@ -1,4 +1,4 @@
-package Flavor.GoogleFit.Activity;
+package flavor.GoogleFit.Activity;
 
 public class GoogleFitSourceSelectionActivity {
 }
