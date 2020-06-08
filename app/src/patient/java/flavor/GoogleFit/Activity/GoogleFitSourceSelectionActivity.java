@@ -1,4 +1,4 @@
-package Flavor.GoogleFit.Activity;
+package flavor.GoogleFit.Activity;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -11,11 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.Util.Vital.BulkVitalUtil;
 import com.thealer.telehealer.common.Utils;
@@ -27,20 +24,18 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 
-import Flavor.GoogleFit.Adapter.GoogleFitSourceAdapter;
-import Flavor.GoogleFit.GoogleFitDefaults;
-import Flavor.GoogleFit.GoogleFitManager;
-import Flavor.GoogleFit.Interface.GoogleFitResultFetcher;
-import Flavor.GoogleFit.Interface.GoogleFitSourceInterface;
-import Flavor.GoogleFit.Models.GoogleFitData;
-import Flavor.GoogleFit.Models.GoogleFitSource;
+import flavor.GoogleFit.Adapter.GoogleFitSourceAdapter;
+import flavor.GoogleFit.GoogleFitDefaults;
+import flavor.GoogleFit.GoogleFitManager;
+import flavor.GoogleFit.Interface.GoogleFitResultFetcher;
+import flavor.GoogleFit.Interface.GoogleFitSourceInterface;
+import flavor.GoogleFit.Models.GoogleFitData;
+import flavor.GoogleFit.Models.GoogleFitSource;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class GoogleFitSourceSelectionActivity extends BaseActivity implements View.OnClickListener, GoogleFitResultFetcher {
 

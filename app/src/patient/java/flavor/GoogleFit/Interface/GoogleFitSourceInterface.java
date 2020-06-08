@@ -1,4 +1,4 @@
-package Flavor.GoogleFit.Interface;
+package flavor.GoogleFit.Interface;
 
 public interface GoogleFitSourceInterface {
     void didSourceChanged();

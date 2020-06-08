@@ -1,4 +1,4 @@
-package Flavor.GoogleFit;
+package flavor.GoogleFit;
 
 import java.util.ArrayList;
 

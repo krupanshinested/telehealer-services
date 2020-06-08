@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import Flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity;
-import Flavor.GoogleFit.GoogleFitDefaults;
-import Flavor.GoogleFit.VitalDeviceListWithGoogleFitFragment;
+import flavor.GoogleFit.VitalDeviceListWithGoogleFitFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

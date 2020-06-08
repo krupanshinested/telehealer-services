@@ -1,25 +1,22 @@
-package Flavor.GoogleFit.Adapter;
+package flavor.GoogleFit.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
 
 
-import Flavor.GoogleFit.Interface.GoogleFitSourceInterface;
-import Flavor.GoogleFit.Models.GoogleFitSource;
+import flavor.GoogleFit.Interface.GoogleFitSourceInterface;
+import flavor.GoogleFit.Models.GoogleFitSource;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class GoogleFitSourceAdapter extends RecyclerView.Adapter<GoogleFitSourceAdapter.DataHolder> {
