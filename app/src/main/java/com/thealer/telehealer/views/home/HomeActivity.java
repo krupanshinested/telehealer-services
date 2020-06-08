@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -84,6 +85,7 @@ import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
+import static com.thealer.telehealer.TeleHealerApplication.isInForeGround;
 
 public class HomeActivity extends BaseActivity implements AttachObserverInterface,
         OnActionCompleteInterface, NavigationView.OnNavigationItemSelectedListener, OnOrientationChangeInterface,
@@ -290,31 +292,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             selecteMenuItem = R.id.menu_schedules;
         }
 
-        if (PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC))
-            attachView();
-    }
-
-    private void checkForMedicalHistory() {
-        if (UserType.isUserPatient() && !appPreference.getBoolean(PreferenceConstants.IS_HISTORY_UPDATE_SHOWN)) {
-
-            WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
-
-            if (whoAmIApiResponseModel != null && (whoAmIApiResponseModel.getQuestionnaire() == null || !whoAmIApiResponseModel.getQuestionnaire().isQuestionariesEmpty())) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_health_heart);
-                bundle.putString(ArgumentKeys.TITLE, getString(R.string.health_summary));
-                bundle.putString(ArgumentKeys.DESCRIPTION, getString(R.string.add_health_info_content));
-                bundle.putBoolean(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
-                bundle.putBoolean(ArgumentKeys.IS_SKIP_NEEDED, true);
-                bundle.putBoolean(ArgumentKeys.IS_BUTTON_NEEDED, true);
-                bundle.putString(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
-                bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
-
-                appPreference.setBoolean(PreferenceConstants.IS_HISTORY_UPDATE_SHOWN, true);
-
-                startActivityForResult(new Intent(HomeActivity.this, ContentActivity.class).putExtras(bundle), RequestID.REQ_CONTENT_VIEW);
-            }
-        }
+        attachView();
     }
 
     private void showMedicalHistory() {
@@ -371,7 +349,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         }
     }
 
-    private BroadcastReceiver profileListener = new BroadcastReceiver() {
+    public BroadcastReceiver profileListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             updateProfilePic();
@@ -773,19 +751,49 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     protected void onResume() {
         super.onResume();
         checkNotification();
-
-        showContent();
         application.addShortCuts();
 
-        if (UserType.isUserDoctor() && isCheckLicense && !appConfig.getInstallType().equals(getString(R.string.install_type_india)))
-            checkIsLicenseExpired();
-        else
-            isCheckLicense = true;
+        if (isInForeGround) {
+            Log.d("Home_Called", "showHelpScreen");
+            showHelpScreen();
+        }
     }
 
-    private void showContent() {
-        if (UserDetailPreferenceManager.getWhoAmIResponse() == null ||
-                !UserDetailPreferenceManager.getWhoAmIResponse().isEmail_verified()) {
+    private void showHelpScreen() {
+        if (UserType.isUserDoctor() && isCheckLicense && !appConfig.getInstallType().equals(getString(R.string.install_type_india)) && checkIsLicenseExpired()) {
+            Log.d("HelpScreen", "CheckLicense");
+            startActivityForResult(new Intent(this, ContentActivity.class)
+                    .putExtra(ArgumentKeys.IS_SHOW_CIRCULAR_AVATAR, true)
+                    .putExtra(ArgumentKeys.CIRCULAR_AVATAR, UserDetailPreferenceManager.getWhoAmIResponse().getUser_avatar())
+                    .putExtra(ArgumentKeys.IS_AUTH_REQUIRED, true)
+                    .putExtra(ArgumentKeys.USER_NAME, UserDetailPreferenceManager.getWhoAmIResponse().getFirst_name())
+                    .putExtra(ArgumentKeys.TITLE, getString(R.string.license_expired))
+                    .putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.license_expired_message))
+                    .putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed))
+                    .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true), RequestID.REQ_LICENSE_EXPIRED);
+
+        } else if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+            Log.d("HelpScreen", "Permission");
+
+        } else if (!appPreference.getBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN) && (!application.isFromRegistration) && UserType.isUserPatient() && UserDetailPreferenceManager.getWhoAmIResponse() != null && (UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire() == null || !UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire().isQuestionariesEmpty())) {
+
+            appPreference.setBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN, true);
+
+            Log.d("HelpScreen", "Health Summary");
+            Bundle bundle = new Bundle();
+            bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_health_heart);
+            bundle.putString(ArgumentKeys.TITLE, getString(R.string.health_summary));
+            bundle.putString(ArgumentKeys.DESCRIPTION, getString(R.string.add_health_info_content));
+            bundle.putBoolean(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
+            bundle.putBoolean(ArgumentKeys.IS_SKIP_NEEDED, true);
+            bundle.putBoolean(ArgumentKeys.IS_BUTTON_NEEDED, true);
+            bundle.putString(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
+            bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
+
+            startActivityForResult(new Intent(HomeActivity.this, ContentActivity.class).putExtras(bundle), RequestID.REQ_CONTENT_VIEW);
+
+        } else if (UserDetailPreferenceManager.getWhoAmIResponse() == null || !UserDetailPreferenceManager.getWhoAmIResponse().isEmail_verified()) {
+            Log.d("HelpScreen", "Email");
             Calendar currentTime = Calendar.getInstance();
             Calendar updateTime;
             boolean show = false;
@@ -807,19 +815,21 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 startActivity(new Intent(this, EmailVerificationActivity.class));
             }
         }
-        if ((!application.isFromRegistration)){
-            checkForMedicalHistory();}
     }
 
-    private void checkIsLicenseExpired() {
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isInForeGround=false;
+    }
+    private boolean checkIsLicenseExpired() {
+        boolean updateLicense = false;
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
         if (whoAmIApiResponseModel != null &&
                 whoAmIApiResponseModel.getUser_detail() != null &&
                 whoAmIApiResponseModel.getUser_detail().getData() != null &&
                 whoAmIApiResponseModel.getUser_detail().getData().getLicenses() != null) {
-
-            boolean updateLicense = false;
 
             List<LicensesBean> licensesBeanList = whoAmIApiResponseModel.getUser_detail().getData().getLicenses();
 
@@ -836,21 +846,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                     }
                 }
             }
-
-            if (updateLicense) {
-                startActivityForResult(new Intent(this, ContentActivity.class)
-                        .putExtra(ArgumentKeys.IS_SHOW_CIRCULAR_AVATAR, true)
-                        .putExtra(ArgumentKeys.CIRCULAR_AVATAR, whoAmIApiResponseModel.getUser_avatar())
-                        .putExtra(ArgumentKeys.IS_AUTH_REQUIRED, true)
-                        .putExtra(ArgumentKeys.USER_NAME, whoAmIApiResponseModel.getFirst_name())
-                        .putExtra(ArgumentKeys.TITLE, getString(R.string.license_expired))
-                        .putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.license_expired_message))
-                        .putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed))
-                        .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true), RequestID.REQ_LICENSE_EXPIRED);
-
-            }
         }
+        Log.d("updateLicense",""+updateLicense);
+        return updateLicense;
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

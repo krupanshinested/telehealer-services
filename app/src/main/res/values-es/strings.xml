@@ -504,6 +504,7 @@
     <string name="certificate">Certificado</string>
     <string name="medical_school_certificate">Diploma de Escuela de Medicina / Certificado</string>
     <string name="profile_picture_updated">profile_picture_updated</string>
+    <string name="app_state_changed">APP_STATE_CHANGED</string>
     <string name="insurance_sentenceCase">Seguro</string>
     <string name="payment_methods">Métodos de pago</string>
     <string name="email">Correo electrónico</string>

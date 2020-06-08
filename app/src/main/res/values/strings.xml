@@ -558,6 +558,7 @@
     <string name="certificate">Certificate</string>
     <string name="medical_school_certificate">Medical School Diploma / Certificate</string>
     <string name="profile_picture_updated">profile_picture_updated</string>
+    <string name="app_state_changed">APP_STATE_CHANGED</string>
     <string name="insurance_sentenceCase">Insurance</string>
     <string name="payment_methods">Payment Methods</string>
     <string name="email">Email</string>

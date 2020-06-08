@@ -368,7 +368,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             setUserVisibleHint(true);
         }
 
-        if (UserType.isUserPatient()) {
+        /*if (UserType.isUserPatient()) {
             Boolean isCallPermitted = PermissionChecker.with(getActivity()).isGranted(PermissionConstants.PERMISSION_CAM_MIC);
             if (!appPreference.getBoolean(PreferenceConstants.PATIENT_VIDEO_FEED) && isCallPermitted) {
                 appPreference.setBoolean(PreferenceConstants.PATIENT_VIDEO_FEED, true);
@@ -385,7 +385,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
                 startActivity(intent);
             }
-        }
+        }*/
     }
 
     private void getAssociationsList(boolean isShowProgress) {
