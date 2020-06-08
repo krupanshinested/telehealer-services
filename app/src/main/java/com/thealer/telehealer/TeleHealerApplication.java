@@ -1,5 +1,6 @@
 package com.thealer.telehealer;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,9 +10,12 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -24,8 +28,10 @@ import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.call.CallActivity;
+import com.thealer.telehealer.views.home.HomeActivity;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import config.AppConfig;
@@ -44,6 +50,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public static Set<Integer> popUpSchedulesId = new HashSet<>();
     public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false, isFromRegistration;
     public static AppConfig appConfig;
+    public static boolean stateChange=false;
 
     @Override
     public void onCreate() {
@@ -94,7 +101,6 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public void onMoveToForeground() {
         // app moved to foreground
         isInForeGround = true;
-
         Log.e("aswin", "onMoveToForeground: ");
         EventRecorder.recordLastUpdate("last_open_date");
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -135,5 +141,13 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
     public void removeShortCuts() {
 
+    }
+
+    public ComponentName getCurrentActivity() {
+        ActivityManager am = (ActivityManager) this .getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.AppTask> taskInfo = am.getAppTasks();
+        ComponentName componentInfo = taskInfo.get(0).getTaskInfo().baseActivity;
+        Log.d( "CURRENT Activity ::" ,""+componentInfo+"   Package Name :  "+componentInfo.getPackageName());
+        return componentInfo;
     }
 }
