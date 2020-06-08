@@ -16,14 +16,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 
-import Flavor.GoogleFit.GoogleFitManager;
+import flavor.GoogleFit.GoogleFitManager;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 

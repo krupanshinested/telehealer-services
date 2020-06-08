@@ -1,4 +1,4 @@
-package Flavor.GoogleFit.Models;
+package flavor.GoogleFit.Models;
 
 import java.io.Serializable;
 import java.util.Date;

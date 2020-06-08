@@ -1,15 +1,13 @@
-package Flavor.GoogleFit;
+package flavor.GoogleFit;
 
 import android.content.Intent;
-import android.util.Log;
-import android.view.View;
 
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.VitalDeviceListFragment;
 
-import Flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity;
+import flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity;
 
 public class VitalDeviceListWithGoogleFitFragment extends VitalDeviceListFragment {
 

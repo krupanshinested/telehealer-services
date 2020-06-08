@@ -1,11 +1,9 @@
-package Flavor.Utils;
+package flavor.Utils;
 
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
@@ -13,9 +11,7 @@ import com.example.smartlinklib.MainActivity;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
-import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.Util.Vital.BulkVitalUtil;
@@ -26,15 +22,14 @@ import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
-import Flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity;
-import Flavor.GoogleFit.GoogleFitDefaults;
-import Flavor.GoogleFit.GoogleFitManager;
-import Flavor.GoogleFit.Interface.GoogleFitResultFetcher;
-import Flavor.GoogleFit.Models.GoogleFitData;
-import Flavor.GoogleFit.Models.GoogleFitSource;
+import flavor.GoogleFit.Activity.GoogleFitSourceSelectionActivity;
+import flavor.GoogleFit.GoogleFitDefaults;
+import flavor.GoogleFit.GoogleFitManager;
+import flavor.GoogleFit.Interface.GoogleFitResultFetcher;
+import flavor.GoogleFit.Models.GoogleFitData;
+import flavor.GoogleFit.Models.GoogleFitSource;
 
 import static java.util.Arrays.*;
 
