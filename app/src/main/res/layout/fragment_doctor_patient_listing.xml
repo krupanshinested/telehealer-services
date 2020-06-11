@@ -27,6 +27,12 @@
             android:id="@+id/search_view"
             />
 
+        <com.thealer.telehealer.views.common.CustomPatientCountLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/search_view"
+            android:id="@+id/lay_patient_count"/>
+
         <com.thealer.telehealer.common.CustomRecyclerView
             android:id="@+id/doctor_patient_list_crv"
             android:layout_width="match_parent"
@@ -34,7 +40,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/search_view" />
+            app:layout_constraintTop_toBottomOf="@+id/lay_patient_count" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_fab"

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,15 +28,15 @@ import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideo;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoRequest;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoViewModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
-import com.thealer.telehealer.common.OpenTok.TokBox;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+
+import java.util.UUID;
 
 import static com.thealer.telehealer.TeleHealerApplication.application;
 
@@ -118,13 +117,12 @@ public class EducationalCreateFragment extends BaseFragment {
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel instanceof EducationalFetchModel) {
                     EducationalFetchModel model = (EducationalFetchModel) baseApiResponseModel;
-                    CallInitiateModel callInitiateModel = new CallInitiateModel(UserDetailPreferenceManager.getUser_guid(),null,null,null,model.getVideoId()+"", OpenTokConstants.education);
-                    callInitiateModel.setEducationTitle(title_et.getText().toString());
-                    callInitiateModel.setEducationDescription(description_et.getText().toString());
-                    callInitiateModel.setTokBoxApiKey(model.getApiKey());
-                    callInitiateModel.setSessionId(model.getSessionId());
-                    callInitiateModel.setToken(model.getToken());
-                    Intent intent = CallActivity.getIntent(application,callInitiateModel);
+                    CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
+                            UserDetailPreferenceManager.getUser_guid(),null,null,null,model.getVideoId()+"", OpenTokConstants.education,true,model.getVideoId()+"");
+                    callRequest.setEducationTitle(title_et.getText().toString());
+                    callRequest.setEducationDescription(description_et.getText().toString());
+                    callRequest.update(model);
+                    Intent intent = CallActivity.getIntent(application, callRequest);
                     application.startActivity(intent);
 
                     getActivity().onBackPressed();

@@ -11,16 +11,14 @@ import com.ihealth.communication.control.UpgradeControl;
 import com.ihealth.communication.manager.iHealthDevicesCallback;
 import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.ihealth.communication.manager.iHealthDevicesUpgradeManager;
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.vitals.BPTrack;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
-import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
@@ -36,8 +34,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import config.AppConfig;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -543,12 +539,12 @@ public class iHealthVitalManager extends VitalsManager {
 
     private void publishMessage(String type,HashMap<String,Object> message) {
         if (UserType.isUserPatient()) {
-            if (TokBox.shared.isActiveCallPreset()) {
+            if (CallManager.shared.isActiveCallPresent()) {
 
                 EventRecorder.recordVitals("publish_vital_result",type);
 
                 String deviceType = VitalDeviceType.shared.getKeyValue(type);
-                TokBox.shared.sendMessage(deviceType.replaceAll(" ","_"), message);
+                CallManager.shared.getActiveCallToShow().sendMessage(deviceType.replaceAll(" ","_"), message);
                 Log.d("VitalManager","publishMessage "+type+" - "+message.toString());
             }
         }

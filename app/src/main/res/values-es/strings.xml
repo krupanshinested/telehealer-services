@@ -1311,4 +1311,45 @@
     <string name="for_technical_help">For technical help or issues using this platform</string>
     <string name="for_help_scheduling">For help with scheduling appointments or any other health related queries ,please contact your providers office vai phone or email</string>
 
+    <string name="guest_login">Guest Login</string>
+    <string name="guest_login_subtitle">Important: Remember to Use the specific phone number or email address where you received your invite code ,if you dont have an invite code , please exit page and register an account instead</string>
+    <string name="enter_phn_or_email">Enter phone no or Email id</string>
+    <string name="invite_code">Invite code</string>
+    <string name="enter_name_optional">Name (optional)</string>
+    <string name="enter">Enter</string>
+    <string name="plz_be_patient">Please be patient while we notify someone from your provider office.You could put this app in the background while you wait.</string>
+    <string name="enjoy_telehealr_platform">Enjoying the Telehealer platform?</string>
+    <string name="create_an_account">"Create an account to unlock all the features "</string>
+    <string name="not_now">"Not now ,will try later "</string>
+    <string name="kickout">KICK OUT</string>
+    <string name="admit">ADMIT</string>
+    <string name="have_invite_code">Have an invite code?</string>
+    <string name="continue_as_guest"> Continue as guest</string>
+    <string name="enter_code">Enter Invite code</string>
+    <string name="youare">You are</string>
+    <string name="inline">in line</string>
+    <string name="exit_waiting_room">Exit waiting room?</string>
+    <string name="exit_waiting_msg">if you exit this now, you will be losing your order, do you want to proceed ?</string>
+    <string name="stayhere">Stay here</string>
+    <string name="exit">Exit</string>
+    <string name="patients_in_waiting_room">patients in waiting room</string>
+    <string name="patient_in_waiting_room">patient in waiting room</string>
+    <string name="patient_count_update">patientCountUpdate</string>
+    <string name="APP_LIFECYCLE_STATUS">APP_LIFECYCLE_STATUS</string>
+    <string name="noUser">No Users Found</string>
+    <string name="enter_your_msg">Enter your message</string>
+    <string name="NO_PATIENT_IN_WAITINGROOM">No Patient are available in Waiting Room</string>
+    <string name="message">MESSAGE</string>
+    <string name="waiting_room">Waiting Room</string>
+    <string name="put_app_in_back">You colud put this app in the background while you wait , but not more than 5 mins at a time ,for otherwise , you may lose your spot and rejoin at the end of the queue.</string>
+    <string name="guest_login_bottom_title">you will be entering a virtual waiting room . Proceed only if you have a scheduled appointment today or your provider has previosuly suggested using the virtual waiting room for same day consults .</string>
+    <string name="entering_you_waiting_room">Entering you waiting room request</string>
+    <string name="validating_your_waiting_room">Validating your waiting room request</string>
+    <string name="waiting_screen_msg">By Pressing Enter you will be  agreeing to <a href="https://www.google.com/">Terms and conditions</a> and <a href="https://www.google.com/">Notice to consumers</a></string>
+    <string name="by_pressing_enter">By Pressing Enter you will be  agreeing to </string>
+    <string name="wating_for_you">is waiting for you</string>
+    <string name="has_enterted_waiting_room">has entered your waiting room. Click yes to get connected.</string>
+    <string name="waiting_for_you">is waiting for you</string>
+    <string name="are_you_sure_to_kickout">Do you really want to withdraw this invite?</string>
+    <string name="confirmation">Confirmation</string>
 </resources>

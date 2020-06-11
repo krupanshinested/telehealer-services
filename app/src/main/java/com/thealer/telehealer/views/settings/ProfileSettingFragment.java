@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -24,7 +23,7 @@ import com.thealer.telehealer.apilayer.models.settings.ProfileUpdate;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Config;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -91,7 +90,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.signOut && TokBox.shared.isActiveCallPreset()) {
+        if (view.getId() == R.id.signOut && CallManager.shared.isActiveCallPresent()) {
             Toast.makeText(getActivity(), getString(R.string.live_call_going_error), Toast.LENGTH_LONG).show();
             return;
         }

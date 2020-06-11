@@ -5,14 +5,17 @@ import android.app.AppOpsManager;
 import android.app.Application;
 import android.app.Dialog;
 import android.app.KeyguardManager;
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.media.AudioDeviceInfo;
 import android.net.Uri;
@@ -22,7 +25,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.telecom.Call;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
@@ -45,17 +47,20 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.skyfishjy.library.RippleBackground;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
@@ -68,9 +73,11 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CompleteListener;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
+import com.thealer.telehealer.common.OpenTok.CallNotificationService;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
-import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.TokBoxUIInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
@@ -94,6 +101,7 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
+import com.thealer.telehealer.views.guestlogin.screens.GuestUserSignupActivity;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.UserDetailActivity;
 
@@ -103,7 +111,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
@@ -124,14 +131,35 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
 
     public static final int VOIP_NOTIFICATION_ID = 303030303;
-    @Nullable
-    public static TelehealerFirebaseMessagingService firebaseMessagingService;
 
-    public static Intent getIntent(Application application,CallInitiateModel callInitiateModel) {
+
+    public static Intent getIntent(Application application, CallRequest callRequest) {
         Intent intent = new Intent(application, CallActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(CALL_INITIATE_MODEL, callInitiateModel);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(CALL_INITIATE_MODEL, callRequest);
         return intent;
+    }
+
+    public static Intent getCallIntent(Application application,Boolean isWaitingRoom,@Nullable Boolean accept,CallRequest callRequest) {
+        Intent fullScreenIntent =  CallActivity.getIntent(application,callRequest);
+        fullScreenIntent.putExtra(ArgumentKeys.TRIGGER_ANSWER,isWaitingRoom);
+        if (accept != null) {
+            if (accept) {
+                fullScreenIntent.putExtra(ArgumentKeys.TRIGGER_ANSWER,true);
+            } else {
+                fullScreenIntent.putExtra(ArgumentKeys.TRIGGER_END,true);
+            }
+        }
+
+        return fullScreenIntent;
+    }
+
+    public static void createNotificationBarCall(Application application,Boolean isWaitingRoom, String doctorName, CallRequest callRequest) {
+        Log.d("CallActivity","createNotificationBarCall");
+        final Class<? extends Service> notificationService = CallNotificationService.class;
+        final Intent notificationIntent = new Intent(application, notificationService);
+        ContextCompat.startForegroundService(application,notificationIntent);
     }
 
     private LinearLayout bigView;
@@ -181,6 +209,10 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     @Nullable
     private CompleteListener lastTaskToDo;
 
+    private OpenTok activeCall;
+    private  CallRequest callRequest;
+    private boolean isScreenBroadcastRegistered = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -189,16 +221,13 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorBlack));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
             KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             if(keyguardManager!=null)
                 keyguardManager.requestDismissKeyguard(this, null);
-        }
-        else
-        {
+        } else {
             this.getWindow().setFlags(
                     WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
@@ -207,22 +236,21 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-
         }
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
         setContentView(R.layout.activity_call);
-        otherPersonDetail = TokBox.shared.getOtherPersonDetail();
 
-        if (firebaseMessagingService != null) {
-            firebaseMessagingService.stopForeground(true);
-            firebaseMessagingService = null;
-        }
+        activeCall = CallManager.shared.getActiveCallToShow();
+
+        otherPersonDetail = activeCall.getOtherPersonDetail();
+
+        stopNotificationService();
+
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null)
             notificationManager.cancel(VOIP_NOTIFICATION_ID);
@@ -230,10 +258,16 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
         Object object = getIntent().getSerializableExtra(ArgumentKeys.CALL_INITIATE_MODEL);
         if (object != null) {
-            CallInitiateModel callInitiateModel = (CallInitiateModel) object;
-            if (!TokBox.shared.isActiveCallPreset()) {
-                TokBox.shared.initialSetUp(callInitiateModel, true, UUID.randomUUID().toString());
-            }
+            callRequest = (CallRequest) object;
+        }
+
+        if (callRequest == null && activeCall != null) {
+            callRequest = activeCall.getCallRequest();
+        }
+
+        if (callRequest.isCalling()) {
+            Log.d("CallActivity", "connectToSession");
+            activeCall.connectToSession();
         }
 
         if (savedInstanceState != null) {
@@ -243,27 +277,26 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         triggerAnswer = getIntent().getBooleanExtra(ArgumentKeys.TRIGGER_ANSWER, false);
         initView();
 
-        if (TokBox.shared.getConnectedDate() != null) {
-            long lastSuccess = TokBox.shared.getConnectedDate().getTime();
+        if (activeCall.getConnectedDate() != null) {
+            long lastSuccess = activeCall.getConnectedDate().getTime();
             long elapsedRealtimeOffset = System.currentTimeMillis() - SystemClock.elapsedRealtime();
             recording_tv.setBase(lastSuccess - elapsedRealtimeOffset);
             callDidStarted();
         } else {
             recording_tv.stop();
-            if (!TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+            if (!activeCall.getCallType().equals(OpenTokConstants.education)) {
                 profile_background.startRippleAnimation();
             }
         }
 
         updateMinimizeButton(Constants.idle);
 
-        TokBox.shared.setup(getRemoteView(), getLocalView());
+        activeCall.setup(getRemoteView(), getLocalView());
         updateCallQuality(currentCallQuality);
 
         final Class<? extends Service> service = CallMinimizeService.class;
         final Intent intent = new Intent(CallActivity.this, service);
         stopService(intent);
-
 
         int callAction = getIntent().getIntExtra(ArgumentKeys.CALL_REQUEST_ACTION, 0);
         if (callAction != 0) {
@@ -279,15 +312,68 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     break;
             }
         }
+
+        registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_ON));
+        registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_USER_PRESENT));
+        isScreenBroadcastRegistered = true;
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        boolean triggerAnswer = intent.getBooleanExtra(ArgumentKeys.TRIGGER_ANSWER,false);
+        boolean triggerReject = intent.getBooleanExtra(ArgumentKeys.TRIGGER_END,false);
+        getIntent().putExtra(ArgumentKeys.TRIGGER_ANSWER,triggerAnswer);
+        getIntent().putExtra(ArgumentKeys.TRIGGER_END,triggerReject);
+        this.triggerAnswer = triggerAnswer;
+        Log.d("CallActivity","onNewIntent "+triggerAnswer+" "+triggerReject);
+    }
+
+    //Create a receiver for screen-on/screen-off
+    BroadcastReceiver screenbroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                String strAction = intent.getAction();
+                KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+                if (strAction.equals(Intent.ACTION_USER_PRESENT) || strAction.equals(Intent.ACTION_SCREEN_OFF) || strAction.equals(Intent.ACTION_SCREEN_ON))
+                    if (myKM.inKeyguardRestrictedInputMode()) {
+
+                    } else {
+                        if (activeCall.getCallState() == OpenTokConstants.waitingForUserAction) {
+                            stopNotificationService();
+
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    CallActivity.createNotificationBarCall(getApplication(), false, callRequest.getDoctorName(), callRequest);
+                                }
+                            },1500);
+                        }
+                        System.out.println("Screen off " + "UNLOCKED");
+                    }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        TokBox.shared.setUIListener(this);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                stopNotificationService();
+            }
+        },1000);
+        activeCall.setUIListener(this);
         smallView.setOnTouchListener(new MoveViewTouchListener(smallView));
-        didChangedAudioInput(TokBox.shared.getCurrentAudioState());
+        didChangedAudioInput(activeCall.getCurrentAudioState());
         LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.CALL_ACTIVITY_RESUMED));
 
         Log.d("CallActivity", "onResume");
@@ -297,10 +383,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             triggerAnswer = false;
             answerTheCall();
         } else if (getIntent().getBooleanExtra(ArgumentKeys.TRIGGER_END,false)) {
-            TokBox.shared.endCall(OpenTokConstants.endCallPressed);
+            activeCall.endCall(OpenTokConstants.endCallPressed);
             Log.d("CallActivity", "TRIGGER_END true");
-        } else {
-            Log.d("CallActivity", "triggerAnswer false");
         }
     }
 
@@ -320,11 +404,18 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void deinit() {
-        TokBox.shared.resetUIListener(this);
-        TokBox.shared.removeRemoteandLocalView(getRemoteView(), getLocalView());
+        activeCall.resetUIListener(this);
+        activeCall.removeRemoteandLocalView(getRemoteView(), getLocalView());
 
         if (errorModelObserver != null) {
-            TokBox.shared.getOpenTokViewModel().getErrorModelLiveData().removeObserver(errorModelObserver);
+            activeCall.getOpenTokViewModel().getErrorModelLiveData().removeObserver(errorModelObserver);
+        }
+
+        try {
+            if (isScreenBroadcastRegistered)
+                unregisterReceiver(screenbroadcast);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -451,12 +542,20 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
     }
 
+    private void stopNotificationService() {
+        final Class<? extends Service> notificationService = CallNotificationService.class;
+        final Intent notificationIntent = new Intent(CallActivity.this, notificationService);
+        stopService(notificationIntent);
+    }
+
     private void updateMinimizeButton(int state) {
-        if (TokBox.shared.getTempToken() != null) {
+        if (callRequest.isForGuestUser() && UserType.isUserPatient()) {
+            minimize.setVisibility(View.GONE);
+        } else if (callRequest.getCallSettings().expiredTokenWhileCallPlaced != null) {
             minimize.setVisibility(View.GONE);
         } else {
 
-            if (TokBox.shared.getCallType().equals(OpenTokConstants.video) && UserType.isUserPatient() && state == Constants.measuring) {
+            if (activeCall.getCallType().equals(OpenTokConstants.video) && UserType.isUserPatient() && state == Constants.measuring) {
                 minimize.setVisibility(View.GONE);
             } else {
                 minimize.setVisibility(View.VISIBLE);
@@ -466,7 +565,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void dismissPatientDisclaimer(Boolean toLeft) {
-        TokBox.shared.setPatientDisclaimerDismissed(true);
+        activeCall.setPatientDisclaimerDismissed(true);
         Transition transition = new ChangeBounds();
         transition.setDuration(800);
         transition.setInterpolator(new AnticipateOvershootInterpolator(1.0f));
@@ -538,7 +637,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             hang_iv.setVisibility(View.VISIBLE);
             showVitalHeader();
 
-            if (TokBox.shared.getCallType().equals(OpenTokConstants.audio)) {
+            if (activeCall.getCallType().equals(OpenTokConstants.audio)) {
                 profile_iv.setVisibility(View.VISIBLE);
             }
 
@@ -547,6 +646,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void setToggleTimer() {
+        if (activeCall.getConnectedDate() == null) {
+            return;
+        }
 
         if (uiToggleTimer != null) {
             uiToggleTimer.setStopped(true);
@@ -575,15 +677,15 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
     private void updateState(int currentState) {
         Log.d("CallActivity", "updateState " + currentState);
-        TokBox.shared.setCallState(currentState);
+        activeCall.setCallState(currentState);
         updateUI();
     }
 
     private void updateUI() {
-        switch (TokBox.shared.getCallState()) {
+        switch (activeCall.getCallState()) {
             case OpenTokConstants.waitingForUserAction:
 
-                if (TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+                if (activeCall.getCallType().equals(OpenTokConstants.education)) {
                     hang_iv.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
                     hang_iv.setVisibility(View.GONE);
                     answer_iv.setVisibility(View.GONE);
@@ -594,7 +696,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     hang_iv.setVisibility(View.VISIBLE);
                     answer_iv.setVisibility(View.VISIBLE);
 
-                    if (TokBox.shared.isVideoCall()) {
+                    if (activeCall.isVideoCall()) {
                         call_type_tv.setText(String.format(getString(R.string.telehealer_video), getString(R.string.app_name)));
                     } else {
                         call_type_tv.setText(String.format(getString(R.string.telehealer_audio), getString(R.string.app_name)));
@@ -623,7 +725,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 break;
             case OpenTokConstants.outGoingCallGoingOn:
 
-                if (TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+                if (activeCall.getCallType().equals(OpenTokConstants.education)) {
                     hang_iv.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
                     hang_iv.setVisibility(View.GONE);
                     call_type_tv.setText("");
@@ -638,7 +740,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 top_option.setVisibility(View.VISIBLE);
                 recording_view.setVisibility(View.VISIBLE);
 
-                if (TokBox.shared.isVideoCall()) {
+                if (activeCall.isVideoCall() && !callRequest.isForGuestUser()) {
                     vitalsView.setVisibility(View.VISIBLE);
                 } else {
                     vitalsView.setVisibility(View.GONE);
@@ -658,8 +760,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 break;
         }
 
-        if (TokBox.shared.getCallState() != OpenTokConstants.waitingForUserAction) {
-            if (UserType.isUserPatient() && !TokBox.shared.getPatientDisclaimerDismissed()) {
+        if (activeCall.getCallState() != OpenTokConstants.waitingForUserAction) {
+            if (UserType.isUserPatient() && !activeCall.getPatientDisclaimerDismissed()) {
                 patient_disclaimer.setVisibility(View.VISIBLE);
             } else {
                 patient_disclaimer.setVisibility(View.GONE);
@@ -668,10 +770,16 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             updateUIForAudioVideo();
         }
 
+        if (!callRequest.getCallSettings().isRecording_enabled()) {
+            findViewById(R.id.recording_dot_parent).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.recording_dot_parent).setVisibility(View.VISIBLE);
+        }
+
     }
 
     private void animation() {
-        switch (TokBox.shared.getCallState()) {
+        switch (activeCall.getCallState()) {
             case OpenTokConstants.incomingCallGoingOn:
 
                 hang_iv.setVisibility(View.VISIBLE);
@@ -691,7 +799,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 smallView.setVisibility(View.VISIBLE);
                 incoming_view.setVisibility(View.GONE);
 
-                if (TokBox.shared.isVideoCall()) {
+                if (activeCall.isVideoCall()) {
                     vitalsView.setVisibility(View.VISIBLE);
                 } else {
                     vitalsView.setVisibility(View.GONE);
@@ -701,7 +809,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private ViewGroup getLocalView() {
-        if (TokBox.shared.isViewSwapped()) {
+        if (activeCall.isViewSwapped()) {
             return bigView;
         } else {
             return smallView;
@@ -709,7 +817,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private ViewGroup getRemoteView() {
-        if (!TokBox.shared.isViewSwapped()) {
+        if (!activeCall.isViewSwapped()) {
             return bigView;
         } else {
             return smallView;
@@ -736,9 +844,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void showOtherPersonDetails() {
-        if (TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
-            name_tv.setText(TokBox.shared.getCallInitiateModel().getEducationTitle());
-            user_info_tv.setText(TokBox.shared.getCallInitiateModel().getEducationDescription());
+        if (activeCall.getCallType().equals(OpenTokConstants.education)) {
+            name_tv.setText(callRequest.getEducationTitle());
+            user_info_tv.setText(callRequest.getEducationDescription());
         } else if (otherPersonDetail != null) {
             name_tv.setText(otherPersonDetail.getDisplayName());
             user_info_tv.setText(otherPersonDetail.getDisplayInfo());
@@ -747,10 +855,10 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void switchToVideo() {
-        TokBox.shared.startPublishVideo();
-        TokBox.shared.setCallType(OpenTokConstants.video);
+        activeCall.startPublishVideo();
+        activeCall.setCallType(OpenTokConstants.video);
         updateUIForAudioVideo();
-        TokBox.shared.setup(getRemoteView(), getLocalView());
+        activeCall.setup(getRemoteView(), getLocalView());
     }
 
     private void updateUIForAudioVideo() {
@@ -758,15 +866,15 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         updateAudioMuteUI();
         updateVidioMuteUI();
 
-        if (TokBox.shared.getConnectedDate() != null) {
+        if (activeCall.getConnectedDate() != null) {
             callDidStarted();
         }
 
-        if (!TokBox.shared.getCallType().equals(OpenTokConstants.audio)) {
+        if (!activeCall.getCallType().equals(OpenTokConstants.audio)) {
 
-            if (TokBox.shared.getConnectedDate() != null) {
+            if (activeCall.getConnectedDate() != null) {
 
-                if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
+                if (activeCall.getCallType().equals(OpenTokConstants.video)) {
                     smallView.setVisibility(View.VISIBLE);
                 }
 
@@ -777,7 +885,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             video_mute.setVisibility(View.VISIBLE);
             flip_camera.setVisibility(View.VISIBLE);
 
-            if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
+            if (activeCall.getCallType().equals(OpenTokConstants.video)) {
                 vitalsView.setVisibility(View.VISIBLE);
                 if (viewPager.getAdapter() == null) {
                     if (vitalCallAdapter == null) {
@@ -827,7 +935,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void updateAudioMuteUI() {
-        if (TokBox.shared.getConnectedDate() != null && !TokBox.shared.isPublisherAudioOn()) {
+        if (activeCall.getConnectedDate() != null && !activeCall.isPublisherAudioOn()) {
             audio_mute.setImageDrawable(getDrawable(R.drawable.chat_audio_mute_active));
         } else {
             audio_mute.setImageDrawable(getDrawable(R.drawable.mic_off));
@@ -835,7 +943,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void updateVidioMuteUI() {
-        if (TokBox.shared.getConnectedDate() != null && !TokBox.shared.isPublisherVideoOn()) {
+        if (activeCall.getConnectedDate() != null && !activeCall.isPublisherVideoOn()) {
             video_mute.setImageDrawable(getDrawable(R.drawable.chat_video_mute_active));
         } else {
             video_mute.setImageDrawable(getDrawable(R.drawable.video_mute));
@@ -847,31 +955,31 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         switch (v.getId()) {
             case R.id.hang_iv:
 
-                if (TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+                if (activeCall.getCallType().equals(OpenTokConstants.education)) {
 
-                    if (TokBox.shared.getConnectedDate() == null) {
+                    if (activeCall.getConnectedDate() == null) {
                         hang_iv.setImageDrawable(getResources().getDrawable(R.drawable.ic_stop));
-                        TokBox.shared.startArchiving();
+                        activeCall.startArchiving();
                     } else {
-                        TokBox.shared.endCall(OpenTokConstants.endCallPressed);
+                        activeCall.endCall(OpenTokConstants.endCallPressed);
                     }
 
                 } else {
                     hang_iv.setClickable(false);
-                    if (!TokBox.shared.getCalling() && TokBox.shared.getConnectedDate() == null) {
-                        TokBox.shared.endCall(OpenTokConstants.notPickedUp);
+                    if (!callRequest.isCallForDirectWaitingRoom() && !activeCall.getCalling() && activeCall.getConnectedDate() == null) {
+                        activeCall.endCall(OpenTokConstants.notPickedUp);
                         EventRecorder.recordCallUpdates("declined_call", null);
 
                         APNSPayload payload = new APNSPayload();
                         HashMap<String, Object> aps = new HashMap<>();
-                        if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
+                        if (activeCall.getCallType().equals(OpenTokConstants.video)) {
                             aps.put(PubNubNotificationPayload.ALERT, getString(R.string.video_missed_call));
                         } else {
                             aps.put(PubNubNotificationPayload.ALERT, getString(R.string.audio_missed_call));
                         }
-                        if (TokBox.shared.getOtherPersonDetail() != null) {
-                            aps.put(PubNubNotificationPayload.TITLE, TokBox.shared.getOtherPersonDetail().getDisplayName());
-                            aps.put(PubNubNotificationPayload.MEDIA_URL, TokBox.shared.getOtherPersonDetail().getUser_avatar());
+                        if (activeCall.getOtherPersonDetail() != null) {
+                            aps.put(PubNubNotificationPayload.TITLE, activeCall.getOtherPersonDetail().getDisplayName());
+                            aps.put(PubNubNotificationPayload.MEDIA_URL, activeCall.getOtherPersonDetail().getUser_avatar());
                         } else {
                             aps.put(PubNubNotificationPayload.TITLE, "Missed");
                         }
@@ -884,17 +992,17 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
                     } else {
                         EventRecorder.recordCallUpdates("end_call_pressed", null);
-                        TokBox.shared.endCall(OpenTokConstants.endCallPressed);
+                        activeCall.endCall(OpenTokConstants.endCallPressed);
                     }
                 }
                 break;
             case R.id.answer_iv:
-                if (TokBox.shared.getCallState() == OpenTokConstants.waitingForUserAction) {
+                if (activeCall.getCallState() == OpenTokConstants.waitingForUserAction) {
                     answerTheCall();
                 }
                 break;
             case R.id.minimize:
-                if (TokBox.shared.getConnectedDate() == null) {
+                if (activeCall.getConnectedDate() == null) {
                     return;
                 }
 
@@ -902,11 +1010,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 minimizeView(null);
                 break;
             case R.id.speaker_type:
-                if (TokBox.shared.getConnectedDate() == null) {
+                if (activeCall.getConnectedDate() == null) {
                     return;
                 }
 
-                ArrayList<AudioDeviceInfo> deviceInfos = TokBox.shared.getConnectedAudioDevices();
+                ArrayList<AudioDeviceInfo> deviceInfos = activeCall.getConnectedAudioDevices();
 
                 Set<String> audioTypes = new HashSet<>();
                 HashMap<String, AudioDeviceInfo> audioMap = new HashMap<>();
@@ -920,7 +1028,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                             audioTypes.add(getString(R.string.speaker));
                             audioMap.put(getString(R.string.speaker), audioDeviceInfo);
 
-                            if (TokBox.shared.getCurrentAudioState() == OpenTokConstants.speaker) {
+                            if (activeCall.getCurrentAudioState() == OpenTokConstants.speaker) {
                                 selectedPosition = audioTypes.size() - 1;
                             }
 
@@ -929,7 +1037,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                             audioTypes.add(getString(R.string.earPiece));
                             audioMap.put(getString(R.string.earPiece), audioDeviceInfo);
 
-                            if (TokBox.shared.getCurrentAudioState() == OpenTokConstants.inEarSpeaker) {
+                            if (activeCall.getCurrentAudioState() == OpenTokConstants.inEarSpeaker) {
                                 selectedPosition = audioTypes.size() - 1;
                             }
 
@@ -939,7 +1047,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                             audioTypes.add(getString(R.string.headphones));
                             audioMap.put(getString(R.string.headphones), audioDeviceInfo);
 
-                            if (TokBox.shared.getCurrentAudioState() == OpenTokConstants.headPhones) {
+                            if (activeCall.getCurrentAudioState() == OpenTokConstants.headPhones) {
                                 selectedPosition = audioTypes.size() - 1;
                             }
 
@@ -949,7 +1057,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                             audioTypes.add(getString(R.string.bluetooth));
                             audioMap.put(getString(R.string.bluetooth), audioDeviceInfo);
 
-                            if (TokBox.shared.getCurrentAudioState() == OpenTokConstants.bluetooth) {
+                            if (activeCall.getCurrentAudioState() == OpenTokConstants.bluetooth) {
                                 selectedPosition = audioTypes.size() - 1;
                             }
 
@@ -966,18 +1074,18 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                         if (audioDeviceInfo != null) {
                             switch (audioDeviceInfo.getType()) {
                                 case AudioDeviceInfo.TYPE_BUILTIN_SPEAKER:
-                                    TokBox.shared.setAudioInput(OpenTokConstants.speaker);
+                                    activeCall.setAudioInput(OpenTokConstants.speaker);
                                     break;
                                 case AudioDeviceInfo.TYPE_BUILTIN_EARPIECE:
-                                    TokBox.shared.setAudioInput(OpenTokConstants.inEarSpeaker);
+                                    activeCall.setAudioInput(OpenTokConstants.inEarSpeaker);
                                     break;
                                 case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:
                                 case AudioDeviceInfo.TYPE_WIRED_HEADSET:
-                                    TokBox.shared.setAudioInput(OpenTokConstants.headPhones);
+                                    activeCall.setAudioInput(OpenTokConstants.headPhones);
                                     break;
                                 case AudioDeviceInfo.TYPE_BLUETOOTH_A2DP:
                                 case AudioDeviceInfo.TYPE_BLUETOOTH_SCO:
-                                    TokBox.shared.setAudioInput(OpenTokConstants.bluetooth);
+                                    activeCall.setAudioInput(OpenTokConstants.bluetooth);
                                     break;
                             }
                         }
@@ -995,31 +1103,31 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
                 break;
             case R.id.audio_mute:
-                if (TokBox.shared.getConnectedDate() == null) {
+                if (activeCall.getConnectedDate() == null) {
                     return;
                 }
 
-                TokBox.shared.toggleAudio();
-                if (!TokBox.shared.isPublisherAudioOn()) {
+                activeCall.toggleAudio();
+                if (!activeCall.isPublisherAudioOn()) {
                     EventRecorder.recordCallUpdates("audio_muted", null);
                 }
                 updateAudioMuteUI();
                 break;
             case R.id.video_mute:
-                if (TokBox.shared.getConnectedDate() == null) {
+                if (activeCall.getConnectedDate() == null) {
                     return;
                 }
 
-                TokBox.shared.toggleVideo();
+                activeCall.toggleVideo();
 
-                if (!TokBox.shared.isPublisherVideoOn()) {
+                if (!activeCall.isPublisherVideoOn()) {
                     EventRecorder.recordCallUpdates("video_muted", null);
                 }
 
                 updateVidioMuteUI();
                 break;
             case R.id.video_switch:
-                if (TokBox.shared.getConnectedDate() == null) {
+                if (activeCall.getConnectedDate() == null) {
                     return;
                 }
 
@@ -1030,7 +1138,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     public void onClick(DialogInterface dialog, int which) {
 
                         if (PermissionChecker.with(CallActivity.this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
-                            TokBox.shared.requestForVideoSwap();
+                            activeCall.requestForVideoSwap();
                         }
 
                         dialog.dismiss();
@@ -1044,7 +1152,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
                 break;
             case R.id.flip_camera:
-                if (TokBox.shared.getConnectedDate() == null) {
+                if (activeCall.getConnectedDate() == null) {
                     return;
                 }
 
@@ -1057,7 +1165,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 }
 
                 EventRecorder.recordCallUpdates("toggle_camera", null);
-                TokBox.shared.flipVideo();
+                activeCall.flipVideo();
                 break;
             case R.id.vitalHeaderView:
                 if (pager_container.getVisibility() == View.GONE) {
@@ -1067,7 +1175,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 }
                 break;
             case R.id.main_container:
-                if (TokBox.shared.getConnectedDate() != null)
+                if (activeCall.getConnectedDate() != null)
                     toggleVisibility();
                 break;
             case R.id.name_arrow:
@@ -1086,8 +1194,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 break;
             case R.id.smallView:
                 Log.d("CallActivity", "small View click");
-                TokBox.shared.setViewSwapped(!TokBox.shared.isViewSwapped());
-                TokBox.shared.setup(getRemoteView(), getLocalView());
+                activeCall.setViewSwapped(!activeCall.isViewSwapped());
+                activeCall.setup(getRemoteView(), getLocalView());
                 break;
         }
     }
@@ -1095,6 +1203,12 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     private void minimizeView(@Nullable CompleteListener completeListener) {
         if (canDrawOverlays(CallActivity.this)) {
             startFloatingViewService();
+
+            if (!isAnActivityPresentUnder()) {
+                Intent intent = new Intent(CallActivity.this, HomeActivity.class);
+                startActivity(intent);
+            }
+
             finish();
             if (completeListener != null)
                 completeListener.didComplete(true);
@@ -1123,27 +1237,27 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         Log.d("CallActivity", "answerTheCall");
         EventRecorder.recordCallUpdates("CALL_ACCEPTED", null);
 
-        if (TokBox.shared.isVideoCall()) {
+        if (activeCall.isVideoCall()) {
             EventRecorder.recordCallUpdates("opening_video_call", null);
         } else {
             EventRecorder.recordCallUpdates("opening_audio_call", null);
         }
 
         int requiredPermission;
-        if (TokBox.shared.isVideoCall()) {
+        if (activeCall.isVideoCall()) {
             requiredPermission = PermissionConstants.PERMISSION_CAM_MIC;
         } else {
             requiredPermission = PermissionConstants.PERMISSION_MICROPHONE;
         }
 
         if (PermissionChecker.with(this).isGranted(requiredPermission)) {
-            TokBox.shared.connectToSession();
+            activeCall.connectToSession();
             updateState(OpenTokConstants.incomingCallGoingOn);
         } else {
-            TokBox.shared.endCall(OpenTokConstants.other);
+            activeCall.endCall(OpenTokConstants.other);
 
             String description;
-            if (TokBox.shared.isVideoCall()) {
+            if (activeCall.isVideoCall()) {
                 if (!PermissionChecker.with(this).isGranted(PermissionConstants.PERMISSION_CAM_MIC)) {
                     description = getString(R.string.microphone_camera_permission);
                 } else if (!PermissionChecker.with(this).isGranted(PermissionConstants.PERMISSION_MICROPHONE)) {
@@ -1200,10 +1314,12 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     private void callDidStarted() {
         recording_tv.start();
 
-        if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
+        if (activeCall.getCallType().equals(OpenTokConstants.video)) {
             profile_iv.setVisibility(View.GONE);
-            showVitalHeader();
-        } else if (TokBox.shared.getCallType().equals(OpenTokConstants.oneWay) || TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+            if (!callRequest.isForGuestUser()) {
+                showVitalHeader();
+            }
+        } else if (activeCall.getCallType().equals(OpenTokConstants.oneWay) || activeCall.getCallType().equals(OpenTokConstants.education)) {
             profile_iv.setVisibility(View.GONE);
         }
 
@@ -1211,14 +1327,17 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
         profile_background.stopRippleAnimation();
         Animation blinkAnimation = AnimationUtils.loadAnimation(CallActivity.this, R.anim.blinking);
-        recording_dot.startAnimation(blinkAnimation);
+
+        if (callRequest.getCallSettings().isRecording_enabled()) {
+            recording_dot.startAnimation(blinkAnimation);
+        }
 
         top_option.setAlpha(1.0f);
 
         setToggleTimer();
 
         if (!UserType.isUserPatient()) {
-            if (!TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+            if (!activeCall.getCallType().equals(OpenTokConstants.education)) {
                 name_arrow.setVisibility(View.VISIBLE);
                 name_arrow.setOnClickListener(this);
                 name_tv.setOnClickListener(this);
@@ -1229,7 +1348,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
         smallView.setOnClickListener(this);
 
-        TokBox.shared.setZOrderTopForLocalView();
+        activeCall.setZOrderTopForLocalView();
 
         if (UserType.isUserPatient()) {
             final int interval = 15000; // 15 Seconds
@@ -1255,12 +1374,16 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void showVitalHeader() {
-        vitalHeaderView.setVisibility(View.VISIBLE);
+        if (callRequest.isForGuestUser()) {
+            vitalHeaderView.setVisibility(View.GONE);
+        } else {
+            vitalHeaderView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateStateView() {
-        if (TokBox.shared.getPatientCurrentState() != null) {
-            didUpdatedPatientLocation(TokBox.shared.getPatientCurrentState());
+        if (activeCall.getPatientCurrentState() != null) {
+            didUpdatedPatientLocation(activeCall.getPatientCurrentState());
         } else {
             status_tv.setVisibility(View.GONE);
         }
@@ -1275,25 +1398,30 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
     @Override
     public void didEndCall(String callRejectionReason) {
-        if (TokBox.shared.getCallType().equals(OpenTokConstants.education)) {
+        if (activeCall.getCallType().equals(OpenTokConstants.education)) {
             deinit();
             finish();
             return;
         }
 
+        if (isAnActivityPresentUnder()) {
+            openFeedBackIfNeeded(callRejectionReason);
+        } else {
+            openHomeAndFinish(callRejectionReason);
+        }
+    }
+
+    private boolean isAnActivityPresentUnder() {
         try {
             ActivityManager mngr = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
             if (mngr != null) {
-                if (mngr.getAppTasks().get(0).getTaskInfo().numActivities > 1) {
-                    openFeedBackIfNeeded(callRejectionReason);
-                } else {
-                    openHomeAndFinish(callRejectionReason);
-                }
+                return mngr.getAppTasks().get(0).getTaskInfo().numActivities > 1;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            openHomeAndFinish(callRejectionReason);
         }
+
+        return false;
     }
 
     private void openHomeAndFinish(String callRejectionReason) {
@@ -1304,66 +1432,74 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void openFeedBackIfNeeded(String callRejectionReason) {
-        openFeedBackIfNeeded(callRejectionReason, CallActivity.this);
+        openFeedBackIfNeeded(callRequest,activeCall.getConnectedDate(),callRejectionReason, CallActivity.this);
         deinit();
         finish();
     }
 
-    public static void openFeedBackIfNeeded(String callRejectionReason, Context context) {
-        String sessionId = TokBox.shared.getSessionId();
+    public static void openFeedBackIfNeeded(CallRequest callRequest,
+                                            Date connectedDate,
+                                            String callRejectionReason, Context context) {
+        String sessionId = callRequest.getSessionId();
         String to_guid = null;
         String to_name = "";
-        String doctor_guid = TokBox.shared.getDoctor_guid();
+        String doctor_guid = callRequest.getDoctorGuid();
 
 
-        if (TokBox.shared.getOtherPersonDetail() != null) {
-            to_guid = TokBox.shared.getOtherPersonDetail().getUser_guid();
-            to_name = TokBox.shared.getOtherPersonDetail().getDisplayName();
+        if (callRequest.getOtherPersonDetail() != null) {
+            to_guid = callRequest.getOtherPersonDetail().getUser_guid();
+            to_name = callRequest.getOtherPersonDetail().getDisplayName();
         }
-        Date startedTime = TokBox.shared.getConnectedDate();
+        Date startedTime = connectedDate;
 
-        switch (callRejectionReason) {
-            case OpenTokConstants.endCallPressed:
-            case OpenTokConstants.other:
-            case OpenTokConstants.badNetwork:
-            case OpenTokConstants.timedOut:
-                Date endedTime = new Date();
-                if (startedTime != null && !TextUtils.isEmpty(sessionId) && endedTime.getTime() - startedTime.getTime() > 5) {
-                    Intent feedBackIntent = new Intent(context, CallFeedBackActivity.class);
-                    feedBackIntent.putExtra(ArgumentKeys.ORDER_ID, sessionId);
-                    feedBackIntent.putExtra(ArgumentKeys.TO_USER_GUID, to_guid);
-                    feedBackIntent.putExtra(ArgumentKeys.DOCTOR_GUID, TokBox.shared.getDoctor_guid());
-                    feedBackIntent.putExtra(ArgumentKeys.STARTED_DATE, startedTime);
-                    feedBackIntent.putExtra(ArgumentKeys.ENDED_DATE, endedTime);
-                    feedBackIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(feedBackIntent);
-                }
-                break;
-            case OpenTokConstants.notPickedUp:
-            case OpenTokConstants.busyInAnotherLine:
-                if (!UserType.isUserPatient()) {
-                    Intent intent = new Intent(context, CallMessageActivity.class);
-                    intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, context.getString(R.string.send_message));
-                    intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
-                    intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_missed_call);
-                    intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(ArgumentKeys.TITLE, "");
-
-                    if (callRejectionReason.equals(OpenTokConstants.notPickedUp)) {
-                        intent.putExtra(ArgumentKeys.DESCRIPTION, to_name + " " + context.getString(R.string.not_available));
-                    } else {
-                        intent.putExtra(ArgumentKeys.DESCRIPTION, to_name + " " + context.getString(R.string.busy_another_call));
+        if (callRequest.isForGuestUser() && UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
+            Intent feedBackIntent =new Intent(context, GuestUserSignupActivity.class);
+            feedBackIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(feedBackIntent);
+        } else {
+            switch (callRejectionReason) {
+                case OpenTokConstants.endCallPressed:
+                case OpenTokConstants.other:
+                case OpenTokConstants.badNetwork:
+                case OpenTokConstants.timedOut:
+                    Date endedTime = new Date();
+                    if (startedTime != null && !TextUtils.isEmpty(sessionId) && endedTime.getTime() - startedTime.getTime() > 5) {
+                        Intent feedBackIntent = new Intent(context, CallFeedBackActivity.class);
+                        feedBackIntent.putExtra(ArgumentKeys.ORDER_ID, sessionId);
+                        feedBackIntent.putExtra(ArgumentKeys.TO_USER_GUID, to_guid);
+                        feedBackIntent.putExtra(ArgumentKeys.DOCTOR_GUID, callRequest.getDoctorGuid());
+                        feedBackIntent.putExtra(ArgumentKeys.STARTED_DATE, startedTime);
+                        feedBackIntent.putExtra(ArgumentKeys.ENDED_DATE, endedTime);
+                        feedBackIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(feedBackIntent);
                     }
+                    break;
+                case OpenTokConstants.notPickedUp:
+                case OpenTokConstants.busyInAnotherLine:
+                    if (!UserType.isUserPatient()) {
+                        Intent intent = new Intent(context, CallMessageActivity.class);
+                        intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, context.getString(R.string.send_message));
+                        intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
+                        intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_missed_call);
+                        intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(ArgumentKeys.TITLE, "");
 
-                    intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
-                    intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
-                    intent.putExtra(ArgumentKeys.USER_GUID, to_guid);
-                    intent.putExtra(ArgumentKeys.DOCTOR_GUID, doctor_guid);
+                        if (callRejectionReason.equals(OpenTokConstants.notPickedUp)) {
+                            intent.putExtra(ArgumentKeys.DESCRIPTION, to_name + " " + context.getString(R.string.not_available));
+                        } else {
+                            intent.putExtra(ArgumentKeys.DESCRIPTION, to_name + " " + context.getString(R.string.busy_another_call));
+                        }
 
-                    context.startActivity(intent);
-                }
-                break;
+                        intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
+                        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+                        intent.putExtra(ArgumentKeys.USER_GUID, to_guid);
+                        intent.putExtra(ArgumentKeys.DOCTOR_GUID, doctor_guid);
+
+                        context.startActivity(intent);
+                    }
+                    break;
+            }
         }
     }
 
@@ -1429,14 +1565,14 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     EventRecorder.recordCallUpdates("audio_to_video_accepted", null);
-                    TokBox.shared.updateVideoSwapRequest(true);
+                    activeCall.updateVideoSwapRequest(true);
                     switchToVideo();
                 }
             }, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     EventRecorder.recordCallUpdates("audio_to_video_rejected", null);
-                    TokBox.shared.updateVideoSwapRequest(false);
+                    activeCall.updateVideoSwapRequest(false);
                 }
             });
         } else {
@@ -1452,7 +1588,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 }
             }, null);
 
-            TokBox.shared.updateVideoSwapRequest(false);
+            activeCall.updateVideoSwapRequest(false);
         }
     }
 
@@ -1490,7 +1626,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
     @Override
     public void updateVideoQuality(String qualityString, Boolean isMuted) {
-        showQualityView(qualityString, TokBox.shared.getSubscriberAudioMuted(), isMuted);
+        showQualityView(qualityString, activeCall.getSubscriberAudioMuted(), isMuted);
     }
 
     @Override
@@ -1523,7 +1659,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void updateBatterInfo() {
-        if (TokBox.shared.isOtherPersonBatteryLow() && !TokBox.shared.getCallType().equals(OpenTokConstants.education) && !TokBox.shared.getCallType().equals(OpenTokConstants.oneWay)) {
+        if (activeCall.isOtherPersonBatteryLow() && !activeCall.getCallType().equals(OpenTokConstants.education) && !activeCall.getCallType().equals(OpenTokConstants.oneWay)) {
             String remoteuserDisplayName = otherPersonDetail != null ? otherPersonDetail.getDisplayName() : getString(R.string.other_person);
             audio_disabled_iv.setVisibility(View.VISIBLE);
             video_disabled_iv.setVisibility(View.GONE);
@@ -1536,27 +1672,27 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void updateQualityView() {
-        if (!TokBox.shared.getSubscriberAudioMuted() && !TokBox.shared.getSubscriberVideoMuted()) {
+        if (!activeCall.getSubscriberAudioMuted() && !activeCall.getSubscriberVideoMuted()) {
             updateBatterInfo();
         } else {
 
             audio_disabled_iv.setImageResource(R.drawable.mic_off);
             String remoteuserDisplayName = otherPersonDetail != null ? otherPersonDetail.getDisplayName() : getString(R.string.other_person);
 
-            if (TokBox.shared.getSubscriberAudioMuted() && TokBox.shared.getSubscriberVideoMuted()) {
+            if (activeCall.getSubscriberAudioMuted() && activeCall.getSubscriberVideoMuted()) {
 
                 String message = getString(R.string.mute_audio_video, remoteuserDisplayName);
-                showQualityView(message, TokBox.shared.getSubscriberAudioMuted(), TokBox.shared.getSubscriberVideoMuted());
+                showQualityView(message, activeCall.getSubscriberAudioMuted(), activeCall.getSubscriberVideoMuted());
 
-            } else if (TokBox.shared.getSubscriberAudioMuted()) {
+            } else if (activeCall.getSubscriberAudioMuted()) {
 
                 String message = getString(R.string.mute_audio, remoteuserDisplayName);
-                showQualityView(message, TokBox.shared.getSubscriberAudioMuted(), TokBox.shared.getSubscriberVideoMuted());
+                showQualityView(message, activeCall.getSubscriberAudioMuted(), activeCall.getSubscriberVideoMuted());
 
-            } else if (TokBox.shared.getSubscriberVideoMuted()) {
+            } else if (activeCall.getSubscriberVideoMuted()) {
 
                 String message = getString(R.string.disabled_video, remoteuserDisplayName);
-                showQualityView(message, TokBox.shared.getSubscriberAudioMuted(), TokBox.shared.getSubscriberVideoMuted());
+                showQualityView(message, activeCall.getSubscriberAudioMuted(), activeCall.getSubscriberVideoMuted());
 
             }
         }
@@ -1638,7 +1774,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.error), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            TokBox.shared.endCall(OpenTokConstants.other);
+                            activeCall.endCall(OpenTokConstants.other);
                         }
                     }, null);
                 }
@@ -1664,7 +1800,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         switch (requestCode) {
             case PermissionConstants.PERMISSION_CAM_MIC:
                 if (resultCode == RESULT_OK) {
-                    TokBox.shared.requestForVideoSwap();
+                    activeCall.requestForVideoSwap();
                 }
                 break;
             case CALL_MINIMIZE_OVERLAY_PERMISSION_REQUEST_CODE:

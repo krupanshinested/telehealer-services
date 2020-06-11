@@ -49,7 +49,7 @@ public class OpenTokConstants {
     public static final int waitingForUserAction = 1; //incoming call
     public static final int incomingCallGoingOn = 2;
     public static final int outGoingCallGoingOn = 3;
-    public static final int idle = 4;
+    public static final int ended = 4;
 
     //Audio State
     public static final int headPhones = 1;

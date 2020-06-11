@@ -225,7 +225,7 @@ public class SchedulesListFragment extends BaseFragment {
         if (!isApiRequested) {
             schedulesElv.hideEmptyState();
             isApiRequested = true;
-            schedulesApiViewModel.getSchedule(searchView.getCurrentSearchResult(), page, isShowProgress, doctorGuidList.toString());
+            schedulesApiViewModel.getSchedule(searchView.getCurrentSearchResult(), page, isShowProgress, doctorGuidList);
         }
     }
 

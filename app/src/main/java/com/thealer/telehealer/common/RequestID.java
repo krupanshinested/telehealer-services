@@ -32,6 +32,7 @@ public class RequestID {
     public static final int REQ_SELECT_CPT_CODE = 9004;
     public static final int REQ_OTP_VALIDATION = 4001;
     public static final int REQ_PROFILE_INCOMPLETE = 4002;
+    public static final int REQ_GUEST_LOGIN = 4003;
 
     public static final String REQ_PASSWORD_RESET_OTP = "REQ_RESET_OTP";
     public static final String REQ_RESET_PASSWORD = "REQ_RESET_PASSWORD";

@@ -35,4 +35,5 @@
     <color name="call_join">#51C442</color>
 
     <color name="vital_good">#00E800</color>
+    <color name="patient_waiting_count_bg">#FFEBEB</color>
 </resources>

@@ -51,6 +51,8 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -526,6 +528,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
     private void setFragment(Fragment fragment) {
+
+        Bundle bundle=fragment.getArguments();
+        if (bundle==null)
+            bundle = new Bundle();
+
+        bundle.putBoolean(ArgumentKeys.IS_FROM_HOME, true);
+        fragment.setArguments(bundle);
+
         removeAllFragments();
         fragmentManager
                 .beginTransaction()
@@ -820,7 +830,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     protected void onStop() {
         super.onStop();
-        isInForeGround=false;
     }
     private boolean checkIsLicenseExpired() {
         boolean updateLicense = false;

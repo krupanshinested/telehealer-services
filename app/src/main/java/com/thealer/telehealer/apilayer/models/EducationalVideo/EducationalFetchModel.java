@@ -1,10 +1,12 @@
 package com.thealer.telehealer.apilayer.models.EducationalVideo;
 
-import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
+
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
+import com.thealer.telehealer.common.OpenTok.CallSettings;
 
 import java.io.Serializable;
 
-public class EducationalFetchModel extends TokenFetchModel implements Serializable {
+public class EducationalFetchModel extends CallSettings implements Serializable {
     private int videoId;
 
     public int getVideoId() {

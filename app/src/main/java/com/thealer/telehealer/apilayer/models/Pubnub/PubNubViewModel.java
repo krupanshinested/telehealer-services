@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.ResultFetcher;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
@@ -31,6 +32,24 @@ public class PubNubViewModel extends BaseApiViewModel {
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     PubnubUtil.shared.enablePushOnChannel(token, channel);
                                     PubnubUtil.shared.enableVoipOnChannel(token,channel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void grantPubNubAccess(String channel,ResultFetcher fetcher) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().grantPubnubAccess(channel)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    fetcher.didFetched(baseApiResponseModel);
                                 }
                             });
                 }

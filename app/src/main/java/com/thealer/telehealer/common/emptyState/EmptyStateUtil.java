@@ -134,6 +134,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_WITH_BTN:
             case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_NEW:
                 return context.getString(R.string.no_educational_video);
+            case EmptyViewConstants.EMPTY_WAITING_ROOM:
+                return context.getString(R.string.EMPTY_PATIENT_TITLE);
             default:
                 return null;
         }
@@ -284,6 +286,8 @@ public class EmptyStateUtil {
                 return context.getString(R.string.empty_educational_message);
             case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_NEW:
                 return context.getString(R.string.empty_educational_new);
+            case EmptyViewConstants.EMPTY_WAITING_ROOM:
+                return context.getString(R.string.NO_PATIENT_IN_WAITINGROOM);
             default:
                 return null;
         }
@@ -397,6 +401,8 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_WITH_BTN:
             case EmptyViewConstants.EMPTY_EDUCATIONAL_VIDEO_ORDER_NEW:
                 return R.drawable.emptystate_educational_video;
+            case EmptyViewConstants.EMPTY_WAITING_ROOM:
+                return R.drawable.emptystate_no_patient;
             default:
                 return 0;
         }

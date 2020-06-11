@@ -38,7 +38,7 @@ public class UserDetailPreferenceManager {
 
     public static String getUserDisplayName() {
         if (UserType.isUserDoctor()) {
-            return getFirst_name() + " " + getLast_name() + " " + getTitle();
+            return getFirst_name() + " " + getLast_name() + " , " + getTitle();
         } else {
             return getFirst_name() + " " + getLast_name();
         }
@@ -93,7 +93,10 @@ public class UserDetailPreferenceManager {
     }
 
     public static String getLast_name() {
-        return appPreference.getString(PreferenceConstants.USER_LAST_NAME);
+        if (appPreference.getString(PreferenceConstants.USER_LAST_NAME)!=null)
+            return appPreference.getString(PreferenceConstants.USER_LAST_NAME);
+        else
+            return "";
     }
 
     public static void setLast_name(String last_name) {
@@ -296,7 +299,7 @@ public class UserDetailPreferenceManager {
 
         try {
             String path = whoAmIApiResponseModel.getUser_avatar();
-            if (TextUtils.isEmpty(path)) {
+            if (!TextUtils.isEmpty(path)) {
                 TeleCacheUrl avatar = new TeleCacheUrl(path);
                 File avatarCacheFile = Glide.getPhotoCacheDir(context, avatar.getCacheKey());
                 if (avatarCacheFile != null) {
@@ -421,5 +424,13 @@ public class UserDetailPreferenceManager {
     public static boolean isProfileInComplete() {
         WhoAmIApiResponseModel whoAmIApiResponseModel = getWhoAmIResponse();
         return whoAmIApiResponseModel != null &&  whoAmIApiResponseModel.getStatus() != null && whoAmIApiResponseModel.getStatus().equals(PROFILE_INCOMPLETE);
+    }
+
+    public static String getJoinedNotficationPushTime(String guid) {
+        return appPreference.getHashString(PreferenceConstants.PATIENT_JOINED_WAITING_ROOM_NOTFICATION+guid);
+    }
+
+    public static void setJoinedNotficationPushTime(String date,String guid) {
+        appPreference.setHashString(PreferenceConstants.PATIENT_JOINED_WAITING_ROOM_NOTFICATION+guid,date);
     }
 }

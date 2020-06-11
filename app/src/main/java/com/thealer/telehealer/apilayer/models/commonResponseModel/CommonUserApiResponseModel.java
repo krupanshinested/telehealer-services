@@ -25,6 +25,8 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private Boolean favorite;
     private Boolean connection_requests;
     private Boolean appt_requests = false;
+    private Boolean transcription_enabled = false;
+    private Boolean recording_enabled = false;
 
     public CommonUserApiResponseModel() {
     }
@@ -71,12 +73,8 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             }
             return Utils.getDoctorDisplayName(getFirst_name(), getLast_name(), title);
         } else {
-            if (getFirst_name() != null && !getFirst_name().isEmpty()) {
-
-                return getFirst_name().substring(0, 1).toUpperCase() + getFirst_name().substring(1) + " " + getLast_name();
-            }
+            return getDefaultDisplayName();
         }
-        return "";
     }
 
     public String getDoctorAddress() {
@@ -119,6 +117,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         }
     }
 
+    @Override
     public String getDisplayName() {
         switch (getRole()) {
             case Constants.ROLE_DOCTOR:
@@ -260,5 +259,13 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public void setConnection_requests(Boolean connection_requests) {
         this.connection_requests = connection_requests;
+    }
+
+    public Boolean getTranscription_enabled() {
+        return transcription_enabled;
+    }
+
+    public Boolean getRecording_enabled() {
+        return recording_enabled;
     }
 }

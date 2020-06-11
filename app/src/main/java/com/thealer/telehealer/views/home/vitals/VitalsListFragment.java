@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
@@ -85,7 +85,7 @@ public class VitalsListFragment extends BaseFragment {
                 public void onClick(View view) {
                     if (UserType.isUserPatient()) {
 
-                        if (TokBox.shared.isActiveCallPreset()) {
+                        if (CallManager.shared.isActiveCallPresent()) {
                             Toast.makeText(getActivity(), getString(R.string.live_call_going_error), Toast.LENGTH_LONG).show();
                             return;
                         }
@@ -188,7 +188,6 @@ public class VitalsListFragment extends BaseFragment {
             case RequestID.REQ_CONNECT_VITAL_CONTENT_VIEW:
                 if (resultCode == Activity.RESULT_OK) {
                     isContentViewProceed = true;
-                    isInForeGround = false;
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vital_devices_url))));
                 }
                 break;

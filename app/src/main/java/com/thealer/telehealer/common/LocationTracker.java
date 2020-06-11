@@ -125,7 +125,7 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
                         try {
                             List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                             locationTrackerInterface.onLocationUpdated(addressList.get(0).getLocality(), addressList.get(0).getSubAdminArea());
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }

@@ -71,4 +71,13 @@ public class AppPreference {
 
         return sharedPreferences.getBoolean(key, false);
     }
+
+    public void setHashString(String key, Object value) {
+        editor.putString(key, String.valueOf(value));
+        editor.commit();
+    }
+
+    public String getHashString(String key) {
+        return sharedPreferences.getString(key, "");
+    }
 }

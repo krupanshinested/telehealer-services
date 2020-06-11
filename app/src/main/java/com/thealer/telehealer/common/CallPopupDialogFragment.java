@@ -15,10 +15,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
+
+import java.util.UUID;
 
 /**
  * Created by Aswin on 04,April,2019
@@ -63,10 +65,10 @@ public class CallPopupDialogFragment extends DialogFragment {
                     doctorName = scheduleDetail.getDoctor().getUserDisplay_name();
                 }
 
-                CallInitiateModel callInitiateModel = new CallInitiateModel(scheduleDetail.getPatient().getUser_guid(), scheduleDetail.getPatient(), doctorGuid, doctorName, String.valueOf(scheduleDetail.getSchedule_id()), OpenTokConstants.video);
+                CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),scheduleDetail.getPatient().getUser_guid(), scheduleDetail.getPatient(), doctorGuid, doctorName, String.valueOf(scheduleDetail.getSchedule_id()), OpenTokConstants.video,true,scheduleDetail.getSchedule_id()+"");
 
                 Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
-                intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
+                intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
                 startActivity(intent);
 
                 dismiss();

@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,14 +26,14 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeViewModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.OpenTok.CallManager;
+import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
-import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -48,7 +48,6 @@ import java.util.HashMap;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
-import static com.thealer.telehealer.common.ArgumentKeys.CALL_INITIATE_MODEL;
 
 /**
  * Created by rsekar on 1/29/19.
@@ -62,7 +61,7 @@ public class CallPlacingActivity extends BaseActivity {
     public static final int OneWayCallRequestID = 237;
 
     @Nullable
-    private CallInitiateModel callInitiateModel;
+    private CallRequest callRequest;
 
     private final OpenTokViewModel openTokViewModel = new OpenTokViewModel(application);
 
@@ -77,26 +76,26 @@ public class CallPlacingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         if (getIntent().getSerializableExtra(ArgumentKeys.CALL_INITIATE_MODEL) != null) {
-            CallInitiateModel callInitiateModel = (CallInitiateModel) getIntent().getSerializableExtra(ArgumentKeys.CALL_INITIATE_MODEL);
-            openCallIfPossible(callInitiateModel);
+            CallRequest callRequest = (CallRequest) getIntent().getSerializableExtra(ArgumentKeys.CALL_INITIATE_MODEL);
+            openCallIfPossible(callRequest);
         }
     }
 
-    public void openCallIfPossible(CallInitiateModel callInitiateModel) {
-        if (callInitiateModel.getScheduleId() != null) {
+    public void openCallIfPossible(CallRequest callRequest) {
+        if (callRequest.getScheduleId() != null) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel(Integer.parseInt(callInitiateModel.getScheduleId()));
+            notificationManager.cancel(Integer.parseInt(callRequest.getScheduleId()));
         }
 
         if (UserType.isUserDoctor()) {
-            fetchSessionId(callInitiateModel);
+            fetchSessionId(callRequest);
         } else if (UserType.isUserAssistant()) {
-            fetchSessionId(callInitiateModel);
+            fetchSessionId(callRequest);
         }
     }
 
-    private void fetchSessionId(CallInitiateModel callInitiateModel) {
-        this.callInitiateModel = callInitiateModel;
+    private void fetchSessionId(CallRequest callRequest) {
+        this.callRequest = callRequest;
 
         attachObserver(openTokViewModel);
 
@@ -104,19 +103,20 @@ public class CallPlacingActivity extends BaseActivity {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
 
-                if (baseApiResponseModel != null && baseApiResponseModel instanceof TokenFetchModel) {
+                if (baseApiResponseModel != null && baseApiResponseModel instanceof CallSettings) {
 
-                    TokenFetchModel tokenFetchModel = (TokenFetchModel) baseApiResponseModel;
-                    callInitiateModel.update(tokenFetchModel);
+                    CallSettings tokenFetchModel = (CallSettings) baseApiResponseModel;
+                    callRequest.update(tokenFetchModel);
 
-                    if ((!appPreference.getBoolean(PreferenceConstants.PATIENT_VIDEO_FEED) && callInitiateModel.getCallType().equals(OpenTokConstants.video)) || (!appPreference.getBoolean(PreferenceConstants.ONE_WAY_CALL_INFO) && callInitiateModel.getCallType().equals(OpenTokConstants.oneWay))) {
+                    if (!callRequest.isCallForDirectWaitingRoom() && ((!appPreference.getBoolean(PreferenceConstants.PATIENT_VIDEO_FEED) && callRequest.getCallType().equals(OpenTokConstants.video))
+                            || (!appPreference.getBoolean(PreferenceConstants.ONE_WAY_CALL_INFO) && callRequest.getCallType().equals(OpenTokConstants.oneWay)))) {
                         Intent intent = new Intent(CallPlacingActivity.this, ContentActivity.class);
                         intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
                         intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
 
 
                         int requestId = 0;
-                        if (callInitiateModel.getCallType().equals(OpenTokConstants.video)) {
+                        if (callRequest.getCallType().equals(OpenTokConstants.video)) {
                             intent.putExtra(ArgumentKeys.TITLE, getString(R.string.enable_patient_video_feed));
                             intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.patient_video_feed_description, getString(R.string.organization_name)));
                             intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.call_kit_education);
@@ -124,7 +124,7 @@ public class CallPlacingActivity extends BaseActivity {
 
                             requestId = CallPlacingActivity.VideoFeedRequestID;
 
-                        } else if (callInitiateModel.getCallType().equals(OpenTokConstants.oneWay)) {
+                        } else if (callRequest.getCallType().equals(OpenTokConstants.oneWay)) {
                             intent.putExtra(ArgumentKeys.TITLE, getString(R.string.one_way_call));
                             intent.putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.one_way_call_description));
                             intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.one_way_call);
@@ -167,7 +167,7 @@ public class CallPlacingActivity extends BaseActivity {
                         Boolean is_cc_captured = (Boolean) errorObject.get("is_cc_captured");
 
                         if (is_cc_captured != null && !is_cc_captured) {
-                            openTrialContentScreen(UserType.isUserDoctor(), callInitiateModel.getDoctorName());
+                            openTrialContentScreen(UserType.isUserDoctor(), callRequest.getDoctorName());
 
                             if (UserType.isUserDoctor()) {
                                 EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
@@ -195,83 +195,85 @@ public class CallPlacingActivity extends BaseActivity {
         });
 
 
-        String callType = callInitiateModel.getCallType();
+        String callType = callRequest.getCallType();
 
         if (callType.equals(OpenTokConstants.oneWay)) {
             callType = OpenTokConstants.video;
         }
 
-        openTokViewModel.postaVoipCall(callInitiateModel.getDoctorGuid(), callInitiateModel.getToUserGuid(), callInitiateModel.getScheduleId(), callType);
-
+        if (callRequest.isCallForDirectWaitingRoom()) {
+            openTokViewModel.getTokenForSession(callRequest.getSessionId(),null);
+        } else {
+            openTokViewModel.postaVoipCall(callRequest.getDoctorGuid(), callRequest.getOtherUserGuid(), callRequest.getScheduleId(), callType);
+        }
     }
 
-    private void openAudioCall() {
+    private void openAudioCall(CallRequest callRequest) {
         if (PermissionChecker.with(CallPlacingActivity.this).checkPermission(PermissionConstants.PERMISSION_MICROPHONE)) {
-            if (TokBox.shared.isActivityPresent() || TokBox.shared.isActiveCallPreset()) {
-                return;
-            }
-
             EventRecorder.recordCallUpdates("TRYING_AUDIO", null);
 
+            OpenTok tokBox = new OpenTok(callRequest);
+            CallManager.shared.addCall(tokBox);
 
-
-            Intent intent = CallActivity.getIntent(application,callInitiateModel);
+            Intent intent = CallActivity.getIntent(application, callRequest);
             application.startActivity(intent);
 
             didOpenCallKit();
-            this.callInitiateModel = null;
+            this.callRequest = null;
             finish();
         }
     }
 
-    private void openVideoCall() {
+    private void openVideoCall(CallRequest callRequest) {
         if (PermissionChecker.with(CallPlacingActivity.this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
-            if (TokBox.shared.isActivityPresent() || TokBox.shared.isActiveCallPreset()) {
-                return;
-            }
-
             EventRecorder.recordCallUpdates("TRYING_VIDEO", null);
 
-            Intent intent = CallActivity.getIntent(application,callInitiateModel);
+            OpenTok tokBox = new OpenTok(callRequest);
+            CallManager.shared.addCall(tokBox);
+
+            Intent intent = CallActivity.getIntent(application, callRequest);
             application.startActivity(intent);
 
             didOpenCallKit();
-            this.callInitiateModel = null;
+            this.callRequest = null;
             finish();
         }
     }
 
-    private void openWayCall() {
+    private void openWayCall(CallRequest callRequest) {
         if (PermissionChecker.with(CallPlacingActivity.this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
-            if (TokBox.shared.isActivityPresent() || TokBox.shared.isActiveCallPreset()) {
-                return;
-            }
-
             EventRecorder.recordCallUpdates("TRYING_ONE_WAY", null);
 
-            Intent intent = CallActivity.getIntent(application,callInitiateModel);
+            OpenTok tokBox = new OpenTok(callRequest);
+            CallManager.shared.addCall(tokBox);
+
+            Intent intent = CallActivity.getIntent(application, callRequest);
             application.startActivity(intent);
 
             didOpenCallKit();
-            this.callInitiateModel = null;
+            this.callRequest = null;
             finish();
         }
     }
 
     private void openCall() {
-        if (callInitiateModel == null) {
+        if (CallManager.shared.isActiveCallPresent()) {
             return;
         }
 
-        switch (callInitiateModel.getCallType()) {
+        if (callRequest == null) {
+            return;
+        }
+
+        switch (callRequest.getCallType()) {
             case OpenTokConstants.audio:
-                openAudioCall();
+                openAudioCall(callRequest);
                 break;
             case OpenTokConstants.video:
-                openVideoCall();
+                openVideoCall(callRequest);
                 break;
             case OpenTokConstants.oneWay:
-                openWayCall();
+                openWayCall(callRequest);
                 break;
         }
     }
@@ -356,7 +358,7 @@ public class CallPlacingActivity extends BaseActivity {
         intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
         intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
 
-        this.callInitiateModel = null;
+        this.callRequest = null;
 
         startActivityForResult(intent, requestId);
     }
@@ -376,7 +378,7 @@ public class CallPlacingActivity extends BaseActivity {
         switch (requestCode) {
             case PermissionConstants.PERMISSION_CAM_MIC:
             case PermissionConstants.PERMISSION_MICROPHONE:
-                if (resultCode == RESULT_OK && callInitiateModel != null) {
+                if (resultCode == RESULT_OK && callRequest != null) {
                     openCall();
                 } else {
                     finish();
@@ -416,7 +418,7 @@ public class CallPlacingActivity extends BaseActivity {
 
                 appPreference.setBoolean(PreferenceConstants.PATIENT_VIDEO_FEED, data.getBooleanExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED, false));
 
-                if (callInitiateModel != null) {
+                if (callRequest != null) {
                     openCall();
                 } else {
                     finish();
@@ -425,7 +427,7 @@ public class CallPlacingActivity extends BaseActivity {
             case CallPlacingActivity.OneWayCallRequestID:
                 if (resultCode == RESULT_OK) {
                     appPreference.setBoolean(PreferenceConstants.ONE_WAY_CALL_INFO, data.getBooleanExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED, false));
-                    if (callInitiateModel != null) {
+                    if (callRequest != null) {
                         openCall();
                     } else {
                         finish();

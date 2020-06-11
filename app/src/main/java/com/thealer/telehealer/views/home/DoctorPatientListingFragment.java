@@ -2,7 +2,6 @@ package com.thealer.telehealer.views.home;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
 import android.content.Intent;
@@ -47,21 +46,26 @@ import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.TimerInterface;
 import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
+import com.thealer.telehealer.common.pubNub.models.Patientinfo;
+import com.thealer.telehealer.common.pubNub.waitingroom.DoctorInviteHandler;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
+import com.thealer.telehealer.views.common.CustomPatientCountLayout;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.common.SearchCellView;
 import com.thealer.telehealer.views.common.SearchInterface;
+import com.thealer.telehealer.views.guestlogin.screens.PatientWaitingRoom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +101,10 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private ArrayList<DoctorGroupedAssociations> doctorGroupedAssociations;
     private ChangeTitleInterface changeTitleInterface;
     private SearchCellView search_view;
+    private DoctorInviteHandler doctorInviteHandler;
+    private CustomPatientCountLayout customPatientCountLayout;
+    private CommonUserApiResponseModel commonUserApiResponseModel;
+
 
     @Override
     public void onAttach(Context context) {
@@ -144,6 +152,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     }
 
     private void initView(View view) {
+        customPatientCountLayout =  view.findViewById(R.id.lay_patient_count);
         doctorPatientListCrv = (CustomRecyclerView) view.findViewById(R.id.doctor_patient_list_crv);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
 
@@ -158,6 +167,8 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         topView.setVisibility(View.GONE);
         bottomView.setVisibility(View.GONE);
+        customPatientCountLayout.setOnClickListener(this::onClick);
+
 
         addFab.setOnClickListener(this);
 
@@ -189,7 +200,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             }
             isDietView = getArguments().getBoolean(ArgumentKeys.IS_DIET_VIEW);
 
-            CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+             commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
             if (commonUserApiResponseModel != null) {
                 doctorGuid = commonUserApiResponseModel.getUser_guid();
             }
@@ -242,7 +253,6 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         });
 
         doctorPatientListCrv.setErrorModel(this, associationApiViewModel.getErrorModelLiveData());
-
     }
 
     @Override
@@ -383,6 +393,15 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 startActivity(intent);
             }
         }*/
+
+        //for initalize Doctor waitingroom
+        if (UserType.isUserDoctor()) {
+            if (getArguments().getBoolean(ArgumentKeys.IS_FROM_HOME)) {
+            Log.d("IS_FROM_HOME","DoctorPatientList");
+            doctorInviteHandler=new DoctorInviteHandler(getActivity(),UserDetailPreferenceManager.getUser_guid(),null);
+            doctorInviteHandler.startToSubscribe();
+            }
+        }
     }
 
     private void getAssociationsList(boolean isShowProgress) {
@@ -413,11 +432,25 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                     Utils.showInviteAlert(getActivity(), null);
                 }
                 break;
+            case R.id.lay_patient_count:
+                Intent i=new Intent(getActivity(), PatientWaitingRoom.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(ArgumentKeys.DOCTOR_GUID,""+UserDetailPreferenceManager.getUser_guid());
+                bundle.putString(ArgumentKeys.DOCTOR_NAME,""+UserDetailPreferenceManager.getFirst_name()+""+UserDetailPreferenceManager.getLast_name());
+                bundle.putSerializable(ArgumentKeys.GUEST_INFO, (ArrayList<Patientinfo>) doctorInviteHandler.currentlySubscribedPatients);
+                i.putExtras(bundle);
+                startActivity(i);
+                break;
         }
     }
 
     @Override
     public void doCurrentTransaction() {
         getAssociationsList( false);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }

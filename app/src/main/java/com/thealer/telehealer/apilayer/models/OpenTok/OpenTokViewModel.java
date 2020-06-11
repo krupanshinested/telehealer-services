@@ -16,7 +16,7 @@ import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
-import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -40,7 +40,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getTokenForSession(String sessionId, OpenTokTokenFetcher fetcher) {
+    public void getTokenForSession(String sessionId, @Nullable OpenTokTokenFetcher fetcher) {
 
         if (BaseApiViewModel.isAuthExpired()) {
 
@@ -55,10 +55,10 @@ public class OpenTokViewModel extends BaseApiViewModel {
                             if (signinApiResponseModel.isSuccess()) {
 
                                 //Setting the temp token
-                                TokBox.shared.setTempToken(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+                                String expiredToken = appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN);
                                 appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
                                 new WhoAmIApiViewModel(application).assignWhoAmI();
-                                getToken(sessionId, fetcher);
+                                getToken(sessionId,expiredToken, fetcher);
                             }
 
                             EventRecorder.updateVersion();
@@ -66,23 +66,25 @@ public class OpenTokViewModel extends BaseApiViewModel {
                         }
                     });
         } else {
-            getToken(sessionId, fetcher);
+            getToken(sessionId,null, fetcher);
         }
     }
 
-    private void getToken(String sessionId, OpenTokTokenFetcher fetcher) {
+    private void getToken(String sessionId,@Nullable String expiredAuthToken, @Nullable  OpenTokTokenFetcher fetcher) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().getOpenTokToken(sessionId)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<TokenFetchModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAObserver<CallSettings>(Constants.SHOW_PROGRESS) {
                                 @Override
-                                public void onSuccess(TokenFetchModel tokenFetchModel) {
-
-                                    fetcher.didFetched(tokenFetchModel);
-
+                                public void onSuccess(CallSettings callSettings) {
+                                    callSettings.expiredTokenWhileCallPlaced = expiredAuthToken;
+                                    baseApiResponseModelMutableLiveData.setValue(callSettings);
+                                    if (fetcher != null) {
+                                        fetcher.didFetched(callSettings);
+                                    }
                                 }
                             });
                 }
@@ -109,22 +111,27 @@ public class OpenTokViewModel extends BaseApiViewModel {
     }
 
     public void updateScreenshot(String sessionId, Bitmap bitmap) {
-        fetchToken(new BaseViewInterface() {
-            @Override
-            public void onStatus(boolean status) {
-                if (status) {
-                    String path = CameraUtil.getBitmapFilePath(getApplication(), bitmap);
-                    getAuthApiService().uploadScreenshot(sessionId,getMultipartFile("audio_stream_screenshot", path))
-                            .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
-                                @Override
-                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+        try {
+            String path = CameraUtil.getBitmapFilePath(getApplication(), bitmap);
 
-                                }
-                            });
+            fetchToken(new BaseViewInterface() {
+                @Override
+                public void onStatus(boolean status) {
+                    if (status) {
+                        getAuthApiService().uploadScreenshot(sessionId, getMultipartFile("audio_stream_screenshot", path))
+                                .compose(applySchedulers())
+                                .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                    @Override
+                                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+
+                                    }
+                                });
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void postCallReview(HashMap<String, Object> params) {
@@ -200,9 +207,9 @@ public class OpenTokViewModel extends BaseApiViewModel {
                 if (status) {
                     getAuthApiService().postaVOIPCall(doctorGuid, result)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<TokenFetchModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAObserver<CallSettings>(Constants.SHOW_PROGRESS) {
                                 @Override
-                                public void onSuccess(TokenFetchModel tokenFetchModel) {
+                                public void onSuccess(CallSettings tokenFetchModel) {
 
                                     EventRecorder.recordNotification("REQUEST_CALL");
                                     baseApiResponseModelMutableLiveData.setValue(tokenFetchModel);

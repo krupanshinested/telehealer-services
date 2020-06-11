@@ -50,6 +50,7 @@ public class CallMinimizeService extends Service implements FloatingViewListener
 
     @Nullable
     private LinearLayout remoteView;
+    private OpenTok currentCall;
 
     /**
      * FloatingViewManager
@@ -58,7 +59,8 @@ public class CallMinimizeService extends Service implements FloatingViewListener
 
     @Override
     public void onCreate() {
-        startForeground(NOTIFICATION_ID, createNotification(this));
+        currentCall = CallManager.shared.getActiveCallToShow();
+        startForeground(NOTIFICATION_ID, createNotification(this,currentCall.getCallType()));
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(callScreenOpened, new IntentFilter(Constants.CALL_ACTIVITY_RESUMED));
     }
 
@@ -75,14 +77,16 @@ public class CallMinimizeService extends Service implements FloatingViewListener
         final LayoutInflater inflater = LayoutInflater.from(this);
         final ConstraintLayout parentView = (ConstraintLayout) inflater.inflate(R.layout.view_call_minimized, null, false);
 
+        currentCall = CallManager.shared.getActiveCallToShow();
+
         LinearLayout remoteView = parentView.findViewById(R.id.remoteView);
         this.remoteView = remoteView;
         remoteView.setClipToOutline(true);
         ImageView profile_iv = parentView.findViewById(R.id.profile_iv);
 
-        if (TokBox.shared.getCallType().equals(OpenTokConstants.audio)) {
-            if (TokBox.shared.getOtherPersonDetail() != null) {
-                Utils.setImageWithGlide(getApplicationContext(), profile_iv, TokBox.shared.getOtherPersonDetail().getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
+        if (currentCall.getCallType().equals(OpenTokConstants.audio)) {
+            if (currentCall.getOtherPersonDetail() != null) {
+                Utils.setImageWithGlide(getApplicationContext(), profile_iv, currentCall.getOtherPersonDetail().getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
             } else {
                 profile_iv.setImageResource(R.drawable.profile_placeholder);
             }
@@ -90,12 +94,12 @@ public class CallMinimizeService extends Service implements FloatingViewListener
             profile_iv.setVisibility(View.VISIBLE);
             remoteView.setVisibility(View.GONE);
         } else {
-            TokBox.shared.setRemoteView(remoteView);
+            currentCall.setRemoteView(remoteView);
             profile_iv.setVisibility(View.GONE);
             remoteView.setVisibility(View.VISIBLE);
         }
 
-        TokBox.shared.setUIListener(this);
+        currentCall.setUIListener(this);
 
         parentView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +113,7 @@ public class CallMinimizeService extends Service implements FloatingViewListener
         final FloatingViewManager.Options options = new FloatingViewManager.Options();
         options.overMargin = (int) (16 * metrics.density);
 
-        if (TokBox.shared.getCallType().equals(OpenTokConstants.audio)) {
+        if (currentCall.getCallType().equals(OpenTokConstants.audio)) {
             options.floatingViewWidth = (int) (120 * metrics.density);
             options.floatingViewHeight = (int) (120 * metrics.density);
         } else {
@@ -164,8 +168,8 @@ public class CallMinimizeService extends Service implements FloatingViewListener
             mFloatingViewManager = null;
         }
 
-        TokBox.shared.resetUIListener(this);
-        TokBox.shared.removeRemoteView(remoteView);
+        currentCall.resetUIListener(this);
+        currentCall.removeRemoteView(remoteView);
 
         stopForeground(true);
 
@@ -176,12 +180,12 @@ public class CallMinimizeService extends Service implements FloatingViewListener
             notificationManager.cancel(NOTIFICATION_ID);
     }
 
-    private static Notification createNotification(Context context) {
+    private static Notification createNotification(Context context,String callType) {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, TeleHealerApplication.appConfig.getCallChannel());
         builder.setWhen(System.currentTimeMillis());
         builder.setSmallIcon(R.drawable.app_icon);
         builder.setContentTitle(context.getString(R.string.app_name)+" Call");
-        if (TokBox.shared.getCallType().equals(OpenTokConstants.audio)) {
+        if (callType.equals(OpenTokConstants.audio)) {
             builder.setContentText("Audio call is going on");
         } else {
             builder.setContentText("Video call is going on");
@@ -222,7 +226,7 @@ public class CallMinimizeService extends Service implements FloatingViewListener
 
     @Override
     public void didEndCall(String callRejectionReason) {
-        CallActivity.openFeedBackIfNeeded(callRejectionReason, application);
+        CallActivity.openFeedBackIfNeeded(currentCall.getCallRequest(),currentCall.getConnectedDate(),callRejectionReason, application);
         destroy();
     }
 
@@ -312,7 +316,7 @@ public class CallMinimizeService extends Service implements FloatingViewListener
 
     @Override
     public void bluetoothMediaAction(Boolean forEnd) {
-        TokBox.shared.endCall(OpenTokConstants.endCallPressed);
+        currentCall.endCall(OpenTokConstants.endCallPressed);
     }
 
     @Override

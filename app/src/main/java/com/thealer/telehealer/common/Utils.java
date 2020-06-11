@@ -3,6 +3,8 @@ package com.thealer.telehealer.common;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -15,7 +17,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -55,14 +56,12 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.Headers;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
@@ -249,7 +248,7 @@ public class Utils {
     }
 
     public static boolean isEmailValid(String email) {
-        String emailPattern = "^[_A-Za-z0-9._\\+]+(\\.[_A-Za-z0-9._-]+)*@[A-Za-z0-9._-]+(\\.[A-Za-z0-9._]+)*(\\.[A-Za-z]{2,})$";
+        String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         return Pattern.matches(emailPattern, email);
     }
 
@@ -339,6 +338,28 @@ public class Utils {
         }
 
         return input.before(calendar);
+    }
+
+    public static long getDateDifferceinHours(long date1,long date2) {
+
+        Calendar calendar1 = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
+
+        Date givendate1=new Date();
+        givendate1.setTime(date1);
+        calendar1.setTime(givendate1);
+
+        Date givendate2=new Date();
+        givendate2.setTime(date2);
+        calendar2.setTime(givendate2);
+
+        long millis1 = calendar1.getTimeInMillis();
+        long millis2 = calendar2.getTimeInMillis();
+
+        long diff = millis2 - millis1;
+        long diffHours = diff / (60 * 60 * 1000);
+        Log.d("getDateDifferceinHours",""+diffHours);
+        return diffHours;
     }
 
     public static boolean isDateTimeExpired(String date) {
@@ -1143,13 +1164,12 @@ public class Utils {
     }
 
     public static void createNotification(APNSPayload data, Intent intent) {
-
         String title = (String) data.getAps().get(PubNubNotificationPayload.TITLE);
         String message = (String) data.getAps().get(PubNubNotificationPayload.ALERT);
         String imageUrl = data.getMedia_url();
 
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if (imageUrl != null) {
 
             new Thread(new Runnable() {
@@ -1180,6 +1200,39 @@ public class Utils {
         } else {
             Bitmap imageBitmap = BitmapFactory.decodeResource(application.getResources(), R.drawable.profile_placeholder);
             displyNotification(title, message, imageBitmap, intent);
+
+        }
+    }
+
+    public static void createNotificationTop(APNSPayload data, Intent intent) {
+
+        String title = (String) data.getAps().get(PubNubNotificationPayload.TITLE);
+        String message = (String) data.getAps().get(PubNubNotificationPayload.ALERT);
+        String imageUrl = data.getMedia_url();
+
+        if (imageUrl != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        TeleCacheUrl glideUrl = Utils.getGlideUrlWithAuth(application, imageUrl, true);
+                        FutureTarget<Bitmap> futureTarget = Glide.with(application).asBitmap().load(glideUrl).submit();
+                        try {
+                            Bitmap imageBitmap = futureTarget.get();
+                                displyNotificationOnTop(title, message, imageBitmap, intent);
+
+                        } catch (Exception e) {
+                                displyNotificationOnTop(title, message, null, intent);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+        } else {
+            Bitmap imageBitmap = BitmapFactory.decodeResource(application.getResources(), R.drawable.profile_placeholder);
+                displyNotificationOnTop(title, message, imageBitmap, intent);
         }
 
     }
@@ -1199,8 +1252,8 @@ public class Utils {
             notification.setLargeIcon(imageBitmap);
         }
 
-        if (intent != null) {
 
+        if (intent != null) {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
             TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(application);
@@ -1216,6 +1269,29 @@ public class Utils {
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(application);
         notificationManagerCompat.notify(random.nextInt(1000), notification.build());
     }
+
+    public static void displyNotificationOnTop(String title, String message,@Nullable Bitmap imageBitmap, Intent intent) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(application, 0, intent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(application, notificationChannelId)
+                .setSmallIcon(R.drawable.app_icon_notification)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setContentIntent(pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+
+        if (imageBitmap != null) {
+            builder.setLargeIcon(imageBitmap);
+        }
+
+        NotificationManager notifManager = (NotificationManager)application.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = builder.build();
+        Random random = new Random();
+        notifManager.notify(random.nextInt(1000), notification);
+    }
+
 
     public static void showOptionSelectionAlert(FragmentActivity activity,
                                                 @NonNull List<String> optionList,

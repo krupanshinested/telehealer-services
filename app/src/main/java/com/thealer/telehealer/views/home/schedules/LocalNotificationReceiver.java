@@ -16,7 +16,7 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.FutureTarget;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
@@ -25,6 +25,8 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.notification.NotificationCancelAppointmentReceiver;
 import com.thealer.telehealer.views.notification.NotificationDetailActivity;
+
+import java.util.UUID;
 
 import static com.thealer.telehealer.TeleHealerApplication.notificationChannelId;
 
@@ -104,8 +106,9 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
 
         // Call click intent
         Intent callIntent = new Intent(context, CallPlacingActivity.class);
-        CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(), resultBean.getPatient(), resultBean.getDoctor().getUser_guid(), resultBean.getDoctor().getUserDisplay_name(), resultBean.getSchedule_id() + "", OpenTokConstants.video);
-        callIntent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
+        CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
+                resultBean.getPatient().getUser_guid(), resultBean.getPatient(), resultBean.getDoctor().getUser_guid(), resultBean.getDoctor().getUserDisplay_name(), resultBean.getSchedule_id() + "", OpenTokConstants.video,true,resultBean.getSchedule_id() + "");
+        callIntent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
 
         TaskStackBuilder builder = TaskStackBuilder.create(context);
         builder.addNextIntentWithParentStack(callIntent);

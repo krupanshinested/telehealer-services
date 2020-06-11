@@ -1,9 +1,5 @@
 package com.thealer.telehealer.common.OpenTok;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -16,6 +12,8 @@ import android.media.AudioDeviceInfo;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
@@ -23,11 +21,12 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
-import androidx.annotation.NonNull;
+
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -46,9 +45,8 @@ import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoViewModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -95,14 +93,12 @@ import java.util.List;
 import static android.media.AudioManager.GET_DEVICES_OUTPUTS;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
-import static com.thealer.telehealer.views.call.CallActivity.firebaseMessagingService;
-import static org.webrtc.ContextUtils.getApplicationContext;
 
 /**
  * Created by rsekar on 12/25/18.
  */
 
-public class TokBox extends SubscriberKit.SubscriberVideoStats implements Session.SessionListener,
+public class OpenTok implements Session.SessionListener,
         Session.ConnectionListener,
         Session.SignalListener,
         Session.StreamPropertiesListener,
@@ -117,8 +113,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         AudioInterface, AudioManager.OnAudioFocusChangeListener,
         OnDSListener {
 
-    public static TokBox shared = new TokBox();
-
     @Nullable
     private Session mSession;
     @Nullable
@@ -129,26 +123,14 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private Connection connection;
 
     @Nullable
-    private String currentUUIDString;
-
-    @Nullable
     private ViewGroup remoteView;
     @Nullable
     private ViewGroup localView;
-    private String token = "", sessionId = "", apiKey = "",otherPersonUserGuid = "";
-    private String callType = "";
-    private Boolean isCalling;
     private Boolean isBadConnection = false;
     private Boolean isPatientDisclaimerDismissed = false;
 
-    @Nullable
-    private String doctor_guid, additionalId;
-
-    private int callState = OpenTokConstants.idle;
+    private int callState = OpenTokConstants.outGoingCallGoingOn;
     private Boolean isSubscriberAudioMuted = false, isSubscriberVideoMuted = false, isSubscriberQualityDegraded = false;
-
-    @Nullable
-    private CommonUserApiResponseModel otherPersonDetail;
 
     @Nullable
     private Date connectingDate, connectedDate;
@@ -157,13 +139,10 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private String patientCurrentState;
 
     @Nullable
-    private String tempToken;
-
-    @Nullable
     private TokBoxUIInterface tokBoxUIInterface;
 
     @Nullable
-    private MediaPlayer incomingPlayer, outgoingPlayer;
+    private Ringtone ringTonePlayer;
     @Nullable
     private Vibrator vibrator;
 
@@ -182,23 +161,27 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private LocationTracker patientLocationTracker;
 
     @Nullable
-    private TimerRunnable outGoingCallTimer, callCapTimer, screenCapturerTimer;
+    private TimerRunnable callConnectingTimer, callCapTimer, screenCapturerTimer;
 
     private final OpenTokViewModel openTokViewModel = new OpenTokViewModel(application);
 
     private Boolean isTranscriptSent = false;
     private Boolean isScreenshotCaptured = false;
     private String currentTranscript = "";
+    @Nullable
     private GoogleSpeechRecognizer googleSpeechRecognizer;
     private TimerRunnable speechRunnable;
 
-    @NonNull
-    private CustomAudioDevice customAudioDevice;
 
     private boolean isBatteryObserverAdded = false;
     private boolean isViewSwapped = false;
+    private boolean isSessionConnect = false;
     @Nullable
     private Float otherPersonBatteryLevel = null;
+
+    @Nullable
+    private AudioFocusRequest audioFocusRequest;
+
     private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive( Context context, Intent intent ) {
@@ -207,29 +190,27 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
     };
 
-    @Nullable
-    private CallInitiateModel callInitiateModel;
+    private CallRequest callRequest;
 
-    public void didRecieveIncoming(APNSPayload apnsPayload, CallReceiveInterface callReceiveInterface) {
+    public static void didRecieveIncoming(APNSPayload apnsPayload, CallReceiveInterface callReceiveInterface) {
         EventRecorder.recordCallUpdates("CALL_RECEIVED",null);
-        this.sessionId = apnsPayload.getSessionId();
 
-        openTokViewModel.getTokenForSession(apnsPayload.getSessionId(), new OpenTokTokenFetcher() {
+        new OpenTokViewModel(application).getTokenForSession(apnsPayload.getSessionId(), new OpenTokTokenFetcher() {
             @Override
-            public void didFetched(TokenFetchModel tokenFetchModel) {
+            public void didFetched(CallSettings callSettings) {
 
-                if (tokenFetchModel == null) {
+                if (callSettings == null) {
                     return;
                 }
 
-                CallInitiateModel callInitiateModel = new CallInitiateModel(apnsPayload.getFrom(), null, apnsPayload.getDoctor_guid(), apnsPayload.getFrom_name(), null, apnsPayload.getType());
-
-                callInitiateModel.setSessionId(apnsPayload.getSessionId());
-                callInitiateModel.setTokBoxApiKey(tokenFetchModel.getApiKey());
-                callInitiateModel.setToken(tokenFetchModel.getToken());
+                CallRequest callRequest = new CallRequest(apnsPayload.getUuid(),
+                        apnsPayload.getFrom(), null, apnsPayload.getDoctor_guid(), apnsPayload.getFrom_name(), null, apnsPayload.getType(),false,null);
+                callRequest.update(callSettings);
 
                 boolean isInWaitingRoom = WaitingRoomActivity.isActive;
-                initialSetUp(callInitiateModel, false, apnsPayload.getUuid());
+                OpenTok tokBox = new OpenTok(callRequest);
+                tokBox.setCallState(OpenTokConstants.waitingForUserAction);
+                CallManager.shared.addCall(tokBox);
 
                 GetUsersApiViewModel getUsersApiViewModel = new GetUsersApiViewModel(application);
                 getUsersApiViewModel.getUserDetail(apnsPayload.getFrom(), new UserDetailFetcher() {
@@ -238,13 +219,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                         if (commonUserApiResponseModel == null) {
                             return;
                         }
-
-                        otherPersonDetail = commonUserApiResponseModel;
-
-                        if (tokBoxUIInterface != null) {
-                            tokBoxUIInterface.didReceivedOtherUserDetails(commonUserApiResponseModel);
-                        }
-
+                        callRequest.setOtherPersonDetail(commonUserApiResponseModel);
 
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
@@ -252,55 +227,21 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        callReceiveInterface.didFetchedAllRequiredData(isInWaitingRoom,commonUserApiResponseModel.getDoctorDisplayName());
+                                        callReceiveInterface.didFetchedAllRequiredData(isInWaitingRoom,commonUserApiResponseModel.getDoctorDisplayName(),callRequest);
                                     }
                                 }, 100);
 
                                 try {
-                                    Log.d("TokBox", "startIncomingTone");
-                                    MediaPlayer player = new MediaPlayer();
+                                    tokBox.vibrator = (Vibrator) application.getSystemService(Context.VIBRATOR_SERVICE);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        long[] mVibratePattern = new long[]{0, 400, 200, 400};
 
-                                    Uri notification = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + application.getPackageName() + "/raw/music");
-                                    player.setDataSource(application, notification);
-                                    player.setLooping(true);
-
-                                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                                            .setUsage(AudioAttributes.USAGE_MEDIA)
-                                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                            .build();
-
-                                    player.setAudioAttributes(audioAttributes);
-
-
-                                    new AsyncTask<Void, Void, Boolean>() {
-                                        @Override
-                                        protected Boolean doInBackground(Void... voids) {
-                                            try {
-                                                player.prepare();
-                                                return true;
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                            return false;
-                                        }
-
-                                        @Override
-                                        protected void onPostExecute(Boolean prepared) {
-                                            try {
-                                                if (prepared) {
-                                                    player.start();
-                                                }
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    }.execute();
-
-                                    incomingPlayer = player;
-
-                                    vibrator = (Vibrator) application.getSystemService(Context.VIBRATOR_SERVICE);
-                                    vibrator.vibrate(20000);
-
+                                        tokBox.vibrator.vibrate(VibrationEffect.createWaveform(mVibratePattern,0));
+                                    } else {
+                                        //deprecated in API 26
+                                        tokBox.vibrator.vibrate(500);
+                                    }
+                                    tokBox.startRingTone();
                                 } catch (Exception e) {
                                     Log.d("TokBox", "startIncomingTone error " + e.getLocalizedMessage());
                                     e.printStackTrace();
@@ -309,8 +250,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
                             }
                         });
-
-
                     }
                 });
             }
@@ -318,52 +257,53 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     //Setup methods
+    public OpenTok(CallRequest callRequest) {
 
-    public TokBox() {
-        CustomAudioDevice customAudioDevice = new CustomAudioDevice(application, this);
-        AudioDeviceManager.setAudioDevice(customAudioDevice);
-        this.customAudioDevice = customAudioDevice;
+        CustomAudioDevice customAudioDevice = null;
+        try {
+            customAudioDevice = (CustomAudioDevice) AudioDeviceManager.getAudioDevice();
+        } catch (Exception e) {
+            customAudioDevice = null;
+            Log.d("TokBox","CustomAudioDevice exception");
+        }
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                googleSpeechRecognizer = new GoogleSpeechRecognizer(application);
-                googleSpeechRecognizer.setOnDroidSpeechListener(TokBox.this);
-            }
-        });
-    }
-
-    public void initialSetUp(CallInitiateModel callInitiateModel, Boolean isCalling, String uuidString) {
+        if (callRequest.getCallSettings().isTranscription_enabled()) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    googleSpeechRecognizer = new GoogleSpeechRecognizer(application);
+                    googleSpeechRecognizer.setOnDroidSpeechListener(OpenTok.this);
+                }
+            });
+        }
 
         EventRecorder.recordLastUpdate("last_call_date");
         currentTranscript = "";
         isTranscriptSent = false;
-        this.callInitiateModel = callInitiateModel;
+        this.callRequest = callRequest;
 
-        this.token = callInitiateModel.getToken();
-        this.sessionId = callInitiateModel.getSessionId();
-        this.apiKey = callInitiateModel.getTokBoxApiKey();
-        this.callType = callInitiateModel.getCallType();
-        this.isCalling = isCalling;
-        this.currentUUIDString = uuidString;
-        this.additionalId = callInitiateModel.getScheduleId();
         this.isPatientDisclaimerDismissed = false;
-        this.otherPersonUserGuid = callInitiateModel.getToUserGuid();
         this.otherPersonBatteryLevel = null;
         this.isViewSwapped = false;
         this.isScreenshotCaptured = false;
-        this.doctor_guid = callInitiateModel.getDoctorGuid();
 
-        if (AudioDeviceManager.getAudioDevice() != null && AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
+        if (customAudioDevice != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                CustomAudioDevice customAudioDevice = (CustomAudioDevice) AudioDeviceManager.getAudioDevice();
                 customAudioDevice.setRendererMute(false);
-                AudioFocusRequest audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(this, new Handler()).build();
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build();
+                audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                        .setAudioAttributes(audioAttributes)
+                        .setOnAudioFocusChangeListener(this, new Handler()).build();
                 customAudioDevice.getAudioManager().requestAudioFocus(audioFocusRequest);
             }
         }
 
-        if (isCalling & !callType.equals(OpenTokConstants.education)) {
+        boolean isCalling = callRequest.isCalling();
+
+        if (isCalling & !callRequest.getCallType().equals(OpenTokConstants.education)) {
             if (tokBoxUIInterface != null) {
                 tokBoxUIInterface.updateCallInfo(application.getString(R.string.trying_to_call));
             }
@@ -375,17 +315,16 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             }
 
             this.callState = OpenTokConstants.outGoingCallGoingOn;
-            connectToSession();
 
             GetUsersApiViewModel getUsersApiViewModel = new GetUsersApiViewModel(application);
-            getUsersApiViewModel.getUserDetail(callInitiateModel.getToUserGuid(), new UserDetailFetcher() {
+            getUsersApiViewModel.getUserDetail(callRequest.getOtherUserGuid(), new UserDetailFetcher() {
                 @Override
                 public void didFetchedDetails(CommonUserApiResponseModel commonUserApiResponseModel) {
                     if (commonUserApiResponseModel == null) {
                         return;
                     }
 
-                    otherPersonDetail = commonUserApiResponseModel;
+                    callRequest.setOtherPersonDetail(commonUserApiResponseModel);
 
                     if (tokBoxUIInterface != null) {
                         tokBoxUIInterface.didReceivedOtherUserDetails(commonUserApiResponseModel);
@@ -394,7 +333,16 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             });
 
         } else {
-            this.callState = OpenTokConstants.waitingForUserAction;
+            if (!callRequest.isCallForDirectWaitingRoom()) {
+                addTimerForIncomingOrOutgoing();
+            }
+            if (callRequest.isCallForDirectWaitingRoom()) {
+                this.callState = OpenTokConstants.incomingCallGoingOn;
+            } else {
+                this.callState = OpenTokConstants.waitingForUserAction;
+            }
+
+
         }
 
         this.connectingDate = null;
@@ -417,7 +365,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void setup(ViewGroup remoteView, ViewGroup localView) {
-        if (callType.equals(OpenTokConstants.oneWay) || callType.equals(OpenTokConstants.education)) {
+        if (callRequest.getCallType().equals(OpenTokConstants.oneWay) || callRequest.getCallType().equals(OpenTokConstants.education)) {
             this.localView = remoteView;
             this.remoteView = localView;
         } else {
@@ -429,7 +377,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void setRemoteView(ViewGroup remoteView) {
-        if (callType.equals(OpenTokConstants.oneWay) || callType.equals(OpenTokConstants.education)) {
+        if (callRequest.getCallType().equals(OpenTokConstants.oneWay) || callRequest.getCallType().equals(OpenTokConstants.education)) {
             this.localView = remoteView;
             setupLocalFeedView();
         } else {
@@ -471,17 +419,28 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void connectToSession() {
-        if (!isCalling)
-            stopIncomingRingtone();
-
         Log.d("TokBox","connectToSession");
+        if (isSessionConnect) {
+            Log.d("TokBox","return since already connected");
+            return;
+        }
 
-        mSession = new Session.Builder(application, apiKey, sessionId).build();
+        if (!callRequest.isCalling())
+            stopRingtone();
+
+        mSession = new Session.Builder(application, callRequest.getCallSettings().apiKey, callRequest.getSessionId()).build();
         mSession.setSessionListener(this);
         mSession.setConnectionListener(this);
         mSession.setSignalListener(this);
         mSession.setStreamPropertiesListener(this);
-        mSession.connect(token);
+        mSession.connect(callRequest.getCallSettings().token);
+        isSessionConnect = true;
+    }
+
+
+    public void startPublishing() {
+        mPublisher.setPublishAudio(true);
+        mPublisher.setPublishVideo(true);
     }
 
     public void setUIListener(TokBoxUIInterface tokBoxUIInterface) {
@@ -495,10 +454,11 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
     }
 
-    @Nullable
-    public CallInitiateModel getCallInitiateModel() {
-        return callInitiateModel;
+    public CallRequest getCallRequest() {
+        return callRequest;
     }
+
+    public String getCallType() { return callRequest.getCallType(); }
 
     @Nullable
     public TokBoxUIInterface getTokBoxUIInterface() {
@@ -540,7 +500,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     public void setZOrderTopForLocalView() {
-        if (callType.equals(OpenTokConstants.oneWay) || callType.equals(OpenTokConstants.education)) {
+        if (callRequest.getCallType().equals(OpenTokConstants.oneWay) || callRequest.getCallType().equals(OpenTokConstants.education)) {
             return;
         }
 
@@ -642,10 +602,6 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
     }
 
-    public String getSessionId() {
-        return sessionId;
-    }
-
     @Nullable
     public Date getConnectingDate() {
         return connectingDate;
@@ -658,33 +614,16 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     @Nullable
     public String getCurrentUUID() {
-        return currentUUIDString;
-    }
-
-    public Boolean isActiveCallPreset() {
-        return callState != OpenTokConstants.idle && !TextUtils.isEmpty(sessionId);
-    }
-
-    public String getCallType() {
-        return callType;
-    }
-
-    @Nullable
-    public String getTempToken() {
-        return tempToken;
-    }
-
-    public void setTempToken(@Nullable String tempToken) {
-        this.tempToken = tempToken;
+        return callRequest.getCallUUID();
     }
 
     @Nullable
     public CommonUserApiResponseModel getOtherPersonDetail() {
-        return otherPersonDetail;
+        return callRequest.getOtherPersonDetail();
     }
 
     public Boolean getCalling() {
-        return isCalling;
+        return callRequest.isCalling();
     }
 
     public void setCallState(int callState) {
@@ -695,16 +634,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         return callState;
     }
 
-    public Boolean isActivityPresent() {
-        return (tokBoxUIInterface != null);
-    }
-
     public void setCallType(String callType) {
-        this.callType = callType;
+        this.callRequest.setCallType(callType);
     }
 
     public Boolean isVideoCall() {
-        return callType.equals(OpenTokConstants.video);
+        return callRequest.getCallType().equals(OpenTokConstants.video);
     }
 
     @Nullable
@@ -742,20 +677,31 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         mPublisher.setVideoStatsListener(this);
         mPublisher.setAudioStatsListener(this);
 
-        switch (callType) {
+        boolean isVideoNeed = false;
+        boolean isAudioNeed = false;
+        switch (callRequest.getCallType()) {
             case OpenTokConstants.audio:
-                mPublisher.setPublishVideo(false);
-                mPublisher.setPublishAudio(true);
+                isVideoNeed = false;
+               isAudioNeed = true;
                 break;
             case OpenTokConstants.video:
-                mPublisher.setPublishVideo(true);
-                mPublisher.setPublishAudio(true);
-                break;
             case OpenTokConstants.oneWay:
             case OpenTokConstants.education:
-                mPublisher.setPublishVideo(true);
-                mPublisher.setPublishAudio(true);
+                isVideoNeed = true;
+                isAudioNeed = true;
                 break;
+        }
+
+        if (callRequest.getCallSettings().canStartPublishVideo && isVideoNeed) {
+            mPublisher.setPublishVideo(true);
+        } else {
+            mPublisher.setPublishVideo(false);
+        }
+
+        if (callRequest.getCallSettings().canStartPublishAudio && isAudioNeed) {
+            mPublisher.setPublishAudio(true);
+        } else {
+            mPublisher.setPublishAudio(false);
         }
 
         mPublisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
@@ -770,12 +716,27 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             tokBoxUIInterface.didPublishStarted();
     }
 
-    private void startOutgoingTone() {
-        Log.d("TokBox", "startOutgoingTone");
+    private void startRingTone() {
+        Log.d("TokBox", "startRingTone");
+        try {
+            Uri notification = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + application.getPackageName() + "/raw/music");
+            ringTonePlayer = RingtoneManager.getRingtone(application, notification);
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                    .setLegacyStreamType(AudioManager.MODE_IN_CALL)
+                    .build();
+            ringTonePlayer.setAudioAttributes(audioAttributes);
+            ringTonePlayer.play();
+        } catch (Exception e) {
+            Log.d("TokBox", "error in outgoing player " + e.getLocalizedMessage());
+            e.printStackTrace();
+        }
+
+        /*Log.d("TokBox", "startOutgoingTone");
         try {
             MediaPlayer player = new MediaPlayer();
 
-            Uri notification = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/raw/music");
+            Uri notification = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +application.getPackageName() + "/raw/music");
             player.setDataSource(application, notification);
             player.setLooping(true);
 
@@ -807,17 +768,17 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                 }
             }.execute();
 
-            outgoingPlayer = player;
+            ringTonePlayer = player;
         } catch (Exception e) {
             Log.d("TokBox", "error in outgoing player " + e.getLocalizedMessage());
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void doSubscribe(Stream stream) {
         if (mSession != null) {
             mSubscriber = new Subscriber.Builder(application, stream)
-                    .renderer(new BasicCustomVideoRenderer(application))
+                     .renderer(new BasicCustomVideoRenderer(application))
                     .build();
             mSubscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
             mSubscriber.setSubscriberListener(this);
@@ -838,22 +799,22 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
     }
 
+    public boolean isActive() {
+        return callState != OpenTokConstants.ended;
+    }
+
     public void endCall(String callRejectionReason) {
-        if (!isActiveCallPreset()) {
+        Log.d("openTok", "endCall");
+        if (!isActive()) {
+            CallManager.shared.removeCall(this);
             Log.d("openTok", "*********Call end called already, returing back");
             return;
         }
 
-        if (CallActivity.firebaseMessagingService != null) {
-            CallActivity.firebaseMessagingService.stopForeground(true);
-            CallActivity.firebaseMessagingService = null;
-        }
-
         Log.d("openTok", "endCall");
-        callState = OpenTokConstants.idle;
+        callState = OpenTokConstants.ended;
 
-        stopIncomingRingtone();
-        stopOutgoingRingtone();
+        stopRingtone();
 
         localView = null;
         remoteView = null;
@@ -861,11 +822,11 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         if (tokBoxUIInterface != null) {
             tokBoxUIInterface.didEndCall(callRejectionReason);
         } else {
-            CallActivity.openFeedBackIfNeeded(callRejectionReason, application);
+            CallActivity.openFeedBackIfNeeded(callRequest,connectedDate,callRejectionReason, application);
         }
 
 
-        if (TextUtils.isEmpty(sessionId)) {
+        if (TextUtils.isEmpty(callRequest.getSessionId())) {
             return;
         }
 
@@ -873,6 +834,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         if (mPublisher != null && mSession != null) {
             mSession.unpublish(mPublisher);
+        }
+
+        if (mSession != null) {
             mSession.disconnect();
         }
 
@@ -889,43 +853,46 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             application.unregisterReceiver(batteryReceiver);
         }
 
-        if (callType.equals(OpenTokConstants.education)) {
-            stopArchive(sessionId);
+        if (AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
+            ((CustomAudioDevice) AudioDeviceManager.getAudioDevice()).audioInterface = null;
+        }
+
+        if (callRequest.getCallType().equals(OpenTokConstants.education)) {
+            stopArchive(callRequest.getSessionId());
         } else {
-            if (!TextUtils.isEmpty(sessionId)) {
-                if (isCalling) {
+            if (!TextUtils.isEmpty(callRequest.getSessionId())) {
+                if (callRequest.isCalling()) {
                     if (connectedDate == null) {
                         HashMap<String, String> map = new HashMap<>();
                         map.put("no_answer", "true");
-                        updateCallStatus(sessionId, map);
+                        updateCallStatus(callRequest.getSessionId(), map);
                         EventRecorder.recordCallUpdates("no_answer", null);
                     } else {
                         HashMap<String, String> map = new HashMap<>();
                         map.put("end", "true");
-                        updateCallStatus(sessionId, map);
+                        updateCallStatus(callRequest.getSessionId(), map);
                     }
                 }
             }
         }
 
-        if (tempToken != null) {
-            appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, tempToken);
+        String expiredToken = callRequest.getCallSettings().getExpiredTokenWhileCallPlaced();
+        if ( expiredToken != null) {
+            appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, expiredToken);
         }
 
         final Class<? extends Service> service = CallMinimizeService.class;
         final Intent intent = new Intent(application, service);
         application.stopService(intent);
 
-        sessionId = "";
-        currentUUIDString = null;
-        otherPersonDetail = null;
+        final Class<? extends Service> notificationService = CallNotificationService.class;
+        final Intent notificationIntent = new Intent(application, notificationService);
+        application.stopService(notificationIntent);
+
         mSession = null;
         connection = null;
         connectedDate = null;
         connectingDate = null;
-        tempToken = null;
-        doctor_guid = null;
-        additionalId = null;
 
         isSubscriberVideoMuted = false;
         isSubscriberAudioMuted = false;
@@ -940,9 +907,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         patientLocationTracker = null;
 
-        if (outGoingCallTimer != null)
-            outGoingCallTimer.setStopped(true);
-        outGoingCallTimer = null;
+        if (callConnectingTimer != null)
+            callConnectingTimer.setStopped(true);
+        callConnectingTimer = null;
 
         if (callCapTimer != null)
             callCapTimer.setStopped(true);
@@ -950,12 +917,30 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         callCapTimer = null;
 
         currentTranscript = "";
-        LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.CALL_ENDED_BROADCAST));
+        Intent endBroadcastIntent = new Intent(Constants.CALL_ENDED_BROADCAST);
+        endBroadcastIntent.putExtra(ArgumentKeys.IS_USER_ADMITTED,callRequest.isUserAdmitted());
+        LocalBroadcastManager.getInstance(application).sendBroadcast(endBroadcastIntent);
+        tokBoxUIInterface = null;
+
+        if (googleSpeechRecognizer != null) {
+            googleSpeechRecognizer.setOnDroidSpeechListener(null);
+        }
+
+        if (audioFocusRequest != null) {
+            if (AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
+                CustomAudioDevice customAudioDevice = (CustomAudioDevice) AudioDeviceManager.getAudioDevice();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    customAudioDevice.getAudioManager().abandonAudioFocusRequest(audioFocusRequest);
+                }
+            }
+        }
+
+        CallManager.shared.removeCall(this);
     }
 
     @Nullable
     public String getDoctor_guid() {
-        return doctor_guid;
+        return callRequest.getDoctorGuid();
     }
 
     private void sendTranscript() {
@@ -968,16 +953,18 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
 
         Log.d("TokBox", "Google search sendTranscript : " + currentTranscript);
-        googleSpeechRecognizer.closeDroidSpeechOperations();
-        openTokViewModel.postTranscript(sessionId, currentTranscript, isCalling);
+        if (googleSpeechRecognizer != null) {
+            googleSpeechRecognizer.closeDroidSpeechOperations();
+        }
+        openTokViewModel.postTranscript(callRequest.getSessionId(), currentTranscript, callRequest.isCalling());
         isTranscriptSent = true;
     }
 
-    private void stopIncomingRingtone() {
-        if (incomingPlayer != null) {
-            incomingPlayer.stop();
-            incomingPlayer.release();
-            incomingPlayer = null;
+    private void stopRingtone() {
+        if (ringTonePlayer != null) {
+            ringTonePlayer.stop();
+            //ringTonePlayer.release();
+            ringTonePlayer = null;
         }
 
         if (vibrator != null) {
@@ -986,22 +973,15 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
     }
 
-    private void stopOutgoingRingtone() {
-        if (outgoingPlayer != null) {
-            outgoingPlayer.stop();
-            outgoingPlayer.release();
-            outgoingPlayer = null;
-        }
-    }
 
     public void sendEndCallNotification(String callRejectionReason) {
-        if (callType.equals(OpenTokConstants.oneWay)  || callType.equals(OpenTokConstants.education)) {
+        if (callRequest.getCallType().equals(OpenTokConstants.oneWay)  || callRequest.getCallType().equals(OpenTokConstants.education)) {
             return;
         }
 
-        if (otherPersonDetail != null) {
+        if (callRequest.getOtherPersonDetail() != null) {
             Log.d("openTok", "endCall");
-            CallChannel.shared.postEndCallToOtherPerson(otherPersonDetail.getUser_guid(),currentUUIDString,UserDetailPreferenceManager.getUserDisplayName(),UserDetailPreferenceManager.getUser_avatar(),callRejectionReason);
+            CallChannel.shared.postEndCallToOtherPerson(callRequest.getOtherPersonDetail().getUser_guid(),callRequest.getCallUUID(),UserDetailPreferenceManager.getUserDisplayName(),UserDetailPreferenceManager.getUser_avatar(),callRejectionReason);
             EventRecorder.recordNotification("DECLINE_CALL");
         }
     }
@@ -1060,7 +1040,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
             @Override
             public void run() {
-                if (isActiveCallPreset()) {
+                if (isActive()) {
                     endCall(OpenTokConstants.timedOut);
                 }
 
@@ -1099,7 +1079,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
            return;
         }
 
-        if (callType.equals(OpenTokConstants.audio)) {
+        if (callRequest.getCallType().equals(OpenTokConstants.audio)) {
             return;
         }
 
@@ -1145,23 +1125,27 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     private void mergeBitmap(Bitmap publisher,@Nullable Bitmap subscriber) {
         if (subscriber != null) {
             Bitmap combinedBitmap = Utils.mergeBitmap(publisher,subscriber);
-            uploadScreenshot(sessionId,combinedBitmap);
+            uploadScreenshot(callRequest.getSessionId(),combinedBitmap);
         } else {
-            uploadScreenshot(sessionId,publisher);
+            uploadScreenshot(callRequest.getSessionId(),publisher);
         }
     }
 
     //Api methods
 
     private void sendNotification(String sessionId, String toGuid) {
-        if (callType.equals(OpenTokConstants.oneWay) || callType.equals(OpenTokConstants.education)) {
+        if (callRequest.isCallForDirectWaitingRoom()) {
+            return;
+        }
+
+        if (callRequest.getCallType().equals(OpenTokConstants.oneWay) || callRequest.getCallType().equals(OpenTokConstants.education)) {
             return;
         }
 
         PushPayLoad pushPayLoad = PubNubNotificationPayload.getCallInvitePayload(
                 UserDetailPreferenceManager.getUserDisplayName()
                 , UserDetailPreferenceManager.getUser_guid(), toGuid,
-                currentUUIDString, callType, sessionId, doctor_guid);
+                callRequest.getCallUUID(), callRequest.getCallType(), sessionId, callRequest.getDoctorGuid());
         PubnubUtil.shared.publishVoipMessage(pushPayLoad, new PubNubResult() {
             @Override
             public void didSend(Boolean isSuccess) {
@@ -1171,7 +1155,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
                     tokBoxUIInterface.updateCallInfo(application.getString(R.string.ringing));
                 }
 
-                startOutgoingTone();
+                startRingTone();
             }
         });
 
@@ -1182,22 +1166,24 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     }
 
     private void uploadScreenshot(String sessionId, Bitmap bitmap) {
-        if (callType.equals(OpenTokConstants.education)) {
-           new EducationalVideoViewModel(application).uploadScreenshot(additionalId,bitmap);
+        if (callRequest.getCallType().equals(OpenTokConstants.education)) {
+           new EducationalVideoViewModel(application).uploadScreenshot(callRequest.getAdditionalId(),bitmap);
         } else {
             openTokViewModel.updateScreenshot(sessionId, bitmap);
         }
     }
 
     private void startArchive(String sessionId) {
-        if (isCalling) {
+        if (callRequest.isCalling() && callRequest.getCallSettings().isRecording_enabled()) {
             openTokViewModel.startArchieve(sessionId);
         }
     }
 
     private void stopArchive(String sessionId) {
         Log.d("openTok", "stopArchive");
-        openTokViewModel.stopArchieve(sessionId);
+        if (callRequest.getCallSettings().isRecording_enabled()) {
+            openTokViewModel.stopArchieve(sessionId);
+        }
     }
 
     private void updatePatientLocation() {
@@ -1226,7 +1212,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     private void sendLocation(String state) {
         HashMap<String, String> message = new HashMap<>();
-        message.put("sessionId", sessionId);
+        message.put("sessionId", callRequest.getSessionId());
         message.put("state", state);
         try {
             String value = Utils.serialize(message);
@@ -1258,7 +1244,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     /*Trigger when user requested for video call,Send a request message to other end user for confirming of switching*/
     public void requestForVideoSwap() {
         HashMap<String, String> message = new HashMap<>();
-        message.put("sessionId", sessionId);
+        message.put("sessionId", callRequest.getSessionId());
         try {
             String value = Utils.serialize(message);
             sendMessage(OpenTokConstants.requestForVideoSwap, value);
@@ -1312,7 +1298,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
         HashMap<String, String> params = new HashMap<>();
         params.put("type", OpenTokConstants.video);
-        openTokViewModel.updateCallStatus(sessionId, params);
+        openTokViewModel.updateCallStatus(callRequest.getSessionId(), params);
     }
 
     private void sendSubscriberStat(Double audioScore, Double videoScore) {
@@ -1363,8 +1349,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             } else {
                 tokBoxUIInterface.updateCallQuality(OpenTokConstants.none);
                 String otherPersonName = "Other";
-                if (otherPersonDetail != null) {
-                    otherPersonName = otherPersonDetail.getDisplayName();
+                if (callRequest.getOtherPersonDetail() != null) {
+                    otherPersonName = callRequest.getOtherPersonDetail().getDisplayName();
                 }
                 tokBoxUIInterface.updateVideoQuality(String.format(application.getString(R.string.fallback_message_with_user), otherPersonName), !isEnabled);
             }
@@ -1461,6 +1447,28 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         }
     }
 
+    private void addTimerForIncomingOrOutgoing() {
+        final int interval = 30000; // 30 Second
+        Handler handler = new Handler();
+        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+            @Override
+            public void run() {
+                if (connectingDate == null && connectedDate == null) {
+                    Log.d("openTok", "ending from TimerForIncomingOrOutgoing");
+                    endCall(OpenTokConstants.notPickedUp);
+                }
+
+                if (callConnectingTimer != null)
+                    callConnectingTimer.setStopped(true);
+                callConnectingTimer = null;
+
+            }
+        });
+
+        callConnectingTimer = runnable;
+        handler.postDelayed(runnable, interval);
+    }
+
     //Listener Methods
 
     //SessionListener methods
@@ -1518,34 +1526,14 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         detail.put("event", "onConnected");
         TeleLogger.shared.log(TeleLogExternalAPI.opentok, detail);
 
-        if (this.isCalling && !TokBox.shared.callType.equals(OpenTokConstants.education)) {
-            final int interval = 30000; // 30 Second
-            Handler handler = new Handler();
-            TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
-                @Override
-                public void run() {
-                    if (connectingDate == null && connectedDate == null) {
-                        endCall(OpenTokConstants.notPickedUp);
-                    }
-
-                    if (outGoingCallTimer != null)
-                        outGoingCallTimer.setStopped(true);
-                    outGoingCallTimer = null;
-
-                }
-            });
-
-            outGoingCallTimer = runnable;
-            handler.postDelayed(runnable, interval);
-
-            //startOutgoingTone();
-
-            sendNotification(sessionId,otherPersonUserGuid);
+        if (callRequest.isCalling() && !callRequest.getCallType().equals(OpenTokConstants.education) && !callRequest.isCallForDirectWaitingRoom()) {
+            addTimerForIncomingOrOutgoing();
+            sendNotification(callRequest.getSessionId(), callRequest.getOtherUserGuid());
         }
 
         doPublish();
 
-        if (callType.equals(OpenTokConstants.oneWay) || callType.equals(OpenTokConstants.education)) {
+        if (callRequest.getCallType().equals(OpenTokConstants.oneWay) || callRequest.getCallType().equals(OpenTokConstants.education)) {
             callStarted();
         }
     }
@@ -1611,7 +1599,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
 
     private void callStarted() {
-        if (!callType.equals(OpenTokConstants.oneWay) && !(callType.equals(OpenTokConstants.education)) && !isBatteryObserverAdded){
+        if (!callRequest.getCallType().equals(OpenTokConstants.oneWay) && !(callRequest.getCallType().equals(OpenTokConstants.education)) && !isBatteryObserverAdded){
             isBatteryObserverAdded = true;
             Intent batteryStatus = application.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED) );
             if (batteryStatus != null)
@@ -1621,12 +1609,12 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         if (mPublisher != null)
             mPublisher.getView().setVisibility(View.VISIBLE);
 
-        if (!callType.equals(OpenTokConstants.education)) {
-            if (isCalling) {
+        if (!callRequest.getCallType().equals(OpenTokConstants.education)) {
+            if (callRequest.isCalling()) {
                 assignCallCapTimer();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("start", "true");
-                updateCallStatus(sessionId, params);
+                updateCallStatus(callRequest.getSessionId(), params);
             }
 
             startArchiving();
@@ -1638,7 +1626,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     public void startArchiving() {
         connectedDate = new Date();
 
-        if (isCalling) {
+        if (callRequest.isCalling()) {
             assignScreenCapturerTime();
         }
 
@@ -1647,7 +1635,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             tokBoxUIInterface.startedCall();
         }
 
-        startArchive(sessionId);
+        startArchive(callRequest.getSessionId());
     }
 
     //SubscriberListener methods
@@ -1659,7 +1647,9 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         setupRemoteFeedView();
         updatePatientLocation();
 
-        googleSpeechRecognizer.startDroidSpeechRecognition();
+        if (googleSpeechRecognizer != null) {
+            googleSpeechRecognizer.startDroidSpeechRecognition();
+        }
 
         speechRunnable = new TimerRunnable(new TimerInterface() {
             @Override
@@ -1669,6 +1659,8 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
             }
         });
         new Handler().postDelayed(speechRunnable, 60000);
+
+        LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.did_subscriber_connected));
     }
 
     @Override
@@ -1721,7 +1713,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
         if (tokBoxUIInterface != null)
             this.tokBoxUIInterface.updateCallInfo(application.getString(R.string.connecting));
 
-        stopOutgoingRingtone();
+        stopRingtone();
     }
 
     @Override
@@ -2070,7 +2062,7 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
 
     @Override
     public void didPressedBluetoothButton() {
-        if (TokBox.shared.getCallState() == OpenTokConstants.waitingForUserAction) {
+        if (getCallState() == OpenTokConstants.waitingForUserAction) {
             if (AudioDeviceManager.getAudioDevice() != null && AudioDeviceManager.getAudioDevice() instanceof CustomAudioDevice) {
                 CustomAudioDevice customAudioDevice = (CustomAudioDevice) AudioDeviceManager.getAudioDevice();
                 customAudioDevice.connectBluetooth();
@@ -2090,37 +2082,36 @@ public class TokBox extends SubscriberKit.SubscriberVideoStats implements Sessio
     //AudioManager.OnAudioFocusChangeListener methods
     @Override
     public void onAudioFocusChange(int focusChange) {
+        Log.d("TokBox", "onAudioFocusChange " + focusChange);
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
-                if (outgoingPlayer != null && outgoingPlayer.isPlaying()) {
-                    outgoingPlayer.start();
-                } else if (incomingPlayer != null && incomingPlayer.isPlaying()) {
-                    incomingPlayer.start();
+                if (ringTonePlayer != null && ringTonePlayer.isPlaying()) {
+                    Log.d("TokBox", "ringTonePlayer start");
+                     ringTonePlayer.play();
                 }
 
                 break;
 
             case AudioManager.AUDIOFOCUS_LOSS:
-                if (outgoingPlayer != null && outgoingPlayer.isPlaying()) {
-                    outgoingPlayer.stop();
-                } else if (incomingPlayer != null && incomingPlayer.isPlaying()) {
-                    incomingPlayer.stop();
+                if (ringTonePlayer != null && ringTonePlayer.isPlaying()) {
+                    Log.d("TokBox", "ringTonePlayer stop");
+                     ringTonePlayer.stop();
                 }
 
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                if (outgoingPlayer != null && outgoingPlayer.isPlaying()) {
-                    outgoingPlayer.pause();
-                } else if (incomingPlayer != null && incomingPlayer.isPlaying()) {
-                    incomingPlayer.pause();
+                if (ringTonePlayer != null && ringTonePlayer.isPlaying()) {
+                    Log.d("TokBox", "ringTonePlayer stop");
+                     ringTonePlayer.stop();
                 }
 
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                if (outgoingPlayer != null && outgoingPlayer.isPlaying()) {
-                    outgoingPlayer.setVolume(0.1f, 0.1f);
-                } else if (incomingPlayer != null && incomingPlayer.isPlaying()) {
-                    incomingPlayer.setVolume(0.1f, 0.1f);
+                if (ringTonePlayer != null && ringTonePlayer.isPlaying()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        Log.d("TokBox", "ringTonePlayer setVolume");
+                        ringTonePlayer.setVolume(0.1f);
+                    }
                 }
                 break;
 

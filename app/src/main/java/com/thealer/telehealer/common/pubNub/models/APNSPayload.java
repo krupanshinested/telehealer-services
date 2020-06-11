@@ -32,6 +32,9 @@ public class APNSPayload implements Serializable {
     public static final String missedCall = "missedCall";
     public static final String endCall = "endCall";
     public static final String liveMessage = "liveMessage";
+    public static final String waitingRoomMessage = "waitingRoomMessage";
+    public static final String kickOutwaitingRoom = "kickOutwaitingRoom";
+    public static final String newUserEnteredWaitingRoom = "newUserEnteredWaitingRoom";
 
 
     private HashMap<String, Object> aps;

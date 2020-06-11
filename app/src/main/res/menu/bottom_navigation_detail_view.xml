@@ -3,6 +3,12 @@
     <group android:checkableBehavior="none">
 
         <item
+            android:id="@+id/menu_wating_room"
+            android:icon="@drawable/waiting_room_icon"
+            android:title="@string/waiting_room"
+            android:visible="false"/>
+
+        <item
             android:id="@+id/menu_call"
             android:icon="@drawable/ic_call"
             android:title="@string/call" />

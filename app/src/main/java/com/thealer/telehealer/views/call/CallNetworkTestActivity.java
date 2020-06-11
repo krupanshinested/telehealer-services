@@ -23,7 +23,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateViewModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
+import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.common.OpenTok.CustomAudioDevice;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.AudioInterface;
 import com.thealer.telehealer.common.PermissionChecker;
@@ -111,8 +111,8 @@ public class CallNetworkTestActivity extends BaseActivity implements
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
 
-                if (baseApiResponseModel != null && baseApiResponseModel instanceof TokenFetchModel) {
-                    TokenFetchModel tokenFetchModel = (TokenFetchModel) baseApiResponseModel;
+                if (baseApiResponseModel != null && baseApiResponseModel instanceof CallSettings) {
+                    CallSettings tokenFetchModel = (CallSettings) baseApiResponseModel;
 
                     APIKEY = tokenFetchModel.getApiKey();
                     SESSION_ID = tokenFetchModel.getSessionId();

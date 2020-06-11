@@ -28,16 +28,25 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:name=".TeleHealerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".views.guestlogin.screens.PatientWaitingRoom" />
+        <activity android:name=".views.guestlogin.screens.GuestUserSignupActivity" />
+        <activity android:name=".views.guestlogin.screens.GuestLoginScreensActivity"
+            android:launchMode="singleTask"
+            />
+        <activity
+            android:name=".views.guestlogin.GuestLoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".views.common.SplashActivity"
             android:screenOrientation="portrait">
@@ -47,7 +56,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".views.home.HomeActivity"
             android:screenOrientation="portrait" />
@@ -118,11 +126,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.call.CallActivity"
+            android:immersive="true"
+            android:inheritShowWhenLocked="true"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:screenOrientation="portrait" />
+            android:turnScreenOn="true" />
         <activity
             android:name=".views.settings.SignatureActivity"
             android:screenOrientation="sensorLandscape" />
@@ -132,11 +142,9 @@
         <activity
             android:name=".views.home.UserDetailActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".views.home.vitals.iHealth.pairing.VitalCreationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
             android:launchMode="singleTask"
@@ -150,52 +158,41 @@
                 <data android:scheme="${applicationId}.braintree" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".views.notification.NotificationActivity"
             android:parentActivityName=".views.home.HomeActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".views.notification.NotificationDetailActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.call.CallNetworkTestActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".views.home.monitoring.diet.SelectDietActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".views.inviteUser.InviteContactUserActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".views.home.pendingInvites.PendingInvitesActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".views.quickLogin.QuickLoginAgreementActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".views.home.vitals.LandscapeImageView"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".views.home.chat.ChatActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".views.common.RecentsSelectionActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".views.home.schedules.WaitingRoomActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".views.settings.accessLogs.AccessLogActivity"
             android:screenOrientation="portrait" />
@@ -207,7 +204,6 @@
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".views.home.schedules.LocalNotificationReceiver"
             android:enabled="true"
@@ -219,7 +215,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".views.notification.NotificationCancelAppointmentReceiver" />
 
         <service android:name=".common.pubNub.TelehealerFirebaseMessagingService">
@@ -227,10 +222,19 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service
             android:name=".common.OpenTok.CallMinimizeService"
             android:exported="false" />
+
+        <service
+            android:name=".common.OpenTok.CallNotificationService"
+            android:exported="false" />
+
+        <service
+            android:name=".views.guestlogin.WaitingRoomHearBeatService"
+            android:enabled="true"
+            android:exported="true"
+            />
 
         <meta-data
             android:name="preloaded_fonts"

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,30 +40,43 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.associationlist.UpdateAssociationRequestModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
+import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiResponseModel;
+import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.OnUpdateListener;
+import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
-import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.PermissionChecker;
+import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.pubNub.models.PatientInvite;
+import com.thealer.telehealer.common.pubNub.models.Patientinfo;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
+import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
+import com.thealer.telehealer.views.common.SuccessViewInterface;
+import com.thealer.telehealer.views.guestlogin.GuestLoginActivity;
+import com.thealer.telehealer.views.guestlogin.screens.GuestLoginScreensActivity;
 import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
 import com.thealer.telehealer.views.home.orders.CreateOrderActivity;
@@ -78,8 +93,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Aswin on 14,November,2018
@@ -112,6 +130,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private OnActionCompleteInterface onActionCompleteInterface;
     private AttachObserverInterface attachObserverInterface;
     private AssociationApiViewModel associationApiViewModel;
+    private GuestloginViewModel guestloginViewModel;
+    private GuestLoginApiResponseModel guestLoginApiResponseModel;
 
     private List<Fragment> fragmentList;
     private List<String> titleList;
@@ -125,6 +145,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private ImageView favoriteIv, searchIV;
     private CircleImageView statusCiv;
     private ShowSubFragmentInterface showSubFragmentInterface;
+    private PatientInvite patientInvite;
 
     private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
             orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7;
@@ -197,6 +218,47 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 }
             }
         });
+
+        guestloginViewModel = new ViewModelProvider(this).get(GuestloginViewModel.class);
+        guestloginViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel instanceof GuestLoginApiResponseModel) {
+
+                        guestLoginApiResponseModel = (GuestLoginApiResponseModel) baseApiResponseModel;
+                        if (guestLoginApiResponseModel.isSuccess()) {
+                            callSuccessDialogBroadcast();
+                            Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(),"", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
+                            patientInvite = new PatientInvite();
+                            patientInvite.setPatientinfo(patientDetails);
+                            patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
+                            patientInvite.setApiKey(guestLoginApiResponseModel.getApiKey());
+                            patientInvite.setToken(guestLoginApiResponseModel.getToken());
+
+                        } else {
+                            showToast(guestLoginApiResponseModel.getMessage());
+                        }
+
+                    }
+                }else {
+                    Toast.makeText(getActivity(), getString(R.string.failure), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        guestloginViewModel.getErrorModelLiveData().observe(this,
+                new Observer<ErrorModel>() {
+                    @Override
+                    public void onChanged(@Nullable ErrorModel errorModel) {
+                        Log.d("ErrorModel","whoAmIApiViewModel");
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                    }
+                });
     }
 
     @Nullable
@@ -214,6 +276,19 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         if (getActivity() != null) {
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(callStartReceiver, new IntentFilter(Constants.CALL_STARTED_BROADCAST));
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(callEndReceiver, new IntentFilter(Constants.CALL_ENDED_BROADCAST));
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        if (CallManager.shared.isActiveCallPresent()) {
+            Log.d("enableOrDisableCall", "false");
+            enableOrDisableCall(false);
+        } else {
+            Log.d("enableOrDisableCall", "true");
+            enableOrDisableCall(true);
         }
     }
 
@@ -253,13 +328,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         searchIV = (ImageView) view.findViewById(R.id.search_iv);
         statusCiv = (CircleImageView) view.findViewById(R.id.status_civ);
 
-        userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
-
-        if (TokBox.shared.isActiveCallPreset()) {
-            enableOrDisableCall(false);
-        } else {
-            enableOrDisableCall(true);
-        }
+        userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(false);
 
         userDetailBnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -288,7 +357,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
                         break;
                     case R.id.menu_call:
-                        if (TokBox.shared.isActiveCallPreset()) {
+                        if (CallManager.shared.isActiveCallPresent()) {
                             return false;
                         }
 
@@ -330,10 +399,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                     doctorName = doctorModel.getUserDisplay_name();
                                 }
 
-                                CallInitiateModel callInitiateModel = new CallInitiateModel(finalCommonUserApiResponseModel.getUser_guid(), finalCommonUserApiResponseModel, doctorGuid, doctorName, null, callType);
+                                CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
+                                        finalCommonUserApiResponseModel.getUser_guid(), finalCommonUserApiResponseModel, doctorGuid, doctorName, null, callType,true,null);
 
                                 Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
-                                intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
+                                intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
                                 startActivity(intent);
 
                             }
@@ -354,6 +424,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         bundle.putString(Constants.SELECTED_ITEM, OrderConstant.ORDER_DOCUMENTS);
                         bundle.putSerializable(Constants.USER_DETAIL, resultBean);
                         startActivity(new Intent(getActivity(), CreateOrderActivity.class).putExtras(bundle));
+                        break;
+                    case R.id.menu_wating_room:
+                        enterWaitingRoom();
                         break;
                 }
                 return false;
@@ -431,6 +504,23 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         });
     }
 
+    private void enterWaitingRoom() {
+        Utils.showAlertDialog(getActivity(), getString(R.string.waiting_room), getString(R.string.guest_login_bottom_title), getString(R.string.proceed), getString(R.string.cancel),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        showDialog();
+                        guestloginViewModel.registerUserEnterWatingRoom(resultBean.getUser_guid());
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+    }
+
     private void getUserDetail(Set<String> guidSet) {
         if (!isUserDataFetched) {
             GetUserDetails
@@ -469,6 +559,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private BroadcastReceiver callStartReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d("enableOrDisable_brod","false");
             enableOrDisableCall(false);
         }
     };
@@ -476,26 +567,30 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private BroadcastReceiver callEndReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d("enableOrDisable_brod","false");
             enableOrDisableCall(true);
         }
     };
 
     private void enableOrDisableCall(Boolean isEnabled) {
+        Log.d("isEnabled",""+isEnabled);
         if (isEnabled) {
-            userDetailBnv.findViewById(R.id.menu_call).setEnabled(true);
-            userDetailBnv.findViewById(R.id.menu_call).setAlpha(1);
+            userDetailBnv.getMenu().findItem(R.id.menu_call).setEnabled(true);
+            //userDetailBnv.getMenu().findItem(R.id.menu_call).set(1);
         } else {
-            userDetailBnv.findViewById(R.id.menu_call).setEnabled(false);
-            userDetailBnv.findViewById(R.id.menu_call).setAlpha(0.5f);
+            userDetailBnv.getMenu().findItem(R.id.menu_call).setEnabled(false);
+            //userDetailBnv.findViewById(R.id.menu_call).setAlpha(0.5f);
         }
 
     }
 
     private void updateUserStatus(CommonUserApiResponseModel userApiResponseModel) {
         if (userApiResponseModel.getRole().equals(Constants.ROLE_PATIENT)) {
-            userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.VISIBLE);
+            Log.d("updateUserStatus","VISIBLE");
+            userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(true);
         } else {
-            userDetailBnv.findViewById(R.id.menu_call).setVisibility(View.GONE);
+            Log.d("updateUserStatus","GONE");
+            userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(false);
         }
 
         Log.e(TAG, "updateUserStatus: " + userApiResponseModel.isAvailable());
@@ -566,6 +661,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     genderIv.setVisibility(View.GONE);
                     if (UserType.isUserAssistant()) {
                         userDetailTab.setTabMode(TabLayout.MODE_SCROLLABLE);
+                    }
+                    if(UserType.isUserPatient()) {
+                        userDetailBnv.getMenu().findItem(R.id.menu_wating_room).setVisible(true);
                     }
                     break;
                 case Constants.ROLE_ASSISTANT:
@@ -763,17 +861,32 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == RequestID.REQ_SELECT_PATIENT) {
-                if (data != null && data.getExtras() != null) {
-                    DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(Constants.VIEW_TYPE,Constants.VIEW_ASSOCIATION_DETAIL);
-                    bundle.putSerializable(Constants.USER_DETAIL,data.getSerializableExtra(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL));
-                    doctorPatientDetailViewFragment.setArguments(bundle);
-                    showSubFragmentInterface.onShowFragment(doctorPatientDetailViewFragment);
+        Log.d("requestCode",""+requestCode);
+        switch (requestCode) {
+
+            case RequestID.REQ_SELECT_PATIENT:
+                if (resultCode == RESULT_OK) {
+                    if (data != null && data.getExtras() != null) {
+                        DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Constants.VIEW_TYPE,Constants.VIEW_ASSOCIATION_DETAIL);
+                        bundle.putSerializable(Constants.USER_DETAIL,data.getSerializableExtra(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL));
+                        doctorPatientDetailViewFragment.setArguments(bundle);
+                        showSubFragmentInterface.onShowFragment(doctorPatientDetailViewFragment);
+                    }
                 }
-            }
+                break;
+
+            case PermissionConstants.PERMISSION_CAM_MIC:
+                if (resultCode == RESULT_OK) {
+                    goToWaitingScreen();
+                }
+                break;
+            case  RequestID.REQ_SHOW_SUCCESS_VIEW:
+                if (resultCode == RESULT_OK) {
+                    goToWaitingScreen();
+                }
+                break;
         }
     }
 
@@ -881,4 +994,33 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     public void onClick(View v) {
         showAssociationSelection(RequestID.REQ_SELECT_PATIENT, ArgumentKeys.SEARCH_ASSOCIATION, resultBean.getUser_guid());
     }
+
+    private void showDialog() {
+        Bundle succesBundle = new Bundle();
+        succesBundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+        succesBundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.validating_your_waiting_room));
+
+        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+        successViewDialogFragment.setArguments(succesBundle);
+        successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+        successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+    }
+
+    private void callSuccessDialogBroadcast() {
+        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, true);
+        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+        intent.putExtra(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+    }
+
+    private void goToWaitingScreen() {
+        if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+            Intent i = new Intent(getActivity(), GuestLoginScreensActivity.class);
+            i.putExtra(ArgumentKeys.GUEST_INFO, patientInvite);
+            i.putExtra(ArgumentKeys.GUEST_SCREENTYPE, ArgumentKeys.WAITING_SCREEN);
+            startActivity(i);
+        }
+    }
+
 }

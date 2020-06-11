@@ -11,7 +11,6 @@ import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoA
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoRequest;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoResponse;
-import com.thealer.telehealer.apilayer.models.OpenTok.TokenFetchModel;
 import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
 import com.thealer.telehealer.apilayer.models.Payments.VitalVisitResponse;
@@ -36,6 +35,7 @@ import com.thealer.telehealer.apilayer.models.diet.food.FoodListApiResponseModel
 import com.thealer.telehealer.apilayer.models.diet.food.NutrientsDetailRequestModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.TypeAHeadResponseModel;
+import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByDemographicRequestModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
@@ -80,7 +80,9 @@ import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
+import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalBulkPdfApiResponseModel;
 
@@ -93,7 +95,6 @@ import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -162,6 +163,8 @@ public interface ApiInterface {
     String ASSIGNOR = "assignor";
     String DOWNLOAD_SUMMARY = "download_summary";
     String PROFILE_COMPLETE = "profile_complete";
+    String REJECT = "reject";
+    String SESSIONID = "session_id";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -490,7 +493,7 @@ public interface ApiInterface {
     Observable<NotificationRequestUpdateResponseModel> updateNotification(@Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Body Map<String, Object> body);
 
     @GET("api/token")
-    Observable<TokenFetchModel> getOpenTokToken(@Query(SESSION_ID) String sessionId);
+    Observable<CallSettings> getOpenTokToken(@Query(SESSION_ID) String sessionId);
 
     @GET("api/users/{id}")
     Observable<CommonUserApiResponseModel> getUserDetail(@Path(ID) String id);
@@ -509,10 +512,10 @@ public interface ApiInterface {
     Observable<CommonUserApiResponseModel> stopArchive(@Query("orderId") String sessionId);
 
     @GET("api/session")
-    Observable<TokenFetchModel> getSessionId(@Query(CALL_QUALITY) String call_quality);
+    Observable<CallSettings> getSessionId(@Query(CALL_QUALITY) String call_quality);
 
     @POST("api/call")
-    Observable<TokenFetchModel> postaVOIPCall(@Query(DOCTOR_GUID) String doctor_guid, @Body Map<String, String> param);
+    Observable<CallSettings> postaVOIPCall(@Query(DOCTOR_GUID) String doctor_guid, @Body Map<String, String> param);
 
     @POST("api/setup/verification-link")
     Observable<BaseApiResponseModel> requestVerificationMain();
@@ -668,5 +671,14 @@ public interface ApiInterface {
 
     @POST("api/educational-video/assign-user")
     Observable<BaseApiResponseModel> postEducationalOrder(@Query(DOCTOR_GUID) String doctorGuid,@Body HashMap<String,Object> item);
+
+    @POST("setup/invite/accept")
+    Observable<GuestLoginApiResponseModel> guestLogin(@Body HashMap<String, Object> params);
+
+    @PUT("api/call/{session_id}")
+    Observable<BaseApiResponseModel> kickOutPatient(@Path(SESSIONID) String sessionId, @Query(REJECT) boolean status);
+
+    @POST("api/virtual-rooms/join")
+    Observable<GuestLoginApiResponseModel> registerUserEnterWaitingRoom(@Body HashMap<String, Object> params);
 
 }

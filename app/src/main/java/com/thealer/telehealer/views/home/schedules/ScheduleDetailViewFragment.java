@@ -14,46 +14,57 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
-import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
+import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiResponseModel;
+import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
-import com.thealer.telehealer.common.OpenTok.TokBox;
-import com.thealer.telehealer.common.ResultFetcher;
+import com.thealer.telehealer.common.PermissionChecker;
+import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.pubNub.models.PatientInvite;
+import com.thealer.telehealer.common.pubNub.models.Patientinfo;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
+import com.thealer.telehealer.views.guestlogin.screens.GuestLoginScreensActivity;
+import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
-import com.thealer.telehealer.views.notification.NotificationDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Aswin on 18,December,2018
@@ -87,6 +98,9 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private Button waitingRoomBtn;
     private TextView historyLabel;
     boolean cancelIsClicked=false;
+    private GuestloginViewModel guestloginViewModel;
+    private GuestLoginApiResponseModel guestLoginApiResponseModel;
+    private PatientInvite patientInvite;
 
     @Override
     public void onAttach(Context context) {
@@ -117,6 +131,47 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
                         }
 
+                    }
+                });
+
+        guestloginViewModel = new ViewModelProvider(this).get(GuestloginViewModel.class);
+        guestloginViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel instanceof GuestLoginApiResponseModel) {
+
+                        guestLoginApiResponseModel = (GuestLoginApiResponseModel) baseApiResponseModel;
+                        if (guestLoginApiResponseModel.isSuccess()) {
+                            callSuccessDialogBroadcast();
+                            Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(),"", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
+                            patientInvite = new PatientInvite();
+                            patientInvite.setPatientinfo(patientDetails);
+                            patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
+                            patientInvite.setApiKey(guestLoginApiResponseModel.getApiKey());
+                            patientInvite.setToken(guestLoginApiResponseModel.getToken());
+
+                        } else {
+                            showToast(guestLoginApiResponseModel.getMessage());
+                        }
+
+                    }
+                }else {
+                    Toast.makeText(getActivity(), getString(R.string.failure), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        guestloginViewModel.getErrorModelLiveData().observe(this,
+                new Observer<ErrorModel>() {
+                    @Override
+                    public void onChanged(@Nullable ErrorModel errorModel) {
+                        Log.d("ErrorModel","whoAmIApiViewModel");
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                     }
                 });
 
@@ -190,7 +245,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
         patientCallIv.setVisibility(View.GONE);
 
-        if (TokBox.shared.isActiveCallPreset()) {
+        if (CallManager.shared.isActiveCallPresent()) {
             patientCallIv.setEnabled(false);
         } else {
             patientCallIv.setEnabled(true);
@@ -285,10 +340,11 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                                 break;
                         }
 
-                        CallInitiateModel callInitiateModel = new CallInitiateModel(resultBean.getPatient().getUser_guid(), resultBean.getPatient(), doctorGuid, doctorName, String.valueOf(resultBean.getSchedule_id()), callType);
+                        CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
+                                resultBean.getPatient().getUser_guid(), resultBean.getPatient(), doctorGuid, doctorName, String.valueOf(resultBean.getSchedule_id()), callType,true,String.valueOf(resultBean.getSchedule_id()));
 
                         Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
-                        intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
+                        intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
                         startActivity(intent);
 
                     }
@@ -303,9 +359,21 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
                 break;
             case R.id.waiting_room_btn:
-                Intent waitingRoomIntent = new Intent(getActivity(), WaitingRoomActivity.class);
-                waitingRoomIntent.putExtra(ArgumentKeys.SCHEDULE_DETAIL, resultBean);
-                startActivity(waitingRoomIntent);
+                Utils.showAlertDialog(getActivity(), getString(R.string.waiting_room), getString(R.string.guest_login_bottom_title), getString(R.string.proceed), getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                showDialog();
+                                Log.d("doctorGuid",""+resultBean.getDoctor().getUser_guid());
+                                guestloginViewModel.registerUserEnterWatingRoom(resultBean.getDoctor().getUser_guid());
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
                 break;
         }
     }
@@ -404,6 +472,52 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 }
             }
 
+        }
+    }
+
+    private void showDialog() {
+        Bundle succesBundle = new Bundle();
+        succesBundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+        succesBundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.validating_your_waiting_room));
+
+        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+        successViewDialogFragment.setArguments(succesBundle);
+        successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+        successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+    }
+
+    private void callSuccessDialogBroadcast() {
+        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, true);
+        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+        intent.putExtra(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+    }
+
+    private void goToWaitingScreen() {
+        if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+            Intent i = new Intent(getActivity(), GuestLoginScreensActivity.class);
+            i.putExtra(ArgumentKeys.GUEST_INFO, patientInvite);
+            i.putExtra(ArgumentKeys.GUEST_SCREENTYPE, ArgumentKeys.WAITING_SCREEN);
+            startActivity(i);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("requestCode",""+requestCode);
+        switch (requestCode) {
+            case PermissionConstants.PERMISSION_CAM_MIC:
+                if (resultCode == RESULT_OK) {
+                    goToWaitingScreen();
+                }
+                break;
+            case  RequestID.REQ_SHOW_SUCCESS_VIEW:
+                if (resultCode == RESULT_OK) {
+                    goToWaitingScreen();
+                }
+                break;
         }
     }
 }

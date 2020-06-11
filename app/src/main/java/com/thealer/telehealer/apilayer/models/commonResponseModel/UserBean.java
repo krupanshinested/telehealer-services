@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
+import android.text.TextUtils;
+
 import androidx.fragment.app.FragmentActivity;
 
 import com.thealer.telehealer.R;
@@ -161,11 +163,27 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
 
 
     public String getDisplayName() {
-        if (getRole().equals(Constants.ROLE_DOCTOR)) {
-            return getFirst_name() + " " + getLast_name();
-        } else {
-            return getFirst_name() + " " + getLast_name();
+      return getDefaultDisplayName();
+    }
+
+    public  String getDefaultDisplayName() {
+        String displayName = "";
+        if (!TextUtils.isEmpty(getFirst_name())) {
+            displayName += getFirst_name();
         }
+
+        if (!TextUtils.isEmpty(getLast_name())) {
+            if (!TextUtils.isEmpty(displayName)) {
+                displayName += " ";
+            }
+            displayName += getLast_name();
+        }
+
+        if (!TextUtils.isEmpty(displayName)) {
+            displayName = displayName.substring(0, 1).toUpperCase() + displayName.substring(1);
+        }
+
+        return  displayName;
     }
 
 

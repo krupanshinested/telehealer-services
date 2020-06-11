@@ -3,7 +3,7 @@ package com.thealer.telehealer.views.settings;
 import android.app.DatePickerDialog;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,7 +34,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraInterface;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
@@ -322,7 +322,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 showSubFragment(privacyFragment);
                 break;
             case R.id.signOut:
-                if (!isSigningOutInProcess && !TokBox.shared.isActiveCallPreset()) {
+                if (!isSigningOutInProcess && !CallManager.shared.isActiveCallPresent()) {
                     isSigningOutInProcess = true;
                     signoutApiViewModel.signOut();
                 }

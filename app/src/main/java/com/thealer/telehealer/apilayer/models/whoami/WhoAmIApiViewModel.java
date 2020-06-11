@@ -31,6 +31,7 @@ public class WhoAmIApiViewModel extends BaseApiViewModel {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
+
                 }
             }
         });

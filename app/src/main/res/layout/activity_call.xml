@@ -167,6 +167,7 @@
             android:layout_gravity="center_vertical"
             app:lay_background_color="@android:color/transparent"
             app:lay_corner_radius="20dp"
+            android:id="@+id/recording_dot_parent"
             app:lay_stroke_color="@color/colorWhite">
 
             <com.thealer.telehealer.views.common.RoundCornerConstraintLayout

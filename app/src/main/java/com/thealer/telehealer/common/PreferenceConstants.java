@@ -74,4 +74,10 @@ public class PreferenceConstants {
     public static final String GOOGLE_FIT_PRE_FETCHED_SOURCES = "GOOGLE_FIT_PRE_FETCHED_SOURCES";
     public static final String LAST_LOGIN = "last_login";
     public static final String IS_HEALTH_SUMMARY_SHOWN = "IS_HEALTH_SUMMARY_SHOWN";
+
+    public static final String GUEST_LOGIN_EMAIL = "GUEST_LOGIN_EMAIL";
+    public static final String GUEST_LOGIN_PHONE = "GUEST_LOGIN_PHONE";
+    public static final String GUEST_LOGIN_NAME = "GUEST_LOGIN_NAME";
+    public static final String GUEST_LOGIN_COUNTRY = "GUEST_LOGIN_COUNTRY";
+    public static final String PATIENT_JOINED_WAITING_ROOM_NOTFICATION = "PATIENT_JOINED_WAITING_ROOM_NOTFICATION";
 }

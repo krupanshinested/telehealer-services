@@ -25,12 +25,12 @@
         android:layout_height="45dp"
         android:layout_marginStart="@dimen/margin_default"
         android:layout_marginEnd="@dimen/margin_default"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="15dp"
         android:stateListAnimator="@null"
         android:text="@string/sign_up"
         app:background_color="@color/colorWhite"
         app:corner_radius="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/lay_guestlogin"
         app:layout_constraintEnd_toStartOf="@+id/signin_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_max="@dimen/max_width"
@@ -42,16 +42,52 @@
         android:layout_height="45dp"
         android:layout_marginStart="@dimen/margin_default"
         android:layout_marginEnd="@dimen/margin_default"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="15dp"
         android:text="@string/sign_in"
         app:background_color="@android:color/transparent"
         app:corner_radius="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/lay_guestlogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/signup_btn"
         app:layout_constraintWidth_max="@dimen/max_width"
         app:stroke_color="@color/colorWhite"
         app:stroke_width="2"
         app:text_color="@color/colorWhite" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/colorWhite"
+        android:id="@+id/lay_guestlogin"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_haveinvitecode"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:text="@string/have_invite_code"
+            android:textColor="@color/colorBlack"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_guestlogin"
+           app:layout_constraintTop_toBottomOf="@+id/tv_haveinvitecode"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center"
+            android:textSize="17dp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp"
+            android:text="@string/continue_as_guest"
+            android:textColor="@color/color_blue"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

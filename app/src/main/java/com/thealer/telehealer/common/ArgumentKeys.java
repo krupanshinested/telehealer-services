@@ -139,6 +139,9 @@ public class ArgumentKeys {
     public static final String SELECTED_MESSAGE = "selected_messaged";
     public static final String SELECTED_ORDER_LIST = "selected_order_list";
     public static final String FOOD_DELETE_MODE = "FOOD_DELETE_MODE";
+    public static final String SIZE ="0" ;
+    public static final String DOCTOR_NAME ="DOCTOR_NAME" ;
+    public static final String SESSION_ID = "SESSION_ID";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
@@ -228,5 +231,17 @@ public class ArgumentKeys {
     public static final String END ="END" ;
 
 
+    public static final String GUEST_INFO = "guestdata";
+    public static final String GUEST_INFO_LIST = "guestdata";
+    public static final String GUEST_SCREENTYPE = "screen";
+    public static final String WAITING_SCREEN = "waitingScreen";
+    public static final String APP_LIFECYCLE_STATUS = "APP_LIFECYCLE_STATUS";
+    public static final String WAITING_ROOM_HEART_BEAT = "WAITING_ROOM_HEART_BEAT";
+
+    public static final String IS_FROM_HOME = "IS_FROM_HOME";
+    public static final String USER_KIKCOUT = "USER_KIKCOUT";
+    public static final String NOT_NOW_GUEST_LOGIN = "NOT_NOW_GUEST_LOGIN";
+
+    public static final String IS_USER_ADMITTED = "IS_USER_ADMITTED";
 
 }

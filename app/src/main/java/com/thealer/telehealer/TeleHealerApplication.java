@@ -1,37 +1,39 @@
 package com.thealer.telehealer;
 
-import android.app.ActivityManager;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import android.content.ComponentName;
-import android.content.Context;
+import android.app.Service;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.opentok.android.AudioDeviceManager;
 import com.thealer.telehealer.common.AppPreference;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
-import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.OpenTok.CallNotificationService;
+import com.thealer.telehealer.common.OpenTok.CustomAudioDevice;
+import com.thealer.telehealer.common.OpenTok.OpenTok;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
-import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.call.CallActivity;
-import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.guestlogin.WaitingRoomHearBeatService;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import config.AppConfig;
@@ -48,7 +50,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public static String notificationChannelId = "";
     public FirebaseAnalytics firebaseAnalytics;
     public static Set<Integer> popUpSchedulesId = new HashSet<>();
-    public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false, isFromRegistration;
+    public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false, isFromRegistration,isDestroyed=false;
     public static AppConfig appConfig;
     public static boolean stateChange=false;
 
@@ -61,8 +63,10 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         appPreference = AppPreference.getInstance(this);
         notificationChannelId = appConfig.getApnsChannel();
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
 
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+        CustomAudioDevice customAudioDevice = new CustomAudioDevice(application, null);
+        AudioDeviceManager.setAudioDevice(customAudioDevice);
 
         createNotificationChannel();
     }
@@ -101,15 +105,18 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public void onMoveToForeground() {
         // app moved to foreground
         isInForeGround = true;
+        Intent i=new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
+        i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS,true);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
         Log.e("aswin", "onMoveToForeground: ");
         EventRecorder.recordLastUpdate("last_open_date");
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                if (TokBox.shared.isActiveCallPreset() && !TokBox.shared.isActivityPresent() && !CallMinimizeService.isCallMinimizeActive) {
+                if (CallManager.shared.needToOpenCallScreenAutomatically() && !CallManager.shared.isActivityPresent() &&
+                        !CallMinimizeService.isCallMinimizeActive) {
                     Log.d("TeleHealerApplication", "open call activity from Application");
-                    Intent intent = new Intent(application, CallActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Intent intent = CallActivity.getIntent(application,CallManager.shared.getActiveCallToShow().getCallRequest());
                     startActivity(intent);
                 } else {
                     Log.d("TeleHealerApplication", "no active call present");
@@ -130,9 +137,30 @@ public class TeleHealerApplication extends Application implements LifecycleObser
             isVitalDeviceConnectionShown = false;
         }
 
-        if (!TokBox.shared.isActiveCallPreset()) {
+        if (CallManager.shared.isActiveCallPresent()) {
+            OpenTok tokBox = CallManager.shared.getActiveCallToShow();
+            if (!tokBox.getCallRequest().isCallForDirectWaitingRoom() && tokBox.getCallState() == OpenTokConstants.waitingForUserAction) {
+                CallActivity.createNotificationBarCall(application,false,tokBox.getCallRequest().getDoctorName(),tokBox.getCallRequest());
+            }
+        } else {
             VitalsManager.getInstance().disconnectAll();
         }
+
+        Intent i=new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
+        i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS,false);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    public void onDestroy() {
+        // app moved to background
+        Log.e("TeleHealerApplication", "appDestroyed");
+        isInForeGround = false;
+
+        Intent i=new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
+        i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS,false);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+
     }
 
     public void addShortCuts() {
@@ -141,13 +169,5 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
     public void removeShortCuts() {
 
-    }
-
-    public ComponentName getCurrentActivity() {
-        ActivityManager am = (ActivityManager) this .getSystemService(ACTIVITY_SERVICE);
-        List<ActivityManager.AppTask> taskInfo = am.getAppTasks();
-        ComponentName componentInfo = taskInfo.get(0).getTaskInfo().baseActivity;
-        Log.d( "CURRENT Activity ::" ,""+componentInfo+"   Package Name :  "+componentInfo.getPackageName());
-        return componentInfo;
     }
 }

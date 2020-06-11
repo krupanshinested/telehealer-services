@@ -84,4 +84,6 @@ public class EmptyViewConstants {
     public static final String EMPTY_EDUCATIONAL_VIDEO_ORDER = "empty_educational_video_order";
     public static final String EMPTY_EDUCATIONAL_VIDEO_ORDER_WITH_BTN = "empty_educational_video_order_with_btn";
     public static final String EMPTY_EDUCATIONAL_VIDEO_ORDER_NEW = "empty_educational_video_order_new";
+
+    public static final String EMPTY_WAITING_ROOM = "empty_waiting_room";
 }

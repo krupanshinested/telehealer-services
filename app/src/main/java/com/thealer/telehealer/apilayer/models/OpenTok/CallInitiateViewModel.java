@@ -4,6 +4,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 /**
@@ -22,9 +23,9 @@ public class CallInitiateViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 getAuthApiService().getSessionId("true")
                         .compose(applySchedulers())
-                        .subscribe(new RAObserver<TokenFetchModel>() {
+                        .subscribe(new RAObserver<CallSettings>() {
                             @Override
-                            public void onSuccess(TokenFetchModel tokenFetchModel) {
+                            public void onSuccess(CallSettings tokenFetchModel) {
                                 baseApiResponseModelMutableLiveData.setValue(tokenFetchModel);
                             }
                         });

@@ -35,7 +35,7 @@ import com.pubnub.api.models.consumer.pubsub.objects.PNSpaceResult;
 import com.pubnub.api.models.consumer.pubsub.objects.PNUserResult;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.chat.ChatApiResponseModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatApiViewModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatMessageRequestModel;
@@ -68,6 +68,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -387,9 +388,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             doctorName = doctorModel.getDoctorDisplayName();
         }
 
-        CallInitiateModel callInitiateModel = new CallInitiateModel(userGuid, userModel, doctorGuid, doctorName, null, callType);
+        CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
+                userGuid, userModel, doctorGuid, doctorName, null, callType,true,null);
         Intent intent = new Intent(this, CallPlacingActivity.class);
-        intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callInitiateModel);
+        intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
         startActivity(intent);
 
 

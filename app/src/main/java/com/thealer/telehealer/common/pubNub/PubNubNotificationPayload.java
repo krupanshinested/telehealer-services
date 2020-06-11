@@ -3,6 +3,8 @@ package com.thealer.telehealer.common.pubNub;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.pubNub.models.GCMPayload;
+import com.thealer.telehealer.common.pubNub.models.PatientInvite;
+import com.thealer.telehealer.common.pubNub.models.Patientinfo;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.notification.PushNotificationConstants;
 
@@ -114,6 +116,82 @@ public class PubNubNotificationPayload {
         apnsPayload.setPn_push(APNSPayload.getPnPushObject());
         apnsPayload.setContent(message);
         apnsPayload.setCreatedAt(date);
+
+        pushPayLoad.setPn_apns(apnsPayload);
+        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+
+        return pushPayLoad;
+    }
+
+    public static PushPayLoad getWaitingRoomChatPayload(String message,String to)  {
+
+        PushPayLoad pushPayLoad = new PushPayLoad();
+        APNSPayload apnsPayload = new APNSPayload();
+
+        String uuid = UUID.randomUUID().toString();
+        HashMap<String, Object> aps = new HashMap<>();
+        aps.put(CONTENT_AVAILABLE, 1);
+        aps.put(MUTABLE_CONTENT, 0);
+        aps.put("title","New Message");
+        aps.put("alert",UserDetailPreferenceManager.getUserDisplayName() + " sent you a message");
+
+        apnsPayload.setAps(aps);
+        apnsPayload.setFrom(UserDetailPreferenceManager.getUser_guid());
+        apnsPayload.setTo(to);
+        apnsPayload.setUuid(uuid);
+        apnsPayload.setIdentifier(uuid);
+        apnsPayload.setType(APNSPayload.waitingRoomMessage);
+        apnsPayload.setPn_push(APNSPayload.getPnPushObject());
+        apnsPayload.setContent(message);
+
+        pushPayLoad.setPn_apns(apnsPayload);
+        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+
+        return pushPayLoad;
+    }
+
+    public static PushPayLoad getKickOutPayload(Patientinfo patientInfo){
+        PushPayLoad pushPayLoad = new PushPayLoad();
+        APNSPayload apnsPayload = new APNSPayload();
+
+        String uuid = UUID.randomUUID().toString();
+        HashMap<String, Object> aps = new HashMap<>();
+        aps.put(CONTENT_AVAILABLE, 1);
+        aps.put(MUTABLE_CONTENT, 0);
+
+        apnsPayload.setAps(aps);
+        apnsPayload.setFrom(UserDetailPreferenceManager.getUser_guid());
+        apnsPayload.setTo(patientInfo.getUserGuid());
+        apnsPayload.setUuid(uuid);
+        apnsPayload.setIdentifier(uuid);
+        apnsPayload.setType(APNSPayload.kickOutwaitingRoom);
+        apnsPayload.setPn_push(APNSPayload.getPnPushObject());
+
+        pushPayLoad.setPn_apns(apnsPayload);
+        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+
+        return pushPayLoad;
+    }
+
+    public static PushPayLoad getPatientAdmittedPayload(PatientInvite patientInvite)  {
+
+        PushPayLoad pushPayLoad = new PushPayLoad();
+        APNSPayload apnsPayload = new APNSPayload();
+
+        String uuid = UUID.randomUUID().toString();
+        HashMap<String, Object> aps = new HashMap<>();
+        aps.put(CONTENT_AVAILABLE, 1);
+        aps.put(MUTABLE_CONTENT, 0);
+        aps.put("title","New Patient Joined");
+        aps.put("alert","A new patient has entered the waiting room");
+
+        apnsPayload.setAps(aps);
+        apnsPayload.setFrom(UserDetailPreferenceManager.getUser_guid());
+        apnsPayload.setTo(patientInvite.doctorDetails.getUser_guid());
+        apnsPayload.setUuid(uuid);
+        apnsPayload.setIdentifier(uuid);
+        apnsPayload.setType(APNSPayload.newUserEnteredWaitingRoom);
+        apnsPayload.setPn_push(APNSPayload.getPnPushObject());
 
         pushPayLoad.setPn_apns(apnsPayload);
         pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));

@@ -2,12 +2,15 @@ package com.thealer.telehealer.common;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.DocumentsContract;
@@ -160,11 +163,37 @@ public class CameraUtil {
     }
 
     private static Uri getImageUri(Context context, Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
 
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, "Title " + SystemClock.currentThreadTimeMillis(), null);
-        return Uri.parse(path);
+        String relativeLocation = Environment.DIRECTORY_PICTURES + File.separator + context.getString(R.string.app_name);
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME,  SystemClock.currentThreadTimeMillis());
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { //this one
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation);
+            contentValues.put(MediaStore.MediaColumns.IS_PENDING, 1);
+        }
+
+
+        ContentResolver resolver = context.getContentResolver();
+        Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+
+
+        try {
+            OutputStream stream = resolver.openOutputStream(uri);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        } catch (Exception e) {
+            if (uri != null) {
+                resolver.delete(uri, null, null);
+            }
+        } finally {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0);
+        }
+
+         return uri;
     }
 
     public String getRealPathFromURI(Context context, Uri uri) {

@@ -179,4 +179,7 @@ public class Constants {
     public static final String message_broadcast = "message_broadcast";
 
     public static final String inValidState = "N/A";
+
+    public static final String did_subscriber_connected = "did_subscriber_connected";
+
 }

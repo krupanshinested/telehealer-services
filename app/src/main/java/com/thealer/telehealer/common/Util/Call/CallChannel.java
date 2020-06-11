@@ -9,14 +9,13 @@ import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.Pubnub.PubNubMessage;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
-import com.thealer.telehealer.common.OpenTok.TokBox;
+import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.models.GCMPayload;
@@ -100,12 +99,13 @@ public class CallChannel {
     private void dismissCall(String uuid,
                              String reason,
                              String from,String url) {
-        if (TokBox.shared == null || TokBox.shared.getCurrentUUID() == null) {
+        OpenTok activeCall = CallManager.shared.getActiveCallToShow();
+        if (activeCall == null) {
             Log.d("CallChannel", "currentUUID null");
             return;
         }
 
-        String currentUUID = TokBox.shared.getCurrentUUID();
+        String currentUUID = activeCall.getCurrentUUID();
         String endCallUUID = uuid;
 
         Log.d("CallChannel", "currentUUID " + currentUUID);
@@ -115,16 +115,16 @@ public class CallChannel {
             return;
         }
 
-        if (!reason.equals(OpenTokConstants.busyInAnotherLine) && (TokBox.shared.getConnectingDate() == null && TokBox.shared.getConnectedDate() == null && !TokBox.shared.getCalling())) {
+        if (!activeCall.getCallRequest().isCallForDirectWaitingRoom() && !reason.equals(OpenTokConstants.busyInAnotherLine) && (activeCall.getConnectingDate() == null && activeCall.getConnectedDate() == null && !activeCall.getCalling())) {
             APNSPayload payload = new APNSPayload();
             HashMap<String, Object> aps = new HashMap<>();
-            if (TokBox.shared.getCallType().equals(OpenTokConstants.video)) {
+            if (activeCall.getCallType().equals(OpenTokConstants.video)) {
                 aps.put(PubNubNotificationPayload.ALERT, application.getString(R.string.video_missed_call));
             } else {
                 aps.put(PubNubNotificationPayload.ALERT, application.getString(R.string.audio_missed_call));
             }
-            if (TokBox.shared.getOtherPersonDetail() != null) {
-                aps.put(PubNubNotificationPayload.TITLE, TokBox.shared.getOtherPersonDetail().getDisplayName());
+            if (activeCall.getOtherPersonDetail() != null) {
+                aps.put(PubNubNotificationPayload.TITLE, activeCall.getOtherPersonDetail().getDisplayName());
             } else {
                 aps.put(PubNubNotificationPayload.TITLE, from);
             }
@@ -141,7 +141,7 @@ public class CallChannel {
             @Override
             public void run() {
                 Log.d("CallChannel", "endCall");
-                TokBox.shared.endCall(reason);
+                activeCall.endCall(reason);
             }
         });
 
