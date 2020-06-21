@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.thealer.telehealer.common.AppPreference;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
@@ -30,7 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import config.AppConfig;
-import io.fabric.sdk.android.Fabric;
+
 
 
 /**
@@ -55,7 +54,6 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         appPreference = AppPreference.getInstance(this);
         notificationChannelId = appConfig.getApnsChannel();
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        Fabric.with(this, new Crashlytics());
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
 
