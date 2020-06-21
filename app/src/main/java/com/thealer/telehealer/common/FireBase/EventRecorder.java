@@ -4,8 +4,8 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.common.Utils;
 
@@ -39,7 +39,7 @@ public class EventRecorder {
     public static void updateUserId(@Nullable String userGuid) {
 
         if (userGuid != null)
-            Crashlytics.setUserIdentifier(userGuid);
+            FirebaseCrashlytics.getInstance().setUserId(userGuid);
 
         analytics.setUserId(userGuid);
     }
