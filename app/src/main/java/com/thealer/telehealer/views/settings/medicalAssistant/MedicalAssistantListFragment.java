@@ -53,7 +53,6 @@ public class MedicalAssistantListFragment extends BaseFragment {
     private AttachObserverInterface attachObserverInterface;
     private AssociationApiResponseModel associationApiResponseModel;
     private OnCloseActionInterface onCloseActionInterface;
-    @Nullable
     private SearchCellView searchView;
     @Override
     public void onAttach(Context context) {
@@ -97,6 +96,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
         searchView.setSearchInterface(new SearchInterface() {
             @Override
             public void doSearch() {
+                page = 1;
                 getMAList(true);
             }
         });

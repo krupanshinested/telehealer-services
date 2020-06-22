@@ -76,10 +76,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
     private int page = 1;
     private boolean isFromHome,isShowToolbar,isCloseNeeded;
     private String selectionType, userName;
-    @Nullable
     private SearchCellView searchView;
-    @Nullable
-    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -190,11 +187,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             }
         });
 
-        if (selectionType.equals(ArgumentKeys.SEARCH_DOCTOR) || selectionType.equals(ArgumentKeys.SEARCH_COPY_TO)) {
-            searchView.setSearchHint(getString(R.string.search_doctors));
-        } else {
-            searchView.setSearchHint(getString(R.string.search_associations));
-        }
+
         associationRv.getSwipeLayout().setEnabled(false);
         associationRv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
@@ -229,6 +222,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             searchView.setSearchInterface(new SearchInterface() {
                 @Override
                 public void doSearch() {
+                    page = 1;
                     fetch();
                 }
             });
@@ -239,16 +233,19 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
 
                 switch (selectionType) {
                     case ArgumentKeys.SEARCH_COPY_TO:
+                        searchView.setSearchHint(getString(R.string.search_doctors));
                         changeTitleInterface.onTitleChange(getString(R.string.copy_to));
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_SPECIALIST);
                         fetch();
                         break;
                     case ArgumentKeys.SEARCH_DOCTOR:
+                        searchView.setSearchHint(getString(R.string.search_doctors));
                         changeTitleInterface.onTitleChange(getString(R.string.specialist));
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_SPECIALIST);
                         fetch();
                         break;
                     case ArgumentKeys.SEARCH_ASSOCIATION:
+                        searchView.setSearchHint(getString(R.string.search_associations));
                         associationRv.setEmptyState(EmptyViewConstants.EMPTY_PATIENT_SEARCH);
                         changeTitleInterface.onTitleChange(getString(R.string.choose_patient));
                         fetch();

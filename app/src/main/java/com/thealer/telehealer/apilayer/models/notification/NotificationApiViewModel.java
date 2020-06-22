@@ -45,7 +45,7 @@ public class NotificationApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getNotifications(String search, int page, boolean isShowProgress, String associationGuids, String selectedFilterTypes) {
+    public void getNotifications(@Nullable String search, int page, boolean isShowProgress, String associationGuids, String selectedFilterTypes) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {

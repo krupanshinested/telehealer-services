@@ -637,19 +637,19 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     }
 
     public void checkFields() {
-        if (firstnameEt.getText().toString().isEmpty()) {
+        if (firstnameEt.getText().toString().trim().isEmpty()) {
             setError(firstnameEt);
         }
-        if (lastnameEt.getText().toString().isEmpty()) {
+        if (lastnameEt.getText().toString().trim().isEmpty()) {
             setError(lastnameEt);
         }
-        if (titleEt.getText().toString().isEmpty()) {
+        if (titleEt.getText().toString().trim().isEmpty()) {
             setError(titleEt);
         }
-        if (npiEt.getText().toString().isEmpty()) {
+        if (npiEt.getText().toString().trim().isEmpty()) {
             setError(npiEt);
         }
-        if (liabilityEt.getText().toString().isEmpty()) {
+        if (liabilityEt.getText().toString().trim().isEmpty()) {
             setError(liabilityEt);
         }
         if (createUserRequestModel.getUser_detail().getData().getPractices().size() == 0) {
@@ -669,13 +669,13 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         }
 
         if (appConfig.getInstallType().equals(getString(R.string.install_type_india))) {
-            if (registrationNumberEt.getText().toString().isEmpty()) {
+            if (registrationNumberEt.getText().toString().trim().isEmpty()) {
                 setError(registrationNumberEt);
             }
-            if (yearOfRegistrationEt.getText().toString().isEmpty()) {
+            if (yearOfRegistrationEt.getText().toString().trim().isEmpty()) {
                 setError(yearOfRegistrationEt);
             }
-            if (mciEt.getText().toString().isEmpty()) {
+            if (mciEt.getText().toString().trim().isEmpty()) {
                 setError(mciEt);
             }
         }
@@ -857,11 +857,11 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         if (currentDisplayType == Constants.VIEW_MODE) {
             onViewChangeInterface.enableNext(true);
             enableNext(true);
-        } else if (!firstnameEt.getText().toString().isEmpty() &&
-                !lastnameEt.getText().toString().isEmpty() &&
-                !titleEt.getText().toString().isEmpty() &&
+        } else if (!firstnameEt.getText().toString().trim().isEmpty() &&
+                !lastnameEt.getText().toString().trim().isEmpty() &&
+                !titleEt.getText().toString().trim().isEmpty() &&
                 createUserRequestModel.getUser_detail().getData().getPractices().size() > 0 &&
-                !liabilityEt.getText().toString().isEmpty() &&
+                !liabilityEt.getText().toString().trim().isEmpty() &&
                 hasValidLicense() &&
                 validateLicenseNpi() &&
                 isOtherInfoValid()) {
@@ -878,7 +878,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
         if (!appConfig.getInstallType().equals(getString(R.string.install_type_india)))
             return true;
         else {
-            return !registrationNumberEt.getText().toString().isEmpty() && !yearOfRegistrationEt.getText().toString().isEmpty()
+            return !registrationNumberEt.getText().toString().trim().isEmpty() && !yearOfRegistrationEt.getText().toString().trim().isEmpty()
                     && !mciEt.getText().toString().isEmpty();
         }
     }
@@ -990,7 +990,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
     private void updateBio() {
         bioEt.setText(createUserRequestModel.getUser_detail().getData().getBio());
 
-        if (bioEt.getText().toString().isEmpty()) {
+        if (bioEt.getText().toString().trim().isEmpty()) {
             bioTil.setError(getString(R.string.bio_empty_error));
         }
     }

@@ -535,9 +535,9 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         if (currentDisplayType == Constants.VIEW_MODE) {
             onViewChangeInterface.enableNext(true);
             enableNext(true);
-        } else if (!firstnameEt.getText().toString().isEmpty()
-                && !lastnameEt.getText().toString().isEmpty()
-                && !dobEt.getText().toString().isEmpty()) {
+        } else if (!firstnameEt.getText().toString().trim().isEmpty()
+                && !lastnameEt.getText().toString().trim().isEmpty()
+                && !dobEt.getText().toString().trim().isEmpty()) {
             onViewChangeInterface.enableNext(true);
             enableNext(true);
         } else {

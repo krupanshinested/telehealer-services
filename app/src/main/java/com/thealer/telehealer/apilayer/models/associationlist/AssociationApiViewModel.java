@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.associationlist;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -23,7 +24,7 @@ public class AssociationApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getAssociationList(String search, int page, String doctorGuid, boolean showProgress, boolean isMedicalAssistant) {
+    public void getAssociationList(@Nullable String search, int page, String doctorGuid, boolean showProgress, boolean isMedicalAssistant) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {

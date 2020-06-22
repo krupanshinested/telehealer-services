@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.schedules;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -23,7 +24,7 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getSchedule(String search, int page, boolean isShowProgress, String doctorGuidList) {
+    public void getSchedule(@Nullable String search, int page, boolean isShowProgress, String doctorGuidList) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {

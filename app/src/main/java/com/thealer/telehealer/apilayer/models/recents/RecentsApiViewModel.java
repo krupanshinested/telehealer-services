@@ -4,6 +4,7 @@ import android.app.Application;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -43,7 +44,7 @@ public class RecentsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getMyCorrespondentList(String search, int page, String doctorGuid, boolean isShowProgress) {
+    public void getMyCorrespondentList(@Nullable String search, int page, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
