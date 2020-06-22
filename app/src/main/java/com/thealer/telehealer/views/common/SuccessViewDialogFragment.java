@@ -149,7 +149,7 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         isDataReceived = true;
     }
 
-    private void dismissScreen() {
+    protected void dismissScreen() {
         successViewInterface.onSuccessViewCompletion(status);
         getDialog().dismiss();
         if (getTargetFragment() != null) {

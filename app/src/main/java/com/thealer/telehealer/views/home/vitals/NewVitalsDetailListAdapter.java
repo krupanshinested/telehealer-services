@@ -95,7 +95,7 @@ public class NewVitalsDetailListAdapter extends RecyclerView.Adapter<RecyclerVie
                 itemHolder.timeTv.setText(Utils.getFormatedTime(vitalsApiResponseModel.getCreated_at()));
                 itemHolder.descriptionTv.setText(vitalsApiResponseModel.getCapturedBy(activity));
 
-                if (UserType.isUserPatient() && isOpenVitalMessage){
+                if (UserType.isUserPatient() && isOpenVitalMessage && vitalsApiResponseModel.getDetail()!=null){
                     itemHolder.vitalRootCl.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -107,12 +107,6 @@ public class NewVitalsDetailListAdapter extends RecyclerView.Adapter<RecyclerVie
                                 bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE, SupportedMeasurementType.getDrawable(vitalsApiResponseModel.getType()));
                                 bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE_TINT, vitalsApiResponseModel.isAbnormal()?R.color.red:R.color.vital_good);
                                 bundle.putSerializable(Constants.VITAL_DETAIL,vitalsApiResponseModel.getDetail());
-                            }
-
-                            if (vitalsApiResponseModel.getDetail()!=null) {
-                                if (vitalsApiResponseModel.getDetail().size() == 0) {
-                                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, vitalsApiResponseModel.getMessage());
-                                }
                             }
 
                             VitalThresholdDialogFragment vitalThresholdDialogFragment = new VitalThresholdDialogFragment();

@@ -25,7 +25,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import com.bumptech.glide.util.Util;
 import com.thealer.telehealer.BuildConfig;
@@ -41,7 +43,8 @@ public class VitalThresholdSuccessViewDialogFragment extends SuccessViewDialogFr
     protected RecyclerView rv_recycler_view;
     private TextView bottomTv;
     private PeekingLinearLayoutManager peekingLinearLayoutManager;
-    
+    private ImageView closeIV;
+    private OffsetItemDecoration OffsetItemDecoration;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,11 +55,18 @@ public class VitalThresholdSuccessViewDialogFragment extends SuccessViewDialogFr
 
     @Override
     protected void initView(View view) {
+        closeIV = (ImageView) view.findViewById(R.id.close_iv);
         rv_recycler_view = (RecyclerView) view.findViewById(R.id.rv_recycler_view);
         bottomTv = (TextView) view.findViewById(R.id.bottom_tv);
         peekingLinearLayoutManager = new PeekingLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rv_recycler_view.setLayoutManager(peekingLinearLayoutManager);
 
+        closeIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismissScreen();
+            }
+        });
         super.initView(view);
     }
 
@@ -74,13 +84,14 @@ public class VitalThresholdSuccessViewDialogFragment extends SuccessViewDialogFr
         else {
             rv_recycler_view.setVisibility(View.VISIBLE);
         }
+        doneBtn.setVisibility(View.GONE);
         rv_recycler_view.setVisibility(View.VISIBLE);
         if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             bottomTv.setVisibility(View.VISIBLE);
             String disclaimerHtml = "<!DOCTYPE html>\n" +
                     "<html>\n" +
                     "<body>\n" +
-                    "<p>%s    <font color=\"black\">%s</font>   %s</p>\n" +
+                    "<p>%s    <font color=\"black\">%s</font>   %s</p>" +
                     "</body>\n" +
                     "</html>\n";
             bottomTv.setText(Html.fromHtml(String.format(disclaimerHtml,getString(R.string.vitals_patient_bottom_hint_1),getString(R.string.not),getString(R.string.vitals_patient_bottom_hint_2))));
@@ -90,20 +101,25 @@ public class VitalThresholdSuccessViewDialogFragment extends SuccessViewDialogFr
     @Override
     protected void onDataUpdated(Bundle bundle) {
         super.onDataUpdated(bundle);
-
-        if (bundle.getSerializable(Constants.VITAL_DETAIL) != null) {
-            ArrayList<VitalsDetailBean> detail = (ArrayList<VitalsDetailBean>) bundle.getSerializable(Constants.VITAL_DETAIL);
+        ArrayList<VitalsDetailBean> detail = (ArrayList<VitalsDetailBean>) bundle.getSerializable(Constants.VITAL_DETAIL);
+        if (  detail!=null && !detail.isEmpty()) {
             Log.e("SuccessView", "VITAL_DETAIL count "+detail.size());
             rv_recycler_view.setAdapter(new VitalThresholdSuccessViewDialogAdapter(detail,getActivity()));
+            SnapHelper snapHelper=new PagerSnapHelper();
+            snapHelper.attachToRecyclerView(rv_recycler_view);
+
+            OffsetItemDecoration = new OffsetItemDecoration(getActivity());
+            rv_recycler_view.addItemDecoration(OffsetItemDecoration);
             rv_recycler_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                     super.onScrollStateChanged(recyclerView, newState);
                     if (newState == RecyclerView.SCROLL_STATE_DRAGGING){
 
-                    } else if (newState == RecyclerView.SCROLL_STATE_IDLE){
-                        int postition = peekingLinearLayoutManager.findFirstVisibleItemPosition();
-                        if (detail.get(postition).isAbnormal()){
+                    } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        View view = snapHelper.findSnapView(peekingLinearLayoutManager);
+                        int position = peekingLinearLayoutManager.getPosition(view);
+                        if (detail.get(position).isAbnormal()) {
                             loaderIv.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.red, null)));
                         } else {
                             loaderIv.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.vital_good, null)));

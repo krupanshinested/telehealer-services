@@ -592,6 +592,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
             searchView.setSearchInterface(new SearchInterface() {
                 @Override
                 public void doSearch() {
+                    page = 1;
                     if (selectedItem.equals(OrderConstant.ORDER_PRESCRIPTIONS)) {
                         ordersApiViewModel.getPrescriptionOrders(searchView.getCurrentSearchResult(),page,true);
                     } else if (selectedItem.equals(OrderConstant.ORDER_REFERRALS)) {

@@ -62,7 +62,6 @@ public class RecentFragment extends BaseFragment {
     private ImageView throbberIv;
     private CustomRecyclerView recentsCrv;
     private boolean isCalls;
-    @Nullable
     private SearchCellView searchView;
 
     @Override
@@ -190,6 +189,7 @@ public class RecentFragment extends BaseFragment {
                         searchView.setSearchInterface(new SearchInterface() {
                             @Override
                             public void doSearch() {
+                                page = 1;
                                 recentsApiViewModel.getMyCorrespondentList(searchView.getCurrentSearchResult(), page, finalDoctorGuid, isShowProgress);
                             }
                         });

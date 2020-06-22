@@ -234,12 +234,16 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     }
 
     public int getSexDrawable() {
-        if (getGender().toLowerCase().equals(Constants.male))
-            return R.drawable.gender_male;
-        else if (getGender().toLowerCase().equals(Constants.female))
-            return R.drawable.gender_female;
-        else
+        if (getGender() != null) {
+            if (getGender().toLowerCase().equals(Constants.male))
+                return R.drawable.gender_male;
+            else if (getGender().toLowerCase().equals(Constants.female))
+                return R.drawable.gender_female;
+            else
+                return R.drawable.gender_others;
+        } else {
             return R.drawable.gender_others;
+        }
     }
 
     public Boolean getConnection_requests() {

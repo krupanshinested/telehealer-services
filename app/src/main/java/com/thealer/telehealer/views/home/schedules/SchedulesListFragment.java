@@ -68,7 +68,6 @@ public class SchedulesListFragment extends BaseFragment {
     private SchedulesListAdapter schedulesListAdapter;
     private String doctorGuidList;
     private boolean isResumed = false;
-    @Nullable
     private SearchCellView searchView;
 
     @Override
@@ -114,6 +113,7 @@ public class SchedulesListFragment extends BaseFragment {
         searchView.setSearchInterface(new SearchInterface() {
             @Override
             public void doSearch() {
+                page = 1;
                 getSchedulesList(page,true);
             }
         });

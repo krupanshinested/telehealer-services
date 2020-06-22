@@ -12,10 +12,10 @@ import java.util.Arrays;
  */
 public class VitalsConstant {
 
-    public static final String INPUT_SYSTOLE = "Systole";
-    public static final String INPUT_DIASTOLE = "Diastole";
-    public static final String INPUT_SYSTOLE_HINT = "Systole (Top number)";
-    public static final String INPUT_DIASTOLE_HINT = "Diastole (Bottom number)";
+    public static final String INPUT_SYSTOLE = "Systolic";
+    public static final String INPUT_DIASTOLE = "Diastolic";
+    public static final String INPUT_SYSTOLE_HINT = "Systolic (Top number)";
+    public static final String INPUT_DIASTOLE_HINT = "Diastolic (Bottom number)";
     public static final String INPUT_GLUCOSE = "Blood Glucose";
     public static final String INPUT_PULSE = "Pulse";
     public static final String INPUT_SPO2 = "Spo2";
@@ -24,8 +24,8 @@ public class VitalsConstant {
     public static final String INPUT_FEET = "Feet";
     public static final String INPUT_INCHES = "Inches";
 
-    public static final String SYSTOLE = "Systole";
-    public static final String DIASTOLE = "Diastole";
+    public static final String SYSTOLE = "Systolic";
+    public static final String DIASTOLE = "Diastolic";
 
     public static final String VITAL_MODE_DOCTOR = "doctor";
     public static final String VITAL_MODE_PATIENT = "patient";

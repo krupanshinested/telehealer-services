@@ -96,11 +96,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private AssociationApiResponseModel associationApiResponseModel;
     private ArrayList<DoctorGroupedAssociations> doctorGroupedAssociations;
     private ChangeTitleInterface changeTitleInterface;
-    @Nullable
     private SearchCellView search_view;
-
-    @Nullable
-    private TimerRunnable uiToggleTimer;
 
     @Override
     public void onAttach(Context context) {
@@ -175,6 +171,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         search_view.setSearchInterface(new SearchInterface() {
             @Override
             public void doSearch() {
+                page = 1;
                 getAssociationsList(true);
             }
         });

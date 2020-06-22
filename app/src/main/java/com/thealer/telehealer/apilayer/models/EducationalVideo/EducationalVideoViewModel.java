@@ -22,7 +22,7 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getEducationalVideo(String search, @Nullable String doctorGuid, int page) {
+    public void getEducationalVideo(@Nullable String search, @Nullable String doctorGuid, int page) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
