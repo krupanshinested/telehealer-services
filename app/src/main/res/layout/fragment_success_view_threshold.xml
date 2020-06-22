@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     android:background="@color/colorWhite">
 
+    <ImageView
+        android:id="@+id/close_iv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:padding="@dimen/padding_default"
+        android:src="@drawable/ic_close_white_40dp"
+        android:tint="@color/colorBlack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -87,6 +99,8 @@
             android:layout_height="0dp"
             android:scrollbars="horizontal"
             android:visibility="gone"
+            app:contentInsetStart="30dp"
+            app:contentInsetEnd="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/message_tv" />
 
@@ -120,7 +134,6 @@
         android:id="@+id/bottom_tv"
         android:visibility="gone"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/done_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="@string/dummy_text"
         android:gravity="center"/>

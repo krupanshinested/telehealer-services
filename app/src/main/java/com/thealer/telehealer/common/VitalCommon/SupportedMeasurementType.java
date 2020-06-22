@@ -29,7 +29,7 @@ public class SupportedMeasurementType {
     public static int getTitle(String type) {
         switch (type) {
             case bp:
-                return R.string.blood_pressure_heart_rate;
+                return R.string.blood_pressure;
             case weight:
                 return R.string.weight;
             case temperature:
@@ -79,7 +79,7 @@ public class SupportedMeasurementType {
             case gulcose:
                 return "mg/dL";
             case heartRate:
-                return "count/min";
+                return "bpm";
             case pulseOximeter:
                 return "%";
             case temperature:

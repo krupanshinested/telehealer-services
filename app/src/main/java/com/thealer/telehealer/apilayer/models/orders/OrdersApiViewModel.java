@@ -50,7 +50,7 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getLabOrders(String search, int page, boolean showProgress) {
+    public void getLabOrders(@Nullable String search, int page, boolean showProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -88,7 +88,7 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getPrescriptionOrders(String search, int page, boolean showProgress) {
+    public void getPrescriptionOrders(@Nullable String search, int page, boolean showProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -126,7 +126,7 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getSpecialist(String search, int page, boolean isShowProgress) {
+    public void getSpecialist(@Nullable String search, int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -203,7 +203,7 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getForms(String search, boolean isShowProgress) {
+    public void getForms(@Nullable String search, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -336,7 +336,7 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getRadiologyList(String  search, int page, boolean isShowProgress) {
+    public void getRadiologyList(@Nullable String  search, int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -372,7 +372,7 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getMiscellaneousList(String search, int page, boolean isShowProgress) {
+    public void getMiscellaneousList(@Nullable String search, int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -408,7 +408,7 @@ public class OrdersApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getEducationalVideoList(String search,int page, boolean isShowProgress) {
+    public void getEducationalVideoList(@Nullable String search,int page, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {

@@ -67,7 +67,6 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
     private Map<String, List<NotificationApiResponseModel.ResultBean.RequestsBean>> childList = new HashMap<>();
 
     private String selectedFilterTypes = null;
-    @Nullable
     private SearchCellView searchView;
 
     @Override
@@ -181,6 +180,7 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
         searchView.setSearchInterface(new SearchInterface() {
             @Override
             public void doSearch() {
+                page = 1;
                 getNotification(true);
             }
         });

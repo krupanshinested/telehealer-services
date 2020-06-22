@@ -440,9 +440,9 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         if (currentDisplayType == Constants.VIEW_MODE) {
             onViewChangeInterface.enableNext(true);
             enableNext(true);
-        } else if (!firstnameEt.getText().toString().isEmpty()
-                && !lastnameEt.getText().toString().isEmpty()
-                && !degreeEt.getText().toString().isEmpty()) {
+        } else if (!firstnameEt.getText().toString().trim().isEmpty()
+                && !lastnameEt.getText().toString().trim().isEmpty()
+                && !degreeEt.getText().toString().trim().isEmpty()) {
             onViewChangeInterface.enableNext(true);
             enableNext(true);
         } else {

@@ -58,7 +58,6 @@ public class EducationalListVideoFragment extends BaseFragment {
     private int page = 1;
     @Nullable
     private EducationListAdapter educationListAdapter;
-    @Nullable
     private SearchCellView searchView;
     @Override
     public void onAttach(Context context) {
@@ -91,6 +90,7 @@ public class EducationalListVideoFragment extends BaseFragment {
         searchView.setSearchInterface(new SearchInterface() {
             @Override
             public void doSearch() {
+                page = 1;
                 getEducationalVideos();
             }
         });

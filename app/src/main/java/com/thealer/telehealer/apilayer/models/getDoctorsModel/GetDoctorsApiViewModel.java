@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.getDoctorsModel;
 
 import android.app.Application;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.annotation.NonNull;
 
@@ -19,7 +20,7 @@ public class GetDoctorsApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getDoctorsDetailList(int page, String name, boolean isShowProgress) {
+    public void getDoctorsDetailList(int page, @Nullable String name, boolean isShowProgress) {
 
         String fields = "npi,licenses,specialties,practices,educations,hospital_affiliations,profile,uid";
         getServiceApi()

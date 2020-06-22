@@ -283,7 +283,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
         }
 
         if (vitalApiRequestModel_1 != null && vitalApiRequestModel_2 != null) {
-            captureSuccessMessage = getString(SupportedMeasurementType.getTitle(vitalApiRequestModel_1.getType())) + " "  + getString(R.string.captured);
+            captureSuccessMessage = getString(SupportedMeasurementType.getTitle(vitalApiRequestModel_1.getType())) + " " + getString(R.string.and) + " " + getString(SupportedMeasurementType.getTitle(vitalApiRequestModel_2.getType())) + " "+ " "  + getString(R.string.captured);
         } else if (vitalApiRequestModel_1 != null) {
             captureSuccessMessage = getString(SupportedMeasurementType.getTitle(vitalApiRequestModel_1.getType())) + " " + getString(R.string.captured);
         } else   {
