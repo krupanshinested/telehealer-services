@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.views.base.BaseViewInterface;
+import com.thealer.telehealer.views.home.vitals.vitalReport.VitalBulkPdfApiResponseModel;
 
 /**
  * Created by Aswin on 04,February,2019
@@ -33,6 +34,24 @@ public class VitalReportApiViewModel extends BaseApiViewModel {
                                 baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                             }
                         });
+            }
+        });
+    }
+
+    public void getBulkVitalPdf(String doctorGuid, String startDate, String endDate) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getBulkVitalPDF(doctorGuid, startDate, endDate)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<VitalBulkPdfApiResponseModel>() {
+                                @Override
+                                public void onSuccess(VitalBulkPdfApiResponseModel vitalBulkPdfApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(vitalBulkPdfApiResponseModel);
+                                }
+                            });
+                }
             }
         });
     }

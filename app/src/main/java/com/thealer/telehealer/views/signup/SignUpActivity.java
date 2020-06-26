@@ -131,13 +131,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void showOtpVerification() {
-        signupToolbarTitleTv.setVisibility(View.GONE);
-        OtpVerificationFragment otpVerificationFragment = new OtpVerificationFragment();
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(ArgumentKeys.IS_VERIFY_OTP, true);
-        otpVerificationFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.signup_fragment_container, otpVerificationFragment).commit();
-
         if (UserType.isUserPatient()){
             currentStep =5;
         }

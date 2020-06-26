@@ -753,6 +753,7 @@
     <string name="help_content_monitoring_patient">Pair with a list of supported devices to initiate a vitals measurement or monitor prescription adherence. In addition, you can manually capture and monitor your daily diet intake.</string>
     <string name="help_content_monitoring_doctor">Perform remote monitoring by reviewing your patient\'s captured vitals, diet, and medications. The list shows all patients who have captured their vitals during a selected monitoring period.\n\nVital measurements captured by the patient can vary from blood pressure, weight, glucose, temperature, pulse ox, and pulse rate.</string>
     <string name="associations">Associations</string>
+    <string name="bulk_pdf_success_message">Your request has been submitted. Please check back in few minutes.</string>
     <string name="referral_success">Your referral for %s has been posted successfully.</string>
     <string name="referral_failure">Your referral for %s has not been posted successfully.</string>
     <string name="miscellaneous_success">Your miscellaneous order for %s has been posted successfully.</string>
@@ -1339,6 +1340,7 @@
     <string name="filter_by_type">Filter by type</string>
     <string name="setup">Setup</string>
     <string name="chat_disclaimer">DISCLAIMER: DO NOT USE THIS FORM IF YOU ARE SEEKING URGENT OR EMERGENCY MEDICAL ATTENTION. CALL 911 OR GO TO THE NEAREST EMERGENCY ROOM INSTEAD.\n\nPlease note that your health care provider may not respond to chat messages in a timely fashion. Use this medium only for non-emergent correspondences.</string>
+    <string name="bulk_print_disclaimer">"Please remember to follow proper HIPAA-compliant processes including physical and administrative safeguards to restrict workstation and/or printer access to authorized users when sharing or printing documents containing PHI. Telehealer assumes no responsibility for securing and/or handling of PHI that is shared outside the platform.</string>
     <string name="no_network_connection">No Internet Connection</string>
     <string name="choose_your_strip">Choose your strip</string>
     <string name="coded">Coded</string>
