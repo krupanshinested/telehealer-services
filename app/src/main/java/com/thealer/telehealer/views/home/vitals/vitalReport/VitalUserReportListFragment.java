@@ -217,61 +217,10 @@ public class VitalUserReportListFragment extends BaseFragment {
 
         toolbar.inflateMenu(R.menu.add_visit_menu);
         setToolbarTitle(getString(R.string.last_week));
-
+        toolbar.getMenu().removeItem(R.id.menu_filter);
         nextMenu = toolbar.getMenu().findItem(R.id.menu_next);
+        toolbar.getMenu().findItem(R.id.menu_print).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
 
-        MenuItem filterItem = toolbar.getMenu().findItem(R.id.menu_filter);
-        View filterView = filterItem.getActionView();
-        ImageView filterIv = filterView.findViewById(R.id.filter_iv);
-        ImageView filterIndicatorIv = filterView.findViewById(R.id.filter_indicatior_iv);
-        filterIndicatorIv.setVisibility(View.VISIBLE);
-        filterIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                selectedList.clear();
-                vitalsApiResponseModelMap.clear();
-                Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
-                    @Override
-                    public void onListItemSelected(int position, Bundle bundle) {
-                        selectedItem = bundle.getString(Constants.SELECTED_ITEM);
-                        startDate = null;
-                        endDate = null;
-
-                        if (selectedItem != null) {
-                            setToolbarTitle(selectedItem);
-
-                            if (selectedItem.equals(getString(R.string.last_week))) {
-                                vitalsListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
-                                filter = VitalReportApiViewModel.LAST_WEEK;
-                            } else if (selectedItem.equals(getString(R.string.all))) {
-                                vitalsListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH);
-                                filter = VitalReportApiViewModel.ALL;
-                            } else {
-                                filter = null;
-                                startDate = bundle.getString(ArgumentKeys.START_DATE);
-                                endDate = bundle.getString(ArgumentKeys.END_DATE);
-
-                                setToolbarTitle(Utils.getMonitoringTitle(startDate, endDate));
-
-                                String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
-
-                                vitalsListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
-                            }
-
-                            getArguments().putString(ArgumentKeys.TITLE, selectedItem);
-                            getArguments().putString(ArgumentKeys.SEARCH_TYPE, filter);
-                            getArguments().putString(ArgumentKeys.START_DATE, startDate);
-                            getArguments().putString(ArgumentKeys.END_DATE, endDate);
-
-                        }
-                        page = 1;
-                        resetData();
-                        getUserVitals(true);
-                    }
-                });
-            }
-        });
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {

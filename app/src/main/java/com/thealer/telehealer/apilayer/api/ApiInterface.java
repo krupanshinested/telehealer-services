@@ -82,6 +82,7 @@ import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseM
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
+import com.thealer.telehealer.views.home.vitals.vitalReport.VitalBulkPdfApiResponseModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -560,6 +561,8 @@ public interface ApiInterface {
     @GET("api/vitals")
     Observable<PDFUrlResponse> getVitalPDF(@Query(TYPE) String type,@Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(DOWNLOAD_SUMMARY) boolean summary);
 
+    @GET("api/vitals/documents")
+    Observable<VitalBulkPdfApiResponseModel> getBulkVitalPDF(@Query(DOCTOR_GUID) String doctorGuid, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate);
 
     @GET("api/vitals")
     Observable<ArrayList<VitalsApiResponseModel>> getUserFilteredVitals(@Query(TYPE) String type, @Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
@@ -665,7 +668,5 @@ public interface ApiInterface {
 
     @POST("api/educational-video/assign-user")
     Observable<BaseApiResponseModel> postEducationalOrder(@Query(DOCTOR_GUID) String doctorGuid,@Body HashMap<String,Object> item);
-
-
 
 }

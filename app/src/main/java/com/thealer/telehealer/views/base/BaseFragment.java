@@ -131,7 +131,6 @@ public class BaseFragment extends Fragment {
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
-
     public void showSnack(View view, String message) {
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();

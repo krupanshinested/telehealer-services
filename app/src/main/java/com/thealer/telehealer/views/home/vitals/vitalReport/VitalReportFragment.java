@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home.vitals.vitalReport;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -21,8 +22,10 @@ import androidx.cardview.widget.CardView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.snackbar.Snackbar;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -32,20 +35,27 @@ import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewMode
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.TimerInterface;
 import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.VisitConstants;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Aswin on 04,February,2019
@@ -64,6 +74,7 @@ public class VitalReportFragment extends BaseFragment {
     private VitalReportApiViewModel vitalReportApiViewModel;
 
     private VitalReportApiReponseModel vitalReportApiReponseModel;
+    private  VitalBulkPdfApiResponseModel vitalBulkPdfApiResponseModel;
     private VitalReportUserListAdapter vitalReportUserListAdapter;
     private static String selectedFilter, title;
     private String startDate = null;
@@ -93,12 +104,43 @@ public class VitalReportFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    vitalReportApiReponseModel = (VitalReportApiReponseModel) baseApiResponseModel;
-                    if (vitalReportApiReponseModel.getResult().size() > 0) {
-                        vitalReportUserListAdapter.setData(vitalReportApiReponseModel.getResult());
-                        patientListCrv.showOrhideEmptyState(false);
-                    } else {
-                        patientListCrv.showOrhideEmptyState(true);
+                    if (baseApiResponseModel instanceof VitalReportApiReponseModel) {
+                        vitalReportApiReponseModel = (VitalReportApiReponseModel) baseApiResponseModel;
+                        if (vitalReportApiReponseModel.getResult().size() > 0) {
+                            vitalReportUserListAdapter.setData(vitalReportApiReponseModel.getResult());
+                            patientListCrv.showOrhideEmptyState(false);
+                        } else {
+                            patientListCrv.showOrhideEmptyState(true);
+                        }
+                    } else if (baseApiResponseModel instanceof VitalBulkPdfApiResponseModel){
+                        vitalBulkPdfApiResponseModel = (VitalBulkPdfApiResponseModel) baseApiResponseModel;
+                        if (vitalBulkPdfApiResponseModel.getCombined_pdf_path() != null){
+                           Bundle bundle = new Bundle();
+                           bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                           bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                           bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
+                           bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+                               LocalBroadcastManager
+                                       .getInstance(getActivity())
+                                       .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                               .putExtras(bundle));
+
+                           PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+                           bundle.putString(ArgumentKeys.PDF_TITLE,getString(R.string.vitals_report));
+                           bundle.putString(ArgumentKeys.PDF_URL, vitalBulkPdfApiResponseModel.getCombined_pdf_path());
+                           bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                           pdfViewerFragment.setArguments(bundle);
+                           showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+                       } else {
+                           Bundle bundle = new Bundle();
+                           bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                           bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                           bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.bulk_pdf_success_message));
+                           LocalBroadcastManager
+                                   .getInstance(getActivity())
+                                   .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                           .putExtras(bundle));
+                       }
                     }
                 }
             }
@@ -108,7 +150,8 @@ public class VitalReportFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    showToast(errorModel.getMessage());
+                    sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.failed_to_connect)));
+
                 }
             }
         });
@@ -118,7 +161,17 @@ public class VitalReportFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        selectedFilter = VitalReportApiViewModel.LAST_WEEK;
+        selectedFilter = VitalReportApiViewModel.LAST_MONTH;
+
+        Calendar calendar = (Calendar) Calendar.getInstance().clone();
+        calendar.add(Calendar.MONTH, -1);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+        startDate = Utils.getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+        endDate = Utils.getUTCfromGMT(new Timestamp(calendar.getTimeInMillis()).toString());
+
         setHasOptionsMenu(true);
     }
 
@@ -160,7 +213,38 @@ public class VitalReportFragment extends BaseFragment {
                 showFilterDialog();
             }
         });
-
+        toolbar.inflateMenu(R.menu.orders_detail_menu);
+        toolbar.getMenu().removeItem(R.id.send_fax_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.print_menu:
+                        Snackbar snackbar = Snackbar.make(view, "", 5000).setBackgroundTint(getResources().getColor(R.color.app_gradient_start));
+                        Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
+                        View snackbarView = getLayoutInflater().inflate(R.layout.view_snackbar, null);
+                        TextView textView= snackbarView.findViewById(R.id.snackbar_tv);
+                        textView.setMaxLines(10);
+                        textView.setText(getString(R.string.bulk_print_disclaimer));
+                        snackbarLayout.addView(snackbarView);
+                        snackbar.addCallback(new Snackbar.Callback(){
+                            @Override
+                            public void onDismissed(Snackbar transientBottomBar, int event) {
+                                super.onDismissed(transientBottomBar, event);
+                                if (UserType.isUserAssistant()){
+                                    vitalReportApiViewModel.getBulkVitalPdf(doctorGuid,startDate, endDate);
+                                }else {
+                                    vitalReportApiViewModel.getBulkVitalPdf(null, startDate, endDate);
+                                }
+                                SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+                                successViewDialogFragment.setTargetFragment(getTargetFragment(), RequestID.REQ_SHOW_SUCCESS_VIEW);
+                                successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+                            }
+                        }).show();
+                }
+                return true;
+            }
+        });
         searchEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -229,7 +313,11 @@ public class VitalReportFragment extends BaseFragment {
 
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
-                setToolbarTitle(getString(R.string.last_week));
+                if (startDate != null && endDate !=null) {
+                    setToolbarTitle(Utils.getMonitoringTitle(startDate, endDate));
+                } else {
+                    setToolbarTitle(selectedFilter);
+                }
                 onCloseActionInterface = (OnCloseActionInterface) getActivity();
                 backIv.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -284,7 +372,17 @@ public class VitalReportFragment extends BaseFragment {
                 endDate = null;
 
                 if (selectedItem != null) {
+                    Calendar previousMonth = Calendar.getInstance();
+                    previousMonth.add(Calendar.MONTH,-1);
+                    String previous = previousMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
                     setToolbarTitle(selectedItem);
+                     if (selectedItem.equals(previous)){
+                        toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
+                        toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
+                    } else {
+                        toolbar.getMenu().findItem(R.id.print_menu).setEnabled(false);
+                        toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorGrey_light));
+                    }
                     if (selectedItem.equals(getString(R.string.last_week))) {
                         patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
                         selectedFilter = VitalReportApiViewModel.LAST_WEEK;
@@ -297,7 +395,6 @@ public class VitalReportFragment extends BaseFragment {
                         endDate = bundle.getString(ArgumentKeys.END_DATE);
 
                         setToolbarTitle(Utils.getMonitoringTitle(startDate, endDate));
-
                         String title = EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO);
 
                         patientListCrv.setEmptyStateTitle(String.format(title, Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
