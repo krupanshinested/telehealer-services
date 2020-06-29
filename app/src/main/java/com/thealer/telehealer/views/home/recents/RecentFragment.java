@@ -121,7 +121,7 @@ public class RecentFragment extends BaseFragment {
         recentsCrv = (CustomRecyclerView) view.findViewById(R.id.recents_crv);
         throbberIv = (ImageView) view.findViewById(R.id.throbber_iv);
         searchView = view.findViewById(R.id.search_view);
-        Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(throbberIv);
+       // Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(throbberIv);
 
         recentsCrv.setEmptyState(EmptyViewConstants.EMPTY_CALLS);
 
@@ -129,6 +129,13 @@ public class RecentFragment extends BaseFragment {
 
         searchView.setSearchHint(getString(R.string.search_contact));
 
+        searchView.setSearchInterface(new SearchInterface() {
+            @Override
+            public void doSearch() {
+                page = 1;
+                makeApiCall(true);
+            }
+        });
         if (getUserVisibleHint()) {
             makeApiCall(true);
         }
@@ -184,15 +191,7 @@ public class RecentFragment extends BaseFragment {
                             doctorGuid = appPreference.getString(PreferenceConstants.ASSOCIATION_GUID_LIST);
                             doctorGuid = doctorGuid.concat("," + UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid());
                         }
-
-                        String finalDoctorGuid = doctorGuid;
-                        searchView.setSearchInterface(new SearchInterface() {
-                            @Override
-                            public void doSearch() {
-                                page = 1;
-                                recentsApiViewModel.getMyCorrespondentList(searchView.getCurrentSearchResult(), page, finalDoctorGuid, isShowProgress);
-                            }
-                        });
+                        recentsApiViewModel.getMyCorrespondentList(searchView.getCurrentSearchResult(), page, doctorGuid, isShowProgress);
                     } else {
 
                         CommonUserApiResponseModel userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
