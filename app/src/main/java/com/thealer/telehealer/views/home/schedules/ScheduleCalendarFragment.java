@@ -255,12 +255,14 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
             }
 
 
-            if (UserType.isUserAssistant()) {
+            if (UserType.isUserAssistant() && doctorModel!=null && patientModel!=null) {
                 eventTitle = doctorModel.getUserDisplay_name() + "-" + patientModel.getUserDisplay_name();
-            } else if (UserType.isUserDoctor()) {
+            } else if (UserType.isUserDoctor() && patientModel!=null) {
                 eventTitle = patientModel.getUserDisplay_name();
-            } else {
+            } else if (doctorModel != null){
                 eventTitle = doctorModel.getUserDisplay_name();
+            } else {
+                eventTitle = "";
             }
 
             WeekViewEvent weekViewEvent = new WeekViewEvent(responseModelArrayList.get(i).getSchedule_id(),

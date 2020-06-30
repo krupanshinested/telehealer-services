@@ -577,7 +577,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     break;
             }
 
-            if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+            if ((UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR)) || (UserType.isUserDoctor() && resultBean.getRole().equals(Constants.ROLE_ASSISTANT))) {
                 userDetailBnv.setVisibility(View.GONE);
             } else if (resultBean.getConnection_status() != null && resultBean.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
                 userDetailBnv.setVisibility(View.VISIBLE);

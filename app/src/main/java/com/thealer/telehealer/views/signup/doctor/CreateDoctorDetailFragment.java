@@ -1160,12 +1160,13 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
 
         createUserRequestModel.getUser_detail().getData().setWebsite(websiteEt.getText().toString());
 
-        ClinicBean clinicBean = new ClinicBean();
-        clinicBean.setName(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getName());
-        clinicBean.setState(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getState());
+        if (createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address() != null) {
+            ClinicBean clinicBean = new ClinicBean();
+            clinicBean.setName(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getName());
+            clinicBean.setState(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getState());
 
-        createUserRequestModel.getUser_detail().getData().setClinic(clinicBean);
-
+            createUserRequestModel.getUser_detail().getData().setClinic(clinicBean);
+        }
         if (appConfig.getInstallType().equals(getString(R.string.install_type_india))) {
             createUserRequestModel.getUser_detail().getData().setOtherInformation(new OtherInformation(Utils.getUTCFormat(yearOfRegistrationEt.getText().toString(), Utils.defaultDateFormat),
                     mciEt.getText().toString(), registrationNumberEt.getText().toString()));
