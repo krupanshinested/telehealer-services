@@ -63,6 +63,8 @@ public class SettingsCellView extends ConstraintLayout {
         }
     }
 
+    public  void setFocusableTitle () { settingSwitch.setAlpha(0.5f);}
+
     public void updateSwitch(Boolean isSelected) {
         settingSwitch.setChecked(isSelected);
     }

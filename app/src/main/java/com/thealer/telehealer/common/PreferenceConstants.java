@@ -18,6 +18,8 @@ public class PreferenceConstants {
     public static final String USER_GENDER = "user_gender";
     public static final String USER_DOB = "user_dob";
     public static final String USER_APPT_LENGTH = "appt_length";
+    public static final String USER_APPT_START_TIME = "appt_start_time";
+    public static final String USER_APPT_END_TIME = "appt_end_time";
     public static final String USER_NPI = "npi";
     public static final String USER_TITLE = "user_title";
     public static final String USER_SIGNATURE = "user_signature";

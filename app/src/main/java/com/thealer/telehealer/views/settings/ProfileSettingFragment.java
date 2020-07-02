@@ -29,6 +29,7 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
+import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import config.AppConfig;
@@ -46,17 +47,15 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     private OnViewChangeInterface onViewChangeInterface;
 
     private ProfileCellView profile, medical_history, settings, email_id,
-            phone_number, change_password,
-            feedback, terms_and_condition, privacy_policy, appointment_slots, payments_billings,educational_video;
+            phone_number, change_password,checkCallQuality, logs,
+            feedback, terms_and_condition, privacy_policy, payments_billings,educational_video;
     private View signOut;
 
     private ProfileUpdate profileUpdate;
-    private Boolean isSlotLoaded = false;
-    private LinearLayout medicalAssistantLl;
+    private LinearLayout medicalAssistantLl, billLl;
     private ProfileCellView medicalAssistant;
     private ProfileCellView documents;
     private TextView versionTv;
-    private String selectedItem;
     private TextView lastLoginTv;
 
     @Nullable
@@ -94,15 +93,12 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             Toast.makeText(getActivity(), getString(R.string.live_call_going_error), Toast.LENGTH_LONG).show();
             return;
         }
-
-        if (view.getId() == R.id.appointment_slots) {
-            appointment_slots.openSpinner();
-        } else {
             settingClickListener.didSelecteItem(view.getId());
-        }
     }
 
     private void initView(View baseView) {
+        checkCallQuality = baseView.findViewById(R.id.check_call_quality);
+        logs = baseView.findViewById(R.id.logs);
         profile = baseView.findViewById(R.id.profile);
         documents = (ProfileCellView) baseView.findViewById(R.id.documents);
         medical_history = baseView.findViewById(R.id.medical_history);
@@ -116,6 +112,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         signOut = baseView.findViewById(R.id.signOut);
         payments_billings = baseView.findViewById(R.id.payments_billings);
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
+        billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
         educational_video = baseView.findViewById(R.id.educational_video);
         versionTv
@@ -138,12 +135,6 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             e.printStackTrace();
         }
 
-        appointment_slots = baseView.findViewById(R.id.appointment_slots);
-        String[] titleList = getActivity().getResources().getStringArray(R.array.doctor_appointment_slots);
-        ArrayAdapter titleAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, titleList);
-        titleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
         profileUpdate = new ViewModelProvider(getActivity()).get(ProfileUpdate.class);
 
         onViewChangeInterface.attachObserver(profileUpdate);
@@ -154,33 +145,14 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 if (baseApiResponseModel != null) {
 
                     WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
-                    whoAmIApiResponseModel.setAppt_length(Integer.parseInt(getAppointmentSlotValue(selectedItem)));
                     UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
-
-                    appointment_slots.updateUI(false);
-                    appointment_slots.updateValue(getAppointmentSlotValue(selectedItem));
-
                 }
-            }
-        });
-
-        isSlotLoaded = false;
-        appointment_slots.updateAdapter(titleAdapter, new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!isSlotLoaded) {
-                    isSlotLoaded = true;
-                } else {
-                    selectedItem = parent.getItemAtPosition(position).toString();
-                    profileUpdate.updateAppointmentSlot(getAppointmentSlotValue(selectedItem));
-                }
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
 
         educational_video.setOnClickListener(this);
+        checkCallQuality.setOnClickListener(this);
+        logs.setOnClickListener(this);
         profile.setOnClickListener(this);
         documents.setOnClickListener(this);
         medical_history.setOnClickListener(this);
@@ -192,7 +164,6 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         terms_and_condition.setOnClickListener(this);
         privacy_policy.setOnClickListener(this);
         signOut.setOnClickListener(this);
-        appointment_slots.setOnClickListener(this);
         payments_billings.setOnClickListener(this);
         medicalAssistantLl.setOnClickListener(this);
 
@@ -201,14 +172,12 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
         switch (appPreference.getInt(Constants.USER_TYPE)) {
             case Constants.TYPE_PATIENT:
-                appointment_slots.setVisibility(View.GONE);
-                change_password.hideSplitter(true);
                 payments_billings.setVisibility(View.GONE);
                 documents.setVisibility(View.VISIBLE);
+                medicalAssistant.setVisibility(View.GONE);
                 educational_video.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
-                appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length() + "");
                 medical_history.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
                     payments_billings.setVisibility(View.VISIBLE);
@@ -216,18 +185,17 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     payments_billings.setVisibility(View.GONE);
                 }
                 medicalAssistantLl.setVisibility(View.VISIBLE);
+                billLl.setVisibility(View.VISIBLE);
                 educational_video.setVisibility(View.VISIBLE);
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
-                medical_history.setVisibility(View.GONE);
-                appointment_slots.setVisibility(View.GONE);
-                payments_billings.setVisibility(View.GONE);
-                educational_video.setVisibility(View.GONE);
+                medicalAssistantLl.setVisibility(View.GONE);
+                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
+                    payments_billings.setVisibility(View.VISIBLE);
+                else {
+                    payments_billings.setVisibility(View.GONE);
+                }
                 break;
         }
-    }
-    private String getAppointmentSlotValue(String selectedItem){
-        String[] value = selectedItem.split("\\s", 2);
-        return value[0];
     }
 }

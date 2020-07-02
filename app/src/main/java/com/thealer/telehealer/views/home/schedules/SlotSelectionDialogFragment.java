@@ -18,10 +18,14 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.DateUtil;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseBottomSheetDialogFragment;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -44,7 +48,7 @@ public class SlotSelectionDialogFragment extends BaseBottomSheetDialogFragment {
     private String[] time = null;
     private String selectedDate = null, selectedTime = null;
     private int position;
-
+    int endHour, endMinute, startHour, startMinute,timeDifference;
     private CreateScheduleViewModel createScheduleViewModel;
 
     @Override
@@ -82,17 +86,30 @@ public class SlotSelectionDialogFragment extends BaseBottomSheetDialogFragment {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        int endHour = 21;
-        int timeDifference = createScheduleViewModel.getDoctorCommonModel().getAppt_length();
-        int endMinute = 60 - timeDifference;
+        if (!createScheduleViewModel.getDoctorCommonModel().getAppt_end_time().isEmpty()) {
+            String endTime = createScheduleViewModel.getDoctorCommonModel().getAppt_end_time();
+            endHour = Integer.parseInt(DateUtil.getLocalfromUTC(endTime,"hh:mm a","kk"));
+            timeDifference = createScheduleViewModel.getDoctorCommonModel().getAppt_length();
+            endMinute = Integer.parseInt(DateUtil.getLocalfromUTC(endTime,"hh:mm a","mm")) - timeDifference;
+        } else {
+            endHour = 21;
+            int timeDifference = createScheduleViewModel.getDoctorCommonModel().getAppt_length();
+             endMinute = 60 - timeDifference;
+        }
 
         for (int i = 0; i < 30; i++) {
 
             List<String> timeList = new ArrayList<>();
             Map<String, String> timeMap = new HashMap<>();
 
-            int startHour = 8;
-            int startMinute = 0;
+            if (!createScheduleViewModel.getDoctorCommonModel().getAppt_start_time().isEmpty()) {
+                String startTime = createScheduleViewModel.getDoctorCommonModel().getAppt_start_time();
+                startHour = Integer.parseInt(DateUtil.getLocalfromUTC(startTime,"hh:mm a","kk"));
+                startMinute = Integer.parseInt(DateUtil.getLocalfromUTC(startTime,"hh:mm a","mm"));
+            } else {
+                 startHour = 8;
+                 startMinute = 0;
+            }
 
             Calendar startCal = Calendar.getInstance();
             startCal.set(year, month, day + i, startHour, startMinute, 0);
@@ -106,21 +123,65 @@ public class SlotSelectionDialogFragment extends BaseBottomSheetDialogFragment {
             String timeStamp = new Timestamp(startCal.getTimeInMillis()).toString();
             String date = Utils.getSlotDate(timeStamp);
 
-            while (startCal.getTime().compareTo(endCal.getTime()) <= 0) {
+            Calendar endTimeOfThatDay = Calendar.getInstance();
+            endTimeOfThatDay.set(year, month, day + i, 23, 59, 0);
+            endTimeOfThatDay.set(Calendar.MILLISECOND, 0);
 
-                if (calendar.getTime().compareTo(startCal.getTime()) < 0) {
-                    timeStamp = new Timestamp(startCal.getTimeInMillis()).toString();
-                    String time = Utils.getSlotTime(timeStamp);
 
-                    if (!createScheduleViewModel.getUnAvaliableTimeSlots().contains(Utils.getUTCfromGMT(timeStamp))) {
-                        if (!timeList.contains(time)) {
-                            timeList.add(time);
+            if (startCal.getTime().compareTo(endCal.getTime()) > 0) {
+
+                while (startCal.getTime().compareTo(endTimeOfThatDay.getTime()) <= 0) {
+
+                    if (calendar.getTime().compareTo(startCal.getTime()) < 0) {
+                        timeStamp = new Timestamp(startCal.getTimeInMillis()).toString();
+                        String time = Utils.getSlotTime(timeStamp);
+                        if (!createScheduleViewModel.getUnAvaliableTimeSlots().contains(Utils.getUTCfromGMT(timeStamp))) {
+                            if (!timeList.contains(time)) {
+                                timeList.add(time);
+                            }
+                            timeMap.put(time, Utils.getUTCfromGMT(timeStamp));
                         }
-                        timeMap.put(time, Utils.getUTCfromGMT(timeStamp));
                     }
+
+                    startCal.add(Calendar.MINUTE, timeDifference);
                 }
 
-                startCal.add(Calendar.MINUTE, timeDifference);
+                //inorder to reset to the previous day same time
+                startCal.add(Calendar.DATE,-1);
+
+                while (startCal.getTime().compareTo(endCal.getTime()) <= 0) {
+
+                    if (calendar.getTime().compareTo(startCal.getTime()) < 0) {
+                        timeStamp = new Timestamp(startCal.getTimeInMillis()).toString();
+                        String time = Utils.getSlotTime(timeStamp);
+                        if (!createScheduleViewModel.getUnAvaliableTimeSlots().contains(Utils.getUTCfromGMT(timeStamp))) {
+                            if (!timeList.contains(time)) {
+                                timeList.add(time);
+                            }
+                            timeMap.put(time, Utils.getUTCfromGMT(timeStamp));
+                        }
+                    }
+
+                    startCal.add(Calendar.MINUTE, timeDifference);
+                }
+            } else {
+                while (startCal.getTime().compareTo(endCal.getTime()) <= 0) {
+
+                    if (calendar.getTime().compareTo(startCal.getTime()) < 0) {
+                        timeStamp = new Timestamp(startCal.getTimeInMillis()).toString();
+                        String time = Utils.getSlotTime(timeStamp);
+
+                        if (!createScheduleViewModel.getUnAvaliableTimeSlots().contains(Utils.getUTCfromGMT(timeStamp))) {
+                            if (!timeList.contains(time)) {
+                                timeList.add(time);
+                            }
+                            timeMap.put(time, Utils.getUTCfromGMT(timeStamp));
+                        }
+                    }
+
+                    startCal.add(Calendar.MINUTE, timeDifference);
+                }
+
             }
 
             if (timeList.size() > 0) {
@@ -134,7 +195,9 @@ public class SlotSelectionDialogFragment extends BaseBottomSheetDialogFragment {
 
 
         date = dateList.toArray(new String[0]);
-        dateNp.setMaxValue(date.length - 1);
+        if (date.length > 0) {
+            dateNp.setMaxValue(date.length - 1);
+        }
         dateNp.setDisplayedValues(date);
 
         setTimeValue(0);

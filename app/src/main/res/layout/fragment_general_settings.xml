@@ -37,11 +37,11 @@
                 android:orientation="vertical">
 
                 <com.thealer.telehealer.views.settings.cellView.SettingsCellView
-                    android:id="@+id/check_call_quality"
+                    android:id="@+id/quick_login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:isSwitchNeed="false"
-                    app:settings_title="@string/check_call_quality" />
+                    app:isSwitchNeed="true"
+                    app:settings_title="@string/quick_login" />
 
                 <com.thealer.telehealer.views.settings.cellView.SettingsCellView
                     android:id="@+id/notification"
@@ -49,20 +49,6 @@
                     android:layout_height="wrap_content"
                     app:isSwitchNeed="true"
                     app:settings_title="@string/notifications" />
-
-                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
-                    android:id="@+id/presence"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:isSwitchNeed="true"
-                    app:settings_title="@string/presence" />
-
-                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
-                    android:id="@+id/quick_login"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:isSwitchNeed="true"
-                    app:settings_title="@string/quick_login" />
 
                 <com.thealer.telehealer.views.settings.cellView.SettingsCellView
                     android:id="@+id/secure_message"
@@ -79,30 +65,188 @@
                     app:settings_title="@string/accept_connection_request" />
 
                 <com.thealer.telehealer.views.settings.cellView.SettingsCellView
-                    android:id="@+id/appointment_request"
+                    android:id="@+id/presence"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:isSwitchNeed="true"
-                    app:settings_title="@string/accept_appointment_request" />
-
-                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/signature"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="@string/signature" />
+                    app:settings_title="@string/presence" />
 
                 <com.thealer.telehealer.views.settings.cellView.SettingsCellView
-                    android:id="@+id/privacy"
+                    android:id="@+id/order_request"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:settings_title="@string/privacy" />
+                    app:isSwitchNeed="true"
+                    app:settings_title="@string/orders" />
 
                 <com.thealer.telehealer.views.settings.cellView.SettingsCellView
-                    android:id="@+id/logs"
+                    android:id="@+id/integration_request"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:settings_title="@string/logs" />
+                    app:isSwitchNeed="true"
+                    app:settings_title="@string/integration" />
 
+                <LinearLayout
+                    android:id="@+id/rpm_ll"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/colorWhite"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorGrey_light" />
+
+                    <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                        android:id="@+id/rpm_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:isSpinnerType="true"
+                        app:hideSpiltter="true"
+                        app:title="@string/rpm_title" />
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorGrey_light" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rpm_hint"
+                    android:text="@string/rpm_hint"
+                    android:textSize="16dp"
+                    android:layout_marginStart="10dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/appointment_text"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/appointment_title"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/appointment_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorWhite"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorGrey_light" />
+
+                    <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                        android:id="@+id/appointment_request"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:isSwitchNeed="true"
+                        app:settings_title="@string/accept_appointment_request" />
+
+                    <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                        android:id="@+id/appointment_slots"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:isSpinnerType="true"
+                        app:title="@string/appointment_slots" />
+
+                    <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                        android:id="@+id/available_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:hideSpiltter="true"
+                        app:isSpinnerType="true"
+                        app:title="@string/available_time" />
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorGrey_light" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/encounter_title"
+                    android:id="@+id/encounter_text"
+                    android:textSize="16dp"
+                    android:textColor="@color/colorBlack"
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="30dp"/>
+
+                <LinearLayout
+                    android:id="@+id/encounter_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorWhite"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorGrey_light" />
+
+                    <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                        android:id="@+id/record_encounter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:isSwitchNeed="true"
+                        app:settings_title="@string/record_encounter" />
+
+                    <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                        android:id="@+id/transcribe_encounter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:isSwitchNeed="true"
+                        app:settings_title="@string/transcribe_encounter" />
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorWhite" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/signature_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/colorWhite"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorGrey_light" />
+
+                    <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                        android:id="@+id/signature"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:title="@string/signature" />
+
+                    <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                        android:id="@+id/privacy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:settings_title="@string/privacy" />
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorWhite" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout

@@ -364,7 +364,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                                 timeEt.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Utils.showTimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                                        Utils.showTimePickerDialog(null,getActivity(), null, new TimePickerDialog.OnTimeSetListener() {
                                             @Override
                                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                                 timeEt.setText(getDisplayTime(hourOfDay, minute));
@@ -416,7 +416,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                                 formTimeEt.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Utils.showTimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                                        Utils.showTimePickerDialog(null,getActivity(), null, new TimePickerDialog.OnTimeSetListener() {
                                             @Override
                                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                                 formTimeEt.setText(getDisplayTime(hourOfDay, minute));

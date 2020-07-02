@@ -50,7 +50,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:icon="@drawable/ic_phone"
-                    app:title="@string/phone_number" />
+                    app:title="@string/phone_no" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/change_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_password"
+                    app:title="@string/password" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/profile"
@@ -60,67 +67,21 @@
                     app:title="@string/profile" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/documents"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:icon="@drawable/ic_settings_document"
-                    app:title="@string/documents" />
-
-                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/medical_history"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/ic_medical_questionarie"
-                    app:title="@string/health_summary" />
-
-                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:icon="@drawable/ic_settings"
-                    app:title="@string/settings" />
-
-                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/change_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/ic_password"
-                    app:title="@string/change_password" />
-
-                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/payments_billings"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/ic_payment"
-                    app:title="@string/payments_billings" />
-
-                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/educational_video"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/ic_educational_video"
-                    app:title="@string/educational_video" />
-
-                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/appointment_slots"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     app:hideSpiltter="true"
-                    app:icon="@drawable/ic_schedules"
-                    app:isSpinnerType="true"
-                    app:title="@string/appointment_slots" />
-
+                    app:icon="@drawable/ic_settings"
+                    app:title="@string/preference" />
 
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:background="@color/colorGrey_light" />
-
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/medical_assistant_ll"
+                android:id="@+id/bill_view"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -134,12 +95,95 @@
                     android:background="@color/colorGrey_light" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/medical_assistant"
+                    android:id="@+id/payments_billings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:hideSpiltter="true"
+                    app:icon="@drawable/ic_payment"
+                    app:title="@string/payments_billings" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
+            </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/call_quality_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:background="@android:color/transparent"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorGrey_light" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                android:id="@+id/check_call_quality"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:hideSpiltter="true"
+                app:icon="@drawable/settings_icon_call_quality"
+                app:title="@string/check_call_quality" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorGrey_light" />
+        </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/medical_assistant_ll"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="@android:color/transparent"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/medical_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_medical_questionarie"
+                    app:title="@string/health_summary" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/documents"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_settings_document"
+                    app:title="@string/documents" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/educational_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_educational_video"
+                    app:title="@string/educational_video" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/medical_assistant"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     app:icon="@drawable/medical_assistant_icon"
                     app:title="@string/medical_assistant" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/logs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hideSpiltter="true"
+                    app:icon="@drawable/setting_logs_icon"
+                    app:title="@string/logs" />
 
                 <View
                     android:layout_width="fill_parent"
@@ -170,14 +214,14 @@
                     android:id="@+id/terms_and_condition"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:title="@string/terms_and_conditions" />
+                    app:title="@string/terms" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/privacy_policy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:hideSpiltter="true"
-                    app:title="@string/privacy_policy" />
+                    app:title="@string/privacy_procedure" />
 
                 <View
                     android:layout_width="fill_parent"

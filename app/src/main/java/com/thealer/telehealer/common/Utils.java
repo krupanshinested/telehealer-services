@@ -237,9 +237,20 @@ public class Utils {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    public static void showTimePickerDialog(FragmentActivity activity, TimePickerDialog.OnTimeSetListener timeSetListener) {
+    public static void showTimePickerDialog(@Nullable String title,
+                                            FragmentActivity activity, @Nullable String time, TimePickerDialog.OnTimeSetListener timeSetListener) {
         Calendar calendar = Calendar.getInstance();
-        TimePickerDialog timePickerDialog = new TimePickerDialog(activity, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
+        if (!TextUtils.isEmpty(time)) {
+            int hour = Integer.parseInt(DateUtil.getLocalfromUTC(time,"hh:mm a","kk"));
+            int minute = Integer.parseInt(DateUtil.getLocalfromUTC(time,"hh:mm a","kk"));
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+        } else {
+        }
+        TimePickerDialog timePickerDialog = new TimePickerDialog(activity, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY),  calendar.get(Calendar.MINUTE), false);
+        if (!TextUtils.isEmpty(title)) {
+                timePickerDialog.setTitle(title);
+            }
         timePickerDialog.show();
     }
 
@@ -502,6 +513,7 @@ public class Utils {
         }
         return "";
     }
+
 
     public static Date getDateFromString(String dateString) {
         DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
@@ -785,17 +797,9 @@ public class Utils {
     }
 
     public static String getUTCfromGMT(String timeStamp) {
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH);
-        inputFormat.setTimeZone(TimeZone.getDefault());
-        DateFormat outputFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
-        outputFormat.setTimeZone(UtcTimezone);
-        try {
-            return outputFormat.format(inputFormat.parse(timeStamp));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return "";
+        return DateUtil.getUTCfromLocal(timeStamp,"yyyy-MM-dd HH:mm:ss.SSS",UTCFormat);
     }
+
 
     public static String getSlotDate(String timeStamp) {
         DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH);

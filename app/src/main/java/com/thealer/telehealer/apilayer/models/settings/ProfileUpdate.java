@@ -10,6 +10,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.HashMap;
@@ -176,6 +177,29 @@ public class ProfileUpdate extends BaseApiViewModel {
                     key.put("appt_requests", request);
 
                     RequestBody body = FormBody.create(MediaType.parse("application/form-data"), new Gson().toJson(key));
+
+                    getAuthApiService().updateUserDetail(body)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void updateAvailableTime(String appt_start_time, String appt_end_time) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                   HashMap<String, String> available_time = new HashMap<>();
+                    available_time.put("appt_start_time", appt_start_time);
+                    available_time.put("appt_end_time", appt_end_time);
+                    RequestBody body = FormBody.create(MediaType.parse("application/form-data"), new Gson().toJson(available_time));
 
                     getAuthApiService().updateUserDetail(body)
                             .compose(applySchedulers())

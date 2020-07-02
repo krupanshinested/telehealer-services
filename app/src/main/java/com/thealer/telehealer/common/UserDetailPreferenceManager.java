@@ -167,6 +167,21 @@ public class UserDetailPreferenceManager {
         appPreference.setInt(PreferenceConstants.USER_APPT_LENGTH, appt_length);
     }
 
+    public  static String getAppt_start_time() {
+        return appPreference.getString(PreferenceConstants.USER_APPT_START_TIME);
+    }
+
+    public static  void setAppt_start_time(String appt_start_time) {
+        appPreference.setString(PreferenceConstants.USER_APPT_START_TIME, appt_start_time);
+    }
+
+    public static String getAppt_end_time() {
+        return appPreference.getString(PreferenceConstants.USER_APPT_END_TIME);
+    }
+
+    public static void setAppt_end_time(String appt_end_time) {
+        appPreference.setString(PreferenceConstants.USER_APPT_END_TIME, appt_end_time);
+    }
     public static String getNpi() {
         return appPreference.getString(PreferenceConstants.USER_NPI);
     }
@@ -228,6 +243,8 @@ public class UserDetailPreferenceManager {
         String response = new Gson().toJson(whoAmIApiResponseModel);
         appPreference.setString(PreferenceConstants.WHO_AM_I_RESPONSE, response);
 
+        setAppt_start_time(whoAmIApiResponseModel.getAppt_start_time());
+        setAppt_end_time(whoAmIApiResponseModel.getAppt_end_time());
         setAppt_length(whoAmIApiResponseModel.getAppt_length());
         setDob(whoAmIApiResponseModel.getDob());
         setEmail(whoAmIApiResponseModel.getEmail());

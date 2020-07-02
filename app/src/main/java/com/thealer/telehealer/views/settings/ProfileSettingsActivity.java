@@ -43,6 +43,7 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.EducationalVideo.EducationalListVideoFragment;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.call.CallNetworkTestActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
@@ -57,6 +58,7 @@ import com.thealer.telehealer.views.home.orders.document.DocumentListFragment;
 import com.thealer.telehealer.views.quickLogin.QuickLoginPinFragment;
 import com.thealer.telehealer.views.settings.Interface.BundleReceiver;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
+import com.thealer.telehealer.views.settings.accessLogs.AccessLogActivity;
 import com.thealer.telehealer.views.settings.medicalAssistant.MedicalAssistantListFragment;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
@@ -293,6 +295,13 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 bundle = new Bundle();
                 EducationalListVideoFragment educationalListVideoFragment = new EducationalListVideoFragment();
                 showSubFragment(educationalListVideoFragment);
+                break;
+            case R.id.check_call_quality:
+                Intent intent = new Intent(this, CallNetworkTestActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.logs:
+                startActivity(new Intent(this, AccessLogActivity.class));
                 break;
             case R.id.feedback:
                 bundle = new Bundle();
@@ -699,7 +708,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     @Override
     public void onSuccessViewCompletion(boolean success) {
-        updateDetailTitle(getString(R.string.settings));
+        updateDetailTitle(getString(R.string.preference));
         setFragment(new ProfileSettingFragment(), true, false, true);
     }
 

@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.settings;
 
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,12 +9,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.snackbar.Snackbar;
 import com.ihealth.communication.utils.Log;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -32,6 +38,7 @@ import com.thealer.telehealer.apilayer.models.userStatus.UpdateStatusApiViewMode
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.DateUtil;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
@@ -50,7 +57,9 @@ import com.thealer.telehealer.views.settings.accessLogs.AccessLogActivity;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
 import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
 
+import java.util.Calendar;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.views.home.orders.forms.EditableFormFragment.getUtcFromDayMonthYear;
 
 /**
  * Created by rsekar on 11/20/18.
@@ -58,9 +67,9 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 public class GeneralSettingsFragment extends BaseFragment implements View.OnClickListener {
 
-    private SettingsCellView checkCallQuality, presence, quickLogin,secure_message,connection_request,appointment_request;
-    private ProfileCellView signature;
-    private LinearLayout deleteView;
+    private SettingsCellView  presence, quickLogin,secure_message,connection_request,appointment_request, order_request, integration_request, record_encounter, transcribe_encounter;
+    private ProfileCellView signature, appointment_slots, available_time;
+    private LinearLayout deleteView, rpmLl,appointmentView,encounterView;
 
     private OnActionCompleteInterface actionCompleteInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
@@ -72,12 +81,14 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
-    private TextView toolbarTitle;
+    private TextView toolbarTitle, appointmentTv, encounterTv, rpmTv;
     private SettingsCellView privacy;
-    private SettingsCellView logs;
+    private String selectedItem, startTime, endTime;
+    private Boolean isSlotLoaded = false;
 
     private ProfileUpdate profileUpdate;
-
+    Calendar calendar1 = Calendar.getInstance();
+    Calendar calendar2 = Calendar.getInstance();
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -95,8 +106,23 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                     whoAmIApiResponseModel.setSecure_message(secure_message.getSwitchStatus());
                     whoAmIApiResponseModel.setConnection_requests(connection_request.getSwitchStatus());
                     whoAmIApiResponseModel.setAppt_requests(appointment_request.getSwitchStatus());
-                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
                     GeneralSettingsFragment.this.whoAmIApiResponseModel = whoAmIApiResponseModel;
+
+                    if (!TextUtils.isEmpty(selectedItem)) {
+                        whoAmIApiResponseModel.setAppt_length(Integer.parseInt(getAppointmentSlotValue(selectedItem)));
+                        appointment_slots.updateUI(false);
+                        appointment_slots.updateValue(getAppointmentSlotValue(selectedItem));
+                    }
+
+                    if (!TextUtils.isEmpty(startTime) && !TextUtils.isEmpty(endTime)) {
+                        whoAmIApiResponseModel.setAppt_end_time(endTime);
+                        whoAmIApiResponseModel.setAppt_start_time(startTime);
+                        available_time.updateUI(false);
+                        updateAvaibleTime(whoAmIApiResponseModel.getAppt_start_time() , whoAmIApiResponseModel.getAppt_end_time());
+                    }
+
+                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+
                 }
             }
         });
@@ -129,6 +155,31 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             secure_message.updateSwitch(false);
         }
 
+        if (whoAmIApiResponseModel != null) {
+            Log.d("message ","order "+whoAmIApiResponseModel.getOrders_enabled());
+            order_request.updateSwitch(whoAmIApiResponseModel.getOrders_enabled());
+        } else {
+            order_request.updateSwitch(false);
+        }
+
+        if (whoAmIApiResponseModel != null) {
+            Log.d("message ","record_encounter "+whoAmIApiResponseModel.getRecording_enabled());
+            record_encounter.updateSwitch(whoAmIApiResponseModel.getRecording_enabled());
+        } else {
+            record_encounter.updateSwitch(false);
+        }
+
+        if (whoAmIApiResponseModel != null) {
+            transcribe_encounter.updateSwitch(whoAmIApiResponseModel.getTranscription_enabled());
+        } else {
+            transcribe_encounter.updateSwitch(false);
+        }
+
+        if (whoAmIApiResponseModel != null) {
+            integration_request.updateSwitch(false);
+        } else {
+            integration_request.updateSwitch(false);
+        }
 
         if (whoAmIApiResponseModel != null) {
             Log.d("message ","connection "+whoAmIApiResponseModel.getConnection_requests());
@@ -146,25 +197,61 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     }
 
     private void initView(View view) {
-        checkCallQuality = view.findViewById(R.id.check_call_quality);
         presence = view.findViewById(R.id.presence);
         quickLogin = view.findViewById(R.id.quick_login);
         signature = view.findViewById(R.id.signature);
         deleteView = view.findViewById(R.id.delete_view);
+        rpmLl = view.findViewById(R.id.rpm_ll);
+        appointmentView = view.findViewById(R.id.appointment_view);
+        encounterView = view.findViewById(R.id.encounter_view);
         notification = (SettingsCellView) view.findViewById(R.id.notification);
         appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        appointmentTv = (TextView) view.findViewById(R.id.appointment_text);
+        encounterTv = (TextView) view.findViewById(R.id.encounter_text);
+        rpmTv = (TextView) view.findViewById(R.id.rpm_hint);
         privacy = (SettingsCellView) view.findViewById(R.id.privacy);
-        logs = (SettingsCellView) view.findViewById(R.id.logs);
         secure_message = view.findViewById(R.id.secure_message);
         connection_request = view.findViewById(R.id.connection_request);
         appointment_request = view.findViewById(R.id.appointment_request);
+        order_request = view.findViewById(R.id.order_request);
+        integration_request = view.findViewById(R.id.integration_request);
+        appointment_slots = view.findViewById(R.id.appointment_slots);
+        available_time= view.findViewById(R.id.available_time);
+        record_encounter = view.findViewById(R.id.record_encounter);
+        transcribe_encounter = view.findViewById(R.id.transcribe_encounter);
 
-        toolbarTitle.setText(getString(R.string.settings));
+        toolbarTitle.setText(getString(R.string.preference));
+        setCurrentTimeOnView();
+        addListenerOnButton();
 
-        checkCallQuality.setOnClickListener(this);
+       /* if (view.getId() == R.id.appointment_slots) {
+            appointment_slots.openSpinner();
+        }*/
+
+        String[] titleList = getActivity().getResources().getStringArray(R.array.doctor_appointment_slots);
+        ArrayAdapter titleAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, titleList);
+        titleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        isSlotLoaded = false;
+        appointment_slots.updateAdapter(titleAdapter, new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!isSlotLoaded) {
+                    isSlotLoaded = true;
+                } else {
+                    selectedItem = parent.getItemAtPosition(position).toString();
+                    profileUpdate.updateAppointmentSlot(getAppointmentSlotValue(selectedItem));
+                }
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        isSlotLoaded = false;
         notification.setOnClickListener(this);
         presence.setOnClickListener(this);
         quickLogin.setOnClickListener(this);
@@ -172,29 +259,61 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         deleteView.setOnClickListener(this);
         backIv.setOnClickListener(this);
         privacy.setOnClickListener(this);
-        logs.setOnClickListener(this);
         secure_message.setOnClickListener(this);
         connection_request.setOnClickListener(this);
         appointment_request.setOnClickListener(this);
+        appointment_slots.setOnClickListener(this);
+        available_time.setOnClickListener(this);
+
+        order_request.setFocusableTitle();
+        integration_request.setFocusableTitle();
+        record_encounter.setFocusableTitle();
+        transcribe_encounter.setFocusableTitle();
 
         switch (appPreference.getInt(Constants.USER_TYPE)) {
             case Constants.TYPE_PATIENT:
                 signature.setVisibility(View.GONE);
                 secure_message.setVisibility(View.GONE);
                 connection_request.setVisibility(View.GONE);
-                appointment_request.setVisibility(View.GONE);
+                order_request.setVisibility(View.GONE);
+                appointmentTv.setVisibility(View.GONE);
+                encounterTv.setVisibility(View.GONE);
+                rpmTv.setVisibility(View.GONE);
+                integration_request.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
+               // rpmLl.setVisibility(View.VISIBLE);
+                appointmentView.setVisibility(View.VISIBLE);
+                encounterView.setVisibility(View.VISIBLE);
+                appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length() + "");
+                if (UserDetailPreferenceManager.getAppt_start_time().equals("08:00 AM") && UserDetailPreferenceManager.getAppt_end_time().equals("09:30 PM")){
+                    startTime = DateUtil.getUTCfromLocal("08:00","hh:mm","hh:mm a");
+                    endTime = DateUtil.getUTCfromLocal("21:30","hh:mm","hh:mm a");
+                } else {
+                    startTime = UserDetailPreferenceManager.getAppt_start_time();
+                    endTime = UserDetailPreferenceManager.getAppt_end_time();
+                }
+                updateAvaibleTime(startTime,endTime);
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
                 secure_message.setVisibility(View.GONE);
                 signature.setVisibility(View.GONE);
                 connection_request.setVisibility(View.GONE);
-                appointment_request.setVisibility(View.GONE);
+                order_request.setVisibility(View.GONE);
+                appointmentTv.setVisibility(View.GONE);
+                encounterTv.setVisibility(View.GONE);
+                rpmTv.setVisibility(View.GONE);
+                integration_request.setVisibility(View.GONE);
                 break;
         }
 
        whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+    }
+
+    private void addListenerOnButton() {
+    }
+
+    private void setCurrentTimeOnView() {
     }
 
     private void updateQuickLoginSwitch() {
@@ -207,11 +326,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             case R.id.back_iv:
                 onCloseActionInterface.onClose(false);
                 break;
-            case R.id.check_call_quality:
-                Intent intent = new Intent(getActivity(), CallNetworkTestActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.notification:
+             case R.id.notification:
                 Utils.showAlertDialog(getActivity(), getString(R.string.settings), getString(R.string.notification_setting_alert_message),
                         getString(R.string.yes), getString(R.string.no),
                         new DialogInterface.OnClickListener() {
@@ -275,7 +390,12 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                     showSignatureView();
                 }
                 break;
-
+            case R.id.appointment_slots:
+                    appointment_slots.openSpinner();
+                break;
+            case R.id.available_time:
+                getAvailableStartTime();
+                break;
             case R.id.connection_request:
                 connection_request.toggleSwitch();
                 profileUpdate.updateConnectionRequest(connection_request.getSwitchStatus());
@@ -308,14 +428,11 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
 
                 break;
             case R.id.privacy:
-                intent = new Intent();
+                Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
                 intent.setData(uri);
                 startActivity(intent);
-                break;
-            case R.id.logs:
-                startActivity(new Intent(getActivity(), AccessLogActivity.class));
                 break;
             case R.id.secure_message:
                 secure_message.toggleSwitch();
@@ -323,9 +440,60 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         }
     }
 
+    private void getAvailableStartTime() {
+        Utils.showTimePickerDialog("Start time",getActivity(),startTime, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                calendar1.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar1.set(Calendar.MINUTE, minute);
+                startTime = DateUtil.getUTCfromLocal(hourOfDay+":"+minute,"hh:mm","hh:mm a");
+                getAvailableEndTime();
+            }
+        });
+    }
+
+    private void getAvailableEndTime() {
+        Utils.showTimePickerDialog("End time",getActivity(),endTime,  new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                calendar2.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar2.set(Calendar.MINUTE, minute);
+                endTime = DateUtil.getUTCfromLocal(hourOfDay+":"+minute,"hh:mm","hh:mm a");
+                if (calendar2.getTimeInMillis() >= calendar1.getTimeInMillis()) {
+                    postAvaibleTime();
+                } else {
+                    Snackbar snackbar = Snackbar.make(getView(), getString(R.string.appt_end_time_note), 3000).setBackgroundTint(getResources().getColor(R.color.app_gradient_start));
+                    Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
+                    View snackbarView = getLayoutInflater().inflate(R.layout.view_snackbar, null);
+                    TextView textView= snackbarView.findViewById(R.id.snackbar_tv);
+                    textView.setText(getString(R.string.appt_end_time_note));
+                    snackbarLayout.addView(snackbarView);
+                    snackbar.addCallback(new Snackbar.Callback() {
+                                             @Override
+                                             public void onDismissed(Snackbar transientBottomBar, int event) {
+                                                 super.onDismissed(transientBottomBar, event);
+                                                 getAvailableEndTime();
+                                             }
+                                         }).show();
+                }
+            }
+        });
+       }
+
+    private void postAvaibleTime() {
+        updateAvaibleTime(startTime,endTime);
+        profileUpdate.updateAvailableTime(startTime, endTime);
+    }
+
     private void showSignatureView() {
         SignatureViewFragment signatureViewFragment = new SignatureViewFragment();
         showSubFragmentInterface.onShowFragment(signatureViewFragment);
+    }
+
+    private void updateAvaibleTime(String startTime,String endTime) {
+        String start = DateUtil.getLocalfromUTC(startTime,"hh:mm a","hh:mm a");
+        String end = DateUtil.getLocalfromUTC(endTime,"hh:mm a","hh:mm a");
+        available_time.updateValue(start + "  -  " + end);
     }
 
 
@@ -348,5 +516,9 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
 
     private boolean isNotificationEnabled() {
         return NotificationManagerCompat.from(getActivity()).areNotificationsEnabled();
+    }
+    private String getAppointmentSlotValue(String selectedItem){
+        String[] value = selectedItem.split("\\s", 2);
+        return value[0];
     }
 }
