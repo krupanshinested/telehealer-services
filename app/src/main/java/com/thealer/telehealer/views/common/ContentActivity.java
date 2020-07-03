@@ -1,17 +1,29 @@
 package com.thealer.telehealer.views.common;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -101,6 +113,16 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
             sub_title_tv.setText(getIntent().getStringExtra(ArgumentKeys.DESCRIPTION));
         }
 
+        if (getIntent().getBooleanExtra(ArgumentKeys.IS_HAVE_CUSTOM_CLICK, false)) {
+
+            sub_title_tv.setText("");
+            String start=getIntent().getStringExtra(ArgumentKeys.START);
+            String end= getIntent().getStringExtra(ArgumentKeys.END);
+            Log.d("START_INDEX",""+start);
+            Log.d("END_INDEX",""+end);
+            makeTextClickable(Integer.parseInt(start),Integer.parseInt(end),getIntent().getStringExtra(ArgumentKeys.DESCRIPTION));
+        }
+
         String actionTitle = getIntent().getStringExtra(ArgumentKeys.OK_BUTTON_TITLE);
         if (TextUtils.isEmpty(actionTitle)) {
             action_btn.setText(getString(R.string.ok));
@@ -185,9 +207,57 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
                 finish();
                 break;
             case R.id.help_tv:
-                Utils.sendHelpEmail(this);
+                showStillNeedHelp();
                 break;
         }
+    }
+
+    private void showStillNeedHelp() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.banner_help);
+        bundle.putString(ArgumentKeys.TITLE,getString(R.string.more_help));
+        bundle.putString(ArgumentKeys.DESCRIPTION, getHelpDesciption());
+        bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
+        bundle.putBoolean(ArgumentKeys.IS_BUTTON_NEEDED, false);
+        bundle.putBoolean(ArgumentKeys.IS_SHOW_HELP, false);
+        bundle.putBoolean(ArgumentKeys.IS_BOTTOM_TEXT_NEEDED, false);
+
+        bundle.putBoolean(ArgumentKeys.IS_HAVE_CUSTOM_CLICK, true);
+        bundle.putString(ArgumentKeys.START, String.valueOf(getHelpDesciption().length()-getString(R.string.click_here).length()));
+        bundle.putString(ArgumentKeys.END, String.valueOf(getHelpDesciption().length()));
+
+        startActivity(new Intent(this, ContentActivity.class).putExtras(bundle));
+    }
+
+    String getHelpDesciption(){
+        Spannable span = new SpannableString(getString(R.string.if_this_emergency));
+        span.setSpan(new ForegroundColorSpan(Color.BLUE), 0, getString(R.string.if_this_emergency).length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return span+"\n\n"+getString(R.string.for_help_scheduling)+"\n\n"+getString(R.string.for_technical_help)+" "+getString(R.string.click_here);
+    }
+
+
+    void makeTextClickable(int start,int end,String text){
+        Log.d("makeTextClickable",""+start+" "+end);
+        ClickableSpan clickable = new ClickableSpan() {
+            @Override
+            public void onClick(View widget) {
+                Utils.sendHelpEmail(ContentActivity.this);
+            }
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                int color = ContextCompat.getColor(ContentActivity.this, R.color.color_blue);
+                ds.setColor(color);
+                ds.setUnderlineText(true);
+            }
+        };
+
+        SpannableString ss = new SpannableString(text);
+        ss.setSpan(new ForegroundColorSpan(Color.RED), 0, getString(R.string.if_this_emergency).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(clickable, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        sub_title_tv.setMovementMethod(LinkMovementMethod.getInstance());
+        sub_title_tv.setHighlightColor(Color.TRANSPARENT);
+        sub_title_tv.setText(ss);
     }
 
     @Override

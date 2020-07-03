@@ -1413,4 +1413,8 @@
     <string name="registration_is_on_process">Registration is on process.</string>
     <string name="registration_error">Registration is not successful</string>
     <string name="account_created">Your account has been created.\n\nLets spend a few quick minutes to setup your profile</string>
+    <string name="more_help">More Help</string>
+    <string name="if_this_emergency">if this is an emergency ,please dial 911</string>
+    <string name="for_technical_help">For technical help or issues using this platform</string>
+    <string name="for_help_scheduling">For help with scheduling appointments or any other health related queries ,please contact your providers office vai phone or email</string>
 </resources>

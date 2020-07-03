@@ -177,6 +177,7 @@ public class ArgumentKeys {
     public static final String IS_CLOSE_NEEDED = "IS_CLOSE_NEEDED";
     public static final String OK_BUTTON_TITLE = "OK_BUTTON_TITLE";
     public static final String IS_BUTTON_NEEDED = "is_button_needed";
+    public static final String IS_HAVE_CUSTOM_CLICK = "IS_HAVE_CUSTOM_CLICK";
 
     public static final String IS_SKIPPED = "IS_SKIPPED";
     public static final String CALL_INITIATE_MODEL = "CALL_INITIATE_MODEL";
@@ -223,6 +224,8 @@ public class ArgumentKeys {
     public static final String SHOW_CONNECTION_REQUEST_ALERT = "SHOW_CONNECTION_REQUEST_ALERT";
     public static final String EDUCATIONAL_VIDEO_ID = "EDUCATIONAL_VIDEO_ID";
     public static final String OPEN_AUTOMATICALLY = "OPEN_AUTOMATICALLY";
+    public static final String START ="START" ;
+    public static final String END ="END" ;
 
 
 
