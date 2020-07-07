@@ -460,6 +460,8 @@ public class Utils {
             case Constants.IOS:
                 PlatoformIv.setImageDrawable(context.getDrawable(R.drawable.ic_apple));
                 break;
+            case Constants.WEB:
+                PlatoformIv.setImageDrawable(context.getDrawable(R.drawable.icon_web));
         }
     }
 

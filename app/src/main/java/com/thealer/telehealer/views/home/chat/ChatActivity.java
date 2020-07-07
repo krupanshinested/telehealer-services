@@ -361,8 +361,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!UserType.isUserPatient())
-            getMenuInflater().inflate(R.menu.menu_chat, menu);
+        if (userModel != null) {
+            if (!UserType.isUserPatient() && !(userModel.getApp_details().isWebUser()))
+                getMenuInflater().inflate(R.menu.menu_chat, menu);
+        }
         return true;
     }
 

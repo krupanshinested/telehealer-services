@@ -299,9 +299,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         }
 
                         ArrayList<String> callTypes = new ArrayList<>();
-                        if (resultBean.isAvailable()) {
-                            callTypes.add(getString(R.string.audio_call));
-                            callTypes.add(getString(R.string.video_call));
+                        if (resultBean.getApp_details() != null) {
+                            if (resultBean.isAvailable() && !(resultBean.getApp_details().isWebUser())) {
+                                callTypes.add(getString(R.string.audio_call));
+                                callTypes.add(getString(R.string.video_call));
+                            }
                         }
                         callTypes.add(getString(R.string.one_way_call));
                         CommonUserApiResponseModel finalCommonUserApiResponseModel = commonUserApiResponseModel;

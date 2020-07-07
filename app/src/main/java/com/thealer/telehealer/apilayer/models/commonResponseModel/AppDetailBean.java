@@ -41,4 +41,11 @@ public class AppDetailBean implements Serializable {
             return platform;
         }
     }
+
+    public Boolean isWebUser() {
+        if (getPlatform().equals(Constants.WEB))
+            return true;
+        else
+            return false;
+    }
 }

@@ -261,8 +261,12 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
             case R.id.patient_call_iv:
 
                 ArrayList<String> callTypes = new ArrayList<>();
-                callTypes.add(getString(R.string.audio_call));
-                callTypes.add(getString(R.string.video_call));
+                if (resultBean.getDoctor().getApp_details() != null){
+                    if (!resultBean.getDoctor().getApp_details().isWebUser()){
+                        callTypes.add(getString(R.string.audio_call));
+                        callTypes.add(getString(R.string.video_call));
+                    }
+            }
                 callTypes.add(getString(R.string.one_way_call));
                 ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
                     @Override
