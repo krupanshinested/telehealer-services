@@ -330,9 +330,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         Date date = Utils.getDateFromString(resultBean.getStart());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        if (!UserType.isUserPatient()) {
-            calendar.add(Calendar.MINUTE, -10);
-        }
+        calendar.add(Calendar.MINUTE, -10);
 
         if (!Utils.isDateTimeExpired(calendar.getTime())) {
             AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
