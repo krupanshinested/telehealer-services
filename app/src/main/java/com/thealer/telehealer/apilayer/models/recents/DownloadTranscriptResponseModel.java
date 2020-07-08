@@ -105,7 +105,7 @@ public class DownloadTranscriptResponseModel extends BaseApiResponseModel {
             this.items = items;
         }
 
-        public String getSpeakerName(TranscriptionApiResponseModel transcriptionApiResponseModel) {
+        public String getSpeakerName(VisitsDetailApiResponseModel transcriptionApiResponseModel) {
             String name = getSpeaker_label();
 
             if (getSpeaker_label().equals("spk_0") ||
@@ -113,11 +113,11 @@ public class DownloadTranscriptResponseModel extends BaseApiResponseModel {
                 int speaker = Integer.parseInt(getSpeaker_label().replace("spk_", "")) + 1;
                 name = "Speaker " + speaker + " : ";
             } else if (getSpeaker_label().equals("caller") &&
-                    transcriptionApiResponseModel.getCaller() != null) {
-                name = transcriptionApiResponseModel.getCaller().getDisplayName();
+                    transcriptionApiResponseModel.getResult().getCaller() != null) {
+                name = transcriptionApiResponseModel.getResult().getCaller().getDisplayName();
             } else if (getSpeaker_label().equals("callee") &&
-                    transcriptionApiResponseModel.getCallee() != null) {
-                name = transcriptionApiResponseModel.getCallee().getDisplayName();
+                    transcriptionApiResponseModel.getResult().getCallee() != null) {
+                name = transcriptionApiResponseModel.getResult().getCallee().getDisplayName();
             }
             return name;
         }

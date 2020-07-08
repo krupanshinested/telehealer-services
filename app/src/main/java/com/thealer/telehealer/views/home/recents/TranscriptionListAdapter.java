@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
-import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseModel;
 
 /**
  * Created by Aswin on 26,December,2018
@@ -19,11 +19,11 @@ import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseMo
 class TranscriptionListAdapter extends RecyclerView.Adapter<TranscriptionListAdapter.ViewHolder> {
     private FragmentActivity activity;
     private DownloadTranscriptResponseModel transcriptResponseModel;
-    private TranscriptionApiResponseModel transcriptionApiResponseModel;
+    private VisitsDetailApiResponseModel transcriptionApiResponseModel;
 
     private int position = -1;
 
-    public TranscriptionListAdapter(FragmentActivity activity, DownloadTranscriptResponseModel downloadTranscriptResponseModel, TranscriptionApiResponseModel transcriptionApiResponseModel) {
+    public TranscriptionListAdapter(FragmentActivity activity, DownloadTranscriptResponseModel downloadTranscriptResponseModel, VisitsDetailApiResponseModel transcriptionApiResponseModel) {
         this.activity = activity;
         this.transcriptResponseModel = downloadTranscriptResponseModel;
         this.transcriptionApiResponseModel = transcriptionApiResponseModel;

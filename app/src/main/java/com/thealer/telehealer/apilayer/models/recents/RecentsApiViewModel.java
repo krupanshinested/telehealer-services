@@ -63,7 +63,7 @@ public class RecentsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getTranscriptionDetail(int id, boolean isShowProgress) {
+    public void getTranscriptionDetail(String id, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {

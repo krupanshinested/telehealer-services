@@ -43,7 +43,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiViewModel;
-import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
@@ -81,7 +81,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
     private RecentsApiViewModel recentsApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private OnCloseActionInterface onCloseActionInterface;
-    private TranscriptionApiResponseModel transcriptionApiResponseModel;
+    private VisitsDetailApiResponseModel visitsDetailApiResponseModel;
     private DownloadTranscriptResponseModel downloadTranscriptResponseModel;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private int position = -1;
@@ -104,20 +104,19 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                     @Override
                     public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                         if (baseApiResponseModel != null) {
-                            if (baseApiResponseModel instanceof TranscriptionApiResponseModel) {
-                                transcriptionApiResponseModel = (TranscriptionApiResponseModel) baseApiResponseModel;
+                            if (baseApiResponseModel instanceof VisitsDetailApiResponseModel) {
+                                visitsDetailApiResponseModel = (VisitsDetailApiResponseModel) baseApiResponseModel;
 
-                                if (transcriptionApiResponseModel.getStatus() != null && transcriptionApiResponseModel.getStatus().equals(transcriptionApiResponseModel.STATUS_READY)) {
                                     String username = null;
                                     if (UserType.isUserPatient()) {
-                                        username = transcriptionApiResponseModel.getDoctor().getDisplayName();
+                                        username = visitsDetailApiResponseModel.getResult().getDoctor().getDisplayName();
                                     } else {
-                                        username = transcriptionApiResponseModel.getPatient().getDisplayName();
+                                        username = visitsDetailApiResponseModel.getResult().getPatient().getDisplayName();
                                     }
                                     toolbarTitle.setTextColor(Color.WHITE);
-                                    toolbarTitle.setText(username + "\n" + Utils.getDayMonthYear(transcriptionApiResponseModel.getOrder_start_time()));
+                                    toolbarTitle.setText(username + "\n" + Utils.getDayMonthYear(visitsDetailApiResponseModel.getResult().getStart_time()));
 
-                                    if (transcriptionApiResponseModel.getDoctor() != null) {
+                                    /*if (transcriptionApiResponseModel.getDoctor() != null) {
                                         if (transcriptionApiResponseModel.getDoctor().getUser_id() == transcriptionApiResponseModel.getCaller_id()) {
                                             transcriptionApiResponseModel.setCaller(transcriptionApiResponseModel.getDoctor());
                                         } else if (transcriptionApiResponseModel.getDoctor().getUser_id() == transcriptionApiResponseModel.getCallee_id()) {
@@ -137,29 +136,13 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                                         } else if (transcriptionApiResponseModel.getMedical_assistant().getUser_id() == transcriptionApiResponseModel.getCallee_id()) {
                                             transcriptionApiResponseModel.setCallee(transcriptionApiResponseModel.getMedical_assistant());
                                         }
-                                    }
+                                    }*/
 
-                                    if (!TextUtils.isEmpty(transcriptionApiResponseModel.getTranscript())) {
-                                        recentsApiViewModel.downloadTranscriptDetail(transcriptionApiResponseModel.getTranscript(), true);
+                                    if (!TextUtils.isEmpty(visitsDetailApiResponseModel.getResult().getTranscript())) {
+                                        recentsApiViewModel.downloadTranscriptDetail(visitsDetailApiResponseModel.getResult().getTranscript(), true);
                                     }
 
                                     createVideoPlayer();
-                                } else {
-                                    Utils.showAlertDialog(getActivity(),
-                                            getString(R.string.alert),
-                                            getString(R.string.transcription_not_ready),
-                                            getString(R.string.ok),
-                                            null,
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.dismiss();
-                                                    onCloseActionInterface.onClose(false);
-                                                }
-                                            },
-                                            null);
-                                }
-
                             } else if (baseApiResponseModel instanceof DownloadTranscriptResponseModel) {
                                 downloadTranscriptResponseModel = (DownloadTranscriptResponseModel) baseApiResponseModel;
                                 updateTranscript();
@@ -211,7 +194,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
         if (getArguments() != null) {
             RecentsApiResponseModel.ResultBean resultBean = (RecentsApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL);
             if (resultBean != null) {
-                recentsApiViewModel.getTranscriptionDetail(resultBean.getTranscription_id(), true);
+                recentsApiViewModel.getTranscriptionDetail(resultBean.getOrder_id(), true);
             }
         }
     }
@@ -221,7 +204,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
         if (downloadTranscriptResponseModel != null && downloadTranscriptResponseModel.getSpeakerLabels().size() > 0) {
             enableOrDisableView(printIv, true);
             enableOrDisableView(featuresIv, true);
-            transcriptionListAdapter = new TranscriptionListAdapter(getActivity(), downloadTranscriptResponseModel, transcriptionApiResponseModel);
+            transcriptionListAdapter = new TranscriptionListAdapter(getActivity(), downloadTranscriptResponseModel, visitsDetailApiResponseModel);
             transcriptRv.getRecyclerView().setAdapter(transcriptionListAdapter);
         } else {
             enableOrDisableView(printIv, false);
@@ -240,7 +223,7 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
     }
 
     private void createVideoPlayer() {
-        String path = transcriptionApiResponseModel.getAudio_stream();
+        String path = visitsDetailApiResponseModel.getResult().getAudio_stream();
 
         /*if (transcriptionApiResponseModel.getAudio_stream().contains("http:") || transcriptionApiResponseModel.getAudio_stream().contains("https:")) {
             path = transcriptionApiResponseModel.getAudio_stream();
@@ -341,8 +324,8 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                 }
                 break;
             case R.id.print_iv:
-                if (transcriptionApiResponseModel != null && downloadTranscriptResponseModel != null) {
-                    String transcriptPdf = new TranscriptionPdfGenerator(getActivity()).getTranscriptPdf(transcriptionApiResponseModel, downloadTranscriptResponseModel, getString(R.string.fine_transcript_message));
+                if (visitsDetailApiResponseModel != null && downloadTranscriptResponseModel != null) {
+                    String transcriptPdf = new TranscriptionPdfGenerator(getActivity()).getTranscriptPdf(visitsDetailApiResponseModel, downloadTranscriptResponseModel, getString(R.string.fine_transcript_message));
 
                     PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
                     bundle.putString(ArgumentKeys.HTML_FILE, transcriptPdf);
@@ -352,10 +335,10 @@ public class RecentDetailView extends BaseFragment implements View.OnClickListen
                 }
                 break;
             case R.id.features_iv:
-                if (transcriptionApiResponseModel != null && downloadTranscriptResponseModel != null) {
+                if (visitsDetailApiResponseModel != null && downloadTranscriptResponseModel != null) {
 
                     bundle = new Bundle();
-                    bundle.putString(ArgumentKeys.ORDER_ID, transcriptionApiResponseModel.getOrder_id());
+                    bundle.putString(ArgumentKeys.ORDER_ID, visitsDetailApiResponseModel.getResult().getOrder_id());
                     bundle.putSerializable(ArgumentKeys.TRANSCRIPTION_DETAIL, downloadTranscriptResponseModel);
 
                     ExperimentalFeatureFragment experimentalFeatureFragment = new ExperimentalFeatureFragment();

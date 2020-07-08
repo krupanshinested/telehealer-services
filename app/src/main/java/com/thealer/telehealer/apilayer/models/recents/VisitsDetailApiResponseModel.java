@@ -49,6 +49,8 @@ public class VisitsDetailApiResponseModel extends BaseApiResponseModel {
         private int schedule_id;
         private UserBean patient;
         private UserBean doctor;
+        private UserBean callee;
+        private UserBean caller;
         private UserBean medical_assistant;
         private List<Integer> user_vitals;
         private List<Integer> user_diets;
@@ -355,6 +357,22 @@ public class VisitsDetailApiResponseModel extends BaseApiResponseModel {
 
         public void setUpdated_transcript(String updated_transcript) {
             this.updated_transcript = updated_transcript;
+        }
+
+        public UserBean getCallee() {
+            return callee;
+        }
+
+        public void setCallee(UserBean callee) {
+            this.callee = callee;
+        }
+
+        public UserBean getCaller() {
+            return caller;
+        }
+
+        public void setCaller(UserBean caller) {
+            this.caller = caller;
         }
     }
 }

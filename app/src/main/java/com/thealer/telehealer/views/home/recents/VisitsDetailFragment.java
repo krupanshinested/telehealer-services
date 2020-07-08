@@ -46,7 +46,6 @@ import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiViewModel;
-import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitDiagnosisModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitSummaryApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseModel;
@@ -105,7 +104,6 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     private IcdCodesDataViewModel icdCodesDataViewModel;
 
     private RecentsApiResponseModel.ResultBean recentDetail;
-    private TranscriptionApiResponseModel transcriptionApiResponseModel;
     private DownloadTranscriptResponseModel downloadTranscriptResponseModel;
     private VisitsDetailApiResponseModel visitsDetailApiResponseModel;
     private SchedulesApiResponseModel.ResultBean schedulesApiResponseModel;
@@ -132,6 +130,8 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         icdCodesDataViewModel.setSelectedIcdCodeList(new MediatorLiveData<>());
         icdCodesDataViewModel.setIcdCodeDetailHashMap(new MediatorLiveData<>());
 
+        visitDetailViewModel = new ViewModelProvider(this).get(VisitDetailViewModel.class);
+
         dietApiViewModel = new ViewModelProvider(this).get(DietApiViewModel.class);
         dietApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
@@ -143,8 +143,6 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 }
             }
         });
-
-        visitDetailViewModel = new ViewModelProvider(this).get(VisitDetailViewModel.class);
 
         schedulesApiViewModel = new ViewModelProvider(this).get(SchedulesApiViewModel.class);
         attachObserverInterface.attachObserver(schedulesApiViewModel);
@@ -226,7 +224,8 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                                     getReferralOrderDetail();
                                     break;
                                 default:
-                                    getOrderDetail();
+                                    getVisitDetail();
+                                   break;
                             }
                         } else if ((Object) visitsDetailApiResponseModel.getResult().getSchedule_id() != null &&
                                 visitsDetailApiResponseModel.getResult().getSchedule_id() != 0) {
@@ -352,20 +351,17 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel instanceof TranscriptionApiResponseModel) {
+                    if (baseApiResponseModel instanceof VisitsDetailApiResponseModel) {
 
-                        transcriptionApiResponseModel = (TranscriptionApiResponseModel) baseApiResponseModel;
+                        visitsDetailApiResponseModel = (VisitsDetailApiResponseModel) baseApiResponseModel;
 
-                        visitDetailViewModel.setTranscriptionApiResponseModel(transcriptionApiResponseModel);
+                        visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
                         visitDetailListAdapter.setData();
 
-                        getOrderDetail();
+                        if (visitsDetailApiResponseModel.getResult().getStatus() != null &&
+                                visitsDetailApiResponseModel.getResult().getTranscript() != null) {
 
-                        if (transcriptionApiResponseModel.getStatus() != null &&
-                                transcriptionApiResponseModel.getStatus().equals(transcriptionApiResponseModel.STATUS_READY) &&
-                                transcriptionApiResponseModel.getTranscript() != null) {
-
-                            downloadTranscript(transcriptionApiResponseModel.getTranscript(), true);
+                            downloadTranscript(visitsDetailApiResponseModel.getResult().getTranscript(), true);
                         }
 
                     } else if (baseApiResponseModel instanceof DownloadTranscriptResponseModel) {
@@ -434,10 +430,9 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         }
     }
 
-    private void getOrderDetail() {
-        if (transcriptionApiResponseModel.getOrder_id() != null) {
-            visitsApiViewModel.getOrderDetail(transcriptionApiResponseModel.getOrder_id(), (UserType.isUserAssistant() ? doctorGuid : null), true);
-        }
+    private void getVisitDetail() {
+        if (visitDetailViewModel.getVisitsDetailApiResponseModel() == null)
+            visitsApiViewModel.getVisitApiDetail(recentDetail.getOrder_id(), (UserType.isUserAssistant() ? doctorGuid : null), true);
     }
 
     @Nullable
@@ -483,8 +478,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 patientGuid = recentDetail.getPatient().getUser_guid();
                 doctorGuid = recentDetail.getDoctor().getUser_guid();
 
-                if (transcriptionApiResponseModel == null)
-                    recentsApiViewModel.getTranscriptionDetail(recentDetail.getTranscription_id(), true);
+                getVisitDetail();
 
                 checkForPatientDetail();
 

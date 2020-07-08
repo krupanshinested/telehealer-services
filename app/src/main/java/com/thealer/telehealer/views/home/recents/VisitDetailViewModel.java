@@ -19,7 +19,6 @@ import com.thealer.telehealer.apilayer.models.orders.radiology.GetRadiologyRespo
 import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitDiagnosisModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
@@ -35,7 +34,6 @@ import java.util.Map;
  */
 public class VisitDetailViewModel extends ViewModel {
     private RecentsApiResponseModel.ResultBean recentResponseModel;
-    private TranscriptionApiResponseModel transcriptionApiResponseModel;
     private DownloadTranscriptResponseModel downloadTranscriptResponseModel;
     private DownloadTranscriptResponseModel updatedTranscriptResponseModel;
     private VisitsDetailApiResponseModel visitsDetailApiResponseModel;
@@ -245,14 +243,6 @@ public class VisitDetailViewModel extends ViewModel {
 
     public void setRecentResponseModel(RecentsApiResponseModel.ResultBean recentResponseModel) {
         this.recentResponseModel = recentResponseModel;
-    }
-
-    public TranscriptionApiResponseModel getTranscriptionApiResponseModel() {
-        return transcriptionApiResponseModel;
-    }
-
-    public void setTranscriptionApiResponseModel(TranscriptionApiResponseModel transcriptionApiResponseModel) {
-        this.transcriptionApiResponseModel = transcriptionApiResponseModel;
     }
 
     public DownloadTranscriptResponseModel getDownloadTranscriptResponseModel() {

@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
-import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseModel;
 import com.thealer.telehealer.common.Utils;
 
 import java.text.DateFormat;
@@ -168,7 +168,7 @@ public class TranscriptionPdfGenerator {
         this.context = context;
     }
 
-    public String getTranscriptPdf(TranscriptionApiResponseModel transcriptionApiResponseModel,
+    public String getTranscriptPdf(VisitsDetailApiResponseModel transcriptionApiResponseModel,
                                    DownloadTranscriptResponseModel downloadTranscriptResponseModel, String transcript_info) {
 
         String chatDetail = getChatDetails(transcriptionApiResponseModel);
@@ -177,7 +177,7 @@ public class TranscriptionPdfGenerator {
         return chatDetail.replace(MESSAGE_INFO, transcriptDetail).replace(TRANSCRIPTION_NOTE, "*" + transcript_info);
     }
 
-    private String getTranscriptDetails(TranscriptionApiResponseModel transcriptionApiResponseModel, DownloadTranscriptResponseModel downloadTranscriptResponseModel) {
+    private String getTranscriptDetails(VisitsDetailApiResponseModel transcriptionApiResponseModel, DownloadTranscriptResponseModel downloadTranscriptResponseModel) {
         StringBuilder transcriptDetail = new StringBuilder();
 
         for (int i = 0; i < downloadTranscriptResponseModel.getSpeakerLabels().size(); i++) {
@@ -195,14 +195,14 @@ public class TranscriptionPdfGenerator {
         return transcriptDetail.toString();
     }
 
-    private String getChatDetails(TranscriptionApiResponseModel transcriptionApiResponseModel) {
+    private String getChatDetails(VisitsDetailApiResponseModel transcriptionApiResponseModel) {
         String chatDetails = transcriptionHeader;
 
-        String date = Utils.getDayMonthYear(transcriptionApiResponseModel.getOrder_start_time());
-        String duration = getDuration(transcriptionApiResponseModel.getOrder_start_time(), transcriptionApiResponseModel.getOrder_end_time());
-        String type = transcriptionApiResponseModel.getType();
-        String patientName = Utils.getPatientDisplayName(transcriptionApiResponseModel.getPatient().getFirst_name(), transcriptionApiResponseModel.getPatient().getLast_name());
-        String doctorName = Utils.getDoctorDisplayName(transcriptionApiResponseModel.getDoctor().getFirst_name(), transcriptionApiResponseModel.getDoctor().getLast_name(), "");
+        String date = Utils.getDayMonthYear(transcriptionApiResponseModel.getResult().getStart_time());
+        String duration = getDuration(transcriptionApiResponseModel.getResult().getStart_time(), transcriptionApiResponseModel.getResult().getEnd_time());
+        String type = transcriptionApiResponseModel.getResult().getType();
+        String patientName = Utils.getPatientDisplayName(transcriptionApiResponseModel.getResult().getPatient().getFirst_name(), transcriptionApiResponseModel.getResult().getPatient().getLast_name());
+        String doctorName = Utils.getDoctorDisplayName(transcriptionApiResponseModel.getResult().getDoctor().getFirst_name(), transcriptionApiResponseModel.getResult().getDoctor().getLast_name(), "");
 
         String icon = "pdf_icon.png";
 

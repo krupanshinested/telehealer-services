@@ -74,8 +74,9 @@
                 android:scaleType="fitXY" />
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:id="@+id/transcript_video_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_play_circle_48dp" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

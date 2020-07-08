@@ -34,12 +34,12 @@ public class VisitsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getOrderDetail(String orderId, String doctorGuid, boolean isShowProgress) {
+    public void getVisitApiDetail(String orderId, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getOrderDetail(orderId, doctorGuid)
+                    getAuthApiService().getVisitDetail(orderId, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

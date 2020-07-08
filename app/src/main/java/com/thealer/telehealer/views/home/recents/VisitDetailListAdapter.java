@@ -35,6 +35,7 @@ import com.thealer.telehealer.apilayer.models.orders.OrdersIdListApiResponseMode
 import com.thealer.telehealer.apilayer.models.orders.documents.DocumentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
+import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitDiagnosisModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewModel;
@@ -197,27 +198,29 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 CallSummaryViewHolder callSummaryViewHolder = (CallSummaryViewHolder) holder;
 
                 CallSummaryModel callSummaryModel = visitDetailAdapterModel.getCallSummaryModel();
-                callSummaryViewHolder.dateTv.setText(Utils.getDayMonthYear(callSummaryModel.getCallStartTime()));
+                RecentsApiResponseModel.ResultBean resultBean = detailViewModel.getRecentResponseModel();
+                callSummaryViewHolder.dateTv.setText(Utils.getDayMonthYear(detailViewModel.getRecentResponseModel().getStart_time()));
                 if (callSummaryModel.getCallCategory() != null && !UserType.isUserPatient()) {
                     callSummaryViewHolder.callTypeTv.setText(callSummaryModel.getCallCategory());
                 } else {
                     callSummaryViewHolder.callTypeTv.setVisibility(View.GONE);
                 }
                 String timeDisplayFormat = "%s to %s ( %s )";
-                callSummaryViewHolder.callTimeTv.setText(String.format(timeDisplayFormat, Utils.getFormatedTime(callSummaryModel.getCallStartTime()),
-                        Utils.getFormatedTime(callSummaryModel.getCallEndTime()), Utils.getDisplayDuration(callSummaryModel.getDurationInSec())));
-                callSummaryViewHolder.transcriptVideoIv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RecentDetailView recentDetailView = new RecentDetailView();
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL, detailViewModel.getRecentResponseModel());
-                        recentDetailView.setArguments(bundle);
-                        showSubFragmentInterface.onShowFragment(recentDetailView);
-                    }
-                });
-                if (visitDetailAdapterModel.getCallSummaryModel().getScreenShot() != null) {
+                callSummaryViewHolder.callTimeTv.setText(String.format(timeDisplayFormat, Utils.getFormatedTime(resultBean.getStart_time()), Utils.getFormatedTime(callSummaryModel.getCallEndTime()) ,Utils.getDisplayDuration(callSummaryModel.getDurationInSec())));
+                if (detailViewModel.getVisitsDetailApiResponseModel().getResult().getAudio_stream()!=null) {
                     Utils.setImageWithGlide(activity, callSummaryViewHolder.transcriptVideoIv, visitDetailAdapterModel.getCallSummaryModel().getScreenShot(), null, true, false);
+                    callSummaryViewHolder.transcriptVideoIv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            RecentDetailView recentDetailView = new RecentDetailView();
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL, detailViewModel.getRecentResponseModel());
+                            recentDetailView.setArguments(bundle);
+                            showSubFragmentInterface.onShowFragment(recentDetailView);
+                        }
+                    });
+                 } else {
+                    callSummaryViewHolder.transcriptVideoIcon.setImageDrawable(activity.getDrawable(R.drawable.ic_no_video));
                 }
                 break;
             case VisitDetailConstants.TYPE_USER_INFO:
@@ -376,7 +379,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 TranscriptViewHolder transcriptViewHolder = (TranscriptViewHolder) holder;
 
                 DownloadTranscriptResponseModel.SpeakerLabelsBean speakerLabelsBean = adapterModelList.get(i).getTranscriptModel();
-                transcriptViewHolder.callerNameTv.setText(speakerLabelsBean.getSpeakerName(detailViewModel.getTranscriptionApiResponseModel()));
+                transcriptViewHolder.callerNameTv.setText(speakerLabelsBean.getSpeakerName(detailViewModel.getVisitsDetailApiResponseModel()));
                 transcriptViewHolder.visitCb.setChecked(!speakerLabelsBean.isRemoved());
 
                 TextWatcher transcriptTextWatcher;
@@ -550,7 +553,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         bundle.putSerializable(Constants.DOCTOR_DETAIL, detailViewModel.getDoctorDetailModel());
                         bundle.putString(ArgumentKeys.SEARCH_TYPE, VitalReportApiViewModel.LAST_WEEK);
                         bundle.putString(ArgumentKeys.DOCTOR_GUID, detailViewModel.getDoctorDetailModel().getUser_guid());
-                        bundle.putString(ArgumentKeys.ORDER_ID, detailViewModel.getTranscriptionApiResponseModel().getOrder_id());
+                        bundle.putString(ArgumentKeys.ORDER_ID, detailViewModel.getVisitsDetailApiResponseModel().getResult().getOrder_id());
                         bundle.putBoolean(ArgumentKeys.DISABLE_CANCEL, true);
 
                         switch (addNewModel.getType()) {
@@ -1362,7 +1365,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private CardView callTypeCv;
         private TextView callTypeTv;
         private TextView callTimeTv;
-        private ImageView transcriptVideoIv;
+        private ImageView transcriptVideoIv, transcriptVideoIcon;
 
         public CallSummaryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -1371,6 +1374,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             callTypeTv = (TextView) itemView.findViewById(R.id.call_type_tv);
             callTimeTv = (TextView) itemView.findViewById(R.id.call_time_tv);
             transcriptVideoIv = (ImageView) itemView.findViewById(R.id.transcript_video_iv);
+            transcriptVideoIcon = (ImageView) itemView.findViewById(R.id.transcript_video_icon);
         }
     }
 
@@ -1389,18 +1393,18 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         /**
          * call summary
          */
-        if (detailViewModel.getTranscriptionApiResponseModel() != null) {
+        if (detailViewModel.getVisitsDetailApiResponseModel() != null) {
             modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_HEADER, activity.getString(R.string.call_summary)));
             String screenShot = null;
             if (detailViewModel.getVisitsDetailApiResponseModel() != null && detailViewModel.getVisitsDetailApiResponseModel().getResult() != null) {
                 screenShot = detailViewModel.getVisitsDetailApiResponseModel().getResult().getAudio_stream_screenshot();
             }
 
-            CallSummaryModel callSummaryModel = new CallSummaryModel(detailViewModel.getTranscriptionApiResponseModel().getOrder_start_time(),
-                    detailViewModel.getTranscriptionApiResponseModel().getOrder_end_time(),
-                    detailViewModel.getTranscriptionApiResponseModel().getType(),
-                    detailViewModel.getTranscriptionApiResponseModel().getCategory(),
-                    detailViewModel.getTranscriptionApiResponseModel().getAudio_stream(),
+            CallSummaryModel callSummaryModel = new CallSummaryModel(detailViewModel.getVisitsDetailApiResponseModel().getResult().getStart_time(),
+                    detailViewModel.getVisitsDetailApiResponseModel().getResult().getEnd_time(),
+                    detailViewModel.getVisitsDetailApiResponseModel().getResult().getType(),
+                    detailViewModel.getVisitsDetailApiResponseModel().getResult().getCategory(),
+                    detailViewModel.getVisitsDetailApiResponseModel().getResult().getAudio_stream(),
                     detailViewModel.getRecentResponseModel().getDurationInSecs(),
                     screenShot);
             modelList.add(new VisitDetailAdapterModel(VisitDetailConstants.TYPE_CALL_SUMMARY, callSummaryModel));

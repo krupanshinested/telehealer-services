@@ -63,7 +63,6 @@ import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialist
 import com.thealer.telehealer.apilayer.models.pendingInvites.PendingInvitesNonRegisterdApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.DownloadTranscriptResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.RecentsApiResponseModel;
-import com.thealer.telehealer.apilayer.models.recents.TranscriptionApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitSummaryApiResponseModel;
 import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseModel;
 import com.thealer.telehealer.apilayer.models.requestotp.OtpVerificationResponseModel;
@@ -468,8 +467,8 @@ public interface ApiInterface {
     @POST("api/setup/invite")
     Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid, @Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);
 
-    @GET("api/transcriptions/{id}")
-    Observable<TranscriptionApiResponseModel> getTranscriptionDetails(@Path(ID) int id);
+    @GET("api/call/{id}")
+    Observable<VisitsDetailApiResponseModel> getTranscriptionDetails(@Path(ID) String id);
 
     @POST("api/pubnub/grant_access")
     Observable<BaseApiResponseModel> grantPubnubAccess(@Query(CHANNEL) String channel);
@@ -630,7 +629,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> updateVisit(@Path(ID) String orderId, @Body UpdateVisitRequestModel requestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/call/{id}")
-    Observable<VisitsDetailApiResponseModel> getOrderDetail(@Path(ID) String orderId, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<VisitsDetailApiResponseModel> getVisitDetail(@Path(ID) String orderId, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/call/{id}")
     Observable<VisitSummaryApiResponseModel> getVisitSummary(@Path(ID) String orderId, @Query("visit_summary") boolean isVisitSummary);
