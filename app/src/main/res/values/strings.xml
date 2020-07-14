@@ -32,7 +32,7 @@
     <string name="role_info">Select your role</string>
     <string name="assistant_info">Enter your first name,last name,gender,title and Degree.</string>
     <string name="insurance_info">Capture your Insurance card\'s front and back side</string>
-    <string name="payment_info">If you choose your payment method as cash, then you will be responsible for any copays/deductible/coinsurance resulting from any interactions with your doctor.\n\nSelect the Cash option incase you don\'t have your insurance information handy. However, please remember to update this information prior to scheduling your first appointment</string>
+    <string name="payment_info">If you choose your payment method as cash, then you will be responsible for any copays/deductible/coinsurance resulting from any interactions with your provider.\n\nSelect the Cash option incase you don\'t have your insurance information handy. However, please remember to update this information prior to scheduling your first appointment</string>
     <string name="otp_info">The code expires in 10mins after you request it.Incase you don’t get the code, you can request for another one in 30 seconds via the link below.</string>
     <string name="image_certificate_info">Capture and save your Certificate.</string>
     <string name="ma_certificate_info">Tap the certificate to preview it in full screen.</string>
@@ -53,7 +53,7 @@
     <string name="enter_the_authorization_code_sent_to">Enter the authorization code sent to</string>
     <string name="resend">Resend</string>
     <string name="select_your_role">Select your role</string>
-    <string name="doctor">DOCTOR</string>
+    <string name="doctor">PROVIDER</string>
     <string name="medical_assistant">Medical Assistant</string>
     <string name="title">Title</string>
     <string name="degree">Degree</string>
@@ -113,7 +113,7 @@
     <string name="version_label">App version :\t</string>
 
     <string-array name="onboarding_list">
-        <item>Visit doctors remotely through a private and secure video call</item>
+        <item>Visit providers remotely through a private and secure video call</item>
         <item>Measure vitals to asses condition</item>
         <item>Transcribe entire encounter</item>
         <item>Send and manage orders such as labs, prescriptions and specialist referrals</item>
@@ -216,7 +216,7 @@
     <string name="vital_broadcast_receiver">VitalBroadcastReceiver</string>
     <string name="doctor_search_name_info">Enter your name</string>
     <string name="doctor_select_profile_info">Select your profile</string>
-    <string name="doctor_detail_info">Doctor Registration</string>
+    <string name="doctor_detail_info">Provider Registration</string>
     <string name="release_info">Please read the info release.</string>
     <string name="reenter_password">Re-Enter your Password</string>
     <string name="success_reset_password">Remember to user your new password when logging in the new time around</string>
@@ -372,9 +372,9 @@
     <string name="profile_settings">Profile Settings</string>
     <string name="submit">submit</string>
     <string name="time">time</string>
-    <string name="vitals_patient_bottom_hint_1">Your doctor\'s office may be  </string>
+    <string name="vitals_patient_bottom_hint_1">Your provider\'s office may be  </string>
     <string name="not">NOT</string>
-    <string name="vitals_patient_bottom_hint_2">reviewing this immediately.  Contact your doctor\'s office is you have concerns with these results.</string>
+    <string name="vitals_patient_bottom_hint_2">reviewing this immediately.  Contact your provider\'s office is you have concerns with these results.</string>
     <string name="search_associations">Search Associations</string>
     <string name="search_notification">Search Notification</string>
     <string name="go_to_settings">Go to settings</string>
@@ -397,7 +397,7 @@
     <string name="search_icd10_codes">Search ICD10 codes</string>
     <string name="selected">Selected</string>
     <string name="icd_10">ICD-10</string>
-    <string name="search_doctors">Search Doctors</string>
+    <string name="search_doctors">Search Providers</string>
     <string name="search_schedules">Search Schedules</string>
     <string name="choose_test">Choose Test</string>
     <string name="quick_login_broadcast_receiver">quick_login_broadcast_receiver</string>
@@ -427,7 +427,7 @@
     <string name="association_deleted">Association Deleted</string>
     <string name="delete_connection">Delete Connection</string>
     <string name="disassoctiate_this_connection">Are you sure to disassociate this connection?</string>
-    <string name="Doctors">Doctors</string>
+    <string name="Doctors">Providers</string>
     <string name="Patients">Patients</string>
     <string name="times">times</string>
     <string name="new_radiology">New Radiology</string>
@@ -595,9 +595,9 @@
     <string name="new_appointment">New Appointment</string>
     <string name="Continue">Continue</string>
     <string name="in_the_case_of_emergency_please_cancel_this_request_and_call_911">In the case of emergency, please cancel this request and call 911</string>
-    <string name="choose_doctor">Choose Doctor</string>
+    <string name="choose_doctor">Choose Provider</string>
     <string name="choose_patient">Choose Patient</string>
-    <string name="slot_info">Try and select more than one slot. Remember, the time slot represents a window when the doctor can reach you.</string>
+    <string name="slot_info">Try and select more than one slot. Remember, the time slot represents a window when the provider can reach you.</string>
     <string name="add_slots">Add Slot</string>
     <string name="reason_for_visit">Reason for visit</string>
     <string name="demographic_info">Demographic Info</string>
@@ -607,10 +607,10 @@
     <string name="request_appointment">Request Appointment</string>
     <string name="patient_history">Patient History</string>
     <string name="post_your_comments">Post your comments</string>
-    <string name="Click_here_to_select_doctor">Click here to select doctor</string>
-    <string name="please_select_a_doctor">Please select a doctor</string>
+    <string name="Click_here_to_select_doctor">Click here to select provider</string>
+    <string name="please_select_a_doctor">Please select a provider</string>
     <string name="select_patient_to_add_slot">Select a patient to add slots</string>
-    <string name="select_doctor_to_add_slot">Select a doctor to add slots</string>
+    <string name="select_doctor_to_add_slot">Select a provider to add slots</string>
     <string name="posting_your_appointment">Posting your appointment...</string>
     <string name="request_slots">Requested slots</string>
     <string name="reject">reject</string>
@@ -704,7 +704,7 @@
     <string name="splash_screen_text">Do not use in case of a medical emergency</string>
     <string name="helpmail_note_message">NOTE : PLS DO NOT POST ANY HEALTH-RELATED OR SCHEDULING QUERIES HERE. USE THIS ONLY IF YOU NEED TECHNICAL SUPPORT WITH THE APP/PLATFORM.</string>
     <string name="non_medical_queries">To be used only for non-medical related queries.</string>
-    <string name="video_feed_description">When answering your doctor\'s video calls from the locked screen, remember to click the \'%s button\' on the right top corner to enable your video feed.</string>
+    <string name="video_feed_description">When answering your provider\'s video calls from the locked screen, remember to click the \'%s button\' on the right top corner to enable your video feed.</string>
     <string name="ccm">CCM</string>
     <string name="rpm">RPM</string>
     <string name="bhi">BHI</string>
@@ -734,7 +734,7 @@
     <string name="fine_transcript_message">Transcript is auto-generated and may have inaccuracies owing to ambient noise, user-accent, and other technical limitations. Please always refer to the recorded audio/video as a more accurate archive of the encounter.</string>
     <string name="duration">Duration</string>
     <string name="type">Type</string>
-    <string name="doctor_name">Doctor Name</string>
+    <string name="doctor_name">Provider Name</string>
     <string name="chat_transcript">Chat Transcript</string>
     <string name="resend_mail">Resend Mail</string>
     <string name="coming_soon">(Coming Soon)</string>
@@ -746,7 +746,7 @@
     <string name="UPDATE">UPDATE</string>
     <string name="help_content_doctor_patient">View your list of connected %1$s here. You can add to this list by requesting a new connection with one or more of your established %2$s.\n\nClick the “+” icon on the right top corner to send a request to %3$s you already know. Once a connection request has been accepted, the %4$s will automatically show up on this list.</string>
     <string name="help_content_orders">Create and optionally fax any new orders.\n\nClick the “+” icon on the right top corner to get started. Orders can vary from prescriptions, labs, radiology, referrals, and/or medical questionnaires. Once an order has been created, you can vIew and/or print these orders.</string>
-    <string name="help_content_vitals">Pair with a list of supported devices and initiate a measurement.\n\nClick the “+” icon on the right top corner to get started. Measurements can be captured directly from the device or manually recorded by either the doctor or patient. All captured vitals can be viewed and/or printed.\n\nVital measurements can vary from blood pressure, weight, glucose, temperature, pulse ox, and pulse rate.</string>
+    <string name="help_content_vitals">Pair with a list of supported devices and initiate a measurement.\n\nClick the “+” icon on the right top corner to get started. Measurements can be captured directly from the device or manually recorded by either the provider or patient. All captured vitals can be viewed and/or printed.\n\nVital measurements can vary from blood pressure, weight, glucose, temperature, pulse ox, and pulse rate.</string>
     <string name="help_content_vital_report">Perform remote monitoring by reviewing your patient\'s captured vitals. The list shows all patients who have captured their vitals during a selected monitoring period. Vital measurements captured by the patient can vary from blood pressure, weight, glucose, temperature, pulse ox, and pulse rate.</string>
     <string name="help_content_recents">View the list of prior calls with your %s. Clicking each entry will display the recorded encounter along with the transcript of the call.</string>
     <string name="help_content_schedules">View all your upcoming appointments and their associated details.\n\nClick the “+” icon on the right top corner to initiate an appointment request. Only requests that are accepted will appear here on the schedules page. The application also provides an automatic reminder 10 minutes prior to a scheduled appointment.</string>
@@ -871,7 +871,7 @@
     <string name="signature_capture">Signature Capture</string>
     <string name="upload_driver_license">Upload your driver\'s license</string>
     <string name="upload_doctor_certificate">Upload your medical school diploma / certificate</string>
-    <string name="payment_alert_info">You will be responsible for any copays/deductible/coinsurance resulting from any interactions with your doctor.</string>
+    <string name="payment_alert_info">You will be responsible for any copays/deductible/coinsurance resulting from any interactions with your provider.</string>
     <string name="enter_your_email">Enter your email</string>
     <string name="enter_your_phone_number">Enter your phone number</string>
     <string name="check_network">Please check your network connection</string>
@@ -942,9 +942,9 @@
     <string name="sending_your_fax">Sending your fax.</string>
     <string name="fax_sent_successfully">Your fax sent successfully</string>
     <string name="no_forms_to_send">There is no forms to send</string>
-    <string name="abnormal_vital_alert_message">Please remember to follow your doctor\'s prescribed guidance for any medications and diet. If you have any questions or concerns with your measured vitals, do not hesitate to reach out directly to your doctor.</string>
+    <string name="abnormal_vital_alert_message">Please remember to follow your provider\'s prescribed guidance for any medications and diet. If you have any questions or concerns with your measured vitals, do not hesitate to reach out directly to your provider.</string>
     <string name="know_your_numbers">Know your numbers</string>
-    <string name="know_your_number_description">While you wait for your doctor to accept the connection request, you can review and purchase one or more supported biometric devices to measure your vitals or manually enter any recent vitals captured outside this app by clicking the ‘+’ button on the bottom right corner of the vitals page.</string>
+    <string name="know_your_number_description">While you wait for your provider to accept the connection request, you can review and purchase one or more supported biometric devices to measure your vitals or manually enter any recent vitals captured outside this app by clicking the ‘+’ button on the bottom right corner of the vitals page.</string>
     <string name="license_expired">License Expired</string>
     <string name="license_expired_message">Your license has expired.Please update your licensing details inorder to continue using the platform.</string>
     <string name="video_missed_call">Missed video call</string>
@@ -1041,9 +1041,9 @@
     <string name="EMPTY_PATIENT_MESSAGE">Patient referrals will eventually show up here</string>
     <string name="EMPTY_PATIENT_WITH_BTN_MESSAGE">Add a Patient by tapping the \'+\' button</string>
     <string name="EMPTY_PATIENT_SEARCH_MESSAGE">No Patient are available on searched name. Try to search with some other name</string>
-    <string name="EMPTY_DOCTOR_TITLE">No Doctors</string>
-    <string name="EMPTY_DOCTOR_MESSAGE">Doctor referrals will eventually show up here</string>
-    <string name="EMPTY_DOCTOR_WITH_BTN_MESSAGE">Add a Doctor by tapping the \'+\' button</string>
+    <string name="EMPTY_DOCTOR_TITLE">No Providers</string>
+    <string name="EMPTY_DOCTOR_MESSAGE">Provider referrals will eventually show up here</string>
+    <string name="EMPTY_DOCTOR_WITH_BTN_MESSAGE">Add a Provider by tapping the \'+\' button</string>
     <string name="EMPTY_MEDICAL_ASSISTANT_TITLE">No Medical Assistant</string>
     <string name="EMPTY_MEDICAL_ASSISTANT_MESSAGE">Medical Assistant referrals will eventually show up here</string>
     <string name="EMPTY_MEDICAL_ASSISTANT_WITH_BTN_MESSAGE">Add a Medical Assistant by tapping the \'+\' button</string>
@@ -1084,7 +1084,7 @@
 
     //overlays
     <string name="OVERLAY_NO_MEDICAL_ASSISTANT_MESSAGE">You can add a Medical Assistant by tapping the \'+\' button</string>
-    <string name="OVERLAY_NO_DOCTOR_MESSAGE">You can add a Doctor by tapping the \'+\' button</string>
+    <string name="OVERLAY_NO_DOCTOR_MESSAGE">You can add a Provider by tapping the \'+\' button</string>
     <string name="OVERLAY_NO_PATIENT_MESSAGE">You can add a Patient by tapping the \'+\' button</string>
     <string name="OVERLAY_NO_APPOINTMENT_MESSAGE">You can add an appointment by tapping the \'+\' button</string>
     <string name="OVERLAY_NO_BP_MESSAGE">You can connect your vitals device to measure your Blood Pressure</string>
@@ -1228,7 +1228,7 @@
     <string name="patient_instructions">Patient instructions</string>
     <string name="visit_detail">Visit Detail</string>
     <string name="user_info">User info</string>
-    <string name="doctor_info">Doctor info</string>
+    <string name="doctor_info">Provider info</string>
     <string name="details">Details</string>
     <string name="patient_history_has_been_updated">Patient history has been updated</string>
     <string name="patient_demographic_changed">Patient demographics changed</string>
@@ -1247,7 +1247,7 @@
     <string name="vitals_has_been_posted">Vitals has been posted successfully.</string>
     <string name="captured">captured</string>
     <string name="patient_diagnosis">Diagnosis</string>
-    <string name="doctor_extender">Doctor / Extender</string>
+    <string name="doctor_extender">Provider / Extender</string>
     <string name="office_assistant">Office Assistant</string>
     <string name="calls">Calls</string>
     <string name="mandatory_questions_info">Questions marked with \' * \' is mandatory</string>
@@ -1261,7 +1261,7 @@
     <string name="trying_to_call">Trying to call</string>
     <string name="still_need_help">Still need help?</string>
     <string name="enter_waiting_room">Enter waiting room</string>
-    <string name="please_wait_till_the_doctor_starts_the_schedule">Someone from your doctor\'s office will call you soon. You are welcome to wait here if you like.</string>
+    <string name="please_wait_till_the_doctor_starts_the_schedule">Someone from your provider\'s office will call you soon. You are welcome to wait here if you like.</string>
     <string name="registration_number_empty_error">Registration number can\'t be empty</string>
     <string name="year_of_registration_empty_error">year of registration can\'t be empty</string>
     <string name="mci_empty_error">MCI number can\'t be empty</string>
@@ -1284,7 +1284,7 @@
     <string name="years" translatable="false">years</string>
     <string name="add_diagnosis">Add Diagnosis</string>
     <string name="view_message">View Message</string>
-    <string name="you_have_a_new_message_from_doctor_s_office">You have a new message from doctor\'s office</string>
+    <string name="you_have_a_new_message_from_doctor_s_office">You have a new message from provider\'s office</string>
     <string name="search_messages">Search messages</string>
     <string name="pin">Pin</string>
     <string name="custom_range">Custom range</string>
@@ -1367,13 +1367,13 @@
     <string name="unassociate_educational_video">Are you sure to remove this educational video for this user.</string>
     <string name="delete_educational_video">Are you sure to Delete your educational video.</string>
     <string name="empty_educational_message_1">Educational Video will eventually show up here</string>
-    <string name="doctor_unavailable">This doctor currently doesn’t accept connection requests. Please reach out directly to your doctor’s office to get connected with your doctor via the platform.</string>
+    <string name="doctor_unavailable">This provider currently doesn’t accept connection requests. Please reach out directly to your provider’s office to get connected with your provider via the platform.</string>
     <string name="empty_educational_new">There are no Educational video present. You can create one from settings page</string>
     <string name="educational_video_created">Educational video is not created yet.Please try again after some time.</string>
     <string name="height">Height</string>
     <string name="EMPTY_HEIGHT_TITLE">No Height values</string>
     <string name="EMPTY_HEIGHT_MESSAGE">Height results will eventually show up here</string>
-    <string name="permission_google_fit">%s would like to access your health data. Enabling Read across “ALL” categories in the following page would help your doctor get a better picture of your overall health and lifestyle.</string>
+    <string name="permission_google_fit">%s would like to access your health data. Enabling Read across “ALL” categories in the following page would help your provider get a better picture of your overall health and lifestyle.</string>
     <string name="permission_google_fit_title">Grant Health Data Access</string>
     <string name="ccm_g2065_description">Complex 30 minutes of clinical staff time directed by a physician or other qualified health care professional, per calendar month</string>
     <string name="ccm_99490_description">Non-complex 20-minute timed service provided by clinical staff to coordinate care across providers and support patient accountability.</string>
