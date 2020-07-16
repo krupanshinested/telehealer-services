@@ -30,6 +30,8 @@ import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoR
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.OpenTok.CallManager;
+import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -121,7 +123,14 @@ public class EducationalCreateFragment extends BaseFragment {
                             UserDetailPreferenceManager.getUser_guid(),null,null,null,model.getVideoId()+"", OpenTokConstants.education,true,model.getVideoId()+"");
                     callRequest.setEducationTitle(title_et.getText().toString());
                     callRequest.setEducationDescription(description_et.getText().toString());
+                    model.recording_enabled = true;
+                    model.transcription_enabled = true;
                     callRequest.update(model);
+
+                    OpenTok tokBox =new OpenTok(callRequest);
+                    tokBox.connectToSession();
+                    CallManager.shared.addCall(tokBox);
+
                     Intent intent = CallActivity.getIntent(application, callRequest);
                     application.startActivity(intent);
 

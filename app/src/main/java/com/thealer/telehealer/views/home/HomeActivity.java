@@ -114,6 +114,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private int helpContent = 0;
     private int notificationCount = 0;
     private boolean isCheckLicense = true;
+    private boolean isPropserShown = false;
 
     private NotificationApiViewModel notificationApiViewModel;
 
@@ -144,6 +145,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             initViewModels();
         }
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(isPropserShownListner, new IntentFilter(getString(R.string.APP_LIFECYCLE_STATUS)));
         LocalBroadcastManager.getInstance(this).registerReceiver(profileListener, new IntentFilter(getString(R.string.profile_picture_updated)));
         LocalBroadcastManager.getInstance(this).registerReceiver(NotificationCountReceiver, new IntentFilter(Constants.NOTIFICATION_COUNT_RECEIVER));
     }
@@ -235,6 +237,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         super.onDestroy();
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(profileListener);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(isPropserShownListner);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(NotificationCountReceiver);
     }
 
@@ -355,6 +358,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         @Override
         public void onReceive(Context context, Intent intent) {
             updateProfilePic();
+        }
+    };
+    public BroadcastReceiver isPropserShownListner = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean status = intent.getBooleanExtra(ArgumentKeys.APP_LIFECYCLE_STATUS,false);
+            if (!status) {
+                isPropserShown=false;
+            }
+
         }
     };
 
@@ -782,9 +795,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                     .putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed))
                     .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true), RequestID.REQ_LICENSE_EXPIRED);
 
-        } else if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
-            Log.d("HelpScreen", "Permission");
+        } else if (!isPropserShown){
 
+                if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+                    Log.d("HelpScreen", "Permission");
+                    isPropserShown=true;
+                }
         } else if (!appPreference.getBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN) && (!application.isFromRegistration) && UserType.isUserPatient() && UserDetailPreferenceManager.getWhoAmIResponse() != null && (UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire() == null || !UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire().isQuestionariesEmpty())) {
 
             appPreference.setBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN, true);
