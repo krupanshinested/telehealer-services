@@ -1472,5 +1472,6 @@
     <string name="waiting_for_you">is waiting for you</string>
     <string name="are_you_sure_to_kickout">Do you really want to withdraw this invite?</string>
     <string name="confirmation">Confirmation</string>
+    <string name="phone_number">Phone Number</string>
 
 </resources>
