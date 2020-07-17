@@ -880,6 +880,22 @@ public class Utils {
         }
     }
 
+    public static String getDatefromString(String dateStr, String pattern) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (date == null) {
+            return "";
+        }
+        SimpleDateFormat convetDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return convetDateFormat.format(date);
+    }
+
     public static String getSelectedSlotTime(String timeSlot) {
         DateFormat inputFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         DateFormat outputFormat = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);

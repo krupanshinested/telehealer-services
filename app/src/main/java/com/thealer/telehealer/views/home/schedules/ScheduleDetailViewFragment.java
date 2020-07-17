@@ -385,8 +385,10 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
             userGuid = resultBean.getPatient().getUser_guid();
 
             if (UserType.isUserPatient() && resultBean.isStartAndEndBetweenCurrentTime()) {
+                Log.d("waitingRoomEnable","True");
                 waitingRoomBtn.setVisibility(View.VISIBLE);
-            }
+            }else
+                Log.d("waitingRoomEnable","False");
 
             String statusInfo = getString(R.string.patient_has_been_updated);
             String detail = "";

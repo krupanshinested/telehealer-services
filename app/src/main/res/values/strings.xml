@@ -1473,5 +1473,6 @@
     <string name="are_you_sure_to_kickout">Do you really want to withdraw this invite?</string>
     <string name="confirmation">Confirmation</string>
     <string name="phone_number">Phone Number</string>
+    <string name="has_enterted_waiting_room_open_ap">has entered your waiting room. Open the app immediately to get connected.</string>
 
 </resources>

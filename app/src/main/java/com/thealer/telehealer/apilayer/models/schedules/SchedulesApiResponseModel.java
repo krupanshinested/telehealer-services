@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.models.schedules;
 
+import android.util.Log;
+
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.PaginationCommonResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -146,10 +148,18 @@ public class SchedulesApiResponseModel extends PaginationCommonResponseModel {
         }
 
         public boolean isStartAndEndBetweenCurrentTime() {
-            Date start = Utils.convertUTCTOLocal(this.start,Utils.UTCFormat);
-            Date end = Utils.convertUTCTOLocal(this.end,Utils.UTCFormat);
-            Date current = Utils.getDateFromString(Utils.getStringFromDate(new Date(),Utils.UTCFormat),Utils.UTCFormat);
-            return current.compareTo(start) >= 0 && current.compareTo(end) <= 0;
+
+            String startDate=Utils.getDatefromString(this.start,Utils.UTCFormat);
+            String currentDate=Utils.getDatefromString(Utils.getStringFromDate(new Date(),Utils.UTCFormat),Utils.UTCFormat);
+
+            System.out.println("start"+startDate);
+            System.out.println("end"+currentDate);
+
+            if (startDate.equals(currentDate))
+                return  true;
+            else
+                return false;
+
         }
 
         public static class DetailBean implements Serializable {

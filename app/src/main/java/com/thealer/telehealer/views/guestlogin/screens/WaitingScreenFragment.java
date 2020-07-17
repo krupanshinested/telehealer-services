@@ -208,7 +208,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
                     if (apnsPayload.getType().equalsIgnoreCase(APNSPayload.waitingRoomMessage)) {
                         if (apnsPayload.getContent() != null) {
                             tv_docotor_msg.setVisibility(View.VISIBLE);
-                            String doctor_msg = patientInvite.doctorDetails.getFirst_name() + " " + patientInvite.doctorDetails.getLast_name() +" , "+patientInvite.doctorDetails.getAssistantTitle()+ "  says : ";
+                            String doctor_msg = patientInvite.doctorDetails.getFirst_name() + " " + patientInvite.doctorDetails.getLast_name() +" , "+patientInvite.doctorDetails.getAssistantTitle()+ "  says  ";
                             tv_docotor_msg.setText(doctor_msg + " ' " + apnsPayload.getContent() + " '");
                         } else
                             tv_docotor_msg.setVisibility(View.GONE);
@@ -329,7 +329,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
             showJoinALert(docotorName + getString(R.string.waiting_for_you), docotorName + getString(R.string.has_enterted_waiting_room), getString(R.string.yes), getString(R.string.exit));
 
             if (!TeleHealerApplication.isInForeGround) {
-                Utils.displyNotificationOnTop(docotorName+" "+getString(R.string.waiting_for_you),docotorName+getString(R.string.has_enterted_waiting_room),null,new Intent(getActivity(), GuestLoginScreensActivity.class));
+                Utils.displyNotificationOnTop(docotorName+" "+getString(R.string.waiting_for_you),docotorName+  getString(R.string.has_enterted_waiting_room_open_ap),null,new Intent(getActivity(), GuestLoginScreensActivity.class));
             }
         }
     };

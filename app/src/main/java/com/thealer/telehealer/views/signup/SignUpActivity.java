@@ -328,7 +328,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     public void setFragment(Bundle bundle) {
         Fragment fragment = getFrament();
-
         if (fragment != null) {
 
             fragment.setArguments(bundle);

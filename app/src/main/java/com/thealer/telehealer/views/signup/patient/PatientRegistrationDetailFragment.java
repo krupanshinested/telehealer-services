@@ -275,7 +275,11 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                     }
                 });
             }
+
         }
+
+        firstnameEt.setText(UserDetailPreferenceManager.getFirst_name());
+        lastnameEt.setText(UserDetailPreferenceManager.getLast_name());
 
         updateUI();
     }
