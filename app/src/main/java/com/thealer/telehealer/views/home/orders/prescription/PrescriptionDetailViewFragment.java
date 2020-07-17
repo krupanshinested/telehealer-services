@@ -177,12 +177,12 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
 
             pharmacyOcv.setTitleTv("-");
 
+            if (UserType.isUserPatient()){
+                patientOcv.setLabelTv(getString(R.string.doctor));
+            } else {
+                patientOcv.setLabelTv(getString(R.string.patient));
+            }
             if (ordersResultBean != null) {
-                if (UserType.isUserPatient()){
-                    patientOcv.setLabelTv(getString(R.string.doctor));
-                } else {
-                    patientOcv.setLabelTv(getString(R.string.patient));
-                }
                 setData(ordersResultBean);
                 setUserDetail();
             } else {
@@ -211,7 +211,11 @@ public class PrescriptionDetailViewFragment extends OrdersBaseFragment implement
     private void setData(OrdersPrescriptionApiResponseModel.OrdersResultBean ordersResultBean) {
         if (ordersResultBean.getUserDetailMap() != null && !ordersResultBean.getUserDetailMap().isEmpty()) {
             if (UserType.isUserPatient()) {
-                patientOcv.setTitleTv(ordersResultBean.getUserDetailMap().get(ordersResultBean.getDoctor().getUser_guid()).getDoctorDisplayName());
+                if (ordersResultBean.getUserDetailMap().get(ordersResultBean.getDoctor().getUser_guid()) != null) {
+                    patientOcv.setTitleTv(ordersResultBean.getUserDetailMap().get(ordersResultBean.getDoctor().getUser_guid()).getDoctorDisplayName());
+                } else {
+                    patientOcv.setTitleTv(ordersResultBean.getUserDetailMap().get(ordersResultBean.getMedical_assistant().getUser_guid()).getDoctorDisplayName());
+                }
             } else {
                 userName = ordersResultBean.getUserDetailMap().get(ordersResultBean.getPatient().getUser_guid()).getUserDisplay_name();
                 patientOcv.setTitleTv(userName);

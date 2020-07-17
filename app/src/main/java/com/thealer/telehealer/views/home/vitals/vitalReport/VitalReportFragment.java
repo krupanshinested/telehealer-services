@@ -303,7 +303,8 @@ public class VitalReportFragment extends BaseFragment {
             }
         });
 
-        patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
+        patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_SEARCH);
+        patientListCrv.setEmptyStateTitle(String.format(EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO), Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
 
         if (getArguments() != null) {
             CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
@@ -358,8 +359,12 @@ public class VitalReportFragment extends BaseFragment {
 
         patientListCrv.setErrorModel(this, vitalReportApiViewModel.getErrorModelLiveData());
 
-        getUsersList(selectedFilter, startDate, endDate);
-
+        if (selectedFilter!=null && selectedFilter.equals(VitalReportApiViewModel.LAST_MONTH)){
+            getUsersList(null, startDate, endDate);
+        }
+        else {
+            getUsersList(selectedFilter, startDate, endDate);
+        }
     }
 
     private void showFilterDialog() {

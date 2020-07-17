@@ -247,9 +247,6 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
                 if (ordersCommonResultResponseModel.getDoctor() != null) {
                     key = ordersCommonResultResponseModel.getDoctor().getUser_guid();
                 }
-                if (ordersCommonResultResponseModel.getMedical_assistant() != null) {
-                    key = ordersCommonResultResponseModel.getMedical_assistant().getUser_guid();
-                }
             }
 
         } else {

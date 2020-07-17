@@ -167,6 +167,9 @@ public class SchedulesListFragment extends BaseFragment {
             if (doctorDetail != null) {
                 doctorGuidList = doctorDetail.getUser_guid();
             }
+            else {
+                doctorGuidList = appPreference.getString(PreferenceConstants.ASSOCIATION_GUID_LIST);
+            }
         } else {
             doctorGuidList = appPreference.getString(PreferenceConstants.ASSOCIATION_GUID_LIST);
         }

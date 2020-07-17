@@ -42,6 +42,7 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewDialogFragment;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewViewModel;
+import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
 import com.thealer.telehealer.views.signup.patient.InsuranceViewPagerAdapter;
@@ -78,7 +79,6 @@ public class AboutFragment extends BaseFragment {
     private ImageView[] indicators;
     private TextView insuranceCashTv;
     private LinearLayout insuranceImageLl;
-
     private int userType;
     private String view_type, doctorGuid = null;
     private CommonUserApiResponseModel userDetail, doctorDetail;
@@ -110,7 +110,6 @@ public class AboutFragment extends BaseFragment {
 
         disconnectAssociationApiViewModel = new ViewModelProvider(this).get(DisconnectAssociationApiViewModel.class);
         attachObserverInterface.attachObserver(disconnectAssociationApiViewModel);
-
         disconnectAssociationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
