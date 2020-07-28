@@ -118,6 +118,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/rpm_hint"
                     android:text="@string/rpm_hint"
+                    android:visibility="gone"
                     android:textSize="16dp"
                     android:layout_marginStart="10dp"/>
 

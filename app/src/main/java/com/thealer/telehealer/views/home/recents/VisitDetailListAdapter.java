@@ -208,7 +208,11 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 String timeDisplayFormat = "%s to %s ( %s )";
                 callSummaryViewHolder.callTimeTv.setText(String.format(timeDisplayFormat, Utils.getFormatedTime(resultBean.getStart_time()), Utils.getFormatedTime(callSummaryModel.getCallEndTime()) ,Utils.getDisplayDuration(callSummaryModel.getDurationInSec())));
                 if (detailViewModel.getVisitsDetailApiResponseModel().getResult().getAudio_stream()!=null) {
-                    Utils.setImageWithGlide(activity, callSummaryViewHolder.transcriptVideoIv, visitDetailAdapterModel.getCallSummaryModel().getScreenShot(), null, true, false);
+                    if (visitDetailAdapterModel.getCallSummaryModel().getScreenShot()!=null) {
+                        Utils.setImageWithGlide(activity, callSummaryViewHolder.transcriptVideoIv, visitDetailAdapterModel.getCallSummaryModel().getScreenShot(), null, true, false);
+                    } else {
+                        Utils.setImageWithGlide(activity, callSummaryViewHolder.transcriptVideoIv, String.valueOf(R.color.colorBlack), null, true, false);
+                    }
                     callSummaryViewHolder.transcriptVideoIv.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

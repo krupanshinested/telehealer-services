@@ -242,7 +242,7 @@ public class Utils {
         Calendar calendar = Calendar.getInstance();
         if (!TextUtils.isEmpty(time)) {
             int hour = Integer.parseInt(DateUtil.getLocalfromUTC(time,"hh:mm a","kk"));
-            int minute = Integer.parseInt(DateUtil.getLocalfromUTC(time,"hh:mm a","kk"));
+            int minute = Integer.parseInt(DateUtil.getLocalfromUTC(time,"hh:mm a","mm"));
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
         } else {
