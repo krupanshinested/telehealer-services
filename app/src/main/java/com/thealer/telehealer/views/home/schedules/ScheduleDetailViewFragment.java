@@ -467,7 +467,6 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 doctorChatIv.setVisibility(View.GONE);
                 patientCallIv.setVisibility(View.GONE);
                 patientChatIv.setVisibility(View.GONE);
-                waitingRoomBtn.setVisibility(View.GONE);
             } else if (!UserType.isUserPatient()) {
                 if (resultBean.getPatient().isAvailable()) {
                     patientCallIv.setVisibility(View.VISIBLE);
