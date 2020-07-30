@@ -36,7 +36,7 @@ public class RetrofitLogger implements Interceptor {
         /** A {@link HttpLoggingInterceptor.Logger} defaults output appropriate for the current platform. */
         HttpLoggingInterceptor.Logger DEFAULT = new HttpLoggingInterceptor.Logger() {
             @Override public void log(String message) {
-                Platform.get().log(INFO, message, null);
+                Platform.get().log( message,INFO, null);
             }
         };
     }
