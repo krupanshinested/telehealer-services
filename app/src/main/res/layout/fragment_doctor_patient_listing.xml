@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.thealer.telehealer.common.CustomRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/doctor_patient_list_crv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />

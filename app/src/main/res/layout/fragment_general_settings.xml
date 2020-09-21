@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/card_view_background">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/card_view_background"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:id="@+id/container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/card_view_background"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:id="@+id/general_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:orientation="vertical">
+
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/check_call_quality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isSwitchNeed="false"
+                    app:settings_title="@string/check_call_quality" />
+
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/presence"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isSwitchNeed="true"
+                    app:settings_title="@string/presence" />
+
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/quick_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isSwitchNeed="true"
+                    app:settings_title="@string/quick_login" />
+
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/signature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="@string/signature" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:id="@+id/delete_view"
+                android:background="@color/colorWhite"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/delete_account"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="17sp" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</android.support.constraint.ConstraintLayout>

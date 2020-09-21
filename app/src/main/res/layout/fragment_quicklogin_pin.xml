@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/close_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_close_red_24dp"
+        android:tint="@color/colorBlack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/doctor_civ"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/profile_placeholder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/close_iv"/>
+
+    <TextView
+        android:id="@+id/doctor_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/doctor_civ"
+        tools:text="@string/dummy_text" />
+
+    <TextView
+        android:id="@+id/enter_pin_tv"
+        style="@style/text_title_dark"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/enter_your_pin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/doctor_name_tv" />
+
+
+    <EditText
+        android:id="@+id/pin_et"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:background="@null"
+        android:cursorVisible="false"
+        android:drawableBottom="@null"
+        android:inputType="number"
+        android:focusedByDefault="true"
+        android:digits="@string/digitsNumeric"
+        android:maxLength="4"
+        android:textColor="@color/colorWhite"
+        app:layout_constraintBottom_toBottomOf="@+id/foreground_fl"
+        app:layout_constraintEnd_toEndOf="@+id/foreground_fl"
+        app:layout_constraintStart_toStartOf="@+id/foreground_fl"
+        app:layout_constraintTop_toBottomOf="@+id/enter_pin_tv" />
+
+    <FrameLayout
+        android:id="@+id/foreground_fl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enter_pin_tv">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/circle_iv1"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/circular_unselected_indicator" />
+
+            <ImageView
+                android:id="@+id/circle_iv2"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/circular_unselected_indicator" />
+
+            <ImageView
+                android:id="@+id/circle_iv3"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/circular_unselected_indicator" />
+
+            <ImageView
+                android:id="@+id/circle_iv4"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/circular_unselected_indicator" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/forget_password_tv"
+        style="@style/text_app_color"
+        android:layout_marginTop="16dp"
+        android:text="@string/forget_passcode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/foreground_fl" />
+
+</android.support.constraint.ConstraintLayout>

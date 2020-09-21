@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/user_detail_appbar_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    >
+
+    <android.support.design.widget.CollapsingToolbarLayout
+        android:id="@+id/collapsing_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        app:titleEnabled="false">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@drawable/app_background_gradient"
+            app:contentInsetStart="0dp"
+            app:layout_collapseMode="pin">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="@dimen/toolbar_title"
+                android:textStyle="bold"
+                android:text="@string/dummy_text"
+                android:textColor="@color/colorWhite" />
+        </android.support.v7.widget.Toolbar>
+
+        <RelativeLayout
+            android:id="@+id/collapse_background_rl"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/colorGrey"
+            app:layout_collapseMode="parallax">
+
+            <ImageView
+                android:id="@+id/user_profile_iv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/profile_placeholder"
+                android:background="@drawable/user_detail_avatar_background"/>
+
+            <ImageView
+                android:id="@+id/gender_iv"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="5dp"
+                android:src="@drawable/gender_male" />
+
+            <TextView
+                android:id="@+id/user_name_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/user_dob_tv"
+                android:layout_margin="5dp"
+                android:layout_toLeftOf="@+id/gender_iv"
+                android:text="@string/dummy_text"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/user_dob_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toLeftOf="@+id/gender_iv"
+                android:drawableLeft="@drawable/ic_status_12dp"
+                android:drawablePadding="10dp"
+                android:gravity="center|left"
+                android:text="@string/dummy_text"
+                android:textColor="@color/colorWhite" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/back_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:tint="@color/colorWhite"
+            android:padding="8dp"
+            android:layout_gravity="top|left"
+            app:layout_collapseMode="pin"
+            android:layout_margin="8dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_margin="10dp"
+            android:id="@+id/next_tv"
+            android:padding="8dp"
+            android:visibility="gone"
+            app:layout_collapseMode="pin"
+            android:textColor="@color/colorWhite"
+            android:text="@string/next"/>
+    </android.support.design.widget.CollapsingToolbarLayout>
+</android.support.design.widget.AppBarLayout>

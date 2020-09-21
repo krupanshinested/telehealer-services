@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/app_gradient_start</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:screenOrientation">portrait</item>
+    </style>
+
+    <style name="text_light">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textSize">36sp</item>
+    </style>
+</resources>

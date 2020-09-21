@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF5458">
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/close_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_close_red_24dp"
+            android:tint="@color/colorWhite"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:text="@string/account_deletion"
+            android:textAlignment="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/close_iv" />
+
+        <TextView
+            android:id="@+id/description_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:text="@string/account_deletion_description"
+            android:textAlignment="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="17sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/description_tv">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorWhite"
+                android:maxLength="1"
+                android:id="@+id/d_editText"
+                android:layout_margin="10dp"
+                android:textAlignment="center"
+                android:inputType="textCapCharacters"
+                android:textColor="@color/colorWhite"
+                android:textSize="28sp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorWhite"
+                android:maxLength="1"
+                android:id="@+id/e1_editText"
+                android:layout_margin="10dp"
+                android:textAlignment="center"
+                android:inputType="textCapCharacters"
+                android:textColor="@color/colorWhite"
+                android:textSize="28sp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorWhite"
+                android:maxLength="1"
+                android:id="@+id/l_editText"
+                android:layout_margin="10dp"
+                android:textAlignment="center"
+                android:inputType="textCapCharacters"
+                android:textColor="@color/colorWhite"
+                android:textSize="28sp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorWhite"
+                android:maxLength="1"
+                android:id="@+id/e2_editText"
+                android:layout_margin="10dp"
+                android:textAlignment="center"
+                android:inputType="textCapCharacters"
+                android:textColor="@color/colorWhite"
+                android:textSize="28sp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorWhite"
+                android:maxLength="1"
+                android:id="@+id/t_editText"
+                android:layout_margin="10dp"
+                android:textAlignment="center"
+                android:inputType="textCapCharacters"
+                android:textColor="@color/colorWhite"
+                android:textSize="28sp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorWhite"
+                android:maxLength="1"
+                android:id="@+id/e3_editText"
+                android:layout_margin="10dp"
+                android:textAlignment="center"
+                android:inputType="textCapCharacters"
+                android:textColor="@color/colorWhite"
+                android:textSize="28sp" />
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

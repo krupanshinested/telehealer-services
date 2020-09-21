@@ -1,0 +1,71 @@
+<resources>
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/app_gradient_start</item>
+        <item name="android:statusBarColor">@color/app_status_bar_color1</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:screenOrientation">portrait</item>
+    </style>
+
+    <style name="activtiy_background">
+        <item name="android:background">@color/colorWhite</item>
+    </style>
+
+    <style name="actionbar_style" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:background">@drawable/app_background_gradient</item>
+    </style>
+
+    <style name="button_light">
+        <item name="android:background">@drawable/btn_white_drawable</item>
+        <item name="android:textColor">@color/app_gradient_start</item>
+    </style>
+
+    <style name="button_dark">
+        <item name="android:background">@drawable/btn_transparent_whiteborder_drawable</item>
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+
+    <style name="button_app_background_white_text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/button_enable_disable_selector</item>
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+
+    <style name="text_light">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="text_title_dark">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="text_app_color">
+        <item name="android:textColor">@color/app_gradient_start</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:alpha">1</item>
+        <item name="android:enabled">true</item>
+    </style>
+
+    <style name="text_disabled_alpha_grey">
+        <item name="android:textColor">@color/colorGrey</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:alpha">0.5</item>
+        <item name="android:enabled">false</item>
+    </style>
+
+
+
+</resources>

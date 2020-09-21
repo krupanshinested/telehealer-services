@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.thealer.telehealer.views.home.orders.OrdersCustomView
+        android:id="@+id/patient_ocv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:view_label="@string/patient_name"
+        app:title_text="@string/Click_here_to_select_patient"
+        app:sub_title_visible="false"
+        app:arrow_visible="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.thealer.telehealer.views.home.orders.OrdersCustomView
+        android:id="@+id/specialist_ocv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:view_label="@string/specialist_name"
+        app:sub_title_visible="false"
+        app:arrow_visible="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/patient_ocv" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/instruction_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/specialist_ocv">
+
+        <EditText
+            android:id="@+id/instruction_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="INSTRUCTIONS"
+            android:maxLines="1"
+            android:imeOptions="actionDone"
+            android:inputType="text"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/send_btn"
+        style="@style/button_app_background_white_text"
+        android:text="@string/send"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</android.support.constraint.ConstraintLayout>

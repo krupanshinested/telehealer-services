@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/info_ll"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/views_ll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/app_gradient_start"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:text="@string/sign_in_info"
+            android:gravity="center"
+            android:textSize="40sp"
+            android:layout_margin="10dp"
+            android:id="@+id/view_info_tv" />
+    </LinearLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/views_ll"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/info_ll"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/appbar_back_with_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/email_til"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/email_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/email_id"
+                        android:inputType="textEmailAddress"
+                        android:maxWidth="@dimen/max_width" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/password_til"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/email_til"
+                    android:layout_marginTop="10dp"
+                    app:passwordToggleEnabled="true">
+
+                    <EditText
+                        android:id="@+id/password_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/password"
+                        android:inputType="textPassword"
+                        android:maxWidth="@dimen/max_width" />
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/forget_password_tv"
+                    style="@style/text_app_color"
+                    android:layout_below="@+id/password_til"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/forget_username_password" />
+
+                <CheckBox
+                    android:id="@+id/remember_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/forget_password_tv"
+                    android:layout_alignBottom="@+id/login_btn"
+                    android:text="@string/remember_me" />
+
+                <Button
+                    android:id="@+id/login_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/forget_password_tv"
+                    android:layout_alignParentEnd="true"
+                    android:background="@color/app_gradient_start"
+                    android:paddingLeft="50dp"
+                    android:paddingRight="50dp"
+                    android:text="@string/log_in"
+                    android:textColor="@color/colorWhite" />
+
+                <TextView
+                    android:id="@+id/or_login_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/remember_cb"
+                    android:layout_marginTop="50dp"
+                    android:gravity="center"
+                    android:text="@string/or_login_with" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/or_login_tv"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical"
+                    android:layout_margin="10dp"
+                    android:id="@+id/quick_login_ll">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/quick_login_civ"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_fingerprint_48dp"
+                        app:civ_circle_background_color="@color/color_grey_light_background" />
+
+                    <TextView
+                        android:id="@+id/quick_login_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center" />
+                </LinearLayout>
+            </RelativeLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</android.support.constraint.ConstraintLayout>

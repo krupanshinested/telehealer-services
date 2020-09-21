@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+
+    <TextView
+        android:id="@+id/title_tv"
+        style="@style/text_app_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/info_release"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGrey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+
+    <WebView
+        android:id="@+id/release_info_wv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/agreement_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <TextView
+        android:id="@+id/agreement_tv"
+        style="@style/text_title_dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/doctor_agreement_hint"
+        app:layout_constraintBottom_toTopOf="@+id/accept_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.thealer.telehealer.common.CustomButton
+        android:id="@+id/accept_btn"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_max="@dimen/max_width"
+        android:layout_height="wrap_content"
+        android:text="@string/accept"
+        app:app_gradient="true"
+        app:corner_radius="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/contact_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:text_color="@color/colorWhite" />
+
+    <TextView
+        android:id="@+id/contact_tv"
+        style="@style/text_app_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/contact_us"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</android.support.constraint.ConstraintLayout>

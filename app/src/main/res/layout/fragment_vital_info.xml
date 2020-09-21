@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/forget_btn_line"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/device_iv"
+            android:layout_width="fill_parent"
+            android:layout_height="300dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/device_iv">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/device_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/device_description"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:layout_constraintLeft_toLeftOf="@+id/device_title"
+                    app:layout_constraintRight_toRightOf="@+id/device_title"
+                    app:layout_constraintTop_toBottomOf="@+id/device_title" />
+
+                <LinearLayout
+                    android:id="@+id/device_info"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="@+id/device_title"
+                    app:layout_constraintRight_toRightOf="@id/device_title"
+                    app:layout_constraintTop_toBottomOf="@+id/device_description">
+
+                    <TextView
+                        android:id="@+id/hardware_version_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ffflflf"
+                        android:textAlignment="textStart" />
+
+                    <TextView
+                        android:id="@+id/device_version_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="fllflflf"
+                        android:textAlignment="textEnd" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/upgrade_bt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/upgrade"
+                    android:textColor="@color/app_gradient_start"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/device_info" />
+
+                <TextView
+                    android:id="@+id/device_info_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/device_information"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/colorBlack"
+                    app:layout_constraintLeft_toLeftOf="@+id/device_title"
+                    app:layout_constraintRight_toRightOf="@id/device_title"
+                    app:layout_constraintTop_toBottomOf="@+id/upgrade_bt" />
+
+                <TextView
+                    android:id="@+id/device_info_url"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/app_gradient_start"
+                    app:layout_constraintLeft_toLeftOf="@+id/device_title"
+                    app:layout_constraintRight_toRightOf="@id/device_title"
+                    app:layout_constraintTop_toBottomOf="@+id/device_info_label" />
+
+                <TextView
+                    android:id="@+id/support_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/support"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/colorBlack"
+                    app:layout_constraintLeft_toLeftOf="@+id/device_title"
+                    app:layout_constraintRight_toRightOf="@id/device_title"
+                    app:layout_constraintTop_toBottomOf="@+id/device_info_url" />
+
+                <TextView
+                    android:id="@+id/support_url"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="2dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/app_gradient_start"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="@+id/device_title"
+                    app:layout_constraintRight_toRightOf="@id/device_title"
+                    app:layout_constraintTop_toBottomOf="@+id/support_label" />
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.constraint.ConstraintLayout>
+
+    <View
+        android:id="@+id/forget_btn_line"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGrey_light"
+        app:layout_constraintBottom_toTopOf="@+id/forget_device_bt"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/forget_device_bt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:padding="0dp"
+        android:text="@string/forget_device"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+</android.support.constraint.ConstraintLayout>

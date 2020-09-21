@@ -1,0 +1,122 @@
+package com.thealer.telehealer.common;
+
+/**
+ * Created by Aswin on 09,October,2018
+ */
+public class Constants {
+    public static final String PREFERENCE_NAME = "thealer";
+    public static final String HEADER_AUTH_TOKEN = "X-Access-Token";
+
+    public static final String BUILD_PATIENT = "patient";
+    public static final String BUILD_MEDICAL = "medical";
+    public static final String BUILD_DOCTOR = "doctor";
+
+    public static final String BUILD_TYPE_DEBUG = "debug";
+
+    public static final int SHOW_NOTHING = 0;
+    public static final int SHOW_PROGRESS = 1;
+    public static final int SHOW_SCREEN = 2;
+
+    public static final int PAGINATION_SIZE = 20;
+
+    //User Activation status
+    public static final String ACTIVATION_PENDING = "ACTIVATION_PENDING";
+    public static final String ONBOARDING_PENDING = "ONBOARDING_PENDING";
+    public static final String OFFLINE = "OFFLINE";
+    public static final String AVAILABLE = "AVAILABLE";
+    public static final String ACTIVATED = "ACTIVATED";
+
+    //Gender
+    public static final String GENDER_MALE = "male";
+    public static final String GENDER_FEMALE = "female";
+    public static final String GENDER_OTHERS = "others";
+
+    //Date picker
+    public static final String DATE_PICKER_TYPE = "date_picker_type";
+    public static final int TYPE_DOB = 1;
+    public static final int TYPE_EXPIRATION = 2;
+    public static final int TILL_CURRENT_DAY = 3;
+    public static final int TYPE_ORDER_CREATION = 4;
+    public static final String DATE_PICKER_INTENT = "datepicker";
+    public static final String YEAR = "year";
+    public static final String DAY = "day";
+    public static final String MONTH = "month";
+
+    public static final String IS_FROM_HOME = "isFromHome";
+    public static final String VIEW_TYPE = "view_type";
+    public static final String VIEW_VITALS = "view_vitals";
+    public static final String VIEW_ORDERS = "view_orders";
+    public static final String VIEW_CONNECTION = "connection_view";
+    public static final String VIEW_ASSOCIATION_DETAIL = "association_detail_view";
+    public static final String ADD_CONNECTION_REQ_TYPE = "connection";
+    public static final String ADD_CONNECTION_REQ_MSG = "Hi, Can we connect?";
+    public static final String ADD_CONNECTION_ID = "add_connection_id";
+    public static final String SELECTED_ITEM = "selected_item";
+
+
+    public static final String MESSAGE = "message";
+    public static final String STATUS = "status";
+
+    //Success view constants
+    public static final String SUCCESS_VIEW_STATUS = "success_view_status";
+    public static final String SUCCESS_VIEW_TITLE = "success_view_title";
+    public static final String SUCCESS_VIEW_DESCRIPTION = "success_view_description";
+
+    //OTP Verification
+    public static final String IS_API_REQUESTED = "isApiRequested";
+    public static final String REMAINING_SECONDS = "remainingSeconds";
+
+    //user roles
+    public static final String ROLE_PATIENT = "USER";
+    public static final String ROLE_DOCTOR = "BUSER";
+    public static final String ROLE_ASSISTANT = "medical_assistant";
+
+    // App user types
+    public static final String USER_TYPE = "user_type";
+    public static final int TYPE_PATIENT = 0;
+    public static final int TYPE_MEDICAL_ASSISTANT = 1;
+    public static final int TYPE_DOCTOR = 2;
+
+    //Doctor registration flow constants
+    public static final String IS_CREATE_MANUALLY = "isCreateManually";
+    public static final String SEARCH_KEY = "search_key";
+    public static final String DOCTOR_DATA = "doctor_data";
+    public static final String PRACTICE_ID = "practice_id";
+    public static final String DOCTOR_ID = "doctor_id";
+    public static final String IS_NEW_PRACTICE = "isNewPractice";
+    public static final String SELECTE_POSITION = "selected_position";
+    public static final String LICENSE_ID = "license_id";
+    public static final String CAMERA_INTENT = "camera_intent";
+    public static final String PICTURE_PATH = "picture_path";
+    public static final String LICENSE_IMAGE_PATH = "license_image_path";
+
+    //Bio metric callback codes
+    public static final int BIOMETRIC_ERROR = 7;
+    public static final int BIOMETRIC_SUCCESS = 1;
+    public static final int BIOMETRIC_FAILED = 2;
+    public static final int BIOMETRIC_CANCEL = 0;
+
+    //Quick login type
+    public static final String QUICK_LOGIN_TYPE = "quick_login_type";
+    public static final int QUICK_LOGIN_TYPE_PIN = 1;
+    public static final int QUICK_LOGIN_TYPE_TOUCH = 2;
+    public static final int QUICK_LOGIN_TYPE_NONE = 3;
+    public static final int QUICK_LOGIN_TYPE_PASSWORD = 4;
+    public static final String QUICK_LOGIN_PIN = "quick_login_pin";
+
+    public static final String CURRENT_STEP = "current_step";
+    public static final String WHERE_FROM = "where_from";
+    public static final String EMAIL = "email";
+    public static final String IS_RESET_PASSWORD = "is_reset_password";
+    public static final String USER_DETAIL = "user_detail";
+
+    public static final int CREATE_MODE = 0;
+    public static final int EDIT_MODE = 1;
+    public static final int VIEW_MODE = 2;
+
+    public static final int LOCATION_SETTINGS_REQUEST = 108;
+
+    //Screen Type
+    public static final int forRegistration = 1;
+    public static final int forProfileUpdate = 2;
+}

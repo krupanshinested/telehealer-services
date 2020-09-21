@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_bnv_patient"
+            android:checked="true"
+            android:icon="@drawable/person_drawable_selector"
+            android:title="Patients" />
+        <item
+            android:id="@+id/menu_bnv_doctor"
+            android:checked="true"
+            android:icon="@drawable/stethoscope_drawable_selector"
+            android:title="Doctors" />
+        <item
+            android:id="@+id/menu_bnv_recent"
+            android:icon="@drawable/recent_drawable_selector"
+            android:title="Recents" />
+
+        <item
+            android:id="@+id/menu_vitals"
+            android:icon="@drawable/ic_vitals"
+            android:title="Vitals" />
+
+        <item
+            android:id="@+id/menu_orders"
+            android:icon="@drawable/ic_orders_documents"
+            android:title="Orders" />
+        <item
+            android:id="@+id/menu_profile_settings"
+            android:icon="@drawable/recent_drawable_selector"
+            android:title="@string/profile_settings" />
+    </group>
+</menu>

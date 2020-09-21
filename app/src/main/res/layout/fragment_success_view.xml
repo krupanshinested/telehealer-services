@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintWidth_max="@dimen/max_width"
+        app:layout_constraintBottom_toTopOf="@+id/done_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center">
+
+        <ImageView
+            android:src="@drawable/ic_cross_inside_a_circle"
+            android:id="@+id/loader_iv"
+            android:layout_width="150dp"
+            android:layout_height="100dp" />
+
+        <TextView
+            android:id="@+id/title_tv"
+            style="@style/text_title_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:layout_margin="5dp"
+            tools:text="@string/dummy_text" />
+
+        <TextView
+            android:id="@+id/message_tv"
+            style="@style/text_title_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            tools:text="@string/dummy_text" />
+    </LinearLayout>
+
+    <com.thealer.telehealer.common.CustomButton
+        android:id="@+id/done_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/done"
+        app:app_gradient="true"
+        app:corner_radius="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="@dimen/max_width"
+        app:text_color="@color/colorWhite" />
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="OrdersCustomView">
+        <attr name="view_label" format="string"/>
+        <attr name="title_text" format="string"/>
+        <attr name="sub_title_text" format="string"/>
+        <attr name="sub_title_visible" format="boolean"/>
+        <attr name="title_visible" format="boolean"/>
+        <attr name="label_visible" format="boolean"/>
+        <attr name="view_visible" format="boolean"/>
+        <attr name="arrow_visible" format="boolean"/>
+    </declare-styleable>
+</resources>

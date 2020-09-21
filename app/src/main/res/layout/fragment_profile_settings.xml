@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/card_view_background"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:id="@+id/container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/card_view_background"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:id="@+id/general_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light"
+                   />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_profile"
+                    app:title="@string/profile" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/medical_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_medical_questionarie"
+                    app:title="@string/medical_history" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/settings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_settings"
+                    app:title="@string/settings" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/email_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_mail"
+                    app:title="@string/email" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/phone_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_phone"
+                    app:title="@string/phone_number" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/change_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_password"
+                    app:title="@string/change_password" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/appointment_slots"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isSpinnerType="true"
+                    app:hideSpiltter="true"
+                    app:icon="@drawable/ic_schedule"
+                    app:title="@string/appointment_slots" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/link_settings"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="@android:color/transparent"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light"
+                    />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/feedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="@string/feedback" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/terms_and_condition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="@string/terms_and_conditions" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/privacy_policy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="@string/privacy_policy"
+                    app:hideSpiltter="true"/>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/signOut"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="@color/colorWhite"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/signOut"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="@dimen/settings_title_size" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
+            </LinearLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <ImageView
+                    android:id="@+id/app_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/app_icon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/app_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/app_name"
+                    android:textColor="@color/colorGrey"
+                    app:layout_constraintLeft_toRightOf="@+id/app_icon"
+                    app:layout_constraintTop_toTopOf="@+id/app_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Version 1.0"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="12sp"
+                    app:layout_constraintLeft_toRightOf="@+id/app_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/app_name" />
+
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</android.support.constraint.ConstraintLayout>

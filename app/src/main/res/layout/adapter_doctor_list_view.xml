@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/doctor_list_cv"
+    android:layout_margin="10dp"
+    android:elevation="10dp"
+    app:cardCornerRadius="6dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/list_iv"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            tools:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/doctor_name_tv"
+            style="@style/text_title_dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/list_iv"
+            android:gravity="left"
+            tools:text="@string/dummy_text" />
+
+        <TextView
+            android:id="@+id/doctor_speciality_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/doctor_name_tv"
+            android:layout_toRightOf="@+id/list_iv"
+            android:padding="8dp"
+            tools:text="@string/dummy_text" />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

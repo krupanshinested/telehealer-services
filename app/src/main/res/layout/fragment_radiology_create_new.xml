@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/send_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/patient_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:arrow_visible="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:sub_title_visible="false"
+                app:title_text="@string/Click_here_to_select_patient"
+                app:view_label="@string/patient_name" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/copy_result_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:arrow_visible="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/patient_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/copy_result_to" />
+
+            <TextView
+                android:id="@+id/radiology_label"
+                style="@style/text_app_color"
+                android:layout_marginStart="4dp"
+                android:text="@string/radiology"
+                android:textAllCaps="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/copy_result_ocv" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/radiology_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:clickable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/radiology_label">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/radiology_list_rv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@+id/radiology_list_bottom_view"
+                    app:layout_constraintEnd_toStartOf="@id/radiology_list_iv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/radiology_list_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
+                    android:tint="@color/app_gradient_start"
+                    app:layout_constraintBottom_toTopOf="@+id/radiology_list_bottom_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/radiology_list_bottom_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="8dp"
+                    android:background="@color/colorGrey_light"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/radiology_list_rv" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/icd_label"
+                style="@style/text_app_color"
+                android:layout_marginStart="4dp"
+                android:text="@string/icd_10"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/radiology_ll" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/icd_list_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:clickable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/icd_label">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/icd_list_rv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@id/icd_list_iv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/icd_list_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
+                    android:tint="@color/app_gradient_start"
+                    app:layout_constraintBottom_toTopOf="@+id/list_bottom_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/list_bottom_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="8dp"
+                    android:background="@color/colorGrey_light"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/icd_list_rv" />
+            </android.support.constraint.ConstraintLayout>
+
+            <Switch
+                android:id="@+id/stat_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:padding="8dp"
+                android:text="@string/stat"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/icd_list_ll" />
+
+            <View
+                android:id="@+id/stat_bottom_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/colorGrey_light"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stat_switch" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/date_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:arrow_visible="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stat_bottom_view"
+                app:sub_title_visible="false"
+                app:view_label="@string/date_requested" />
+
+            <TextView
+                android:id="@+id/comments_label"
+                style="@style/text_app_color"
+                android:layout_marginStart="4dp"
+                android:text="@string/comments"
+                android:textAllCaps="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/date_ocv" />
+
+            <EditText
+                android:id="@+id/comments_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="32dp"
+                android:inputType="text"
+                android:paddingTop="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/comments_label" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/send_btn"
+        style="@style/button_app_background_white_text"
+        android:text="@string/send"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</android.support.constraint.ConstraintLayout>

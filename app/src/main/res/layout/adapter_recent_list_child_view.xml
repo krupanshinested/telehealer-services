@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:padding="8dp">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardUseCompatPadding="true"
+        android:id="@+id/item_cv">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_avatar_civ"
+                android:layout_width="@dimen/card_circular_image_size"
+                android:layout_height="@dimen/card_circular_image_size"
+                android:layout_margin="4dp"
+                android:src="@drawable/profile_placeholder"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/user_name_tv"
+                style="@style/text_title_dark"
+                android:layout_width="0dp"
+                android:gravity="left|center"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@id/label_iv"
+                app:layout_constraintStart_toEndOf="@+id/user_avatar_civ"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/label_iv"
+                android:layout_width="45dp"
+                android:layout_height="60dp"
+                android:background="@drawable/recents_piovted_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:rotation="45"
+                android:id="@+id/label_tv"
+                android:text="RPM"
+                android:textColor="@color/colorWhite"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:drawableLeft="@drawable/ic_videocam_black_24dp"
+                android:drawablePadding="10dp"
+                android:gravity="left|center"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/duration_tv"
+                app:layout_constraintStart_toEndOf="@+id/user_avatar_civ"
+                app:layout_constraintTop_toBottomOf="@+id/user_name_tv" />
+
+            <TextView
+                android:id="@+id/duration_tv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:drawableLeft="@drawable/ic_access_time_24dp"
+                android:drawablePadding="10dp"
+                android:gravity="left|center"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/info_iv"
+                app:layout_constraintStart_toEndOf="@+id/time_tv"
+                app:layout_constraintTop_toBottomOf="@+id/user_name_tv" />
+
+            <ImageView
+                android:id="@+id/info_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_info_32dp"
+                android:tint="@color/app_gradient_start"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/user_name_tv" />
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+</LinearLayout>

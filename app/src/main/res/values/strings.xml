@@ -1,0 +1,552 @@
+<resources>
+    <string name="app_name">TeleHealer</string>
+    <string name="sign_up">Register</string>
+    <string name="sign_in">Login</string>
+    <string name="dummy_text">Text comes here</string>
+    <string name="next">Next</string>
+    <string name="registration">Registration</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="date_of_birth">Date of birth</string>
+    <string name="gender">Gender</string>
+    <string name="email_hint">example@domain.com</string>
+    <string name="email_address">Email Address</string>
+    <string name="mobile_number">Mobile number</string>
+
+    //Password requirements
+    <string name="requirement_1">8 to 20 characters long</string>
+    <string name="requirement_2">Use atleast 1 uppercase letter, 1 lowercase letter and 1 number</string>
+    <string name="requirement_3">Not repeat the same number or letter more than three times in a row</string>
+    <string name="requirement_4">Not contain spaces, and may only use these special characters \'@#*()+={}/?~;,.-_\'</string>
+
+    //Registration page informations
+    <string name="email_info">Your Email id will be used to log you into your Telehealer account</string>
+    <string name="phone_info">Your phone number will be used to validate your identity via an authorization code. You agree that you are responsible for paying any of your carrier\'s charges related to SMS messages received from Telehealer.</string>
+    <string name="patient_info">Enter your first name,last name,gender and Date of birth.</string>
+    <string name="password_info">Enter the password for your account.</string>
+    <string name="country_info">Select the country code.</string>
+    <string name="role_info">Select your role</string>
+    <string name="assistant_info">Enter your first name,last name,gender,title and Degree.</string>
+    <string name="insurance_info">Capture your Insurance card\'s front and back side</string>
+    <string name="payment_info">If you choose your payment method as cash, then you will be responsible for any copays/deductible/coinsurance resulting from any interactions with your doctor.\n\nSelect the Cash option incase you don\'t have your insurance information handy. However, please remember to update this information prior to scheduling your first appointment</string>
+    <string name="otp_info">The code expires in 10mins after you request it.Incase you don’t get the code, you can request for another one in 30 seconds via the link below.</string>
+    <string name="image_certificate_info">Capture and save your Certificate.</string>
+    <string name="ma_certificate_info">Tap the certificate to preview it in full screen.</string>
+
+    <string name="terms_and_conditions">Terms and conditions</string>
+    <string name="accept">Accept</string>
+    <string name="terms_and_conditions_info">By creating an account, you agree to all the terms and conditions stated here.</string>
+    <string name="choose_your_payment_method">Choose your payment method</string>
+    <string name="cash">cash</string>
+    <string name="insurance">insurance</string>
+    <string name="insurance_details">Insurance Details</string>
+    <string name="front_side">FRONT SIDE</string>
+    <string name="back_side">BACK SIDE</string>
+    <string name="please_select_your_option">Please select your option</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="password">Password</string>
+    <string name="enter_the_authorization_code_sent_to">Enter the authorization code sent to</string>
+    <string name="resend">Resend</string>
+    <string name="select_your_role">Select your role</string>
+    <string name="doctor">DOCTOR</string>
+    <string name="medical_assistant">MEDICAL ASSISTANT</string>
+    <string name="title">Title</string>
+    <string name="degree">Degree</string>
+    <string name="image_of_certification">Image of certification</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="add_document">Add document</string>
+    <string name="password_requirements">Password Requirements</string>
+    <string name="ok_got_it">OK, Got it</string>
+    <string name="done">done</string>
+    <string name="what_is_your_name">What is your name?</string>
+    <string name="search">Search</string>
+    <string name="remember_me">Remember me</string>
+    <string name="register_manually">Register Manually</string>
+    <string name="if_above_result_doesn_t_match">If above result doesn\'t match</string>
+    <string name="speciality">Speciality</string>
+    <string name="bio">Bio</string>
+    <string name="website_optional">Website (Optional)</string>
+    <string name="practice">Practice</string>
+    <string name="landline">LANDLINE</string>
+    <string name="office_phone">Office Phone (Optional)</string>
+    <string name="license">License</string>
+    <string name="add_license">Add License</string>
+    <string name="npi">NPI</string>
+    <string name="liability_insurance">Liability Insurance Name</string>
+    <string name="add_address">Add Address</string>
+    <string name="website">Website</string>
+    <string name="delete">DELETE</string>
+    <string name="street">Street</string>
+    <string name="street2">Street2</string>
+    <string name="city">City</string>
+    <string name="state">State</string>
+    <string name="zip">Zip</string>
+    <string name="number">Number</string>
+    <string name="expiration">Expiration</string>
+    <string name="add_new">Add New</string>
+    <string name="practice_not_found">Practice not found?</string>
+    <string name="choose_practice">Choose Practice</string>
+    <string name="result">RESULTS</string>
+    <string name="driver_license">Driver\'s license</string>
+    <string name="doctor_driving_license_hint">We need your driver’s license to confirm your identity. This information will not be displayed as part of your public profile and will be kept confidential</string>
+    <string name="doctor_certificate">Medical School Diploma / Certificate</string>
+    <string name="doctor_certificate_hint">As part of our credentialing process, we would like to validate your medical degree. This information will not be displayed as part of your public profile and will be kept confidential</string>
+    <string name="info_release">Information release</string>
+    <string name="contact_us">Contact us</string>
+    <string name="doctor_agreement_hint">By creating an account, you agree to all the info release stated here</string>
+    <string name="address">Address</string>
+
+
+    <string-array name="onboarding_list">
+        <item>Visit doctors remotely through a private and secure video call</item>
+        <item>Measure vitals to asses condition</item>
+        <item>Transcribe entire encounter</item>
+        <item>Send and manage orders such as labs, prescriptions and specialist referrals</item>
+        <item>Revolutionizing medicine through effortless clinical documentation</item>
+    </string-array>
+
+    <!--Gender List-->
+    <string-array name="gender_list">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Others</item>
+    </string-array>
+
+    <!--Medical Assistant Title list-->
+    <string-array name="assistant_title_list">
+        <item>RN</item>
+        <item>NP</item>
+        <item>LPN</item>
+        <item>LVN</item>
+        <item>CNA</item>
+        <item>CNM</item>
+        <item>CRNA</item>
+        <item>DNP</item>
+        <item>MA</item>
+        <item>RMA</item>
+        <item>PA</item>
+        <item>FNP</item>
+        <item>Other</item>
+    </string-array>
+
+    <!--Doctor speciality list-->
+    <string-array name="doctor_speciality_list">
+        <item>Obstetrics &amp; Gynecology</item>
+        <item>Orthopedics</item>
+        <item>Podiatry</item>
+        <item>Family Medicine</item>
+        <item>Internal Medicine</item>
+        <item>Pediatrics</item>
+        <item>Neurology</item>
+        <item>Dermatology</item>
+        <item>Ophthalmology</item>
+        <item>Urology</item>
+        <item>ENT</item>
+        <item>Hematology &amp; Oncology</item>
+        <item>Psychiatry</item>
+        <item>Sports Medicine</item>
+        <item>Infectious Disease</item>
+        <item>Emergency Medicine</item>
+        <item>Pain Medicine</item>
+        <item>Allergy &amp; Immunology</item>
+        <item>Other</item>
+    </string-array>
+
+    <!--Appointment list-->
+    <string-array name="doctor_appointment_slots">
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+        <item>35</item>
+        <item>40</item>
+        <item>45</item>
+        <item>50</item>
+        <item>55</item>
+        <item>60</item>
+    </string-array>
+
+    <string name="digitsAlphaNumberic">abcdefghijklmnopqrstuvwxyzQWERTYUIOPASDFGHJKLZXCVBNM1234567890</string>
+    <string name="digitsNumeric">1234567890</string>
+    <string name="cancel">cancel</string>
+    <string name="biometric_title">Touch ID</string>
+    <string name="biometric_subtitle">Login with touch id to access the app</string>
+    <string name="biometric_description">Place your finger on the finger print scanner to verify your identity</string>
+    <string name="touch_the_fingerprint_sensor">Touch the fingerprint sensor</string>
+    <string name="agreement_for_use_of_touch_id">Agreement for use of Touch ID</string>
+    <string name="enable">enable</string>
+    <string name="quick_login_with_touch_id">Quick login with Touch ID</string>
+    <string name="touch_info">Login with Touch ID is faster and easier than the login with User Id and Password.</string>
+    <string name="enter_your_pin">Enter your pin</string>
+    <string name="forget_passcode">forget passcode?</string>
+    <string name="BIOMETRIC_FAILED">Not Recognized</string>
+    <string name="BIOMETRIC_SUCCESS">success</string>
+    <string name="email_id">Email</string>
+    <string name="log_in">log in</string>
+    <string name="forget_username_password">Forgot Password?</string>
+    <string name="login_with_touch_id">LOGIN WITH TOUCH ID</string>
+    <string name="login">Login</string>
+    <string name="quick_login_with_pin">LOGIN WITH PIN</string>
+    <string name="reenter_pin">Re-Enter your PIN</string>
+    <string name="create_pin">Create your PIN</string>
+    <string name="passcode_not_match">Passcode does not match. Please try again</string>
+    <string name="passcode_wrong">Wrong passcode. Please try again</string>
+    <string name="error">Error</string>
+    <string name="success_title_touchid">You’ve set up your Touch ID.</string>
+    <string name="success_message_touchid">We saved your Email Id on this device so you can use your Touch ID to login next time</string>
+    <string name="success_title_pin">You’ve set up your login PIN.</string>
+    <string name="success_message_pin">We saved your Email Id on this device so you can use your PIN to login next time.</string>
+    <string name="success_broadcast_receiver">SuccessBroadcastReceiver</string>
+    <string name="doctor_search_name_info">Enter your name.</string>
+    <string name="doctor_select_profile_info">Select your profile</string>
+    <string name="doctor_detail_info">Doctor Registration</string>
+    <string name="release_info">Please read the info release.</string>
+    <string name="reenter_password">Re-Enter your Password</string>
+    <string name="success_reset_password">Remember to user your new password when logging in the new time around</string>
+    <string name="sign_in_info">Login with your Email and Password. If not an already registered user, please register to us with sign up button.</string>
+
+    //empty error strings
+    <string name="firstname_empty_error">First Name can\'t be empty</string>
+    <string name="lastname_empty_error">Last Name can\'t be empty</string>
+    <string name="password_empty_error">Password can\'t be empty</string>
+    <string name="title_empty_error">Title can\'t be empty</string>
+    <string name="bio_empty_error">Bio can\'t be empty</string>
+    <string name="address_empty_error">Address can\'t be empty</string>
+    <string name="license_empty_error">License can\'t be empty</string>
+    <string name="npi_empty_error">NPI can\'t be empty</string>
+    <string name="liability_empty_error">Liability Insurance name can\'t be empty</string>
+    <string name="state_empty_error">State cannot be empty</string>
+    <string name="expiration_empty_error">Expiration date cannot be empty</string>
+
+    <string name="enter_valid_state">Enter valid state</string>
+    <string name="enter_practice_name">Enter practice name</string>
+    <string name="enter_street">Enter street</string>
+    <string name="enter_city">Enter city</string>
+    <string name="enter_state">Enter state</string>
+    <string name="enter_zip_code">Enter zip code</string>
+    <string name="image_path">img_path</string>
+    <string name="alert">Alert</string>
+    <string name="front_image_path">front_img_path</string>
+    <string name="back_image_path">back_img_path</string>
+    <string name="failure">Failure</string>
+    <string name="success">Success</string>
+    <string name="enter_valid_email">Enter valid email address</string>
+    <string name="email_already_taken">Email id already taken</string>
+    <string name="number_already_taken">Number already taken</string>
+    <string name="enter_email_id">Enter email id</string>
+    <string name="enter_password">Enter password</string>
+    <string name="or_login_with">Or, Login with</string>
+    <string name="touch_id">Touch Id</string>
+    <string name="use_touch_id">Use Touch Id</string>
+    <string name="user_not_allowed_error">You are attempting to login via the Telehealer Patient app. Instead, please install and sign-in using the Telehealer Medical app.</string>
+    <string name="license_number_empty_error">License number can\'t be empty</string>
+    <string name="expired_date_error">Already expired date can\'t be take for Expiration field</string>
+    <string name="license_state_empty_error">License number and State can\'t be empty</string>
+    <string name="license_date_empty_error">License number and Expiration date can\'t be empty</string>
+    <string name="state_date_empty_error">State and Expiration date can\'t be empty</string>
+    <string name="allow_access">Allow Access</string>
+
+    //permission check message
+    <string name="permission_camera_message">Telehealer would like to access your Camera inorder to take a photo.</string>
+    <string name="permission_gallery_message">Telehealer would like to access your Photos inorder to choose a photo.</string>
+    <string name="permission_mic_message">elehealer would like to access your Microphone inorder to record a audio.</string>
+    <string name="permission_location_message">Telehealer would like to access your Location</string>
+    <string name="permission_notification_message">Telehealer would like to send you notification updates.</string>
+    <string name="permission_health_message">Telehealer would like to access your health data.</string>
+    <string name="permission_cam_mic_noti_message">Telehealer would like to access your Camera,Microphone and Notification inorder to take photo,record audio and send notification updates.</string>
+    <string name="permission_cam_photos_message">Telehealer would like to access your Camera and Photos inorder to take/choose a photo.</string>
+    <string name="permission_cam_mic_message">Telehealer would like to access your Camera and Microphone inorder to take photo and record audio.</string>
+    <string name="permission_cam_noti_message">Telehealer would like to access your Camera and Notification inorder to take photo and send notification updates.</string>
+    <string name="permission_mic_noti_message">Telehealer would like to access your Microphone and Notifiction inorder to record audio and send notification updates.</string>
+    <string name="permission_loc_storage_vitals_message">Telehealer would like to access your Location and Storage inorder to connect with your iHealth devices.</string>
+    <string name="permission_loc_vitals_message">Telehealer would like to access your Location inorder to connect with your iHealth devices.</string>
+    <string name="permission_storage_vitals_message">Telehealer would like to access your Storage inorder to save data from your iHealth devices.</string>
+
+    //permission check title
+    <string name="permission_camera_title">Grant Camera Access</string>
+    <string name="permission_gallery_title">Grant Photo Access</string>
+    <string name="permission_mic_title">Grant Microphone Access</string>
+    <string name="permission_location_title">Grant Location Access</string>
+    <string name="permission_notification_title">Grant Notification Access</string>
+    <string name="permission_health_title">Grant Health Data Access</string>
+    <string name="permission_cam_mic_noti_title">Grant Camera,Microphone and Notification Access</string>
+    <string name="permission_cam_photos_title">Grant Camera and Photo Access</string>
+    <string name="permission_cam_mic_title">Grant Camera and Microphone Access</string>
+    <string name="permission_cam_noti_title">Grant Camera and Notification Access</string>
+    <string name="permission_mic_noti_title">Grant Microphone and Notification Access</string>
+    <string name="permission_loc_storage_title">Grant Location and Storage Access</string>
+
+    <string name="gallery_not_supported">Gallery option is not supported in this device</string>
+    <string name="camera_not_supported">Camera option is not supported in this device</string>
+    <string name="open_drawer">open_drawer</string>
+    <string name="close_drawer">close_drawer</string>
+    <string name="add_connection_success_prefix">Your connection request for</string>
+    <string name="add_connection_success_suffix">has been posted successfully.</string>
+    <string name="add_connection_failure_prefix">Your connection request for</string>
+    <string name="add_connection_failure_suffix">has been failed.</string>
+    <string name="add_connection_pending">PENDING</string>
+    <string name="add_connection_connect">CONNECT</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="add_connection_requesting">Posting your connection request.</string>
+    <string name="Add_connections">Add Connections</string>
+    <string name="more">more</string>
+    <string name="less">less</string>
+
+    <string name="about">About</string>
+    <string name="vitals">Vitals</string>
+    <string name="recents">Recents</string>
+    <string name="orders">Orders</string>
+    <string name="orders_referrals">Referrals</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="cancel_caps">CANCEL</string>
+    <string name="cancel_prescription_order">Do you really want to cancel this prescription order?</string>
+
+    <string name="patient">PATIENT</string>
+    <string name="pharmacy">PHARMACY</string>
+    <string name="order_status">ORDER STATUS</string>
+    <string name="prescription">PRESCRIPTION</string>
+    <string name="form">FORM</string>
+    <string name="strength">STRENGTH</string>
+    <string name="direction">DIRECTION</string>
+    <string name="dispense">DISPENSE</string>
+    <string name="refill">REFILL</string>
+    <string name="do_not_substitute">Do Not Substitute</string>
+    <string name="label">Label</string>
+    <string name="date">DATE</string>
+    <string name="copy_to">Copy To</string>
+    <string name="stat">Stat</string>
+    <string name="canceled">canceled</string>
+    <string name="referred_by">Referred by</string>
+    <string name="reason">reason</string>
+
+
+
+    //settings page
+    <string name="profile">Profile</string>
+    <string name="signOut">Sign Out</string>
+    <string name="medical_history">Medical History</string>
+    <string name="settings">Settings</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="change_password">Change Password</string>
+    <string name="appointment_slots">Appointment Slots</string>
+    <string name="feedback">Feedback</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="ok">Ok</string>
+    <string name="otp">Otp</string>
+    <string name="update">Update</string>
+    <string name="edit">Edit</string>
+    <string name="hi">Hi</string>
+    <string name="reset_password_string">In-Order to change your password,\n You have to enter authorization code which will sent to your registered Phone Number</string>
+    <string name="delete_account">DELETE ACCOUNT</string>
+    <string name="check_call_quality">Check Call Quality</string>
+    <string name="notification">Notification</string>
+    <string name="presence">Presence</string>
+    <string name="quick_login">Quick Login</string>
+    <string name="signature">Signature</string>
+    <string name="account_deletion">Account Deletion</string>
+    <string name="account_deletion_description">To Delete account permanantly,enter the text \'DELETE\'</string>
+    <string name="delete_account_description">Are you sure you want to delete your account? Deleting your account would terminate all access to the platform and immediately also delete all your records. This will not be retrievable at a later point and this action cannot be reversed.</string>
+    <string name="profile_settings">Profile Settings</string>
+    <string name="submit">submit</string>
+    <string name="time">time</string>
+    <string name="search_associations">Search Associations</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="print">print</string>
+    <string name="send">send</string>
+    <string name="Click_here_to_select_patient">Click here to select patient</string>
+    <string name="patient_name">Patient Name</string>
+    <string name="add">Add</string>
+    <string name="specialist_name">Specialist Name</string>
+    <string name="specialist">Specialist</string>
+    <string name="file_name">FILE NAME</string>
+    <string name="documents">Documents</string>
+    <string name="share">share</string>
+    <string name="save_fax"><![CDATA[save & fax]]></string>
+    <string name="save">save</string>
+    <string name="do_not_disturb">DO NOT DISTURB</string>
+    <string name="lab_description">LAB DESCRIPTION</string>
+    <string name="add_test">Add Test</string>
+    <string name="search_icd10_codes">Search ICD10 codes</string>
+    <string name="selected">Selected</string>
+    <string name="icd_10">ICD-10</string>
+    <string name="search_doctors">Search Doctors</string>
+    <string name="choose_test">Choose Test</string>
+    <string name="quick_login_broadcast_receiver">quick_login_broadcast_receiver</string>
+    <string name="edit_document">Edit Document</string>
+    <string name="search_pharmacy">Search Pharmacy</string>
+    <string name="choose_pharmacy">Choose Pharmacy</string>
+    <string name="onboarding_info">We will get in touch within 24hrs to validate your credentials and enable access to the platform.\n\nPlease remember to update your insurance company and include Telehealer,Inc as a supported platform for your practice.</string>
+    <string name="onboarding_in_progress">Onboarding in Progress</string>
+    <string name="permission_storage_message">Telehealer would like to access your local storage to store and display files</string>
+    <string name="permission_storage_title">Grant Storage Access</string>
+    <string name="clinic">CLINIC</string>
+    <string name="phone">Phone</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="name">Name</string>
+    <string name="validate">validate</string>
+    <string name="successfully_uploaded">Successfully uploaded</string>
+    <string name="something_went_wrong_try_again">Something went wrong please try again.</string>
+    <string name="are_you_sure_to_delete_document">Are you sure to delete your document</string>
+    <string name="selected_form_submitted_successfully">Selected forms has been submitted successfully</string>
+    <string name="new_prescription_order">New Prescription Order</string>
+    <string name="drug_error_nsg">Drug can\'t be empty</string>
+    <string name="direction_error_msg">Direction can\'t be empty</string>
+    <string name="dispense_error_msg">Dispense can\'t be empty</string>
+    <string name="strength_error_msg">Strength can\'t be empty</string>
+    <string name="new_specialist">New Specialist</string>
+    <string name="association_deleted">Association Deleted</string>
+    <string name="delete_connection">Delete Connection</string>
+    <string name="disassoctiate_this_connection">Are you sure to disassociate this connection?</string>
+    <string name="connection_status_open">open</string>
+    <string name="Doctors">Doctors</string>
+    <string name="Patients">Patients</string>
+    <string name="times">times</string>
+    <string name="new_radiology">New Radiology</string>
+    <string name="copy_result_to">Copy Result To</string>
+    <string name="radiology">Radiology</string>
+    <string name="date_requested">Date Requested</string>
+    <string name="comments">Comments</string>
+    <string name="new_lab_order">New Lab Order</string>
+    <string name="instructions">Instructions</string>
+    <string name="radiology_instructions">Ø  Nothing by mouth after 12 AM.\n** Lab instructions on back.\n💧Hydration instructions on back.\n✪ Need bowel prep.\n❄Instructions on back.\n★ Oral contrast prep required.</string>
+
+
+    //vitals
+    <string name="wireless_Pulse_Oximeter">Wireless Pulse Oximeter</string>
+    <string name="wireless_blood_Pressure">Wireless Blood Pressure</string>
+    <string name="wireless_Weight_Scale">Wireless Weight Scale</string>
+    <string name="wireless_Glucometer">Wireless Glucometer</string>
+    <string name="wireless_Thermometer">Wireless Thermometer</string>
+
+    <string name="air_description">Wireless Pulse Oximeter.\nSee how your activity affects your oxygen level and pulse pre and post workout!</string>
+    <string name="ease_description">Blood Pressure.\nMedically Accurate. Stylish and Bluetooth Smart Technology. Easy to Use. Share Data</string>
+    <string name="feel_description">Blood Pressure.\nAccurate blood pressure monitoring right at home.</string>
+    <string name="sense_description">Blood Pressure.\nWireless Wrist Blood Pressure Monitor. Clinically accurate. Insanely portable.</string>
+    <string name="lite_description">Wireless Body Analysis Scale.\nElegant Design. Modern, minimalist style fits any decor. Our wireless BMI weight scale easily records your fitness progress.</string>
+    <string name="view_description">Blood Pressure.\nWireless Wrist Blood Pressure Monitor Clinically accurate. Intuitive display.</string>
+    <string name="smart_description">Glucometer.\nA Portable, Shareable, Personal Diabetes Data Management Device.</string>
+    <string name="clear_description">Blood Pressure.\nWiFi Blood Pressure Monitor with Result Comparison and Voice.</string>
+    <string name="track_description">Blood Pressure.\nA powerful and friendly Bluetooth blood pressure monitor that anyone can use!</string>
+    <string name="core_description">Weighing Scale.\nThe Core Smart Scale. Measure and track nine aspects of your body composition with our medical-grade body composition scale for a complete understanding of your overall weight.</string>
+    <string name="ts28_description">iHealth - Infrared No-Touch Thermometer.</string>
+    <string name="thv3_description">Blood Pressure.\nWiFi Blood Pressure Monitor with Result Comparison and Voice.</string>
+    <string name="vital_connection_error">Haven’t permission to connect this device or the mac is not valid</string>
+    <string name="clear_title">iHealth Clear</string>
+    <string name="air_title">iHealth Air</string>
+    <string name="track_title">iHealth Track</string>
+    <string name="core_title">iHealth Core</string>
+    <string name="sense_title">iHealth Sense</string>
+    <string name="lite_title">iHealth Lite</string>
+    <string name="ease_title">iHealth Ease</string>
+    <string name="feel_title">iHealth Feel</string>
+    <string name="view_title">iHealth View</string>
+    <string name="smart_title">iHealth Smart</string>
+    <string name="ts28_title">iHealth Thermometer TS28</string>
+    <string name="manual_input">Manual Input</string>
+    <string name="connected_devices">Connected Devices</string>
+    <string name="unconnected_devices">Unconnected Devices</string>
+    <string name="setup_new_devices">Setup New Device</string>
+    <string name="supported_devices">Supported Devices</string>
+    <string name="new_vital">New Vital</string>
+    <string name="how_to_connect">Watch How to connect Video</string>
+    <string name="vital_tip_1">Make sure your %1$s is fully charged and in the vicinity of your phone</string>
+    <string name="connecting">Connecting....</string>
+    <string name="vital_discover_title">Found a device</string>
+    <string name="vital_discover_description">Vital Discovered</string>
+    <string name="connect">Connect</string>
+    <string name="retry">Retry</string>
+    <string name="connected">Connected</string>
+    <string name="device_connected_successfully">Device Connected Successfully</string>
+    <string name="device_learn_more">Learn more about the list of supported devices and where to purchase them,</string>
+    <string name="click_here">click here</string>
+    <string name="upgrade">UPGRADE</string>
+    <string name="forget_device">FORGET DEVICE</string>
+    <string name="device_information">Device Information :</string>
+    <string name="support">Support :</string>
+    <string name="START">START</string>
+    <string name="failed_to_connect">Failed to Connect</string>
+    <string name="save_and_close"><![CDATA[SAVE & CLOSE]]></string>
+    <string name="close">CLOSE</string>
+    <string name="remeasure">REMEASURE</string>
+    <string name="STOP">STOP</string>
+    <string name="CLOSE">CLOSE</string>
+    <string name="SAVE_AND_CLOSE"><![CDATA[SAVE & CLOSE]]></string>
+    <string name="RESTART">RESTART</string>
+    <string name="unable_to_connect">Unable to Connect</string>
+    <string name="discovering">Discovering....</string>
+    <string name="vital_troubleshoot">Is the light on and steady? If yes, try the following troubleshooting steps</string>
+    <string name="charge_text">Charge your %1$s</string>
+    <string name="reconnect_text">Reconnect with the device by turning off and turning on %1$s</string>
+    <string name="blood_dropped">Blood Dropped</string>
+    <string name="qr_scanned">QR Scanned</string>
+    <string name="powered_on">Powered On</string>
+    <string name="strip_inserted">Strip Inserted</string>
+    <string name="insert_strip">Insert Strip</string>
+    <string name="power_on">Power On</string>
+    <string name="drop_blood">Drop Blood</string>
+    <string name="scan_strip_bottle_qr">Scan Strip Bottle QR</string>
+    <string name="bluetooth_enable_title">Bluetooth Needed</string>
+    <string name="bluetooth_enable_description">Bluetoot is need to be enable inorder to connect with your vital devices.</string>
+    <string name="bluetooth_disabled">Bluetooth_disabled</string>
+    <string name="bluetooth_enabled">bluetooth_enabled</string>
+    <string name="blood_pressure">Blood Pressure</string>
+    <string name="weight">Weight</string>
+    <string name="bodyTemperature">Body Temperature</string>
+    <string name="bloodGlucose">Blood Glucose</string>
+    <string name="pulseOximeter">Pulse Oximeter</string>
+    <string name="heartRate">Heart Rate</string>
+    <string name="choose_the_type">Choose the type</string>
+    <string name="information_required">Information required</string>
+    <string name="other">Other</string>
+    <string name="please_provide_the_details">Please provide the details</string>
+    <string name="posting">Posting</string>
+    <string name="posting_please_wait">Posting your order please wait.</string>
+    <string name="cancel_xray_order">Do you really want to cancel this X-Ray order.</string>
+    <string name="gulcoWarning">For Pairing/Connecting i-Health Smart you need to connect the i-Health Smart(BG5) device manually from your phone settings first and then come here to pair.</string>
+    <string name="hardware">Hardware %1$s</string>
+    <string name="firmware">Firmware %1$s</string>
+    <string name="proposer_broadcastReceiver">proposer_broadcast_receiver</string>
+    <string name="demographics">Demographics</string>
+    <string name="send_an_invite_by_using_any_of_the_following">Send an invite by using any of the following</string>
+    <string name="invite_a_user">Invite a User</string>
+    <string name="invite_by_email_info">A connection request will be sent if a matching email address is already registered on Telehealer. Otherwise, the patient will get an email with a link to download the app.</string>
+    <string name="invite">Invite</string>
+    <string name="invite_by_email">Invite by Email</string>
+    <string name="invite_user_success_message">You have successfully invited a user</string>
+    <string name="invite_by_phone_info">A connection request will be sent if a matching phone number is already registered on Telehealer. Otherwise, the patient will get an SMS with a link to download the app.</string>
+    <string name="invite_by_phone">Invite by Phone</string>
+    <string name="invite_by_demographics">Invite by Demographics</string>
+    <string name="invite_by_demographics_info">A connection request will be sent if a patient with matching demographic details is found.</string>
+    <string name="certificate">Certificate</string>
+    <string name="medical_school_certificate">Medical School Diploma / Certificate</string>
+    <string name="profile_picture_updated">profile_picture_updated</string>
+    <string name="insurance_sentenceCase">Insurance</string>
+    <string name="payment_methods">Payment Methods</string>
+    <string name="email">Email</string>
+    <string name="not_connected">Not Connected</string>
+    <string name="scan_completed">Scan Completed</string>
+    <string name="scan_complete_description">Make sure your device is in pairing mode and it is fully charged.</string>
+    <string name="scanned">Scanned</string>
+    <string name="scanning_failed">Scanning Failed.</string>
+    <string name="device_disconnected">Device Disconnected</string>
+    <string name="fdir_title">iHealth Thermometer FDIR</string>
+    <string name="fdir_description">iHealth - Infrared No-Touch Thermometer.</string>
+    <string name="communication_timeout">Communication Timeout</string>
+    <string name="no_previous_value">There are no previous measured values,Please start your measuremnet.</string>
+    <string name="did_device_state_changed">did_device_state_changed</string>
+    <string name="device_not_found">Device not found!</string>
+    <string name="device_not_found_description">Do you want to retry?</string>
+    <string name="transcript">Transcript</string>
+    <string name="assessment">Assessment</string>
+    <string name="symptoms">Symptoms</string>
+    <string name="treatment_plan">Treatment Plan</string>
+    <string name="speaker_2_s_text">Speaker 2\'s text</string>
+    <string name="speaker_1_s_text">Speaker 1\'s text</string>
+    <string name="experimental_feature">Experimental Feature</string>
+    <string name="transcript_file">Transcript File</string>
+
+
+</resources>

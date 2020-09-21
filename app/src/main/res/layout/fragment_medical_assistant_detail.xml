@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="50dp"
+        android:paddingTop="10dp">
+
+        <include
+            android:id="@+id/circular_layout"
+            layout="@layout/layout_circular_profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/firstname_til"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/circular_layout"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <EditText
+                android:id="@+id/firstname_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/first_name"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/lastname_til"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/firstname_til"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <EditText
+                android:id="@+id/lastname_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/last_name"
+                android:inputType="text"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingLeft="4dp"
+            android:paddingTop="8dp"
+            android:text="@string/title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lastname_til"
+            app:layout_constraintWidth_max="@dimen/max_width" />
+
+        <LinearLayout
+            android:id="@+id/title_lay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <Spinner
+                android:id="@+id/title_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/app_gradient_start"
+                android:padding="0dp"
+                android:popupElevation="@dimen/spinner_dropdown_elevation" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/title_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingLeft="4dp"
+            android:paddingTop="8dp"
+            android:textColor="@color/colorBlack"
+            android:visibility="gone"
+            android:text="@string/title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_lay"
+            app:layout_constraintWidth_max="@dimen/max_width" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="2dp"
+            android:id="@+id/title_splitter"
+            android:background="@color/colorGrey"
+            app:layout_constraintEnd_toEndOf="@+id/gender_tv"
+            app:layout_constraintStart_toStartOf="@+id/gender_tv"
+            app:layout_constraintTop_toBottomOf="@+id/title_value"
+            app:layout_constraintWidth_max="@dimen/max_width" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/degree_til"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_splitter"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <EditText
+                android:id="@+id/degree_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/degree"
+                android:inputType="text"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
+
+
+        <TextView
+            android:id="@+id/gender_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/gender"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/degree_til"
+            app:layout_constraintWidth_max="@dimen/max_width" />
+
+        <LinearLayout
+            android:id="@+id/gender_lay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gender_tv"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <Spinner
+                android:id="@+id/gender_sp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/app_gradient_start"
+                android:padding="0dp"
+                android:popupElevation="@dimen/spinner_dropdown_elevation" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/gender_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingLeft="4dp"
+            android:paddingTop="8dp"
+            android:textColor="@color/colorBlack"
+            android:visibility="gone"
+            android:text="@string/title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gender_lay"
+            app:layout_constraintWidth_max="@dimen/max_width" />
+
+
+        <View
+            android:id="@+id/gender_splitter"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="2dp"
+            android:background="@color/colorGrey"
+            app:layout_constraintEnd_toEndOf="@+id/gender_tv"
+            app:layout_constraintStart_toStartOf="@+id/gender_tv"
+            app:layout_constraintTop_toBottomOf="@+id/gender_value" />
+
+
+        <TextView
+            android:id="@+id/certificate_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/certificate"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gender_splitter"
+            app:layout_constraintWidth_max="@dimen/max_width" />
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:id="@+id/certificate_card"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:cardUseCompatPadding="true"
+            app:cardPreventCornerOverlap="false"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:layout_constraintLeft_toLeftOf="@+id/certificate_tv"
+            app:layout_constraintTop_toBottomOf="@+id/certificate_tv"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="@+id/certificate_tv"
+            >
+        <ImageView
+            android:id="@+id/certificate_iv"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scaleType="centerCrop"
+            android:visibility="visible"
+            android:padding="8dp"
+            />
+        </android.support.v7.widget.CardView>
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v4.widget.NestedScrollView>

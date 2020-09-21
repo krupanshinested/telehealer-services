@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ProfileCellView" >
+        <attr name="isSpinnerType" format="boolean"/>
+        <attr name="hideSpiltter" format="boolean"/>
+        <attr name="title" format="string"/>
+        <attr name="value" format="string"/>
+        <attr name="icon" format="reference"/>
+    </declare-styleable>
+</resources>

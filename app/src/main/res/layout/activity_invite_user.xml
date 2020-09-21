@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/appbar_back_with_title_app_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/fragment_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/info_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:text="@string/send_an_invite_by_using_any_of_the_following"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.thealer.telehealer.common.CustomButton
+                android:id="@+id/email_cb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorWhite"
+                android:text="@string/email_id"
+                app:corner_radius="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/info_tv"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_max="@dimen/max_width"
+                app:layout_constraintWidth_percent="0.6"
+                app:stroke_color="@color/app_gradient_start"
+                app:stroke_width="2"
+                app:text_color="@color/app_gradient_start" />
+
+            <com.thealer.telehealer.common.CustomButton
+                android:id="@+id/phone_cb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorWhite"
+                android:text="@string/phone"
+                app:corner_radius="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/email_cb"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_max="@dimen/max_width"
+                app:layout_constraintWidth_percent="0.6"
+                app:stroke_color="@color/app_gradient_start"
+                app:stroke_width="2"
+                app:text_color="@color/app_gradient_start" />
+
+            <com.thealer.telehealer.common.CustomButton
+                android:id="@+id/demographics_cb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorWhite"
+                android:text="@string/demographics"
+                app:corner_radius="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/phone_cb"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_max="@dimen/max_width"
+                app:layout_constraintWidth_percent="0.6"
+                app:stroke_color="@color/app_gradient_start"
+                app:stroke_width="2"
+                app:text_color="@color/app_gradient_start" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.constraint.ConstraintLayout>

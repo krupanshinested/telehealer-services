@@ -1,0 +1,977 @@
+package com.thealer.telehealer.views.signup.doctor;
+
+import android.annotation.SuppressLint;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.Intent;
+import android.icu.util.UniversalTimeScale;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.UserDetailBean;
+import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
+import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
+import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
+import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
+import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiViewModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.CameraInterface;
+import com.thealer.telehealer.common.CameraUtil;
+import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.CurrentModeInterface;
+import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
+import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.views.home.DoctorOnBoardingActivity;
+import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
+/**
+ * Created by Aswin on 23,October,2018
+ */
+public class DoctorDetailFragment extends BaseFragment implements DoCurrentTransactionInterface, View.OnClickListener, CameraInterface,CurrentModeInterface {
+
+    private OnActionCompleteInterface onActionCompleteInterface;
+    private OnViewChangeInterface onViewChangeInterface;
+
+    private CircleImageView profileCiv;
+    private ImageView cameraIv;
+    private TextInputLayout firstnameTil;
+    private EditText firstnameEt;
+    private TextInputLayout lastnameTil;
+    private EditText lastnameEt;
+    private TextInputLayout titleTil;
+    private EditText titleEt;
+    private LinearLayout specialityLl;
+    private Spinner specialitySp;
+    private TextInputLayout bioTil;
+    private EditText bioEt;
+    private LinearLayout genderLl;
+    private TextView genderTv;
+    private Spinner genderSp;
+    private View genderView;
+    private TextInputLayout websiteTil;
+    private EditText websiteEt;
+    private TextInputLayout addAddressTil;
+    private EditText addAddressEt;
+    private TextInputLayout practiceTil;
+    private EditText practiceEt;
+    private RecyclerView officePhoneRv;
+    private LinearLayout licenseLl;
+    private TextView licenseHintTv;
+    private RecyclerView licenseRv;
+    private TextInputLayout addLicenseTil;
+    private EditText addLicenseEt;
+    private TextInputLayout npiTil;
+    private EditText npiEt;
+    private TextInputLayout liabilityInsuranceTil;
+    private EditText liabilityEt;
+
+    //not for registration
+    private ConstraintLayout driver_license,certificate;
+    private TextView driver_license_tv,certificate_tv;
+    private ImageView driver_license_iv,certificate_iv;
+    private TextView gender_value,specialist_tv;
+
+    private boolean isCreateManually;
+    private java.lang.String[] specialityArray;
+    private java.lang.String[] genderArray;
+    private int practiceId = 0;
+    private int doctor_id;
+    private boolean isNewPractice = true;
+    private DoctorLicenseListAdapter doctorLicenseListAdapter;
+    private OfficePhoneListAdapter officePhoneListAdapter;
+    private java.lang.String doctorImagePath;
+    private java.lang.String searchKey = "";
+    private DoctorLicenseBottomSheetFragment doctorLicenseBottomSheetFragment;
+
+    private GetDoctorsApiResponseModel.DataBean doctorDetailModel;
+    private CreateUserRequestModel createUserRequestModel;
+    private UpdateProfileModel updateProfileModel;
+    private WhoAmIApiViewModel whoAmIApiViewModel;
+    private GetDoctorsApiViewModel getDoctorsApiViewModel;
+    private GetDoctorsApiResponseModel getDoctorsApiResponseModel;
+
+    private WhoAmIApiResponseModel whoAmi;
+    private int currentGalleryCallingId;
+    private int currentDisplayType = Constants.CREATE_MODE;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
+        onViewChangeInterface = (OnViewChangeInterface) getActivity();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            doctorImagePath = savedInstanceState.getString(Constants.PICTURE_PATH);
+        }
+
+        if (savedInstanceState == null && getArguments() != null) {
+            currentDisplayType = getArguments().getInt(ArgumentKeys.VIEW_TYPE, Constants.CREATE_MODE);
+        } else if (savedInstanceState != null) {
+            currentDisplayType = savedInstanceState.getInt(ArgumentKeys.VIEW_TYPE,Constants.CREATE_MODE);
+        } else {
+            currentDisplayType = Constants.CREATE_MODE;
+        }
+
+        addObservers();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(Constants.PICTURE_PATH, doctorImagePath);
+        outState.putInt(ArgumentKeys.VIEW_TYPE,currentDisplayType);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_doctor_detail, container, false);
+
+        onViewChangeInterface.hideOrShowNext(true);
+        onViewChangeInterface.enableNext(false);
+
+        if (getArguments() != null) {
+
+            isCreateManually = getArguments().getBoolean(Constants.IS_CREATE_MANUALLY);
+
+            if (isCreateManually) {
+
+                searchKey = getArguments().getString(Constants.SEARCH_KEY);
+                firstnameEt.setText(searchKey);
+
+            } else {
+
+                isNewPractice = getArguments().getBoolean(Constants.IS_NEW_PRACTICE);
+
+                if (!isNewPractice)
+                    practiceId = getArguments().getInt(Constants.PRACTICE_ID);
+
+                doctor_id = getArguments().getInt(Constants.DOCTOR_ID);
+
+            }
+        }
+
+        createUserRequestModel = ViewModelProviders.of(getActivity()).get(CreateUserRequestModel.class);
+
+        initView(view);
+
+        getDoctorsApiViewModel = ViewModelProviders.of(getActivity()).get(GetDoctorsApiViewModel.class);
+
+        if (savedInstanceState == null) {
+            if (currentDisplayType == Constants.CREATE_MODE) {
+                getDoctorsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+                    @Override
+                    public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                        if (baseApiResponseModel != null) {
+
+                            getDoctorsApiResponseModel = (GetDoctorsApiResponseModel) baseApiResponseModel;
+
+                            if (getDoctorsApiResponseModel.getData() != null && getDoctorsApiResponseModel.getData().size() > 0) {
+
+                                doctorDetailModel = getDoctorsApiResponseModel.getData().get(doctor_id);
+
+                                if (doctorDetailModel != null) {
+
+                                    if (!isCreateManually) {
+                                        updateUserRequestModel();
+                                    } else {
+                                        createUserRequestModel.getUser_data().setFirst_name(searchKey);
+                                        setData();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        if (currentDisplayType != Constants.CREATE_MODE) {
+            if (whoAmi == null) {
+                whoAmIApiViewModel.checkWhoAmI();
+            } else {
+                if (createUserRequestModel.getUser_data().getFirst_name() != null) {
+                    updateUI(createUserRequestModel);
+                } else {
+                    updateUI(whoAmi);
+                }
+            }
+        }
+
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (!isCreateManually && currentDisplayType == Constants.CREATE_MODE){
+            checkFields();
+        }
+
+        if (currentDisplayType == Constants.CREATE_MODE) {
+            onViewChangeInterface.updateTitle(getString(R.string.profile));
+        } else {
+            onViewChangeInterface.updateTitle(UserDetailPreferenceManager.getUserDisplayName());
+        }
+
+        reloadUI();
+    }
+
+    private void updateUserRequestModel() {
+
+        createUserRequestModel.getUser_data().setAppt_length(50);
+        createUserRequestModel.getUser_data().setFirst_name(doctorDetailModel.getProfile().getFirst_name());
+        createUserRequestModel.getUser_data().setLast_name(doctorDetailModel.getProfile().getLast_name());
+        createUserRequestModel.getUser_data().setGender(doctorDetailModel.getProfile().getGender());
+
+        createUserRequestModel.getUser_detail().getData().setNpi(doctorDetailModel.getNpi());
+        createUserRequestModel.getUser_detail().getData().setTitle(doctorDetailModel.getProfile().getTitle());
+
+        createUserRequestModel.getUser_detail().getData().setBio(doctorDetailModel.getProfile().getBio());
+        createUserRequestModel.getUser_detail().getData().setUid(doctorDetailModel.getUid());
+        createUserRequestModel.getUser_detail().getData().setImage_url(doctorDetailModel.getProfile().getImage_url());
+
+        createUserRequestModel.getUser_detail().getData().setLicenses(doctorDetailModel.getLicenses());
+        createUserRequestModel.getUser_detail().getData().setSpecialties(doctorDetailModel.getSpecialties());
+
+        if (!isNewPractice) {
+            createUserRequestModel.getUser_detail().getData().setPractices(doctorDetailModel.getPractices());
+        } else {
+            List<PracticesBean> practicesBeanList = new ArrayList<>();
+            practicesBeanList.add(new PracticesBean(null, null,
+                    null,
+                    new ArrayList<>()));
+            createUserRequestModel.getUser_detail().getData().setPractices(practicesBeanList);
+        }
+
+        setData();
+
+        checkFields();
+
+    }
+
+    private void addObservers() {
+        updateProfileModel = ViewModelProviders.of(this).get(UpdateProfileModel.class);
+
+        updateProfileModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+
+                if (baseApiResponseModel != null) {
+
+                    whoAmIApiViewModel.checkWhoAmI();
+
+                    onViewChangeInterface.enableNext(true);
+                    currentDisplayType = Constants.VIEW_MODE;
+                    reloadUI();
+
+                    updatedProfile();
+                }
+
+            }
+        });
+
+        whoAmIApiViewModel = ViewModelProviders.of(getActivity()).get(WhoAmIApiViewModel.class);
+
+        whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
+                new Observer<BaseApiResponseModel>() {
+                    @Override
+                    public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                        if (baseApiResponseModel != null) {
+                            WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                            whoAmi = whoAmIApiResponseModel;
+                            updateUI(whoAmIApiResponseModel);
+                            UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+
+                            if (doctorImagePath != null) {
+                                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(getString(R.string.profile_picture_updated)));
+                            }
+
+                            onViewChangeInterface.updateTitle(UserDetailPreferenceManager.getUserDisplayName());
+
+                            if (whoAmIApiResponseModel.getStatus().equals(Constants.ONBOARDING_PENDING)){
+                                startActivity(new Intent(getActivity(), DoctorOnBoardingActivity.class));
+                            }
+
+
+                        }
+                    }
+                });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setData() {
+
+        setProfileImage();
+
+        firstnameEt.setText(createUserRequestModel.getUser_data().getFirst_name());
+        lastnameEt.setText(createUserRequestModel.getUser_data().getLast_name());
+        titleEt.setText(createUserRequestModel.getUser_detail().getData().getTitle());
+        bioEt.setText(createUserRequestModel.getUser_detail().getData().getBio());
+        genderSp.setSelection(getGenderPosition(createUserRequestModel.getUser_data().getGender()));
+        npiEt.setText(createUserRequestModel.getUser_detail().getData().getNpi());
+        liabilityEt.setText(createUserRequestModel.getUser_detail().getData().getLiability());
+
+        if (createUserRequestModel != null &&
+                createUserRequestModel.getUser_detail().getData().getPractices().size() > 0) {
+            websiteEt.setText(createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getWebsite());
+        }
+
+        setPractices();
+
+        setPhoneList();
+
+        setLicenseList();
+
+    }
+
+    private int getSpecialityPosition(java.lang.String specialist) {
+        for (int i = 0; i < specialityArray.length; i++) {
+            if (specialityArray[i].equalsIgnoreCase(specialist))
+                return i;
+        }
+        return 0;
+    }
+
+    private int getGenderPosition(java.lang.String gender) {
+        for (int i = 0; i < genderArray.length; i++) {
+            if (genderArray[i].equalsIgnoreCase(gender))
+                return i;
+        }
+        return 0;
+    }
+
+
+    private void initView(View view) {
+        profileCiv = (CircleImageView) view.findViewById(R.id.profile_civ);
+        cameraIv = (ImageView) view.findViewById(R.id.camera_iv);
+        firstnameTil = (TextInputLayout) view.findViewById(R.id.firstname_til);
+        firstnameEt = (EditText) view.findViewById(R.id.firstname_et);
+        lastnameTil = (TextInputLayout) view.findViewById(R.id.lastname_til);
+        lastnameEt = (EditText) view.findViewById(R.id.lastname_et);
+        titleTil = (TextInputLayout) view.findViewById(R.id.title_til);
+        titleEt = (EditText) view.findViewById(R.id.title_et);
+        specialityLl = (LinearLayout) view.findViewById(R.id.speciality_ll);
+        specialitySp = (Spinner) view.findViewById(R.id.speciality_sp);
+        bioTil = (TextInputLayout) view.findViewById(R.id.bio_til);
+        bioEt = (EditText) view.findViewById(R.id.bio_et);
+        genderLl = (LinearLayout) view.findViewById(R.id.gender_ll);
+        genderTv = (TextView) view.findViewById(R.id.gender_tv);
+        genderSp = (Spinner) view.findViewById(R.id.gender_sp);
+        genderView = (View) view.findViewById(R.id.gender_view);
+        websiteTil = (TextInputLayout) view.findViewById(R.id.website_til);
+        websiteEt = (EditText) view.findViewById(R.id.website_et);
+        addAddressTil = (TextInputLayout) view.findViewById(R.id.add_address_til);
+        addAddressEt = (EditText) view.findViewById(R.id.add_address_et);
+        practiceTil = (TextInputLayout) view.findViewById(R.id.practice_til);
+        practiceEt = (EditText) view.findViewById(R.id.practice_et);
+        officePhoneRv = (RecyclerView) view.findViewById(R.id.office_phone_rv);
+        licenseLl = (LinearLayout) view.findViewById(R.id.license_ll);
+        licenseHintTv = (TextView) view.findViewById(R.id.license_hint_tv);
+        licenseRv = (RecyclerView) view.findViewById(R.id.license_rv);
+        addLicenseTil = (TextInputLayout) view.findViewById(R.id.add_license_til);
+        addLicenseEt = (EditText) view.findViewById(R.id.add_license_et);
+        npiTil = (TextInputLayout) view.findViewById(R.id.npi_til);
+        npiEt = (EditText) view.findViewById(R.id.npi_et);
+        liabilityInsuranceTil = (TextInputLayout) view.findViewById(R.id.liability_insurance_til);
+        liabilityEt = (EditText) view.findViewById(R.id.liability_et);
+
+        driver_license = view.findViewById(R.id.driver_license);
+        certificate = view.findViewById(R.id.certificate);
+        driver_license_tv = view.findViewById(R.id.driver_license_tv);
+        certificate_tv = view.findViewById(R.id.certificate_tv);
+        driver_license_iv = view.findViewById(R.id.driver_license_iv);
+        certificate_iv = view.findViewById(R.id.certificate_iv);
+        gender_value  = view.findViewById(R.id.gender_value);
+        specialist_tv  = view.findViewById(R.id.specialist_tv);
+
+        specialityArray = getActivity().getResources().getStringArray(R.array.doctor_speciality_list);
+        genderArray = getActivity().getResources().getStringArray(R.array.gender_list);
+
+        ArrayAdapter specialityAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, specialityArray);
+        specialityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        specialitySp.setAdapter(specialityAdapter);
+
+        ArrayAdapter genderAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, genderArray);
+        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genderSp.setAdapter(genderAdapter);
+
+        bioEt.setOnClickListener(this);
+        addAddressEt.setOnClickListener(this);
+        practiceEt.setOnClickListener(this);
+        addLicenseEt.setOnClickListener(this);
+        profileCiv.setOnClickListener(this);
+        driver_license_tv.setOnClickListener(this);
+        certificate_iv.setOnClickListener(this);
+
+        addTextWatcher(firstnameEt, firstnameTil);
+        addTextWatcher(lastnameEt, lastnameTil);
+        addTextWatcher(titleEt, titleTil);
+        addTextWatcher(bioEt, bioTil);
+        addTextWatcher(addAddressEt, addAddressTil);
+        addTextWatcher(addLicenseEt, addLicenseTil);
+        addTextWatcher(npiEt, npiTil);
+        addTextWatcher(liabilityEt, liabilityInsuranceTil);
+
+        updateUI();
+    }
+
+
+    private void updateUI() {
+
+        if (currentDisplayType != Constants.CREATE_MODE) {
+            certificate.setVisibility(View.VISIBLE);
+            driver_license.setVisibility(View.VISIBLE);
+            addAddressTil.setVisibility(View.GONE);
+        } else {
+            certificate.setVisibility(View.GONE);
+            driver_license.setVisibility(View.GONE);
+
+            if (createUserRequestModel != null &&
+                    createUserRequestModel.getUser_detail().getData().getSpecialties() != null &&
+                    createUserRequestModel.getUser_detail().getData().getSpecialties().size() > 0)
+                specialitySp.setSelection(getSpecialityPosition(createUserRequestModel.getUser_detail().getData().getSpecialties().get(0).getName()));
+
+
+            createUserRequestModel.getUser_data().setAppt_length(50);
+
+            setPractices();
+            setLicenseList();
+            setPhoneList();
+            setProfileImage();
+            validateDetails();
+        }
+    }
+
+
+    private void updateUI(WhoAmIApiResponseModel whoAmIApiResponseModel) {
+        createUserRequestModel.setUser_data(new CreateUserRequestModel.UserDataBean(whoAmIApiResponseModel));
+        createUserRequestModel.setUser_detail(whoAmIApiResponseModel.getUser_detail());
+
+        updateUI(createUserRequestModel);
+    }
+
+    private void updateUI(CreateUserRequestModel createUserRequestModel) {
+        firstnameEt.setText(createUserRequestModel.getUser_data().getFirst_name());
+        lastnameEt.setText(createUserRequestModel.getUser_data().getLast_name());
+        titleEt.setText(createUserRequestModel.getUser_detail().getData().getTitle());
+        bioEt.setText(createUserRequestModel.getUser_detail().getData().getBio());
+        websiteEt.setText(createUserRequestModel.getUser_detail().getData().getWebsite());
+        npiEt.setText(createUserRequestModel.getUser_detail().getData().getNpi());
+        liabilityEt.setText(createUserRequestModel.getUser_detail().getData().getLiability());
+
+        try {
+            String title = createUserRequestModel.getUser_detail().getData().getSpecialties().get(0).getName();
+            List speciality = Arrays.asList(specialityArray);
+            specialitySp.setSelection(speciality.indexOf(title), false);
+            specialist_tv.setText(specialitySp.getSelectedItem().toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            String gender = createUserRequestModel.getUser_data().getGender();
+            List genders = Arrays.asList(genderArray);
+            genderSp.setSelection(genders.indexOf(gender), false);
+            gender_value.setText(genderSp.getSelectedItem().toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        setProfileImage();
+        setPractices();
+        setPhoneList();
+        setLicenseList();
+        setCertificate();
+        setLicense();
+
+        validateDetails();
+        checkFields();
+    }
+
+    private void reloadUI() {
+        switch (currentDisplayType){
+            case Constants.EDIT_MODE:
+                updateAllViews(true);
+                onViewChangeInterface.updateNextTitle(getString(R.string.update));
+                break;
+            case Constants.CREATE_MODE:
+                updateAllViews(true);
+                onViewChangeInterface.updateNextTitle(getString(R.string.next));
+                break;
+            case Constants.VIEW_MODE:
+                updateAllViews(false);
+                onViewChangeInterface.updateNextTitle(getString(R.string.edit));
+                Utils.hideKeyboardFrom(getActivity(),this.getView());
+                break;
+        }
+        validateDetails();
+
+        if (doctorLicenseListAdapter != null) {
+            doctorLicenseListAdapter.notifyDataSetChanged();
+        }
+
+        if (officePhoneListAdapter != null) {
+            officePhoneListAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+    private void updateAllViews(Boolean enabled) {
+        Utils.setEditable(firstnameEt, enabled);
+        Utils.setEditable(lastnameEt, enabled);
+        Utils.setEditable(titleEt, enabled);
+
+        Utils.setEditable(npiEt, enabled);
+        Utils.setEditable(liabilityEt, enabled);
+        Utils.setEditable(websiteEt, enabled);
+
+       if (enabled) {
+           gender_value.setVisibility(View.GONE);
+           genderSp.setVisibility(View.VISIBLE);
+
+           specialist_tv.setVisibility(View.GONE);
+           specialitySp.setVisibility(View.VISIBLE);
+
+           liabilityEt.setInputType(InputType.TYPE_CLASS_TEXT);
+       } else {
+           gender_value.setVisibility(View.VISIBLE);
+           genderSp.setVisibility(View.GONE);
+
+           specialist_tv.setVisibility(View.VISIBLE);
+           specialitySp.setVisibility(View.GONE);
+       }
+    }
+
+    private void addTextWatcher(EditText editText, TextInputLayout textInputLayout) {
+
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (editText.getText().toString().isEmpty() &&
+                        !hasFocus) {
+                    setError(editText);
+                    validateDetails();
+                }
+            }
+        });
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                textInputLayout.setErrorEnabled(false);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                validateDetails();
+            }
+        });
+    }
+
+    private void setError(EditText editText) {
+        switch (editText.getId()) {
+            case R.id.firstname_et:
+                firstnameTil.setError(getString(R.string.firstname_empty_error));
+                break;
+            case R.id.lastname_et:
+                lastnameTil.setError(getString(R.string.lastname_empty_error));
+                break;
+            case R.id.title_et:
+                titleTil.setError(getString(R.string.title_empty_error));
+                break;
+            case R.id.bio_et:
+                bioTil.setError(getString(R.string.bio_empty_error));
+                break;
+            case R.id.add_address_et:
+                addAddressTil.setError(getString(R.string.address_empty_error));
+                break;
+            case R.id.add_license_et:
+                addLicenseTil.setError(getString(R.string.license_empty_error));
+                break;
+            case R.id.npi_et:
+                npiTil.setError(getString(R.string.npi_empty_error));
+                break;
+            case R.id.liability_et:
+                liabilityInsuranceTil.setError(getString(R.string.liability_empty_error));
+                break;
+        }
+    }
+
+    private void setPhoneList() {
+        officePhoneRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        officePhoneListAdapter = new OfficePhoneListAdapter(getActivity(), practiceId, isNewPractice,this);
+        officePhoneRv.setAdapter(officePhoneListAdapter);
+    }
+
+    private boolean needToPutDoctorInOnboarding() {
+        if (createUserRequestModel.getDoctor_driving_license_path() != null || createUserRequestModel.getDoctor_certificate_path() != null) {
+            return true;
+        } else if (!UserDetailPreferenceManager.getNpi().equals(createUserRequestModel.getUser_detail().getData().getNpi())) {
+            return true;
+        } else if (UserDetailPreferenceManager.getLicenses().size() != createUserRequestModel.getUser_detail().getData().getLicenses().size()) {
+            return true;
+        } else {
+            Boolean needToPost = false;
+
+            for (LicensesBean license : createUserRequestModel.getUser_detail().getData().getLicenses()) {
+                for (LicensesBean currentLicense : UserDetailPreferenceManager.getLicenses()) {
+                    if (!license.isEqual(currentLicense)) {
+                        needToPost = true;
+                        break;
+                    }
+                }
+            }
+
+            return needToPost;
+        }
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        if (currentDisplayType == Constants.VIEW_MODE) {
+            return;
+        }
+
+        switch (v.getId()) {
+            case R.id.profile_civ:
+                currentGalleryCallingId = v.getId();
+                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                break;
+            case R.id.bio_et:
+                DoctorBioBottomSheetFragment doctorBioBottomSheetFragment = new DoctorBioBottomSheetFragment();
+
+                doctorBioBottomSheetFragment.setTargetFragment(this, RequestID.REQ_BIO);
+                doctorBioBottomSheetFragment.show(getFragmentManager(), doctorBioBottomSheetFragment.getClass().getSimpleName());
+                break;
+            case R.id.add_address_et:
+                DoctorPracticesBottomSheetFragment addPracticeBottomSheetFragment = new DoctorPracticesBottomSheetFragment();
+
+                Bundle newPracticeBundle = new Bundle();
+                newPracticeBundle.putBoolean(Constants.IS_NEW_PRACTICE, true);
+                addPracticeBottomSheetFragment.setArguments(newPracticeBundle);
+                addPracticeBottomSheetFragment.setTargetFragment(this, RequestID.REQ_PRACTICE);
+                addPracticeBottomSheetFragment.show(getFragmentManager(), addPracticeBottomSheetFragment.getClass().getSimpleName());
+                break;
+            case R.id.practice_et:
+                DoctorPracticesBottomSheetFragment doctorPracticesBottomSheetFragment = new DoctorPracticesBottomSheetFragment();
+                if (!isNewPractice) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(Constants.PRACTICE_ID, practiceId);
+                    doctorPracticesBottomSheetFragment.setArguments(bundle);
+                }
+
+                doctorPracticesBottomSheetFragment.setTargetFragment(this, RequestID.REQ_PRACTICE);
+                doctorPracticesBottomSheetFragment.show(getFragmentManager(), doctorPracticesBottomSheetFragment.getClass().getSimpleName());
+                break;
+            case R.id.add_license_et:
+                doctorLicenseBottomSheetFragment = new DoctorLicenseBottomSheetFragment();
+                doctorLicenseBottomSheetFragment.setTargetFragment(this, RequestID.REQ_LICENSE);
+                doctorLicenseBottomSheetFragment.show(getActivity().getSupportFragmentManager(), doctorLicenseBottomSheetFragment.getClass().getSimpleName());
+                break;
+            case R.id.driver_license_iv:
+                currentGalleryCallingId = v.getId();
+                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                break;
+            case R.id.certificate_iv:
+                currentGalleryCallingId = v.getId();
+                CameraUtil.with(getActivity()).showImageSelectionAlert();
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case RequestID.REQ_BIO:
+                updateBio();
+                break;
+            case RequestID.REQ_PRACTICE:
+                setPractices();
+                if (createUserRequestModel.getUser_detail().getData().getPractices().size() == 0) {
+                    addAddressTil.setError(getString(R.string.address_empty_error));
+                } else {
+                    addAddressTil.setErrorEnabled(false);
+                }
+                break;
+            case RequestID.REQ_LICENSE:
+                setLicenseList();
+                if (createUserRequestModel.getUser_detail().getData().getLicenses().size() == 0) {
+                    addLicenseTil.setError(getString(R.string.license_empty_error));
+                } else {
+                    addLicenseTil.setErrorEnabled(false);
+                }
+                break;
+        }
+        validateDetails();
+    }
+
+    private void setLicenseList() {
+
+        if (createUserRequestModel.getUser_detail().getData().getLicenses().size() > 0) {
+            licenseLl.setVisibility(View.VISIBLE);
+        } else {
+            licenseLl.setVisibility(View.GONE);
+        }
+
+        licenseRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        doctorLicenseListAdapter = new DoctorLicenseListAdapter(getActivity(),this);
+        licenseRv.setAdapter(doctorLicenseListAdapter);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setPractices() {
+
+        if (createUserRequestModel != null &&
+                createUserRequestModel.getUser_detail().getData().getPractices().size() > practiceId &&
+                createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address() != null) {
+
+            practiceTil.setVisibility(View.VISIBLE);
+            addAddressTil.setVisibility(View.GONE);
+
+            java.lang.String name = (createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getName() != null) ? createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getName() : "";
+            java.lang.String street = (createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getStreet() != null) ? createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getStreet() : "";
+            java.lang.String street2 = (createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getStreet2() != null) ? createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getStreet2() : "";
+            java.lang.String city = (createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getCity() != null) ? createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getCity() : "";
+            java.lang.String state = (createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getState() != null) ? createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getState() : "";
+            java.lang.String zip = (createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getZip() != null) ? createUserRequestModel.getUser_detail().getData().getPractices().get(practiceId).getVisit_address().getZip() : "";
+
+            practiceEt.setText(name + "\n" +
+                    street + "\n" +
+                    street2 + "\n" +
+                    city + "\n" +
+                    state + "\n" +
+                    zip);
+        } else {
+            practiceTil.setVisibility(View.GONE);
+            addAddressTil.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void updateBio() {
+        bioEt.setText(createUserRequestModel.getUser_detail().getData().getBio());
+
+        if (bioEt.getText().toString().isEmpty()) {
+            bioTil.setError(getString(R.string.bio_empty_error));
+        }
+    }
+
+    private void setProfileImage() {
+        if (doctorImagePath != null && !doctorImagePath.isEmpty()) {
+            profileCiv.setImageBitmap(getBitmpaFromPath(doctorImagePath));
+        } else if (createUserRequestModel != null && createUserRequestModel.getUser_data().getUser_avatar() != null&& !createUserRequestModel.getUser_data().getUser_avatar().isEmpty()) {
+            Utils.setImageWithGlide(getContext(), profileCiv, createUserRequestModel.getUser_data().getUser_avatar(), getContext().getDrawable(R.drawable.profile_placeholder), true);
+        } else if (createUserRequestModel != null &&
+                createUserRequestModel.getUser_detail() != null &&
+                createUserRequestModel.getUser_detail().getData().getImage_url() != null &&
+                !createUserRequestModel.getUser_detail().getData().getImage_url().isEmpty()){
+            Glide.with(getContext())
+                    .load(createUserRequestModel.getUser_detail().getData().getImage_url())
+                    .apply(new RequestOptions()
+                            .placeholder(R.drawable.profile_placeholder))
+                    .into(profileCiv);
+
+        }
+    }
+
+    private void setLicense() {
+        if (createUserRequestModel != null && createUserRequestModel.getDoctor_driving_license_path() != null&& !createUserRequestModel.getDoctor_driving_license_path().isEmpty()) {
+            driver_license_iv.setImageBitmap(getBitmpaFromPath(createUserRequestModel.getDoctor_driving_license_path()));
+        } else if (createUserRequestModel != null && createUserRequestModel.getUser_detail().getData().getDriver_license() != null){
+            Utils.setImageWithGlide(getContext(), driver_license_iv, createUserRequestModel.getUser_detail().getData().getDriver_license(), getContext().getDrawable(R.drawable.placeholder_certificate), true);
+        }
+    }
+
+    private void setCertificate() {
+        if (createUserRequestModel != null && createUserRequestModel.getDoctor_certificate_path() != null&& !createUserRequestModel.getDoctor_certificate_path().isEmpty()) {
+            certificate_iv.setImageBitmap(getBitmpaFromPath(createUserRequestModel.getDoctor_certificate_path()));
+        } else if (createUserRequestModel != null && createUserRequestModel.getUser_detail().getData().getDiploma_certificate() != null){
+            Utils.setImageWithGlide(getContext(), certificate_iv, createUserRequestModel.getUser_detail().getData().getDiploma_certificate(), getContext().getDrawable(R.drawable.placeholder_certificate), true);
+        }
+    }
+
+    public void validateDetails() {
+        if (currentDisplayType == Constants.VIEW_MODE) {
+            onViewChangeInterface.enableNext(true);
+        } else if (!firstnameEt.getText().toString().isEmpty() &&
+                !lastnameEt.getText().toString().isEmpty() &&
+                !titleEt.getText().toString().isEmpty() &&
+                !bioEt.getText().toString().isEmpty() &&
+                createUserRequestModel.getUser_detail().getData().getPractices().size() > 0 &&
+                createUserRequestModel.getUser_detail().getData().getLicenses().size() > 0 &&
+                hasValidLicense() &&
+                !npiEt.getText().toString().isEmpty() &&
+                !liabilityEt.getText().toString().isEmpty()) {
+
+                onViewChangeInterface.enableNext(true);
+        } else {
+            onViewChangeInterface.enableNext(false);
+        }
+    }
+
+    private boolean hasValidLicense() {
+        boolean isValidLicense = true;
+
+        for (Boolean isValid :
+                createUserRequestModel.getHasValidLicensesList()) {
+            if (!isValid) {
+                isValidLicense = false;
+                break;
+            }
+        }
+        return isValidLicense;
+    }
+
+    public void checkFields() {
+        if (firstnameEt.getText().toString().isEmpty()) {
+            setError(firstnameEt);
+        }
+        if (lastnameEt.getText().toString().isEmpty()) {
+            setError(lastnameEt);
+        }
+        if (titleEt.getText().toString().isEmpty()) {
+            setError(titleEt);
+        }
+        if (bioEt.getText().toString().isEmpty()) {
+            setError(bioEt);
+        }
+        if (npiEt.getText().toString().isEmpty()) {
+            setError(npiEt);
+        }
+        if (liabilityEt.getText().toString().isEmpty()) {
+            setError(liabilityEt);
+        }
+        if (createUserRequestModel.getUser_detail().getData().getPractices().size() == 0 ) {
+            setError(addAddressEt);
+        }
+
+        if (createUserRequestModel.getUser_detail().getData().getLicenses().size() == 0) {
+            setError(addLicenseEt);
+        }
+
+        if (!isCreateManually && isNewPractice){
+            if (createUserRequestModel.getUser_detail().getData().getPractices().get(0).getVisit_address() == null){
+                setError(addAddressEt);
+            }
+        }
+    }
+
+    @Override
+    public void doCurrentTransaction() {
+
+        switch (currentDisplayType) {
+            case Constants.EDIT_MODE:
+                createUserRequestModel();
+                if (needToPutDoctorInOnboarding()) {
+                    createUserRequestModel.getUser_data().setStatus(Constants.ONBOARDING_PENDING);
+                }
+                updateProfileModel.updateDoctor(createUserRequestModel);
+                break;
+            case Constants.VIEW_MODE:
+                currentDisplayType = Constants.EDIT_MODE;
+                reloadUI();
+                break;
+            case Constants.CREATE_MODE:
+                createUserRequestModel();
+                onActionCompleteInterface.onCompletionResult(null, true, null);
+                break;
+        }
+    }
+
+    private void updatedProfile() {
+        onActionCompleteInterface.onCompletionResult(RequestID.PROFILE_UPDATED, true, null);
+    }
+
+    private void createUserRequestModel() {
+        createUserRequestModel.setUser_avatar_path(doctorImagePath);
+        createUserRequestModel.getUser_data().setFirst_name(firstnameEt.getText().toString());
+        createUserRequestModel.getUser_data().setLast_name(lastnameEt.getText().toString());
+        createUserRequestModel.getUser_data().setGender(genderSp.getSelectedItem().toString());
+
+        createUserRequestModel.getUser_detail().getData().setTitle(titleEt.getText().toString());
+        createUserRequestModel.getUser_detail().getData().setNpi(npiEt.getText().toString());
+        createUserRequestModel.getUser_detail().getData().setLiability(liabilityEt.getText().toString());
+
+        createUserRequestModel.getUser_detail().getData().setWebsite(websiteEt.getText().toString());
+
+    }
+
+    @Override
+    public void onImageReceived(java.lang.String imagePath) {
+        switch (currentGalleryCallingId) {
+            case R.id.driver_license_iv:
+                createUserRequestModel.setDoctor_driving_license_path(imagePath);
+                setLicense();
+                break;
+            case R.id.certificate_iv:
+                createUserRequestModel.setDoctor_certificate_path(imagePath);
+                setCertificate();
+                break;
+            case R.id.profile_civ:
+                doctorImagePath = imagePath;
+                createUserRequestModel.setUser_avatar_path(imagePath);
+                setProfileImage();
+                break;
+        }
+
+    }
+
+    @Override
+    public int getCurrentMode() {
+        return currentDisplayType;
+    }
+}

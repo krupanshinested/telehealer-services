@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/license_cl"
+    android:layout_marginRight="4dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/license_number_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorBlack"
+        android:padding="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/state_tv"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/view_iv" />
+
+    <TextView
+        android:id="@+id/state_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorBlack"
+        android:padding="4dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/expiration_tv" />
+
+    <TextView
+        android:id="@+id/expiration_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorBlack"
+        android:padding="4dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintLeft_toRightOf="@+id/state_tv"
+        app:layout_constraintRight_toLeftOf="@+id/view_iv" />
+
+    <ImageView
+        android:id="@+id/view_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
+        android:tint="@color/app_gradient_start"
+        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGrey"
+        app:layout_constraintBottom_toTopOf="@+id/error_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/error_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="4dp"
+        android:visibility="gone"
+        android:textColor="@android:color/holo_red_light"/>
+</android.support.constraint.ConstraintLayout>

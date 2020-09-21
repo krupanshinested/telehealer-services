@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title_tv"
+        style="@style/text_app_color"
+        android:layout_marginTop="72dp"
+        android:text="@string/image_of_certification"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.thealer.telehealer.common.CustomButton
+        android:id="@+id/take_photo_btn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:drawableStart="@drawable/ic_photo_camera_white_24dp"
+        android:drawableTint="@color/app_gradient_start"
+        android:paddingLeft="10dp"
+        android:text="@string/take_photo"
+        app:background_color="@color/colorWhite"
+        app:corner_radius="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_tv"
+        app:layout_constraintWidth_max="@dimen/max_width"
+        app:stroke_color="@color/app_gradient_start"
+        app:stroke_width="2" />
+
+    <com.thealer.telehealer.common.CustomButton
+        android:id="@+id/add_document_btn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:drawableStart="@drawable/ic_add_white_24dp"
+        android:drawableTint="@color/app_gradient_start"
+        android:paddingLeft="10dp"
+        android:text="@string/add_document"
+        app:background_color="@color/colorWhite"
+        app:corner_radius="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/take_photo_btn"
+        app:layout_constraintWidth_max="@dimen/max_width"
+        app:stroke_color="@color/app_gradient_start"
+        app:stroke_width="2" />
+
+</android.support.constraint.ConstraintLayout>

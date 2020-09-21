@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TeleHealer</string>
+    <string name="app_gradient_start">#3B9EFF</string>
+    <string name="app_gradient_end">#38C9E5</string>
+</resources>

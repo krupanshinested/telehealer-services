@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/save_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/patient_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:arrow_visible="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:sub_title_visible="false"
+                app:title_text="@string/Click_here_to_select_patient"
+                app:view_label="@string/patient_name" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/drug_til"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/patient_ocv">
+
+                <EditText
+                    android:id="@+id/drug_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="DRUG"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <com.thealer.telehealer.common.CustomSpinnerView
+                android:id="@+id/form_csv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/drug_til"
+                app:spinner_label_text="@string/form" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/strength_til"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:layout_constraintEnd_toStartOf="@id/metric_csv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/form_csv">
+
+                <EditText
+                    android:id="@+id/strength_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/strength"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <com.thealer.telehealer.common.CustomSpinnerView
+                android:id="@+id/metric_csv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/strength_til"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/strength_til"
+                app:spinner_label_text="metric" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/direction_til"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toStartOf="@id/direction_1_csv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/strength_til">
+
+                <EditText
+                    android:id="@+id/direction_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/direction"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <com.thealer.telehealer.common.CustomSpinnerView
+                android:id="@+id/direction_1_csv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="1"
+                app:layout_constraintBottom_toBottomOf="@+id/direction_til"
+                app:layout_constraintEnd_toStartOf="@id/direction_2_csv"
+                app:layout_constraintStart_toEndOf="@id/direction_til"
+                app:spinner_label_visible="false" />
+
+            <com.thealer.telehealer.common.CustomSpinnerView
+                android:id="@+id/direction_2_csv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/direction_til"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/direction_1_csv"
+                app:spinner_label_visible="false" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/dispense_til"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/direction_til">
+
+                <EditText
+                    android:id="@+id/dispense_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/dispense"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/refill_label_tv"
+                style="@style/text_app_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="@string/refill"
+                app:layout_constraintTop_toBottomOf="@+id/dispense_til" />
+
+            <TextView
+                android:id="@+id/refill_count_tv"
+                style="@style/text_title_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 time"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/refill_label_tv" />
+
+            <ImageButton
+                android:id="@+id/add_ib"
+                android:layout_width="48dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/border_drawable_app_color"
+                android:src="@drawable/ic_add_white_24dp"
+                android:tint="@color/app_gradient_start"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/refill_label_tv" />
+
+            <ImageButton
+                android:id="@+id/sub_ib"
+                android:layout_width="48dp"
+                android:layout_height="24dp"
+                android:background="@drawable/border_drawable_app_color"
+                android:src="@drawable/ic_remove_white_24dp"
+                android:tint="@color/app_gradient_start"
+                app:layout_constraintEnd_toStartOf="@id/add_ib"
+                app:layout_constraintTop_toBottomOf="@+id/refill_label_tv" />
+
+            <View
+                android:id="@+id/refill_bottom_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@color/colorGrey_light"
+                app:layout_constraintTop_toBottomOf="@+id/refill_count_tv" />
+
+            <CheckBox
+                android:id="@+id/do_not_disturb_cb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/do_not_disturb"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/refill_bottom_view" />
+
+            <CheckBox
+                android:id="@+id/label_cb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/label"
+                android:textAllCaps="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/do_not_disturb_cb" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/save_btn"
+        style="@style/button_app_background_white_text"
+        android:text="@string/save"
+        android:layout_width="0dp"
+        android:layout_marginRight="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/save_fax_btn"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/save_fax_btn"
+        style="@style/button_app_background_white_text"
+        android:layout_width="0dp"
+        android:layout_marginLeft="1dp"
+        android:text="@string/save_fax"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/save_btn" />
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <fragment
+        android:id="@+id/fragment_viewpager_holder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:name="com.thealer.telehealer.views.onboarding.OnBoardingViewPagerFragment"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_action_holder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight="2"/>
+
+    <fragment
+        android:id="@+id/fragment_action_holder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:name="com.thealer.telehealer.views.onboarding.OnBoardingActionFragment"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_viewpager_holder" />
+</android.support.constraint.ConstraintLayout>

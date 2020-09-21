@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/appbar_back_with_title_app_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/cancel_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/patient_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:sub_title_visible="false"
+                app:view_label="@string/patient" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/pharmacy_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/patient_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/pharmacy" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/order_status_ocv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pharmacy_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/order_status" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/prescription_ocv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@+id/form_ocv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/order_status_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/prescription" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/form_ocv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/prescription_ocv"
+                app:layout_constraintTop_toBottomOf="@+id/order_status_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/form" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/strength_ocv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@id/direction_ocv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/prescription_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/strength" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/direction_ocv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/strength_ocv"
+                app:layout_constraintTop_toBottomOf="@+id/prescription_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/direction" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/dispense_ocv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@id/refill_ocv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/strength_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/dispense" />
+
+            <com.thealer.telehealer.views.home.orders.OrdersCustomView
+                android:id="@+id/refill_ocv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/dispense_ocv"
+                app:layout_constraintTop_toBottomOf="@+id/strength_ocv"
+                app:sub_title_visible="false"
+                app:view_label="@string/refill" />
+
+            <Switch
+                android:id="@+id/dns_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:clickable="false"
+                android:padding="8dp"
+                android:text="@string/do_not_substitute"
+                android:textColor="@color/colorBlack"
+                app:layout_constraintTop_toBottomOf="@id/dispense_ocv" />
+
+            <Switch
+                android:id="@+id/label_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:clickable="false"
+                android:padding="8dp"
+                android:text="@string/label"
+                android:textColor="@color/colorBlack"
+                app:layout_constraintTop_toBottomOf="@id/dns_switch" />
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/cancel_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <include layout="@layout/order_bottom_cancel_view" />
+
+    </LinearLayout>
+
+    <include layout="@layout/cancel_watermark_view"
+        android:visibility="gone"/>
+</android.support.constraint.ConstraintLayout>

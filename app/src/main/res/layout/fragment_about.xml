@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:id="@+id/patient_detail_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/phone_cv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <com.thealer.telehealer.common.CustomButton
+                android:id="@+id/medical_history_btn"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/medical_history"
+                app:app_gradient="true"
+                app:corner_radius="6dp"
+                app:text_color="@color/colorWhite" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/insurance_cv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:elevation="10dp"
+                app:cardCornerRadius="6dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/insurance_detail_tv"
+                        style="@style/text_app_color"
+                        android:textAllCaps="true"
+                        android:text="@string/insurance_details" />
+
+                    <TextView
+                        android:id="@+id/insurance_cash_tv"
+                        style="@style/text_title_dark"
+                        android:text="@string/cash" />
+
+                    <LinearLayout
+                        android:id="@+id/insurance_image_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <android.support.v4.view.ViewPager
+                            android:id="@+id/insurance_viewPager"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:overScrollMode="never" />
+
+                        <LinearLayout
+                            android:id="@+id/insurance_pager_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"
+                            android:gravity="center"
+                            android:orientation="horizontal" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/email_cv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:elevation="10dp"
+                app:cardCornerRadius="6dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/text_app_color"
+                        android:text="@string/email_id"
+                        android:textAllCaps="true"/>
+
+                    <TextView
+                        android:id="@+id/patient_email_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:textColor="@color/colorBlack" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/doctor_detail_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/phone_cv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/license_hint_tv"
+                    style="@style/text_app_color"
+                    android:layout_width="0dp"
+                    android:gravity="left"
+                    android:text="@string/license"
+                    app:layout_constraintEnd_toStartOf="@id/npi_hint_tv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/npi_hint_tv"
+                    style="@style/text_app_color"
+                    android:layout_width="0dp"
+                    android:gravity="left"
+                    android:text="@string/npi"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/license_hint_tv"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/license_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@+id/npi_tv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/license_hint_tv" />
+
+                <TextView
+                    android:id="@+id/npi_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/license_tv"
+                    app:layout_constraintTop_toBottomOf="@+id/npi_hint_tv" />
+
+                <TextView
+                    android:id="@+id/doctor_bio_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="3"
+                    android:maxLines="4"
+                    android:ellipsize="end"
+                    android:padding="8dp"
+                    android:textColor="@color/colorBlack"
+                    app:layout_constraintTop_toBottomOf="@+id/license_tv" />
+
+                <TextView
+                    android:id="@+id/more_less_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="more"
+                    android:textColor="@color/app_gradient_start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/doctor_bio_tv" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/clinic_cv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:elevation="10dp"
+                app:cardCornerRadius="6dp"
+                app:cardUseCompatPadding="true">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/label_tv"
+                        style="@style/text_app_color"
+                        android:layout_width="0dp"
+                        android:gravity="left"
+                        android:text="@string/clinic"
+                        app:layout_constraintEnd_toStartOf="@+id/map_iv"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/clinic_address_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/map_iv"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/label_tv" />
+
+                    <ImageView
+                        android:id="@+id/map_iv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_map_with_marker"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/phone_cv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:elevation="10dp"
+            app:cardCornerRadius="6dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintBottom_toTopOf="@+id/disconnect_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/text_app_color"
+                    android:text="@string/phone"
+                    android:textAllCaps="true"/>
+
+                <TextView
+                    android:id="@+id/user_phone_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:drawableEnd="@drawable/ic_call_black_24dp"
+                    android:drawableTint="@color/app_gradient_start"
+                    android:textColor="@color/colorBlack" />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/disconnect_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/disconnect"
+            android:textAllCaps="true"
+            android:textColor="@android:color/holo_red_dark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_max="@dimen/max_width" />
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v4.widget.NestedScrollView>

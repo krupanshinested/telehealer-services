@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:maxWidth="@dimen/max_width">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_tv"
+            style="@style/text_app_color"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:gravity="bottom"
+            android:text="@string/doctor_certificate"
+            app:layout_constraintBottom_toTopOf="@+id/certificate_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/certificate_iv"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@color/colorGrey"
+            android:scaleType="fitXY"
+            android:src="@drawable/placeholder_certificate"
+            app:layout_constraintBottom_toTopOf="@+id/page_hint_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/page_hint_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center|top"
+            android:padding="8dp"
+            android:text="@string/doctor_certificate_hint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_max="@dimen/max_width" />
+    </android.support.constraint.ConstraintLayout>
+</LinearLayout>

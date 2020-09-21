@@ -1,0 +1,230 @@
+package com.thealer.telehealer.common;
+
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.google.gson.reflect.TypeToken;
+import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
+import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
+/**
+ * Created by Aswin on 04,December,2018
+ */
+public class UserDetailPreferenceManager {
+
+    public static String getUserDisplayName() {
+        if (UserType.isUserDoctor()) {
+            return "Dr. " + getFirst_name() + " " + getLast_name() + " " + getTitle();
+        } else  {
+            return getFirst_name() + " " + getLast_name();
+        }
+    }
+
+    public static String getUser_guid() {
+        return appPreference.getString(PreferenceConstants.USER_GUID);
+    }
+
+    public static void setUser_guid(String user_guid) {
+        appPreference.setString(PreferenceConstants.USER_GUID, user_guid);
+    }
+
+    public static String getVersion() {
+        return appPreference.getString(PreferenceConstants.VERSION);
+    }
+
+    public static void setVersion(String version) {
+        appPreference.setString(PreferenceConstants.VERSION, version);
+    }
+
+    public static String getUser_activated() {
+        return appPreference.getString(PreferenceConstants.USER_ACTIVATED);
+    }
+
+    public static void setUser_activated(String user_activated) {
+        switch (user_activated) {
+            case Constants.ACTIVATION_PENDING:
+                appPreference.setBoolean(PreferenceConstants.IS_USER_VALIDATED, false);
+                break;
+            case Constants.ONBOARDING_PENDING:
+                appPreference.setBoolean(PreferenceConstants.IS_USER_ACTIVATED, false);
+                break;
+            case Constants.OFFLINE:
+            case Constants.AVAILABLE:
+            case Constants.ACTIVATED:
+                appPreference.setBoolean(PreferenceConstants.IS_USER_ACTIVATED, true);
+                appPreference.setBoolean(PreferenceConstants.IS_USER_VALIDATED, true);
+                break;
+        }
+        appPreference.setString(PreferenceConstants.USER_ACTIVATED, user_activated);
+    }
+
+    public static String getFirst_name() {
+        return appPreference.getString(PreferenceConstants.USER_FIRST_NAME);
+    }
+
+    public static void setFirst_name(String first_name) {
+        appPreference.setString(PreferenceConstants.USER_FIRST_NAME, first_name);
+    }
+
+    public static String getLast_name() {
+        return appPreference.getString(PreferenceConstants.USER_LAST_NAME);
+    }
+
+    public static void setLast_name(String last_name) {
+        appPreference.setString(PreferenceConstants.USER_LAST_NAME, last_name);
+    }
+
+    public static String getStatus() {
+        return appPreference.getString(PreferenceConstants.USER_STATUS);
+    }
+
+    public static void setStatus(String status) {
+        appPreference.setString(PreferenceConstants.USER_STATUS, status);
+    }
+
+    public static String getEmail() {
+        return appPreference.getString(PreferenceConstants.USER_EMAIL);
+    }
+
+    public static void setEmail(String email) {
+        appPreference.setString(PreferenceConstants.USER_EMAIL, email);
+    }
+
+    public static String getUser_avatar() {
+        return appPreference.getString(PreferenceConstants.USER_AVATAR);
+    }
+
+    public static void setUser_avatar(String user_avatar) {
+        appPreference.setString(PreferenceConstants.USER_AVATAR, user_avatar);
+    }
+
+    public static String getRole() {
+        return appPreference.getString(PreferenceConstants.USER_ROLE);
+    }
+
+    public static void setRole(String role) {
+        appPreference.setString(PreferenceConstants.USER_ROLE, role);
+    }
+
+    public static String getPhone() {
+        return appPreference.getString(PreferenceConstants.USER_PHONE);
+    }
+
+    public static void setPhone(String phone) {
+        appPreference.setString(PreferenceConstants.USER_PHONE, phone);
+    }
+
+    public static String getGender() {
+        return appPreference.getString(PreferenceConstants.USER_GENDER);
+    }
+
+    public static void setGender(String gender) {
+        appPreference.setString(PreferenceConstants.USER_GENDER, gender);
+    }
+
+    public static String getDob() {
+        return appPreference.getString(PreferenceConstants.USER_DOB);
+    }
+
+    public static void setDob(String dob) {
+        appPreference.setString(PreferenceConstants.USER_DOB, dob);
+    }
+
+    public static int getAppt_length() {
+        return appPreference.getInt(PreferenceConstants.USER_APPT_LENGTH);
+    }
+
+    public static void setAppt_length(int appt_length) {
+        appPreference.setInt(PreferenceConstants.USER_APPT_LENGTH, appt_length);
+    }
+
+    public static String getNpi() {
+        return appPreference.getString(PreferenceConstants.USER_NPI);
+    }
+
+    public static void setNpi(String npi) {
+        appPreference.setString(PreferenceConstants.USER_NPI, npi);
+    }
+
+    public static String getTitle() {
+        return appPreference.getString(PreferenceConstants.USER_TITLE);
+    }
+
+    public static void setTitle(String title) {
+        appPreference.setString(PreferenceConstants.USER_TITLE, title);
+    }
+
+    public static String getSignature() {
+        return appPreference.getString(PreferenceConstants.USER_SIGNATURE);
+    }
+
+    public static void setSignature(String signature) {
+        appPreference.setString(PreferenceConstants.USER_SIGNATURE, signature);
+    }
+
+    public static String getSpeciality() {
+        return appPreference.getString(PreferenceConstants.USER_SPECIALITY);
+    }
+
+    public static void setSpeciality(String speciality) {
+        appPreference.setString(PreferenceConstants.USER_SPECIALITY, speciality);
+    }
+
+    public static List<LicensesBean> getLicenses() {
+        String licenscesList = appPreference.getString(PreferenceConstants.USER_LICENSES);
+        Gson gson = new Gson();
+
+        Type type = new TypeToken<List<LicensesBean >>(){}.getType();
+        List <LicensesBean > license = gson.fromJson(licenscesList,type);
+
+        if (license != null) {
+            return license;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public static void setLicenses(List<LicensesBean> licenses) {
+        Gson gson = new Gson();
+        String license = gson.toJson(licenses);
+        appPreference.setString(PreferenceConstants.USER_LICENSES, license);
+    }
+
+    public static void insertUserDetail(WhoAmIApiResponseModel whoAmIApiResponseModel) {
+        Log.e("aswin", "insertUserDetail: " + new Gson().toJson(whoAmIApiResponseModel));
+
+        setAppt_length(whoAmIApiResponseModel.getAppt_length());
+        setDob(whoAmIApiResponseModel.getDob());
+        setEmail(whoAmIApiResponseModel.getEmail());
+        setFirst_name(whoAmIApiResponseModel.getFirst_name());
+        setLast_name(whoAmIApiResponseModel.getLast_name());
+        setGender(whoAmIApiResponseModel.getGender());
+        setNpi(whoAmIApiResponseModel.getDoctorNpi());
+        setPhone(whoAmIApiResponseModel.getPhone());
+        setRole(whoAmIApiResponseModel.getRole());
+        setSpeciality(whoAmIApiResponseModel.getDoctorSpecialist());
+        setStatus(whoAmIApiResponseModel.getStatus());
+        setUser_activated(whoAmIApiResponseModel.getUser_activated());
+        setUser_avatar(whoAmIApiResponseModel.getUser_avatar());
+        setUser_guid(whoAmIApiResponseModel.getUser_guid());
+        setVersion(whoAmIApiResponseModel.getVersion());
+
+        if (whoAmIApiResponseModel.getUser_detail() != null) {
+
+            setSignature(whoAmIApiResponseModel.getUser_detail().getSignature());
+
+            if (whoAmIApiResponseModel.getUser_detail().getData() != null) {
+                setTitle(whoAmIApiResponseModel.getUser_detail().getData().getTitle());
+                setLicenses(whoAmIApiResponseModel.getUser_detail().getData().getLicenses());
+            }
+        }
+
+    }
+}

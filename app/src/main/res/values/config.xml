@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="isXlarge">false</bool>
+    <dimen name="max_width">340dp</dimen>
+    <string name="release_info_url">http://telehealer.com/info-release/</string>
+    <string name="contact_url">http://telehealer.com/feedback</string>
+    <string name="get_image_url">api/download?path=</string>
+    <string name="feedback_url">http://telehealer.com/feedback</string>
+    <string name="privacy_url">http://telehealer.com/privacy/</string>
+</resources>
