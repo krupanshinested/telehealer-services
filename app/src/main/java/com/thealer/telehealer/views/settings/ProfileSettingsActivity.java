@@ -1,21 +1,12 @@
 package com.thealer.telehealer.views.settings;
 
 import android.app.DatePickerDialog;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -23,9 +14,42 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.stripe.android.ApiResultCallback;
+import com.stripe.android.CustomerSession;
+import com.stripe.android.PaymentIntentResult;
+import com.stripe.android.PaymentSession;
+import com.stripe.android.PaymentSessionConfig;
+import com.stripe.android.PaymentSessionData;
+import com.stripe.android.SetupIntentResult;
+import com.stripe.android.Stripe;
+import com.stripe.android.StripeError;
+import com.stripe.android.model.ConfirmSetupIntentParams;
+import com.stripe.android.model.Customer;
+import com.stripe.android.model.PaymentIntent;
+import com.stripe.android.model.PaymentMethod;
+import com.stripe.android.model.PaymentMethodCreateParams;
+import com.stripe.android.model.SetupIntent;
+import com.stripe.android.model.Source;
+import com.stripe.android.model.StripeModel;
+import com.stripe.android.view.AddPaymentMethodActivityStarter;
+import com.stripe.android.view.BillingAddressFields;
+import com.stripe.android.view.PaymentMethodsActivityStarter;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeViewModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signout.SignoutApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
@@ -41,6 +65,8 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
+import com.thealer.telehealer.stripe.OnSetupIntentResp;
 import com.thealer.telehealer.views.EducationalVideo.EducationalListVideoFragment;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.call.CallNetworkTestActivity;
@@ -72,9 +98,22 @@ import com.thealer.telehealer.views.signup.patient.PatientChoosePaymentFragment;
 import com.thealer.telehealer.views.signup.patient.PatientRegistrationDetailFragment;
 import com.thealer.telehealer.views.signup.patient.PatientUploadInsuranceFragment;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.application;
 
 /**
  * Created by rsekar on 11/15/18.
@@ -106,9 +145,12 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private boolean isBackDisabled = false;
     private SignoutApiViewModel signoutApiViewModel;
+    private BrainTreeViewModel brainTreeViewModel;
     private ImageView favoriteIv;
     private CircleImageView statusCiv;
     private boolean isSigningOutInProcess = false;
+
+    Stripe stripe = new Stripe(application, BuildConfig.STRIPE_KEY);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,10 +171,13 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             hideOrShowNext(false);
             updateDetailTitle(UserDetailPreferenceManager.getUserDisplayName());
         }
+
+        CustomerSession.initCustomerSession(this, new AppEphemeralKeyProvider(signoutApiViewModel.getAuthApiService()));
     }
 
     private void initObservers() {
         signoutApiViewModel = new ViewModelProvider(this).get(SignoutApiViewModel.class);
+        brainTreeViewModel = new ViewModelProvider(this).get(BrainTreeViewModel.class);
         signoutApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -154,6 +199,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 isSigningOutInProcess = false;
             }
         });
+
     }
 
     private void initView() {
@@ -177,7 +223,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         favoriteIv.setVisibility(View.GONE);
 
         nextTv = findViewById(R.id.next_tv);
-      
+
         updateProfile();
 
         appbarLayout.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {
@@ -600,11 +646,15 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
                 break;
             case RequestID.CARD_INFORMATION_VIEW:
-                CardInformationFragment cardInformationFragment = new CardInformationFragment();
+                //to open stripe payment method list
+                new PaymentMethodsActivityStarter(this).startForResult(new PaymentMethodsActivityStarter.Args(null, 0, false, Arrays.asList(PaymentMethod.Type.Card), null, null, BillingAddressFields.None, false, false, true));
+
+
+                /*CardInformationFragment cardInformationFragment = new CardInformationFragment();
                 bundle = new Bundle();
                 bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
                 cardInformationFragment.setArguments(bundle);
-                showSubFragment(cardInformationFragment);
+                showSubFragment(cardInformationFragment);*/
                 break;
 
             case RequestID.TRANSACTION_DETAIL:
@@ -633,15 +683,37 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PaymentMethodsActivityStarter.REQUEST_CODE) {
+            PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
+            if (result != null && result.paymentMethod != null) {
+                setDefaultMethod(result.paymentMethod.id, clientSecret1 -> stripe.onSetupResult(requestCode, data, new ApiResultCallback<SetupIntentResult>() {
+                    @Override
+                    public void onSuccess(@NotNull SetupIntentResult setupIntentResult) {
+                        Log.e("setupresult", "" + setupIntentResult.getIntent().getPaymentMethodId());
+                    }
 
-        getCurrentFragment().onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PermissionConstants.GALLERY_REQUEST_CODE || requestCode == PermissionConstants.CAMERA_REQUEST_CODE) {
-            String imagePath = CameraUtil.getImagePath(this, requestCode, resultCode, data);
-            CameraInterface cameraInterface = (CameraInterface) getCurrentFragment();
-            cameraInterface.onImageReceived(imagePath);
+                    @Override
+                    public void onError(@NotNull Exception e) {
+                        e.printStackTrace();
+                    }
+                }));
+            }
+        } else {
+            getCurrentFragment().onActivityResult(requestCode, resultCode, data);
+            if (requestCode == PermissionConstants.GALLERY_REQUEST_CODE || requestCode == PermissionConstants.CAMERA_REQUEST_CODE) {
+                String imagePath = CameraUtil.getImagePath(this, requestCode, resultCode, data);
+                CameraInterface cameraInterface = (CameraInterface) getCurrentFragment();
+                cameraInterface.onImageReceived(imagePath);
+            }
         }
 
+    }
+
+    private void setDefaultMethod(String paymentMethodId, OnSetupIntentResp onSetupIntentResp) {
+        brainTreeViewModel.makeDefaultCard(paymentMethodId, clientSecret -> {
+            stripe.confirmSetupIntent(ProfileSettingsActivity.this, ConfirmSetupIntentParams.create(clientSecret, paymentMethodId));
+            onSetupIntentResp.onSuccess("");
+        });
     }
 
     @Override
