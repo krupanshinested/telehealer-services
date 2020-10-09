@@ -375,7 +375,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (navigationView == null) {
             return;
         }
-        
+
         View view = navigationView.getHeaderView(0);
         ImageView userProfileIv = view.findViewById(R.id.home_header_iv);
         Utils.setImageWithGlide(getApplicationContext(), userProfileIv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
