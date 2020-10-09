@@ -31,6 +31,8 @@ public class BrainTreeViewModel extends BaseApiViewModel {
         super(application);
     }
 
+    private String paymentMethodId;
+
     public void getBrainTreeCustomer() {
         fetchToken(new BaseViewInterface() {
             @Override
@@ -86,24 +88,12 @@ public class BrainTreeViewModel extends BaseApiViewModel {
         });
     }
 
-    public void makeDefaultCard(String paymentMethodId, OnSetupIntentResp onSetupIntentResp) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("paymentMethodId", paymentMethodId);
-        fetchToken(new BaseViewInterface() {
-            @Override
-            public void onStatus(boolean status) {
-                if (status) {
-                    getAuthApiService().makeDefault(map)
-                            .compose(applySchedulers())
-                            .subscribe(responseBody -> {
-                                getSetupIntent(onSetupIntentResp);
-                            });
-                }
-            }
-        });
+    public void makeDefaultCard(String paymentMethodId) {
+        getSetupIntent(paymentMethodId);
+
     }
 
-    public void getSetupIntent(OnSetupIntentResp onSetupIntentResp) {
+    public void getSetupIntent(String paymentMethodId) {
         fetchToken(status -> {
             if (status) {
                 getAuthApiService().getSetupIntent()
@@ -111,9 +101,15 @@ public class BrainTreeViewModel extends BaseApiViewModel {
                         .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                             @Override
                             public void onSuccess(BaseApiResponseModel model) {
-                                if (model instanceof SetUpIntentResp) {
-                                    onSetupIntentResp.onSuccess(((SetUpIntentResp) model).getClientSecret());
-                                }
+                                baseApiResponseModelMutableLiveData.setValue(model);
+                                HashMap<String, String> map = new HashMap<>();
+                                map.put("paymentMethodId", paymentMethodId);
+                                getAuthApiService().makeDefault(map)
+                                        .compose(applySchedulers())
+                                        .subscribe(responseBody -> {
+                                            setPaymentMethodId(paymentMethodId);
+
+                                        });
                             }
                         });
 
@@ -122,4 +118,29 @@ public class BrainTreeViewModel extends BaseApiViewModel {
     }
 
 
+    public void getDefaultCard() {
+        fetchToken(status -> {
+            if (status) {
+                getAuthApiService().getDefaultCard()
+                        .compose(applySchedulers())
+                        .subscribe(new RAObserver<DefaultCardResp>(Constants.SHOW_PROGRESS) {
+                            @Override
+                            public void onSuccess(DefaultCardResp model) {
+                                setPaymentMethodId(model.getCardDetail().getCardId());
+                                baseApiResponseModelMutableLiveData.setValue(model);
+                            }
+                        });
+
+            }
+        });
+    }
+
+
+    public String getPaymentMethodId() {
+        return paymentMethodId;
+    }
+
+    public void setPaymentMethodId(String paymentMethodId) {
+        this.paymentMethodId = paymentMethodId;
+    }
 }

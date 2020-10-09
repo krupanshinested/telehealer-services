@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.api;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
+import com.thealer.telehealer.apilayer.models.Braintree.DefaultCardResp;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileResponseModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.DeleteEducationalVideoResponse;
@@ -691,7 +692,7 @@ public interface ApiInterface {
     Observable<SetUpIntentResp> getSetupIntent();
 
     @GET("api/stripe/default-card")
-    Observable<ResponseBody> getDefaultCard();
+    Observable<DefaultCardResp> getDefaultCard();
 
 
 }
