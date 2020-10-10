@@ -1156,7 +1156,7 @@
     <string name="registration_number">पंजीकरण संख्या</string>
     <string name="year_of_registration">पंजीकरण का वर्ष</string>
     <string name="state_medical_council_for_mci">एमसीआई के लिए राज्य चिकित्सा परिषद</string>
-    <string name="account_locked_info">आपका खाता अगले %s घंटे के लिए लॉक कर दिया गया है। या तो आप प्रतीक्षा कर सकते हैं या अपना पासवर्ड रीसेट कर सकते हैं।</string>
+    <string name="account_locked_info">आपका खाता अगले %d %s के लिए लॉक कर दिया गया है। या तो आप प्रतीक्षा कर सकते हैं या अपना पासवर्ड रीसेट कर सकते हैं।</string>
     <string name="abnormal_vital">असामान्य महत्वपूर्ण</string>
     <string name="captured_via">%1$s माध्यम से कैप्चर किया गया</string>
     <string name="manage_sources">स्रोत प्रबंधित करें</string>

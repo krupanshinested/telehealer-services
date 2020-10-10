@@ -917,7 +917,9 @@
     <string name="segment">Segment</string>
     <string name="seconds">Seconds</string>
     <string name="minute">Minute</string>
+    <string name="minutes" translatable="false">Minutes</string>
     <string name="hour">Hour</string>
+    <string name="hours" translatable="false">Hour</string>
     <string name="Date">Date</string>
     <string name="stethIO">Steth IO</string>
     <string name="registration_email_phone_verify_info">Before we create your account, let us make sure that we have correctly captured your mobile number and email</string>
@@ -1272,7 +1274,7 @@
     <string name="registration_number">Registration Number</string>
     <string name="year_of_registration">Year of registration</string>
     <string name="state_medical_council_for_mci">State medical council for MCI</string>
-    <string name="account_locked_info">Your account has been locked out for next %s hours. Either you can wait or reset your password.</string>
+    <string name="account_locked_info">Your account has been locked out for next %d %s. Either you can wait or reset your password.</string>
     <string name="abnormal_vital">Abnormal vital</string>
     <string name="captured_via">Captured via %1$s</string>
     <string name="manage_sources">Manage Sources</string>

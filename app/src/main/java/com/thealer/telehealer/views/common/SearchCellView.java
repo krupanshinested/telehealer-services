@@ -56,9 +56,9 @@ public class SearchCellView extends ConstraintLayout implements TextWatcher {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if ((keyEvent != null && (keyEvent.getKeyCode() == android.view.KeyEvent.KEYCODE_ENTER)) || (i == EditorInfo.IME_ACTION_DONE)) {
-                   if (searchInterface != null) {
-                       searchInterface.doSearch();
-                   }
+                    if (searchInterface != null) {
+                        searchInterface.doSearch();
+                    }
                 }
                 return false;
             }
@@ -77,12 +77,12 @@ public class SearchCellView extends ConstraintLayout implements TextWatcher {
     }
 
     public String getCurrentSearchResult() {
-            String searchText = searchEt.getText().toString();
-            if (TextUtils.isEmpty(searchText)) {
-                return null;
-            } else {
-                return searchText;
-            }
+        String searchText = searchEt.getText().toString();
+        if (TextUtils.isEmpty(searchText)) {
+            return null;
+        } else {
+            return searchText;
+        }
     }
 
     public void setSearchHint(String searchHint) {

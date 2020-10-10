@@ -159,7 +159,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                         EventRecorder.updateUserId(whoAmIApiResponseModel.getUser_guid());
                         EventRecorder.recordUserStatus(whoAmIApiResponseModel.getUser_activated());
 
-                        Log.d("SiginActivity","trigg checkSignalKeys whoami");
+                        Log.d("SiginActivity", "trigg checkSignalKeys whoami");
                         checkSignalKeys();
 
                     } else {
@@ -195,7 +195,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, authToken);
 
                             if (isQuickLogin) {
-                                Log.e("SiginActivity","trigg checkSignalKeys isQuickLogin");
+                                Log.e("SiginActivity", "trigg checkSignalKeys isQuickLogin");
                                 checkSignalKeys();
                             } else {
                                 appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, refreshToken);
@@ -218,8 +218,17 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                     if (errorModel.isLocked()) {
                         UserDetailPreferenceManager.invalidateUser();
                         setQuickLoginView();
+
+                        int time = errorModel.getLockTimeInMins();
+                        String lbl = getString(R.string.minutes);
+                        if (time >= 60) {
+                            time = time / 60;
+                            lbl = time > 1 ? getString(R.string.hours) : getString(R.string.hour);
+                        }
+
+
                         Utils.showAlertDialog(SigninActivity.this, getString(R.string.error),
-                                getString(R.string.account_locked_info, String.valueOf(errorModel.getLockTimeInMins() / 60)),
+                                getString(R.string.account_locked_info, time, lbl),
                                 getString(R.string.reset_password), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -271,12 +280,12 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void checkSignalKeys() {
-        Log.e("SiginActivity","checkSignalKeys");
+        Log.e("SiginActivity", "checkSignalKeys");
         SignalKeyManager
                 .getInstance(SigninActivity.this, new SignalKeyManager.OnUserKeyReceivedListener() {
                     @Override
                     public void onKeyReceived(UserKeysApiResponseModel userKeysApiResponseModel) {
-                        Log.e("SiginActivity","checkSignalKeys respo");
+                        Log.e("SiginActivity", "checkSignalKeys respo");
                         checkUserValidation();
                     }
                 })
@@ -289,8 +298,8 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         if (whoAmIApiResponseModel != null && whoAmIApiResponseModel.getUser_activated() != null &&
                 whoAmIApiResponseModel.getUser_activated().equals(Constants.ACTIVATION_PENDING)) {
             showOTPContent();
-        }  else if (UserDetailPreferenceManager.isProfileInComplete()){
-           showProfileIncompleteContent();
+        } else if (UserDetailPreferenceManager.isProfileInComplete()) {
+            showProfileIncompleteContent();
         } else {
             proceedLoginSuccess();
         }
@@ -326,9 +335,9 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
     private void proceedLoginSuccess() {
         if (isQuickLogin) {
-           Utils.validUserToLogin(getApplicationContext());
+            Utils.validUserToLogin(getApplicationContext());
         } else {
-            Log.d("SignInActivity","proceedLoginSuccess");
+            Log.d("SignInActivity", "proceedLoginSuccess");
             if (quickLoginType == -1) {
                 startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class));
             } else
@@ -342,9 +351,9 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RequestID.REQ_OTP_VALIDATION && resultCode == Activity.RESULT_OK){
+        if (requestCode == RequestID.REQ_OTP_VALIDATION && resultCode == Activity.RESULT_OK) {
             proceedLoginSuccess();
-        } else if (requestCode == RequestID.REQ_PROFILE_INCOMPLETE && resultCode == Activity.RESULT_OK){
+        } else if (requestCode == RequestID.REQ_PROFILE_INCOMPLETE && resultCode == Activity.RESULT_OK) {
             proceedLoginSuccess();
         }
     }
@@ -498,6 +507,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
             snackbar.show();
         }
     }
+
     private void makeRefreshTokenApiCall() {
         isQuickLogin = true;
         signinApiViewModel.refreshToken();
@@ -507,7 +517,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(quickLoginBroadcastReceiver);
-        if (connectivityManager != null && networkCallback != null){
+        if (connectivityManager != null && networkCallback != null) {
             connectivityManager.unregisterNetworkCallback(networkCallback);
         }
     }

@@ -33,23 +33,24 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:theme="@style/AppTheme">
         <activity android:name=".views.guestlogin.screens.PatientWaitingRoom" />
         <activity android:name=".views.guestlogin.screens.GuestUserSignupActivity" />
-        <activity android:name=".views.guestlogin.screens.GuestLoginScreensActivity"
-            android:launchMode="singleTask"
-            />
+        <activity
+            android:name=".views.guestlogin.screens.GuestLoginScreensActivity"
+            android:launchMode="singleTask" />
         <activity
             android:name=".views.guestlogin.GuestLoginActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".views.common.SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -161,7 +162,8 @@
         <activity
             android:name=".views.notification.NotificationActivity"
             android:parentActivityName=".views.home.HomeActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".views.notification.NotificationDetailActivity"
             android:screenOrientation="portrait" />
@@ -233,8 +235,7 @@
         <service
             android:name=".views.guestlogin.WaitingRoomHearBeatService"
             android:enabled="true"
-            android:exported="true"
-            />
+            android:exported="true" />
 
         <meta-data
             android:name="preloaded_fonts"

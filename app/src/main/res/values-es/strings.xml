@@ -1160,7 +1160,7 @@
     <string name="registration_number">Número de registro</string>
     <string name="year_of_registration">Año de registro</string>
     <string name="state_medical_council_for_mci">Consejo medico estatal para MCI</string>
-    <string name="account_locked_info">Su cuenta ha sido bloqueada por el siguiente %s horas. O bien puede esperar o restablecer su contraseña.</string>
+    <string name="account_locked_info">Su cuenta ha sido bloqueada por el siguiente %d %s. O bien puede esperar o restablecer su contraseña.</string>
     <string name="abnormal_vital">Vital anormal</string>
     <string name="captured_via">Capturado a través de %1$s</string>
     <string name="manage_sources">Administrar Fuentes</string>

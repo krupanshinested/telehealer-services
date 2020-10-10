@@ -363,9 +363,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     public BroadcastReceiver isPropserShownListner = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean status = intent.getBooleanExtra(ArgumentKeys.APP_LIFECYCLE_STATUS,false);
+            boolean status = intent.getBooleanExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, false);
             if (!status) {
-                isPropserShown=false;
+                isPropserShown = false;
             }
 
         }
@@ -375,7 +375,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (navigationView == null) {
             return;
         }
-        
+
         View view = navigationView.getHeaderView(0);
         ImageView userProfileIv = view.findViewById(R.id.home_header_iv);
         Utils.setImageWithGlide(getApplicationContext(), userProfileIv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
@@ -498,14 +498,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (!isSubFragmentVisible) {
             if (getResources().getBoolean(R.bool.isXlarge) && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                finish();
+                finishAffinity();
             } else {
                 fragmentManager.popBackStackImmediate();
                 if (fragmentManager.findFragmentById(R.id.sub_fragment_holder) == null)
                     updateToolbarOptions(fragmentManager.findFragmentById(R.id.fragment_holder), false);
             }
         } else {
-            finish();
+            finishAffinity();
         }
     }
 
@@ -542,8 +542,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void setFragment(Fragment fragment) {
 
-        Bundle bundle=fragment.getArguments();
-        if (bundle==null)
+        Bundle bundle = fragment.getArguments();
+        if (bundle == null)
             bundle = new Bundle();
 
         bundle.putBoolean(ArgumentKeys.IS_FROM_HOME, true);
@@ -650,7 +650,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (openAutomatically != null) {
             Bundle bundle = new Bundle();
-            bundle.putString(ArgumentKeys.OPEN_AUTOMATICALLY,openAutomatically);
+            bundle.putString(ArgumentKeys.OPEN_AUTOMATICALLY, openAutomatically);
             monitoringFragment.setArguments(bundle);
         }
 
@@ -795,12 +795,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                     .putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed))
                     .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true), RequestID.REQ_LICENSE_EXPIRED);
 
-        } else if (!isPropserShown){
+        } else if (!isPropserShown) {
 
-                if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
-                    Log.d("HelpScreen", "Permission");
-                    isPropserShown=true;
-                }
+            if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+                Log.d("HelpScreen", "Permission");
+                isPropserShown = true;
+            }
         } else if (!appPreference.getBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN) && (!application.isFromRegistration) && UserType.isUserPatient() && UserDetailPreferenceManager.getWhoAmIResponse() != null && (UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire() == null || !UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire().isQuestionariesEmpty())) {
 
             appPreference.setBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN, true);
@@ -847,6 +847,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     protected void onStop() {
         super.onStop();
     }
+
     private boolean checkIsLicenseExpired() {
         boolean updateLicense = false;
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
@@ -872,7 +873,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 }
             }
         }
-        Log.d("updateLicense",""+updateLicense);
+        Log.d("updateLicense", "" + updateLicense);
         return updateLicense;
     }
 
