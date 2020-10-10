@@ -108,6 +108,10 @@ public class BrainTreeViewModel extends BaseApiViewModel {
                                         .compose(applySchedulers())
                                         .subscribe(responseBody -> {
                                             setPaymentMethodId(paymentMethodId);
+                                            BaseApiResponseModel responseModel = new BaseApiResponseModel();
+                                            responseModel.setMessage("SET_DEFAULT");
+                                            responseModel.setSuccess(true);
+                                            baseApiResponseModelMutableLiveData.setValue(responseModel);
 
                                         });
                             }
@@ -126,7 +130,6 @@ public class BrainTreeViewModel extends BaseApiViewModel {
                         .subscribe(new RAObserver<DefaultCardResp>(Constants.SHOW_PROGRESS) {
                             @Override
                             public void onSuccess(DefaultCardResp model) {
-                                setPaymentMethodId(model.getCardDetail().getCardId());
                                 baseApiResponseModelMutableLiveData.setValue(model);
                             }
                         });

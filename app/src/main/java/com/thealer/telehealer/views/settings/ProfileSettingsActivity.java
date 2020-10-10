@@ -232,6 +232,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 showMedicalHistory();
             } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.LICENCE_UPDATE) {
                 showUserProfile();
+            } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.PAYMENT_INFO) {
+                didSelecteItem(R.id.payments_billings);
             }
         }
     }

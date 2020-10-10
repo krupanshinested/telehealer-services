@@ -1,20 +1,9 @@
 package com.thealer.telehealer.views.settings;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.android.material.appbar.AppBarLayout;
-
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.stripe.android.ApiResultCallback;
 import com.stripe.android.CustomerSession;
 import com.stripe.android.SetupIntentResult;
@@ -50,6 +46,7 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.settings.Adapters.PaymentAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -148,7 +145,10 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         };
 
         recyclerContainer.getSwipeLayout().setEnabled(false);
-        transactionApiViewModel.getTransactions();
+        if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
+            closeIv.performClick();
+        } else
+            transactionApiViewModel.getTransactions();
     }
 
     private void addObserver() {
@@ -193,7 +193,14 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel instanceof SetUpIntentResp) {
-                    stripe.confirmSetupIntent(getActivity(), ConfirmSetupIntentParams.create(((SetUpIntentResp) baseApiResponseModel).getClientSecret(), brainTreeViewModel.getPaymentMethodId()));
+                    String clientSecret = ((SetUpIntentResp) baseApiResponseModel).getClientSecret();
+                    if (clientSecret != null && getActivity() != null)
+                        stripe.confirmSetupIntent(getActivity(), ConfirmSetupIntentParams.create(brainTreeViewModel.getPaymentMethodId(), clientSecret));
+                } else if ("SET_DEFAULT".equals(baseApiResponseModel.getMessage())) {
+                    if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
+                        startActivity(new Intent(getActivity(), HomeActivity.class));
+                        getActivity().finishAffinity();
+                    }
                 }
             }
         });
@@ -224,12 +231,18 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PaymentMethodsActivityStarter.REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO)
+                    getActivity().finishAffinity();
+                return;
+            }
             PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
             if (result != null && result.paymentMethod != null) {
                 if (result.paymentMethod.id.equals(brainTreeViewModel.getPaymentMethodId()))
                     return;
 
                 setDefaultMethod(result.paymentMethod.id);
+                brainTreeViewModel.setPaymentMethodId(result.paymentMethod.id);
                 stripe.onSetupResult(requestCode, data, new ApiResultCallback<SetupIntentResult>() {
                     @Override
                     public void onSuccess(@NotNull SetupIntentResult setupIntentResult) {
