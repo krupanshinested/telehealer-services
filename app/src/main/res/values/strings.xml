@@ -1474,6 +1474,6 @@
     <string name="confirmation">Confirmation</string>
     <string name="phone_number">Phone Number</string>
     <string name="has_enterted_waiting_room_open_ap">has entered your waiting room. Open the app immediately to get connected.</string>
-    <string name="msg_payment_gateway_changed">Telehealer Inc. payment processing method has changed, to continue to use the app please enter valid credit card information.</string>
+    <string name="msg_payment_gateway_changed">%s Inc. payment processing method has changed, to continue to use the app please enter valid credit card information.</string>
 
 </resources>
