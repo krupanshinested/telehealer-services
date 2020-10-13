@@ -202,7 +202,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                         intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
                         intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
 
-                        String description = getString(R.string.msg_payment_gateway_changed, getString(R.string.organization_name));
+                        String description = getString(R.string.msg_payment_gateway_changed);
 
                         intent.putExtra(ArgumentKeys.DESCRIPTION, description);
                         startActivityForResult(intent, RequestID.REQ_CARD_INFO);
