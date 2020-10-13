@@ -197,16 +197,17 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                    if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
-                        Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
-                        intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
-                        intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
+                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
+                        if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
+                            Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
+                            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
+                            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
 
-                        String description = getString(R.string.msg_payment_gateway_changed);
+                            String description = getString(R.string.msg_payment_gateway_changed);
 
-                        intent.putExtra(ArgumentKeys.DESCRIPTION, description);
-                        startActivityForResult(intent, RequestID.REQ_CARD_INFO);
-                    }
+                            intent.putExtra(ArgumentKeys.DESCRIPTION, description);
+                            startActivityForResult(intent, RequestID.REQ_CARD_INFO);
+                        }
                 }
             }
         });
