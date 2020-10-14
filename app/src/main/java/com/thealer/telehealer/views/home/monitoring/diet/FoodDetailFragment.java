@@ -27,6 +27,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -291,7 +292,7 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
 
                     if (dietApiResponseModel.getDisplayFoodImage() != null) {
                         Utils.setImageWithGlide(getContext(), foodAvatarCiv, dietApiResponseModel.getDisplayFoodImage(), getActivity().getDrawable(R.drawable.diet_food_placeholder), false, false);
-                    }else {
+                    } else {
                         foodAvatarCiv.setVisibility(View.GONE);
                     }
 
@@ -443,6 +444,8 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
                 getActivity().setResult(resultCode);
                 getActivity().finish();
             } else {
+                Log.e("deletedDate", "-->" + dietApiResponseModel.getDate());
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Constants.DIET_REMOVED_INTENT).putExtra(Constants.EXTRA_REMOVED_DATE, dietApiResponseModel.getDate()));
                 onBackPressed();
             }
         }

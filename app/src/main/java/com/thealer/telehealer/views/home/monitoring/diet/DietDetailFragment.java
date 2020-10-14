@@ -2,11 +2,13 @@ package com.thealer.telehealer.views.home.monitoring.diet;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -41,6 +43,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.DatePickerDialogFragment;
+import com.thealer.telehealer.common.DateUtil;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
@@ -121,6 +124,26 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
         }
 
     };
+
+    private BroadcastReceiver onDietRemove = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null) {
+                String removedDate = intent.getStringExtra(Constants.EXTRA_REMOVED_DATE);
+                if (removedDate != null) {
+                    DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    try {
+                        String formattedDate = outputFormat.format(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(removedDate));
+                        listMap.remove(formattedDate);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }
+    };
+
     private DietApiViewModel dietApiViewModel;
     private DietViewPagerAdapter dietViewPagerAdapter;
     private ShowSubFragmentInterface showSubFragmentInterface;
@@ -144,8 +167,8 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
             public void onChanged(@Nullable ArrayList<BaseApiResponseModel> baseApiResponseModels) {
                 if (baseApiResponseModels != null) {
                     dietApiResponseModelArrayList = (ArrayList<DietApiResponseModel>) (Object) baseApiResponseModels;
-                        listMap.put(selectedDate, dietApiResponseModelArrayList);
-                        setData();
+                    listMap.put(selectedDate, dietApiResponseModelArrayList);
+                    setData();
                 }
             }
         });
@@ -159,7 +182,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
 
                         PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
                         Bundle bundle = new Bundle();
-                        bundle.putString(ArgumentKeys.PDF_TITLE,getString(R.string.diet_report));
+                        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.diet_report));
                         bundle.putString(ArgumentKeys.PDF_URL, pdfUrlResponse.getUrl());
                         bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
                         pdfViewerFragment.setArguments(bundle);
@@ -429,7 +452,13 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
         if (!isViewMode) {
             toolbarTitle.setOnClickListener(this);
             setUpViewPager();
-            getDietList();
+            dietListVp.postDelayed(() -> {
+                if (calendarview.getSelectedDate() != null)
+                    setCurrentDate(calendarview.getSelectedDate());
+                else
+                    setCurrentDate(CalendarDay.today());
+
+            }, 100);
         }
 
     }
@@ -453,7 +482,7 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
     }
 
     private void generatePdf() {
-        dietApiViewModel.getDietPdf(selectedFilter,startDate,endDate,userGuid,null,true);
+        dietApiViewModel.getDietPdf(selectedFilter, startDate, endDate, userGuid, null, true);
     }
 
     private void setUpViewPager() {
@@ -479,7 +508,9 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
                             calendarDay = calendarview.getSelectedDate();
                             setCurrentDate(CalendarDay.from(calendarDay.getDate().plusDays(1)));
                         } else {
-                            dietListVp.setCurrentItem(1);
+                            calendarDay = calendarview.getSelectedDate();
+                            setCurrentDate(CalendarDay.from(calendarDay.getDate()));
+//                            dietListVp.setCurrentItem(1);
                         }
                         break;
                 }
@@ -548,11 +579,13 @@ public class DietDetailFragment extends BaseFragment implements View.OnClickList
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(dateBroadcastReceiver, new IntentFilter(Constants.DATE_PICKER_INTENT));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onDietRemove, new IntentFilter(Constants.DIET_REMOVED_INTENT));
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(dateBroadcastReceiver);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onDietRemove);
     }
 }
