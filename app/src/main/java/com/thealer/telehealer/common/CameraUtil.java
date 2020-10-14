@@ -184,6 +184,7 @@ public class CameraUtil {
         try {
             OutputStream stream = resolver.openOutputStream(uri);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
         } catch (Exception e) {
             if (uri != null) {
                 resolver.delete(uri, null, null);

@@ -1,19 +1,25 @@
 package com.thealer.telehealer.views.home.orders.document;
 
 import android.app.Activity;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -112,7 +118,7 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
                 documentsCrv.getSwipeLayout().setRefreshing(false);
                 if (baseApiResponseModel != null) {
                     documentsApiResponseModel = (DocumentsApiResponseModel) baseApiResponseModel;
-                    if (page == 1){
+                    if (page == 1) {
                         toolbarTitle.setText(Utils.getPaginatedTitle(getString(R.string.documents), documentsApiResponseModel.getCount()));
                     }
                     if (UserType.isUserPatient() && page == 1 && documentsApiResponseModel.getResult().size() == 0) {
@@ -167,8 +173,8 @@ public class DocumentListFragment extends BaseFragment implements View.OnClickLi
 
         documentsCrv.setNextPage(documentsApiResponseModel.getNext());
 
+        documentListAdapter.setData(documentsApiResponseModel.getResult(), page);
         if (documentsApiResponseModel.getCount() > 0) {
-            documentListAdapter.setData(documentsApiResponseModel.getResult(), page);
             documentsCrv.hideEmptyState();
         } else {
             documentsCrv.showEmptyState();
