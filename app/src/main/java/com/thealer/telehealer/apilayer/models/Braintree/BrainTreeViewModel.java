@@ -130,6 +130,7 @@ public class BrainTreeViewModel extends BaseApiViewModel {
                         .subscribe(new RAObserver<DefaultCardResp>(Constants.SHOW_PROGRESS) {
                             @Override
                             public void onSuccess(DefaultCardResp model) {
+                                setPaymentMethodId(model.getCardDetail().getCardId());
                                 baseApiResponseModelMutableLiveData.setValue(model);
                             }
                         });
