@@ -255,11 +255,11 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
             }
 
 
-            if (UserType.isUserAssistant() && doctorModel!=null && patientModel!=null) {
+            if (UserType.isUserAssistant() && doctorModel != null && patientModel != null) {
                 eventTitle = doctorModel.getUserDisplay_name() + "-" + patientModel.getUserDisplay_name();
-            } else if (UserType.isUserDoctor() && patientModel!=null) {
+            } else if (UserType.isUserDoctor() && patientModel != null) {
                 eventTitle = patientModel.getUserDisplay_name();
-            } else if (doctorModel != null){
+            } else if (doctorModel != null) {
                 eventTitle = doctorModel.getUserDisplay_name();
             } else {
                 eventTitle = "";
@@ -376,10 +376,10 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView materialCalendarView, @NonNull CalendarDay calendarDay, boolean b) {
 
-                if (calendarview.getCalendarMode() == CalendarMode.MONTHS) {
+                /*if (calendarview.getCalendarMode() == CalendarMode.MONTHS) {
                     setCalendarMode(CalendarMode.WEEKS);
                     isWeekScrollEnabled = true;
-                }
+                }*/
                 calendarview.setSelectedDate(calendarDay);
                 calendarview.setCurrentDate(calendarDay);
                 calendarview.setDateSelected(calendarDay, true);
@@ -432,18 +432,19 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
 
     private void setCalendarMode(CalendarMode mode) {
 
+        CalendarDay selectedDay = calendarview.getSelectedDate();
         if (calendarview.getCalendarMode() != mode) {
             calendarview
                     .state()
                     .edit()
                     .setCalendarDisplayMode(mode)
-                    .isCacheCalendarPositionEnabled(true)
+//                    .isCacheCalendarPositionEnabled(true)
                     .setMinimumDate(CalendarDay.from(CalendarDay.today().getYear() - 2, 1, 1))
                     .setMaximumDate(CalendarDay.from(CalendarDay.today().getYear() + 1, 12, 31))
                     .commit();
         }
 
-        calendarview.setCurrentDate(calendarview.getSelectedDate(), true);
+        calendarview.setCurrentDate(selectedDay, true);
 
         if (mode == CalendarMode.MONTHS) {
             isWeekScrollEnabled = false;
@@ -532,12 +533,12 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         weekView.setVerticalScrollListener(new OnVerticalScrollListener() {
             @Override
             public void onScrollTop() {
-                setCalendarMode(CalendarMode.WEEKS);
+//                setCalendarMode(CalendarMode.WEEKS);
             }
 
             @Override
             public void onScrollDown() {
-                setCalendarMode(CalendarMode.MONTHS);
+//                setCalendarMode(CalendarMode.MONTHS);
             }
         });
 
@@ -700,7 +701,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
     }
 
     private void getDoctorsList() {
-        associationApiViewModel.getAssociationList(null,true, null);
+        associationApiViewModel.getAssociationList(null, true, null);
     }
 
 }
