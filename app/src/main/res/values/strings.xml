@@ -1480,5 +1480,6 @@
 
     <string name="lbl_medical_document">Medical Documents</string>
     <string name="lbl_administrative_document">Administrative Documents</string>
+    <string name="msg_add_slot">You can request up to 3 appointment slots</string>
 
 </resources>

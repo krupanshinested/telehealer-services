@@ -95,7 +95,7 @@
                 android:drawableTint="@color/app_gradient_start"
                 android:gravity="center|left"
                 android:padding="@dimen/padding_default"
-                android:text="@string/add_slots"
+                android:text="@string/msg_add_slot"
                 android:textColor="@color/app_gradient_start"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
