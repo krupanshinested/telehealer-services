@@ -985,9 +985,9 @@
     <string name="EMPTY_DOCUMENTS_MESSAGE">Documents will eventually show up here</string>
     <string name="EMPTY_VITALS_WITH_BTN_MESSAGE">Connect your vitals device to measure your vitals by tapping the \'+\' button</string>
     <string name="EMPTY_DOCUMENTS_WITH_BTN_MESSAGE">Add a Document by tapping the \'+\' button</string>
-    <string name="EMPTY_MISC_TITLE">No Miscellaneous</string>
-    <string name="EMPTY_MISC_MESSAGE">Miscellaneous will eventually show up here</string>
-    <string name="EMPTY_MISC_WITH_BTN_MESSAGE">Add a Miscellaneous by tapping the \'+\' button</string>
+    <string name="EMPTY_MISC_TITLE">No Medical Documents</string>
+    <string name="EMPTY_MISC_MESSAGE">Medical Documents will eventually show up here</string>
+    <string name="EMPTY_MISC_WITH_BTN_MESSAGE">Add a Medical Document by tapping the \'+\' button</string>
     <string name="EMPTY_PRESCRIPTION_MESSAGE">Prescription orders will eventually show up here</string>
     <string name="EMPTY_ORDER_MESSAGE">Orders will eventually show up here</string>
     <string name="EMPTY_PRESCRIPTION_TITLE">No Prescription</string>
@@ -1477,5 +1477,8 @@
     <string name="confirmation">Confirmation</string>
     <string name="phone_number">Phone Number</string>
     <string name="has_enterted_waiting_room_open_ap">has entered your waiting room. Open the app immediately to get connected.</string>
+
+    <string name="lbl_medical_document">Medical Documents</string>
+    <string name="lbl_administrative_document">Administrative Documents</string>
 
 </resources>

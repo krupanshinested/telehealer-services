@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tool="http://schemas.android.com/tools"
     android:background="@color/colorWhite">
 
     <androidx.core.widget.NestedScrollView
@@ -108,32 +108,32 @@
                     android:background="@color/colorGrey_light" />
             </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/call_quality_view"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:background="@android:color/transparent"
-            android:orientation="vertical">
-
-            <View
+            <LinearLayout
+                android:id="@+id/call_quality_view"
                 android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorGrey_light" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="@android:color/transparent"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                android:id="@+id/check_call_quality"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:hideSpiltter="true"
-                app:icon="@drawable/settings_icon_call_quality"
-                app:title="@string/check_call_quality" />
+                    android:id="@+id/check_call_quality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hideSpiltter="true"
+                    app:icon="@drawable/settings_icon_call_quality"
+                    app:title="@string/check_call_quality" />
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorGrey_light" />
-        </LinearLayout>
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/medical_assistant_ll"
@@ -161,7 +161,7 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:icon="@drawable/ic_settings_document"
-                    app:title="@string/documents" />
+                    app:title="@string/lbl_administrative_document" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/educational_video"
@@ -289,9 +289,9 @@
                     android:layout_marginLeft="10dp"
                     android:textColor="@color/colorGrey"
                     android:textSize="12sp"
-                    tool:text="Version 1.0"
                     app:layout_constraintLeft_toRightOf="@+id/app_icon"
-                    app:layout_constraintTop_toBottomOf="@+id/app_name" />
+                    app:layout_constraintTop_toBottomOf="@+id/app_name"
+                    tool:text="Version 1.0" />
 
                 <TextView
                     android:id="@+id/last_login_tv"
