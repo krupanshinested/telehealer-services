@@ -96,6 +96,7 @@ public class ArgumentKeys {
     public static final String SEGMENT_DETAIL = "segmentDetail";
     public static final String SEGMENT = "segment";
     public static final String IS_SHOW_CIRCULAR_AVATAR = "isShowCircularAvatar";
+    public static final String SUBTITLE_ALIGNMENT = "subTitleAlignment";
     public static final String CIRCULAR_AVATAR = "circularAvatar";
     public static final String IS_AUTH_REQUIRED = "isAuthRequrired";
     public static final String DISABLE_BACk = "disableBack";
@@ -139,8 +140,8 @@ public class ArgumentKeys {
     public static final String SELECTED_MESSAGE = "selected_messaged";
     public static final String SELECTED_ORDER_LIST = "selected_order_list";
     public static final String FOOD_DELETE_MODE = "FOOD_DELETE_MODE";
-    public static final String SIZE ="0" ;
-    public static final String DOCTOR_NAME ="DOCTOR_NAME" ;
+    public static final String SIZE = "0";
+    public static final String DOCTOR_NAME = "DOCTOR_NAME";
     public static final String SESSION_ID = "SESSION_ID";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
@@ -227,8 +228,8 @@ public class ArgumentKeys {
     public static final String SHOW_CONNECTION_REQUEST_ALERT = "SHOW_CONNECTION_REQUEST_ALERT";
     public static final String EDUCATIONAL_VIDEO_ID = "EDUCATIONAL_VIDEO_ID";
     public static final String OPEN_AUTOMATICALLY = "OPEN_AUTOMATICALLY";
-    public static final String START ="START" ;
-    public static final String END ="END" ;
+    public static final String START = "START";
+    public static final String END = "END";
 
 
     public static final String GUEST_INFO = "guestdata";

@@ -1335,7 +1335,7 @@
     <string name="validating_your_waiting_room">Validating your waiting room request</string>
     <string name="waiting_screen_msg">By Pressing Enter you will be  agreeing to <a href="https://www.google.com/">Terms and conditions</a> and <a href="https://www.google.com/">Notice to consumers</a></string>
     <string name="by_pressing_enter">By Pressing Enter you will be  agreeing to </string>
-    <string name="wating_for_you">is waiting for you</string>
+<!--    <string name="wating_for_you">is waiting for you</string>-->
     <string name="has_enterted_waiting_room">has entered your waiting room. Click yes to get connected.</string>
     <string name="waiting_for_you">is waiting for you</string>
     <string name="are_you_sure_to_kickout">Do you really want to withdraw this invite?</string>

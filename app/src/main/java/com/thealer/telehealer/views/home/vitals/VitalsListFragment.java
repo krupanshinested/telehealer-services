@@ -7,8 +7,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -117,61 +119,9 @@ public class VitalsListFragment extends BaseFragment {
                 appbarLayout.setVisibility(View.GONE);
             }
         }
-            VitalsOrdersListAdapter vitalsOrdersListAdapter = new VitalsOrdersListAdapter(getActivity(), SupportedMeasurementType.getItems(), Constants.VIEW_VITALS, getArguments());
-            listRv.setAdapter(vitalsOrdersListAdapter);
+        VitalsOrdersListAdapter vitalsOrdersListAdapter = new VitalsOrdersListAdapter(getActivity(), SupportedMeasurementType.getItems(), Constants.VIEW_VITALS, getArguments());
+        listRv.setAdapter(vitalsOrdersListAdapter);
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (UserType.isUserPatient() && !isContentViewProceed && appPreference.getInt(PreferenceConstants.DEVICE_CONNECTION_COUNT) < 3) {
-            boolean result = checkVitalDeviceConnection();
-            if (!result) {
-                runAfterKnowYourNumber();
-            }
-        } else {
-            runAfterKnowYourNumber();
-        }
-
-        if (isContentViewProceed && isInForeGround) {
-            isContentViewProceed = false;
-        }
-    }
-
-    private boolean checkVitalDeviceConnection() {
-        if (!appPreference.getBoolean(PreferenceConstants.IS_VITAL_DEVICE_CONNECTED) &&
-                !isVitalDeviceConnectionShown && !isKnowYourNumberOpened) {
-            isKnowYourNumberOpened = true;
-            isVitalDeviceConnectionShown = true;
-            showKnowYourNumber();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private void showKnowYourNumber() {
-
-        int count = appPreference.getInt(PreferenceConstants.DEVICE_CONNECTION_COUNT);
-
-        if (count < 1) {
-            count = 1;
-        } else {
-            count = count + 1;
-        }
-
-        appPreference.setInt(PreferenceConstants.DEVICE_CONNECTION_COUNT, count);
-
-        startActivityForResult(new Intent(getActivity(), ContentActivity.class)
-                        .putExtra(ArgumentKeys.TITLE, getString(R.string.know_your_numbers))
-                        .putExtra(ArgumentKeys.DESCRIPTION, getString(R.string.know_your_number_description))
-                        .putExtra(ArgumentKeys.IS_SKIP_NEEDED, true)
-                        .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true)
-                        .putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed))
-                        .putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.ic_health_heart)
-                , RequestID.REQ_CONNECT_VITAL_CONTENT_VIEW);
     }
 
     @Override
@@ -185,12 +135,6 @@ public class VitalsListFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case RequestID.REQ_CONNECT_VITAL_CONTENT_VIEW:
-                if (resultCode == Activity.RESULT_OK) {
-                    isContentViewProceed = true;
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vital_devices_url))));
-                }
-                break;
             case RequestID.REQ_CREATE_NEW_VITAL:
                 if (resultCode == Activity.RESULT_OK) {
                     if (data != null && data.getStringExtra(ArgumentKeys.MEASUREMENT_TYPE) != null) {
