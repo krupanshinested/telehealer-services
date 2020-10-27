@@ -10,3 +10,9 @@
 /captures
 .externalNativeBuild
 *.apk
+*.aab
+/app/doctor/debug
+/app/patient/debug
+/app/doctor/release
+/app/patient/release
+

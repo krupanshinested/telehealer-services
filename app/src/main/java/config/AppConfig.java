@@ -158,7 +158,7 @@ public class AppConfig {
     }
 
     public List<Integer> getRemovedFeatures() {
-        /*List<Integer> removedList;
+        List<Integer> removedList;
         if (isOtherThanTelehealer(context)) {
             removedList = new ArrayList<>();
         } else if (UserDetailPreferenceManager.getInstallType().equals(context.getString(R.string.install_type_india))) {
@@ -166,7 +166,7 @@ public class AppConfig {
                     FEATURE_STATE_VALIDATION, FEATURE_ZIP_VALIDATION, FEATURE_PAYMENT, FEATURE_STETHOSCOPE));
         } else {
             removedList = new ArrayList<>(Arrays.asList(FEATURE_STETHOSCOPE));
-        }*/
-        return new ArrayList<>();
+        }
+        return removedList;
     }
 }
