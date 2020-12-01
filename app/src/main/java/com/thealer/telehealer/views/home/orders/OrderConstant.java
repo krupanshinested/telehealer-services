@@ -50,7 +50,7 @@ public class OrderConstant {
             case ORDER_DOCUMENTS:
                 return context.getString(R.string.documents);
             case ORDER_MISC:
-                return context.getString(R.string.miscellaneous);
+                return context.getString(R.string.lbl_medical_document);
             case ORDER_EDUCATIONAL_VIDEO:
                 return context.getString(R.string.educational_video);
         }

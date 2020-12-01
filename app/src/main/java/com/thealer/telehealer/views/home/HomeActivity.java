@@ -524,14 +524,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (!isSubFragmentVisible) {
             if (getResources().getBoolean(R.bool.isXlarge) && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                finish();
+                finishAffinity();
             } else {
                 fragmentManager.popBackStackImmediate();
                 if (fragmentManager.findFragmentById(R.id.sub_fragment_holder) == null)
                     updateToolbarOptions(fragmentManager.findFragmentById(R.id.fragment_holder), false);
             }
         } else {
-            finish();
+            finishAffinity();
         }
     }
 

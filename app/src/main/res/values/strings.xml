@@ -917,7 +917,9 @@
     <string name="segment">Segment</string>
     <string name="seconds">Seconds</string>
     <string name="minute">Minute</string>
+    <string name="minutes" translatable="false">Minutes</string>
     <string name="hour">Hour</string>
+    <string name="hours" translatable="false">Hour</string>
     <string name="Date">Date</string>
     <string name="stethIO">Steth IO</string>
     <string name="registration_email_phone_verify_info">Before we create your account, let us make sure that we have correctly captured your mobile number and email</string>
@@ -949,6 +951,7 @@
     <string name="abnormal_vital_alert_message">Please remember to follow your provider\'s prescribed guidance for any medications and diet. If you have any questions or concerns with your measured vitals, do not hesitate to reach out directly to your provider.</string>
     <string name="know_your_numbers">Know your numbers</string>
     <string name="know_your_number_description">While you wait for your provider to accept the connection request, you can review and purchase one or more supported biometric devices to measure your vitals or manually enter any recent vitals captured outside this app by clicking the ‘+’ button on the bottom right corner of the vitals page.</string>
+    <string name="know_your_number_description_vitals">You can review and purchase one or more supported biometric devices to measure your vitals.</string>
     <string name="license_expired">License Expired</string>
     <string name="license_expired_message">Your license has expired.Please update your licensing details inorder to continue using the platform.</string>
     <string name="video_missed_call">Missed video call</string>
@@ -982,9 +985,9 @@
     <string name="EMPTY_DOCUMENTS_MESSAGE">Documents will eventually show up here</string>
     <string name="EMPTY_VITALS_WITH_BTN_MESSAGE">Connect your vitals device to measure your vitals by tapping the \'+\' button</string>
     <string name="EMPTY_DOCUMENTS_WITH_BTN_MESSAGE">Add a Document by tapping the \'+\' button</string>
-    <string name="EMPTY_MISC_TITLE">No Miscellaneous</string>
-    <string name="EMPTY_MISC_MESSAGE">Miscellaneous will eventually show up here</string>
-    <string name="EMPTY_MISC_WITH_BTN_MESSAGE">Add a Miscellaneous by tapping the \'+\' button</string>
+    <string name="EMPTY_MISC_TITLE">No Medical Documents</string>
+    <string name="EMPTY_MISC_MESSAGE">Medical Documents will eventually show up here</string>
+    <string name="EMPTY_MISC_WITH_BTN_MESSAGE">Add a Medical Document by tapping the \'+\' button</string>
     <string name="EMPTY_PRESCRIPTION_MESSAGE">Prescription orders will eventually show up here</string>
     <string name="EMPTY_ORDER_MESSAGE">Orders will eventually show up here</string>
     <string name="EMPTY_PRESCRIPTION_TITLE">No Prescription</string>
@@ -1272,7 +1275,7 @@
     <string name="registration_number">Registration Number</string>
     <string name="year_of_registration">Year of registration</string>
     <string name="state_medical_council_for_mci">State medical council for MCI</string>
-    <string name="account_locked_info">Your account has been locked out for next %s hours. Either you can wait or reset your password.</string>
+    <string name="account_locked_info">Your account has been locked out for next %d %s. Either you can wait or reset your password.</string>
     <string name="abnormal_vital">Abnormal vital</string>
     <string name="captured_via">Captured via %1$s</string>
     <string name="manage_sources">Manage Sources</string>
@@ -1475,5 +1478,9 @@
     <string name="phone_number">Phone Number</string>
     <string name="has_enterted_waiting_room_open_ap">has entered your waiting room. Open the app immediately to get connected.</string>
     <string name="msg_payment_gateway_changed">Our payment processing method has changed. To continue to use the app please enter valid credit card information</string>
+
+    <string name="lbl_medical_document">Medical Documents</string>
+    <string name="lbl_administrative_document">Administrative Documents</string>
+    <string name="msg_add_slot">You can request up to 3 appointment slots</string>
 
 </resources>

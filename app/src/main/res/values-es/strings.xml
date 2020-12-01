@@ -1160,7 +1160,7 @@
     <string name="registration_number">Número de registro</string>
     <string name="year_of_registration">Año de registro</string>
     <string name="state_medical_council_for_mci">Consejo medico estatal para MCI</string>
-    <string name="account_locked_info">Su cuenta ha sido bloqueada por el siguiente %s horas. O bien puede esperar o restablecer su contraseña.</string>
+    <string name="account_locked_info">Su cuenta ha sido bloqueada por el siguiente %d %s. O bien puede esperar o restablecer su contraseña.</string>
     <string name="abnormal_vital">Vital anormal</string>
     <string name="captured_via">Capturado a través de %1$s</string>
     <string name="manage_sources">Administrar Fuentes</string>
@@ -1347,10 +1347,14 @@
     <string name="validating_your_waiting_room">Validating your waiting room request</string>
     <string name="waiting_screen_msg">By Pressing Enter you will be  agreeing to <a href="https://www.google.com/">Terms and conditions</a> and <a href="https://www.google.com/">Notice to consumers</a></string>
     <string name="by_pressing_enter">By Pressing Enter you will be  agreeing to </string>
-<!--    <string name="wating_for_you">is waiting for you</string>-->
+    <!--    <string name="wating_for_you">is waiting for you</string>-->
     <string name="has_enterted_waiting_room">has entered your waiting room. Click yes to get connected.</string>
     <string name="waiting_for_you">is waiting for you</string>
     <string name="are_you_sure_to_kickout">Do you really want to withdraw this invite?</string>
     <string name="confirmation">Confirmation</string>
     <string name="has_enterted_waiting_room_open_ap">has entered your waiting room. Open the app immediately to get connected.</string>
+
+    <string name="lbl_medical_document">Documentos medicos</string>
+    <string name="lbl_administrative_document">Documentos administrativos</string>
+    <string name="msg_add_slot">Puede solicitar hasta 3 espacios para citas</string>
 </resources>

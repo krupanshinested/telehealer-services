@@ -221,8 +221,17 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                     if (errorModel.isLocked()) {
                         UserDetailPreferenceManager.invalidateUser();
                         setQuickLoginView();
+
+                        int time = errorModel.getLockTimeInMins();
+                        String lbl = getString(R.string.minutes);
+                        if (time >= 60) {
+                            time = time / 60;
+                            lbl = time > 1 ? getString(R.string.hours) : getString(R.string.hour);
+                        }
+
+
                         Utils.showAlertDialog(SigninActivity.this, getString(R.string.error),
-                                getString(R.string.account_locked_info, String.valueOf(errorModel.getLockTimeInMins() / 60)),
+                                getString(R.string.account_locked_info, time, lbl),
                                 getString(R.string.reset_password), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {

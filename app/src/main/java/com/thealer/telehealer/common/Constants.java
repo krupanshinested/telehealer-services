@@ -57,6 +57,7 @@ public class Constants {
     public static final int TYPE_ORDER_CREATION = 4;
     public static final int DIET_CALENDAR = 5;
     public static final String DATE_PICKER_INTENT = "datepicker";
+    public static final String DIET_REMOVED_INTENT = "diet_removed";
     public static final String YEAR = "year";
     public static final String DAY = "day";
     public static final String MONTH = "month";
@@ -135,7 +136,6 @@ public class Constants {
     public static final String VITAL_DETAIL = "VITAL_DETAIL";
 
 
-
     public static final int CREATE_MODE = 0;
     public static final int EDIT_MODE = 1;
     public static final int VIEW_MODE = 2;
@@ -169,6 +169,7 @@ public class Constants {
     public static final String CALL_ENDED_BROADCAST = "CALL_ENDED_BROADCAST";
     public static final String CALL_SCREEN_MAXIMIZE = "CALL_SCREEN_MAXIMIZE";
     public static final String CALL_ACTIVITY_RESUMED = "CALL_ACTIVITY_RESUMED";
+    public static final String EXTRA_REMOVED_DATE = "EXTRA_REMOVED_DATE";
 
     //Vital States
     public static final int idle = 1;
