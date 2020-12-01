@@ -123,7 +123,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         });
         nextTv.setVisibility(View.GONE);
         closeIv.setVisibility(View.VISIBLE);
-        closeIv.setImageDrawable(getActivity().getDrawable(R.drawable.ic_info_24dp));
+        closeIv.setImageDrawable(getActivity().getDrawable(R.drawable.ic_add_credit_card_white));
         closeIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
