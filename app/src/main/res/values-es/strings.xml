@@ -1354,6 +1354,8 @@
     <string name="confirmation">Confirmation</string>
     <string name="has_enterted_waiting_room_open_ap">has entered your waiting room. Open the app immediately to get connected.</string>
 
+    <string name="msg_payment_gateway_changed">Nuestro proveedor de procesamiento de pagos ha cambiado. Para continuar usando la aplicación, ingrese la información de la tarjeta de crédito válida</string>
+
     <string name="lbl_medical_document">Documentos medicos</string>
     <string name="lbl_administrative_document">Documentos administrativos</string>
     <string name="msg_add_slot">Puede solicitar hasta 3 espacios para citas</string>
