@@ -1,10 +1,14 @@
 package com.thealer.telehealer.apilayer.models.Braintree;
 
+import android.app.Activity;
 import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.stripe.android.model.PaymentMethod;
+import com.stripe.android.view.BillingAddressFields;
+import com.stripe.android.view.PaymentMethodsActivityStarter;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
@@ -14,6 +18,7 @@ import com.thealer.telehealer.stripe.SetUpIntentResp;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -25,9 +30,9 @@ import okhttp3.ResponseBody;
  * Created by rsekar on 1/22/19.
  */
 
-public class BrainTreeViewModel extends BaseApiViewModel {
+public class StripeViewModel extends BaseApiViewModel {
 
-    public BrainTreeViewModel(@NonNull Application application) {
+    public StripeViewModel(@NonNull Application application) {
         super(application);
     }
 
@@ -137,6 +142,10 @@ public class BrainTreeViewModel extends BaseApiViewModel {
 
             }
         });
+    }
+
+    public void openPaymentScreen(Activity activity) {
+        new PaymentMethodsActivityStarter(activity).startForResult(new PaymentMethodsActivityStarter.Args(getPaymentMethodId(), 0, false, Arrays.asList(PaymentMethod.Type.Card), null, null, BillingAddressFields.None, false, false, true));
     }
 
 

@@ -4,7 +4,6 @@ import android.app.Activity;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
 import android.content.Intent;
@@ -31,7 +30,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCard;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
-import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeViewModel;
+import com.thealer.telehealer.apilayer.models.Braintree.StripeViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
@@ -60,7 +59,7 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
     private TextView emptyMessageTv;
 
     private OnViewChangeInterface onViewChangeInterface;
-    private BrainTreeViewModel brainTreeViewModel;
+    private StripeViewModel stripeViewModel;
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
@@ -121,7 +120,7 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
 
         recyclerEmptyStateView.setVisibility(View.GONE);
         main_container.setVisibility(View.GONE);
-        brainTreeViewModel.getBrainTreeCustomer();
+        stripeViewModel.getBrainTreeCustomer();
 
         addIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_white_24dp));
         nextTv.setText(getString(R.string.edit));
@@ -145,9 +144,9 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
     }
 
     private void addObserver() {
-        brainTreeViewModel = new ViewModelProvider(getActivity()).get(BrainTreeViewModel.class);
+        stripeViewModel = new ViewModelProvider(getActivity()).get(StripeViewModel.class);
 
-        brainTreeViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+        stripeViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 Log.v("CardInformation", "base api response model observer");
@@ -189,7 +188,7 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
                         nextTv.setVisibility(View.VISIBLE);
 
                     } else {
-                        brainTreeViewModel.getBrainTreeCustomer();
+                        stripeViewModel.getBrainTreeCustomer();
                     }
                 } else {
                     Log.v("CardInformation", "base api response model observer null");
@@ -198,12 +197,12 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
         });
 
 
-        brainTreeViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+        stripeViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 Log.v("CardInformation", "error observer");
                 if (forCheckout) {
-                    brainTreeViewModel.getBrainTreeCustomer();
+                    stripeViewModel.getBrainTreeCustomer();
                     forCheckout = false;
                 } else if (errorModel != null && errorModel.getName() != null) {
                     nextTv.setVisibility(View.VISIBLE);
@@ -213,7 +212,7 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
         });
 
         if (getActivity() instanceof BaseActivity) {
-            ((BaseActivity) getActivity()).attachObserver(brainTreeViewModel);
+            ((BaseActivity) getActivity()).attachObserver(stripeViewModel);
         }
     }
 
@@ -284,6 +283,6 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
             param.put("verifyCard", "true");
         }
         isUserActionOccured = true;
-        brainTreeViewModel.getBrainTreeClientToken(param);
+        stripeViewModel.getBrainTreeClientToken(param);
     }
 }

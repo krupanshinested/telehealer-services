@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.appbar.AppBarLayout;
 import com.stripe.android.ApiResultCallback;
 import com.stripe.android.CustomerSession;
-import com.stripe.android.PaymentConfiguration;
+import com.stripe.android.PaymentSessionConfig;
 import com.stripe.android.SetupIntentResult;
 import com.stripe.android.Stripe;
 import com.stripe.android.model.ConfirmSetupIntentParams;
@@ -31,7 +31,7 @@ import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeViewModel;
+import com.thealer.telehealer.apilayer.models.Braintree.StripeViewModel;
 import com.thealer.telehealer.apilayer.models.Payments.Transaction;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionApiViewModel;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
@@ -72,7 +72,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
     Stripe stripe = new Stripe(application, BuildConfig.STRIPE_KEY);
 
-    private BrainTreeViewModel brainTreeViewModel;
+    private StripeViewModel stripeViewModel;
 
 
     private PaymentAdapter paymentAdapter;
@@ -188,15 +188,15 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         });
 
 
-        brainTreeViewModel = new ViewModelProvider(this).get(BrainTreeViewModel.class);
+        stripeViewModel = new ViewModelProvider(this).get(StripeViewModel.class);
 
-        brainTreeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+        stripeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel instanceof SetUpIntentResp) {
                     String clientSecret = ((SetUpIntentResp) baseApiResponseModel).getClientSecret();
                     if (clientSecret != null && getActivity() != null)
-                        stripe.confirmSetupIntent(getActivity(), ConfirmSetupIntentParams.create(brainTreeViewModel.getPaymentMethodId(), clientSecret));
+                        stripe.confirmSetupIntent(getActivity(), ConfirmSetupIntentParams.create(stripeViewModel.getPaymentMethodId(), clientSecret));
                 } else if ("SET_DEFAULT".equals(baseApiResponseModel.getMessage())) {
                     if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
                         startActivity(new Intent(getActivity(), HomeActivity.class));
@@ -206,13 +206,14 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             }
         });
 
-        brainTreeViewModel.getDefaultCard();
+        stripeViewModel.getDefaultCard();
 
-        CustomerSession.initCustomerSession(getContext(), new AppEphemeralKeyProvider(brainTreeViewModel.getAuthApiService()));
+
+        CustomerSession.initCustomerSession(getContext(), new AppEphemeralKeyProvider(stripeViewModel.getAuthApiService()));
 
         if (getActivity() instanceof BaseActivity) {
             ((BaseActivity) getActivity()).attachObserver(transactionApiViewModel);
-            ((BaseActivity) getActivity()).attachObserver(brainTreeViewModel);
+            ((BaseActivity) getActivity()).attachObserver(stripeViewModel);
         }
     }
 
@@ -223,8 +224,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
     @Override
     public void doCurrentTransaction() {
-        new PaymentMethodsActivityStarter(this).startForResult(new PaymentMethodsActivityStarter.Args(brainTreeViewModel.getPaymentMethodId(), 0, false, Arrays.asList(PaymentMethod.Type.Card), null
-                , null, BillingAddressFields.None, false, false, true));
+        stripeViewModel.openPaymentScreen(getActivity());
 //        onActionCompleteInterface.onCompletionResult(RequestID.CARD_INFORMATION_VIEW, true, null);
     }
 
@@ -240,11 +240,11 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             }
             PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
             if (result != null && result.paymentMethod != null) {
-                if (result.paymentMethod.id.equals(brainTreeViewModel.getPaymentMethodId()))
+                if (result.paymentMethod.id.equals(stripeViewModel.getPaymentMethodId()))
                     return;
 
                 setDefaultMethod(result.paymentMethod.id);
-                brainTreeViewModel.setPaymentMethodId(result.paymentMethod.id);
+                stripeViewModel.setPaymentMethodId(result.paymentMethod.id);
                 stripe.onSetupResult(requestCode, data, new ApiResultCallback<SetupIntentResult>() {
                     @Override
                     public void onSuccess(@NotNull SetupIntentResult setupIntentResult) {
@@ -261,6 +261,6 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
     }
 
     private void setDefaultMethod(String paymentMethodId) {
-        brainTreeViewModel.makeDefaultCard(paymentMethodId);
+        stripeViewModel.makeDefaultCard(paymentMethodId);
     }
 }

@@ -1,6 +1,5 @@
 package com.thealer.telehealer.views.common;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 
 import androidx.lifecycle.Observer;
@@ -32,9 +31,7 @@ import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
-import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
-import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeViewModel;
+import com.thealer.telehealer.apilayer.models.Braintree.StripeViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -46,14 +43,12 @@ import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
 import com.thealer.telehealer.stripe.SetUpIntentResp;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.call.CallActivity;
-import com.thealer.telehealer.views.home.HomeActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -82,7 +77,7 @@ public class CallPlacingActivity extends BaseActivity {
 
     Stripe stripe = new Stripe(application, BuildConfig.STRIPE_KEY);
 
-    private BrainTreeViewModel brainTreeViewModel;
+    private StripeViewModel stripeViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -312,24 +307,24 @@ public class CallPlacingActivity extends BaseActivity {
 
             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
             requestId = CallPlacingActivity.DOCTOR_PAYMENT_REQUEST;
-            if (brainTreeViewModel == null) {
-                brainTreeViewModel = new ViewModelProvider(this).get(BrainTreeViewModel.class);
+            if (stripeViewModel == null) {
+                stripeViewModel = new ViewModelProvider(this).get(StripeViewModel.class);
 
-                brainTreeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+                stripeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
                     @Override
                     public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                         if (baseApiResponseModel instanceof SetUpIntentResp) {
                             String clientSecret = ((SetUpIntentResp) baseApiResponseModel).getClientSecret();
                             if (clientSecret != null)
-                                stripe.confirmSetupIntent(CallPlacingActivity.this, ConfirmSetupIntentParams.create(brainTreeViewModel.getPaymentMethodId(), clientSecret));
+                                stripe.confirmSetupIntent(CallPlacingActivity.this, ConfirmSetupIntentParams.create(stripeViewModel.getPaymentMethodId(), clientSecret));
                         } else if ("SET_DEFAULT".equals(baseApiResponseModel.getMessage())) {
 
                         }
                     }
                 });
-                brainTreeViewModel.getDefaultCard();
-                CustomerSession.initCustomerSession(this, new AppEphemeralKeyProvider(brainTreeViewModel.getAuthApiService()));
-                attachObserver(brainTreeViewModel);
+                stripeViewModel.getDefaultCard();
+                CustomerSession.initCustomerSession(this, new AppEphemeralKeyProvider(stripeViewModel.getAuthApiService()));
+                attachObserver(stripeViewModel);
             }
 
         } else {
@@ -378,7 +373,7 @@ public class CallPlacingActivity extends BaseActivity {
                 break;
 
             case CallPlacingActivity.DOCTOR_PAYMENT_REQUEST: {
-                new PaymentMethodsActivityStarter(this).startForResult(new PaymentMethodsActivityStarter.Args(brainTreeViewModel.getPaymentMethodId(), 0, false, Arrays.asList(PaymentMethod.Type.Card), null, null, BillingAddressFields.None, false, false, true));
+                stripeViewModel.openPaymentScreen(this);
                 break;
             }
 
@@ -386,11 +381,11 @@ public class CallPlacingActivity extends BaseActivity {
 
                 PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
                 if (result != null && result.paymentMethod != null) {
-                    if (result.paymentMethod.id.equals(brainTreeViewModel.getPaymentMethodId()))
+                    if (result.paymentMethod.id.equals(stripeViewModel.getPaymentMethodId()))
                         return;
 
-                    brainTreeViewModel.makeDefaultCard(result.paymentMethod.id);
-                    brainTreeViewModel.setPaymentMethodId(result.paymentMethod.id);
+                    stripeViewModel.makeDefaultCard(result.paymentMethod.id);
+                    stripeViewModel.setPaymentMethodId(result.paymentMethod.id);
                     stripe.onSetupResult(requestCode, data, new ApiResultCallback<SetupIntentResult>() {
                         @Override
                         public void onSuccess(@NotNull SetupIntentResult setupIntentResult) {

@@ -590,6 +590,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onBackPressed() {
+        Utils.hideKeyboard(this);
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
         } else {
