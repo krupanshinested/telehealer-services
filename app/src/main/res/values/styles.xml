@@ -255,10 +255,11 @@
         <item name="android:padding">@dimen/padding_default</item>
     </style>
 
-    <style name="StripeDefaultTheme" parent="StripeBaseTheme">
+    <style name="StripeDefaultTheme" parent="AppTheme">
         <item name="colorPrimary">@color/app_gradient_start</item>
         <item name="colorPrimaryDark">@color/app_status_bar_color1</item>
         <item name="colorAccent">@color/app_status_bar_color1</item>
         <item name="colorControlNormal">@color/app_status_bar_color1</item>
+        <item name="titleTextColor">@color/colorWhite</item>
     </style>
 </resources>
