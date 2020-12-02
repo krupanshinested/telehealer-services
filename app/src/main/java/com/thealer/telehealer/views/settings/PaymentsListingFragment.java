@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.appbar.AppBarLayout;
 import com.stripe.android.ApiResultCallback;
 import com.stripe.android.CustomerSession;
+import com.stripe.android.PaymentConfiguration;
 import com.stripe.android.SetupIntentResult;
 import com.stripe.android.Stripe;
 import com.stripe.android.model.ConfirmSetupIntentParams;
@@ -222,7 +223,8 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
     @Override
     public void doCurrentTransaction() {
-        new PaymentMethodsActivityStarter(this).startForResult(new PaymentMethodsActivityStarter.Args(brainTreeViewModel.getPaymentMethodId(), 0, false, Arrays.asList(PaymentMethod.Type.Card), null, null, BillingAddressFields.None, false, false, true));
+        new PaymentMethodsActivityStarter(this).startForResult(new PaymentMethodsActivityStarter.Args(brainTreeViewModel.getPaymentMethodId(), 0, false, Arrays.asList(PaymentMethod.Type.Card), null
+                , null, BillingAddressFields.None, false, false, true));
 //        onActionCompleteInterface.onCompletionResult(RequestID.CARD_INFORMATION_VIEW, true, null);
     }
 

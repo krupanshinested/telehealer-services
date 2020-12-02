@@ -203,8 +203,8 @@ dependencies {
     //signature pad
     implementation 'com.github.gcacace:signature-pad:1.2.1'
 
-    //Brain Tree
-    implementation 'com.braintreepayments.api:drop-in:3.7.1'
+    /*//Brain Tree
+    implementation 'com.braintreepayments.api:drop-in:3.7.1'*/
 
     //wave animation
     implementation 'com.github.Jay-Goo:WaveLineView:v1.0.3'

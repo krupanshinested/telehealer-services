@@ -1,17 +1,23 @@
 package com.thealer.telehealer.views.settings;
 
 import android.app.Activity;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.google.android.material.appbar.AppBarLayout;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +25,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.braintreepayments.api.dropin.DropInRequest;
-import com.braintreepayments.api.dropin.DropInResult;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -150,11 +154,11 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
 
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel instanceof BrainTreeClientToken) {
-                        if (isUserActionOccured) {
+                        /*if (isUserActionOccured) {
                             DropInRequest dropInRequest = new DropInRequest().clientToken(((BrainTreeClientToken) baseApiResponseModel).getClient_token());
                             startActivityForResult(dropInRequest.getIntent(getActivity()), CallPlacingActivity.BRAIN_TREE_REQUEST);
                             isUserActionOccured = false;
-                        }
+                        }*/
                     } else if (baseApiResponseModel instanceof BrainTreeCustomer) {
 
                         BrainTreeCustomer brainTreeCustomer = (BrainTreeCustomer) baseApiResponseModel;
@@ -243,6 +247,7 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
             case CallPlacingActivity.BRAIN_TREE_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
                     Log.v("CardInformation", "brain tree ok");
+/*
                     DropInResult result = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
 
                     HashMap<String, Object> param = new HashMap<>();
@@ -254,6 +259,7 @@ public class CardInformationFragment extends BaseFragment implements View.OnClic
                     param.put("savePayment", true);
                     forCheckout = true;
                     brainTreeViewModel.checkOutBrainTree(param);
+*/
                     Log.v("CardInformation", "brain tree called checkout");
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     break;
