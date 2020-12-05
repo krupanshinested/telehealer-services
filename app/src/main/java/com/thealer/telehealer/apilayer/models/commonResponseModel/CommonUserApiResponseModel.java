@@ -1,6 +1,9 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
+import androidx.annotation.Nullable;
+
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
 import com.thealer.telehealer.apilayer.models.createuser.VisitAddressBean;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
@@ -287,5 +290,15 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public Boolean getRecording_enabled() {
         return recording_enabled;
+    }
+
+    @Nullable
+    public String getOfficePhoneNo() {
+        List<PracticesBean> numbers = getUser_detail().getData().getPractices();
+        String phoneNo = null;
+        if (numbers != null && !numbers.isEmpty()) {
+            phoneNo = numbers.get(0).getPhones().get(0).getNumber();
+        }
+        return phoneNo;
     }
 }
