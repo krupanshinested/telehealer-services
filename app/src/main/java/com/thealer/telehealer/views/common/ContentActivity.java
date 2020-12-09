@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
@@ -57,7 +58,7 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestFullScreenMode();
-
+        Utils.hideKeyboard(this);
         setContentView(R.layout.activity_content);
         initView();
 
@@ -119,11 +120,11 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
         if (getIntent().getBooleanExtra(ArgumentKeys.IS_HAVE_CUSTOM_CLICK, false)) {
 
             sub_title_tv.setText("");
-            String start=getIntent().getStringExtra(ArgumentKeys.START);
-            String end= getIntent().getStringExtra(ArgumentKeys.END);
-            Log.d("START_INDEX",""+start);
-            Log.d("END_INDEX",""+end);
-            makeTextClickable(Integer.parseInt(start),Integer.parseInt(end),getIntent().getStringExtra(ArgumentKeys.DESCRIPTION));
+            String start = getIntent().getStringExtra(ArgumentKeys.START);
+            String end = getIntent().getStringExtra(ArgumentKeys.END);
+            Log.d("START_INDEX", "" + start);
+            Log.d("END_INDEX", "" + end);
+            makeTextClickable(Integer.parseInt(start), Integer.parseInt(end), getIntent().getStringExtra(ArgumentKeys.DESCRIPTION));
         }
 
         String actionTitle = getIntent().getStringExtra(ArgumentKeys.OK_BUTTON_TITLE);
@@ -171,15 +172,21 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
             helpTv.setVisibility(View.GONE);
         }
 
-        if (getIntent().getBooleanExtra(ArgumentKeys.IS_BOTTOM_TEXT_NEEDED,false)) {
+        if (getIntent().getBooleanExtra(ArgumentKeys.IS_BOTTOM_TEXT_NEEDED, false)) {
             bottom_tv.setVisibility(View.VISIBLE);
         } else {
             bottom_tv.setVisibility(View.GONE);
         }
 
+        if (getIntent().getIntExtra(ArgumentKeys.SUBTITLE_ALIGNMENT, 0) != 0) {
+            sub_title_tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        }
+
         sub_title_tv.post(new Runnable() {
             @Override
             public void run() {
+                if (getIntent().getIntExtra(ArgumentKeys.SUBTITLE_ALIGNMENT, 0) != 0)
+                    return;
                 int lineCount = sub_title_tv.getLineCount();
                 if (lineCount == 1) {
                     sub_title_tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -218,7 +225,7 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
     private void showStillNeedHelp() {
         Bundle bundle = new Bundle();
         bundle.putInt(ArgumentKeys.RESOURCE_ICON, R.drawable.banner_help);
-        bundle.putString(ArgumentKeys.TITLE,getString(R.string.more_help));
+        bundle.putString(ArgumentKeys.TITLE, getString(R.string.more_help));
         bundle.putString(ArgumentKeys.DESCRIPTION, getHelpDesciption());
         bundle.putBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
         bundle.putBoolean(ArgumentKeys.IS_BUTTON_NEEDED, false);
@@ -226,26 +233,27 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
         bundle.putBoolean(ArgumentKeys.IS_BOTTOM_TEXT_NEEDED, false);
 
         bundle.putBoolean(ArgumentKeys.IS_HAVE_CUSTOM_CLICK, true);
-        bundle.putString(ArgumentKeys.START, String.valueOf(getHelpDesciption().length()-getString(R.string.click_here).length()));
+        bundle.putString(ArgumentKeys.START, String.valueOf(getHelpDesciption().length() - getString(R.string.click_here).length()));
         bundle.putString(ArgumentKeys.END, String.valueOf(getHelpDesciption().length()));
 
         startActivity(new Intent(this, ContentActivity.class).putExtras(bundle));
     }
 
-    String getHelpDesciption(){
+    String getHelpDesciption() {
         Spannable span = new SpannableString(getString(R.string.if_this_emergency));
         span.setSpan(new ForegroundColorSpan(Color.BLUE), 0, getString(R.string.if_this_emergency).length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return span+"\n\n"+getString(R.string.for_help_scheduling)+"\n\n"+getString(R.string.for_technical_help)+" "+getString(R.string.click_here);
+        return span + "\n\n" + getString(R.string.for_help_scheduling) + "\n\n" + getString(R.string.for_technical_help) + " " + getString(R.string.click_here);
     }
 
 
-    void makeTextClickable(int start,int end,String text){
-        Log.d("makeTextClickable",""+start+" "+end);
+    void makeTextClickable(int start, int end, String text) {
+        Log.d("makeTextClickable", "" + start + " " + end);
         ClickableSpan clickable = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
                 Utils.sendHelpEmail(ContentActivity.this);
             }
+
             @Override
             public void updateDrawState(TextPaint ds) {
                 super.updateDrawState(ds);

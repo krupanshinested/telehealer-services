@@ -1,18 +1,23 @@
 package com.thealer.telehealer.views.home.schedules;
 
 import android.app.Activity;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -28,6 +33,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestModel;
@@ -676,11 +682,17 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                         CommonUserApiResponseModel doctor = (CommonUserApiResponseModel) data.getExtras().getSerializable(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL);
 
                         if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) && !doctor.getAppt_requests()) {
-                            Utils.showAlertDialog(getActivity(),getString(R.string.no_new_appointment),String.format(getString(R.string.appointment_not_allowed_create),doctor.getDisplayName()),getString(R.string.ok),null
-                                    ,null,null);
+                            Utils.showAlertDialog(getActivity(), getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create)), doctor.getOfficePhoneNo(), getString(R.string.ok)
+                                    , new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Uri uri = Uri.parse("tel:" + doctor.getOfficePhoneNo());
+                                            startActivity(new Intent(Intent.ACTION_DIAL, uri));
+                                        }
+                                    }, null);
                         } else {
                             doctorDetailCommonModel = doctor;
-                                    doctorSchedulesTimeList.clear();
+                            doctorSchedulesTimeList.clear();
                             createScheduleViewModel.setDoctorCommonModel(doctorDetailCommonModel);
                             createScheduleViewModel.getTimeSlots().setValue(new ArrayList<>());
                             enableOrDisableBtn();

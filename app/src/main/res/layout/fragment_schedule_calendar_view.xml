@@ -79,9 +79,7 @@
             android:animateLayoutChanges="true"
             android:background="@color/colorWhite"
             android:clickable="false"
-            android:gravity="center"
-            app:layout_constraintWidth_max="@dimen/max_width">
-
+            android:gravity="center">
             <include layout="@layout/layout_empty_state_view" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

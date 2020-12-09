@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.api;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
+import com.thealer.telehealer.apilayer.models.Braintree.DefaultCardResp;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileResponseModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.DeleteEducationalVideoResponse;
@@ -82,6 +83,7 @@ import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
+import com.thealer.telehealer.stripe.SetUpIntentResp;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalBulkPdfApiResponseModel;
 
@@ -135,7 +137,7 @@ public interface ApiInterface {
     String SEARCH_FILTER_XRAY = "filter_xray_name__icontains";
     String SEARCH_FILTER_NAME = "filter_name__icontains";
     String SEARCH_FILTER_NOTES = "filter_notes__icontains";
-    String SEARCH_FILTER_TITLE= "filter_title__icontains";
+    String SEARCH_FILTER_TITLE = "filter_title__icontains";
     String NAME = "name";
     String FIELDS = "fields";
     String EMAIL = "email";
@@ -207,21 +209,21 @@ public interface ApiInterface {
     @Multipart
     @PUT("api/users/profile")
     Observable<UpdateProfileApiResponseModel> updateDoctor(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
-                                                        @Part(USER_DETAIL) DataBean user_detail,
-                                                        @Part(PROFILE_COMPLETE) Boolean profile_complete,
-                                                        @Part MultipartBody.Part user_avatar,
-                                                        @Part MultipartBody.Part certification,
-                                                        @Part MultipartBody.Part license);
+                                                           @Part(USER_DETAIL) DataBean user_detail,
+                                                           @Part(PROFILE_COMPLETE) Boolean profile_complete,
+                                                           @Part MultipartBody.Part user_avatar,
+                                                           @Part MultipartBody.Part certification,
+                                                           @Part MultipartBody.Part license);
 
     @Multipart
     @PUT("api/users/profile")
     Observable<UpdateProfileApiResponseModel> updatePatient(@Part(USER_DATA) CreateUserRequestModel.UserDataBean user_data,
-                                                         @Part(PROFILE_COMPLETE) Boolean profile_complete,
-                                                         @Part MultipartBody.Part user_avatar,
-                                                         @Part MultipartBody.Part insurance_front,
-                                                         @Part MultipartBody.Part insurance_back,
-                                                         @Part MultipartBody.Part secondary_insurance_front,
-                                                         @Part MultipartBody.Part secondary_insurance_back);
+                                                            @Part(PROFILE_COMPLETE) Boolean profile_complete,
+                                                            @Part MultipartBody.Part user_avatar,
+                                                            @Part MultipartBody.Part insurance_front,
+                                                            @Part MultipartBody.Part insurance_back,
+                                                            @Part MultipartBody.Part secondary_insurance_front,
+                                                            @Part MultipartBody.Part secondary_insurance_back);
 
     @DELETE("api/users/insurance")
     Observable<CommonUserApiResponseModel> deleteInsurance(@QueryMap Map<String, Boolean> params);
@@ -278,7 +280,7 @@ public interface ApiInterface {
     Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(SEARCH_FILTER) String search, @Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/unconnected-users")
-    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate,@Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
+    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
 
     @POST("api/requests")
     Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
@@ -374,7 +376,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> updateForm(@Path(ID) int id, @Part("data") RequestBody data);
 
     @POST("api/referrals/" + OrderConstant.ORDER_TYPE_SPECIALIST)
-    Observable<OrdersBaseApiResponseModel> assignSpecialist(@Query(SYNC_CREATE) boolean sync_create,@Body AssignSpecialistRequestModel assignSpecialistRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<OrdersBaseApiResponseModel> assignSpecialist(@Query(SYNC_CREATE) boolean sync_create, @Body AssignSpecialistRequestModel assignSpecialistRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
     @POST("api/users/" + OrderConstant.ORDER_TYPE_FILES)
@@ -399,7 +401,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> sendFax(@Body SendFaxRequestModel sendFaxRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @POST("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
-    Observable<OrdersBaseApiResponseModel> createLabOrder(@Query(SYNC_CREATE) boolean sync_create,@Body CreateTestApiRequestModel createTestApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<OrdersBaseApiResponseModel> createLabOrder(@Query(SYNC_CREATE) boolean sync_create, @Body CreateTestApiRequestModel createTestApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/download")
     Observable<Response<ResponseBody>> getPdfFile(@Query("path") String path, @Query("decrypt") boolean isDecrypt);
@@ -408,10 +410,10 @@ public interface ApiInterface {
     Observable<Response<ResponseBody>> getPdfFile(@Url String fileUrl);
 
     @POST("refresh")
-    Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check,@Query("version") String version);
+    Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check, @Query("version") String version);
 
     @POST("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
-    Observable<OrdersBaseApiResponseModel> createRadiology(@Query(SYNC_CREATE) boolean sync_create,@Body CreateRadiologyRequestModel createRadiologyRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<OrdersBaseApiResponseModel> createRadiology(@Query(SYNC_CREATE) boolean sync_create, @Body CreateRadiologyRequestModel createRadiologyRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
     Observable<GetRadiologyResponseModel> getRadiologyList(@Query(SEARCH_FILTER_XRAY) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
@@ -426,10 +428,10 @@ public interface ApiInterface {
     Observable<MiscellaneousApiResponseModel> getUserMiscellaneousList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/" + OrderConstant.ORDER_TYPE_EDUCATIONAL_VIDEO)
-    Observable<EducationalVideoApiResponseModel> getEducationalVideoList(@Query(SEARCH_FILTER_TITLE) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize,@Query(ASSIGNOR) boolean assignor);
+    Observable<EducationalVideoApiResponseModel> getEducationalVideoList(@Query(SEARCH_FILTER_TITLE) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(ASSIGNOR) boolean assignor);
 
     @GET("api/" + OrderConstant.ORDER_TYPE_EDUCATIONAL_VIDEO)
-    Observable<EducationalVideoApiResponseModel> getUserEducationalVideoList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid,@Query(ASSIGNOR) boolean assignor);
+    Observable<EducationalVideoApiResponseModel> getUserEducationalVideoList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(ASSIGNOR) boolean assignor);
 
     @POST("api/referrals/" + OrderConstant.ORDER_TYPE_MISC)
     Observable<BaseApiResponseModel> createMiscellaneous(@Body CreateMiscellaneousRequestModel createMiscellaneousRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
@@ -502,7 +504,7 @@ public interface ApiInterface {
 
     @Multipart
     @POST("api/call/{id}")
-    Observable<BaseApiResponseModel> uploadScreenshot(@Path(ID) String sessionId,@Part MultipartBody.Part file);
+    Observable<BaseApiResponseModel> uploadScreenshot(@Path(ID) String sessionId, @Part MultipartBody.Part file);
 
     @GET("api/archive/start")
     Observable<CommonUserApiResponseModel> startArchive(@Query(SESSION_ID) String sessionId);
@@ -561,7 +563,7 @@ public interface ApiInterface {
     Observable<VitalsPaginatedApiResponseModel> getUserFilteredVitals(@Query(FILTER) String type, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/vitals")
-    Observable<PDFUrlResponse> getVitalPDF(@Query(TYPE) String type,@Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(DOWNLOAD_SUMMARY) boolean summary);
+    Observable<PDFUrlResponse> getVitalPDF(@Query(TYPE) String type, @Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(DOWNLOAD_SUMMARY) boolean summary);
 
     @GET("api/vitals/documents")
     Observable<VitalBulkPdfApiResponseModel> getBulkVitalPDF(@Query(DOCTOR_GUID) String doctorGuid, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate);
@@ -620,7 +622,7 @@ public interface ApiInterface {
     Observable<ChatApiResponseModel> getChatMessages(@Query("to") String userGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @POST("api/messages")
-    Observable<BaseApiResponseModel> sendMessage(@Query("notification") boolean notification,@Body ChatMessageRequestModel chatMessageRequestModel);
+    Observable<BaseApiResponseModel> sendMessage(@Query("notification") boolean notification, @Body ChatMessageRequestModel chatMessageRequestModel);
 
     @GET("precanned-messages")
     Observable<PrecannedMessageApiResponse> getPrecannedMessages(@Query(TYPE) String type);
@@ -639,37 +641,37 @@ public interface ApiInterface {
 
 
     @GET("api/educational-video")
-    Observable<EducationalVideoResponse> getEducationalVideo(@Query(SEARCH_TITLE_FILTER) String search, @Query(PAGINATE) boolean paginate,@Query(DOCTOR_GUID) String user_guid,@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<EducationalVideoResponse> getEducationalVideo(@Query(SEARCH_TITLE_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String user_guid, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/educational-video")
-    Observable<ArrayList<EducationalVideoOrder>> getEducationalVideos(@Query(ASSIGNOR) boolean assignor,@Query(FILTER_ID_IN) String ids,@Query(USER_GUID) String userGuid,@Query(DOCTOR_GUID) String doctorGuid);
+    Observable<ArrayList<EducationalVideoOrder>> getEducationalVideos(@Query(ASSIGNOR) boolean assignor, @Query(FILTER_ID_IN) String ids, @Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
 
 
     @Multipart
     @PATCH("api/educational-video/{id}")
-    Observable<BaseApiResponseModel> uploadVideoScreenshot(@Path(ID) String sessionId,@Part MultipartBody.Part file);
+    Observable<BaseApiResponseModel> uploadVideoScreenshot(@Path(ID) String sessionId, @Part MultipartBody.Part file);
 
 
     @POST("api/educational-video")
     Observable<EducationalFetchModel> postEducationalVideo(@Body EducationalVideoRequest request);
 
     @PATCH("api/educational-video/referral/{id}")
-    Observable<EducationalFetchModel> patchEducationalVideo(@Path(ID) String videoId,@Body HashMap<String,Object> item);
+    Observable<EducationalFetchModel> patchEducationalVideo(@Path(ID) String videoId, @Body HashMap<String, Object> item);
 
     @Multipart
     @PATCH("api/educational-video/{id}")
-    Observable<BaseApiResponseModel> updateEducationalVideo(@Path(ID) String sessionId,@Part("details") HashMap<String,Object> item);
+    Observable<BaseApiResponseModel> updateEducationalVideo(@Path(ID) String sessionId, @Part("details") HashMap<String, Object> item);
 
     @DELETE("api/educational-video/{id}")
     Observable<DeleteEducationalVideoResponse> deleteEducationalVideo(@Path(ID) String sessionId);
 
 
     @POST("api/educational-video/remove-user")
-    Observable<DeleteEducationalVideoResponse> unAssociateEducationalVideoOrder(@Query(DOCTOR_GUID) String doctorGuid, @Body HashMap<String,Object> item);
+    Observable<DeleteEducationalVideoResponse> unAssociateEducationalVideoOrder(@Query(DOCTOR_GUID) String doctorGuid, @Body HashMap<String, Object> item);
 
 
     @POST("api/educational-video/assign-user")
-    Observable<BaseApiResponseModel> postEducationalOrder(@Query(DOCTOR_GUID) String doctorGuid,@Body HashMap<String,Object> item);
+    Observable<BaseApiResponseModel> postEducationalOrder(@Query(DOCTOR_GUID) String doctorGuid, @Body HashMap<String, Object> item);
 
     @POST("setup/invite/accept")
     Observable<GuestLoginApiResponseModel> guestLogin(@Body HashMap<String, Object> params);
@@ -679,5 +681,18 @@ public interface ApiInterface {
 
     @POST("api/virtual-rooms/join")
     Observable<GuestLoginApiResponseModel> registerUserEnterWaitingRoom(@Body HashMap<String, Object> params);
+
+    @GET("api/stripe/ephemeral-key")
+    Observable<ResponseBody> getEphemeralKey(@Query("api_version") String apiVersion);
+
+    @POST("api/stripe/cards/make-default")
+    Observable<ResponseBody> makeDefault(@Body Map<String, String> params);
+
+    @GET("api/stripe/get-setup-intent")
+    Observable<SetUpIntentResp> getSetupIntent();
+
+    @GET("api/stripe/default-card")
+    Observable<DefaultCardResp> getDefaultCard();
+
 
 }

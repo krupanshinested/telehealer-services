@@ -1,19 +1,25 @@
 package com.thealer.telehealer.views.home.vitals.iHealth.pairing;
 
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.CustomViews.BatteryView;
+
 import androidx.lifecycle.Lifecycle;
+
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -53,6 +59,8 @@ import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerIns
 
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
+import static com.thealer.telehealer.TeleHealerApplication.isContentViewProceed;
+
 /**
  * Created by rsekar on 11/28/18.
  */
@@ -69,9 +77,9 @@ public class VitalCreationActivity extends BaseActivity implements
 
     private FrameLayout mainContainer;
     private Toolbar toolbar;
-    private ImageView closeButton,backIv,otherOption;
+    private ImageView closeButton, backIv, otherOption;
     private BatteryView batteryView;
-    private TextView toolbarTitle,toolbarSubTitle;
+    private TextView toolbarTitle, toolbarSubTitle;
 
     @Nullable
     private String measurementType;
@@ -105,7 +113,7 @@ public class VitalCreationActivity extends BaseActivity implements
             bluetoothAdapter.enable();
         }
 
-       // registerReceiver(new BTStateChangedBroadcastReceiver(),new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+        // registerReceiver(new BTStateChangedBroadcastReceiver(),new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
 
     }
 
@@ -114,12 +122,12 @@ public class VitalCreationActivity extends BaseActivity implements
         Bundle bundle = new Bundle();
 
         if (measurementType != null && !TextUtils.isEmpty(measurementType)) {
-            bundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE,measurementType);
+            bundle.putString(ArgumentKeys.SELECTED_VITAL_TYPE, measurementType);
         }
 
         vitalDeviceListFragment.setArguments(bundle);
 
-        setFragment(vitalDeviceListFragment,false);
+        setFragment(vitalDeviceListFragment, false);
     }
 
     @Override
@@ -137,7 +145,7 @@ public class VitalCreationActivity extends BaseActivity implements
     protected void onPause() {
         super.onPause();
 
-        Log.d("vitalCreationActivity","onPause");
+        Log.d("vitalCreationActivity", "onPause");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
@@ -176,7 +184,7 @@ public class VitalCreationActivity extends BaseActivity implements
         super.onSaveInstanceState(outState);
         outState.putString(ArgumentKeys.CURRENT_TITLE, this.detailTitle);
 
-        outState.putBoolean(ArgumentKeys.SHOW_BACK,backIv.getVisibility() == View.VISIBLE);
+        outState.putBoolean(ArgumentKeys.SHOW_BACK, backIv.getVisibility() == View.VISIBLE);
     }
 
 
@@ -207,19 +215,19 @@ public class VitalCreationActivity extends BaseActivity implements
             bundle.putSerializable(Constants.USER_DETAIL, getIntent().getSerializableExtra(Constants.USER_DETAIL));
         }
 
-        bundle.putSerializable(Constants.DOCTOR_ID,getIntent().getSerializableExtra(Constants.DOCTOR_ID));
+        bundle.putSerializable(Constants.DOCTOR_ID, getIntent().getSerializableExtra(Constants.DOCTOR_ID));
 
         switch (string) {
             case RequestID.TRIGGER_MANUAL_ENTRY:
                 VitalCreateNewFragment vitalCreateNewFragment = new VitalCreateNewFragment();
                 vitalCreateNewFragment.setArguments(bundle);
-                setFragment(vitalCreateNewFragment,true);
+                setFragment(vitalCreateNewFragment, true);
                 break;
             case RequestID.SET_UP_DEVICE:
                 updateDetailTitle(getString(R.string.setup_new_devices));
                 NewVitalDeviceSetUpFragment deviceSetUpFragment = new NewVitalDeviceSetUpFragment();
                 deviceSetUpFragment.setArguments(bundle);
-                setFragment(deviceSetUpFragment,true);
+                setFragment(deviceSetUpFragment, true);
                 break;
             case RequestID.OPEN_CONNECTED_DEVICE:
                 EventRecorder.recordLastUpdate("last_vitals_measured_date");
@@ -232,60 +240,60 @@ public class VitalCreationActivity extends BaseActivity implements
                         if (type != null && type.equals(VitalsConstant.TYPE_550BT)) {
                             BPTrackMeasureFragment bpMeasureFragment = new BPTrackMeasureFragment();
                             bpMeasureFragment.setArguments(bundle);
-                            setFragment(bpMeasureFragment,true);
+                            setFragment(bpMeasureFragment, true);
                         } else {
                             BPMeasureFragment bpMeasureFragment = new BPMeasureFragment();
                             bpMeasureFragment.setArguments(bundle);
-                            setFragment(bpMeasureFragment,true);
+                            setFragment(bpMeasureFragment, true);
                         }
                         break;
                     case SupportedMeasurementType.weight:
                         WeightMeasureFragment weightMeasureFragment = new WeightMeasureFragment();
                         weightMeasureFragment.setArguments(bundle);
-                        setFragment(weightMeasureFragment,true);
+                        setFragment(weightMeasureFragment, true);
                         break;
                     case SupportedMeasurementType.heartRate:
                         break;
                     case SupportedMeasurementType.temperature:
                         ThermoMeasureFragment thermoMeasureFragment = new ThermoMeasureFragment();
                         thermoMeasureFragment.setArguments(bundle);
-                        setFragment(thermoMeasureFragment,true);
+                        setFragment(thermoMeasureFragment, true);
                         break;
                     case SupportedMeasurementType.gulcose:
                         GulcoMeasureFragment gulcoMeasureFragment = new GulcoMeasureFragment();
                         gulcoMeasureFragment.setArguments(bundle);
-                        setFragment(gulcoMeasureFragment,true);
+                        setFragment(gulcoMeasureFragment, true);
                         break;
                     case SupportedMeasurementType.pulseOximeter:
                         PulseMeasureFragment pulseMeasureFragment = new PulseMeasureFragment();
                         pulseMeasureFragment.setArguments(bundle);
-                        setFragment(pulseMeasureFragment,true);
+                        setFragment(pulseMeasureFragment, true);
                         break;
                 }
                 break;
             case RequestID.OPEN_NOT_CONNECTED_DEVICE:
                 VitalConnectingFragment notConnectedfragment = new VitalConnectingFragment();
                 notConnectedfragment.setArguments(bundle);
-                setFragment(notConnectedfragment,true);
+                setFragment(notConnectedfragment, true);
                 break;
             case RequestID.OPEN_VITAL_SETUP:
                 VitalDemoVideoFragment demoVideoFragment = new VitalDemoVideoFragment();
                 demoVideoFragment.setArguments(bundle);
-                setFragment(demoVideoFragment,true);
+                setFragment(demoVideoFragment, true);
                 break;
             case RequestID.TRIGGER_DEVICE_CONNECTION:
                 VitalDiscoveringFragment vitalConnectingFragment = new VitalDiscoveringFragment();
                 vitalConnectingFragment.setArguments(bundle);
-                setFragment(vitalConnectingFragment,true);
+                setFragment(vitalConnectingFragment, true);
                 break;
             case RequestID.OPEN_VITAL_INFO:
                 VitalInfoFragment vitalInfoFragment = new VitalInfoFragment();
                 vitalInfoFragment.setArguments(bundle);
-                setFragment(vitalInfoFragment,true);
+                setFragment(vitalInfoFragment, true);
                 break;
             case RequestID.OPEN_QR_READER:
                 Intent intent = new Intent(VitalCreationActivity.this, QRCodeReaderActivity.class);
-                startActivityForResult(intent,QRCodeReaderActivity.RequestID);
+                startActivityForResult(intent, QRCodeReaderActivity.RequestID);
                 break;
             case RequestID.OPEN_INITIAL_FRAGMENT:
                 openRootFragment();
@@ -294,8 +302,8 @@ public class VitalCreationActivity extends BaseActivity implements
     }
 
     @Override
-    public void onActivityResult(int requestCode,int resultCode,Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
             case QRCodeReaderActivity.RequestID:
@@ -321,19 +329,25 @@ public class VitalCreationActivity extends BaseActivity implements
 
                 break;
             case Constants.LOCATION_SETTINGS_REQUEST:
-               Log.d("VitalCreationActivity",resultCode+" for loca");
+                Log.d("VitalCreationActivity", resultCode + " for loca");
                 if (resultCode == RESULT_CANCELED) {
                     onBackPressed();
+                }
+                break;
+            case RequestID.REQ_CONNECT_VITAL_CONTENT_VIEW:
+                if (resultCode == Activity.RESULT_OK) {
+                    isContentViewProceed = true;
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vital_devices_url))));
                 }
                 break;
         }
     }
 
     /*
-   *
-   * Initializing the views
-   * */
-    private  void initView() {
+     *
+     * Initializing the views
+     * */
+    private void initView() {
         mainContainer = findViewById(R.id.main_container);
         toolbar = findViewById(R.id.appbar);
         closeButton = toolbar.findViewById(R.id.close_iv);
@@ -356,7 +370,7 @@ public class VitalCreationActivity extends BaseActivity implements
         backIv.setOnClickListener(this);
     }
 
-    private void updateDetailTitle(String detailTitle){
+    private void updateDetailTitle(String detailTitle) {
         this.detailTitle = detailTitle;
         toolbarTitle.setText(detailTitle);
     }
@@ -366,7 +380,7 @@ public class VitalCreationActivity extends BaseActivity implements
                 .findFragmentById(R.id.main_container);
     }
 
-    private void setFragment(Fragment fragment,Boolean needToAddBackTrace) {
+    private void setFragment(Fragment fragment, Boolean needToAddBackTrace) {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         findViewById(mainContainer.getId()).bringToFront();
@@ -462,7 +476,9 @@ public class VitalCreationActivity extends BaseActivity implements
     }
 
     @Override
-    public ImageView getExtraOption() { return otherOption; }
+    public ImageView getExtraOption() {
+        return otherOption;
+    }
 
     @Override
     public void updateSubTitle(String subTitle, int visibility) {
@@ -471,12 +487,12 @@ public class VitalCreationActivity extends BaseActivity implements
     }
 
     private void checkVitalPermission() {
-       PermissionChecker permissionChecker = PermissionChecker.with(this);
-       if (permissionChecker.isGranted(PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS)) {
-           //nothing to do
-       } else if (getLifecycle().getCurrentState() != Lifecycle.State.RESUMED || getLifecycle().getCurrentState() != Lifecycle.State.STARTED) {
-           permissionChecker.checkPermission(PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS);
-       }
+        PermissionChecker permissionChecker = PermissionChecker.with(this);
+        if (permissionChecker.isGranted(PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS)) {
+            //nothing to do
+        } else if (getLifecycle().getCurrentState() != Lifecycle.State.RESUMED || getLifecycle().getCurrentState() != Lifecycle.State.STARTED) {
+            permissionChecker.checkPermission(PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS);
+        }
     }
 
     @Override

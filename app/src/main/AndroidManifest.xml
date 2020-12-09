@@ -40,16 +40,17 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".views.guestlogin.screens.PatientWaitingRoom" />
         <activity android:name=".views.guestlogin.screens.GuestUserSignupActivity" />
-        <activity android:name=".views.guestlogin.screens.GuestLoginScreensActivity"
-            android:launchMode="singleTask"
-            />
+        <activity
+            android:name=".views.guestlogin.screens.GuestLoginScreensActivity"
+            android:launchMode="singleTask" />
         <activity
             android:name=".views.guestlogin.GuestLoginActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".views.common.SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -83,7 +84,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.proposer.ProposerActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".views.home.AddConnectionActivity"
             android:screenOrientation="portrait" />
@@ -161,7 +163,8 @@
         <activity
             android:name=".views.notification.NotificationActivity"
             android:parentActivityName=".views.home.HomeActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".views.notification.NotificationDetailActivity"
             android:screenOrientation="portrait" />
@@ -233,8 +236,7 @@
         <service
             android:name=".views.guestlogin.WaitingRoomHearBeatService"
             android:enabled="true"
-            android:exported="true"
-            />
+            android:exported="true" />
 
         <meta-data
             android:name="preloaded_fonts"

@@ -36,4 +36,7 @@
 
     <color name="vital_good">#00E800</color>
     <color name="patient_waiting_count_bg">#FFEBEB</color>
+
+    <color name="bt_white">@color/colorWhite</color>
+    <color name="bt_very_light_gray">#E2E2E3</color>
 </resources>

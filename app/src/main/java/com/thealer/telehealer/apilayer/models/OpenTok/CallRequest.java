@@ -42,7 +42,7 @@ public class CallRequest implements Serializable {
 
     public CallRequest(String callUUID,
                        String otherUserGuid, @Nullable CommonUserApiResponseModel otherPersonDetail,
-                       String doctorGuid, String doctorName, String scheduleId, String callType, boolean isCalling,@Nullable String additionalId) {
+                       String doctorGuid, String doctorName, String scheduleId, String callType, boolean isCalling, @Nullable String additionalId) {
         this.otherUserGuid = otherUserGuid;
         this.otherPersonDetail = otherPersonDetail;
         this.doctorGuid = doctorGuid;

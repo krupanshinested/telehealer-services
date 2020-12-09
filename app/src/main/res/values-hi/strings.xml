@@ -1156,7 +1156,7 @@
     <string name="registration_number">पंजीकरण संख्या</string>
     <string name="year_of_registration">पंजीकरण का वर्ष</string>
     <string name="state_medical_council_for_mci">एमसीआई के लिए राज्य चिकित्सा परिषद</string>
-    <string name="account_locked_info">आपका खाता अगले %s घंटे के लिए लॉक कर दिया गया है। या तो आप प्रतीक्षा कर सकते हैं या अपना पासवर्ड रीसेट कर सकते हैं।</string>
+    <string name="account_locked_info">आपका खाता अगले %d %s के लिए लॉक कर दिया गया है। या तो आप प्रतीक्षा कर सकते हैं या अपना पासवर्ड रीसेट कर सकते हैं।</string>
     <string name="abnormal_vital">असामान्य महत्वपूर्ण</string>
     <string name="captured_via">%1$s माध्यम से कैप्चर किया गया</string>
     <string name="manage_sources">स्रोत प्रबंधित करें</string>
@@ -1290,7 +1290,7 @@
     <string name="sync_track_message">Press Sync to fetch the track data.</string>
     <string name="accept_appointment_request">Create Appointment Requests</string>
     <string name="no_new_appointment">No new Appointment request</string>
-    <string name="appointment_not_allowed_create">%s does not currently accept appointment requests. Please check back at a later time.</string>
+    <string name="appointment_not_allowed_create">This physician does not use a Telehealer scheduling functionality, please call the doctor\'s office for an appointment.</string>
     <string name="registration_is_on_process">Registration is on process.</string>
     <string name="registration_error">Registration is not successfull</string>
     <string name="account_created">Your account has been created.\\n\\nLets spend a few quick minutes to setup your profile</string>
@@ -1335,10 +1335,16 @@
     <string name="validating_your_waiting_room">Validating your waiting room request</string>
     <string name="waiting_screen_msg">By Pressing Enter you will be  agreeing to <a href="https://www.google.com/">Terms and conditions</a> and <a href="https://www.google.com/">Notice to consumers</a></string>
     <string name="by_pressing_enter">By Pressing Enter you will be  agreeing to </string>
-    <string name="wating_for_you">is waiting for you</string>
+    <!--    <string name="wating_for_you">is waiting for you</string>-->
     <string name="has_enterted_waiting_room">has entered your waiting room. Click yes to get connected.</string>
     <string name="waiting_for_you">is waiting for you</string>
     <string name="are_you_sure_to_kickout">Do you really want to withdraw this invite?</string>
     <string name="confirmation">Confirmation</string>
     <string name="has_enterted_waiting_room_open_ap">has entered your waiting room. Open the app immediately to get connected.</string>
+
+    <string name="msg_payment_gateway_changed">हमारा भुगतान प्रसंस्करण विक्रेता बदल गया है। एप्लिकेशन का उपयोग जारी रखने के लिए कृपया मान्य क्रेडिट कार्ड जानकारी दर्ज करें</string>
+
+    <string name="lbl_medical_document">चिकित्सा दस्तावेज</string>
+    <string name="lbl_administrative_document">प्रशासनिक दस्तावेज</string>
+    <string name="msg_add_slot">आप 3 अपॉइंटमेंट स्लॉट तक का अनुरोध कर सकते हैं</string>
 </resources>

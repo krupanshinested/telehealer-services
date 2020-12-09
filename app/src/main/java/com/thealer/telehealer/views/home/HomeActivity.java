@@ -40,6 +40,7 @@ import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
@@ -77,6 +78,7 @@ import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
+import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.Calendar;
@@ -118,6 +120,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private NotificationApiViewModel notificationApiViewModel;
 
+    private WhoAmIApiViewModel whoAmIApiViewModel;
+
     private BroadcastReceiver NotificationCountReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -152,8 +156,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void initViewModels() {
         addConnectionApiViewModel = new ViewModelProvider(this).get(AddConnectionApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
 
         attachObserver(addConnectionApiViewModel);
+        attachObserver(whoAmIApiViewModel);
 
         addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -186,6 +192,26 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             }
         });
 
+        whoAmIApiViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
+                        if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
+                            Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
+                            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
+                            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
+
+                            String description = getString(R.string.msg_payment_gateway_changed);
+
+                            intent.putExtra(ArgumentKeys.DESCRIPTION, description);
+                            startActivityForResult(intent, RequestID.REQ_CARD_INFO);
+                        }
+                }
+            }
+        });
+        whoAmIApiViewModel.checkWhoAmI();
     }
 
     private void checkNotification() {
@@ -363,9 +389,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     public BroadcastReceiver isPropserShownListner = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean status = intent.getBooleanExtra(ArgumentKeys.APP_LIFECYCLE_STATUS,false);
+            boolean status = intent.getBooleanExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, false);
             if (!status) {
-                isPropserShown=false;
+                isPropserShown = false;
             }
 
         }
@@ -375,7 +401,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (navigationView == null) {
             return;
         }
-        
+
         View view = navigationView.getHeaderView(0);
         ImageView userProfileIv = view.findViewById(R.id.home_header_iv);
         Utils.setImageWithGlide(getApplicationContext(), userProfileIv, UserDetailPreferenceManager.getUser_avatar(), getDrawable(R.drawable.profile_placeholder), true, true);
@@ -498,14 +524,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (!isSubFragmentVisible) {
             if (getResources().getBoolean(R.bool.isXlarge) && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                finish();
+                finishAffinity();
             } else {
                 fragmentManager.popBackStackImmediate();
                 if (fragmentManager.findFragmentById(R.id.sub_fragment_holder) == null)
                     updateToolbarOptions(fragmentManager.findFragmentById(R.id.fragment_holder), false);
             }
         } else {
-            finish();
+            finishAffinity();
         }
     }
 
@@ -542,8 +568,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void setFragment(Fragment fragment) {
 
-        Bundle bundle=fragment.getArguments();
-        if (bundle==null)
+        Bundle bundle = fragment.getArguments();
+        if (bundle == null)
             bundle = new Bundle();
 
         bundle.putBoolean(ArgumentKeys.IS_FROM_HOME, true);
@@ -650,7 +676,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (openAutomatically != null) {
             Bundle bundle = new Bundle();
-            bundle.putString(ArgumentKeys.OPEN_AUTOMATICALLY,openAutomatically);
+            bundle.putString(ArgumentKeys.OPEN_AUTOMATICALLY, openAutomatically);
             monitoringFragment.setArguments(bundle);
         }
 
@@ -795,12 +821,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                     .putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed))
                     .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true), RequestID.REQ_LICENSE_EXPIRED);
 
-        } else if (!isPropserShown){
+        } else if (!isPropserShown) {
 
-                if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
-                    Log.d("HelpScreen", "Permission");
-                    isPropserShown=true;
-                }
+            if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+                Log.d("HelpScreen", "Permission");
+                isPropserShown = true;
+            }
         } else if (!appPreference.getBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN) && (!application.isFromRegistration) && UserType.isUserPatient() && UserDetailPreferenceManager.getWhoAmIResponse() != null && (UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire() == null || !UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire().isQuestionariesEmpty())) {
 
             appPreference.setBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN, true);
@@ -847,6 +873,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     protected void onStop() {
         super.onStop();
     }
+
     private boolean checkIsLicenseExpired() {
         boolean updateLicense = false;
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
@@ -872,7 +899,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 }
             }
         }
-        Log.d("updateLicense",""+updateLicense);
+        Log.d("updateLicense", "" + updateLicense);
         return updateLicense;
     }
 
@@ -891,6 +918,13 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (requestCode == PermissionConstants.PERMISSION_CAM_MIC) {
             attachView();
+        }
+        if (requestCode == RequestID.REQ_CARD_INFO) {
+            if (resultCode == Activity.RESULT_OK) {
+                startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, true));
+            } else {
+                finishAffinity();
+            }
         }
     }
 

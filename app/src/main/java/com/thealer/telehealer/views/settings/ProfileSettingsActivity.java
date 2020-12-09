@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.settings;
 
 import android.app.DatePickerDialog;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -9,13 +10,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -23,6 +28,17 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.stripe.android.CustomerSession;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -41,6 +57,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
 import com.thealer.telehealer.views.EducationalVideo.EducationalListVideoFragment;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.call.CallNetworkTestActivity;
@@ -110,6 +127,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private CircleImageView statusCiv;
     private boolean isSigningOutInProcess = false;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -154,6 +172,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 isSigningOutInProcess = false;
             }
         });
+
+
     }
 
     private void initView() {
@@ -177,7 +197,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         favoriteIv.setVisibility(View.GONE);
 
         nextTv = findViewById(R.id.next_tv);
-      
+
         updateProfile();
 
         appbarLayout.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {
@@ -209,8 +229,19 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
         setFragment(new ProfileSettingFragment(), true, false, false);
 
-        WhoAmIApiViewModel whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserver(whoAmIApiViewModel);
+
+        whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                    showMedicalHistory();
+                }
+            }
+        });
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             isBackDisabled = getIntent().getExtras().getBoolean(ArgumentKeys.DISABLE_BACk, false);
@@ -227,6 +258,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 showMedicalHistory();
             } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.LICENCE_UPDATE) {
                 showUserProfile();
+            } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.PAYMENT_INFO) {
+                didSelecteItem(R.id.payments_billings);
             }
         }
     }
@@ -252,22 +285,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 showSubFragment(documentListFragment);
                 break;
             case R.id.medical_history:
-                if (whoAmIApiViewModel == null) {
-                    whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
-                }
-                if (!whoAmIApiViewModel.baseApiResponseModelMutableLiveData.hasActiveObservers()) {
-                    whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-                        @Override
-                        public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                            if (baseApiResponseModel != null) {
-                                WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                                UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
-                                whoAmIApiViewModel.baseApiResponseModelMutableLiveData.removeObservers(ProfileSettingsActivity.this);
-                                showMedicalHistory();
-                            }
-                        }
-                    });
-                }
                 whoAmIApiViewModel.checkWhoAmI();
                 break;
             case R.id.settings:
@@ -600,11 +617,14 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
                 break;
             case RequestID.CARD_INFORMATION_VIEW:
-                CardInformationFragment cardInformationFragment = new CardInformationFragment();
+                //to open stripe payment method list
+
+
+                /*CardInformationFragment cardInformationFragment = new CardInformationFragment();
                 bundle = new Bundle();
                 bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
                 cardInformationFragment.setArguments(bundle);
-                showSubFragment(cardInformationFragment);
+                showSubFragment(cardInformationFragment);*/
                 break;
 
             case RequestID.TRANSACTION_DETAIL:
@@ -634,14 +654,14 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        getCurrentFragment().onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PermissionConstants.GALLERY_REQUEST_CODE || requestCode == PermissionConstants.CAMERA_REQUEST_CODE) {
-            String imagePath = CameraUtil.getImagePath(this, requestCode, resultCode, data);
-            CameraInterface cameraInterface = (CameraInterface) getCurrentFragment();
-            cameraInterface.onImageReceived(imagePath);
+        if (getCurrentFragment() != null) {
+            getCurrentFragment().onActivityResult(requestCode, resultCode, data);
+            if (requestCode == PermissionConstants.GALLERY_REQUEST_CODE || requestCode == PermissionConstants.CAMERA_REQUEST_CODE) {
+                String imagePath = CameraUtil.getImagePath(this, requestCode, resultCode, data);
+                CameraInterface cameraInterface = (CameraInterface) getCurrentFragment();
+                cameraInterface.onImageReceived(imagePath);
+            }
         }
-
     }
 
     @Override

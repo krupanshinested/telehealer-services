@@ -13,9 +13,10 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 32
-        versionName "2.9.2"
+        versionCode 35
+        versionName "2.9.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "STRIPE_KEY", "\"pk_test_53GgqkDGWa4LC5sKjS5fp7zU00thKb6Or6\"")
     }
     buildTypes {
         release {
@@ -25,7 +26,7 @@ android {
         }
         debug {
             FirebasePerformance {
-             instrumentationEnabled false
+                instrumentationEnabled false
             }
         }
     }
@@ -43,8 +44,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 30
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 32
-            versionName "2.9.2"
+            versionCode 35
+            versionName "2.9.5"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"telehealer\"")
@@ -177,7 +178,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
     implementation 'com.google.firebase:firebase-analytics:17.4.4'
 
-    implementation ('com.google.firebase:firebase-perf:19.0.8') {
+    implementation('com.google.firebase:firebase-perf:19.0.8') {
         exclude group: 'com.google.protobuf'
     }
 
@@ -202,8 +203,8 @@ dependencies {
     //signature pad
     implementation 'com.github.gcacace:signature-pad:1.2.1'
 
-    //Brain Tree
-    implementation 'com.braintreepayments.api:drop-in:3.7.1'
+    /*//Brain Tree
+    implementation 'com.braintreepayments.api:drop-in:3.7.1'*/
 
     //wave animation
     implementation 'com.github.Jay-Goo:WaveLineView:v1.0.3'
@@ -227,9 +228,11 @@ dependencies {
     implementation 'com.romainpiel.shimmer:library:1.4.0@aar'
 
     //Chat
-    implementation ('org.whispersystems:signal-protocol-android:2.7.1')
+    implementation('org.whispersystems:signal-protocol-android:2.7.1')
 
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
+
+    implementation 'com.stripe:stripe-android:16.0.0'
 
 
     //Google Fit
