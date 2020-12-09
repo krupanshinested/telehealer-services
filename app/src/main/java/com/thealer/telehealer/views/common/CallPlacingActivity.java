@@ -1,7 +1,7 @@
 package com.thealer.telehealer.views.common;
 
-import android.app.Activity;
 import android.app.NotificationManager;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -11,21 +11,27 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.braintreepayments.api.dropin.DropInActivity;
-import com.braintreepayments.api.dropin.DropInRequest;
-import com.braintreepayments.api.dropin.DropInResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.stripe.android.ApiResultCallback;
+import com.stripe.android.CustomerSession;
+import com.stripe.android.SetupIntentResult;
+import com.stripe.android.Stripe;
+import com.stripe.android.model.ConfirmSetupIntentParams;
+import com.stripe.android.model.PaymentMethod;
+import com.stripe.android.view.BillingAddressFields;
+import com.stripe.android.view.PaymentMethodsActivityStarter;
+import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
-import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
-import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeViewModel;
+import com.thealer.telehealer.apilayer.models.Braintree.StripeViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -37,13 +43,17 @@ import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
+import com.thealer.telehealer.stripe.SetUpIntentResp;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.call.CallActivity;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -65,7 +75,9 @@ public class CallPlacingActivity extends BaseActivity {
 
     private final OpenTokViewModel openTokViewModel = new OpenTokViewModel(application);
 
-    private BrainTreeViewModel brainTreeViewModel = null;
+    Stripe stripe = new Stripe(application, BuildConfig.STRIPE_KEY);
+
+    private StripeViewModel stripeViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -202,7 +214,7 @@ public class CallPlacingActivity extends BaseActivity {
         }
 
         if (callRequest.isCallForDirectWaitingRoom()) {
-            openTokViewModel.getTokenForSession(callRequest.getSessionId(),null);
+            openTokViewModel.getTokenForSession(callRequest.getSessionId(), null);
         } else {
             openTokViewModel.postaVoipCall(callRequest.getDoctorGuid(), callRequest.getOtherUserGuid(), callRequest.getScheduleId(), callType);
         }
@@ -278,46 +290,6 @@ public class CallPlacingActivity extends BaseActivity {
         }
     }
 
-    private void addBrainTreeObserver() {
-        brainTreeViewModel = new ViewModelProvider(CallPlacingActivity.this).get(BrainTreeViewModel.class);
-
-        attachObserver(brainTreeViewModel);
-
-        brainTreeViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-                    if (baseApiResponseModel instanceof BrainTreeClientToken) {
-                        DropInRequest dropInRequest = new DropInRequest().clientToken(((BrainTreeClientToken) baseApiResponseModel).getClient_token());
-                        startActivityForResult(dropInRequest.getIntent(CallPlacingActivity.this), CallPlacingActivity.BRAIN_TREE_REQUEST);
-                    } else if (baseApiResponseModel instanceof BrainTreeCustomer) {
-                        BrainTreeCustomer customer = (BrainTreeCustomer) baseApiResponseModel;
-
-                        HashMap<String, String> param = new HashMap<>();
-                        if (customer.getPaymentMethods() != null) {
-                            param.put("customerId", UserDetailPreferenceManager.getUser_guid());
-                            param.put("verifyCard", "true");
-                        }
-
-                        brainTreeViewModel.getBrainTreeClientToken(param);
-                    }
-                }
-            }
-        });
-
-
-        brainTreeViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
-            @Override
-            public void onChanged(@Nullable ErrorModel errorModel) {
-                if (errorModel != null && errorModel.getName() != null) {
-                    if (errorModel.getName().equals("notFoundError")) {
-                        brainTreeViewModel.getBrainTreeClientToken(new HashMap<>());
-                    }
-                }
-            }
-        });
-    }
-
     private void openTrialContentScreen(Boolean forDoctor, String doctorName) {
         didOpenTrialScreen();
 
@@ -330,14 +302,29 @@ public class CallPlacingActivity extends BaseActivity {
 
             String description = String.format(getString(R.string.trial_period_expired_doc_sec_1), getString(R.string.app_name));
             String url = getString(R.string.pricing_url);
-            description += " <a href=\""+url+"\">"+url+"</a> ";
+            description += " <a href=\"" + url + "\">" + url + "</a> ";
             description += getString(R.string.trial_period_expired_doc_sec_2);
 
             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
             requestId = CallPlacingActivity.DOCTOR_PAYMENT_REQUEST;
+            if (stripeViewModel == null) {
+                stripeViewModel = new ViewModelProvider(this).get(StripeViewModel.class);
 
-            if (brainTreeViewModel == null) {
-                addBrainTreeObserver();
+                stripeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+                    @Override
+                    public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                        if (baseApiResponseModel instanceof SetUpIntentResp) {
+                            String clientSecret = ((SetUpIntentResp) baseApiResponseModel).getClientSecret();
+                            if (clientSecret != null)
+                                stripe.confirmSetupIntent(CallPlacingActivity.this, ConfirmSetupIntentParams.create(stripeViewModel.getPaymentMethodId(), clientSecret));
+                        } else if ("SET_DEFAULT".equals(baseApiResponseModel.getMessage())) {
+
+                        }
+                    }
+                });
+                stripeViewModel.getDefaultCard();
+                CustomerSession.initCustomerSession(this, new AppEphemeralKeyProvider(stripeViewModel.getAuthApiService()));
+                attachObserver(stripeViewModel);
             }
 
         } else {
@@ -346,7 +333,7 @@ public class CallPlacingActivity extends BaseActivity {
             intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
 
             String name = TextUtils.isEmpty(doctorName) ? getString(R.string.doctor) : doctorName;
-            String description = getString(R.string.trial_period_expired_ma_sec_1, getString(R.string.organization_name),name);
+            String description = getString(R.string.trial_period_expired_ma_sec_1, getString(R.string.organization_name), name);
 
             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
             requestId = CallPlacingActivity.MA_DOC_PAYMENT_REQUEST;
@@ -384,36 +371,37 @@ public class CallPlacingActivity extends BaseActivity {
                     finish();
                 }
                 break;
-            case CallPlacingActivity.DOCTOR_PAYMENT_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    brainTreeViewModel.getBrainTreeCustomer();
-                } else {
+
+            case CallPlacingActivity.DOCTOR_PAYMENT_REQUEST: {
+                stripeViewModel.openPaymentScreen(this);
+                break;
+            }
+
+            case PaymentMethodsActivityStarter.REQUEST_CODE: {
+
+                PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
+                if (result != null && result.paymentMethod != null) {
+                    if (result.paymentMethod.id.equals(stripeViewModel.getPaymentMethodId()))
+                        return;
+
+                    stripeViewModel.makeDefaultCard(result.paymentMethod.id);
+                    stripeViewModel.setPaymentMethodId(result.paymentMethod.id);
+                    stripe.onSetupResult(requestCode, data, new ApiResultCallback<SetupIntentResult>() {
+                        @Override
+                        public void onSuccess(@NotNull SetupIntentResult setupIntentResult) {
+                            Log.e("setupresult", "" + setupIntentResult.getIntent().getPaymentMethodId());
+                        }
+
+                        @Override
+                        public void onError(@NotNull Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
                     finish();
                 }
                 break;
-            case CallPlacingActivity.BRAIN_TREE_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    DropInResult result = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
+            }
 
-                    HashMap<String, Object> param = new HashMap<>();
-                    if (result.getPaymentMethodNonce() != null) {
-                        param.put("payment_method_nonce", result.getPaymentMethodNonce().getNonce());
-                    }
-                    param.put("amount", "0");
-                    param.put("savePayment", true);
-
-                    brainTreeViewModel.checkOutBrainTree(param);
-                    finish();
-                } else if (resultCode == Activity.RESULT_CANCELED) {
-                    Log.d("CallPlacingFragment", "Braintree Cancelled");
-                    finish();
-                } else {
-                    Exception error = (Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
-                    Log.d("CallPlacingFragment", error.getLocalizedMessage());
-                    finish();
-                }
-
-                break;
             case CallPlacingActivity.VideoFeedRequestID:
 
                 appPreference.setBoolean(PreferenceConstants.PATIENT_VIDEO_FEED, data.getBooleanExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED, false));

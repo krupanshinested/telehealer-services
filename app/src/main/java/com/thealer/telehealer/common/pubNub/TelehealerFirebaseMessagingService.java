@@ -94,12 +94,12 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             @Override
             public void run() {
                 TelehealerFirebaseMessagingService.currentToken = currentToken;
-                Log.d("MessagingService","assignToken");
+                Log.d("MessagingService", "assignToken");
                 if (UserDetailPreferenceManager.getUser_guid() != null && !UserDetailPreferenceManager.getUser_guid().isEmpty() && appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
                     PubnubUtil.shared.grantPubNub(currentToken, UserDetailPreferenceManager.getUser_guid());
-                    Log.d("MessagingService","grantPubNub");
+                    Log.d("MessagingService", "grantPubNub");
                 } else {
-                    Log.d("MessagingService","not grantPubNub "+UserDetailPreferenceManager.getUser_guid()+" " + appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN));
+                    Log.d("MessagingService", "not grantPubNub " + UserDetailPreferenceManager.getUser_guid() + " " + appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN));
                 }
             }
         });
@@ -124,7 +124,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                     }
                 });
                 break;
-           case APNSPayload.text:
+            case APNSPayload.text:
                 break;
             case APNSPayload.message:
                 intent = new Intent(this, ChatActivity.class);
@@ -193,14 +193,14 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 }
                 break;
             case APNSPayload.waitingRoomMessage:
-                if (!TeleHealerApplication.isInForeGround){
-                    Utils.createNotificationTop(data,new Intent(this, GuestLoginScreensActivity.class));
+                if (!TeleHealerApplication.isInForeGround) {
+                    Utils.createNotificationTop(data, new Intent(this, GuestLoginScreensActivity.class));
                 }
 
 
                 break;
             case APNSPayload.newUserEnteredWaitingRoom:
-                    Utils.createNotificationTop(data,new Intent(this, HomeActivity.class));
+                Utils.createNotificationTop(data, new Intent(this, HomeActivity.class));
                 break;
             case APNSPayload.kickOutwaitingRoom:
                 LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(ArgumentKeys.USER_KIKCOUT));
@@ -219,7 +219,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             OpenTok.didRecieveIncoming(data, new CallReceiveInterface() {
                 @Override
                 public void didFetchedAllRequiredData(Boolean isWaitingRoom, String doctorName, CallRequest callRequest) {
-                    Intent fullScreenIntent = CallActivity.getCallIntent(application,isWaitingRoom,null,callRequest);
+                    Intent fullScreenIntent = CallActivity.getCallIntent(application, isWaitingRoom, null, callRequest);
 
                     if (TeleHealerApplication.isInForeGround) {
                         Log.d("MessagingService", "start activity directly");
@@ -232,7 +232,17 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             });
 
         } else {
-            CallChannel.shared.postEndCallToOtherPerson(data.getFrom(),data.getUuid(),UserDetailPreferenceManager.getUserDisplayName(),UserDetailPreferenceManager.getUser_avatar(),OpenTokConstants.busyInAnotherLine);
+            String currentCallFromId = null;
+            if (CallManager.shared.getActiveCallToShow() != null) {
+                if (CallManager.shared.getActiveCallToShow().getCallRequest().getOtherUserGuid() != null) {
+                        currentCallFromId = CallManager.shared.getActiveCallToShow().getCallRequest().getOtherUserGuid();
+                }
+            }
+
+            if (currentCallFromId != null && currentCallFromId.equals(data.getFrom()))
+                return;
+
+            CallChannel.shared.postEndCallToOtherPerson(data.getFrom(), data.getUuid(), UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_avatar(), OpenTokConstants.busyInAnotherLine);
             EventRecorder.recordNotification("BUSY_CALL");
 
             if (data.getType().equals(OpenTokConstants.video)) {

@@ -2,6 +2,8 @@ package com.thealer.telehealer.apilayer.baseapimodel;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Aswin on 08,October,2018
  */
@@ -19,6 +21,9 @@ public class ErrorModel {
 
     private boolean locked;
     private int lockTimeInMins;
+
+    @SerializedName("is_cc_captured")
+    private boolean isCCCaptured;
 
     public ErrorModel(int code, String message, String data) {
         this.code = code;
@@ -85,5 +90,13 @@ public class ErrorModel {
 
     public void setLockTimeInMins(int lockTimeInMins) {
         this.lockTimeInMins = lockTimeInMins;
+    }
+
+    public boolean isCCCaptured() {
+        return isCCCaptured;
+    }
+
+    public void setCCCaptured(boolean CCCaptured) {
+        isCCCaptured = CCCaptured;
     }
 }

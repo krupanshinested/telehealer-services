@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.home;
 import android.annotation.SuppressLint;
 
 import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -13,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -164,12 +166,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
                 resultBean = model;
-                if (doctorGuid!=null){
+                if (doctorGuid != null) {
                     Set<String> set = new HashSet<>();
                     set.add(doctorGuid);
                     getUserDetail(set);
-                }
-                else {
+                } else {
                     updateView(resultBean);
                 }
             }
@@ -229,7 +230,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         guestLoginApiResponseModel = (GuestLoginApiResponseModel) baseApiResponseModel;
                         if (guestLoginApiResponseModel.isSuccess()) {
                             callSuccessDialogBroadcast();
-                            Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(),"", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
+                            Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(), "", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
                             patientInvite = new PatientInvite();
                             patientInvite.setPatientinfo(patientDetails);
                             patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
@@ -241,7 +242,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         }
 
                     }
-                }else {
+                } else {
                     Toast.makeText(getActivity(), getString(R.string.failure), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -251,7 +252,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 new Observer<ErrorModel>() {
                     @Override
                     public void onChanged(@Nullable ErrorModel errorModel) {
-                        Log.d("ErrorModel","whoAmIApiViewModel");
+                        Log.d("ErrorModel", "whoAmIApiViewModel");
                         Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
                         intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
@@ -280,7 +281,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         if (CallManager.shared.isActiveCallPresent()) {
@@ -347,8 +348,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
                             } else {
 
-                                Utils.showAlertDialog(getActivity(), getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create), resultBean.getDisplayName()), getString(R.string.ok), null
-                                        , null, null);
+                                Utils.showAlertDialog(getActivity(), getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create)), resultBean.getOfficePhoneNo(), getString(R.string.ok)
+                                        , new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Uri uri = Uri.parse("tel:" + resultBean.getOfficePhoneNo());
+                                                startActivity(new Intent(Intent.ACTION_DIAL, uri));
+                                            }
+                                        }, null);
                             }
 
                         } else {
@@ -400,7 +407,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 }
 
                                 CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
-                                        finalCommonUserApiResponseModel.getUser_guid(), finalCommonUserApiResponseModel, doctorGuid, doctorName, null, callType,true,null);
+                                        finalCommonUserApiResponseModel.getUser_guid(), finalCommonUserApiResponseModel, doctorGuid, doctorName, null, callType, true, null);
 
                                 Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
                                 intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
@@ -451,10 +458,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     // Collapsed
                     toolbarTitle.setVisibility(View.VISIBLE);
                     collapseBackgroundRl.setVisibility(View.INVISIBLE);
-                    if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR) && viewPager.getCurrentItem() == 1){
+                    if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_DOCTOR) && viewPager.getCurrentItem() == 1) {
                         toolbarSearch.setVisibility(View.VISIBLE);
-                    }
-                    else
+                    } else
                         toolbarSearch.setVisibility(View.GONE);
 
                 } else if (verticalOffset == 0) {
@@ -462,11 +468,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     toolbarTitle.setVisibility(View.GONE);
                     toolbarSearch.setVisibility(View.GONE);
                     collapseBackgroundRl.setVisibility(View.VISIBLE);
-                    if (UserType.isUserAssistant() && resultBean!=null && viewPager.getCurrentItem() == 1){
+                    if (UserType.isUserAssistant() && resultBean != null && viewPager.getCurrentItem() == 1) {
                         if (resultBean.getRole().equals(Constants.ROLE_DOCTOR))
                             searchIV.setVisibility(View.VISIBLE);
-                    }
-                    else
+                    } else
                         searchIV.setVisibility(View.GONE);
                 } else {
                     // Somewhere in between
@@ -491,7 +496,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
                 doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
             }
-                getUsersApiViewModel.getUserDetail(userGuid, null);
+            getUsersApiViewModel.getUserDetail(userGuid, null);
         }
 
         backIv = (ImageView) view.findViewById(R.id.back_iv);
@@ -549,7 +554,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 }
                             }
                         }
-                            updateView(resultBean);
+                        updateView(resultBean);
                     }
                 }
             });
@@ -559,7 +564,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private BroadcastReceiver callStartReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("enableOrDisable_brod","false");
+            Log.d("enableOrDisable_brod", "false");
             enableOrDisableCall(false);
         }
     };
@@ -567,13 +572,13 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private BroadcastReceiver callEndReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("enableOrDisable_brod","false");
+            Log.d("enableOrDisable_brod", "false");
             enableOrDisableCall(true);
         }
     };
 
     private void enableOrDisableCall(Boolean isEnabled) {
-        Log.d("isEnabled",""+isEnabled);
+        Log.d("isEnabled", "" + isEnabled);
         if (isEnabled) {
             userDetailBnv.getMenu().findItem(R.id.menu_call).setEnabled(true);
             //userDetailBnv.getMenu().findItem(R.id.menu_call).set(1);
@@ -586,10 +591,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
     private void updateUserStatus(CommonUserApiResponseModel userApiResponseModel) {
         if (userApiResponseModel.getRole().equals(Constants.ROLE_PATIENT)) {
-            Log.d("updateUserStatus","VISIBLE");
+            Log.d("updateUserStatus", "VISIBLE");
             userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(true);
         } else {
-            Log.d("updateUserStatus","GONE");
+            Log.d("updateUserStatus", "GONE");
             userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(false);
         }
 
@@ -621,7 +626,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             if (resultBean.getRole().equals(Constants.ROLE_PATIENT) && resultBean.getApp_details() != null) {
                 appPlatform.setVisibility(View.VISIBLE);
                 appVersion.setVisibility(View.VISIBLE);
-                appVersion.setText(getString(R.string.version_label)+resultBean.getApp_details().getVersion());
+                appVersion.setText(getString(R.string.version_label) + resultBean.getApp_details().getVersion());
                 Utils.setPlatformImage(getActivity(), appPlatform, resultBean.getApp_details().displayPlatform());
             } else {
                 appPlatform.setVisibility(View.GONE);
@@ -629,7 +634,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             }
 
             if (getArguments() != null) {
-                getArguments().putSerializable(Constants.USER_DETAIL,resultBean);
+                getArguments().putSerializable(Constants.USER_DETAIL, resultBean);
             }
 
             Utils.setImageWithGlide(getActivity().getApplicationContext().getApplicationContext(), userProfileIv, resultBean.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);
@@ -662,12 +667,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     if (UserType.isUserAssistant()) {
                         userDetailTab.setTabMode(TabLayout.MODE_SCROLLABLE);
                     }
-                    if(UserType.isUserPatient()) {
+                    if (UserType.isUserPatient()) {
                         userDetailBnv.getMenu().findItem(R.id.menu_wating_room).setVisible(true);
                     }
                     break;
                 case Constants.ROLE_ASSISTANT:
-                    if(UserType.isUserPatient()) {
+                    if (UserType.isUserPatient()) {
                         userDetailTab.setVisibility(View.GONE);
                         userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(false);
                         userDetailBnv.getMenu().findItem(R.id.menu_schedules).setVisible(false);
@@ -681,7 +686,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 userDetailBnv.setVisibility(View.GONE);
             } else if (resultBean.getConnection_status() != null && resultBean.getConnection_status().equals(Constants.CONNECTION_STATUS_ACCEPTED)) {
                 userDetailBnv.setVisibility(View.VISIBLE);
-            } else if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_PATIENT)){
+            } else if (UserType.isUserAssistant() && resultBean.getRole().equals(Constants.ROLE_PATIENT)) {
                 userDetailBnv.setVisibility(View.VISIBLE);
             } else {
                 userDetailBnv.setVisibility(View.GONE);
@@ -861,7 +866,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("requestCode",""+requestCode);
+        Log.d("requestCode", "" + requestCode);
         switch (requestCode) {
 
             case RequestID.REQ_SELECT_PATIENT:
@@ -869,8 +874,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     if (data != null && data.getExtras() != null) {
                         DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constants.VIEW_TYPE,Constants.VIEW_ASSOCIATION_DETAIL);
-                        bundle.putSerializable(Constants.USER_DETAIL,data.getSerializableExtra(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL));
+                        bundle.putSerializable(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
+                        bundle.putSerializable(Constants.USER_DETAIL, data.getSerializableExtra(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL));
                         doctorPatientDetailViewFragment.setArguments(bundle);
                         showSubFragmentInterface.onShowFragment(doctorPatientDetailViewFragment);
                     }
@@ -882,7 +887,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     goToWaitingScreen();
                 }
                 break;
-            case  RequestID.REQ_SHOW_SUCCESS_VIEW:
+            case RequestID.REQ_SHOW_SUCCESS_VIEW:
                 if (resultCode == RESULT_OK) {
                     goToWaitingScreen();
                 }
@@ -990,6 +995,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         fragmentList.add(fragment);
         titleList.add(title);
     }
+
     @Override
     public void onClick(View v) {
         showAssociationSelection(RequestID.REQ_SELECT_PATIENT, ArgumentKeys.SEARCH_ASSOCIATION, resultBean.getUser_guid());

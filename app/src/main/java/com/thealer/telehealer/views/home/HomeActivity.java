@@ -40,6 +40,7 @@ import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
@@ -77,6 +78,7 @@ import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
+import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.Calendar;
@@ -118,6 +120,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private NotificationApiViewModel notificationApiViewModel;
 
+    private WhoAmIApiViewModel whoAmIApiViewModel;
+
     private BroadcastReceiver NotificationCountReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -152,8 +156,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void initViewModels() {
         addConnectionApiViewModel = new ViewModelProvider(this).get(AddConnectionApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
 
         attachObserver(addConnectionApiViewModel);
+        attachObserver(whoAmIApiViewModel);
 
         addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -186,6 +192,26 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             }
         });
 
+        whoAmIApiViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
+                        if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
+                            Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
+                            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
+                            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
+
+                            String description = getString(R.string.msg_payment_gateway_changed);
+
+                            intent.putExtra(ArgumentKeys.DESCRIPTION, description);
+                            startActivityForResult(intent, RequestID.REQ_CARD_INFO);
+                        }
+                }
+            }
+        });
+        whoAmIApiViewModel.checkWhoAmI();
     }
 
     private void checkNotification() {
@@ -892,6 +918,13 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (requestCode == PermissionConstants.PERMISSION_CAM_MIC) {
             attachView();
+        }
+        if (requestCode == RequestID.REQ_CARD_INFO) {
+            if (resultCode == Activity.RESULT_OK) {
+                startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, true));
+            } else {
+                finishAffinity();
+            }
         }
     }
 

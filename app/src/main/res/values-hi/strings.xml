@@ -1290,7 +1290,7 @@
     <string name="sync_track_message">Press Sync to fetch the track data.</string>
     <string name="accept_appointment_request">Create Appointment Requests</string>
     <string name="no_new_appointment">No new Appointment request</string>
-    <string name="appointment_not_allowed_create">%s does not currently accept appointment requests. Please check back at a later time.</string>
+    <string name="appointment_not_allowed_create">This physician does not use a Telehealer scheduling functionality, please call the doctor\'s office for an appointment.</string>
     <string name="registration_is_on_process">Registration is on process.</string>
     <string name="registration_error">Registration is not successfull</string>
     <string name="account_created">Your account has been created.\\n\\nLets spend a few quick minutes to setup your profile</string>
@@ -1342,6 +1342,7 @@
     <string name="confirmation">Confirmation</string>
     <string name="has_enterted_waiting_room_open_ap">has entered your waiting room. Open the app immediately to get connected.</string>
 
+    <string name="msg_payment_gateway_changed">हमारा भुगतान प्रसंस्करण विक्रेता बदल गया है। एप्लिकेशन का उपयोग जारी रखने के लिए कृपया मान्य क्रेडिट कार्ड जानकारी दर्ज करें</string>
 
     <string name="lbl_medical_document">चिकित्सा दस्तावेज</string>
     <string name="lbl_administrative_document">प्रशासनिक दस्तावेज</string>

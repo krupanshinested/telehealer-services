@@ -10,6 +10,7 @@
 /captures
 .externalNativeBuild
 *.apk
+.idea
 *.aab
 /app/doctor/debug
 /app/patient/debug
