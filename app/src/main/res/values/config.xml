@@ -2,26 +2,26 @@
 <resources>
     <bool name="isXlarge">false</bool>
     <dimen name="max_width">320dp</dimen>
-    <string name="release_info_url">http://telehealer.com/info-release/</string>
-    <string name="contact_url">http://telehealer.com/feedback</string>
-    <string name="get_image_url">api/download?path=</string>
-    <string name="feedback_url">https://telehealer.freshdesk.com/support/tickets/new</string>
-    <string name="privacy_url">http://telehealer.com/privacy/</string>
-    <string name="vital_devices_url">http://telehealer.com/vitals-devices/</string>
-    <string name="doctor_onboard_url">https://vimeo.com/278934065</string>
-    <string name="pricing_url">https://telehealer.com/product/doctors/#pricing</string>
+    <string name="release_info_url" translatable="false">http://telehealer.com/info-release/</string>
+    <string name="contact_url" translatable="false">http://telehealer.com/feedback</string>
+    <string name="get_image_url" translatable="false">api/download?path=</string>
+    <string name="feedback_url" translatable="false">https://telehealer.freshdesk.com/support/tickets/new</string>
+    <string name="privacy_url" translatable="false">http://telehealer.com/privacy/</string>
+    <string name="vital_devices_url" translatable="false">http://telehealer.com/vitals-devices/</string>
+    <string name="doctor_onboard_url" translatable="false">https://vimeo.com/464589318</string>
+    <string name="pricing_url" translatable="false">https://telehealer.com/product/doctors/#pricing</string>
     //Food Api service
-    <string name="food_api_base_url">https://api.edamam.com</string>
+    <string name="food_api_base_url" translatable="false">https://api.edamam.com</string>
 
-    <string name="food_db_app_id">1e9168c1</string>
-    <string name="food_db_app_key">861d428891f85fefe9dae2c52a02acf4</string>
-    <string name="food_detail_app_id">7e6be163</string>
-    <string name="food_detail_app_key">66f25a8e5d9b1a821fb2f59d1156898e</string>
+    <string name="food_db_app_id" translatable="false">1e9168c1</string>
+    <string name="food_db_app_key" translatable="false">861d428891f85fefe9dae2c52a02acf4</string>
+    <string name="food_detail_app_id" translatable="false">7e6be163</string>
+    <string name="food_detail_app_key" translatable="false">66f25a8e5d9b1a821fb2f59d1156898e</string>
 
     //Service api
-    <string name="service_api_base_url">https://services.telehealer.com</string>
-    <string name="service_api_key">ezuGJrW9O24Ran2gZaF7m2Ro13RTvD1q26IKTj4m</string>
+    <string name="service_api_base_url" translatable="false">https://services.telehealer.com</string>
+    <string name="service_api_key" translatable="false">ezuGJrW9O24Ran2gZaF7m2Ro13RTvD1q26IKTj4m</string>
 
     //mail
-    <string name ="mail_to">support@telehealer.com</string>
+    <string name="mail_to" translatable="false">support@telehealer.com</string>
 </resources>
