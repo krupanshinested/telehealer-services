@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.common;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 
 import androidx.lifecycle.Observer;
@@ -164,45 +165,42 @@ public class CallPlacingActivity extends BaseActivity {
             }
         });
 
-        openTokViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
-            @Override
-            public void onChanged(@Nullable ErrorModel errorModel) {
+        openTokViewModel.getErrorModelLiveData().observe(this, errorModel -> {
 
-                String errorMessage = null;
-                if (errorModel != null) {
-                    Type type = new TypeToken<HashMap<String, Object>>() {
-                    }.getType();
-                    HashMap<String, Object> errorObject = new Gson().fromJson(errorModel.getResponse(), type);
+            String errorMessage = null;
+            if (errorModel != null) {
+                Type type = new TypeToken<HashMap<String, Object>>() {
+                }.getType();
+                HashMap<String, Object> errorObject = new Gson().fromJson(errorModel.getResponse(), type);
 
 
-                    if (errorObject.get("is_cc_captured") != null) {
-                        Boolean is_cc_captured = (Boolean) errorObject.get("is_cc_captured");
+                if (errorObject.get("is_cc_captured") != null) {
+                    Boolean is_cc_captured = (Boolean) errorObject.get("is_cc_captured");
 
-                        if (is_cc_captured != null && !is_cc_captured) {
-                            openTrialContentScreen(UserType.isUserDoctor(), callRequest.getDoctorName());
+                    if (is_cc_captured != null && !is_cc_captured) {
+                        openTrialContentScreen(UserType.isUserDoctor(), callRequest.getDoctorName());
 
-                            if (UserType.isUserDoctor()) {
-                                EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
-                            }
-
-                        } else {
-                            errorMessage = errorModel.getMessage();
+                        if (UserType.isUserDoctor()) {
+                            EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
                         }
+
                     } else {
                         errorMessage = errorModel.getMessage();
                     }
                 } else {
-                    errorMessage = getString(R.string.something_went_wrong_try_again);
+                    errorMessage = errorModel.getMessage();
                 }
+            } else {
+                errorMessage = getString(R.string.something_went_wrong_try_again);
+            }
 
-                if (errorMessage != null) {
-                    Utils.showAlertDialog(CallPlacingActivity.this, getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }, null);
-                }
+            if (errorMessage != null) {
+                Utils.showAlertDialog(CallPlacingActivity.this, getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }, null);
             }
         });
 
@@ -373,11 +371,19 @@ public class CallPlacingActivity extends BaseActivity {
                 break;
 
             case CallPlacingActivity.DOCTOR_PAYMENT_REQUEST: {
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    finish();
+                    return;
+                }
                 stripeViewModel.openPaymentScreen(this);
                 break;
             }
 
             case PaymentMethodsActivityStarter.REQUEST_CODE: {
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    finish();
+                    return;
+                }
 
                 PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
                 if (result != null && result.paymentMethod != null) {
