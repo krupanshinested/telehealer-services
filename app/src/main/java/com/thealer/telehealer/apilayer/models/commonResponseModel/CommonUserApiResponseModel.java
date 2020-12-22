@@ -297,7 +297,8 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         List<PracticesBean> numbers = getUser_detail().getData().getPractices();
         String phoneNo = null;
         if (numbers != null && !numbers.isEmpty()) {
-            phoneNo = numbers.get(0).getPhones().get(0).getNumber();
+            if (numbers.get(0).getPhones() != null && !numbers.get(0).getPhones().isEmpty())
+                phoneNo = numbers.get(0).getPhones().get(0).getNumber();
         }
         return phoneNo;
     }
