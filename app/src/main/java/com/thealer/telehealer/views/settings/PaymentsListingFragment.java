@@ -39,6 +39,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
 import com.thealer.telehealer.stripe.SetUpIntentResp;
@@ -125,6 +126,10 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         nextTv.setVisibility(View.GONE);
         closeIv.setVisibility(View.VISIBLE);
         closeIv.setImageDrawable(getActivity().getDrawable(R.drawable.ic_add_credit_card_white));
+        closeIv.setScaleType(ImageView.ScaleType.FIT_XY);
+        closeIv.getLayoutParams().width = Utils.dpToPx(getContext(), 46);
+        closeIv.getLayoutParams().height = Utils.dpToPx(getContext(), 46);
+        closeIv.requestLayout();
         closeIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
