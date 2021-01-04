@@ -493,7 +493,7 @@ public interface ApiInterface {
     @PATCH("api/requests/{id}")
     Observable<NotificationRequestUpdateResponseModel> updateNotification(@Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Body Map<String, Object> body);
 
-    @GET("api/token")
+    @GET("api/token-v2")
     Observable<CallSettings> getOpenTokToken(@Query(SESSION_ID) String sessionId);
 
     @GET("api/users/{id}")
@@ -515,7 +515,7 @@ public interface ApiInterface {
     @GET("api/session")
     Observable<CallSettings> getSessionId(@Query(CALL_QUALITY) String call_quality);
 
-    @POST("api/call")
+    @POST("api/call-v2")
     Observable<CallSettings> postaVOIPCall(@Query(DOCTOR_GUID) String doctor_guid, @Body Map<String, String> param);
 
     @POST("api/setup/verification-link")
