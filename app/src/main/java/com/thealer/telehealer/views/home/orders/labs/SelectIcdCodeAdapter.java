@@ -8,6 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +82,6 @@ public class SelectIcdCodeAdapter extends RecyclerView.Adapter<SelectIcdCodeAdap
 
         viewHolder.icdCodeCb.setText(resultsBeanList.get(i).getCode());
         viewHolder.icdDetailTv.setText(resultsBeanList.get(i).getDescription());
-
         viewHolder.listItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

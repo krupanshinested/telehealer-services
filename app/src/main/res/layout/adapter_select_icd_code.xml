@@ -4,7 +4,8 @@
     xmlns:tool="http://schemas.android.com/tools"
     android:id="@+id/list_item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants">
 
     <CheckBox
         android:id="@+id/icd_code_cb"
@@ -12,6 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_default"
         android:buttonTint="@color/app_gradient_start"
+        android:clickable="false"
+        android:focusable="false"
         app:layout_constraintBottom_toBottomOf="@+id/icd_detail_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/icd_detail_tv"
