@@ -33,6 +33,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -241,16 +242,16 @@ public class Utils {
                                             FragmentActivity activity, @Nullable String time, TimePickerDialog.OnTimeSetListener timeSetListener) {
         Calendar calendar = Calendar.getInstance();
         if (!TextUtils.isEmpty(time)) {
-            int hour = Integer.parseInt(DateUtil.getLocalfromUTC(time,"hh:mm a","kk"));
-            int minute = Integer.parseInt(DateUtil.getLocalfromUTC(time,"hh:mm a","mm"));
+            int hour = Integer.parseInt(DateUtil.getLocalfromUTC(time, "hh:mm a", "kk"));
+            int minute = Integer.parseInt(DateUtil.getLocalfromUTC(time, "hh:mm a", "mm"));
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
         } else {
         }
-        TimePickerDialog timePickerDialog = new TimePickerDialog(activity, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY),  calendar.get(Calendar.MINUTE), false);
+        TimePickerDialog timePickerDialog = new TimePickerDialog(activity, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
         if (!TextUtils.isEmpty(title)) {
-                timePickerDialog.setTitle(title);
-            }
+            timePickerDialog.setTitle(title);
+        }
         timePickerDialog.show();
     }
 
@@ -265,7 +266,7 @@ public class Utils {
 
     public static String trimAndRemoveNewLineCharacters(@Nullable String text) {
         if (!TextUtils.isEmpty(text)) {
-            return text.trim().replace("\n","");
+            return text.trim().replace("\n", "");
         } else {
             return "";
         }
@@ -351,16 +352,16 @@ public class Utils {
         return input.before(calendar);
     }
 
-    public static long getDateDifferceinHours(long date1,long date2) {
+    public static long getDateDifferceinHours(long date1, long date2) {
 
         Calendar calendar1 = Calendar.getInstance();
         Calendar calendar2 = Calendar.getInstance();
 
-        Date givendate1=new Date();
+        Date givendate1 = new Date();
         givendate1.setTime(date1);
         calendar1.setTime(givendate1);
 
-        Date givendate2=new Date();
+        Date givendate2 = new Date();
         givendate2.setTime(date2);
         calendar2.setTime(givendate2);
 
@@ -369,7 +370,7 @@ public class Utils {
 
         long diff = millis2 - millis1;
         long diffHours = diff / (60 * 60 * 1000);
-        Log.d("getDateDifferceinHours",""+diffHours);
+        Log.d("getDateDifferceinHours", "" + diffHours);
         return diffHours;
     }
 
@@ -797,7 +798,7 @@ public class Utils {
     }
 
     public static String getUTCfromGMT(String timeStamp) {
-        return DateUtil.getUTCfromLocal(timeStamp,"yyyy-MM-dd HH:mm:ss.SSS",UTCFormat);
+        return DateUtil.getUTCfromLocal(timeStamp, "yyyy-MM-dd HH:mm:ss.SSS", UTCFormat);
     }
 
 
@@ -1209,7 +1210,6 @@ public class Utils {
                         }
 
 
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -1239,10 +1239,10 @@ public class Utils {
                         FutureTarget<Bitmap> futureTarget = Glide.with(application).asBitmap().load(glideUrl).submit();
                         try {
                             Bitmap imageBitmap = futureTarget.get();
-                                displyNotificationOnTop(title, message, imageBitmap, intent);
+                            displyNotificationOnTop(title, message, imageBitmap, intent);
 
                         } catch (Exception e) {
-                                displyNotificationOnTop(title, message, null, intent);
+                            displyNotificationOnTop(title, message, null, intent);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1252,7 +1252,7 @@ public class Utils {
 
         } else {
             Bitmap imageBitmap = BitmapFactory.decodeResource(application.getResources(), R.drawable.profile_placeholder);
-                displyNotificationOnTop(title, message, imageBitmap, intent);
+            displyNotificationOnTop(title, message, imageBitmap, intent);
         }
 
     }
@@ -1290,7 +1290,7 @@ public class Utils {
         notificationManagerCompat.notify(random.nextInt(1000), notification.build());
     }
 
-    public static void displyNotificationOnTop(String title, String message,@Nullable Bitmap imageBitmap, Intent intent) {
+    public static void displyNotificationOnTop(String title, String message, @Nullable Bitmap imageBitmap, Intent intent) {
         PendingIntent pendingIntent = PendingIntent.getActivity(application, 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(application, notificationChannelId)
                 .setSmallIcon(R.drawable.app_icon_notification)
@@ -1306,7 +1306,7 @@ public class Utils {
             builder.setLargeIcon(imageBitmap);
         }
 
-        NotificationManager notifManager = (NotificationManager)application.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notifManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = builder.build();
         Random random = new Random();
         notifManager.notify(random.nextInt(1000), notification);
@@ -1570,7 +1570,7 @@ public class Utils {
     }
 
     public static void sendHelpEmail(Context context) {
-        String phoneNumber = "", userName = "",appName = "", noteMessage = "";
+        String phoneNumber = "", userName = "", appName = "", noteMessage = "";
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
         if (whoAmIApiResponseModel != null) {
             phoneNumber = whoAmIApiResponseModel.getPhone();
@@ -1582,10 +1582,10 @@ public class Utils {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         String mailto = null;
         try {
-            mailto = "mailto:"+ context.getString(R.string.mail_to) +
+            mailto = "mailto:" + context.getString(R.string.mail_to) +
                     "?cc=" +
                     "&subject=" +
-                    "&body=" + Uri.encode(String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName+ "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ",noteMessage, phoneNumber,appName));
+                    "&body=" + Uri.encode(String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ", noteMessage, phoneNumber, appName));
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -1603,8 +1603,8 @@ public class Utils {
         appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
     }
 
-    public static void showMultichoiseItemSelectAlertDialog(@NonNull Context context,@NonNull String title,@NonNull String[] itemsList,@NonNull boolean[] selectedList,@NonNull String positiveTitle,@NonNull String negativeTitle,
-                                                            @NonNull OnMultipleChoiceInterface multipleChoiceInterface){
+    public static void showMultichoiseItemSelectAlertDialog(@NonNull Context context, @NonNull String title, @NonNull String[] itemsList, @NonNull boolean[] selectedList, @NonNull String positiveTitle, @NonNull String negativeTitle,
+                                                            @NonNull OnMultipleChoiceInterface multipleChoiceInterface) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
@@ -1632,11 +1632,11 @@ public class Utils {
         builder.show();
     }
 
-    public interface OnMultipleChoiceInterface{
+    public interface OnMultipleChoiceInterface {
         void onSelected(boolean[] selectedList);
     }
 
-    public static String getPaginatedTitle(@NonNull String title, @NonNull int count){
+    public static String getPaginatedTitle(@NonNull String title, @NonNull int count) {
         if (count > 0) {
             return title + " ( " + count + " )";
         } else {
@@ -1644,7 +1644,7 @@ public class Utils {
         }
     }
 
-    public static String getMonitoringTitle(@NonNull String startDate, @NonNull String endDate){
+    public static String getMonitoringTitle(@NonNull String startDate, @NonNull String endDate) {
         Calendar startCal = Calendar.getInstance();
         startCal.setTime(Utils.getDateFromString(startDate));
 
@@ -1679,11 +1679,11 @@ public class Utils {
 
 
         comboImage.drawBitmap(fr, 0f, 0f, null);
-        comboImage.drawBitmap(sc, fr.getWidth(), 0f , null);
+        comboImage.drawBitmap(sc, fr.getWidth(), 0f, null);
         return comboBitmap;
     }
 
-    public static void validUserToLogin(Context context){
+    public static void validUserToLogin(Context context) {
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
         if (whoAmIApiResponseModel != null && whoAmIApiResponseModel.getUser_activated() != null &&
@@ -1693,7 +1693,7 @@ public class Utils {
 
             context.startActivity(new Intent(context, SignUpActivity.class).putExtras(bundle)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-        }  else if (UserDetailPreferenceManager.isProfileInComplete()){
+        } else if (UserDetailPreferenceManager.isProfileInComplete()) {
             Bundle bundle = new Bundle();
             bundle.putBoolean(ArgumentKeys.IS_DETAIL_PENDING, true);
 
@@ -1704,5 +1704,10 @@ public class Utils {
             Utils.updateLastLogin();
             context.startActivity(new Intent(context, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
         }
+    }
+
+    public static int dpToPx(Context context, int dp) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 }
