@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -83,6 +84,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
     private TextView toolbarTitle;
     private TextView nextTv;
     private ImageView closeIv;
+    private LinearLayout addCardButton;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,26 +113,20 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         nextTv = (TextView) view.findViewById(R.id.next_tv);
         closeIv = (ImageView) view.findViewById(R.id.close_iv);
+        addCardButton = (LinearLayout) view.findViewById(R.id.btnAddCard);
         recyclerContainer = view.findViewById(R.id.recyclerContainer);
         recyclerContainer.setScrollable(false);
         recyclerContainer.setEmptyState(EmptyViewConstants.EMPTY_PAYMENTS);
         recyclerContainer.hideEmptyState();
 
-        toolbarTitle.setText(getString(R.string.call_charges));
+        toolbarTitle.setText(getString(R.string.lbl_payment));
         backIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((OnCloseActionInterface) getActivity()).onClose(false);
             }
         });
-        nextTv.setVisibility(View.GONE);
-        closeIv.setVisibility(View.VISIBLE);
-        closeIv.setImageDrawable(getActivity().getDrawable(R.drawable.ic_add_credit_card_white));
-        closeIv.setScaleType(ImageView.ScaleType.FIT_XY);
-        closeIv.getLayoutParams().width = Utils.dpToPx(getContext(), 46);
-        closeIv.getLayoutParams().height = Utils.dpToPx(getContext(), 46);
-        closeIv.requestLayout();
-        closeIv.setOnClickListener(new View.OnClickListener() {
+        addCardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 doCurrentTransaction();
@@ -152,7 +148,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
         recyclerContainer.getSwipeLayout().setEnabled(false);
         if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
-            closeIv.performClick();
+            addCardButton.performClick();
         } else
             transactionApiViewModel.getTransactions();
     }
