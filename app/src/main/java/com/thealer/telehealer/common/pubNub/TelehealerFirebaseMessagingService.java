@@ -200,6 +200,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
 
                 break;
             case APNSPayload.newUserEnteredWaitingRoom:
+            case APNSPayload.creditCardExpired:
                 Utils.createNotificationTop(data, new Intent(this, HomeActivity.class));
                 break;
             case APNSPayload.kickOutwaitingRoom:
@@ -235,7 +236,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             String currentCallFromId = null;
             if (CallManager.shared.getActiveCallToShow() != null) {
                 if (CallManager.shared.getActiveCallToShow().getCallRequest().getOtherUserGuid() != null) {
-                        currentCallFromId = CallManager.shared.getActiveCallToShow().getCallRequest().getOtherUserGuid();
+                    currentCallFromId = CallManager.shared.getActiveCallToShow().getCallRequest().getOtherUserGuid();
                 }
             }
 
