@@ -35,6 +35,7 @@ public class APNSPayload implements Serializable {
     public static final String waitingRoomMessage = "waitingRoomMessage";
     public static final String kickOutwaitingRoom = "kickOutwaitingRoom";
     public static final String newUserEnteredWaitingRoom = "newUserEnteredWaitingRoom";
+    public static final String creditCardExpired = "creditcard";
 
 
     private HashMap<String, Object> aps;
@@ -73,7 +74,7 @@ public class APNSPayload implements Serializable {
     @Nullable
     private String createdAt;
 
-    private ArrayList<HashMap<String,Object>> pn_push;
+    private ArrayList<HashMap<String, Object>> pn_push;
 
 
     public HashMap<String, Object> getAps() {
@@ -247,15 +248,15 @@ public class APNSPayload implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public static HashMap<String,Object> getPnPushObject() {
-        HashMap<String,Object> item = new HashMap<>();
-        item.put("version","v2");
+    public static HashMap<String, Object> getPnPushObject() {
+        HashMap<String, Object> item = new HashMap<>();
+        item.put("version", "v2");
 
-        ArrayList<HashMap<String,String >> targets = new ArrayList<>();
-        for (String bundleId :TeleHealerApplication.appConfig.getOtherParentBundleIds()) {
-            HashMap<String,String> target = new HashMap<>();
+        ArrayList<HashMap<String, String>> targets = new ArrayList<>();
+        for (String bundleId : TeleHealerApplication.appConfig.getOtherParentBundleIds()) {
+            HashMap<String, String> target = new HashMap<>();
             target.put("environment", BuildConfig.DEBUG ? "development" : "production");
-            target.put("topic",bundleId);
+            target.put("topic", bundleId);
             targets.add(target);
         }
 
