@@ -13,6 +13,9 @@ public class PaymentInfo {
     @SerializedName("is_cc_captured")
     private boolean isCCCaptured;
 
+    @SerializedName("is_default_card_valid")
+    private boolean isDefaultCardValid;
+
     public String getOauthStatus() {
         return oauthStatus;
     }
@@ -28,5 +31,13 @@ public class PaymentInfo {
 
     public void setCCCaptured(boolean CCCaptured) {
         isCCCaptured = CCCaptured;
+    }
+
+    public boolean isDefaultCardValid() {
+        return isDefaultCardValid;
+    }
+
+    public void setDefaultCardValid(boolean defaultCardValid) {
+        isDefaultCardValid = defaultCardValid;
     }
 }

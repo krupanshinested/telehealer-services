@@ -207,6 +207,15 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
                             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
                             startActivityForResult(intent, RequestID.REQ_CARD_INFO);
+                        } else if (!whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()) {
+                            Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
+                            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.lbl_manage_cards));
+                            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
+
+                            String description = getString(R.string.msg_default_card_expired);
+
+                            intent.putExtra(ArgumentKeys.DESCRIPTION, description);
+                            startActivityForResult(intent, RequestID.REQ_CARD_INFO);
                         }
                 }
             }
