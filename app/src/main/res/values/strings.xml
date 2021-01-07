@@ -1478,6 +1478,8 @@
     <string name="phone_number">Phone Number</string>
     <string name="has_enterted_waiting_room_open_ap">has entered your waiting room. Open the app immediately to get connected.</string>
     <string name="msg_payment_gateway_changed">Our payment processing vendor has changed. To continue to use the app please enter valid credit card information</string>
+    <string name="msg_default_card_expired">Your default card has expired, Please add a new card or select one from your existing card as default.</string>
+    <string name="lbl_manage_cards">Manage Cards</string>
 
     <string name="lbl_medical_document">Medical Documents</string>
     <string name="lbl_administrative_document">Administrative Documents</string>
