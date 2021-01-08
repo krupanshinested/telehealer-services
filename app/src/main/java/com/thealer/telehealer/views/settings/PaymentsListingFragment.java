@@ -241,8 +241,11 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             }
             PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
             if (result != null && result.paymentMethod != null) {
-                if (result.paymentMethod.id.equals(stripeViewModel.getPaymentMethodId()))
+                if (result.paymentMethod.id.equals(stripeViewModel.getPaymentMethodId())) {
+                    if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO)
+                        getActivity().finishAffinity();
                     return;
+                }
 
                 setDefaultMethod(result.paymentMethod.id);
                 stripeViewModel.setPaymentMethodId(result.paymentMethod.id);

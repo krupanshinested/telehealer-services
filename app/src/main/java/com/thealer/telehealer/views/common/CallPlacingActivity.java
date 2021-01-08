@@ -44,12 +44,14 @@ import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
 import com.thealer.telehealer.stripe.SetUpIntentResp;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.call.CallActivity;
+import com.thealer.telehealer.views.home.HomeActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -179,6 +181,29 @@ public class CallPlacingActivity extends BaseActivity {
 
                     if (is_cc_captured != null && !is_cc_captured) {
                         openTrialContentScreen(UserType.isUserDoctor(), callRequest.getDoctorName());
+
+                        if (UserType.isUserDoctor()) {
+                            EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
+                        }
+
+                    } else {
+                        errorMessage = errorModel.getMessage();
+                    }
+                } else {
+                    errorMessage = errorModel.getMessage();
+                }
+                if (errorObject.get("is_default_card_valid") != null) {
+                    Boolean is_default_card_valid = (Boolean) errorObject.get("is_default_card_valid");
+
+                    if (is_default_card_valid != null && !is_default_card_valid) {
+                        Intent intent = new Intent(CallPlacingActivity.this, ContentActivity.class);
+                        intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.lbl_manage_cards));
+                        intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
+                        intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
+                        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+                        String description = getString(R.string.msg_default_card_expired);
+                        intent.putExtra(ArgumentKeys.DESCRIPTION, description);
+                        startActivityForResult(intent, RequestID.REQ_CARD_EXPIRE);
 
                         if (UserType.isUserDoctor()) {
                             EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
