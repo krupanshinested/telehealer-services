@@ -2,7 +2,6 @@ package com.thealer.telehealer.views.home;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -52,8 +51,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
-import com.thealer.telehealer.common.pubNub.models.APNSPayload;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -78,7 +76,6 @@ import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
-import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.Calendar;
@@ -198,25 +195,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
-                        if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
-                            Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
-                            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
-                            intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
-                            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
-                            String description = getString(R.string.msg_payment_gateway_changed);
-
-                            intent.putExtra(ArgumentKeys.DESCRIPTION, description);
-                            startActivityForResult(intent, RequestID.REQ_CARD_INFO);
-                        } else if (!whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()) {
-                            Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
-                            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.lbl_manage_cards));
-                            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
-                            intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
-                            intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
-                            String description = getString(R.string.msg_default_card_expired);
-                            intent.putExtra(ArgumentKeys.DESCRIPTION, description);
-                            startActivityForResult(intent, RequestID.REQ_CARD_EXPIRE);
-                        }
+                        AppPaymentCardUtils.handleCardCasesFromWhoAmI(HomeActivity.this, whoAmIApiResponseModel);
                 }
             }
         });
