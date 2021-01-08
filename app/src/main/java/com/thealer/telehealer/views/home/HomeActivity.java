@@ -201,8 +201,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                         if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
                             Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
                             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
+                            intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
                             intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
-
                             String description = getString(R.string.msg_payment_gateway_changed);
 
                             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
@@ -211,11 +211,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                             Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
                             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.lbl_manage_cards));
                             intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
-
+                            intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
+                            intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
                             String description = getString(R.string.msg_default_card_expired);
-
                             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
-                            startActivityForResult(intent, RequestID.REQ_CARD_INFO);
+                            startActivityForResult(intent, RequestID.REQ_CARD_EXPIRE);
                         }
                 }
             }
@@ -935,6 +935,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 finishAffinity();
             }
         }
+        if (requestCode == RequestID.REQ_CARD_EXPIRE) {
+            if (resultCode == Activity.RESULT_OK) {
+                startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
+            }
+        }
+
     }
 
     private void showLicenUpdate() {
