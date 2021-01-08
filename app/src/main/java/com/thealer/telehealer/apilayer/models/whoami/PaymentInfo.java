@@ -16,6 +16,9 @@ public class PaymentInfo {
     @SerializedName("is_default_card_valid")
     private boolean isDefaultCardValid;
 
+    @SerializedName("saved_cards_count")
+    private int savedCardsCount;
+
     public String getOauthStatus() {
         return oauthStatus;
     }
@@ -39,5 +42,13 @@ public class PaymentInfo {
 
     public void setDefaultCardValid(boolean defaultCardValid) {
         isDefaultCardValid = defaultCardValid;
+    }
+
+    public int getSavedCardsCount() {
+        return savedCardsCount;
+    }
+
+    public void setSavedCardsCount(int savedCardsCount) {
+        this.savedCardsCount = savedCardsCount;
     }
 }
