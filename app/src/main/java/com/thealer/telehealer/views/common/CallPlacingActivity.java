@@ -192,7 +192,13 @@ public class CallPlacingActivity extends BaseActivity {
                                 Boolean is_default_card_valid = (Boolean) errorObject.get("is_default_card_valid");
 
                                 if (is_default_card_valid != null && !is_default_card_valid) {
-                                    AppPaymentCardUtils.openCardExpiredScreen(CallPlacingActivity.this, 0);
+                                    int counts = 0;
+                                    if (errorObject.containsKey("saved_cards_count")) {
+                                        if (errorObject.get("saved_cards_count") instanceof Integer)
+                                            counts = (Integer) errorObject.get("saved_cards_count");
+                                    }
+                                    initStripeVM();
+                                    AppPaymentCardUtils.openCardExpiredScreen(CallPlacingActivity.this, counts);
                                     if (UserType.isUserDoctor()) {
                                         EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
                                     }
@@ -318,26 +324,7 @@ public class CallPlacingActivity extends BaseActivity {
 
             intent.putExtra(ArgumentKeys.DESCRIPTION, description);
             requestId = CallPlacingActivity.DOCTOR_PAYMENT_REQUEST;
-            if (stripeViewModel == null) {
-                stripeViewModel = new ViewModelProvider(this).get(StripeViewModel.class);
-
-                stripeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
-                    @Override
-                    public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                        if (baseApiResponseModel instanceof SetUpIntentResp) {
-                            String clientSecret = ((SetUpIntentResp) baseApiResponseModel).getClientSecret();
-                            if (clientSecret != null)
-                                stripe.confirmSetupIntent(CallPlacingActivity.this, ConfirmSetupIntentParams.create(stripeViewModel.getPaymentMethodId(), clientSecret));
-                        } else if ("SET_DEFAULT".equals(baseApiResponseModel.getMessage())) {
-
-                        }
-                    }
-                });
-                stripeViewModel.getDefaultCard();
-                CustomerSession.initCustomerSession(this, new AppEphemeralKeyProvider(stripeViewModel.getAuthApiService()));
-                attachObserver(stripeViewModel);
-            }
-
+            initStripeVM();
         } else {
 
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
@@ -359,6 +346,28 @@ public class CallPlacingActivity extends BaseActivity {
         this.callRequest = null;
 
         startActivityForResult(intent, requestId);
+    }
+
+    private void initStripeVM() {
+        if (stripeViewModel == null) {
+            stripeViewModel = new ViewModelProvider(this).get(StripeViewModel.class);
+
+            stripeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+                @Override
+                public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                    if (baseApiResponseModel instanceof SetUpIntentResp) {
+                        String clientSecret = ((SetUpIntentResp) baseApiResponseModel).getClientSecret();
+                        if (clientSecret != null)
+                            stripe.confirmSetupIntent(CallPlacingActivity.this, ConfirmSetupIntentParams.create(stripeViewModel.getPaymentMethodId(), clientSecret));
+                    } else if ("SET_DEFAULT".equals(baseApiResponseModel.getMessage())) {
+
+                    }
+                }
+            });
+            stripeViewModel.getDefaultCard();
+            CustomerSession.initCustomerSession(this, new AppEphemeralKeyProvider(stripeViewModel.getAuthApiService()));
+            attachObserver(stripeViewModel);
+        }
     }
 
     void didOpenCallKit() {
@@ -383,7 +392,8 @@ public class CallPlacingActivity extends BaseActivity {
                 }
                 break;
 
-            case CallPlacingActivity.DOCTOR_PAYMENT_REQUEST: {
+            case CallPlacingActivity.DOCTOR_PAYMENT_REQUEST:
+            case RequestID.REQ_CARD_EXPIRE: {
                 if (resultCode == Activity.RESULT_CANCELED) {
                     finish();
                     return;
