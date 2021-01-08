@@ -43,6 +43,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VisitConstants;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -74,7 +75,7 @@ public class VitalReportFragment extends BaseFragment {
     private VitalReportApiViewModel vitalReportApiViewModel;
 
     private VitalReportApiReponseModel vitalReportApiReponseModel;
-    private  VitalBulkPdfApiResponseModel vitalBulkPdfApiResponseModel;
+    private VitalBulkPdfApiResponseModel vitalBulkPdfApiResponseModel;
     private VitalReportUserListAdapter vitalReportUserListAdapter;
     private static String selectedFilter, title;
     private String startDate = null;
@@ -112,35 +113,35 @@ public class VitalReportFragment extends BaseFragment {
                         } else {
                             patientListCrv.showOrhideEmptyState(true);
                         }
-                    } else if (baseApiResponseModel instanceof VitalBulkPdfApiResponseModel){
+                    } else if (baseApiResponseModel instanceof VitalBulkPdfApiResponseModel) {
                         vitalBulkPdfApiResponseModel = (VitalBulkPdfApiResponseModel) baseApiResponseModel;
-                        if (vitalBulkPdfApiResponseModel.getCombined_pdf_path() != null){
-                           Bundle bundle = new Bundle();
-                           bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                           bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                           bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
-                           bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
-                               LocalBroadcastManager
-                                       .getInstance(getActivity())
-                                       .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                               .putExtras(bundle));
+                        if (vitalBulkPdfApiResponseModel.getCombined_pdf_path() != null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                            bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
+                            bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+                            LocalBroadcastManager
+                                    .getInstance(getActivity())
+                                    .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                            .putExtras(bundle));
 
-                           PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
-                           bundle.putString(ArgumentKeys.PDF_TITLE,getString(R.string.vitals_report));
-                           bundle.putString(ArgumentKeys.PDF_URL, vitalBulkPdfApiResponseModel.getCombined_pdf_path());
-                           bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
-                           pdfViewerFragment.setArguments(bundle);
-                           showSubFragmentInterface.onShowFragment(pdfViewerFragment);
-                       } else {
-                           Bundle bundle = new Bundle();
-                           bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                           bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                           bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.bulk_pdf_success_message));
-                           LocalBroadcastManager
-                                   .getInstance(getActivity())
-                                   .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                           .putExtras(bundle));
-                       }
+                            PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+                            bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.vitals_report));
+                            bundle.putString(ArgumentKeys.PDF_URL, vitalBulkPdfApiResponseModel.getCombined_pdf_path());
+                            bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                            pdfViewerFragment.setArguments(bundle);
+                            showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+                        } else {
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                            bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.bulk_pdf_success_message));
+                            LocalBroadcastManager
+                                    .getInstance(getActivity())
+                                    .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                            .putExtras(bundle));
+                        }
                     }
                 }
             }
@@ -150,8 +151,21 @@ public class VitalReportFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.failed_to_connect)));
 
+                    if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.failed_to_connect)));
+                    } else {
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+                        LocalBroadcastManager
+                                .getInstance(getActivity())
+                                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                        .putExtras(bundle));
+                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalReportFragment.this, errorModel);
+                    }
                 }
             }
         });
@@ -223,17 +237,17 @@ public class VitalReportFragment extends BaseFragment {
                         Snackbar snackbar = Snackbar.make(view, "", 5000).setBackgroundTint(getResources().getColor(R.color.app_gradient_start));
                         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
                         View snackbarView = getLayoutInflater().inflate(R.layout.view_snackbar, null);
-                        TextView textView= snackbarView.findViewById(R.id.snackbar_tv);
+                        TextView textView = snackbarView.findViewById(R.id.snackbar_tv);
                         textView.setMaxLines(10);
                         textView.setText(getString(R.string.bulk_print_disclaimer));
                         snackbarLayout.addView(snackbarView);
-                        snackbar.addCallback(new Snackbar.Callback(){
+                        snackbar.addCallback(new Snackbar.Callback() {
                             @Override
                             public void onDismissed(Snackbar transientBottomBar, int event) {
                                 super.onDismissed(transientBottomBar, event);
-                                if (UserType.isUserAssistant()){
-                                    vitalReportApiViewModel.getBulkVitalPdf(doctorGuid,startDate, endDate);
-                                }else {
+                                if (UserType.isUserAssistant()) {
+                                    vitalReportApiViewModel.getBulkVitalPdf(doctorGuid, startDate, endDate);
+                                } else {
                                     vitalReportApiViewModel.getBulkVitalPdf(null, startDate, endDate);
                                 }
                                 SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
@@ -263,23 +277,23 @@ public class VitalReportFragment extends BaseFragment {
                     if (vitalReportApiReponseModel != null) {
 
                         if (uiToggleTimer != null) {
-                        uiToggleTimer.setStopped(true);
-                        uiToggleTimer = null;
-                    }
+                            uiToggleTimer.setStopped(true);
+                            uiToggleTimer = null;
+                        }
 
-                    Handler handler = new Handler();
-                    TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
-                        @Override
-                        public void run() {
-                            for (int i = 0; i < vitalReportApiReponseModel.getResult().size(); i++) {
-                                if (vitalReportApiReponseModel.getResult().get(i).getUserDisplay_name().toLowerCase().contains(searchEt.getText().toString())) {
-                                    searchList.add(vitalReportApiReponseModel.getResult().get(i));
+                        Handler handler = new Handler();
+                        TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
+                            @Override
+                            public void run() {
+                                for (int i = 0; i < vitalReportApiReponseModel.getResult().size(); i++) {
+                                    if (vitalReportApiReponseModel.getResult().get(i).getUserDisplay_name().toLowerCase().contains(searchEt.getText().toString())) {
+                                        searchList.add(vitalReportApiReponseModel.getResult().get(i));
+                                    }
                                 }
                             }
-                        }
-                    });
-                    uiToggleTimer = runnable;
-                    handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
+                        });
+                        uiToggleTimer = runnable;
+                        handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
 
                         if (searchList.size() > 0) {
                             if (vitalReportUserListAdapter != null) {
@@ -314,7 +328,7 @@ public class VitalReportFragment extends BaseFragment {
 
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
-                if (startDate != null && endDate !=null) {
+                if (startDate != null && endDate != null) {
                     setToolbarTitle(Utils.getMonitoringTitle(startDate, endDate));
                 } else {
                     setToolbarTitle(selectedFilter);
@@ -359,10 +373,9 @@ public class VitalReportFragment extends BaseFragment {
 
         patientListCrv.setErrorModel(this, vitalReportApiViewModel.getErrorModelLiveData());
 
-        if (selectedFilter!=null && selectedFilter.equals(VitalReportApiViewModel.LAST_MONTH)){
+        if (selectedFilter != null && selectedFilter.equals(VitalReportApiViewModel.LAST_MONTH)) {
             getUsersList(null, startDate, endDate);
-        }
-        else {
+        } else {
             getUsersList(selectedFilter, startDate, endDate);
         }
     }
@@ -378,10 +391,10 @@ public class VitalReportFragment extends BaseFragment {
 
                 if (selectedItem != null) {
                     Calendar previousMonth = Calendar.getInstance();
-                    previousMonth.add(Calendar.MONTH,-1);
+                    previousMonth.add(Calendar.MONTH, -1);
                     String previous = previousMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
                     setToolbarTitle(selectedItem);
-                     if (selectedItem.equals(previous)){
+                    if (selectedItem.equals(previous)) {
                         toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
                         toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
                     } else {
