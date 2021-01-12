@@ -930,7 +930,7 @@
     <string name="EMPTY_HEART_RATE_MESSAGE">Los resultados de la frecuencia del pulso eventualmente aparecerán aquí</string>
     <string name="EMPTY_HEART_RATE_WITH_BTN_MESSAGE">Conecte su dispositivo vital para medir su frecuencia de pulso</string>
     <string name="EMPTY_PAYMENTS_TITLE">Sin pagos / facturación</string>
-    <string name="EMPTY_PAYMENTS_MESSAGE">La información de pago / facturación eventualmente aparecerá aquí</string>
+    <string name="EMPTY_PAYMENTS_MESSAGE">Agregue una nueva tarjeta de crédito arriba y todas las transacciones se mostrarán aquí.</string>
     <string name="EMPTY_CARDS_TITLE">No hay tarjetas</string>
     <string name="EMPTY_CARDS_MESSAGE">La información de la tarjeta eventualmente aparecerá aquí</string>
     <string name="EMPTY_PATIENT_TITLE">No pacientes</string>

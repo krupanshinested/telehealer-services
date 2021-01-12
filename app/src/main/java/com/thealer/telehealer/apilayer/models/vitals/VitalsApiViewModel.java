@@ -82,6 +82,8 @@ public class VitalsApiViewModel extends BaseApiViewModel {
                                 public void onSuccess(PDFUrlResponse baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
+
+
                             });
                 }
             }

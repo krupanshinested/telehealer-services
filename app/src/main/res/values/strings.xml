@@ -1041,7 +1041,7 @@
     <string name="EMPTY_HEART_RATE_MESSAGE">Pulse Rate results will eventually show up here</string>
     <string name="EMPTY_HEART_RATE_WITH_BTN_MESSAGE">Connect your vitals device to measure your Pulse Rate</string>
     <string name="EMPTY_PAYMENTS_TITLE">No Payments/Billing</string>
-    <string name="EMPTY_PAYMENTS_MESSAGE">Payment/Billing information will eventually show up here</string>
+    <string name="EMPTY_PAYMENTS_MESSAGE">Add new credit card above and all transactions will be displayed here.</string>
     <string name="EMPTY_CARDS_TITLE">No Cards</string>
     <string name="EMPTY_CARDS_MESSAGE">Card Information will eventually show up here</string>
     <string name="EMPTY_PATIENT_TITLE">No Patients</string>

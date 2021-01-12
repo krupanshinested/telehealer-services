@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.vitals.vitalReport;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewMode
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.TimerInterface;
@@ -51,6 +53,7 @@ import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
+import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -91,6 +94,16 @@ public class VitalReportFragment extends BaseFragment {
 
     @Nullable
     private TimerRunnable uiToggleTimer;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestID.REQ_CARD_EXPIRE) {
+            if (resultCode == Activity.RESULT_OK) {
+                startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
+            }
+        }
+    }
 
     @Override
     public void onAttach(Context context) {

@@ -194,8 +194,10 @@ public class CallPlacingActivity extends BaseActivity {
                                 if (is_default_card_valid != null && !is_default_card_valid) {
                                     int counts = 0;
                                     if (errorObject.containsKey("saved_cards_count")) {
-                                        if (errorObject.get("saved_cards_count") instanceof Integer)
+                                        if (errorObject.get("saved_cards_count") instanceof Integer) {
                                             counts = (Integer) errorObject.get("saved_cards_count");
+                                        } else if (errorObject.get("saved_cards_count") instanceof Double)
+                                            counts =  ((Double) errorObject.get("saved_cards_count")).intValue();
                                     }
                                     initStripeVM();
                                     AppPaymentCardUtils.openCardExpiredScreen(CallPlacingActivity.this, counts);

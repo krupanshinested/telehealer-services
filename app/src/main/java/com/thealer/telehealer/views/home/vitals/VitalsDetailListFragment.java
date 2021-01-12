@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.vitals;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -20,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -39,6 +41,7 @@ import com.github.mikephil.charting.utils.MPPointF;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
@@ -46,17 +49,21 @@ import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiViewMode
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.OpenTok.CallManager;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -75,7 +82,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.VitalCreationActivity;
+import com.thealer.telehealer.views.home.vitals.vitalReport.VitalUserReportListFragment;
+import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.toptas.fancyshowcase.listener.DismissListener;
 
@@ -96,6 +107,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private ImageView infoIv;
     private CustomSwipeRefreshLayout swipeLayout;
     private LineChart linechart;
+    private WhoAmIApiViewModel whoAmIApiViewModel;
 
     private OnCloseActionInterface onCloseActionInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
@@ -121,6 +133,16 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private boolean isGetType;
     private String filter, startDate, endDate;
     private boolean isOpenVitalMessage = false;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestID.REQ_CARD_EXPIRE) {
+            if (resultCode == Activity.RESULT_OK) {
+                startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
+            }
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -165,10 +187,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                         VitalsPaginatedApiResponseModel vitalsPaginatedApiResponseModel = (VitalsPaginatedApiResponseModel) baseApiResponseModel;
 
                         vitalDetailCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
-                    if (page == 1){
-                        setTitle(Utils.getPaginatedTitle(getString(SupportedMeasurementType.getTitle(selectedItem)), vitalsPaginatedApiResponseModel.getCount()));
-                    }
-                    vitalDetailCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
+                        if (page == 1) {
+                            setTitle(Utils.getPaginatedTitle(getString(SupportedMeasurementType.getTitle(selectedItem)), vitalsPaginatedApiResponseModel.getCount()));
+                        }
+                        vitalDetailCrv.setNextPage(vitalsPaginatedApiResponseModel.getNext());
 
                         vitalsApiResponseModelArrayList = vitalsPaginatedApiResponseModel.getResult();
 
@@ -240,6 +262,47 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             }
         });
 
+        vitalsApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null) {
+                    if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.failed_to_connect)));
+                    } else {
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+                        LocalBroadcastManager
+                                .getInstance(getActivity())
+                                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                        .putExtras(bundle));
+                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalsDetailListFragment.this, errorModel);
+                    }
+                }
+            }
+        });
+
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
+        attachObserverInterface.attachObserver(whoAmIApiViewModel);
+        whoAmIApiViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())) {
+                        if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
+                            AppPaymentCardUtils.handleCardCasesFromWhoAmI(getActivity(), whoAmIApiResponseModel);
+                        } else if (!whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()) {
+                            AppPaymentCardUtils.handleCardCasesFromWhoAmI(getActivity(), whoAmIApiResponseModel);
+                        } else {
+                            proceedAdd(selectedItem);
+                        }
+                    }
+                }
+            }
+        });
         getUsersApiViewModel = new ViewModelProvider(this).get(GetUsersApiViewModel.class);
         attachObserverInterface.attachObserver(getUsersApiViewModel);
 
@@ -650,6 +713,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 initializeSelectedItemView(selectedItem);
             }
         }
+
     }
 
     private void openPDFFor(Bundle bundle) {
@@ -675,7 +739,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             }
         }
 
-        vitalsApiViewModel.getVitalPdf(getCurrentVitalType(),filter, startDate, endDate, userGuid, doctorGuid, true);
+        vitalsApiViewModel.getVitalPdf(getCurrentVitalType(), filter, startDate, endDate, userGuid, doctorGuid, true);
 
     }
 
@@ -779,8 +843,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 }
 
                 addFab.setClickable(false);
-
-                proceedAdd(selectedItem);
+                checkWhoAmI();
                 break;
             case R.id.info_iv:
                 showUserDetailView();
@@ -788,6 +851,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         }
     }
 
+    private void checkWhoAmI() {
+
+        whoAmIApiViewModel.checkWhoAmI();
+    }
 
     private void proceedAdd(String selectedItem) {
         Bundle bundle = getArguments();
@@ -803,11 +870,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         Intent intent = new Intent(getActivity(), VitalCreationActivity.class);
         intent.putExtra(ArgumentKeys.SELECTED_VITAL_TYPE, selectedItem);
         if (!UserType.isUserPatient()) {
-            intent.putExtra(Constants.USER_DETAIL,bundle.getSerializable(Constants.USER_DETAIL));
+            intent.putExtra(Constants.USER_DETAIL, bundle.getSerializable(Constants.USER_DETAIL));
         }
 
         if (UserType.isUserAssistant()) {
-            intent.putExtra(Constants.DOCTOR_ID,doctorGuid);
+            intent.putExtra(Constants.DOCTOR_ID, doctorGuid);
         }
 
         getActivity().startActivity(intent);
