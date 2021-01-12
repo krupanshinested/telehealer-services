@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
@@ -41,6 +42,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VisitConstants;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -50,6 +52,7 @@ import com.thealer.telehealer.views.common.RecentsSelectionActivity;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.recents.VisitDetailConstants;
 import com.thealer.telehealer.views.home.vitals.NewVitalsDetailListAdapter;
+import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,6 +90,7 @@ public class VitalUserReportListFragment extends BaseFragment {
     private boolean isDisableCancel = false, isApiRequested;
     private CustomRecyclerView vitalsListCrv;
     private String selectedItem;
+
 
     @Override
     public void onAttach(Context context) {
@@ -152,6 +156,28 @@ public class VitalUserReportListFragment extends BaseFragment {
                     sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.associate_order_failure), VisitConstants.TYPE_VITALS));
                 }
                 resetData();
+            }
+        });
+
+        vitalsApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null) {
+                    if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.failed_to_connect)));
+                    } else {
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+                        LocalBroadcastManager
+                                .getInstance(getActivity())
+                                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                        .putExtras(bundle));
+                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalUserReportListFragment.this, errorModel);
+                    }
+                }
             }
         });
     }
@@ -423,7 +449,7 @@ public class VitalUserReportListFragment extends BaseFragment {
     }
 
     private void generatePrintList() {
-        vitalsApiViewModel.getVitalPdf(null,filter,startDate,endDate,userGuid,doctorGuid,true);
+        vitalsApiViewModel.getVitalPdf(null, filter, startDate, endDate, userGuid, doctorGuid, true);
     }
 
     private void enableOrDisablePrint() {
@@ -489,7 +515,13 @@ public class VitalUserReportListFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         switch (requestCode) {
+            case RequestID.REQ_CARD_EXPIRE:
+                if (resultCode == Activity.RESULT_OK) {
+                    startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
+                }
+                break;
             case RequestID.REQ_VISIT_RECENT:
                 if (resultCode == Activity.RESULT_OK) {
                     RecentsApiResponseModel.ResultBean resultBean = (RecentsApiResponseModel.ResultBean) data.getSerializableExtra(ArgumentKeys.SELECTED_RECENT_DETAIL);
@@ -508,6 +540,7 @@ public class VitalUserReportListFragment extends BaseFragment {
                 }
                 break;
         }
+
     }
 
     private void addVisit(String order_id) {

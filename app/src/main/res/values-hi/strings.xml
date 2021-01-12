@@ -935,7 +935,7 @@
     <string name="EMPTY_HEART_RATE_MESSAGE">हपल्स रेट के परिणाम अंततः यहाँ दिखाई देंगे</string>
     <string name="EMPTY_HEART_RATE_WITH_BTN_MESSAGE">अपने पल्स रेट को मापने के लिए अपने विटाल डिवाइस से कनेक्ट करें</string>
     <string name="EMPTY_PAYMENTS_TITLE">कोई भुगतान / बिलिंग नहीं</string>
-    <string name="EMPTY_PAYMENTS_MESSAGE">भुगतान / बिलिंग जानकारी अंततः यहाँ दिखाई देगी</string>
+    <string name="EMPTY_PAYMENTS_MESSAGE">ऊपर नया क्रेडिट कार्ड जोड़ें और सभी लेनदेन यहां प्रदर्शित होंगे।</string>
     <string name="EMPTY_CARDS_TITLE">कोई कार्ड नहीं</string>
     <string name="EMPTY_CARDS_MESSAGE">कार्ड की जानकारी अंततः यहाँ दिखाई देगी</string>
     <string name="EMPTY_PATIENT_TITLE">कोई मरीज नहीं</string>

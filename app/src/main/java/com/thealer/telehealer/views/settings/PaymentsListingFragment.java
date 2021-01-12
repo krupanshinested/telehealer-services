@@ -200,8 +200,12 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
                         stripe.confirmSetupIntent(getActivity(), ConfirmSetupIntentParams.create(stripeViewModel.getPaymentMethodId(), clientSecret));
                 } else if ("SET_DEFAULT".equals(baseApiResponseModel.getMessage())) {
                     if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
-                        startActivity(new Intent(getActivity(), HomeActivity.class));
-                        getActivity().finishAffinity();
+                        if (getActivity() instanceof ProfileSettingsActivity) {
+                            getActivity().finish();
+                        } else {
+                            startActivity(new Intent(getActivity(), HomeActivity.class));
+                            getActivity().finishAffinity();
+                        }
                     }
                 }
             }
@@ -236,14 +240,23 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         if (requestCode == PaymentMethodsActivityStarter.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_CANCELED) {
                 if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO)
-                    getActivity().finishAffinity();
+                    if (getActivity() instanceof ProfileSettingsActivity) {
+                        getActivity().finish();
+                    } else {
+                        getActivity().finishAffinity();
+                    }
                 return;
             }
             PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
             if (result != null && result.paymentMethod != null) {
                 if (result.paymentMethod.id.equals(stripeViewModel.getPaymentMethodId())) {
-                    if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO)
-                        getActivity().finishAffinity();
+                    if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
+                        if (getActivity() instanceof ProfileSettingsActivity) {
+                            getActivity().finish();
+                        } else {
+                            getActivity().finishAffinity();
+                        }
+                    }
                     return;
                 }
 
