@@ -353,7 +353,6 @@ public class CallPlacingActivity extends BaseActivity {
     private void initStripeVM() {
         if (stripeViewModel == null) {
             stripeViewModel = new ViewModelProvider(this).get(StripeViewModel.class);
-
             stripeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
                 @Override
                 public void onChanged(BaseApiResponseModel baseApiResponseModel) {

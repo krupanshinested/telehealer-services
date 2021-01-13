@@ -288,13 +288,13 @@ public interface ApiInterface {
     @DELETE("api/associations")
     Observable<BaseApiResponseModel> disconnectUser(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/vitals")
+    @GET("api/vitals-v2")
     Observable<VitalsPaginatedApiResponseModel> getUserVitals(@Query(TYPE) String type, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/vitals")
+    @GET("api/vitals-v2")
     Observable<VitalsPaginatedApiResponseModel> getVitals(@Query(TYPE) String type, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/vitals")
+    @GET("api/vitals-v2")
     Observable<ArrayList<VitalsApiResponseModel>> getVitalDetail(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
@@ -351,7 +351,7 @@ public interface ApiInterface {
     @PATCH("api/users/questionnaire/{id}")
     Observable<BaseApiResponseModel> updateUserQuestionnaire(@Path(ID) String userGuid, @Body UpdateQuestionaryBodyModel updateQuestionaryBodyModel);
 
-    @POST("api/vitals")
+    @POST("api/vitals-v2")
     Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
@@ -559,16 +559,16 @@ public interface ApiInterface {
     @GET("api/vitals/users")
     Observable<VitalReportApiReponseModel> getVitalUsers(@Query(FILTER) String filter, @Query(DOCTOR_GUID) String doctorGuid, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate);
 
-    @GET("api/vitals")
+    @GET("api/vitals-v2")
     Observable<VitalsPaginatedApiResponseModel> getUserFilteredVitals(@Query(FILTER) String type, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/vitals")
+    @GET("api/vitals-v2")
     Observable<PDFUrlResponse> getVitalPDF(@Query(TYPE) String type, @Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(DOWNLOAD_SUMMARY) boolean summary);
 
-    @GET("api/vitals/documents")
+    @GET("api/vitals/documents-v2")
     Observable<VitalBulkPdfApiResponseModel> getBulkVitalPDF(@Query(DOCTOR_GUID) String doctorGuid, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate);
 
-    @GET("api/vitals")
+    @GET("api/vitals-v2")
     Observable<ArrayList<VitalsApiResponseModel>> getUserFilteredVitals(@Query(TYPE) String type, @Query(FILTER) String filter, @Query(START_DATE) String startDate, @Query(END_DATE) String endDate, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @PUT("api/available")

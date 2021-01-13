@@ -155,7 +155,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         customPatientCountLayout =  view.findViewById(R.id.lay_patient_count);
         doctorPatientListCrv = (CustomRecyclerView) view.findViewById(R.id.doctor_patient_list_crv);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
-
+        addFab.setVisibility(View.GONE);
         appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
@@ -426,6 +426,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_fab:
+            case R.id.btnAddPatient:
                 if (!UserType.isUserDoctor()) {
                     startActivity(new Intent(getActivity(), AddConnectionActivity.class));
                 } else {

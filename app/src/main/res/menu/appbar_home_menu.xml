@@ -33,5 +33,10 @@
         android:title="@string/notification"
         app:actionLayout="@layout/view_home_notification_icon"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_addPatients"
+        android:title="@string/lbl_add_patients"
+        app:actionLayout="@layout/view_home_add_patients"
+        app:showAsAction="always" />
 
 </menu>
