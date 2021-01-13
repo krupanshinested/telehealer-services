@@ -27,6 +27,7 @@
     <dimen name="registration_text_title_size">24sp</dimen>
     <dimen name="text_title_size">18sp</dimen>
     <dimen name="text_sub_title_size">14sp</dimen>
+    <dimen name="text_small_title_size">9sp</dimen>
 
     <dimen name="margin_default">8dp</dimen>
     <dimen name="padding_default">8dp</dimen>

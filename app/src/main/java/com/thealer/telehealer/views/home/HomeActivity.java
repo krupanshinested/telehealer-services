@@ -100,6 +100,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private TextView notificationCountTv;
     private ImageView notificationIv;
+    private LinearLayout addPatient;
     private Menu optionsMenu;
 
     private FragmentManager fragmentManager;
@@ -417,6 +418,23 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 onOptionsItemSelected(menuItem);
             }
         });
+        MenuItem menuItemAddPatient = menu.findItem(R.id.menu_addPatients);
+        View addPatientiew = menuItemAddPatient.getActionView();
+        ((TextView) addPatientiew.findViewById(R.id.add_patients)).setText((UserType.isUserPatient() || UserType.isUserAssistant()) ? getString(R.string.lbl_add_providers) : getString(R.string.lbl_add_patients));
+        ((LinearLayout) addPatientiew.findViewById(R.id.btnAddPatient)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getSupportFragmentManager().findFragmentById(fragmentHolder.getId()) instanceof DoctorPatientListingFragment) {
+                    ((DoctorPatientListingFragment) getSupportFragmentManager().findFragmentById(fragmentHolder.getId())).onClick(v);
+                }
+            }
+        });
+
+        if (UserType.isUserPatient() || UserType.isUserAssistant()) {
+            setToolbarTitle(getString(R.string.Doctors));
+        } else {
+            setToolbarTitle(getString(R.string.Patients));
+        }
 
         if (getSupportFragmentManager().findFragmentById(fragmentHolder.getId()) instanceof DoctorPatientListingFragment) {
             showPendingInvitesOption(true);
@@ -703,6 +721,17 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
             } else {
                 optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
+            }
+        }
+        showAddPatientsOption(visible);
+    }
+
+    private void showAddPatientsOption(boolean visible) {
+        if (optionsMenu != null) {
+            if (visible) {
+                optionsMenu.findItem(R.id.menu_addPatients).setVisible(true);
+            } else {
+                optionsMenu.findItem(R.id.menu_addPatients).setVisible(false);
             }
         }
     }

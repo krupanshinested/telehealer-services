@@ -175,6 +175,7 @@ public class VitalUserReportListFragment extends BaseFragment {
                                 .getInstance(getActivity())
                                 .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
                                         .putExtras(bundle));
+
                         AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalUserReportListFragment.this, errorModel);
                     }
                 }

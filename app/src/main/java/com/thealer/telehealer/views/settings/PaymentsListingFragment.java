@@ -46,6 +46,7 @@ import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
 import com.thealer.telehealer.stripe.SetUpIntentResp;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -85,10 +86,11 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
     private TextView nextTv;
     private ImageView closeIv;
     private LinearLayout addCardButton;
+    boolean isOpened = false;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         addObserver();
     }
 
@@ -148,7 +150,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
         recyclerContainer.getSwipeLayout().setEnabled(false);
         if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
-            addCardButton.performClick();
+            //addCardButton.performClick();
         } else
             transactionApiViewModel.getTransactions();
     }
@@ -198,6 +200,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
                     String clientSecret = ((SetUpIntentResp) baseApiResponseModel).getClientSecret();
                     if (clientSecret != null && getActivity() != null)
                         stripe.confirmSetupIntent(getActivity(), ConfirmSetupIntentParams.create(stripeViewModel.getPaymentMethodId(), clientSecret));
+
                 } else if ("SET_DEFAULT".equals(baseApiResponseModel.getMessage())) {
                     if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
                         if (getActivity() instanceof ProfileSettingsActivity) {
@@ -206,6 +209,13 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
                             startActivity(new Intent(getActivity(), HomeActivity.class));
                             getActivity().finishAffinity();
                         }
+                    }
+                }
+                if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
+                    if (!isOpened) {
+                        isOpened = true;
+                        stripeViewModel.openPaymentScreen(getActivity());
+
                     }
                 }
             }
@@ -232,6 +242,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         stripeViewModel.openPaymentScreen(getActivity());
 //        onActionCompleteInterface.onCompletionResult(RequestID.CARD_INFORMATION_VIEW, true, null);
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
