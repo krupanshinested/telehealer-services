@@ -518,6 +518,7 @@ public class VitalUserReportListFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
+            case RequestID.REQ_CARD_INFO:
             case RequestID.REQ_CARD_EXPIRE:
                 if (resultCode == Activity.RESULT_OK) {
                     startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));

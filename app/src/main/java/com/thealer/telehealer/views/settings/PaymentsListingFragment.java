@@ -211,24 +211,33 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
                         }
                     }
                 }
-                if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
-                    if (!isOpened) {
-                        isOpened = true;
-                        stripeViewModel.openPaymentScreen(getActivity());
+                openPayment();
 
-                    }
-                }
+            }
+        });
+        stripeViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null)
+                    openPayment();
             }
         });
 
         stripeViewModel.getDefaultCard();
-
-
         CustomerSession.initCustomerSession(getContext(), new AppEphemeralKeyProvider(stripeViewModel.getAuthApiService()));
 
         if (getActivity() instanceof BaseActivity) {
             ((BaseActivity) getActivity()).attachObserver(transactionApiViewModel);
             ((BaseActivity) getActivity()).attachObserver(stripeViewModel);
+        }
+    }
+    private void openPayment(){
+        if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
+            if (!isOpened) {
+                isOpened = true;
+                stripeViewModel.openPaymentScreen(getActivity());
+
+            }
         }
     }
 
