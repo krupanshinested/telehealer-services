@@ -98,7 +98,7 @@ public class VitalReportFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RequestID.REQ_CARD_EXPIRE) {
+        if (requestCode == RequestID.REQ_CARD_EXPIRE||requestCode==RequestID.REQ_CARD_INFO) {
             if (resultCode == Activity.RESULT_OK) {
                 startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
             }
