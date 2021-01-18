@@ -351,7 +351,7 @@ public interface ApiInterface {
     @PATCH("api/users/questionnaire/{id}")
     Observable<BaseApiResponseModel> updateUserQuestionnaire(@Path(ID) String userGuid, @Body UpdateQuestionaryBodyModel updateQuestionaryBodyModel);
 
-    @POST("api/vitals-v2")
+    @POST("api/vitals")
     Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
