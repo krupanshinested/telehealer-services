@@ -58,6 +58,7 @@ import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
@@ -852,8 +853,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     }
 
     private void checkWhoAmI() {
-
-        whoAmIApiViewModel.checkWhoAmI();
+        if (Constants.ROLE_PATIENT.equals(UserDetailPreferenceManager.getRole())) {
+            proceedAdd(selectedItem);
+        } else {
+            whoAmIApiViewModel.checkWhoAmI();
+        }
     }
 
     private void proceedAdd(String selectedItem) {

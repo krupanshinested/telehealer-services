@@ -30,13 +30,14 @@
 
     <application
         android:name=".TeleHealerApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        tools:replace="android:allowBackup"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".views.guestlogin.screens.PatientWaitingRoom" />
@@ -113,6 +114,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.common.ContentActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.call.CallMessageActivity"
