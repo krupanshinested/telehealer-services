@@ -75,6 +75,7 @@ import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OptionsSelectionAdapter;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
@@ -1443,6 +1444,47 @@ public class Utils {
                 context.startActivity(intent);
             }
         });
+
+        cancelCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            alertDialog.getWindow().setGravity(Gravity.BOTTOM);
+        }
+        alertDialog.show();
+    }
+
+    public static void showDoctorOverflowMenu(FragmentActivity context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View alertView = LayoutInflater.from(context).inflate(R.layout.view_invite_alert, null);
+        builder.setView(alertView);
+
+        AlertDialog alertDialog = builder.create();
+
+        TextView pendingInvitesTv;
+        TextView broadCastMessageTv;
+        CardView cancelCv;
+
+        pendingInvitesTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
+        broadCastMessageTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
+        pendingInvitesTv.setText(R.string.pending_invites);
+        broadCastMessageTv.setVisibility(View.GONE);
+        cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+
+        pendingInvitesTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                context.startActivity(new Intent(context, PendingInvitesActivity.class));
+
+            }
+        });
+
 
         cancelCv.setOnClickListener(new View.OnClickListener() {
             @Override

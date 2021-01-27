@@ -8,6 +8,7 @@
         android:title="@string/pending_invites"
         android:visible="false"
         app:showAsAction="always" />
+
     <item
         android:id="@+id/menu_help"
         android:icon="@drawable/ic_help_outline"
@@ -38,5 +39,10 @@
         android:title="@string/lbl_add_patients"
         app:actionLayout="@layout/view_home_add_patients"
         app:showAsAction="always" />
-
+    <item
+        android:id="@+id/menu_overflow"
+        android:icon="@drawable/ic_baseline_more_vert_24"
+        android:title="@string/More"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

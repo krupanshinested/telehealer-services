@@ -434,10 +434,15 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         getMenuInflater().inflate(R.menu.appbar_home_menu, menu);
 
         if (UserType.isUserAssistant()) {
+            optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
             optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
             optionsMenu.findItem(R.id.menu_schedules).setVisible(true);
-        } else {
+        } else if (UserType.isUserPatient()) {
+            optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
             optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
+        } else {
+            optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+            optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
         }
 
         MenuItem menuItem = menu.findItem(R.id.menu_notification);
@@ -492,8 +497,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_help:
                 showHelpContent();
                 break;
+            case R.id.menu_overflow:
+                showDoctorsOverflowMenu();
+                break;
             case R.id.menu_pending_invites:
-                showPendingInvites();
+                startActivity(new Intent(this, PendingInvitesActivity.class));
                 break;
             case R.id.menu_notification:
                 showNotificationFragment();
@@ -507,8 +515,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     }
 
 
-    private void showPendingInvites() {
-        startActivity(new Intent(this, PendingInvitesActivity.class));
+    private void showDoctorsOverflowMenu() {
+        Utils.showDoctorOverflowMenu(this);
     }
 
     private void showNotificationFragment() {
@@ -765,8 +773,15 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private void showPendingInvitesOption(boolean visible) {
         if (optionsMenu != null) {
             if (visible) {
-                optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
+                if (UserType.isUserPatient()) {
+                    optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
+                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
+                } else if (UserType.isUserDoctor()) {
+                    optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
+                }
             } else {
+                optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
                 optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
             }
         }
