@@ -137,7 +137,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RequestID.REQ_CARD_EXPIRE||requestCode==RequestID.REQ_CARD_INFO) {
+        if (requestCode == RequestID.REQ_CARD_EXPIRE || requestCode == RequestID.REQ_CARD_INFO) {
             if (resultCode == Activity.RESULT_OK) {
                 startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
             }
@@ -299,6 +299,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                         } else {
                             proceedAdd(selectedItem);
                         }
+                    } else if (Constants.ROLE_PATIENT.equals(whoAmIApiResponseModel.getRole())) {
+                        proceedAdd(selectedItem);
                     }
                 }
             }
