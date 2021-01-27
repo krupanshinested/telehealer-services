@@ -84,6 +84,7 @@ import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.stripe.SetUpIntentResp;
+import com.thealer.telehealer.views.appupdate.AppUpdateResponse;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalBulkPdfApiResponseModel;
 
@@ -693,6 +694,9 @@ public interface ApiInterface {
 
     @GET("api/stripe/default-card")
     Observable<DefaultCardResp> getDefaultCard();
+
+    @GET("/version/active-version/{appType}")
+    Observable<AppUpdateResponse> fetchLatestVersion(@Path("appType") int appType);
 
 
 }
