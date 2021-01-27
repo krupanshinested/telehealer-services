@@ -45,8 +45,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 30
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 37
-            versionName "2.9.7"
+            versionCode 36
+            versionName "2.9.6"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"telehealer\"")

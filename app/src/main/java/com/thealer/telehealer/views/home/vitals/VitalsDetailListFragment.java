@@ -299,8 +299,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                         } else {
                             proceedAdd(selectedItem);
                         }
-                    } else if (Constants.ROLE_PATIENT.equals(whoAmIApiResponseModel.getRole())) {
-                        proceedAdd(selectedItem);
                     }
                 }
             }
