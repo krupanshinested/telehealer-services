@@ -199,9 +199,10 @@ public class CallPlacingActivity extends BaseActivity {
                                         } else if (errorObject.get("saved_cards_count") instanceof Double)
                                             counts =  ((Double) errorObject.get("saved_cards_count")).intValue();
                                     }
+                                    if (UserType.isUserDoctor()) {
                                     initStripeVM();
                                     AppPaymentCardUtils.openCardExpiredScreen(CallPlacingActivity.this, counts);
-                                    if (UserType.isUserDoctor()) {
+
                                         EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
                                     }
                                     return;
@@ -411,8 +412,10 @@ public class CallPlacingActivity extends BaseActivity {
 
                 PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
                 if (result != null && result.paymentMethod != null) {
-                    if (result.paymentMethod.id.equals(stripeViewModel.getPaymentMethodId()))
+                    if (result.paymentMethod.id.equals(stripeViewModel.getPaymentMethodId())) {
+                        finish();
                         return;
+                    }
 
                     stripeViewModel.makeDefaultCard(result.paymentMethod.id);
                     stripeViewModel.setPaymentMethodId(result.paymentMethod.id);
