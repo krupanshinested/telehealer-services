@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.vitals;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -39,6 +40,7 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -72,6 +74,7 @@ import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 
 import java.util.ArrayList;
@@ -87,6 +90,7 @@ import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.VitalCreationActivity;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalUserReportListFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
+import com.thealer.telehealer.views.signin.SigninActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.toptas.fancyshowcase.listener.DismissListener;
@@ -140,7 +144,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RequestID.REQ_CARD_EXPIRE || requestCode == RequestID.REQ_CARD_INFO) {
             if (resultCode == Activity.RESULT_OK) {
-                startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
+                if (UserType.isUserDoctor())
+                    startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
             }
         }
     }
@@ -268,18 +273,22 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
                     if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
-                        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.failed_to_connect)));
+                        Utils.showAlertDialog(getContext(), getString(R.string.error),
+                                errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                                null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+
                     } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
-                        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
-                        LocalBroadcastManager
-                                .getInstance(getActivity())
-                                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                        .putExtras(bundle));
-                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalsDetailListFragment.this, errorModel);
+                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalsDetailListFragment.this, errorModel, doctorModel != null ? doctorModel.getDoctorDisplayName() : null);
                     }
                 }
             }
@@ -292,14 +301,13 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())) {
-                        if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
-                            AppPaymentCardUtils.handleCardCasesFromWhoAmI(getActivity(), whoAmIApiResponseModel);
-                        } else if (!whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()) {
-                            AppPaymentCardUtils.handleCardCasesFromWhoAmI(getActivity(), whoAmIApiResponseModel);
-                        } else {
+                    if (UserType.isUserDoctor() || UserType.isUserAssistant()) {
+                        if (AppPaymentCardUtils.hasValidPaymentCard(whoAmIApiResponseModel)) {
                             proceedAdd(selectedItem);
+                        } else {
+                            AppPaymentCardUtils.handleCardCasesFromWhoAmI(getActivity(), whoAmIApiResponseModel, doctorModel != null ? doctorModel.getDoctorDisplayName() : null);
                         }
+
                     }
                 }
             }
@@ -853,7 +861,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     }
 
     private void checkWhoAmI() {
-        if (Constants.ROLE_PATIENT.equals(UserDetailPreferenceManager.getRole())) {
+        if (UserType.isUserPatient()) {
             proceedAdd(selectedItem);
         } else {
             whoAmIApiViewModel.checkWhoAmI();

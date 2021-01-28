@@ -92,15 +92,18 @@ public class VitalReportFragment extends BaseFragment {
     private String doctorGuid;
     private ShowSubFragmentInterface showSubFragmentInterface;
 
+    private CommonUserApiResponseModel doctorModel;
+
     @Nullable
     private TimerRunnable uiToggleTimer;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RequestID.REQ_CARD_EXPIRE||requestCode==RequestID.REQ_CARD_INFO) {
+        if (requestCode == RequestID.REQ_CARD_EXPIRE || requestCode == RequestID.REQ_CARD_INFO) {
             if (resultCode == Activity.RESULT_OK) {
-                startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
+                if (UserType.isUserDoctor())
+                    startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
             }
         }
     }
@@ -166,7 +169,7 @@ public class VitalReportFragment extends BaseFragment {
                 if (errorModel != null) {
 
                     if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
-                        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.failed_to_connect)));
+                        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect));
                     } else {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
@@ -177,7 +180,7 @@ public class VitalReportFragment extends BaseFragment {
                                 .getInstance(getActivity())
                                 .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
                                         .putExtras(bundle));
-                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalReportFragment.this, errorModel);
+                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalReportFragment.this, errorModel, doctorModel != null ? doctorModel.getDoctorDisplayName() : null);
                     }
                 }
             }
@@ -334,7 +337,7 @@ public class VitalReportFragment extends BaseFragment {
         patientListCrv.setEmptyStateTitle(String.format(EmptyStateUtil.getTitle(getActivity(), EmptyViewConstants.EMPTY_VITAL_FROM_TO), Utils.getDayMonthYear(startDate), Utils.getDayMonthYear(endDate)));
 
         if (getArguments() != null) {
-            CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
             if (doctorModel != null) {
                 doctorGuid = doctorModel.getUser_guid();
             }
@@ -366,6 +369,7 @@ public class VitalReportFragment extends BaseFragment {
                 bundle.putString(ArgumentKeys.START_DATE, startDate);
                 bundle.putString(ArgumentKeys.END_DATE, endDate);
                 bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                bundle.putString(ArgumentKeys.DOCTOR_NAME, doctorModel != null ? doctorModel.getDoctorDisplayName() : null);
                 bundle.putString(ArgumentKeys.TITLE, title);
                 vitalUserReportListFragment.setArguments(bundle);
                 showSubFragmentInterface.onShowFragment(vitalUserReportListFragment);

@@ -203,7 +203,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
-                        AppPaymentCardUtils.handleCardCasesFromWhoAmI(HomeActivity.this, whoAmIApiResponseModel);
+                        AppPaymentCardUtils.handleCardCasesFromWhoAmI(HomeActivity.this, whoAmIApiResponseModel, null);
                 }
             }
         });
@@ -999,15 +999,18 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             attachView();
         }
         if (requestCode == RequestID.REQ_CARD_INFO) {
-            if (resultCode == Activity.RESULT_OK) {
-                startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, true));
-            } else {
-                finishAffinity();
+            if (UserType.isUserDoctor()) {
+                if (resultCode == Activity.RESULT_OK) {
+                    startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, true));
+                } else {
+                    finishAffinity();
+                }
             }
         }
         if (requestCode == RequestID.REQ_CARD_EXPIRE) {
             if (resultCode == Activity.RESULT_OK) {
-                startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
+                if (UserType.isUserDoctor())
+                    startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
             }
         }
 

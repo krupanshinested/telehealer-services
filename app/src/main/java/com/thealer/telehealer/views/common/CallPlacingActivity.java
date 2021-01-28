@@ -197,14 +197,13 @@ public class CallPlacingActivity extends BaseActivity {
                                         if (errorObject.get("saved_cards_count") instanceof Integer) {
                                             counts = (Integer) errorObject.get("saved_cards_count");
                                         } else if (errorObject.get("saved_cards_count") instanceof Double)
-                                            counts =  ((Double) errorObject.get("saved_cards_count")).intValue();
+                                            counts = ((Double) errorObject.get("saved_cards_count")).intValue();
                                     }
                                     if (UserType.isUserDoctor()) {
-                                    initStripeVM();
-                                    AppPaymentCardUtils.openCardExpiredScreen(CallPlacingActivity.this, counts);
-
+                                        initStripeVM();
                                         EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
                                     }
+                                    AppPaymentCardUtils.openCardExpiredScreen(CallPlacingActivity.this, counts, callRequest.getDoctorName());
                                     return;
                                 }
                             }
