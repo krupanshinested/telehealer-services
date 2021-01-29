@@ -864,7 +864,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
         if (UserType.isUserPatient()) {
             proceedAdd(selectedItem);
         } else {
-            whoAmIApiViewModel.checkWhoAmI();
+            whoAmIApiViewModel.checkWhoAmI(doctorGuid);
         }
     }
 

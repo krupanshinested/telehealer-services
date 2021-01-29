@@ -148,6 +148,7 @@ public interface ApiInterface {
     String FILTER_USER_GUID_IN = "filter_user_guid_in";
     String USER_GUID = "user_guid";
     String DOCTOR_GUID = "doctor_guid";
+    String DOC_GUID = "doc_guid";
     String REFRESH_TOKEN = "refresh_token";
     String CHANNEL = "channel";
     String SESSION_ID = "sessionId";
@@ -251,7 +252,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> signOut();
 
     @GET("api/whoami")
-    Observable<WhoAmIApiResponseModel> whoAmI();
+    Observable<WhoAmIApiResponseModel> whoAmI(@Query(DOC_GUID) String docGuId);
 
     @GET("api/associations")
     Observable<AssociationApiResponseModel> getAssociations(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query(DOCTOR_GUID) String doctorGuid);

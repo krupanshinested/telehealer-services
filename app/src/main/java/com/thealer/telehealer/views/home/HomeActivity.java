@@ -467,8 +467,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             }
         });
 
-        if (UserType.isUserPatient() || UserType.isUserAssistant()) {
+        if (UserType.isUserPatient()) {
             setToolbarTitle(getString(R.string.Doctors));
+        } else if (UserType.isUserAssistant()) {
+            setToolbarTitle(getString(R.string.schedules));
         } else {
             setToolbarTitle(getString(R.string.Patients));
         }

@@ -1,7 +1,9 @@
 package com.thealer.telehealer.apilayer.models.whoami;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -19,11 +21,15 @@ public class WhoAmIApiViewModel extends BaseApiViewModel {
     }
 
     public void checkWhoAmI() {
+        checkWhoAmI(null);
+    }
+
+    public void checkWhoAmI(@Nullable String doctorGuId) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().whoAmI()
+                    getAuthApiService().whoAmI(doctorGuId)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -43,7 +49,7 @@ public class WhoAmIApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().whoAmI()
+                    getAuthApiService().whoAmI(null)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
