@@ -85,6 +85,13 @@
                     app:isSwitchNeed="true"
                     app:settings_title="@string/integration" />
 
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/enable_patient_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isSwitchNeed="true"
+                    app:settings_title="@string/enable_patient_card" />
+
                 <LinearLayout
                     android:id="@+id/rpm_ll"
                     android:layout_width="fill_parent"
@@ -103,8 +110,8 @@
                         android:id="@+id/rpm_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:isSpinnerType="true"
                         app:hideSpiltter="true"
+                        app:isSpinnerType="true"
                         app:title="@string/rpm_title" />
 
                     <View
@@ -114,18 +121,18 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/rpm_hint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/rpm_hint"
+                    android:layout_marginStart="10dp"
                     android:text="@string/rpm_hint"
-                    android:visibility="gone"
                     android:textSize="16dp"
-                    android:layout_marginStart="10dp"/>
+                    android:visibility="gone" />
 
                 <TextView
+                    android:id="@+id/appointment_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/appointment_text"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="30dp"
                     android:text="@string/appointment_title"
@@ -139,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/colorWhite"
                     android:orientation="vertical"
-                    android:visibility="gone" >
+                    android:visibility="gone">
 
                     <View
                         android:layout_width="fill_parent"
@@ -175,15 +182,15 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/encounter_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/encounter_title"
-                    android:id="@+id/encounter_text"
-                    android:textSize="16dp"
-                    android:textColor="@color/colorBlack"
-                    android:textStyle="bold"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="30dp"/>
+                    android:layout_marginTop="30dp"
+                    android:text="@string/encounter_title"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/encounter_view"

@@ -58,6 +58,7 @@ import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
 import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
 
 import java.util.Calendar;
+
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.views.home.orders.forms.EditableFormFragment.getUtcFromDayMonthYear;
 
@@ -67,9 +68,9 @@ import static com.thealer.telehealer.views.home.orders.forms.EditableFormFragmen
 
 public class GeneralSettingsFragment extends BaseFragment implements View.OnClickListener {
 
-    private SettingsCellView  presence, quickLogin,secure_message,connection_request,appointment_request, order_request, integration_request, record_encounter, transcribe_encounter;
+    private SettingsCellView presence, quickLogin, secure_message, connection_request, appointment_request, order_request, integration_request, record_encounter, transcribe_encounter, enable_patient_card;
     private ProfileCellView signature, appointment_slots, available_time;
-    private LinearLayout deleteView, rpmLl,appointmentView,encounterView;
+    private LinearLayout deleteView, rpmLl, appointmentView, encounterView;
 
     private OnActionCompleteInterface actionCompleteInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
@@ -89,6 +90,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     private ProfileUpdate profileUpdate;
     Calendar calendar1 = Calendar.getInstance();
     Calendar calendar2 = Calendar.getInstance();
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -97,7 +99,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         profileUpdate = new ViewModelProvider(this).get(ProfileUpdate.class);
-        
+
         profileUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
@@ -118,7 +120,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                         whoAmIApiResponseModel.setAppt_end_time(endTime);
                         whoAmIApiResponseModel.setAppt_start_time(startTime);
                         available_time.updateUI(false);
-                        updateAvaibleTime(whoAmIApiResponseModel.getAppt_start_time() , whoAmIApiResponseModel.getAppt_end_time());
+                        updateAvaibleTime(whoAmIApiResponseModel.getAppt_start_time(), whoAmIApiResponseModel.getAppt_end_time());
                     }
 
                     UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
@@ -149,21 +151,21 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             presence.updateSwitch(false);
 
         if (whoAmIApiResponseModel != null) {
-            Log.d("message ","secure "+whoAmIApiResponseModel.isSecure_message());
+            Log.d("message ", "secure " + whoAmIApiResponseModel.isSecure_message());
             secure_message.updateSwitch(whoAmIApiResponseModel.isSecure_message());
         } else {
             secure_message.updateSwitch(false);
         }
 
         if (whoAmIApiResponseModel != null) {
-            Log.d("message ","order "+whoAmIApiResponseModel.getOrders_enabled());
+            Log.d("message ", "order " + whoAmIApiResponseModel.getOrders_enabled());
             order_request.updateSwitch(whoAmIApiResponseModel.getOrders_enabled());
         } else {
             order_request.updateSwitch(false);
         }
 
         if (whoAmIApiResponseModel != null) {
-            Log.d("message ","record_encounter "+whoAmIApiResponseModel.getRecording_enabled());
+            Log.d("message ", "record_encounter " + whoAmIApiResponseModel.getRecording_enabled());
             record_encounter.updateSwitch(whoAmIApiResponseModel.getRecording_enabled());
         } else {
             record_encounter.updateSwitch(false);
@@ -182,7 +184,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         }
 
         if (whoAmIApiResponseModel != null) {
-            Log.d("message ","connection "+whoAmIApiResponseModel.getConnection_requests());
+            Log.d("message ", "connection " + whoAmIApiResponseModel.getConnection_requests());
             connection_request.updateSwitch(whoAmIApiResponseModel.getConnection_requests());
         } else {
             connection_request.updateSwitch(false);
@@ -219,9 +221,10 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         order_request = view.findViewById(R.id.order_request);
         integration_request = view.findViewById(R.id.integration_request);
         appointment_slots = view.findViewById(R.id.appointment_slots);
-        available_time= view.findViewById(R.id.available_time);
+        available_time = view.findViewById(R.id.available_time);
         record_encounter = view.findViewById(R.id.record_encounter);
         transcribe_encounter = view.findViewById(R.id.transcribe_encounter);
+        enable_patient_card = view.findViewById(R.id.enable_patient_card);
 
         toolbarTitle.setText(getString(R.string.preference));
         setCurrentTimeOnView();
@@ -264,6 +267,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         appointment_request.setOnClickListener(this);
         appointment_slots.setOnClickListener(this);
         available_time.setOnClickListener(this);
+        enable_patient_card.setOnClickListener(this);
 
         order_request.setFocusableTitle();
         integration_request.setFocusableTitle();
@@ -280,20 +284,22 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 encounterTv.setVisibility(View.GONE);
                 rpmTv.setVisibility(View.GONE);
                 integration_request.setVisibility(View.GONE);
+                enable_patient_card.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
-               // rpmLl.setVisibility(View.VISIBLE);
+                // rpmLl.setVisibility(View.VISIBLE);
                 appointmentView.setVisibility(View.VISIBLE);
                 encounterView.setVisibility(View.VISIBLE);
                 appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length() + "");
-                if (UserDetailPreferenceManager.getAppt_start_time().equals("08:00 AM") && UserDetailPreferenceManager.getAppt_end_time().equals("09:30 PM")){
-                    startTime = DateUtil.getUTCfromLocal("08:00","hh:mm","hh:mm a");
-                    endTime = DateUtil.getUTCfromLocal("21:30","hh:mm","hh:mm a");
+                if (UserDetailPreferenceManager.getAppt_start_time().equals("08:00 AM") && UserDetailPreferenceManager.getAppt_end_time().equals("09:30 PM")) {
+                    startTime = DateUtil.getUTCfromLocal("08:00", "hh:mm", "hh:mm a");
+                    endTime = DateUtil.getUTCfromLocal("21:30", "hh:mm", "hh:mm a");
                 } else {
                     startTime = UserDetailPreferenceManager.getAppt_start_time();
                     endTime = UserDetailPreferenceManager.getAppt_end_time();
                 }
-                updateAvaibleTime(startTime,endTime);
+                updateAvaibleTime(startTime, endTime);
+                enable_patient_card.setVisibility(View.VISIBLE);
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
                 secure_message.setVisibility(View.GONE);
@@ -304,10 +310,11 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 encounterTv.setVisibility(View.GONE);
                 rpmTv.setVisibility(View.GONE);
                 integration_request.setVisibility(View.GONE);
+                enable_patient_card.setVisibility(View.GONE);
                 break;
         }
 
-       whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+        whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
     }
 
     private void addListenerOnButton() {
@@ -326,7 +333,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             case R.id.back_iv:
                 onCloseActionInterface.onClose(false);
                 break;
-             case R.id.notification:
+            case R.id.notification:
                 Utils.showAlertDialog(getActivity(), getString(R.string.settings), getString(R.string.notification_setting_alert_message),
                         getString(R.string.yes), getString(R.string.no),
                         new DialogInterface.OnClickListener() {
@@ -391,7 +398,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 }
                 break;
             case R.id.appointment_slots:
-                    appointment_slots.openSpinner();
+                appointment_slots.openSpinner();
                 break;
             case R.id.available_time:
                 getAvailableStartTime();
@@ -436,52 +443,56 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 break;
             case R.id.secure_message:
                 secure_message.toggleSwitch();
-                profileUpdate.updateSecureMessage(secure_message.getSwitchStatus(),true);
+                profileUpdate.updateSecureMessage(secure_message.getSwitchStatus(), true);
+            case R.id.enable_patient_card:
+                enable_patient_card.toggleSwitch();
+                //todo call api here to update patient card status
+//                profileUpdate.updateSecureMessage(secure_message.getSwitchStatus(), true);
         }
     }
 
     private void getAvailableStartTime() {
-        Utils.showTimePickerDialog("Start time",getActivity(),startTime, new TimePickerDialog.OnTimeSetListener() {
+        Utils.showTimePickerDialog("Start time", getActivity(), startTime, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 calendar1.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar1.set(Calendar.MINUTE, minute);
-                startTime = DateUtil.getUTCfromLocal(hourOfDay+":"+minute,"hh:mm","hh:mm a");
+                startTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute, "hh:mm", "hh:mm a");
                 getAvailableEndTime();
             }
         });
     }
 
     private void getAvailableEndTime() {
-        Utils.showTimePickerDialog("End time",getActivity(),endTime,  new TimePickerDialog.OnTimeSetListener() {
+        Utils.showTimePickerDialog("End time", getActivity(), endTime, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 calendar2.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar2.set(Calendar.MINUTE, minute);
-                endTime = DateUtil.getUTCfromLocal(hourOfDay+":"+minute,"hh:mm","hh:mm a");
+                endTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute, "hh:mm", "hh:mm a");
                 if (calendar2.getTimeInMillis() >= calendar1.getTimeInMillis()) {
                     postAvaibleTime();
                 } else {
                     Snackbar snackbar = Snackbar.make(getView(), getString(R.string.appt_end_time_note), 3000).setBackgroundTint(getResources().getColor(R.color.app_gradient_start));
                     Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
                     View snackbarView = getLayoutInflater().inflate(R.layout.view_snackbar, null);
-                    TextView textView= snackbarView.findViewById(R.id.snackbar_tv);
+                    TextView textView = snackbarView.findViewById(R.id.snackbar_tv);
                     textView.setText(getString(R.string.appt_end_time_note));
                     snackbarLayout.addView(snackbarView);
                     snackbar.addCallback(new Snackbar.Callback() {
-                                             @Override
-                                             public void onDismissed(Snackbar transientBottomBar, int event) {
-                                                 super.onDismissed(transientBottomBar, event);
-                                                 getAvailableEndTime();
-                                             }
-                                         }).show();
+                        @Override
+                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                            super.onDismissed(transientBottomBar, event);
+                            getAvailableEndTime();
+                        }
+                    }).show();
                 }
             }
         });
-       }
+    }
 
     private void postAvaibleTime() {
-        updateAvaibleTime(startTime,endTime);
+        updateAvaibleTime(startTime, endTime);
         profileUpdate.updateAvailableTime(startTime, endTime);
     }
 
@@ -490,9 +501,9 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         showSubFragmentInterface.onShowFragment(signatureViewFragment);
     }
 
-    private void updateAvaibleTime(String startTime,String endTime) {
-        String start = DateUtil.getLocalfromUTC(startTime,"hh:mm a","hh:mm a");
-        String end = DateUtil.getLocalfromUTC(endTime,"hh:mm a","hh:mm a");
+    private void updateAvaibleTime(String startTime, String endTime) {
+        String start = DateUtil.getLocalfromUTC(startTime, "hh:mm a", "hh:mm a");
+        String end = DateUtil.getLocalfromUTC(endTime, "hh:mm a", "hh:mm a");
         available_time.updateValue(start + "  -  " + end);
     }
 
@@ -517,7 +528,8 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     private boolean isNotificationEnabled() {
         return NotificationManagerCompat.from(getActivity()).areNotificationsEnabled();
     }
-    private String getAppointmentSlotValue(String selectedItem){
+
+    private String getAppointmentSlotValue(String selectedItem) {
         String[] value = selectedItem.split("\\s", 2);
         return value[0];
     }
