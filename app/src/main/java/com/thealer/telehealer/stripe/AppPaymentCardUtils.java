@@ -72,10 +72,14 @@ public class AppPaymentCardUtils {
         if (UserType.isUserDoctor()) {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(R.string.proceed));
             description = activity.getString(R.string.msg_payment_gateway_changed);
-        } else {
+        } else if (UserType.isUserAssistant()) {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(R.string.ok));
             String name = TextUtils.isEmpty(doctorName) ? activity.getString(R.string.doctor) : doctorName;
             description = activity.getString(R.string.trial_period_expired_ma_sec_1, activity.getString(R.string.organization_name), name);
+        } else {
+            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(R.string.proceed));
+            intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+            description = "One of your connected provider requires credit card to book appointment";
         }
 
         intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);

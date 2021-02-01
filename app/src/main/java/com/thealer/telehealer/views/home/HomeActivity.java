@@ -204,6 +204,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
                         AppPaymentCardUtils.handleCardCasesFromWhoAmI(HomeActivity.this, whoAmIApiResponseModel, null);
+                    else if (UserType.isUserPatient()) {
+                        AppPaymentCardUtils.handleCardCasesFromWhoAmI(HomeActivity.this, whoAmIApiResponseModel, null);
+                    }
                 }
             }
         });
@@ -1001,11 +1004,15 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             attachView();
         }
         if (requestCode == RequestID.REQ_CARD_INFO) {
-            if (UserType.isUserDoctor()) {
+            if (!UserType.isUserAssistant()) {
                 if (resultCode == Activity.RESULT_OK) {
-                    startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, true));
+                    startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, UserType.isUserDoctor()));
                 } else {
-                    finishAffinity();
+                    if (UserType.isUserDoctor())
+                        finishAffinity();
+                    else if (UserType.isUserPatient())
+                        finish();
+
                 }
             }
         }
