@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:isSwitchNeed="true"
-                    app:settings_title="@string/enable_patient_card" />
+                    app:settings_title="@string/lbl_patient_credit_card" />
 
                 <LinearLayout
                     android:id="@+id/rpm_ll"

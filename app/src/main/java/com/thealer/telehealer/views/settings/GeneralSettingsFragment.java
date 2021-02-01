@@ -108,6 +108,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                     whoAmIApiResponseModel.setSecure_message(secure_message.getSwitchStatus());
                     whoAmIApiResponseModel.setConnection_requests(connection_request.getSwitchStatus());
                     whoAmIApiResponseModel.setAppt_requests(appointment_request.getSwitchStatus());
+                    whoAmIApiResponseModel.setPatient_credit_card_required(enable_patient_card.getSwitchStatus());
                     GeneralSettingsFragment.this.whoAmIApiResponseModel = whoAmIApiResponseModel;
 
                     if (!TextUtils.isEmpty(selectedItem)) {
@@ -194,6 +195,12 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             appointment_request.updateSwitch(whoAmIApiResponseModel.getAppt_requests());
         } else {
             appointment_request.updateSwitch(false);
+        }
+
+        if (whoAmIApiResponseModel != null) {
+            enable_patient_card.updateSwitch(whoAmIApiResponseModel.isPatient_credit_card_required());
+        } else {
+            enable_patient_card.updateSwitch(false);
         }
 
     }
@@ -446,8 +453,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 profileUpdate.updateSecureMessage(secure_message.getSwitchStatus(), true);
             case R.id.enable_patient_card:
                 enable_patient_card.toggleSwitch();
-                //todo call api here to update patient card status
-//                profileUpdate.updateSecureMessage(secure_message.getSwitchStatus(), true);
+                profileUpdate.updatePatientCreditCard(enable_patient_card.getSwitchStatus(), true);
         }
     }
 

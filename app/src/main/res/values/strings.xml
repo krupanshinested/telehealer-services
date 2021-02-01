@@ -1489,6 +1489,6 @@
     <string name="lbl_add_patients">Add Patients</string>
     <string name="lbl_add_providers">Add Providers</string>
     <string name="lbl_payment">Payment</string>
-    <string name="enable_patient_card">Enable Patient Card</string>
+    <string name="lbl_patient_credit_card">Patient Credit Card</string>
 
 </resources>

@@ -41,6 +41,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     private String name;
     private String last_active;
     private boolean secure_message;
+    private boolean patient_credit_card_required;
 
     public UserBean() {
     }
@@ -273,5 +274,13 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
 
     public void setSecure_message(boolean secure_message) {
         this.secure_message = secure_message;
+    }
+
+    public boolean isPatient_credit_card_required() {
+        return patient_credit_card_required;
+    }
+
+    public void setPatient_credit_card_required(boolean patient_credit_card_required) {
+        this.patient_credit_card_required = patient_credit_card_required;
     }
 }
