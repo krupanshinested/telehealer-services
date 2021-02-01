@@ -47,8 +47,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     private OnViewChangeInterface onViewChangeInterface;
 
     private ProfileCellView profile, medical_history, settings, email_id,
-            phone_number, change_password,checkCallQuality, logs,
-            feedback, terms_and_condition, privacy_policy, payments_billings,educational_video;
+            phone_number, change_password, checkCallQuality, logs,
+            feedback, terms_and_condition, privacy_policy, payments_billings, educational_video;
     private View signOut;
 
     private ProfileUpdate profileUpdate;
@@ -93,7 +93,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             Toast.makeText(getActivity(), getString(R.string.live_call_going_error), Toast.LENGTH_LONG).show();
             return;
         }
-            settingClickListener.didSelecteItem(view.getId());
+        settingClickListener.didSelecteItem(view.getId());
     }
 
     private void initView(View baseView) {
@@ -172,7 +172,11 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
         switch (appPreference.getInt(Constants.USER_TYPE)) {
             case Constants.TYPE_PATIENT:
-                payments_billings.setVisibility(View.GONE);
+                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
+                    billLl.setVisibility(View.VISIBLE);
+                else {
+                    billLl.setVisibility(View.GONE);
+                }
                 documents.setVisibility(View.VISIBLE);
                 medicalAssistant.setVisibility(View.GONE);
                 educational_video.setVisibility(View.GONE);
@@ -180,20 +184,19 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             case Constants.TYPE_DOCTOR:
                 medical_history.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
-                    payments_billings.setVisibility(View.VISIBLE);
+                    billLl.setVisibility(View.VISIBLE);
                 else {
-                    payments_billings.setVisibility(View.GONE);
+                    billLl.setVisibility(View.GONE);
                 }
                 medicalAssistantLl.setVisibility(View.VISIBLE);
-                billLl.setVisibility(View.VISIBLE);
                 educational_video.setVisibility(View.VISIBLE);
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
                 medicalAssistantLl.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
-                    payments_billings.setVisibility(View.VISIBLE);
+                    billLl.setVisibility(View.VISIBLE);
                 else {
-                    payments_billings.setVisibility(View.GONE);
+                    billLl.setVisibility(View.GONE);
                 }
                 break;
         }
