@@ -1010,9 +1010,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 } else {
                     if (UserType.isUserDoctor())
                         finishAffinity();
-                    else if (UserType.isUserPatient())
-                        finish();
-
                 }
             }
         }

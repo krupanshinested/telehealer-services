@@ -1490,5 +1490,6 @@
     <string name="lbl_add_providers">Add Providers</string>
     <string name="lbl_payment">Payment</string>
     <string name="lbl_patient_credit_card">Patient Credit Card</string>
+    <string name="lbl_not_now">Not Now</string>
 
 </resources>
