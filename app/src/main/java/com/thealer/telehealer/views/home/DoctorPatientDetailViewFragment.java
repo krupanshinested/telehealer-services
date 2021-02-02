@@ -51,6 +51,8 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiResponseModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.GetUserDetails;
@@ -66,6 +68,7 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.models.PatientInvite;
 import com.thealer.telehealer.common.pubNub.models.Patientinfo;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
@@ -134,6 +137,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private AssociationApiViewModel associationApiViewModel;
     private GuestloginViewModel guestloginViewModel;
     private GuestLoginApiResponseModel guestLoginApiResponseModel;
+
+    private WhoAmIApiViewModel whoAmIApiViewModel;
 
     private List<Fragment> fragmentList;
     private List<String> titleList;
@@ -260,6 +265,20 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                     }
                 });
+
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
+        whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                WhoAmIApiResponseModel patientData = (WhoAmIApiResponseModel) baseApiResponseModel;
+                if (!AppPaymentCardUtils.hasValidPaymentCard(patientData)) {
+                    AppPaymentCardUtils.handleCardCasesFromWhoAmI(DoctorPatientDetailViewFragment.this, patientData, null);
+                } else {
+                    proceedForWaitingRoom();
+                }
+            }
+        });
+        attachObserverInterface.attachObserver(whoAmIApiViewModel);
     }
 
     @Nullable
@@ -515,8 +534,13 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        showDialog();
-                        guestloginViewModel.registerUserEnterWatingRoom(resultBean.getUser_guid());
+
+                        if (resultBean.isPatient_credit_card_required()) {
+                            whoAmIApiViewModel.checkWhoAmI();
+                        } else {
+                            proceedForWaitingRoom();
+                        }
+
                     }
                 }, new DialogInterface.OnClickListener() {
                     @Override
@@ -524,6 +548,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         dialog.dismiss();
                     }
                 });
+    }
+
+    private void proceedForWaitingRoom() {
+        showDialog();
+        guestloginViewModel.registerUserEnterWatingRoom(resultBean.getUser_guid());
     }
 
     private void getUserDetail(Set<String> guidSet) {
@@ -883,15 +912,24 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 break;
 
             case PermissionConstants.PERMISSION_CAM_MIC:
-                if (resultCode == RESULT_OK) {
-                    goToWaitingScreen();
-                }
-                break;
             case RequestID.REQ_SHOW_SUCCESS_VIEW:
                 if (resultCode == RESULT_OK) {
                     goToWaitingScreen();
                 }
                 break;
+            case RequestID.REQ_CARD_INFO:
+            case RequestID.REQ_CARD_EXPIRE:
+                if (!UserType.isUserAssistant()) {
+                    if (resultCode == Activity.RESULT_OK) {
+                        AppPaymentCardUtils.startPaymentIntent(getActivity(), UserType.isUserDoctor());
+                    } else {
+                        if (UserType.isUserPatient())
+                            proceedForWaitingRoom();
+                    }
+                }
+                break;
+
+
         }
     }
 

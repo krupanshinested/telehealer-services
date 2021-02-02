@@ -210,7 +210,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 }
             }
         });
-        whoAmIApiViewModel.checkWhoAmI();
+        whoAmIApiViewModel.assignWhoAmI();
 
 
         signoutApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -1006,7 +1006,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (requestCode == RequestID.REQ_CARD_INFO) {
             if (!UserType.isUserAssistant()) {
                 if (resultCode == Activity.RESULT_OK) {
-                    startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, UserType.isUserDoctor()));
+                    AppPaymentCardUtils.startPaymentIntent(this, UserType.isUserDoctor());
                 } else {
                     if (UserType.isUserDoctor())
                         finishAffinity();
@@ -1016,7 +1016,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (requestCode == RequestID.REQ_CARD_EXPIRE) {
             if (resultCode == Activity.RESULT_OK) {
                 if (UserType.isUserDoctor())
-                    startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
+                    AppPaymentCardUtils.startPaymentIntent(this, false);
             }
         }
 

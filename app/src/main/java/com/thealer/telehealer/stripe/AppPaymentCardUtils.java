@@ -15,6 +15,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 
 public class AppPaymentCardUtils {
 
@@ -23,6 +24,14 @@ public class AppPaymentCardUtils {
             openCardNotAddedScreen(activity, doctorName);
         } else if (!whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()) {
             openCardExpiredScreen(activity, whoAmIApiResponseModel.getPayment_account_info().getSavedCardsCount(), doctorName);
+        }
+    }
+
+    public static void handleCardCasesFromWhoAmI(Fragment fragment, WhoAmIApiResponseModel whoAmIApiResponseModel, @Nullable String doctorName) {
+        if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
+            openCardNotAddedScreen(fragment, doctorName);
+        } else if (!whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()) {
+            openCardExpiredScreen(fragment, whoAmIApiResponseModel.getPayment_account_info().getSavedCardsCount(), doctorName);
         }
     }
 
@@ -80,7 +89,7 @@ public class AppPaymentCardUtils {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(R.string.proceed));
             intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
             intent.putExtra(ArgumentKeys.SKIP_TITLE, activity.getString(R.string.lbl_not_now));
-            description = "One of your connected provider requires credit card to book appointment";
+            description = activity.getString(R.string.msg_patient_card_not_added);
         }
 
         intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
@@ -94,7 +103,7 @@ public class AppPaymentCardUtils {
         Intent intent = new Intent(activity, ContentActivity.class);
 
         String description;
-        if (UserType.isUserDoctor()) {
+        if (UserType.isUserDoctor() || UserType.isUserPatient()) {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(doesUserHasMultipleCards ? R.string.lbl_manage_cards : R.string.lbl_add_card));
             description = activity.getString(doesUserHasMultipleCards ? R.string.msg_default_card_expired_multiple : R.string.msg_default_card_expired);
         } else {
@@ -108,5 +117,9 @@ public class AppPaymentCardUtils {
         intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
         intent.putExtra(ArgumentKeys.DESCRIPTION, description);
         return intent;
+    }
+
+    public static void startPaymentIntent(Activity activity, boolean disableBack) {
+        activity.startActivity(new Intent(activity, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, disableBack));
     }
 }

@@ -82,7 +82,6 @@ import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseM
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
-import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.stripe.SetUpIntentResp;
 import com.thealer.telehealer.views.appupdate.AppUpdateResponse;
 import com.thealer.telehealer.views.home.orders.OrderConstant;

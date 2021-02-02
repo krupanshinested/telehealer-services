@@ -21,12 +21,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.appbar.AppBarLayout;
 import com.stripe.android.ApiResultCallback;
 import com.stripe.android.CustomerSession;
-import com.stripe.android.PaymentSessionConfig;
 import com.stripe.android.SetupIntentResult;
 import com.stripe.android.Stripe;
 import com.stripe.android.model.ConfirmSetupIntentParams;
-import com.stripe.android.model.PaymentMethod;
-import com.stripe.android.view.BillingAddressFields;
 import com.stripe.android.view.PaymentMethodsActivityStarter;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
@@ -40,13 +37,11 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
 import com.thealer.telehealer.stripe.SetUpIntentResp;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -56,7 +51,6 @@ import com.thealer.telehealer.views.settings.Adapters.PaymentAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static com.thealer.telehealer.TeleHealerApplication.application;
 
@@ -231,7 +225,8 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             ((BaseActivity) getActivity()).attachObserver(stripeViewModel);
         }
     }
-    private void openPayment(){
+
+    private void openPayment() {
         if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
             if (!isOpened) {
                 isOpened = true;

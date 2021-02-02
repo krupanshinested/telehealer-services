@@ -25,13 +25,10 @@ import com.stripe.android.CustomerSession;
 import com.stripe.android.SetupIntentResult;
 import com.stripe.android.Stripe;
 import com.stripe.android.model.ConfirmSetupIntentParams;
-import com.stripe.android.model.PaymentMethod;
-import com.stripe.android.view.BillingAddressFields;
 import com.stripe.android.view.PaymentMethodsActivityStarter;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.Braintree.StripeViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
@@ -52,12 +49,10 @@ import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.stripe.SetUpIntentResp;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.call.CallActivity;
-import com.thealer.telehealer.views.home.HomeActivity;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -360,8 +355,6 @@ public class CallPlacingActivity extends BaseActivity {
                         String clientSecret = ((SetUpIntentResp) baseApiResponseModel).getClientSecret();
                         if (clientSecret != null)
                             stripe.confirmSetupIntent(CallPlacingActivity.this, ConfirmSetupIntentParams.create(stripeViewModel.getPaymentMethodId(), clientSecret));
-                    } else if ("SET_DEFAULT".equals(baseApiResponseModel.getMessage())) {
-
                     }
                 }
             });
