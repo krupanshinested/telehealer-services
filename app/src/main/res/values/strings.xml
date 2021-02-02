@@ -1493,5 +1493,9 @@
     <string name="lbl_not_now">Not Now</string>
     <string name="lbl_payment_method">Payment Method</string>
     <string name="msg_patient_card_not_added">Please enter credit card detail here to proceed the payment online.</string>
+    <string name="lbl_type_of_charge">Type Of charge</string>
+    <string name="lbl_add_fees">Add Fees($)</string>
+    <string name="lbl_reason">Reason</string>
+    <string name="lbl_transaction">Transaction</string>
 
 </resources>
