@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.call;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -29,6 +30,7 @@ import com.thealer.telehealer.views.Procedure.SelectProcedureBottomSheetDialogFr
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.CCMItemView;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.transaction.AddChargeActivity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +52,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     private RatingBar rating_bar;
     private EditText rating_et;
     private ConstraintLayout ccm_view;
-    private CCMItemView first_item, second_item, third_item,fourth_item;
+    private CCMItemView first_item, second_item, third_item, fourth_item;
     private CustomButton submit_btn;
     private CCMItemView newItem;
     private TextView moreTv;
@@ -83,6 +85,8 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
 
                 if (baseApiResponseModel != null) {
                     finish();
+                    if (!UserType.isUserPatient())
+                        startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class));
                 }
 
                 submit_btn.setEnabled(true);
