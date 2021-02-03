@@ -8,13 +8,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.master.MasterApiViewModel;
+import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.TransactionOption;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseActivity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class AddChargeActivity extends BaseActivity implements View.OnClickListener {
@@ -28,22 +37,11 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private TextView tvChargeType;
     private TextView tvReason;
 
-    private List<TransactionOption> listChargeTypes = Arrays.asList(
-            new TransactionOption("Co-pay"),
-            new TransactionOption("Deductible"),
-            new TransactionOption("Co-insurance"),
-            new TransactionOption("Fee")
-    );
+    private MasterApiViewModel masterApiViewModel;
 
-    private List<TransactionOption> listReason = Arrays.asList(
-            new TransactionOption("Visit"),
-            new TransactionOption("Medicine"),
-            new TransactionOption("Supplies"),
-            new TransactionOption("CCM"),
-            new TransactionOption("RPM"),
-            new TransactionOption("BHI"),
-            new TransactionOption("Concierge")
-    );
+    private ArrayList<MasterResp.MasterItem> listChargeTypes = new ArrayList<>();
+
+    private ArrayList<MasterResp.MasterItem> listReason = new ArrayList<>();
 
 
     @Override
@@ -60,7 +58,47 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         layoutChargeType.setOnClickListener(this);
         layoutReason.setOnClickListener(this);
 
-        initAdapter();
+
+        masterApiViewModel = new ViewModelProvider(this).get(MasterApiViewModel.class);
+        attachObserver(masterApiViewModel);
+        masterApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel instanceof MasterResp) {
+                    MasterResp resp = (MasterResp) baseApiResponseModel;
+                    HashMap<Integer, ArrayList<MasterResp.MasterItem>> filteredMaster = new HashMap<>();
+                    MasterResp.MasterItem chargeTypeParentMaster = null;
+                    MasterResp.MasterItem chargeReasonParentMaster = null;
+                    for (MasterResp.MasterItem masterItem : resp.getData()) {
+                        if (masterItem.getParentId() == 0) {
+                            filteredMaster.put(masterItem.getId(), new ArrayList<>());
+                            if (Constants.MasterCodes.TYPE_OF_CHARGE.equals(masterItem.getCode())) {
+                                chargeTypeParentMaster = masterItem;
+                            }
+                            if (Constants.MasterCodes.REASON.equals(masterItem.getCode())) {
+                                chargeReasonParentMaster = masterItem;
+                            }
+
+                        } else {
+                            if (filteredMaster.get(masterItem.getParentId()) == null)
+                                filteredMaster.put(masterItem.getParentId(), new ArrayList<>());
+                            filteredMaster.get(masterItem.getParentId()).add(masterItem);
+                        }
+                    }
+                    if (chargeTypeParentMaster != null) {
+                        listChargeTypes.addAll(filteredMaster.get(chargeTypeParentMaster.getId()));
+                    }
+                    if (chargeReasonParentMaster != null) {
+                        listReason.addAll(filteredMaster.get(chargeTypeParentMaster.getId()));
+                    }
+
+                    initAdapter();
+                }
+
+
+            }
+        });
+        masterApiViewModel.fetchMasters();
     }
 
     private void initAdapter() {
@@ -68,7 +106,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onSelected(int pos) {
                 rvChargeType.setVisibility(View.GONE);
-                tvChargeType.setText(listChargeTypes.get(pos).getTitle());
+                tvChargeType.setText(listChargeTypes.get(pos).getName());
             }
         });
         rvChargeType.setAdapter(adapterChargeType);
@@ -77,7 +115,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onSelected(int pos) {
                 rvReason.setVisibility(View.GONE);
-                tvReason.setText(listReason.get(pos).getTitle());
+                tvReason.setText(listReason.get(pos).getName());
             }
         });
         rvReason.setAdapter(adapterReason);

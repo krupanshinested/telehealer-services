@@ -183,4 +183,9 @@ public class Constants {
 
     public static final String did_subscriber_connected = "did_subscriber_connected";
 
+
+    public interface MasterCodes {
+        String TYPE_OF_CHARGE = "TYPE_OF_CHARGE";
+        String REASON = "REASON";
+    }
 }

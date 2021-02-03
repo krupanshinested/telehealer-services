@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.TransactionOption;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 
@@ -16,10 +17,10 @@ import java.util.List;
 
 public class TransactionOptionAdapter extends RecyclerView.Adapter<TransactionOptionAdapter.TransactionOptionVH> {
 
-    private List<TransactionOption> list;
+    private List<MasterResp.MasterItem> list;
     private OnOptionSelected onOptionSelected;
 
-    public TransactionOptionAdapter(List<TransactionOption> list, OnOptionSelected onOptionSelected) {
+    public TransactionOptionAdapter(List<MasterResp.MasterItem> list, OnOptionSelected onOptionSelected) {
         this.list = list;
         this.onOptionSelected = onOptionSelected;
     }
@@ -34,7 +35,7 @@ public class TransactionOptionAdapter extends RecyclerView.Adapter<TransactionOp
 
     @Override
     public void onBindViewHolder(@NonNull TransactionOptionVH holder, int position) {
-        holder.title.setText(list.get(position).getTitle());
+        holder.title.setText(list.get(position).getName());
     }
 
     @Override

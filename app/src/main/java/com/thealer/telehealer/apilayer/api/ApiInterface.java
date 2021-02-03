@@ -40,6 +40,7 @@ import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiRespon
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByDemographicRequestModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
+import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
@@ -697,6 +698,9 @@ public interface ApiInterface {
 
     @GET("/version/active-version/{appType}")
     Observable<AppUpdateResponse> fetchLatestVersion(@Path("appType") int appType);
+
+    @GET("/master/get")
+    Observable<MasterResp> fetchMasters();
 
 
 }
