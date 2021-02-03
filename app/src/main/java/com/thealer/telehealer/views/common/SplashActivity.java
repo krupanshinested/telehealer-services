@@ -92,8 +92,8 @@ public class SplashActivity extends BaseActivity {
                 checkAndMoveToNext(savedInstanceState, 1000);
             }
         });
-//        appUpdateViewModel.checkForUpdate();
-        startActivity(new Intent(this, AddChargeActivity.class));
+        appUpdateViewModel.checkForUpdate();
+//        startActivity(new Intent(this, AddChargeActivity.class));
 
     }
 

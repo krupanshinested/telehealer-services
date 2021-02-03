@@ -94,6 +94,7 @@ import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -419,19 +420,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                         break;
                                 }
 
-                                String doctorGuid = null, doctorName = null;
-                                if (doctorModel != null) {
-                                    doctorGuid = doctorModel.getUser_guid();
-                                    doctorName = doctorModel.getUserDisplay_name();
+                                // TODO: 3/2/21 check for patient's credit card is valid or not
+                                if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
+                                    showWithoutCardOptions(finalCommonUserApiResponseModel, callType);
+                                } else {
+                                    startCall(finalCommonUserApiResponseModel, callType);
                                 }
-
-                                CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
-                                        finalCommonUserApiResponseModel.getUser_guid(), finalCommonUserApiResponseModel, doctorGuid, doctorName, null, callType, true, null);
-
-                                Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
-                                intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
-                                startActivity(intent);
-
                             }
 
                             @Override
@@ -526,6 +520,46 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 onCloseActionInterface.onClose(false);
             }
         });
+    }
+
+    private void showWithoutCardOptions(CommonUserApiResponseModel finalCommonUserApiResponseModel, String callType) {
+        ArrayList<String> options = new ArrayList<>(Arrays.asList("Continue Anyway", "Ask to add credit card"));
+        new ItemPickerDialog(getContext(), "This patient does not have a credit card added.", options, new PickerListener() {
+            @Override
+            public void didSelectedItem(int position) {
+                switch (position) {
+                    case 0:
+                        startCall(finalCommonUserApiResponseModel, callType);
+                        break;
+                    case 1:
+                        // TODO: 3/2/21 call api to send add credit card notification.
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void didCancelled() {
+
+            }
+        }).show();
+    }
+
+    private void startCall(CommonUserApiResponseModel finalCommonUserApiResponseModel, String callType) {
+        String doctorGuid = null, doctorName = null;
+        if (doctorModel != null) {
+            doctorGuid = doctorModel.getUser_guid();
+            doctorName = doctorModel.getUserDisplay_name();
+        }
+
+        CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
+                finalCommonUserApiResponseModel.getUser_guid(), finalCommonUserApiResponseModel, doctorGuid, doctorName, null, callType, true, null);
+
+        Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
+        intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
+        startActivity(intent);
+
     }
 
     private void enterWaitingRoom() {
