@@ -1425,9 +1425,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void openHomeAndFinish(String callRejectionReason) {
-        Intent intent = new Intent(CallActivity.this, HomeActivity.class);
+        /*Intent intent = new Intent(CallActivity.this, HomeActivity.class);
         startActivity(intent);
-
+*/
         openFeedBackIfNeeded(callRejectionReason);
     }
 
