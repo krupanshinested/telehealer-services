@@ -523,8 +523,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     }
 
     private void showWithoutCardOptions(CommonUserApiResponseModel finalCommonUserApiResponseModel, String callType) {
-        ArrayList<String> options = new ArrayList<>(Arrays.asList("Continue Anyway", "Ask to add credit card"));
-        new ItemPickerDialog(getContext(), "This patient does not have a credit card added.", options, new PickerListener() {
+        ArrayList<String> options = new ArrayList<>(Arrays.asList(getString(R.string.lbl_continue_anyway), getString(R.string.lbl_ask_to_add_credit_card)));
+        new ItemPickerDialog(getContext(), getString(R.string.msg_card_not_added_by_patient), options, new PickerListener() {
             @Override
             public void didSelectedItem(int position) {
                 switch (position) {

@@ -1497,5 +1497,8 @@
     <string name="lbl_add_fees">Add Fees($)</string>
     <string name="lbl_reason">Reason</string>
     <string name="lbl_transaction">Transaction</string>
+    <string name="lbl_continue_anyway">Continue Anyway</string>
+    <string name="lbl_ask_to_add_credit_card">Ask to add credit card</string>
+    <string name="msg_card_not_added_by_patient">Patient has not added the credit card.</string>
 
 </resources>
