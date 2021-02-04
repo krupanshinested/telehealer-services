@@ -203,9 +203,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
-                        AppPaymentCardUtils.handleCardCasesFromWhoAmI(HomeActivity.this, whoAmIApiResponseModel, null);
+                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
                     else if (UserType.isUserPatient()) {
-                        AppPaymentCardUtils.handleCardCasesFromWhoAmI(HomeActivity.this, whoAmIApiResponseModel, null);
+                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
                     }
                 }
             }

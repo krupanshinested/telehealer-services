@@ -681,7 +681,7 @@ public interface ApiInterface {
     @PUT("api/call/{session_id}")
     Observable<BaseApiResponseModel> kickOutPatient(@Path(SESSIONID) String sessionId, @Query(REJECT) boolean status);
 
-    @POST("api/virtual-rooms/join")
+    @POST("api/virtual-rooms/join-v2")
     Observable<GuestLoginApiResponseModel> registerUserEnterWaitingRoom(@Body HashMap<String, Object> params);
 
     @GET("api/stripe/ephemeral-key")

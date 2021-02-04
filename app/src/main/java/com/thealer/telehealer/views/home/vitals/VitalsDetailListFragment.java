@@ -22,7 +22,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -40,7 +39,6 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -60,7 +58,6 @@ import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
@@ -74,7 +71,6 @@ import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 
 import java.util.ArrayList;
@@ -86,11 +82,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.VitalCreationActivity;
-import com.thealer.telehealer.views.home.vitals.vitalReport.VitalUserReportListFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
-import com.thealer.telehealer.views.signin.SigninActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.toptas.fancyshowcase.listener.DismissListener;
@@ -302,10 +295,10 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     if (UserType.isUserDoctor() || UserType.isUserAssistant()) {
-                        if (AppPaymentCardUtils.hasValidPaymentCard(whoAmIApiResponseModel)) {
+                        if (AppPaymentCardUtils.hasValidPaymentCard(whoAmIApiResponseModel.getPayment_account_info())) {
                             proceedAdd(selectedItem);
                         } else {
-                            AppPaymentCardUtils.handleCardCasesFromWhoAmI(getActivity(), whoAmIApiResponseModel, doctorModel != null ? doctorModel.getDoctorDisplayName() : null);
+                            AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), whoAmIApiResponseModel.getPayment_account_info(), doctorModel != null ? doctorModel.getDoctorDisplayName() : null);
                         }
 
                     }

@@ -139,7 +139,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private GuestloginViewModel guestloginViewModel;
     private GuestLoginApiResponseModel guestLoginApiResponseModel;
 
-    private WhoAmIApiViewModel whoAmIApiViewModel;
+    private boolean isNotWantToAddCard;
 
     private List<Fragment> fragmentList;
     private List<String> titleList;
@@ -235,13 +235,26 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
                         guestLoginApiResponseModel = (GuestLoginApiResponseModel) baseApiResponseModel;
                         if (guestLoginApiResponseModel.isSuccess()) {
-                            callSuccessDialogBroadcast();
-                            Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(), "", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
-                            patientInvite = new PatientInvite();
-                            patientInvite.setPatientinfo(patientDetails);
-                            patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
-                            patientInvite.setApiKey(guestLoginApiResponseModel.getApiKey());
-                            patientInvite.setToken(guestLoginApiResponseModel.getToken());
+                            if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info()) && !isNotWantToAddCard) {
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+                                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                                bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
+                                bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+                                LocalBroadcastManager
+                                        .getInstance(getActivity())
+                                        .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                                .putExtras(bundle));
+                                AppPaymentCardUtils.handleCardCasesFromPaymentInfo(DoctorPatientDetailViewFragment.this, guestLoginApiResponseModel.getPayment_account_info(), null);
+                            } else {
+                                callSuccessDialogBroadcast();
+                                Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(), "", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
+                                patientInvite = new PatientInvite();
+                                patientInvite.setPatientinfo(patientDetails);
+                                patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
+                                patientInvite.setApiKey(guestLoginApiResponseModel.getApiKey());
+                                patientInvite.setToken(guestLoginApiResponseModel.getToken());
+                            }
 
                         } else {
                             showToast(guestLoginApiResponseModel.getMessage());
@@ -266,20 +279,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                     }
                 });
-
-        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
-        whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                WhoAmIApiResponseModel patientData = (WhoAmIApiResponseModel) baseApiResponseModel;
-                if (!AppPaymentCardUtils.hasValidPaymentCard(patientData)) {
-                    AppPaymentCardUtils.handleCardCasesFromWhoAmI(DoctorPatientDetailViewFragment.this, patientData, null);
-                } else {
-                    proceedForWaitingRoom();
-                }
-            }
-        });
-        attachObserverInterface.attachObserver(whoAmIApiViewModel);
     }
 
     @Nullable
@@ -568,13 +567,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-
-                        if (resultBean.isPatient_credit_card_required()) {
-                            whoAmIApiViewModel.checkWhoAmI();
-                        } else {
-                            proceedForWaitingRoom();
-                        }
-
+                        proceedForWaitingRoom();
                     }
                 }, new DialogInterface.OnClickListener() {
                     @Override
@@ -957,8 +950,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     if (resultCode == Activity.RESULT_OK) {
                         AppPaymentCardUtils.startPaymentIntent(getActivity(), UserType.isUserDoctor());
                     } else {
-                        if (UserType.isUserPatient())
+                        if (UserType.isUserPatient()) {
+                            isNotWantToAddCard = true;
                             proceedForWaitingRoom();
+                        }
                     }
                 }
                 break;

@@ -9,29 +9,32 @@ import androidx.fragment.app.Fragment;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.common.ContentActivity;
-import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 
 public class AppPaymentCardUtils {
 
-    public static void handleCardCasesFromWhoAmI(Activity activity, WhoAmIApiResponseModel whoAmIApiResponseModel, @Nullable String doctorName) {
-        if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
-            openCardNotAddedScreen(activity, doctorName);
-        } else if (!whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()) {
-            openCardExpiredScreen(activity, whoAmIApiResponseModel.getPayment_account_info().getSavedCardsCount(), doctorName);
+    public static void handleCardCasesFromPaymentInfo(Activity activity, @Nullable PaymentInfo paymentInfo, @Nullable String doctorName) {
+        if (paymentInfo != null) {
+            if (!paymentInfo.isCCCaptured()) {
+                openCardNotAddedScreen(activity, doctorName);
+            } else if (!paymentInfo.isDefaultCardValid()) {
+                openCardExpiredScreen(activity, paymentInfo.getSavedCardsCount(), doctorName);
+            }
         }
     }
 
-    public static void handleCardCasesFromWhoAmI(Fragment fragment, WhoAmIApiResponseModel whoAmIApiResponseModel, @Nullable String doctorName) {
-        if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
-            openCardNotAddedScreen(fragment, doctorName);
-        } else if (!whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()) {
-            openCardExpiredScreen(fragment, whoAmIApiResponseModel.getPayment_account_info().getSavedCardsCount(), doctorName);
+    public static void handleCardCasesFromPaymentInfo(Fragment fragment, @Nullable PaymentInfo paymentInfo, @Nullable String doctorName) {
+        if (paymentInfo != null) {
+            if (!paymentInfo.isCCCaptured()) {
+                openCardNotAddedScreen(fragment, doctorName);
+            } else if (!paymentInfo.isDefaultCardValid()) {
+                openCardExpiredScreen(fragment, paymentInfo.getSavedCardsCount(), doctorName);
+            }
         }
     }
 
@@ -52,8 +55,11 @@ public class AppPaymentCardUtils {
         return errorModel.isCCCaptured() && errorModel.isDefaultCardValid();
     }
 
-    public static boolean hasValidPaymentCard(WhoAmIApiResponseModel whoAmIApiResponseModel) {
-        return whoAmIApiResponseModel.getPayment_account_info().isCCCaptured() && whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid();
+    public static boolean hasValidPaymentCard(@Nullable PaymentInfo paymentInfo) {
+        if (paymentInfo != null)
+            return paymentInfo.isCCCaptured() && paymentInfo.isDefaultCardValid();
+        else
+            return true;
     }
 
 
