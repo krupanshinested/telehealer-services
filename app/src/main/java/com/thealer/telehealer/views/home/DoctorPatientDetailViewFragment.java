@@ -249,6 +249,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             } else {
                                 callSuccessDialogBroadcast();
                                 Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(), "", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
+                                patientDetails.setHasValidCard(AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info()));
                                 patientInvite = new PatientInvite();
                                 patientInvite.setPatientinfo(patientDetails);
                                 patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
