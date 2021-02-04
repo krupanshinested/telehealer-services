@@ -3,9 +3,9 @@ package com.thealer.telehealer.views.transaction;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -16,15 +16,13 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.master.MasterApiViewModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
-import com.thealer.telehealer.apilayer.models.transaction.TransactionOption;
+import com.thealer.telehealer.apilayer.models.transaction.AddChargeViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 public class AddChargeActivity extends BaseActivity implements View.OnClickListener {
 
@@ -36,89 +34,79 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private RecyclerView rvReason;
     private TextView tvChargeType;
     private TextView tvReason;
+    private ImageView ivReason;
 
     private MasterApiViewModel masterApiViewModel;
+    private AddChargeViewModel addChargeViewModel;
 
-    private ArrayList<MasterResp.MasterItem> listChargeTypes = new ArrayList<>();
-
-    private ArrayList<MasterResp.MasterItem> listReason = new ArrayList<>();
-
+    public static String EXTRA_REASON = "reason";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_charge);
+        initView();
+        initViewModels();
+        addChargeViewModel.setSelectedReason(getIntent().getIntExtra(EXTRA_REASON, -1));
+        masterApiViewModel.fetchMasters();
+        updateUI();
+    }
+
+
+    private void initView() {
         layoutChargeType = findViewById(R.id.layoutChargeType);
         layoutReason = findViewById(R.id.layoutReason);
         rvChargeType = findViewById(R.id.rvChargeType);
         rvReason = findViewById(R.id.rvReasonType);
         tvChargeType = findViewById(R.id.tvChargeType);
         tvReason = findViewById(R.id.tvReason);
+        ivReason = findViewById(R.id.ivReasonArrow);
 
         layoutChargeType.setOnClickListener(this);
-        layoutReason.setOnClickListener(this);
 
+    }
 
+    private void initViewModels() {
         masterApiViewModel = new ViewModelProvider(this).get(MasterApiViewModel.class);
+        addChargeViewModel = new ViewModelProvider(this).get(AddChargeViewModel.class);
         attachObserver(masterApiViewModel);
+        attachObserver(addChargeViewModel);
+
         masterApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel instanceof MasterResp) {
                     MasterResp resp = (MasterResp) baseApiResponseModel;
-                    HashMap<Integer, ArrayList<MasterResp.MasterItem>> filteredMaster = new HashMap<>();
-                    MasterResp.MasterItem chargeTypeParentMaster = null;
-                    MasterResp.MasterItem chargeReasonParentMaster = null;
-                    for (MasterResp.MasterItem masterItem : resp.getData()) {
-                        if (masterItem.getParentId() == 0) {
-                            filteredMaster.put(masterItem.getId(), new ArrayList<>());
-                            if (Constants.MasterCodes.TYPE_OF_CHARGE.equals(masterItem.getCode())) {
-                                chargeTypeParentMaster = masterItem;
-                            }
-                            if (Constants.MasterCodes.REASON.equals(masterItem.getCode())) {
-                                chargeReasonParentMaster = masterItem;
-                            }
-
-                        } else {
-                            if (filteredMaster.get(masterItem.getParentId()) == null)
-                                filteredMaster.put(masterItem.getParentId(), new ArrayList<>());
-                            filteredMaster.get(masterItem.getParentId()).add(masterItem);
-                        }
-                    }
-                    if (chargeTypeParentMaster != null) {
-                        listChargeTypes.addAll(filteredMaster.get(chargeTypeParentMaster.getId()));
-                    }
-                    if (chargeReasonParentMaster != null) {
-                        listReason.addAll(filteredMaster.get(chargeTypeParentMaster.getId()));
-                    }
-
-                    initAdapter();
+                    addChargeViewModel.setUpChargeTypeFromMasters(resp);
+                    MasterOptionAdapter adapterType = new MasterOptionAdapter(addChargeViewModel.getListChargeTypes(), pos -> {
+                        rvChargeType.setVisibility(View.GONE);
+                        tvChargeType.setText(addChargeViewModel.getListChargeTypes().get(pos).getName());
+                        addChargeViewModel.setSelectedChargeTypeId(addChargeViewModel.getListChargeTypes().get(pos).getId());
+                    });
+                    rvChargeType.setAdapter(adapterType);
                 }
-
-
             }
         });
-        masterApiViewModel.fetchMasters();
     }
 
-    private void initAdapter() {
-        TransactionOptionAdapter adapterChargeType = new TransactionOptionAdapter(listChargeTypes, new TransactionOptionAdapter.OnOptionSelected() {
-            @Override
-            public void onSelected(int pos) {
-                rvChargeType.setVisibility(View.GONE);
-                tvChargeType.setText(listChargeTypes.get(pos).getName());
-            }
-        });
-        rvChargeType.setAdapter(adapterChargeType);
-
-        TransactionOptionAdapter adapterReason = new TransactionOptionAdapter(listReason, new TransactionOptionAdapter.OnOptionSelected() {
-            @Override
-            public void onSelected(int pos) {
+    private void updateUI() {
+        if (addChargeViewModel.getSelectedReason() == -1) {
+            ReasonOptionAdapter adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), pos -> {
                 rvReason.setVisibility(View.GONE);
-                tvReason.setText(listReason.get(pos).getName());
-            }
-        });
-        rvReason.setAdapter(adapterReason);
+                tvReason.setText(addChargeViewModel.getReasonOptions().get(pos).getTitle());
+                addChargeViewModel.setSelectedReason(addChargeViewModel.getReasonOptions().get(pos).getValue());
+            });
+            rvReason.setAdapter(adapterReason);
+            layoutReason.setOnClickListener(this);
+            ivReason.setVisibility(View.VISIBLE);
+            return;
+        }
+        ReasonOption selectedOption = addChargeViewModel.getReasonByValue(addChargeViewModel.getSelectedReason());
+        if (selectedOption != null) {
+            tvReason.setText(selectedOption.getTitle());
+            layoutReason.setOnClickListener(null);
+            ivReason.setVisibility(View.GONE);
+        }
     }
 
     @Override

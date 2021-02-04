@@ -2,6 +2,7 @@ package com.thealer.telehealer.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -187,5 +188,15 @@ public class Constants {
     public interface MasterCodes {
         String TYPE_OF_CHARGE = "TYPE_OF_CHARGE";
         String REASON = "REASON";
+    }
+
+    public interface ChargeReason {
+        int VISIT = 1;
+        int MEDICINE = 2;
+        int SUPPLIES = 3;
+        int CCM = 4;
+        int RPM = 5;
+        int BHI = 6;
+        int CONCIERGE = 7;
     }
 }

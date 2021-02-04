@@ -1,10 +1,13 @@
 package com.thealer.telehealer.apilayer.models.transaction;
 
-public class TransactionOption {
+public class ReasonOption {
 
     private String title;
 
-    public TransactionOption(String title) {
+    private int value;
+
+    public ReasonOption(int value, String title) {
+        this.value = value;
         this.title = title;
     }
 
@@ -14,5 +17,13 @@ public class TransactionOption {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
     }
 }

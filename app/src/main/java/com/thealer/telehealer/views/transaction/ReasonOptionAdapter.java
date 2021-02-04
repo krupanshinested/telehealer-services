@@ -10,17 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
-import com.thealer.telehealer.apilayer.models.transaction.TransactionOption;
-import com.thealer.telehealer.views.common.OnActionCompleteInterface;
+import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
 
 import java.util.List;
 
-public class TransactionOptionAdapter extends RecyclerView.Adapter<TransactionOptionAdapter.TransactionOptionVH> {
+public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapter.TransactionOptionVH> {
 
-    private List<MasterResp.MasterItem> list;
+    private List<ReasonOption> list;
     private OnOptionSelected onOptionSelected;
 
-    public TransactionOptionAdapter(List<MasterResp.MasterItem> list, OnOptionSelected onOptionSelected) {
+    public ReasonOptionAdapter(List<ReasonOption> list, OnOptionSelected onOptionSelected) {
         this.list = list;
         this.onOptionSelected = onOptionSelected;
     }
@@ -35,7 +34,7 @@ public class TransactionOptionAdapter extends RecyclerView.Adapter<TransactionOp
 
     @Override
     public void onBindViewHolder(@NonNull TransactionOptionVH holder, int position) {
-        holder.title.setText(list.get(position).getName());
+        holder.title.setText(list.get(position).getTitle());
     }
 
     @Override
