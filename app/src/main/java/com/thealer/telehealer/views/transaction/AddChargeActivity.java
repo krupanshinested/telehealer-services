@@ -36,6 +36,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private TextView tvReason;
     private ImageView ivReason;
 
+    private LinearLayout layoutFromDate;
+    private LinearLayout layoutToDate;
+    private TextView tvFromDate;
+    private TextView tvToDate;
+    private EditText etTextField;
+
     private MasterApiViewModel masterApiViewModel;
     private AddChargeViewModel addChargeViewModel;
 
@@ -61,6 +67,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         tvChargeType = findViewById(R.id.tvChargeType);
         tvReason = findViewById(R.id.tvReason);
         ivReason = findViewById(R.id.ivReasonArrow);
+
+        layoutFromDate = findViewById(R.id.layoutFromDate);
+        layoutToDate = findViewById(R.id.layoutTomDate);
+        tvFromDate = findViewById(R.id.tvFromDate);
+        tvToDate = findViewById(R.id.tvToDate);
+        etTextField = findViewById(R.id.etTextField);
 
         layoutChargeType.setOnClickListener(this);
 
@@ -95,6 +107,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 rvReason.setVisibility(View.GONE);
                 tvReason.setText(addChargeViewModel.getReasonOptions().get(pos).getTitle());
                 addChargeViewModel.setSelectedReason(addChargeViewModel.getReasonOptions().get(pos).getValue());
+                showUIByReason();
             });
             rvReason.setAdapter(adapterReason);
             layoutReason.setOnClickListener(this);
@@ -106,6 +119,42 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             tvReason.setText(selectedOption.getTitle());
             layoutReason.setOnClickListener(null);
             ivReason.setVisibility(View.GONE);
+
+            showUIByReason();
+        }
+    }
+
+    private void showUIByReason() {
+        layoutFromDate.setVisibility(View.GONE);
+        layoutToDate.setVisibility(View.GONE);
+        etTextField.setVisibility(View.GONE);
+        switch (addChargeViewModel.getSelectedReason()) {
+            case Constants.ChargeReason.BHI:
+            case Constants.ChargeReason.CCM:
+            case Constants.ChargeReason.RPM:
+            case Constants.ChargeReason.CONCIERGE: {
+                tvFromDate.setHint(R.string.lbl_from_date);
+                layoutFromDate.setVisibility(View.VISIBLE);
+                layoutToDate.setVisibility(View.VISIBLE);
+                break;
+            }
+            case Constants.ChargeReason.MEDICINE: {
+                etTextField.setHint(R.string.drug_name);
+                etTextField.setVisibility(View.VISIBLE);
+                break;
+            }
+            case Constants.ChargeReason.SUPPLIES: {
+                etTextField.setHint(R.string.lbl_supplier);
+                etTextField.setVisibility(View.VISIBLE);
+                break;
+            }
+            case Constants.ChargeReason.VISIT: {
+                tvFromDate.setHint(R.string.lbl_service_date);
+                layoutFromDate.setVisibility(View.VISIBLE);
+                break;
+            }
+
+
         }
     }
 

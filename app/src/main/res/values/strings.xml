@@ -1500,5 +1500,9 @@
     <string name="lbl_continue_anyway">Continue Anyway</string>
     <string name="lbl_ask_to_add_credit_card">Ask to add credit card</string>
     <string name="msg_card_not_added_by_patient">Patient has not added the credit card.</string>
+    <string name="lbl_supplier">Supplier</string>
+    <string name="lbl_from_date">From Date</string>
+    <string name="lbl_to_date">To Date</string>
+    <string name="lbl_service_date">Service Date</string>
 
 </resources>
