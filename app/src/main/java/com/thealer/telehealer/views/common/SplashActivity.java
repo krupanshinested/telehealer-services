@@ -93,7 +93,7 @@ public class SplashActivity extends BaseActivity {
             }
         });
         appUpdateViewModel.checkForUpdate();
-//        startActivity(new Intent(this, AddChargeActivity.class).putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.BHI));
+//        startActivity(new Intent(this, AddChargeActivity.class));
 
     }
 

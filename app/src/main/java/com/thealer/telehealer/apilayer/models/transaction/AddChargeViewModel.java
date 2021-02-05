@@ -10,6 +10,7 @@ import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.common.Constants;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +21,9 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     private int selectedReason = -1;
     private int selectedChargeTypeId = -1;
+
+    private Calendar selectedFromDate = null;
+    private Calendar selectedToDate = null;
 
     private final List<ReasonOption> reasonOptions = new ArrayList<>();
 
@@ -92,5 +96,21 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     public void setSelectedChargeTypeId(int selectedChargeTypeId) {
         this.selectedChargeTypeId = selectedChargeTypeId;
+    }
+
+    public Calendar getSelectedFromDate() {
+        return selectedFromDate;
+    }
+
+    public void setSelectedFromDate(Calendar selectedFromDate) {
+        this.selectedFromDate = selectedFromDate;
+    }
+
+    public Calendar getSelectedToDate() {
+        return selectedToDate;
+    }
+
+    public void setSelectedToDate(Calendar selectedToDate) {
+        this.selectedToDate = selectedToDate;
     }
 }

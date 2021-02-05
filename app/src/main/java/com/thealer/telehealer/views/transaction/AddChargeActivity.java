@@ -1,7 +1,9 @@
 package com.thealer.telehealer.views.transaction;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,9 +21,11 @@ import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.AddChargeViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class AddChargeActivity extends BaseActivity implements View.OnClickListener {
@@ -75,6 +79,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         etTextField = findViewById(R.id.etTextField);
 
         layoutChargeType.setOnClickListener(this);
+        layoutFromDate.setOnClickListener(this);
+        layoutToDate.setOnClickListener(this);
 
     }
 
@@ -128,6 +134,13 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         layoutFromDate.setVisibility(View.GONE);
         layoutToDate.setVisibility(View.GONE);
         etTextField.setVisibility(View.GONE);
+
+        etTextField.setText(null);
+        tvFromDate.setText(null);
+        tvToDate.setText(null);
+        addChargeViewModel.setSelectedFromDate(null);
+        addChargeViewModel.setSelectedToDate(null);
+
         switch (addChargeViewModel.getSelectedReason()) {
             case Constants.ChargeReason.BHI:
             case Constants.ChargeReason.CCM:
@@ -173,6 +186,32 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 else
                     rvReason.setVisibility(View.VISIBLE);
                 break;
+            case R.id.layoutFromDate:
+                Utils.showDatePickerDialog(this, Calendar.getInstance(), Constants.TYPE_EXPIRATION, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(year, month, dayOfMonth);
+                        addChargeViewModel.setSelectedFromDate(calendar);
+                        updateDate(tvFromDate, year, month, dayOfMonth);
+                    }
+                });
+                break;
+            case R.id.layoutTomDate:
+                Utils.showDatePickerDialog(this, addChargeViewModel.getSelectedFromDate() != null ? addChargeViewModel.getSelectedFromDate() : Calendar.getInstance(), Constants.TYPE_EXPIRATION, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(year, month, dayOfMonth);
+                        addChargeViewModel.setSelectedToDate(calendar);
+                        updateDate(tvToDate, year, month, dayOfMonth);
+                    }
+                });
+                break;
         }
+    }
+
+    private void updateDate(TextView dateTextView, int year, int month, int dayOfMonth) {
+        dateTextView.setText(Utils.getFormatedDate(year, month, dayOfMonth));
     }
 }
