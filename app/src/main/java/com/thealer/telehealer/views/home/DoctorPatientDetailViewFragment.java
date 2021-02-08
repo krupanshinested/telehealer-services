@@ -150,7 +150,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private String view_type;
     private String doctorGuid = null, userGuid = null;
     private boolean isUserDataFetched = false;
-    private ImageView favoriteIv, searchIV;
+    private ImageView favoriteIv, searchIV, hasCardIV;
     private CircleImageView statusCiv;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private PatientInvite patientInvite;
@@ -348,6 +348,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         favoriteIv = (ImageView) view.findViewById(R.id.favorite_iv);
         searchIV = (ImageView) view.findViewById(R.id.search_iv);
         statusCiv = (CircleImageView) view.findViewById(R.id.status_civ);
+        hasCardIV = (ImageView) view.findViewById(R.id.card_iv);
 
         userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(false);
 
@@ -421,11 +422,19 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 }
 
                                 // TODO: 3/2/21 check for patient's credit card is valid or not
-                                if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
-                                    showWithoutCardOptions(finalCommonUserApiResponseModel, callType);
-                                } else {
-                                    startCall(finalCommonUserApiResponseModel, callType);
+                                if (UserType.isUserDoctor()) {
+                                    if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
+                                        showWithoutCardOptions(finalCommonUserApiResponseModel, callType);
+                                        return;
+                                    }
+                                } else if (UserType.isUserAssistant()) {
+                                    if (doctorModel.isPatient_credit_card_required()) {
+                                        showWithoutCardOptions(finalCommonUserApiResponseModel, callType);
+                                        return;
+                                    }
                                 }
+                                startCall(finalCommonUserApiResponseModel, callType);
+
                             }
 
                             @Override
@@ -900,6 +909,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
                 }
             });
+            if (Constants.ROLE_PATIENT.equals(resultBean.getRole())) {
+                AppPaymentCardUtils.setCardStatusImage(hasCardIV, resultBean.getPayment_account_info());
+            } else
+                hasCardIV.setVisibility(View.GONE);
         }
     }
 

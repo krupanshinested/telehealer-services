@@ -498,7 +498,7 @@ public interface ApiInterface {
     @GET("api/token-v2")
     Observable<CallSettings> getOpenTokToken(@Query(SESSION_ID) String sessionId);
 
-    @GET("api/users/{id}")
+    @GET("api/users-v2/{id}")
     Observable<CommonUserApiResponseModel> getUserDetail(@Path(ID) String id);
 
     @PUT("api/call/{id}")

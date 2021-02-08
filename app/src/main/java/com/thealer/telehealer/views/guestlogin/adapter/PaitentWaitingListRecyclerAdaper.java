@@ -62,6 +62,7 @@ public class PaitentWaitingListRecyclerAdaper extends RecyclerView.Adapter<Paite
             viewHolder.view_status.setBackground(ContextCompat.getDrawable(context, R.drawable.circular_orange_indicator));
         }
 
+
         viewHolder.btn_message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,11 +95,16 @@ public class PaitentWaitingListRecyclerAdaper extends RecyclerView.Adapter<Paite
             viewHolder.im_kickout.setVisibility(View.VISIBLE);
         } else {
             viewHolder.im_kickout.setVisibility(View.GONE);
-        }
-        if (!patientinfo.isHasValidCard() && UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
-            viewHolder.btn_ask_for_card.setVisibility(View.VISIBLE);
-        } else {
-            viewHolder.btn_ask_for_card.setVisibility(View.GONE);
+            if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
+                viewHolder.hasCardIV.setVisibility(View.VISIBLE);
+                if (patientinfo.isHasValidCard()) {
+                    viewHolder.btn_ask_for_card.setVisibility(View.GONE);
+                    viewHolder.hasCardIV.setImageResource(R.drawable.ic_card_enabled);
+                } else {
+                    viewHolder.btn_ask_for_card.setVisibility(View.VISIBLE);
+                    viewHolder.hasCardIV.setImageResource(R.drawable.ic_card_disabled);
+                }
+            }
         }
     }
 
@@ -110,7 +116,7 @@ public class PaitentWaitingListRecyclerAdaper extends RecyclerView.Adapter<Paite
     class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView tvName, tvPhn;
         private TextView btn_message, btn_Admit, btn_ask_for_card;
-        private ImageView im_kickout;
+        private ImageView im_kickout, hasCardIV;
         private View view_status;
 
         MyViewHolder(View view) {
@@ -122,6 +128,7 @@ public class PaitentWaitingListRecyclerAdaper extends RecyclerView.Adapter<Paite
             im_kickout = view.findViewById(R.id.im_kickout);
             view_status = view.findViewById(R.id.view_status);
             btn_ask_for_card = view.findViewById(R.id.ask_for_card_btn);
+            hasCardIV = view.findViewById(R.id.card_iv);
         }
     }
 

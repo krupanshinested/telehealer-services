@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
@@ -42,6 +43,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     private String last_active;
     private boolean secure_message;
     private boolean patient_credit_card_required;
+    private PaymentInfo payment_account_info;
 
     public UserBean() {
     }
@@ -156,7 +158,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
         }
 
         StringBuilder name = new StringBuilder();
-        
+
         name = name.append(getFirst_name()).append(" ").append(getLast_name());
 
         return name.toString();
@@ -164,10 +166,10 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
 
 
     public String getDisplayName() {
-      return getDefaultDisplayName();
+        return getDefaultDisplayName();
     }
 
-    public  String getDefaultDisplayName() {
+    public String getDefaultDisplayName() {
         String displayName = "";
         if (!TextUtils.isEmpty(getFirst_name())) {
             displayName += getFirst_name();
@@ -184,7 +186,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
             displayName = displayName.substring(0, 1).toUpperCase() + displayName.substring(1);
         }
 
-        return  displayName;
+        return displayName;
     }
 
 
@@ -282,5 +284,13 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
 
     public void setPatient_credit_card_required(boolean patient_credit_card_required) {
         this.patient_credit_card_required = patient_credit_card_required;
+    }
+
+    public PaymentInfo getPayment_account_info() {
+        return payment_account_info;
+    }
+
+    public void setPayment_account_info(PaymentInfo payment_account_info) {
+        this.payment_account_info = payment_account_info;
     }
 }

@@ -3,6 +3,8 @@ package com.thealer.telehealer.stripe;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -127,5 +129,17 @@ public class AppPaymentCardUtils {
 
     public static void startPaymentIntent(Activity activity, boolean disableBack) {
         activity.startActivity(new Intent(activity, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, disableBack));
+    }
+
+    public static void setCardStatusImage(ImageView imageView, @Nullable PaymentInfo paymentInfo) {
+        if (paymentInfo != null) {
+            imageView.setVisibility(View.VISIBLE);
+            if (hasValidPaymentCard(paymentInfo)) {
+                imageView.setImageResource(R.drawable.ic_card_enabled);
+            } else {
+                imageView.setImageResource(R.drawable.ic_card_disabled);
+            }
+        } else
+            imageView.setVisibility(View.GONE);
     }
 }
