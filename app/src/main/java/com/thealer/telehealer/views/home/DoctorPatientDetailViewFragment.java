@@ -139,8 +139,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private GuestloginViewModel guestloginViewModel;
     private GuestLoginApiResponseModel guestLoginApiResponseModel;
 
-    private boolean isNotWantToAddCard;
-
     private List<Fragment> fragmentList;
     private List<String> titleList;
     private AppBarLayout userDetailAppbarLayout;
@@ -235,7 +233,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
                         guestLoginApiResponseModel = (GuestLoginApiResponseModel) baseApiResponseModel;
                         if (guestLoginApiResponseModel.isSuccess()) {
-                            if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info()) && !isNotWantToAddCard) {
+                            if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info())) {
                                 Bundle bundle = new Bundle();
                                 bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
                                 bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
@@ -248,13 +246,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 AppPaymentCardUtils.handleCardCasesFromPaymentInfo(DoctorPatientDetailViewFragment.this, guestLoginApiResponseModel.getPayment_account_info(), null);
                             } else {
                                 callSuccessDialogBroadcast();
-                                Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(), "", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
-                                patientDetails.setHasValidCard(AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info()));
-                                patientInvite = new PatientInvite();
-                                patientInvite.setPatientinfo(patientDetails);
-                                patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
-                                patientInvite.setApiKey(guestLoginApiResponseModel.getApiKey());
-                                patientInvite.setToken(guestLoginApiResponseModel.getToken());
+                                createPatientInvite();
                             }
 
                         } else {
@@ -280,6 +272,16 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                     }
                 });
+    }
+
+    private void createPatientInvite() {
+        Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(), "", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
+        patientDetails.setHasValidCard(AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info()));
+        patientInvite = new PatientInvite();
+        patientInvite.setPatientinfo(patientDetails);
+        patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
+        patientInvite.setApiKey(guestLoginApiResponseModel.getApiKey());
+        patientInvite.setToken(guestLoginApiResponseModel.getToken());
     }
 
     @Nullable
@@ -965,8 +967,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         AppPaymentCardUtils.startPaymentIntent(getActivity(), UserType.isUserDoctor());
                     } else {
                         if (UserType.isUserPatient()) {
-                            isNotWantToAddCard = true;
-                            proceedForWaitingRoom();
+                            createPatientInvite();
+                            goToWaitingScreen();
                         }
                     }
                 }

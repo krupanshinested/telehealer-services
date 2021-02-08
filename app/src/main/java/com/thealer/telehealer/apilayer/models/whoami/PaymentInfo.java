@@ -2,7 +2,9 @@ package com.thealer.telehealer.apilayer.models.whoami;
 
 import com.google.gson.annotations.SerializedName;
 
-public class PaymentInfo {
+import java.io.Serializable;
+
+public class PaymentInfo implements Serializable {
 
     @SerializedName("oauth_status")
     private String oauthStatus;
