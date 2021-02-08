@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home;
 
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
@@ -19,6 +20,7 @@ import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -87,7 +89,10 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 if (UserType.isUserDoctor()) {
                     viewHolder.actionIv.setVisibility(View.VISIBLE);
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
-                } else if (UserType.isUserPatient() || UserType.isUserAssistant()) {
+                    viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info());
+                } else if (UserType.isUserAssistant()) {
+                    viewHolder.actionIv.setVisibility(View.GONE);
+                } else if (UserType.isUserPatient()) {
                     viewHolder.actionIv.setVisibility(View.GONE);
                 }
                 viewHolder.subTitleTv.setText(userModel.getDisplayInfo());

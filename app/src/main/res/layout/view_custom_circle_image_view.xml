@@ -90,11 +90,23 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
+
+                    <ImageView
+                        android:id="@+id/card_iv"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_card_enabled"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
                     <ImageView
                         android:id="@+id/action_iv"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:visibility="gone" />
+                        android:src="@drawable/gender_male"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <CheckBox
                         android:id="@+id/checkbox"

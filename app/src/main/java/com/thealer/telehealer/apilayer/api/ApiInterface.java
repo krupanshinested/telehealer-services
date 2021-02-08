@@ -254,25 +254,25 @@ public interface ApiInterface {
     @GET("api/whoami")
     Observable<WhoAmIApiResponseModel> whoAmI(@Query(DOC_GUID) String docGuId);
 
-    @GET("api/associations")
+    @GET("api/associations-v2")
     Observable<AssociationApiResponseModel> getAssociations(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/associations")
+    @GET("api/associations-v2")
     Observable<ArrayList<CommonUserApiResponseModel>> getAssociations(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/associated-doctors")
     Observable<ArrayList<DoctorGroupedAssociations>> getDoctorGroupedAssociations();
 
-    @GET("api/associations")
+    @GET("api/associations-v2")
     Observable<ArrayList<CommonUserApiResponseModel>> getUserAssociationDetail(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid);
 
     @PUT("api/associations/{id}")
     Observable<BaseApiResponseModel> updateAssociationDetail(@Path(ID) String userGuid, @Body UpdateAssociationRequestModel requestModel);
 
-    @GET("api/associations")
+    @GET("api/associations-v2")
     Observable<ArrayList<CommonUserApiResponseModel>> getAssociationUserDetail(@Query(FILTER_USER_GUID_IN) String guidList, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/associations")
+    @GET("api/associations-v2")
     Observable<ArrayList<CommonUserApiResponseModel>> getAssociationUserDetail(@Query(FILTER_USER_GUID_IN) String guidList);
 
     @GET("api/correspondence-history")

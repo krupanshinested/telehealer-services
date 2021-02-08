@@ -423,16 +423,17 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                         break;
                                 }
 
-                                // TODO: 3/2/21 check for patient's credit card is valid or not
-                                if (UserType.isUserDoctor()) {
-                                    if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
-                                        showWithoutCardOptions(finalCommonUserApiResponseModel, callType);
-                                        return;
-                                    }
-                                } else if (UserType.isUserAssistant()) {
-                                    if (doctorModel.isPatient_credit_card_required()) {
-                                        showWithoutCardOptions(finalCommonUserApiResponseModel, callType);
-                                        return;
+                                if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPayment_account_info())) {
+                                    if (UserType.isUserDoctor()) {
+                                        if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
+                                            showWithoutCardOptions(finalCommonUserApiResponseModel, callType);
+                                            return;
+                                        }
+                                    } else if (UserType.isUserAssistant()) {
+                                        if (doctorModel.isPatient_credit_card_required()) {
+                                            showWithoutCardOptions(finalCommonUserApiResponseModel, callType);
+                                            return;
+                                        }
                                     }
                                 }
                                 startCall(finalCommonUserApiResponseModel, callType);

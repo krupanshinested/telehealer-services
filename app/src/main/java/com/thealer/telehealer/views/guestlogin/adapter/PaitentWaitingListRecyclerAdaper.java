@@ -95,15 +95,13 @@ public class PaitentWaitingListRecyclerAdaper extends RecyclerView.Adapter<Paite
             viewHolder.im_kickout.setVisibility(View.VISIBLE);
         } else {
             viewHolder.im_kickout.setVisibility(View.GONE);
-            if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
-                viewHolder.hasCardIV.setVisibility(View.VISIBLE);
-                if (patientinfo.isHasValidCard()) {
-                    viewHolder.btn_ask_for_card.setVisibility(View.GONE);
-                    viewHolder.hasCardIV.setImageResource(R.drawable.ic_card_enabled);
-                } else {
-                    viewHolder.btn_ask_for_card.setVisibility(View.VISIBLE);
-                    viewHolder.hasCardIV.setImageResource(R.drawable.ic_card_disabled);
-                }
+            viewHolder.hasCardIV.setVisibility(View.VISIBLE);
+            if (patientinfo.isHasValidCard()) {
+                viewHolder.btn_ask_for_card.setVisibility(View.GONE);
+                viewHolder.hasCardIV.setImageResource(R.drawable.ic_card_enabled);
+            } else {
+                viewHolder.btn_ask_for_card.setVisibility(View.VISIBLE);
+                viewHolder.hasCardIV.setImageResource(R.drawable.ic_card_disabled);
             }
         }
     }
