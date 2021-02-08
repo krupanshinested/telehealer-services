@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
+import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 
@@ -52,6 +53,7 @@ public class CustomUserListItemView extends ConstraintLayout {
     private boolean showAction, showCheckbox, showStatus, showBottomView;
     private View bottomView;
     private ConstraintLayout abnormalIndicatorCl;
+    private CustomButton addChargeBtn;
 
     public CustomUserListItemView(Context context) {
         super(context);
@@ -78,6 +80,7 @@ public class CustomUserListItemView extends ConstraintLayout {
         bottomView = (View) view.findViewById(R.id.bottom_view);
         abnormalIndicatorCl = (ConstraintLayout) view.findViewById(R.id.abnormal_indicator_cl);
         hasCardIV = (ImageView) view.findViewById(R.id.card_iv);
+        addChargeBtn = (CustomButton) view.findViewById(R.id.accept_btn);
 
 
         if (attrs != null) {
@@ -251,5 +254,6 @@ public class CustomUserListItemView extends ConstraintLayout {
 
     public void showCardStatus(PaymentInfo paymentInfo) {
         AppPaymentCardUtils.setCardStatusImage(hasCardIV, paymentInfo);
+        addChargeBtn.setVisibility(VISIBLE);
     }
 }
