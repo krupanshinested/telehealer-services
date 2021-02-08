@@ -29,6 +29,7 @@ import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.EducationalVideo.EducationalVideoDetailFragment;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -164,6 +165,11 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                             case REQUEST_STATUS_OPEN:
                                 viewHolder.slotCl.setVisibility(View.VISIBLE);
                                 viewHolder.actionCl.setVisibility(View.VISIBLE);
+                                viewHolder.hasCardIV.setVisibility(View.VISIBLE);
+                                AppPaymentCardUtils.setCardStatusImage(viewHolder.hasCardIV, patientModel.getPayment_account_info());
+                                if (!AppPaymentCardUtils.hasValidPaymentCard(patientModel.getPayment_account_info())) {
+                                    viewHolder.ackForCardBtn.setVisibility(View.VISIBLE);
+                                }
                                 break;
                             case REQUEST_STATUS_ACCEPTED:
                                 break;
@@ -546,19 +552,19 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                     }
                                 }
                                 break;
-                           case NotificationConstants.EDUCATIONAL_VIDEO:
-                               if (resultModel.getEntity_id() != null) {
-                                   EducationalVideoDetailFragment fragment = new EducationalVideoDetailFragment();
-                                   Bundle detail = new Bundle();
-                                   if (UserType.isUserAssistant()) {
-                                       detail.putString(ArgumentKeys.DOCTOR_GUID, resultModel.getDoctorModel().getUser_guid());
-                                   }
-                                   detail.putString(ArgumentKeys.USER_GUID,resultModel.getPatientModel().getUser_guid());
-                                   detail.putString(ArgumentKeys.EDUCATIONAL_VIDEO_ID,resultModel.getEntity_id()+"");
-                                   fragment.setArguments(detail);
-                                   showSubFragmentInterface.onShowFragment(fragment);
-                               }
-                               break;
+                            case NotificationConstants.EDUCATIONAL_VIDEO:
+                                if (resultModel.getEntity_id() != null) {
+                                    EducationalVideoDetailFragment fragment = new EducationalVideoDetailFragment();
+                                    Bundle detail = new Bundle();
+                                    if (UserType.isUserAssistant()) {
+                                        detail.putString(ArgumentKeys.DOCTOR_GUID, resultModel.getDoctorModel().getUser_guid());
+                                    }
+                                    detail.putString(ArgumentKeys.USER_GUID, resultModel.getPatientModel().getUser_guid());
+                                    detail.putString(ArgumentKeys.EDUCATIONAL_VIDEO_ID, resultModel.getEntity_id() + "");
+                                    fragment.setArguments(detail);
+                                    showSubFragmentInterface.onShowFragment(fragment);
+                                }
+                                break;
                             default:
                                 showUserDetailView(resultModel, finalDoctorModel, finalPatientModel);
                         }
@@ -779,7 +785,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         private CircleImageView avatarCiv;
         private TextView listTitleTv;
         private TextView listSubTitleTv;
-        private ImageView infoIv;
+        private ImageView infoIv, hasCardIV;
         private View bottomView;
         private TextView descriptionTv;
         private ConstraintLayout slotCl;
@@ -796,6 +802,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         private ConstraintLayout actionCl;
         private CustomButton acceptBtn;
         private Button rejectBtn;
+        private Button ackForCardBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -810,6 +817,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
             listTitleTv = (TextView) itemView.findViewById(R.id.list_title_tv);
             listSubTitleTv = (TextView) itemView.findViewById(R.id.list_sub_title_tv);
             infoIv = (ImageView) itemView.findViewById(R.id.info_iv);
+            hasCardIV = (ImageView) itemView.findViewById(R.id.card_iv);
             bottomView = (View) itemView.findViewById(R.id.bottom_view);
             descriptionTv = (TextView) itemView.findViewById(R.id.description_tv);
             slotCl = (ConstraintLayout) itemView.findViewById(R.id.slot_cl);
@@ -826,6 +834,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
             actionCl = (ConstraintLayout) itemView.findViewById(R.id.action_cl);
             acceptBtn = (CustomButton) itemView.findViewById(R.id.accept_btn);
             rejectBtn = (Button) itemView.findViewById(R.id.reject_btn);
+            ackForCardBtn = (Button) itemView.findViewById(R.id.ask_for_card_btn);
 
         }
     }
