@@ -1105,7 +1105,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     }
 
     private void goToWaitingScreen() {
-        if (PermissionChecker.with(getActivity()).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+        if (PermissionChecker.with(getActivity()).checkPermissionForFragment(PermissionConstants.PERMISSION_CAM_MIC, this)) {
             Intent i = new Intent(getActivity(), GuestLoginScreensActivity.class);
             i.putExtra(ArgumentKeys.GUEST_INFO, patientInvite);
             i.putExtra(ArgumentKeys.GUEST_SCREENTYPE, ArgumentKeys.WAITING_SCREEN);
