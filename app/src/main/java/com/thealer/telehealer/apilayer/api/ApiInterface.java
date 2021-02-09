@@ -486,7 +486,7 @@ public interface ApiInterface {
     @GET("api/sources/{id}")
     Observable<BaseApiResponseModel> getExperimentalFeature(@Path(ID) String id);
 
-    @GET("api/requests")
+    @GET("api/requests-v2")
     Observable<NotificationApiResponseModel> getNotifications(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuid, @Query(TYPE) String filters);
 
     @PUT("api/requests")

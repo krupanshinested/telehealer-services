@@ -341,7 +341,7 @@
                     android:textSize="12sp"
                     app:app_gradient="true"
                     app:corner_radius="25dp"
-                    app:layout_constraintBottom_toTopOf="@id/ask_for_card_btn"
+                    app:layout_constraintBottom_toTopOf="@id/btn_barrier"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:text_color="@color/colorWhite" />
@@ -354,9 +354,15 @@
                     android:text="@string/reject"
                     android:textColor="@color/red"
                     android:textSize="12sp"
-                    app:layout_constraintBottom_toTopOf="@id/ask_for_card_btn"
                     app:layout_constraintEnd_toStartOf="@id/accept_btn"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/btn_barrier"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="accept_btn,reject_btn" />
 
 
                 <Button
@@ -364,7 +370,7 @@
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/btn_primary"
@@ -378,7 +384,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/accept_btn"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_barrier"
                     app:layout_constraintWidth_max="@dimen/max_width"
                     tools:visibility="visible" />
 
