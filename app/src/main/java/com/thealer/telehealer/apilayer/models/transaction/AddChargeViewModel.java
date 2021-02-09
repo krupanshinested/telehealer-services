@@ -19,7 +19,6 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     private final ArrayList<MasterResp.MasterItem> listChargeTypes = new ArrayList<>();
 
-    private int selectedReason = -1;
     private int selectedChargeTypeId = -1;
 
     private Calendar selectedFromDate = null;
@@ -54,14 +53,24 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     }
 
+    public void setSelectedReason(int selectedReason) {
+        if (selectedReason != -1) {
+            for (ReasonOption reason : reasonOptions) {
+                if (reason.getValue() == selectedReason)
+                    reason.setSelected(true);
+            }
+        }
+    }
+
+
     private void setUpReason() {
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.VISIT, "Visit"));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.MEDICINE, "Medicine"));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.SUPPLIES, "Supplies"));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.CCM, "CCM"));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.RPM, "RMP"));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.BHI, "BHI"));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.CONCIERGE, "Concierge"));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.VISIT, "Visit", 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.MEDICINE, "Medicine", 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.SUPPLIES, "Supplies", 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.CCM, "CCM", 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.RPM, "RMP", 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.BHI, "BHI", 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.CONCIERGE, "Concierge", 0));
 
     }
 
@@ -74,24 +83,20 @@ public class AddChargeViewModel extends BaseApiViewModel {
         return null;
     }
 
+    public boolean isReasonSelected(int value) {
+        for (ReasonOption option : reasonOptions) {
+            if (option.getValue() == value)
+                return option.isSelected();
+        }
+        return false;
+    }
+
     public ArrayList<MasterResp.MasterItem> getListChargeTypes() {
         return listChargeTypes;
     }
 
     public List<ReasonOption> getReasonOptions() {
         return reasonOptions;
-    }
-
-    public int getSelectedReason() {
-        return selectedReason;
-    }
-
-    public void setSelectedReason(int selectedReason) {
-        this.selectedReason = selectedReason;
-    }
-
-    public int getSelectedChargeTypeId() {
-        return selectedChargeTypeId;
     }
 
     public void setSelectedChargeTypeId(int selectedChargeTypeId) {

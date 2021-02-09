@@ -24,9 +24,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 public class AddChargeActivity extends BaseActivity implements View.OnClickListener {
 
@@ -49,6 +47,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private MasterApiViewModel masterApiViewModel;
     private AddChargeViewModel addChargeViewModel;
 
+    private ReasonOptionAdapter adapterReason;
+
     public static String EXTRA_REASON = "reason";
 
     @Override
@@ -60,6 +60,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         addChargeViewModel.setSelectedReason(getIntent().getIntExtra(EXTRA_REASON, -1));
         masterApiViewModel.fetchMasters();
         updateUI();
+        checkForVisitAndSetUI();
     }
 
 
@@ -77,10 +78,14 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         tvFromDate = findViewById(R.id.tvFromDate);
         tvToDate = findViewById(R.id.tvToDate);
         etTextField = findViewById(R.id.etTextField);
+        etFees = findViewById(R.id.etFees);
 
         layoutChargeType.setOnClickListener(this);
         layoutFromDate.setOnClickListener(this);
         layoutToDate.setOnClickListener(this);
+
+        rvReason.setNestedScrollingEnabled(false);
+
 
     }
 
@@ -108,40 +113,32 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void updateUI() {
-        if (addChargeViewModel.getSelectedReason() == -1) {
-            ReasonOptionAdapter adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), pos -> {
-                rvReason.setVisibility(View.GONE);
-                tvReason.setText(addChargeViewModel.getReasonOptions().get(pos).getTitle());
-                addChargeViewModel.setSelectedReason(addChargeViewModel.getReasonOptions().get(pos).getValue());
-                showUIByReason();
-            });
-            rvReason.setAdapter(adapterReason);
-            layoutReason.setOnClickListener(this);
-            ivReason.setVisibility(View.VISIBLE);
-            return;
-        }
-        ReasonOption selectedOption = addChargeViewModel.getReasonByValue(addChargeViewModel.getSelectedReason());
-        if (selectedOption != null) {
-            tvReason.setText(selectedOption.getTitle());
-            layoutReason.setOnClickListener(null);
-            ivReason.setVisibility(View.GONE);
-
-            showUIByReason();
+        for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
+            if (reasonOption.isSelected()) {
+                showUIByReason(reasonOption.getValue());
+            }
         }
     }
 
-    private void showUIByReason() {
-        layoutFromDate.setVisibility(View.GONE);
-        layoutToDate.setVisibility(View.GONE);
-        etTextField.setVisibility(View.GONE);
 
-        etTextField.setText(null);
-        tvFromDate.setText(null);
-        tvToDate.setText(null);
-        addChargeViewModel.setSelectedFromDate(null);
-        addChargeViewModel.setSelectedToDate(null);
+    private void checkForVisitAndSetUI() {
+        if (addChargeViewModel.isReasonSelected(Constants.ChargeReason.VISIT)) {
+            layoutReason.setVisibility(View.VISIBLE);
+            etFees.setVisibility(View.VISIBLE);
+        } else {
+            adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), pos -> {
+                addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
+                adapterReason.notifyItemChanged(pos);
+                showUIByReason(addChargeViewModel.getReasonOptions().get(pos).getValue());
+            });
+            rvReason.setAdapter(adapterReason);
+            ivReason.setVisibility(View.VISIBLE);
 
-        switch (addChargeViewModel.getSelectedReason()) {
+        }
+    }
+
+    private void showUIByReason(int reason) {
+        switch (reason) {
             case Constants.ChargeReason.BHI:
             case Constants.ChargeReason.CCM:
             case Constants.ChargeReason.RPM:
@@ -166,8 +163,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 layoutFromDate.setVisibility(View.VISIBLE);
                 break;
             }
-
-
         }
     }
 

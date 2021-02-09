@@ -6,9 +6,14 @@ public class ReasonOption {
 
     private int value;
 
-    public ReasonOption(int value, String title) {
+    private int fee;
+
+    private boolean isSelected;
+
+    public ReasonOption(int value, String title, int fee) {
         this.value = value;
         this.title = title;
+        this.fee = fee;
     }
 
     public String getTitle() {
@@ -25,5 +30,21 @@ public class ReasonOption {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public int getFee() {
+        return fee;
+    }
+
+    public void setFee(int fee) {
+        this.fee = fee;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

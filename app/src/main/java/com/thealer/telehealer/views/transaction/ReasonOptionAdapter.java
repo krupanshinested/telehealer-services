@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.transaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,13 +29,14 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
     @NonNull
     @Override
     public TransactionOptionVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_transaction_options, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_fee_reason, parent, false);
         return new TransactionOptionVH(view, onOptionSelected);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TransactionOptionVH holder, int position) {
-        holder.title.setText(list.get(position).getTitle());
+        holder.cbReason.setText(list.get(position).getTitle());
+        holder.cbReason.setSelected(list.get(position).isSelected());
     }
 
     @Override
@@ -44,12 +46,12 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
 
     public static class TransactionOptionVH extends RecyclerView.ViewHolder {
 
-        TextView title;
+        CheckBox cbReason;
 
         public TransactionOptionVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
-            title = itemView.findViewById(R.id.tv_title);
-            itemView.setOnClickListener(new View.OnClickListener() {
+            cbReason = itemView.findViewById(R.id.item_cb);
+            cbReason.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onOptionSelected.onSelected(getAdapterPosition());
