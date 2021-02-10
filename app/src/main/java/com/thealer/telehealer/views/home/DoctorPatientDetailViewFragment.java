@@ -963,15 +963,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 break;
             case RequestID.REQ_CARD_INFO:
             case RequestID.REQ_CARD_EXPIRE:
-                if (!UserType.isUserAssistant()) {
-                    if (resultCode == Activity.RESULT_OK) {
-                        AppPaymentCardUtils.startPaymentIntent(getActivity(), UserType.isUserDoctor());
-                    } else {
-                        if (UserType.isUserPatient()) {
-                            createPatientInvite();
-                            goToWaitingScreen();
-                        }
-                    }
+                if (UserType.isUserPatient()) {
+                    createPatientInvite();
+                    goToWaitingScreen();
                 }
                 break;
 

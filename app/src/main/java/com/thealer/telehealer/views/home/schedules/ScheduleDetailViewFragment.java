@@ -104,8 +104,6 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private GuestLoginApiResponseModel guestLoginApiResponseModel;
     private PatientInvite patientInvite;
 
-    private boolean isNotWantToAddCard;
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -147,7 +145,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
                         guestLoginApiResponseModel = (GuestLoginApiResponseModel) baseApiResponseModel;
                         if (guestLoginApiResponseModel.isSuccess()) {
-                            if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info()) && !isNotWantToAddCard) {
+                            if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info())) {
                                 Bundle bundle = new Bundle();
                                 bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
                                 bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
@@ -160,13 +158,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                                 AppPaymentCardUtils.handleCardCasesFromPaymentInfo(ScheduleDetailViewFragment.this, guestLoginApiResponseModel.getPayment_account_info(), null);
                             } else {
                                 callSuccessDialogBroadcast();
-                                Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(), "", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
-                                patientDetails.setHasValidCard(AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info()));
-                                patientInvite = new PatientInvite();
-                                patientInvite.setPatientinfo(patientDetails);
-                                patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
-                                patientInvite.setApiKey(guestLoginApiResponseModel.getApiKey());
-                                patientInvite.setToken(guestLoginApiResponseModel.getToken());
+                                createPatientInvite();
                             }
                         } else {
                             showToast(guestLoginApiResponseModel.getMessage());
@@ -192,6 +184,16 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                     }
                 });
 
+    }
+
+    private void createPatientInvite() {
+        Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(), "", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
+        patientDetails.setHasValidCard(AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info()));
+        patientInvite = new PatientInvite();
+        patientInvite.setPatientinfo(patientDetails);
+        patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
+        patientInvite.setApiKey(guestLoginApiResponseModel.getApiKey());
+        patientInvite.setToken(guestLoginApiResponseModel.getToken());
     }
 
     @Nullable
@@ -536,15 +538,9 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 break;
             case RequestID.REQ_CARD_INFO:
             case RequestID.REQ_CARD_EXPIRE:
-                if (!UserType.isUserAssistant()) {
-                    if (resultCode == Activity.RESULT_OK) {
-                        AppPaymentCardUtils.startPaymentIntent(getActivity(), UserType.isUserDoctor());
-                    } else {
-                        if (UserType.isUserPatient()) {
-                            isNotWantToAddCard = true;
-                            proceedForWaitingRoom();
-                        }
-                    }
+                if (UserType.isUserPatient()) {
+                    createPatientInvite();
+                    goToWaitingScreen();
                 }
                 break;
 
