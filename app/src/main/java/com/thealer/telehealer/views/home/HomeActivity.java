@@ -80,6 +80,7 @@ import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import java.util.Calendar;
 import java.util.List;
@@ -555,6 +556,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         setDoctorPatientTitle();
         DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
         setFragment(doctorPatientListingFragment);
+
+        /*TransactionListFragment transactionListFragment=new TransactionListFragment();
+        setFragment(transactionListFragment);*/
     }
 
     private void setDoctorPatientTitle() {

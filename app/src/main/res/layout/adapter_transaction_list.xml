@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginEnd="5dp">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp">
+
+        <TableRow style="@style/TransactionListRow">
+
+            <TextView
+                style="@style/TransactionRowLbl"
+
+                android:text="@string/lbl_transaction_date_time" />
+
+            <TextView
+                style="@style/TransactionRowValue"
+                android:text="21 Jan 2021 | 03:15 AM" />
+        </TableRow>
+
+        <TableRow style="@style/TransactionListRow">
+
+            <TextView
+                style="@style/TransactionRowLbl"
+                android:text="@string/lbl_service_date" />
+
+            <TextView
+                style="@style/TransactionRowValue"
+                android:text="20 Jan 2021" />
+        </TableRow>
+
+        <TableRow style="@style/TransactionListRow">
+
+            <TextView
+                style="@style/TransactionRowLbl"
+                android:text="@string/lbl_patient" />
+
+            <TextView
+                style="@style/TransactionRowValue"
+                android:text="Bella Tallyer" />
+        </TableRow>
+
+        <TableRow style="@style/TransactionListRow">
+
+            <TextView
+                style="@style/TransactionRowLbl"
+                android:text="@string/lbl_type_of_charge" />
+
+            <TextView
+                style="@style/TransactionRowValue"
+                android:text="Co-Pay" />
+        </TableRow>
+
+        <TableRow style="@style/TransactionListRow">
+
+            <TextView
+                style="@style/TransactionRowLbl"
+                android:text="@string/lbl_reason" />
+
+            <TextView
+                style="@style/TransactionRowValue"
+                android:text="Medicine" />
+        </TableRow>
+
+        <TableRow style="@style/TransactionListRow">
+
+            <TextView
+                style="@style/TransactionRowLbl"
+                android:text="@string/lbl_charge" />
+
+            <TextView
+                style="@style/TransactionRowValue"
+                android:text=" $28.00" />
+        </TableRow>
+
+        <TableRow style="@style/TransactionListRow">
+
+            <TextView
+                style="@style/TransactionRowLbl"
+                android:text="@string/lbl_status" />
+
+            <TextView
+                style="@style/TransactionRowValue"
+                android:text="Success" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/btnRefund"
+                style="?attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                android:layout_weight=".5"
+                android:background="@drawable/btn_theme_orange"
+                android:text="@string/lbl_refund"
+                android:textAllCaps="false"
+                android:textColor="@color/bt_white" />
+
+            <Button
+                android:id="@+id/btnReciept"
+                style="?attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                android:layout_weight=".5"
+                android:background="@drawable/btn_theme_blue"
+                android:text="@string/lbl_receipt"
+                android:textAllCaps="false"
+                android:textColor="@color/bt_white" />
+
+
+            <Button
+                android:id="@+id/btnProcessPayment"
+                style="?attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_theme_green"
+                android:text="@string/lbl_process_payment"
+                android:textAllCaps="false"
+                android:textColor="@color/bt_white" />
+        </TableRow>
+
+
+    </TableLayout>
+</androidx.cardview.widget.CardView>

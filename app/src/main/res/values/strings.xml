@@ -1503,6 +1503,13 @@
     <string name="lbl_supplier">Supplier</string>
     <string name="lbl_from_date">From Date</string>
     <string name="lbl_to_date">To Date</string>
-    <string name="lbl_service_date">Service Date</string>
+    <string name="lbl_service_date">Date of service</string>
+    <string name="lbl_transaction_date_time"><![CDATA[Transaction Date & Time]]></string>
+    <string name="lbl_patient">Patient</string>
+    <string name="lbl_charge">Charge</string>
+    <string name="lbl_status">Status</string>
+    <string name="lbl_refund">Refund</string>
+    <string name="lbl_receipt">Receipt</string>
+    <string name="lbl_process_payment">Process Payment</string>
 
 </resources>

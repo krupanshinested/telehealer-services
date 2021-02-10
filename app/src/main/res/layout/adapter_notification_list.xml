@@ -373,7 +373,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="10dp"
-                    android:background="@drawable/btn_primary"
+                    android:background="@drawable/btn_theme_green"
                     android:gravity="center"
                     android:stateListAnimator="@null"
                     android:text="@string/lbl_ask_to_add_credit_card"
