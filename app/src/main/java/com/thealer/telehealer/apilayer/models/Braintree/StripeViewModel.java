@@ -5,6 +5,7 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.stripe.android.model.PaymentMethod;
 import com.stripe.android.view.BillingAddressFields;

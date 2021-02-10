@@ -1,10 +1,8 @@
 package com.thealer.telehealer.views.settings;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,20 +17,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.appbar.AppBarLayout;
-import com.stripe.android.ApiResultCallback;
-import com.stripe.android.CustomerSession;
-import com.stripe.android.PaymentSessionConfig;
-import com.stripe.android.SetupIntentResult;
-import com.stripe.android.Stripe;
-import com.stripe.android.model.ConfirmSetupIntentParams;
-import com.stripe.android.model.PaymentMethod;
-import com.stripe.android.view.BillingAddressFields;
-import com.stripe.android.view.PaymentMethodsActivityStarter;
-import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.Braintree.StripeViewModel;
 import com.thealer.telehealer.apilayer.models.Payments.Transaction;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionApiViewModel;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
@@ -40,25 +27,16 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
-import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
-import com.thealer.telehealer.stripe.SetUpIntentResp;
+import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
-import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.settings.Adapters.PaymentAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import static com.thealer.telehealer.TeleHealerApplication.application;
 
 
 /**
@@ -73,10 +51,6 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
     private TransactionApiViewModel transactionApiViewModel;
 
-    Stripe stripe = new Stripe(application, BuildConfig.STRIPE_KEY);
-
-    private StripeViewModel stripeViewModel;
-
 
     private PaymentAdapter paymentAdapter;
     private AppBarLayout appbarLayout;
@@ -86,7 +60,6 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
     private TextView nextTv;
     private ImageView closeIv;
     private LinearLayout addCardButton;
-    boolean isOpened = false;
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -190,54 +163,9 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             }
         });
 
-
-        stripeViewModel = new ViewModelProvider(this).get(StripeViewModel.class);
-
-        stripeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel instanceof SetUpIntentResp) {
-                    String clientSecret = ((SetUpIntentResp) baseApiResponseModel).getClientSecret();
-                    if (clientSecret != null && getActivity() != null)
-                        stripe.confirmSetupIntent(getActivity(), ConfirmSetupIntentParams.create(stripeViewModel.getPaymentMethodId(), clientSecret));
-
-                } else if ("SET_DEFAULT".equals(baseApiResponseModel.getMessage())) {
-                    if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
-                        if (getActivity() instanceof ProfileSettingsActivity) {
-                            getActivity().finish();
-                        } else {
-                            startActivity(new Intent(getActivity(), HomeActivity.class));
-                            getActivity().finishAffinity();
-                        }
-                    }
-                }
-                openPayment();
-
-            }
-        });
-        stripeViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
-            @Override
-            public void onChanged(@Nullable ErrorModel errorModel) {
-                if (errorModel != null)
-                    openPayment();
-            }
-        });
-
-        stripeViewModel.getDefaultCard();
-        CustomerSession.initCustomerSession(getContext(), new AppEphemeralKeyProvider(stripeViewModel.getAuthApiService()));
-
         if (getActivity() instanceof BaseActivity) {
             ((BaseActivity) getActivity()).attachObserver(transactionApiViewModel);
-            ((BaseActivity) getActivity()).attachObserver(stripeViewModel);
-        }
-    }
-    private void openPayment(){
-        if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
-            if (!isOpened) {
-                isOpened = true;
-                stripeViewModel.openPaymentScreen(getActivity());
 
-            }
         }
     }
 
@@ -248,56 +176,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
     @Override
     public void doCurrentTransaction() {
-        stripeViewModel.openPaymentScreen(getActivity());
+        startActivity(new Intent(getActivity(), PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
 //        onActionCompleteInterface.onCompletionResult(RequestID.CARD_INFORMATION_VIEW, true, null);
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PaymentMethodsActivityStarter.REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO)
-                    if (getActivity() instanceof ProfileSettingsActivity) {
-                        getActivity().finish();
-                    } else {
-                        getActivity().finishAffinity();
-                    }
-                return;
-            }
-            PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
-            if (result != null && result.paymentMethod != null) {
-                if (result.paymentMethod.id.equals(stripeViewModel.getPaymentMethodId())) {
-                    if (getActivity().getIntent().getIntExtra(ArgumentKeys.VIEW_TYPE, 0) == ArgumentKeys.PAYMENT_INFO) {
-                        if (getActivity() instanceof ProfileSettingsActivity) {
-                            getActivity().finish();
-                        } else {
-                            getActivity().finishAffinity();
-                        }
-                    }
-                    return;
-                }
-
-                setDefaultMethod(result.paymentMethod.id);
-                stripeViewModel.setPaymentMethodId(result.paymentMethod.id);
-                stripe.onSetupResult(requestCode, data, new ApiResultCallback<SetupIntentResult>() {
-                    @Override
-                    public void onSuccess(@NotNull SetupIntentResult setupIntentResult) {
-                        Log.e("setupresult", "" + setupIntentResult.getIntent().getPaymentMethodId());
-                    }
-
-                    @Override
-                    public void onError(@NotNull Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
-        }
-    }
-
-    private void setDefaultMethod(String paymentMethodId) {
-        stripeViewModel.makeDefaultCard(paymentMethodId);
     }
 }

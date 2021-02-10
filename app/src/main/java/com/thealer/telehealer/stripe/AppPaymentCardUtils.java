@@ -13,8 +13,6 @@ import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.views.common.ContentActivity;
-import com.thealer.telehealer.views.home.HomeActivity;
 
 public class AppPaymentCardUtils {
 
@@ -67,7 +65,7 @@ public class AppPaymentCardUtils {
 
 
     private static Intent getCardNotAddedIntent(Activity activity, @Nullable String doctorName) {
-        Intent intent = new Intent(activity, ContentActivity.class);
+        Intent intent = new Intent(activity, PaymentContentActivity.class);
         String description;
         if (UserType.isUserDoctor()) {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(R.string.proceed));
@@ -86,8 +84,7 @@ public class AppPaymentCardUtils {
 
     private static Intent getCardExpiredIntent(Activity activity, int cardCount, @Nullable String doctorName) {
         boolean doesUserHasMultipleCards = cardCount > 1;
-        Intent intent = new Intent(activity, ContentActivity.class);
-
+        Intent intent = new Intent(activity, PaymentContentActivity.class);
         String description;
         if (UserType.isUserDoctor()) {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(doesUserHasMultipleCards ? R.string.lbl_manage_cards : R.string.lbl_add_card));

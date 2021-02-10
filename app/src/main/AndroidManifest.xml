@@ -37,9 +37,9 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        tools:replace="android:allowBackup"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup">
         <activity android:name=".views.guestlogin.screens.PatientWaitingRoom" />
         <activity android:name=".views.guestlogin.screens.GuestUserSignupActivity" />
         <activity
@@ -114,8 +114,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.common.ContentActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".views.call.CallMessageActivity"
             android:screenOrientation="portrait" />
@@ -202,6 +202,11 @@
         <activity
             android:name=".views.settings.accessLogs.AccessLogActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".stripe.PaymentContentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Transparent"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
