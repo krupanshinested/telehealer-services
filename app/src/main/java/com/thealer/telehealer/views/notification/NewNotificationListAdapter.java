@@ -16,13 +16,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
@@ -84,13 +84,16 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     private List<NotificationApiResponseModel.ResultBean.RequestsBean> notificationList;
     private int selectedSlot = 0;
     private NotificationApiViewModel notificationApiViewModel;
+    private AskToAddCardViewModel askToAddCardViewModel;
+
     private ShowSubFragmentInterface showSubFragmentInterface;
 
-    public NewNotificationListAdapter(FragmentActivity activity) {
+    public NewNotificationListAdapter(FragmentActivity activity, AskToAddCardViewModel askToAddCardViewModel) {
         this.activity = activity;
         modelList = new ArrayList<>();
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
         notificationApiViewModel = new ViewModelProvider(activity).get(NotificationApiViewModel.class);
+        this.askToAddCardViewModel = askToAddCardViewModel;
     }
 
     @NonNull
@@ -169,7 +172,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 if (!UserType.isUserPatient()) {
                                     AppPaymentCardUtils.setCardStatusImage(viewHolder.hasCardIV, patientModel.getPayment_account_info());
                                     if (!AppPaymentCardUtils.hasValidPaymentCard(patientModel.getPayment_account_info())) {
-                                        viewHolder.ackForCardBtn.setVisibility(View.VISIBLE);
+                                        viewHolder.askForCardBtn.setVisibility(View.VISIBLE);
                                     }
                                 }
                                 break;
@@ -658,6 +661,17 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                     }
                 });
 
+                viewHolder.askForCardBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (UserType.isUserAssistant())
+                            askToAddCardViewModel.askToAddCard(finalPatientModel.getUser_guid(), finalDoctorModel.getUser_guid());
+                        else {
+                            askToAddCardViewModel.askToAddCard(finalPatientModel.getUser_guid(), null);
+                        }
+                    }
+                });
+
                 if (!resultModel.isIs_requestee()) {
                     viewHolder.actionCl.setVisibility(View.GONE);
                     if (resultModel.isRequestor_read_status()) {
@@ -804,7 +818,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         private ConstraintLayout actionCl;
         private CustomButton acceptBtn;
         private Button rejectBtn;
-        private Button ackForCardBtn;
+        private Button askForCardBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -836,7 +850,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
             actionCl = (ConstraintLayout) itemView.findViewById(R.id.action_cl);
             acceptBtn = (CustomButton) itemView.findViewById(R.id.accept_btn);
             rejectBtn = (Button) itemView.findViewById(R.id.reject_btn);
-            ackForCardBtn = (Button) itemView.findViewById(R.id.ask_for_card_btn);
+            askForCardBtn = (Button) itemView.findViewById(R.id.ask_for_card_btn);
 
         }
     }

@@ -24,10 +24,12 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileApiResponseModel;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -62,6 +64,7 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
     private ImageView back_iv;
     private TextView toolbar_title;
     private PatientWaitingRoomModel patientWaitingRoomModel;
+    private AskToAddCardViewModel askToAddCardViewModel;
     private Patientinfo selectedPaitentinfo = null;
 
 
@@ -151,13 +154,34 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
 
             @Override
             public void onAskToAddCardClick(Patientinfo data) {
-                // TODO: 4/2/21 Send event in pub-nub or call api to fire notification.
+                askToAddCardViewModel.askToAddCard(data.getUserGuid(), doctorGuuid);
             }
         });
 
         paitentWaitingRecyclerview.getRecyclerView().setAdapter(adaper);
 
         patientWaitingRoomModel = new ViewModelProvider(this).get(PatientWaitingRoomModel.class);
+
+        askToAddCardViewModel = new ViewModelProvider(this).get(AskToAddCardViewModel.class);
+        attachObserver(askToAddCardViewModel);
+        askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                Utils.showAlertDialog(PatientWaitingRoom.this, getString(R.string.error),
+                        errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                        null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+            }
+        });
 
 
         back_iv.setOnClickListener(this::onClick);
