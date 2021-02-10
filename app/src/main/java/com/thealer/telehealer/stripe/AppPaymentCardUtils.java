@@ -25,6 +25,19 @@ public class AppPaymentCardUtils {
     }
 
     /**
+     * @param activity   instance of activity
+     * @param errorModel instance of error model from api response
+     */
+    public static void handleCardCasesFromErrorModel(Activity activity, ErrorModel errorModel, @Nullable String doctorName) {
+        if (!errorModel.isCCCaptured()) {
+            openCardNotAddedScreen(activity, doctorName);
+
+        } else if (!errorModel.isDefaultCardValid()) {
+            openCardExpiredScreen(activity, errorModel.getSavedCardsCount(), doctorName);
+        }
+    }
+
+    /**
      * @param fragment   instance of fragment
      * @param errorModel instance of error model from api response
      */
