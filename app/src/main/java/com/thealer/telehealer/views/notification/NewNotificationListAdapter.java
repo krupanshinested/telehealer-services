@@ -166,9 +166,11 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 viewHolder.slotCl.setVisibility(View.VISIBLE);
                                 viewHolder.actionCl.setVisibility(View.VISIBLE);
                                 viewHolder.hasCardIV.setVisibility(View.VISIBLE);
-                                AppPaymentCardUtils.setCardStatusImage(viewHolder.hasCardIV, patientModel.getPayment_account_info());
-                                if (!AppPaymentCardUtils.hasValidPaymentCard(patientModel.getPayment_account_info())) {
-                                    viewHolder.ackForCardBtn.setVisibility(View.VISIBLE);
+                                if (!UserType.isUserPatient()) {
+                                    AppPaymentCardUtils.setCardStatusImage(viewHolder.hasCardIV, patientModel.getPayment_account_info());
+                                    if (!AppPaymentCardUtils.hasValidPaymentCard(patientModel.getPayment_account_info())) {
+                                        viewHolder.ackForCardBtn.setVisibility(View.VISIBLE);
+                                    }
                                 }
                                 break;
                             case REQUEST_STATUS_ACCEPTED:

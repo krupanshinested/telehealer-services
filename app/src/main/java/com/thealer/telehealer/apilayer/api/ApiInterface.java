@@ -702,5 +702,8 @@ public interface ApiInterface {
     @GET("/master/get")
     Observable<MasterResp> fetchMasters();
 
+    @POST("/api/charge/send-notification")
+    Observable<BaseApiResponseModel> askToAddCard(@Body() HashMap<String, String> req);
+
 
 }

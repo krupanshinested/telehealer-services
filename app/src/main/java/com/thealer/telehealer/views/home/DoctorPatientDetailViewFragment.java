@@ -51,6 +51,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiResponseModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -138,6 +139,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private AssociationApiViewModel associationApiViewModel;
     private GuestloginViewModel guestloginViewModel;
     private GuestLoginApiResponseModel guestLoginApiResponseModel;
+    private AskToAddCardViewModel askToAddCardViewModel;
 
     private List<Fragment> fragmentList;
     private List<String> titleList;
@@ -272,6 +274,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                     }
                 });
+
+        askToAddCardViewModel = new ViewModelProvider(this).get(AskToAddCardViewModel.class);
+        attachObserverInterface.attachObserver(askToAddCardViewModel);
     }
 
     private void createPatientInvite() {
@@ -544,7 +549,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         startCall(finalCommonUserApiResponseModel, callType);
                         break;
                     case 1:
-                        // TODO: 3/2/21 call api to send add credit card notification.
+                        askToAddCardViewModel.askToAddCard(finalCommonUserApiResponseModel.getUser_guid(), doctorGuid);
                         break;
                     default:
                         break;
