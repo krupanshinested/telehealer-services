@@ -246,4 +246,6 @@ public class ArgumentKeys {
 
     public static final String IS_USER_ADMITTED = "IS_USER_ADMITTED";
 
+    public static final String IS_HEAD_LESS = "IS_HEAD_LESS";
+
 }

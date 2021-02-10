@@ -74,10 +74,6 @@ public class CallPlacingActivity extends BaseActivity {
 
     private final OpenTokViewModel openTokViewModel = new OpenTokViewModel(application);
 
-    Stripe stripe = new Stripe(application, BuildConfig.STRIPE_KEY);
-
-    private StripeViewModel stripeViewModel;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -167,45 +163,12 @@ public class CallPlacingActivity extends BaseActivity {
 
             String errorMessage = null;
             if (errorModel != null) {
-                Type type = new TypeToken<HashMap<String, Object>>() {
-                }.getType();
-                HashMap<String, Object> errorObject = new Gson().fromJson(errorModel.getResponse(), type);
-
-
-                if (errorObject.get("is_cc_captured") != null) {
-                    Boolean is_cc_captured = (Boolean) errorObject.get("is_cc_captured");
-                    if (is_cc_captured != null) {
-                        if (!is_cc_captured) {
-                            openTrialContentScreen(UserType.isUserDoctor(), callRequest.getDoctorName());
-
-                            if (UserType.isUserDoctor()) {
-                                EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
-                            }
-                            return;
-                        } else {
-                            if (errorObject.get("is_default_card_valid") != null) {
-                                Boolean is_default_card_valid = (Boolean) errorObject.get("is_default_card_valid");
-
-                                if (is_default_card_valid != null && !is_default_card_valid) {
-                                    int counts = 0;
-                                    if (errorObject.containsKey("saved_cards_count")) {
-                                        if (errorObject.get("saved_cards_count") instanceof Integer) {
-                                            counts = (Integer) errorObject.get("saved_cards_count");
-                                        } else if (errorObject.get("saved_cards_count") instanceof Double)
-                                            counts = ((Double) errorObject.get("saved_cards_count")).intValue();
-                                    }
-                                    if (UserType.isUserDoctor()) {
-                                        initStripeVM();
-                                        EventRecorder.recordTrialExpired("TRIAL_EXPIRED");
-                                    }
-                                    AppPaymentCardUtils.openCardExpiredScreen(CallPlacingActivity.this, counts, callRequest.getDoctorName());
-                                    return;
-                                }
-                            }
-                        }
-                    }
+                if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                    errorMessage = errorModel.getMessage();
+                } else {
+                    AppPaymentCardUtils.handleCardCasesFromErrorModel(this, errorModel, callRequest.getDoctorName());
                 }
-                errorMessage = errorModel.getMessage();
+
             } else {
                 errorMessage = getString(R.string.something_went_wrong_try_again);
             }
@@ -304,73 +267,10 @@ public class CallPlacingActivity extends BaseActivity {
         }
     }
 
-    private void openTrialContentScreen(Boolean forDoctor, String doctorName) {
-        didOpenTrialScreen();
-
-        Intent intent = new Intent(CallPlacingActivity.this, ContentActivity.class);
-        int requestId;
-
-        if (forDoctor) {
-            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.proceed));
-            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
-
-            String description = String.format(getString(R.string.trial_period_expired_doc_sec_1), getString(R.string.app_name));
-            String url = getString(R.string.pricing_url);
-            description += " <a href=\"" + url + "\">" + url + "</a> ";
-            description += getString(R.string.trial_period_expired_doc_sec_2);
-
-            intent.putExtra(ArgumentKeys.DESCRIPTION, description);
-            requestId = CallPlacingActivity.DOCTOR_PAYMENT_REQUEST;
-            initStripeVM();
-        } else {
-
-            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, getString(R.string.ok));
-            intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, false);
-
-            String name = TextUtils.isEmpty(doctorName) ? getString(R.string.doctor) : doctorName;
-            String description = getString(R.string.trial_period_expired_ma_sec_1, getString(R.string.organization_name), name);
-
-            intent.putExtra(ArgumentKeys.DESCRIPTION, description);
-            requestId = CallPlacingActivity.MA_DOC_PAYMENT_REQUEST;
-        }
-
-        intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
-        intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
-        intent.putExtra(ArgumentKeys.TITLE, getString(R.string.payment_information_required));
-        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
-        intent.putExtra(ArgumentKeys.IS_CHECK_BOX_NEEDED, false);
-
-        this.callRequest = null;
-
-        startActivityForResult(intent, requestId);
-    }
-
-    private void initStripeVM() {
-        if (stripeViewModel == null) {
-            stripeViewModel = new ViewModelProvider(this).get(StripeViewModel.class);
-            stripeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
-                @Override
-                public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                    if (baseApiResponseModel instanceof SetUpIntentResp) {
-                        String clientSecret = ((SetUpIntentResp) baseApiResponseModel).getClientSecret();
-                        if (clientSecret != null)
-                            stripe.confirmSetupIntent(CallPlacingActivity.this, ConfirmSetupIntentParams.create(stripeViewModel.getPaymentMethodId(), clientSecret));
-                    }
-                }
-            });
-            stripeViewModel.getDefaultCard();
-            CustomerSession.initCustomerSession(this, new AppEphemeralKeyProvider(stripeViewModel.getAuthApiService()));
-            attachObserver(stripeViewModel);
-        }
-    }
-
     void didOpenCallKit() {
 
     }
 
-    void didOpenTrialScreen() {
-
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -385,45 +285,9 @@ public class CallPlacingActivity extends BaseActivity {
                     finish();
                 }
                 break;
-
-            case CallPlacingActivity.DOCTOR_PAYMENT_REQUEST:
-            case RequestID.REQ_CARD_EXPIRE: {
-                if (resultCode == Activity.RESULT_CANCELED) {
-                    finish();
-                    return;
-                }
-                stripeViewModel.openPaymentScreen(this);
-                break;
-            }
-
-            case PaymentMethodsActivityStarter.REQUEST_CODE: {
-                if (resultCode == Activity.RESULT_CANCELED) {
-                    finish();
-                    return;
-                }
-
-                PaymentMethodsActivityStarter.Result result = PaymentMethodsActivityStarter.Result.fromIntent(data);
-                if (result != null && result.paymentMethod != null) {
-                    if (result.paymentMethod.id.equals(stripeViewModel.getPaymentMethodId())) {
-                        finish();
-                        return;
-                    }
-
-                    stripeViewModel.makeDefaultCard(result.paymentMethod.id);
-                    stripeViewModel.setPaymentMethodId(result.paymentMethod.id);
-                    stripe.onSetupResult(requestCode, data, new ApiResultCallback<SetupIntentResult>() {
-                        @Override
-                        public void onSuccess(@NotNull SetupIntentResult setupIntentResult) {
-                            Log.e("setupresult", "" + setupIntentResult.getIntent().getPaymentMethodId());
-                        }
-
-                        @Override
-                        public void onError(@NotNull Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                    finish();
-                }
+            case RequestID.REQ_CARD_EXPIRE:
+            case RequestID.REQ_CARD_INFO: {
+                finish();
                 break;
             }
 

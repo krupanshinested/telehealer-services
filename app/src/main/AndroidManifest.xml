@@ -206,6 +206,11 @@
             android:name=".views.transaction.AddChargeActivity"
             android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".stripe.PaymentContentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Transparent"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"

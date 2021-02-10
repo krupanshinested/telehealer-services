@@ -41,6 +41,19 @@ public class AppPaymentCardUtils {
     }
 
     /**
+     * @param activity   instance of activity
+     * @param errorModel instance of error model from api response
+     */
+    public static void handleCardCasesFromErrorModel(Activity activity, ErrorModel errorModel, @Nullable String doctorName) {
+        if (!errorModel.isCCCaptured()) {
+            openCardNotAddedScreen(activity, doctorName);
+
+        } else if (!errorModel.isDefaultCardValid()) {
+            openCardExpiredScreen(activity, errorModel.getSavedCardsCount(), doctorName);
+        }
+    }
+
+    /**
      * @param fragment   instance of fragment
      * @param errorModel instance of error model from api response
      */
@@ -84,7 +97,7 @@ public class AppPaymentCardUtils {
 
 
     private static Intent getCardNotAddedIntent(Activity activity, @Nullable String doctorName) {
-        Intent intent = new Intent(activity, ContentActivity.class);
+        Intent intent = new Intent(activity, PaymentContentActivity.class);
         String description;
         if (UserType.isUserDoctor()) {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(R.string.proceed));
@@ -108,8 +121,7 @@ public class AppPaymentCardUtils {
 
     private static Intent getCardExpiredIntent(Activity activity, int cardCount, @Nullable String doctorName) {
         boolean doesUserHasMultipleCards = cardCount > 1;
-        Intent intent = new Intent(activity, ContentActivity.class);
-
+        Intent intent = new Intent(activity, PaymentContentActivity.class);
         String description;
         if (UserType.isUserDoctor() || UserType.isUserPatient()) {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(doesUserHasMultipleCards ? R.string.lbl_manage_cards : R.string.lbl_add_card));

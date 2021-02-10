@@ -1007,22 +1007,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (requestCode == PermissionConstants.PERMISSION_CAM_MIC) {
             attachView();
         }
-        if (requestCode == RequestID.REQ_CARD_INFO) {
-            if (!UserType.isUserAssistant()) {
-                if (resultCode == Activity.RESULT_OK) {
-                    AppPaymentCardUtils.startPaymentIntent(this, UserType.isUserDoctor());
-                } else {
-                    if (UserType.isUserDoctor())
-                        finishAffinity();
-                }
-            }
-        }
-        if (requestCode == RequestID.REQ_CARD_EXPIRE) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (UserType.isUserDoctor())
-                    AppPaymentCardUtils.startPaymentIntent(this, false);
-            }
-        }
 
     }
 
