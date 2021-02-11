@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.transaction.TransactionItem;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 
 import java.util.List;
 
@@ -37,6 +38,19 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     @Override
     public void onBindViewHolder(@NonNull TransactionListVH holder, int position) {
         holder.tvStatus.setText(list.get(position).getStatusString());
+        if (UserType.isUserPatient()) {
+            if (list.get(position).getStatus() == Constants.ChargeStatus.CHARGE_PROCESSED) {
+                holder.btnReceipt.setVisibility(View.VISIBLE);
+                holder.actionRow.setVisibility(View.VISIBLE);
+            } else {
+                holder.actionRow.setVisibility(View.GONE);
+            }
+        } else {
+            updateActionsForProvider(holder, position);
+        }
+    }
+
+    private void updateActionsForProvider(@NonNull TransactionListVH holder, int position) {
         switch (list.get(position).getStatus()) {
             case Constants.ChargeStatus.CHARGE_ADDED: {
                 holder.btnProcessPayment.setVisibility(View.VISIBLE);
@@ -73,6 +87,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         Button btnProcessPayment;
         Button btnRefundClick;
         TextView tvStatus;
+        View actionRow;
 
         public TransactionListVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
@@ -80,6 +95,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             btnRefundClick = itemView.findViewById(R.id.btnRefund);
             btnProcessPayment = itemView.findViewById(R.id.btnProcessPayment);
             tvStatus = itemView.findViewById(R.id.tvStatus);
+            actionRow = itemView.findViewById(R.id.actionRow);
 
             btnRefundClick.setOnClickListener(new View.OnClickListener() {
                 @Override
