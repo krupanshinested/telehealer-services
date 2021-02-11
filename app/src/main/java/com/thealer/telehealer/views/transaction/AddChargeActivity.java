@@ -1,9 +1,7 @@
 package com.thealer.telehealer.views.transaction;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,11 +18,9 @@ import com.thealer.telehealer.apilayer.models.master.MasterApiViewModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.AddChargeViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
+import com.thealer.telehealer.apilayer.models.transaction.TextFieldModel;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
-
-import java.util.Calendar;
 
 public class AddChargeActivity extends BaseActivity implements View.OnClickListener {
 
@@ -34,9 +30,13 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     private RecyclerView rvChargeType;
     private RecyclerView rvReason;
+    private RecyclerView rvSuppliers;
+    private RecyclerView rvMedicines;
     private TextView tvChargeType;
     private TextView tvReason;
     private ImageView ivReason;
+    private ImageView imgAddSupplier;
+    private ImageView imgAddMedicine;
 
     private EditText etTextField;
 
@@ -44,6 +44,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private AddChargeViewModel addChargeViewModel;
 
     private ReasonOptionAdapter adapterReason;
+    private TextFieldAdapter adapterSupplier;
+    private TextFieldAdapter adapterMedicine;
 
     private DateRangeView viewBHI;
     private DateRangeView viewCCM;
@@ -83,6 +85,15 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
         etTextField = findViewById(R.id.etTextField);
         etFees = findViewById(R.id.etFees);
+
+        rvSuppliers = findViewById(R.id.rvSuppliers);
+        rvMedicines = findViewById(R.id.rvMedicines);
+
+        imgAddMedicine = findViewById(R.id.imgAddMedicine);
+        imgAddSupplier = findViewById(R.id.imgAddSupplier);
+
+        imgAddMedicine.setOnClickListener(this);
+        imgAddSupplier.setOnClickListener(this);
 
         layoutChargeType.setOnClickListener(this);
 
@@ -134,6 +145,25 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             rvReason.setAdapter(adapterReason);
             ivReason.setVisibility(View.VISIBLE);
 
+
+            adapterSupplier = new TextFieldAdapter(addChargeViewModel.getSuppliers(), getString(R.string.lbl_supplier_name), new TextFieldAdapter.OnOptionSelected() {
+                @Override
+                public void onRemoveField(int pos) {
+                    addChargeViewModel.getSuppliers().remove(pos);
+                    adapterSupplier.notifyItemRemoved(pos);
+                }
+            });
+            adapterMedicine = new TextFieldAdapter(addChargeViewModel.getMedicines(), getString(R.string.lbl_medicine_name), new TextFieldAdapter.OnOptionSelected() {
+                @Override
+                public void onRemoveField(int pos) {
+                    addChargeViewModel.getMedicines().remove(pos);
+                    adapterMedicine.notifyItemRemoved(pos);
+                }
+            });
+
+            rvMedicines.setAdapter(adapterMedicine);
+            rvSuppliers.setAdapter(adapterSupplier);
+
         }
     }
 
@@ -156,13 +186,33 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 break;
             }
             case Constants.ChargeReason.MEDICINE: {
-                etTextField.setHint(R.string.drug_name);
-                etTextField.setVisibility(View.VISIBLE);
+                if (reasonOption.isSelected()) {
+                    if (addChargeViewModel.getMedicines().size() == 0) {
+                        addChargeViewModel.getMedicines().add(new TextFieldModel());
+                        adapterMedicine.notifyDataSetChanged();
+                    }
+                    rvMedicines.setVisibility(View.VISIBLE);
+                    imgAddMedicine.setVisibility(View.VISIBLE);
+                } else {
+                    rvMedicines.setVisibility(View.GONE);
+                    imgAddMedicine.setVisibility(View.GONE);
+                    addChargeViewModel.getMedicines().clear();
+                }
                 break;
             }
             case Constants.ChargeReason.SUPPLIES: {
-                etTextField.setHint(R.string.lbl_supplier);
-                etTextField.setVisibility(View.VISIBLE);
+                if (reasonOption.isSelected()) {
+                    if (addChargeViewModel.getSuppliers().size() == 0) {
+                        addChargeViewModel.getSuppliers().add(new TextFieldModel());
+                        adapterSupplier.notifyDataSetChanged();
+                    }
+                    rvSuppliers.setVisibility(View.VISIBLE);
+                    imgAddSupplier.setVisibility(View.VISIBLE);
+                } else {
+                    rvSuppliers.setVisibility(View.GONE);
+                    imgAddSupplier.setVisibility(View.GONE);
+                    addChargeViewModel.getSuppliers().clear();
+                }
                 break;
             }
             case Constants.ChargeReason.VISIT: {
@@ -186,6 +236,16 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 else
                     rvReason.setVisibility(View.VISIBLE);
                 break;
+            case R.id.imgAddSupplier: {
+                addChargeViewModel.getSuppliers().add(new TextFieldModel());
+                adapterSupplier.notifyDataSetChanged();
+                break;
+            }
+            case R.id.imgAddMedicine: {
+                addChargeViewModel.getMedicines().add(new TextFieldModel());
+                adapterMedicine.notifyDataSetChanged();
+                break;
+            }
 
         }
     }

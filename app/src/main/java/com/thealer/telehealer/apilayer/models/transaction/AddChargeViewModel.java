@@ -10,7 +10,6 @@ import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.common.Constants;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,7 +20,8 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     private int selectedChargeTypeId = -1;
 
-
+    private ArrayList<TextFieldModel> suppliers = new ArrayList<>();
+    private ArrayList<TextFieldModel> medicines = new ArrayList<>();
 
     private final List<ReasonOption> reasonOptions = new ArrayList<>();
 
@@ -102,5 +102,11 @@ public class AddChargeViewModel extends BaseApiViewModel {
         this.selectedChargeTypeId = selectedChargeTypeId;
     }
 
+    public ArrayList<TextFieldModel> getMedicines() {
+        return medicines;
+    }
 
+    public ArrayList<TextFieldModel> getSuppliers() {
+        return suppliers;
+    }
 }
