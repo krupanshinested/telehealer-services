@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.notification;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,9 @@ import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
+import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.EducationalVideo.EducationalVideoDetailFragment;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -168,8 +171,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                             case REQUEST_STATUS_OPEN:
                                 viewHolder.slotCl.setVisibility(View.VISIBLE);
                                 viewHolder.actionCl.setVisibility(View.VISIBLE);
-                                viewHolder.hasCardIV.setVisibility(View.VISIBLE);
                                 if (!UserType.isUserPatient()) {
+                                    viewHolder.hasCardIV.setVisibility(View.VISIBLE);
                                     AppPaymentCardUtils.setCardStatusImage(viewHolder.hasCardIV, patientModel.getPayment_account_info());
                                     if (!AppPaymentCardUtils.hasValidPaymentCard(patientModel.getPayment_account_info())) {
                                         viewHolder.askForCardBtn.setVisibility(View.VISIBLE);
@@ -301,6 +304,20 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                         viewHolder.bottomView.setVisibility(View.VISIBLE);
                         viewHolder.titleTv.setTextColor(activity.getColor(R.color.app_gradient_start));
                         break;
+                    case APNSPayload.creditCardRequested: {
+                        title = activity.getString(R.string.lbl_add_card).toUpperCase();
+                        description = resultModel.getMessage();
+                        viewHolder.descriptionTv.setVisibility(View.VISIBLE);
+                        viewHolder.bottomView.setVisibility(View.VISIBLE);
+                        viewHolder.titleTv.setTextColor(activity.getColor(R.color.app_gradient_start));
+                        viewHolder.askForCardBtn.setText(R.string.lbl_add_card);
+                        viewHolder.acceptBtn.setVisibility(View.GONE);
+                        viewHolder.rejectBtn.setVisibility(View.GONE);
+                        viewHolder.askForCardBtn.setVisibility(View.VISIBLE);
+                        viewHolder.actionCl.setVisibility(View.VISIBLE);
+                        break;
+                    }
+
                 }
 
                 if (isAddRequestStatus) {
@@ -666,8 +683,10 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                     public void onClick(View v) {
                         if (UserType.isUserAssistant())
                             askToAddCardViewModel.askToAddCard(finalPatientModel.getUser_guid(), finalDoctorModel.getUser_guid());
-                        else {
+                        else if (UserType.isUserDoctor()) {
                             askToAddCardViewModel.askToAddCard(finalPatientModel.getUser_guid(), null);
+                        } else if (UserType.isUserPatient()) {
+                            activity.startActivity(new Intent(activity, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
                         }
                     }
                 });

@@ -154,6 +154,7 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
 
             @Override
             public void onAskToAddCardClick(Patientinfo data) {
+                selectedPaitentinfo = data;
                 askToAddCardViewModel.askToAddCard(data.getUserGuid(), doctorGuuid);
             }
         });
@@ -163,6 +164,15 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
         patientWaitingRoomModel = new ViewModelProvider(this).get(PatientWaitingRoomModel.class);
 
         askToAddCardViewModel = new ViewModelProvider(this).get(AskToAddCardViewModel.class);
+        askToAddCardViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (selectedPaitentinfo != null) {
+                    PushPayLoad pushPayLoad = PubNubNotificationPayload.getKickOutPayload(selectedPaitentinfo);
+                    PubnubUtil.shared.publishPushMessage(pushPayLoad, null);
+                }
+            }
+        });
         attachObserver(askToAddCardViewModel);
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override

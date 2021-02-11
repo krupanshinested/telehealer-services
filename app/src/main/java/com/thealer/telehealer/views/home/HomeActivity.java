@@ -554,8 +554,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         showPendingInvitesOption(true);
         helpContent = HelpContent.HELP_DOC_PATIENT;
         setDoctorPatientTitle();
-        /*DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
-        setFragment(doctorPatientListingFragment);*/
+        DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
+        setFragment(doctorPatientListingFragment);
 
         TransactionListFragment transactionListFragment = new TransactionListFragment();
         setFragment(transactionListFragment);

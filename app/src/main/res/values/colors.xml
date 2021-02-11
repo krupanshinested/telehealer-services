@@ -41,8 +41,8 @@
     <color name="bt_white">@color/colorWhite</color>
     <color name="bt_very_light_gray">#E2E2E3</color>
 
-    <color name="bt_theme_green">#90ee90</color>
+    <color name="bt_theme_green">#63EE63</color>
     <color name="bt_theme_orange">#FF9233</color>
-    <color name="bt_theme_blue">@color/color_blue</color>
+    <color name="bt_theme_blue">#3B9EFF</color>
 
 </resources>
