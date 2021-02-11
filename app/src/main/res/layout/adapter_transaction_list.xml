@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="5dp"
     android:layout_marginTop="5dp"
-    android:layout_marginEnd="5dp">
+    android:layout_marginEnd="5dp"
+    app:cardCornerRadius="4dp"
+    app:cardUseCompatPadding="true">
 
     <TableLayout
         android:layout_width="match_parent"
@@ -86,6 +89,7 @@
                 android:text="@string/lbl_status" />
 
             <TextView
+                android:id="@+id/tvStatus"
                 style="@style/TransactionRowValue"
                 android:text="Success" />
         </TableRow>
@@ -102,7 +106,8 @@
                 android:background="@drawable/btn_theme_orange"
                 android:text="@string/lbl_refund"
                 android:textAllCaps="false"
-                android:textColor="@color/bt_white" />
+                android:textColor="@color/bt_white"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnReciept"
@@ -114,7 +119,8 @@
                 android:background="@drawable/btn_theme_blue"
                 android:text="@string/lbl_receipt"
                 android:textAllCaps="false"
-                android:textColor="@color/bt_white" />
+                android:textColor="@color/bt_white"
+                android:visibility="gone" />
 
 
             <Button
@@ -127,7 +133,8 @@
                 android:background="@drawable/btn_theme_green"
                 android:text="@string/lbl_process_payment"
                 android:textAllCaps="false"
-                android:textColor="@color/bt_white" />
+                android:textColor="@color/bt_white"
+                android:visibility="gone" />
         </TableRow>
 
 

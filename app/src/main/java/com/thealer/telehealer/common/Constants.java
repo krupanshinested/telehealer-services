@@ -199,4 +199,11 @@ public class Constants {
         int BHI = 6;
         int CONCIERGE = 7;
     }
+
+    public interface ChargeStatus {
+        int CHARGE_PENDING = 1;
+        int CHARGE_ADDED = 2;
+        int CHARGE_PROCESSED = 3;
+        int CHARGE_PROCESS_FAILED = 4;
+    }
 }

@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.common.Constants;
 
 import java.util.ArrayList;
 
@@ -17,9 +18,9 @@ public class TransactionListViewModel extends BaseApiViewModel {
     }
 
     public void loadTransactions() {
-        for (int i = 0; i < 10; i++) {
-            transactions.add(new TransactionItem());
-        }
+        transactions.add(new TransactionItem(Constants.ChargeStatus.CHARGE_ADDED));
+        transactions.add(new TransactionItem(Constants.ChargeStatus.CHARGE_PROCESSED));
+        transactions.add(new TransactionItem(Constants.ChargeStatus.CHARGE_PROCESS_FAILED));
     }
 
     public ArrayList<TransactionItem> getTransactions() {

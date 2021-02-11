@@ -4,13 +4,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.transaction.TransactionItem;
+import com.thealer.telehealer.common.Constants;
 
 import java.util.List;
 
@@ -34,6 +36,30 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     @Override
     public void onBindViewHolder(@NonNull TransactionListVH holder, int position) {
+        holder.tvStatus.setText(list.get(position).getStatusString());
+        switch (list.get(position).getStatus()) {
+            case Constants.ChargeStatus.CHARGE_ADDED: {
+                holder.btnProcessPayment.setVisibility(View.VISIBLE);
+                holder.btnRefundClick.setVisibility(View.GONE);
+                holder.btnReceipt.setVisibility(View.VISIBLE);
+                holder.btnReceipt.setText(R.string.update);
+                ((LinearLayout.LayoutParams) holder.btnReceipt.getLayoutParams()).weight = 1;
+                break;
+            }
+            case Constants.ChargeStatus.CHARGE_PROCESS_FAILED: {
+                holder.btnProcessPayment.setVisibility(View.VISIBLE);
+                holder.btnReceipt.setVisibility(View.GONE);
+                holder.btnRefundClick.setVisibility(View.GONE);
+                break;
+            }
+            case Constants.ChargeStatus.CHARGE_PROCESSED: {
+                holder.btnProcessPayment.setVisibility(View.GONE);
+                holder.btnReceipt.setVisibility(View.VISIBLE);
+                ((LinearLayout.LayoutParams) holder.btnReceipt.getLayoutParams()).weight = 0.5f;
+                holder.btnRefundClick.setVisibility(View.VISIBLE);
+                break;
+            }
+        }
     }
 
     @Override
@@ -46,12 +72,14 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         Button btnReceipt;
         Button btnProcessPayment;
         Button btnRefundClick;
+        TextView tvStatus;
 
         public TransactionListVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
             btnReceipt = itemView.findViewById(R.id.btnReciept);
             btnRefundClick = itemView.findViewById(R.id.btnRefund);
             btnProcessPayment = itemView.findViewById(R.id.btnProcessPayment);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
 
             btnRefundClick.setOnClickListener(new View.OnClickListener() {
                 @Override
