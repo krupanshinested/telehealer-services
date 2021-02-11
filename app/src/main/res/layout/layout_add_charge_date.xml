@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/containerDate"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="15dp"
+    android:orientation="horizontal">
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/colorBlack_50"
+            android:textSize="14sp"
+            tools:text="Title" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/rowTitle"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:layout_weight="1"
+            android:text="@string/lbl_start_date"
+            android:textColor="@color/colorBlack"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_marginStart="30dp"
+            android:layout_weight="1"
+            android:text="@string/lbl_end_date"
+            android:textColor="@color/colorBlack"
+            android:textSize="12sp" />
+    </TableRow>
+
+    <TableRow>
+
+        <LinearLayout
+            android:id="@+id/layoutFromDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/border_black"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="10dp">
+
+            <TextView
+                android:id="@+id/tvFromDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/lbl_start_date"
+                android:textColorHint="@color/colorBlack_50"
+                android:textSize="12sp" />
+
+            <ImageView
+
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_baseline_date_range_24"
+                app:tint="@color/colorGrey" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutTomDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/border_black"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="10dp">
+
+            <TextView
+                android:id="@+id/tvToDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/lbl_end_date"
+                android:textColorHint="@color/colorBlack_50"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_baseline_date_range_24"
+                app:tint="@color/colorGrey" />
+        </LinearLayout>
+    </TableRow>
+</TableLayout>

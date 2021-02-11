@@ -38,16 +38,18 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private TextView tvReason;
     private ImageView ivReason;
 
-    private LinearLayout layoutFromDate;
-    private LinearLayout layoutToDate;
-    private TextView tvFromDate;
-    private TextView tvToDate;
     private EditText etTextField;
 
     private MasterApiViewModel masterApiViewModel;
     private AddChargeViewModel addChargeViewModel;
 
     private ReasonOptionAdapter adapterReason;
+
+    private DateRangeView viewBHI;
+    private DateRangeView viewCCM;
+    private DateRangeView viewConcierge;
+    private DateRangeView viewRPM;
+
 
     public static String EXTRA_REASON = "reason";
 
@@ -73,16 +75,16 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         tvReason = findViewById(R.id.tvReason);
         ivReason = findViewById(R.id.ivReasonArrow);
 
-        layoutFromDate = findViewById(R.id.layoutFromDate);
-        layoutToDate = findViewById(R.id.layoutTomDate);
-        tvFromDate = findViewById(R.id.tvFromDate);
-        tvToDate = findViewById(R.id.tvToDate);
+        viewBHI = findViewById(R.id.bhi);
+        viewCCM = findViewById(R.id.ccm);
+        viewRPM = findViewById(R.id.rpm);
+        viewConcierge = findViewById(R.id.concierge);
+
+
         etTextField = findViewById(R.id.etTextField);
         etFees = findViewById(R.id.etFees);
 
         layoutChargeType.setOnClickListener(this);
-        layoutFromDate.setOnClickListener(this);
-        layoutToDate.setOnClickListener(this);
 
         rvReason.setNestedScrollingEnabled(false);
 
@@ -114,9 +116,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     private void updateUI() {
         for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
-            if (reasonOption.isSelected()) {
-                showUIByReason(reasonOption.getValue());
-            }
+            showUIByReason(reasonOption);
         }
     }
 
@@ -129,7 +129,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), pos -> {
                 addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
                 adapterReason.notifyItemChanged(pos);
-                showUIByReason(addChargeViewModel.getReasonOptions().get(pos).getValue());
+                showUIByReason(addChargeViewModel.getReasonOptions().get(pos));
             });
             rvReason.setAdapter(adapterReason);
             ivReason.setVisibility(View.VISIBLE);
@@ -137,15 +137,22 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private void showUIByReason(int reason) {
-        switch (reason) {
-            case Constants.ChargeReason.BHI:
-            case Constants.ChargeReason.CCM:
-            case Constants.ChargeReason.RPM:
+    private void showUIByReason(ReasonOption reasonOption) {
+        switch (reasonOption.getValue()) {
+            case Constants.ChargeReason.BHI: {
+                viewBHI.show(reasonOption.isSelected());
+                break;
+            }
+            case Constants.ChargeReason.CCM: {
+                viewCCM.show(reasonOption.isSelected());
+                break;
+            }
+            case Constants.ChargeReason.RPM: {
+                viewRPM.show(reasonOption.isSelected());
+                break;
+            }
             case Constants.ChargeReason.CONCIERGE: {
-                tvFromDate.setHint(R.string.lbl_from_date);
-                layoutFromDate.setVisibility(View.VISIBLE);
-                layoutToDate.setVisibility(View.VISIBLE);
+                viewConcierge.show(reasonOption.isSelected());
                 break;
             }
             case Constants.ChargeReason.MEDICINE: {
@@ -159,8 +166,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 break;
             }
             case Constants.ChargeReason.VISIT: {
-                tvFromDate.setHint(R.string.lbl_service_date);
-                layoutFromDate.setVisibility(View.VISIBLE);
                 break;
             }
         }
@@ -181,32 +186,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 else
                     rvReason.setVisibility(View.VISIBLE);
                 break;
-            case R.id.layoutFromDate:
-                Utils.showDatePickerDialog(this, Calendar.getInstance(), Constants.TYPE_EXPIRATION, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(year, month, dayOfMonth);
-                        addChargeViewModel.setSelectedFromDate(calendar);
-                        updateDate(tvFromDate, year, month, dayOfMonth);
-                    }
-                });
-                break;
-            case R.id.layoutTomDate:
-                Utils.showDatePickerDialog(this, addChargeViewModel.getSelectedFromDate() != null ? addChargeViewModel.getSelectedFromDate() : Calendar.getInstance(), Constants.TYPE_EXPIRATION, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(year, month, dayOfMonth);
-                        addChargeViewModel.setSelectedToDate(calendar);
-                        updateDate(tvToDate, year, month, dayOfMonth);
-                    }
-                });
-                break;
+
         }
     }
 
-    private void updateDate(TextView dateTextView, int year, int month, int dayOfMonth) {
-        dateTextView.setText(Utils.getFormatedDate(year, month, dayOfMonth));
-    }
+
 }

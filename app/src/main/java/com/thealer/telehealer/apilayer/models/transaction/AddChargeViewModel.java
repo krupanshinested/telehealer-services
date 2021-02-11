@@ -21,8 +21,7 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     private int selectedChargeTypeId = -1;
 
-    private Calendar selectedFromDate = null;
-    private Calendar selectedToDate = null;
+
 
     private final List<ReasonOption> reasonOptions = new ArrayList<>();
 
@@ -103,19 +102,5 @@ public class AddChargeViewModel extends BaseApiViewModel {
         this.selectedChargeTypeId = selectedChargeTypeId;
     }
 
-    public Calendar getSelectedFromDate() {
-        return selectedFromDate;
-    }
 
-    public void setSelectedFromDate(Calendar selectedFromDate) {
-        this.selectedFromDate = selectedFromDate;
-    }
-
-    public Calendar getSelectedToDate() {
-        return selectedToDate;
-    }
-
-    public void setSelectedToDate(Calendar selectedToDate) {
-        this.selectedToDate = selectedToDate;
-    }
 }

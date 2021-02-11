@@ -1,9 +1,12 @@
 package com.thealer.telehealer.views.transaction;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +17,7 @@ import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapter.TransactionOptionVH> {
 
@@ -36,7 +40,17 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
     @Override
     public void onBindViewHolder(@NonNull TransactionOptionVH holder, int position) {
         holder.cbReason.setText(list.get(position).getTitle());
-        holder.cbReason.setSelected(list.get(position).isSelected());
+        holder.cbReason.setChecked(list.get(position).isSelected());
+        holder.etFees.setEnabled(list.get(position).isSelected());
+        if (list.get(position).isSelected()) {
+            if (list.get(position).getFee() != 0)
+                holder.etFees.setText(String.format(Locale.getDefault(), "%.2f", list.get(position).getFee()));
+            else
+                holder.etFees.setText(null);
+        } else
+            holder.etFees.setText(null);
+        holder.etFees.removeTextChangedListener(list.get(position).getTextWatcher());
+        holder.etFees.addTextChangedListener(list.get(position).getTextWatcher());
     }
 
     @Override
@@ -47,6 +61,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
     public static class TransactionOptionVH extends RecyclerView.ViewHolder {
 
         CheckBox cbReason;
+        EditText etFees;
 
         public TransactionOptionVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
@@ -57,6 +72,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                     onOptionSelected.onSelected(getAdapterPosition());
                 }
             });
+            etFees = itemView.findViewById(R.id.etFees);
         }
     }
 

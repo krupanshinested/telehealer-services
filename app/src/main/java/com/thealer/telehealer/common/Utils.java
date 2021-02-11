@@ -161,7 +161,7 @@ public class Utils {
         vibrator.vibrate(50);
     }
 
-    public static Dialog showDatePickerDialog(FragmentActivity activity, Calendar minCalendar, int type, DatePickerDialog.OnDateSetListener dateSetListener) {
+    public static Dialog showDatePickerDialog(Context activity, Calendar minCalendar, int type, DatePickerDialog.OnDateSetListener dateSetListener) {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);

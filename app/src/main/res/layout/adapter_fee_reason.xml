@@ -3,18 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
     android:gravity="center"
-    android:paddingHorizontal="12dp"
-    android:paddingTop="6dp">
+    android:paddingHorizontal="12dp">
 
 
     <CheckBox
         android:id="@+id/item_cb"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:layout_weight="1"
+        android:gravity="center_vertical"
         android:textColor="@color/colorBlack_50"
         android:textSize="12sp"
         tools:text="@string/dummy_text" />
@@ -25,6 +24,11 @@
         style="@style/AddChargeEditText"
         android:layout_width="wrap_content"
         android:layout_marginTop="0dp"
-        android:hint="@string/lbl_add_fees" />
+        android:hint="@string/lbl_add_fees"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        android:textSize="12sp" />
 
 </LinearLayout>
