@@ -19,7 +19,9 @@ import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.transaction.RefundViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 public class TransactionListFragment extends BaseFragment {
 
     private TransactionListViewModel transactionListViewModel;
+    private RefundViewModel refundViewModel;
     private OnViewChangeInterface onViewChangeInterface;
 
     private RecyclerView rvTransactions;
@@ -41,7 +44,9 @@ public class TransactionListFragment extends BaseFragment {
         super.onAttach(context);
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         transactionListViewModel = new ViewModelProvider(this).get(TransactionListViewModel.class);
+        refundViewModel = new ViewModelProvider(this).get(RefundViewModel.class);
         onViewChangeInterface.attachObserver(transactionListViewModel);
+        onViewChangeInterface.attachObserver(refundViewModel);
         transactionListViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
@@ -97,7 +102,7 @@ public class TransactionListFragment extends BaseFragment {
 
             @Override
             public void onRefundClick(int pos) {
-
+                refundViewModel.processRefund(transactionListViewModel.getTransactions().get(pos).getId(), new RefundReq());
             }
         }));
 

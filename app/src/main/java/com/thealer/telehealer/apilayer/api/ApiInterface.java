@@ -74,6 +74,7 @@ import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseMode
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
+import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
@@ -716,6 +717,9 @@ public interface ApiInterface {
 
     @POST("/api/charge/process-payment/{id}")
     Observable<BaseApiResponseModel> processPayment(@Path("id") int id);
+
+    @POST("/api/charge/process-refund/{id}")
+    Observable<BaseApiResponseModel> processRefund(@Path("id") int id, @Body() RefundReq req);
 
 
 }
