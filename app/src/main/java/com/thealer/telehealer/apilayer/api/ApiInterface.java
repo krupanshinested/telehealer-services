@@ -73,6 +73,7 @@ import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestMo
 import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
+import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
 import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseModel;
@@ -704,6 +705,9 @@ public interface ApiInterface {
 
     @POST("/api/charge/send-notification")
     Observable<BaseApiResponseModel> askToAddCard(@Body() HashMap<String, String> req);
+
+    @POST("/api/charge/add-charge")
+    Observable<BaseApiResponseModel> addCharge(@Body() AddChargeReq req);
 
 
 }

@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.monitoring.diet.DietListingFragment;
+import com.thealer.telehealer.views.transaction.AddChargeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +92,14 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                     viewHolder.actionIv.setVisibility(View.VISIBLE);
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
                     viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info());
+                    viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
+                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id()));
+                        }
+                    });
+
                 } else if (UserType.isUserAssistant()) {
                     viewHolder.actionIv.setVisibility(View.GONE);
                 } else if (UserType.isUserPatient()) {

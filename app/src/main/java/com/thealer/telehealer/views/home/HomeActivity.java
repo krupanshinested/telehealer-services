@@ -557,8 +557,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
         setFragment(doctorPatientListingFragment);
 
-        TransactionListFragment transactionListFragment = new TransactionListFragment();
-        setFragment(transactionListFragment);
+        /*TransactionListFragment transactionListFragment = new TransactionListFragment();
+        setFragment(transactionListFragment);*/
     }
 
     private void setDoctorPatientTitle() {

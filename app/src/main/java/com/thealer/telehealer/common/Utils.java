@@ -1752,4 +1752,8 @@ public class Utils {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
+
+    public static String getUTCDateFromCalendar(Calendar calendar) {
+        return new SimpleDateFormat(UTCFormat, Locale.getDefault()).format(calendar.getTimeInMillis());
+    }
 }

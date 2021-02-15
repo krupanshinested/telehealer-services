@@ -9,7 +9,7 @@ public class ReasonOption {
 
     private int value;
 
-    private float fee;
+    private int fee;
 
     private boolean isSelected;
 
@@ -27,9 +27,9 @@ public class ReasonOption {
         @Override
         public void afterTextChanged(Editable s) {
             try {
-                fee = Float.parseFloat(s.toString());
+                fee = Integer.parseInt(s.toString());
             } catch (NumberFormatException numberFormatException) {
-                fee = 0f;
+                fee = 0;
             }
 
         }
@@ -57,11 +57,11 @@ public class ReasonOption {
         this.value = value;
     }
 
-    public float getFee() {
+    public int getFee() {
         return fee;
     }
 
-    public void setFee(float fee) {
+    public void setFee(int fee) {
         this.fee = fee;
     }
 

@@ -1,6 +1,7 @@
 package com.thealer.telehealer.common.Animation;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -20,9 +21,11 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
+import com.thealer.telehealer.views.transaction.AddChargeActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -255,5 +258,9 @@ public class CustomUserListItemView extends ConstraintLayout {
     public void showCardStatus(PaymentInfo paymentInfo) {
         AppPaymentCardUtils.setCardStatusImage(hasCardIV, paymentInfo);
         addChargeBtn.setVisibility(VISIBLE);
+    }
+
+    public CustomButton getAddChargeBtn() {
+        return addChargeBtn;
     }
 }

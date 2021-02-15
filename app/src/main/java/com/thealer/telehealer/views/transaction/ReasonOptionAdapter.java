@@ -44,13 +44,16 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         holder.etFees.setEnabled(list.get(position).isSelected());
         if (list.get(position).isSelected()) {
             if (list.get(position).getFee() != 0)
-                holder.etFees.setText(String.format(Locale.getDefault(), "%.2f", list.get(position).getFee()));
+                holder.etFees.setText(String.format(Locale.getDefault(), "%.2d", list.get(position).getFee()));
             else
                 holder.etFees.setText(null);
         } else
             holder.etFees.setText(null);
-        holder.etFees.removeTextChangedListener(list.get(position).getTextWatcher());
-        holder.etFees.addTextChangedListener(list.get(position).getTextWatcher());
+
+        holder.chargeWatcher.setPosition(position);
+/*
+        holder.etFees.removeTextChangedListener(null);
+        holder.etFees.addTextChangedListener(list.get(position).getTextWatcher());*/
     }
 
     @Override
@@ -58,10 +61,11 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         return list.size();
     }
 
-    public static class TransactionOptionVH extends RecyclerView.ViewHolder {
+    public class TransactionOptionVH extends RecyclerView.ViewHolder {
 
         CheckBox cbReason;
         EditText etFees;
+        ChargeWatcher chargeWatcher = new ChargeWatcher();
 
         public TransactionOptionVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
@@ -73,10 +77,42 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                 }
             });
             etFees = itemView.findViewById(R.id.etFees);
+            etFees.addTextChangedListener(chargeWatcher);
         }
     }
 
     interface OnOptionSelected {
         void onSelected(int pos);
+    }
+
+    class ChargeWatcher implements TextWatcher {
+
+        int position;
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (!s.toString().isEmpty()) {
+                try {
+                    list.get(position).setFee(Integer.parseInt(s.toString()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    list.get(position).setFee(0);
+                }
+            }
+        }
     }
 }

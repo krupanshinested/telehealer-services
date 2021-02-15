@@ -61,6 +61,7 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
 
         public TextFieldVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
+            setIsRecyclable(false);
             imgRemove = itemView.findViewById(R.id.imgRemove);
             imgRemove.setOnClickListener(new View.OnClickListener() {
                 @Override

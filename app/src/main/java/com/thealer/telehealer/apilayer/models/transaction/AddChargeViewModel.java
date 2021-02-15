@@ -5,9 +5,13 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fasterxml.jackson.core.io.CharTypes;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
+import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +24,13 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     private int selectedChargeTypeId = -1;
 
-    private ArrayList<TextFieldModel> suppliers = new ArrayList<>();
-    private ArrayList<TextFieldModel> medicines = new ArrayList<>();
+    private int patientId;
+    private int fees;
+
+    private boolean isOnlyVisit;
+
+    private final ArrayList<TextFieldModel> suppliers = new ArrayList<>();
+    private final ArrayList<TextFieldModel> medicines = new ArrayList<>();
 
     private final List<ReasonOption> reasonOptions = new ArrayList<>();
 
@@ -102,11 +111,60 @@ public class AddChargeViewModel extends BaseApiViewModel {
         this.selectedChargeTypeId = selectedChargeTypeId;
     }
 
+    public int getSelectedChargeTypeId() {
+        return selectedChargeTypeId;
+    }
+
     public ArrayList<TextFieldModel> getMedicines() {
         return medicines;
     }
 
     public ArrayList<TextFieldModel> getSuppliers() {
         return suppliers;
+    }
+
+
+    public void addCharge(AddChargeReq req) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().addCharge(req)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+
+                }
+            }
+        });
+    }
+
+
+    public int getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
+    }
+
+    public int getFees() {
+        return fees;
+    }
+
+    public void setFees(int fees) {
+        this.fees = fees;
+    }
+
+    public boolean isOnlyVisit() {
+        return isOnlyVisit;
+    }
+
+    public void setOnlyVisit(boolean onlyVisit) {
+        isOnlyVisit = onlyVisit;
     }
 }
