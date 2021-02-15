@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.transaction.TransactionItem;
+import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 
@@ -39,7 +39,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     public void onBindViewHolder(@NonNull TransactionListVH holder, int position) {
         holder.tvStatus.setText(list.get(position).getStatusString());
         if (UserType.isUserPatient()) {
-            if (list.get(position).getStatus() == Constants.ChargeStatus.CHARGE_PROCESSED) {
+            if (list.get(position).getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESSED) {
                 holder.btnReceipt.setVisibility(View.VISIBLE);
                 holder.actionRow.setVisibility(View.VISIBLE);
             } else {
@@ -51,7 +51,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     }
 
     private void updateActionsForProvider(@NonNull TransactionListVH holder, int position) {
-        switch (list.get(position).getStatus()) {
+        switch (list.get(position).getChargeStatus()) {
             case Constants.ChargeStatus.CHARGE_ADDED: {
                 holder.btnProcessPayment.setVisibility(View.VISIBLE);
                 holder.btnRefundClick.setVisibility(View.GONE);

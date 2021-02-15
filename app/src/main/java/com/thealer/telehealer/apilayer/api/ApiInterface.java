@@ -74,6 +74,8 @@ import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseMode
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
+import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
+import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
 import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseModel;
@@ -708,6 +710,9 @@ public interface ApiInterface {
 
     @POST("/api/charge/add-charge")
     Observable<BaseApiResponseModel> addCharge(@Body() AddChargeReq req);
+
+    @GET("/api/charge/paginate")
+    Observable<TransactionListResp> transactionPaginate(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
 
 }
