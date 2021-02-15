@@ -20,6 +20,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
@@ -38,14 +39,19 @@ public class TransactionListFragment extends BaseFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        onViewChangeInterface= (OnViewChangeInterface) getActivity();
+        onViewChangeInterface = (OnViewChangeInterface) getActivity();
         transactionListViewModel = new ViewModelProvider(this).get(TransactionListViewModel.class);
         onViewChangeInterface.attachObserver(transactionListViewModel);
         transactionListViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
-                rvTransactions.getAdapter().notifyDataSetChanged();
-                progressBar.setVisibility(View.GONE);
+                if (baseApiResponseModels instanceof TransactionListResp) {
+                    rvTransactions.getAdapter().notifyDataSetChanged();
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    transactionListViewModel.setPage(1);
+                    transactionListViewModel.loadTransactions(true);
+                }
             }
         });
         transactionListViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
@@ -86,7 +92,7 @@ public class TransactionListFragment extends BaseFragment {
 
             @Override
             public void onProcessPaymentClick(int pos) {
-
+                transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId());
             }
 
             @Override

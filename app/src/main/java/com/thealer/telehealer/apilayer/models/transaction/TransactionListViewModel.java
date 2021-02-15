@@ -30,29 +30,42 @@ public class TransactionListViewModel extends BaseApiViewModel {
     public void loadTransactions(boolean isShowProgress) {
         if (!isApiRequested) {
             isApiRequested = true;
-            fetchToken(new BaseViewInterface() {
-                @Override
-                public void onStatus(boolean status) {
-                    if (status) {
-                        getAuthApiService().transactionPaginate(true, page, 5)
-                                .compose(applySchedulers())
-                                .subscribe(new RAObserver<TransactionListResp>(getProgress(isShowProgress)) {
-                                    @Override
-                                    public void onSuccess(TransactionListResp response) {
-                                        isApiRequested = false;
-                                        if (page == 1) {
-                                            transactions.clear();
-                                        }
-                                        transactions.addAll(response.getResult());
-                                        totalCount = response.getCount();
-                                        baseApiResponseModelMutableLiveData.postValue(response);
+            fetchToken(status -> {
+                if (status) {
+                    getAuthApiService().transactionPaginate(true, page, Constants.PAGINATION_SIZE)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<TransactionListResp>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(TransactionListResp response) {
+                                    isApiRequested = false;
+                                    if (page == 1) {
+                                        transactions.clear();
                                     }
-                                });
+                                    transactions.addAll(response.getResult());
+                                    totalCount = response.getCount();
+                                    baseApiResponseModelMutableLiveData.postValue(response);
+                                }
+                            });
 
-                    }
                 }
             });
         }
+    }
+
+    public void processPayment(int id) {
+        fetchToken(status -> {
+            if (status) {
+                getAuthApiService().processPayment(id)
+                        .compose(applySchedulers())
+                        .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            @Override
+                            public void onSuccess(BaseApiResponseModel response) {
+                                baseApiResponseModelMutableLiveData.postValue(response);
+                            }
+                        });
+
+            }
+        });
     }
 
     public ArrayList<TransactionItem> getTransactions() {
