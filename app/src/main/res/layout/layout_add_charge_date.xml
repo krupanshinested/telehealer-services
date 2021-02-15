@@ -24,12 +24,14 @@
         android:layout_marginBottom="4dp">
 
         <TextView
+            android:id="@+id/lbStartDate"
             android:layout_weight="1"
             android:text="@string/lbl_start_date"
             android:textColor="@color/colorBlack"
             android:textSize="12sp" />
 
         <TextView
+            android:id="@+id/lbEndDate"
             android:layout_marginStart="30dp"
             android:layout_weight="1"
             android:text="@string/lbl_end_date"

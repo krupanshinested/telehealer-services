@@ -12,6 +12,8 @@
         style="@style/AddChargeEditText"
         android:layout_marginTop="0dp"
         android:hint="@string/lbl_supplier_name"
+        android:inputType="text"
+        android:paddingEnd="36dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

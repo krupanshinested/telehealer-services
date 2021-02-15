@@ -181,6 +181,12 @@
                 app:date_title="@string/lbl_concierge" />
 
 
+            <com.thealer.telehealer.views.transaction.DateRangeView
+                android:id="@+id/dateOfService"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
             <EditText
                 android:id="@+id/etFees"
                 style="@style/AddChargeEditText"

@@ -134,6 +134,14 @@ public class DateRangeView extends LinearLayout {
         } else {
             setVisibility(GONE);
         }
+    }
 
+    public void setSingleSelection(String hintText) {
+        tvFromDate.setHint(hintText);
+        layoutToDate.setVisibility(View.GONE);
+        tvFromDate.setTextSize(14);
+        selectedToDate = null;
+        findViewById(R.id.lbStartDate).setVisibility(GONE);
+        findViewById(R.id.lbEndDate).setVisibility(GONE);
     }
 }

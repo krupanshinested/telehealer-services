@@ -204,7 +204,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.transaction.AddChargeActivity"
-            android:windowSoftInputMode="adjustNothing"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait" />
         <activity
             android:name=".stripe.PaymentContentActivity"

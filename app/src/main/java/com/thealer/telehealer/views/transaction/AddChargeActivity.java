@@ -51,6 +51,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private DateRangeView viewCCM;
     private DateRangeView viewConcierge;
     private DateRangeView viewRPM;
+    private DateRangeView viewDateOfService;
 
 
     public static String EXTRA_REASON = "reason";
@@ -81,6 +82,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         viewCCM = findViewById(R.id.ccm);
         viewRPM = findViewById(R.id.rpm);
         viewConcierge = findViewById(R.id.concierge);
+        viewDateOfService = findViewById(R.id.dateOfService);
 
 
         etTextField = findViewById(R.id.etTextField);
@@ -136,6 +138,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         if (addChargeViewModel.isReasonSelected(Constants.ChargeReason.VISIT)) {
             layoutReason.setVisibility(View.VISIBLE);
             etFees.setVisibility(View.VISIBLE);
+            viewDateOfService.setSingleSelection(getString(R.string.lbl_service_date));
+            viewDateOfService.setVisibility(View.VISIBLE);
+            tvReason.setText(getString(R.string.visit));
+            rvReason.setVisibility(View.GONE);
+            ivReason.setVisibility(View.GONE);
+            layoutReason.setEnabled(false);
         } else {
             adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), pos -> {
                 addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
@@ -216,6 +224,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 break;
             }
             case Constants.ChargeReason.VISIT: {
+                if (reasonOption.isSelected()) {
+                    viewDateOfService.setVisibility(View.VISIBLE);
+                } else {
+                    viewDateOfService.setVisibility(View.GONE);
+                }
+                viewDateOfService.setSingleSelection(getString(R.string.lbl_service_date));
                 break;
             }
         }
