@@ -1515,5 +1515,15 @@
     <string name="lbl_end_date">End Date</string>
     <string name="lbl_concierge">Concierge</string>
     <string name="lbl_medicine_name">Medicine Name</string>
+    <string name="msg_please_enter_fees">Please enter fees</string>
+    <string name="msg_please_select_date_of_service">Please select date of service.</string>
+    <string name="msg_please_select_charge_type">Please select charge type</string>
+    <string name="msg_please_enter_fees_for_any">Please enter fees for %s</string>
+    <string name="msg_please_select_start_date_for_any">Please select start date for %s</string>
+    <string name="msg_please_select_end_date_for_any">Please select end date for %s</string>
+    <string name="msg_please_select_valid_date_range_for_any">Please select valid date range for %s</string>
+    <string name="msg_please_select_a_reason">Please select a reason</string>
+    <string name="msg_please_enter_medicine_name">Please enter medicine name</string>
+    <string name="msg_please_enter_supplier_name">Please enter supplier name</string>
 
 </resources>

@@ -22,13 +22,12 @@ import com.thealer.telehealer.apilayer.models.transaction.AddChargeViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.TextFieldModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
-import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class AddChargeActivity extends BaseActivity implements View.OnClickListener {
 
@@ -297,13 +296,133 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 break;
             }
             case R.id.btnSubmit: {
-                addChargeViewModel.addCharge(getReq());
+                if (isValid())
+                    addChargeViewModel.addCharge(getReq());
                 break;
             }
             case R.id.btnPending: {
                 break;
             }
         }
+    }
+
+    private boolean isValid() {
+        if (addChargeViewModel.getSelectedChargeTypeId() == -1) {
+            showError(getString(R.string.msg_please_select_charge_type));
+            return false;
+        }
+        if (addChargeViewModel.isOnlyVisit()) {
+            if (viewDateOfService.getSelectedFromDate() == null) {
+                showError(getString(R.string.msg_please_select_date_of_service));
+                return false;
+            }
+            if (etFees.getText().length() == 0) {
+                showError(getString(R.string.msg_please_enter_fees));
+                return false;
+            }
+        } else {
+            int selectedCount = 0;
+            for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
+                if (reasonOption.isSelected()) {
+                    selectedCount++;
+                    if (reasonOption.getFee() == 0) {
+                        showError(getString(R.string.msg_please_enter_fees_for_any, reasonOption.getTitle()));
+                        return false;
+                    }
+                    switch (reasonOption.getValue()) {
+                        case Constants.ChargeReason.BHI: {
+                            if (hasDateError(reasonOption, viewBHI.getSelectedFromDate(), viewBHI.getSelectedToDate())) {
+                                return false;
+                            }
+                            break;
+                        }
+                        case Constants.ChargeReason.CCM: {
+                            if (hasDateError(reasonOption, viewCCM.getSelectedFromDate(), viewCCM.getSelectedToDate())) {
+                                return false;
+                            }
+                            break;
+                        }
+                        case Constants.ChargeReason.RPM: {
+                            if (hasDateError(reasonOption, viewRPM.getSelectedFromDate(), viewRPM.getSelectedToDate())) {
+                                return false;
+                            }
+                            break;
+                        }
+                        case Constants.ChargeReason.CONCIERGE: {
+                            if (hasDateError(reasonOption, viewConcierge.getSelectedFromDate(), viewConcierge.getSelectedToDate())) {
+                                return false;
+                            }
+                            break;
+                        }
+                        case Constants.ChargeReason.MEDICINE: {
+                            if (addChargeViewModel.getMedicines().size() == 1) {
+                                if (addChargeViewModel.getMedicines().get(0).getValue() == null || addChargeViewModel.getMedicines().get(0).getValue().isEmpty()) {
+                                    showError(getString(R.string.msg_please_enter_medicine_name));
+                                    return false;
+                                }
+                            } else {
+                                for (TextFieldModel textFieldModel : addChargeViewModel.getMedicines()) {
+                                    if (textFieldModel.getValue() == null || textFieldModel.getValue().isEmpty()) {
+                                        showError(getString(R.string.msg_please_enter_medicine_name));
+                                        return false;
+                                    }
+                                }
+
+                            }
+                            break;
+                        }
+                        case Constants.ChargeReason.SUPPLIES: {
+                            if (addChargeViewModel.getSuppliers().size() == 1) {
+                                if (addChargeViewModel.getSuppliers().get(0).getValue() == null || addChargeViewModel.getSuppliers().get(0).getValue().isEmpty()) {
+                                    showError(getString(R.string.msg_please_enter_supplier_name));
+                                    return false;
+                                }
+                            } else {
+                                for (TextFieldModel textFieldModel : addChargeViewModel.getSuppliers()) {
+                                    if (textFieldModel.getValue() == null || textFieldModel.getValue().isEmpty()) {
+                                        showError(getString(R.string.msg_please_enter_supplier_name));
+                                        return false;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        case Constants.ChargeReason.VISIT: {
+                            if (viewDateOfService.getSelectedFromDate() == null) {
+                                showError(getString(R.string.msg_please_select_date_of_service));
+                                return false;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            if (selectedCount == 0) {
+                showError(getString(R.string.msg_please_select_a_reason));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean hasDateError(ReasonOption reasonOption, Calendar start, Calendar end) {
+        if (start == null) {
+            showError(getString(R.string.msg_please_select_start_date_for_any, reasonOption.getTitle()));
+            return true;
+        }
+        if (end == null) {
+            showError(getString(R.string.msg_please_select_end_date_for_any, reasonOption.getTitle()));
+            return true;
+        }
+        if (start.after(end)) {
+            showError(getString(R.string.msg_please_select_valid_date_range_for_any, reasonOption.getTitle()));
+            return true;
+        }
+        return false;
+    }
+
+    private void showError(String message) {
+        Utils.showAlertDialog(this, getString(R.string.error), message, getString(R.string.ok), null, null, null);
     }
 
     private AddChargeReq getReq() {

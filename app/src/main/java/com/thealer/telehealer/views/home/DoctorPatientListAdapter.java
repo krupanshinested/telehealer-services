@@ -96,6 +96,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                         @Override
                         public void onClick(View v) {
                             fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
+                                    .putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.VISIT)
                                     .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id()));
                         }
                     });
