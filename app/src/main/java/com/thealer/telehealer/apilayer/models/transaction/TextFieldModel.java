@@ -7,6 +7,13 @@ public class TextFieldModel {
 
     private String value;
 
+    public TextFieldModel() {
+    }
+
+    public TextFieldModel(String value) {
+        this.value = value;
+    }
+
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {

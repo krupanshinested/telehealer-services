@@ -2,20 +2,25 @@ package com.thealer.telehealer.views.transaction;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -23,9 +28,12 @@ import com.thealer.telehealer.apilayer.models.transaction.RefundViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
+import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
@@ -36,8 +44,13 @@ public class TransactionListFragment extends BaseFragment {
     private RefundViewModel refundViewModel;
     private OnViewChangeInterface onViewChangeInterface;
 
-    private RecyclerView rvTransactions;
+    private CustomRecyclerView rvTransactions;
     private ImageView progressBar;
+
+    private AppBarLayout appbarLayout;
+    private Toolbar toolbar;
+    private ImageView backIv;
+    private TextView toolbarTitle;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -51,8 +64,9 @@ public class TransactionListFragment extends BaseFragment {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
                 if (baseApiResponseModels instanceof TransactionListResp) {
-                    rvTransactions.getAdapter().notifyDataSetChanged();
+                    rvTransactions.getRecyclerView().getAdapter().notifyDataSetChanged();
                     progressBar.setVisibility(View.GONE);
+                    showEmptyState();
                 } else {
                     transactionListViewModel.setPage(1);
                     transactionListViewModel.loadTransactions(true);
@@ -62,6 +76,7 @@ public class TransactionListFragment extends BaseFragment {
         transactionListViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
+                showEmptyState();
                 transactionListViewModel.setApiRequested(false);
                 progressBar.setVisibility(View.GONE);
                 String errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
@@ -76,6 +91,13 @@ public class TransactionListFragment extends BaseFragment {
         transactionListViewModel.loadTransactions(true);
     }
 
+    private void showEmptyState() {
+        if (transactionListViewModel.getPage() == 1 && transactionListViewModel.getTransactions().size() == 0) {
+            rvTransactions.setEmptyState(EmptyViewConstants.EMPTY_TRANSACTIONS);
+            rvTransactions.showEmptyState();
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -88,8 +110,27 @@ public class TransactionListFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         rvTransactions = view.findViewById(R.id.rvTransactions);
         progressBar = view.findViewById(R.id.progressbar);
+
+        appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        backIv = (ImageView) view.findViewById(R.id.back_iv);
+        toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        toolbarTitle.setText(getString(R.string.lbl_patient_payments));
+
+        rvTransactions.setScrollable(false);
+        rvTransactions.setEmptyState(EmptyViewConstants.EMPTY_PAYMENTS);
+        rvTransactions.hideEmptyState();
+
+
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((OnCloseActionInterface) getActivity()).onClose(false);
+            }
+        });
+
         Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(progressBar);
-        rvTransactions.setAdapter(new TransactionListAdapter(transactionListViewModel.getTransactions(), new TransactionListAdapter.OnOptionSelected() {
+        rvTransactions.getRecyclerView().setAdapter(new TransactionListAdapter(transactionListViewModel.getTransactions(), new TransactionListAdapter.OnOptionSelected() {
             @Override
             public void onReceiptClick(int pos) {
 
@@ -104,12 +145,22 @@ public class TransactionListFragment extends BaseFragment {
             public void onRefundClick(int pos) {
                 refundViewModel.processRefund(transactionListViewModel.getTransactions().get(pos).getId(), new RefundReq());
             }
+
+            @Override
+            public void onAddChargeClick(int position) {
+                startActivity(new Intent(getActivity(), AddChargeActivity.class));
+            }
+
+            @Override
+            public void onUpdateChargeClick(int position) {
+                startActivity(new Intent(getActivity(), AddChargeActivity.class).putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))));
+            }
         }));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         rvTransactions.setLayoutManager(linearLayoutManager);
 
-        rvTransactions.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        rvTransactions.getRecyclerView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);

@@ -14,6 +14,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 
 import java.util.List;
 
@@ -38,15 +39,32 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     @Override
     public void onBindViewHolder(@NonNull TransactionListVH holder, int position) {
         holder.tvStatus.setText(list.get(position).getStatusString());
+        holder.tvCharge.setText(String.format("{$}%d", list.get(position).getAmount()));
+        holder.tvReason.setText(list.get(position).getCommaSeparatedReason(holder.itemView.getContext()));
+        holder.tvChargeType.setText(list.get(position).getTypeOfCharge().getName());
+        holder.tvDate.setText(Utils.getFormatedDateTime(list.get(position).getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));
         if (UserType.isUserPatient()) {
+            holder.patientRow.setVisibility(View.GONE);
+
+            holder.doctorRow.setVisibility(View.VISIBLE);
+            holder.tvDoctor.setText(list.get(position).getDoctorId().getDisplayName());
             if (list.get(position).getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESSED) {
                 holder.btnReceipt.setVisibility(View.VISIBLE);
                 holder.actionRow.setVisibility(View.VISIBLE);
             } else {
                 holder.actionRow.setVisibility(View.GONE);
             }
+        } else if (UserType.isUserAssistant()) {
+            holder.doctorRow.setVisibility(View.VISIBLE);
+            holder.tvDoctor.setText(list.get(position).getDoctorId().getDisplayName());
+
+            holder.patientRow.setVisibility(View.VISIBLE);
+            holder.tvPatient.setText(list.get(position).getPatientId().getDisplayName());
         } else {
             updateActionsForProvider(holder, position);
+            holder.patientRow.setVisibility(View.VISIBLE);
+            holder.tvPatient.setText(list.get(position).getPatientId().getDisplayName());
+            holder.doctorRow.setVisibility(View.GONE);
         }
     }
 
@@ -60,6 +78,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
                 ((LinearLayout.LayoutParams) holder.btnReceipt.getLayoutParams()).weight = 1;
                 break;
             }
+            case Constants.ChargeStatus.CHARGE_PENDING: {
+                holder.btnRefundClick.setVisibility(View.VISIBLE);
+                holder.btnRefundClick.setText(holder.itemView.getContext().getString(R.string.lbl_add_charge));
+                holder.btnReceipt.setVisibility(View.GONE);
+                holder.btnProcessPayment.setVisibility(View.GONE);
+                break;
+            }
             case Constants.ChargeStatus.CHARGE_PROCESS_FAILED: {
                 holder.btnProcessPayment.setVisibility(View.VISIBLE);
                 holder.btnReceipt.setVisibility(View.GONE);
@@ -69,11 +94,33 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             case Constants.ChargeStatus.CHARGE_PROCESSED: {
                 holder.btnProcessPayment.setVisibility(View.GONE);
                 holder.btnReceipt.setVisibility(View.VISIBLE);
+                holder.btnReceipt.setText(R.string.lbl_receipt);
                 ((LinearLayout.LayoutParams) holder.btnReceipt.getLayoutParams()).weight = 0.5f;
                 holder.btnRefundClick.setVisibility(View.VISIBLE);
                 break;
             }
         }
+
+        holder.btnRefundClick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (list.get(position).getChargeStatus() == Constants.ChargeStatus.CHARGE_PENDING)
+                    onOptionSelected.onAddChargeClick(position);
+                else
+                    onOptionSelected.onRefundClick(position);
+            }
+        });
+
+        holder.btnReceipt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (list.get(position).getChargeStatus() == Constants.ChargeStatus.CHARGE_ADDED)
+                    onOptionSelected.onUpdateChargeClick(position);
+                else
+                    onOptionSelected.onReceiptClick(position);
+            }
+        });
+
     }
 
     @Override
@@ -86,7 +133,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         Button btnReceipt;
         Button btnProcessPayment;
         Button btnRefundClick;
-        TextView tvStatus;
+        TextView tvStatus, tvDate, tvDateOfService, tvPatient, tvChargeType, tvReason, tvCharge, tvDoctor;
+        View doctorRow, patientRow;
         View actionRow;
 
         public TransactionListVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
@@ -95,21 +143,18 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             btnRefundClick = itemView.findViewById(R.id.btnRefund);
             btnProcessPayment = itemView.findViewById(R.id.btnProcessPayment);
             tvStatus = itemView.findViewById(R.id.tvStatus);
+            tvDate = itemView.findViewById(R.id.tvDate);
+            tvDateOfService = itemView.findViewById(R.id.tvDateOfService);
+            tvPatient = itemView.findViewById(R.id.tvPatient);
+            tvChargeType = itemView.findViewById(R.id.tvChargeType);
+            tvReason = itemView.findViewById(R.id.tvReason);
+            tvCharge = itemView.findViewById(R.id.tvCharge);
+            tvDoctor = itemView.findViewById(R.id.tvDoctor);
+
             actionRow = itemView.findViewById(R.id.actionRow);
+            doctorRow = itemView.findViewById(R.id.doctorRow);
+            patientRow = itemView.findViewById(R.id.patientRow);
 
-            btnRefundClick.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onOptionSelected.onRefundClick(getAdapterPosition());
-                }
-            });
-
-            btnReceipt.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onOptionSelected.onReceiptClick(getAdapterPosition());
-                }
-            });
             btnProcessPayment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -126,6 +171,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         void onProcessPaymentClick(int pos);
 
         void onRefundClick(int pos);
+
+        void onAddChargeClick(int position);
+
+        void onUpdateChargeClick(int position);
 
     }
 }

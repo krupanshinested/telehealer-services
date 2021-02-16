@@ -48,7 +48,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private ProfileCellView profile, medical_history, settings, email_id,
             phone_number, change_password, checkCallQuality, logs,
-            feedback, terms_and_condition, privacy_policy, payments_billings, educational_video;
+            feedback, terms_and_condition, privacy_policy, payments_billings, educational_video, patient_payments;
     private View signOut;
 
     private ProfileUpdate profileUpdate;
@@ -111,6 +111,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         privacy_policy = baseView.findViewById(R.id.privacy_policy);
         signOut = baseView.findViewById(R.id.signOut);
         payments_billings = baseView.findViewById(R.id.payments_billings);
+        patient_payments = baseView.findViewById(R.id.patient_payments);
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
@@ -166,6 +167,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         signOut.setOnClickListener(this);
         payments_billings.setOnClickListener(this);
         medicalAssistantLl.setOnClickListener(this);
+        patient_payments.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
         phone_number.updateValue(UserDetailPreferenceManager.getPhone());
@@ -183,9 +185,10 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 break;
             case Constants.TYPE_DOCTOR:
                 medical_history.setVisibility(View.GONE);
-                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
+                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
-                else {
+                    patient_payments.setVisibility(View.VISIBLE);
+                } else {
                     billLl.setVisibility(View.GONE);
                 }
                 medicalAssistantLl.setVisibility(View.VISIBLE);
@@ -193,9 +196,10 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
                 medicalAssistantLl.setVisibility(View.GONE);
-                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
+                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
-                else {
+                    patient_payments.setVisibility(View.VISIBLE);
+                } else {
                     billLl.setVisibility(View.GONE);
                 }
                 break;

@@ -553,8 +553,8 @@ public interface ApiInterface {
     @POST("api/braintree/checkout")
     Observable<BaseApiResponseModel> checkOutBrainTree(@Body Map<String, Object> param);
 
-    @GET("/api/braintree/transactions")
-    Observable<TransactionResponse> getTransactions();
+    @GET("/api/payment/transactions")
+    Observable<TransactionResponse> getTransactions(@Query(PAGINATE) boolean paginate,@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("/api/log/vitals")
     Observable<VitalVisitResponse> getVitalVisit(@Query(MONTH) String month);

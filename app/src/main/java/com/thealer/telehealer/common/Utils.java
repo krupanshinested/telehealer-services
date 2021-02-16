@@ -123,6 +123,7 @@ public class Utils {
     public static final String yyyy_mm_dd = "yyyy-MM-dd";
     public static final String mmm_dd = "MMM dd";
     public static final String mmm_yyyy = "MMM yyyy";
+    public static final String dd_mmm_yyyy_hh_mm_a = "dd MMM yyyy | hh:mm a";
     public static String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     private static FancyShowCaseView fancyShowCaseView;
@@ -1756,4 +1757,6 @@ public class Utils {
     public static String getUTCDateFromCalendar(Calendar calendar) {
         return new SimpleDateFormat(UTCFormat, Locale.getDefault()).format(calendar.getTimeInMillis());
     }
+
+
 }

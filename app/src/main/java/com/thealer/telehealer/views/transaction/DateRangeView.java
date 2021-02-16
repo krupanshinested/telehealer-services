@@ -108,6 +108,8 @@ public class DateRangeView extends LinearLayout {
 
     public void setSelectedFromDate(Calendar selectedFromDate) {
         this.selectedFromDate = selectedFromDate;
+        updateDate(tvFromDate, selectedFromDate.get(Calendar.YEAR), selectedFromDate.get(Calendar.MONTH), selectedFromDate.get(Calendar.DAY_OF_MONTH));
+
     }
 
     public Calendar getSelectedToDate() {
@@ -116,6 +118,7 @@ public class DateRangeView extends LinearLayout {
 
     public void setSelectedToDate(Calendar selectedToDate) {
         this.selectedToDate = selectedToDate;
+        updateDate(tvFromDate, selectedToDate.get(Calendar.YEAR), selectedToDate.get(Calendar.MONTH), selectedToDate.get(Calendar.DAY_OF_MONTH));
     }
 
 

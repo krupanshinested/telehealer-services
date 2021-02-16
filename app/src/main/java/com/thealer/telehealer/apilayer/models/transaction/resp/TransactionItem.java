@@ -1,11 +1,17 @@
 package com.thealer.telehealer.apilayer.models.transaction.resp;
 
+import android.content.Context;
+import android.text.TextUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.common.Constants;
 
@@ -39,7 +45,7 @@ public class TransactionItem extends BaseApiResponseModel {
     private int id;
 
     @SerializedName("type_of_charge")
-    private int typeOfCharge;
+    private MasterResp.MasterItem typeOfCharge;
 
     @SerializedName("order_id")
     private Object orderId;
@@ -80,7 +86,7 @@ public class TransactionItem extends BaseApiResponseModel {
         return id;
     }
 
-    public int getTypeOfCharge() {
+    public MasterResp.MasterItem getTypeOfCharge() {
         return typeOfCharge;
     }
 
@@ -102,5 +108,35 @@ public class TransactionItem extends BaseApiResponseModel {
             default:
                 return "Pending";
         }
+    }
+
+    public String getCommaSeparatedReason(Context context) {
+        ArrayList<String> reasons = new ArrayList<>();
+        if (chargeData != null && chargeData.size() > 0) {
+            for (AddChargeReq.ChargeDataItem item : chargeData) {
+                reasons.add(getReasonByConstant(item.getReason(), context));
+            }
+        }
+        return TextUtils.join(",", reasons);
+    }
+
+    private String getReasonByConstant(int constant, Context context) {
+        switch (constant) {
+            case Constants.ChargeReason.VISIT:
+                return context.getString(R.string.visit);
+            case Constants.ChargeReason.RPM:
+                return context.getString(R.string.rpm);
+            case Constants.ChargeReason.CCM:
+                return context.getString(R.string.ccm);
+            case Constants.ChargeReason.BHI:
+                return context.getString(R.string.bhi);
+            case Constants.ChargeReason.CONCIERGE:
+                return context.getString(R.string.lbl_concierge);
+            case Constants.ChargeReason.SUPPLIES:
+                return context.getString(R.string.lbl_supplies);
+            case Constants.ChargeReason.MEDICINE:
+                return context.getString(R.string.lbl_medicine);
+        }
+        return null;
     }
 }

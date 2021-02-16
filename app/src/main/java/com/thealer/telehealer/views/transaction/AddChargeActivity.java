@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -24,6 +25,7 @@ import com.thealer.telehealer.apilayer.models.transaction.AddChargeViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.TextFieldModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
+import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -31,6 +33,7 @@ import com.thealer.telehealer.views.common.CallPlacingActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class AddChargeActivity extends BaseActivity implements View.OnClickListener {
 
@@ -66,6 +69,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     public static String EXTRA_REASON = "reason";
     public static String EXTRA_PATIENT_ID = "patientId";
+    public static String EXTRA_TRANSACTION_ITEM = "transactionItem";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,8 +79,13 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         initViewModels();
         addChargeViewModel.setSelectedReason(getIntent().getIntExtra(EXTRA_REASON, -1));
         addChargeViewModel.setPatientId(getIntent().getIntExtra(EXTRA_PATIENT_ID, -1));
+        String json = getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM);
+        if (json != null && json.length() > 0) {
+            prepareDataFromTransactionItem(new Gson().fromJson(json, TransactionItem.class));
+        } else {
+            updateUI();
+        }
         masterApiViewModel.fetchMasters();
-        updateUI();
         checkForVisitAndSetUI();
     }
 
@@ -153,6 +162,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 if (baseApiResponseModel instanceof MasterResp) {
                     MasterResp resp = (MasterResp) baseApiResponseModel;
                     addChargeViewModel.setUpChargeTypeFromMasters(resp);
+                    if (addChargeViewModel.getSelectedChargeTypeId() != -1) {
+                        MasterResp.MasterItem masterItem = addChargeViewModel.getChargeTypeById(addChargeViewModel.getSelectedChargeTypeId());
+                        if (masterItem != null) {
+                            tvChargeType.setText(masterItem.getName());
+                        }
+                    }
                     MasterOptionAdapter adapterType = new MasterOptionAdapter(addChargeViewModel.getListChargeTypes(), pos -> {
                         rvChargeType.setVisibility(View.GONE);
                         tvChargeType.setText(addChargeViewModel.getListChargeTypes().get(pos).getName());
@@ -178,6 +193,57 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
+    public void prepareDataFromTransactionItem(TransactionItem transactionItem) {
+        if (transactionItem != null) {
+            addChargeViewModel.setSelectedChargeTypeId(transactionItem.getTypeOfCharge().getId());
+            if (transactionItem.getChargeData() != null && transactionItem.getChargeData().size() > 0) {
+                for (AddChargeReq.ChargeDataItem item : transactionItem.getChargeData()) {
+                    setReasonDataFromTransactionItem(item, addChargeViewModel.getReasonByValue(item.getReason()));
+                }
+            }
+        }
+    }
+
+    private void setReasonDataFromTransactionItem(AddChargeReq.ChargeDataItem item, ReasonOption reasonOption) {
+        if (reasonOption != null) {
+            showUIByReason(reasonOption);
+            reasonOption.setFee(item.getAmount());
+            reasonOption.setSelected(true);
+            switch (reasonOption.getValue()) {
+                case Constants.ChargeReason.BHI:
+                    setDateInDateRangeView(item.getDescription(), viewBHI);
+                    break;
+                case Constants.ChargeReason.CCM:
+                    setDateInDateRangeView(item.getDescription(), viewCCM);
+                    break;
+                case Constants.ChargeReason.RPM:
+                    setDateInDateRangeView(item.getDescription(), viewRPM);
+                    break;
+                case Constants.ChargeReason.CONCIERGE:
+                    setDateInDateRangeView(item.getDescription(), viewConcierge);
+                    break;
+                case Constants.ChargeReason.VISIT:
+                    setDateInDateRangeView(item.getDescription(), viewDateOfService);
+                    etFees.setText(item.getAmount() + "");
+                    break;
+                case Constants.ChargeReason.MEDICINE:
+                    if (item.getDescription().getMedicines() != null && item.getDescription().getMedicines().size() != 0) {
+                        for (String medicine : item.getDescription().getMedicines()) {
+                            addChargeViewModel.getMedicines().add(new TextFieldModel(medicine));
+                        }
+                    }
+                    break;
+                case Constants.ChargeReason.SUPPLIES:
+                    if (item.getDescription().getSuppliers() != null && item.getDescription().getSuppliers().size() != 0) {
+                        for (String supplier : item.getDescription().getSuppliers()) {
+                            addChargeViewModel.getSuppliers().add(new TextFieldModel(supplier));
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
     private void updateUI() {
         for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
             showUIByReason(reasonOption);
@@ -186,17 +252,21 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
 
     private void checkForVisitAndSetUI() {
+        int selectedCount = addChargeViewModel.getSelectedReasonCount();
         if (addChargeViewModel.isReasonSelected(Constants.ChargeReason.VISIT)) {
-            addChargeViewModel.setOnlyVisit(true);
-            layoutReason.setVisibility(View.VISIBLE);
-            etFees.setVisibility(View.VISIBLE);
+            if (selectedCount == 1) {
+                addChargeViewModel.setOnlyVisit(true);
+                layoutReason.setVisibility(View.VISIBLE);
+                etFees.setVisibility(View.VISIBLE);
+                tvReason.setText(getString(R.string.visit));
+                rvReason.setVisibility(View.GONE);
+                ivReason.setVisibility(View.GONE);
+                layoutReason.setEnabled(false);
+            }
             viewDateOfService.setSingleSelection(getString(R.string.lbl_service_date));
             viewDateOfService.setVisibility(View.VISIBLE);
-            tvReason.setText(getString(R.string.visit));
-            rvReason.setVisibility(View.GONE);
-            ivReason.setVisibility(View.GONE);
-            layoutReason.setEnabled(false);
-        } else {
+        }
+        if (!addChargeViewModel.isOnlyVisit()) {
             adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), pos -> {
                 addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
                 adapterReason.notifyItemChanged(pos);
@@ -333,7 +403,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 showError(getString(R.string.msg_please_select_date_of_service));
                 return false;
             }
-            if (etFees.getText().length() == 0) {
+            if (etFees.getText().length() == 0 || addChargeViewModel.getFees() == 0) {
                 showError(getString(R.string.msg_please_enter_fees));
                 return false;
             }
@@ -516,6 +586,28 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private void setDateInDescription(AddChargeReq.Description description, DateRangeView dateRangeView) {
         description.setStartDate(Utils.getUTCDateFromCalendar(dateRangeView.getSelectedFromDate()));
         description.setEndDate(Utils.getUTCDateFromCalendar(dateRangeView.getSelectedToDate()));
+    }
+
+    private void setDateInDateRangeView(AddChargeReq.Description description, DateRangeView dateRangeView) {
+        if (description.getDateOfService() != null) {
+            Date startDate = Utils.getDateFromString(description.getDateOfService());
+            if (startDate != null) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(startDate.getTime());
+                dateRangeView.setSelectedFromDate(calendar);
+            }
+        } else {
+            Date startDate = Utils.getDateFromString(description.getStartDate());
+            Date endDate = Utils.getDateFromString(description.getEndDate());
+            if (startDate != null && endDate != null) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(startDate.getTime());
+                dateRangeView.setSelectedFromDate(calendar);
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTimeInMillis(endDate.getTime());
+                dateRangeView.setSelectedToDate(calendar2);
+            }
+        }
     }
 
 

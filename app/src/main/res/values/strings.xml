@@ -1525,5 +1525,11 @@
     <string name="msg_please_select_a_reason">Please select a reason</string>
     <string name="msg_please_enter_medicine_name">Please enter medicine name</string>
     <string name="msg_please_enter_supplier_name">Please enter supplier name</string>
+    <string name="lbl_patient_payments">Patient Payments</string>
+
+    <string name="EMPTY_TRANSACTIONS">No Transactions recorded.</string>
+    <string name="lbl_add_charge">Add Charge</string>
+    <string name="lbl_medicine">Medicine</string>
+    <string name="lbl_supplies">Supplies</string>
 
 </resources>

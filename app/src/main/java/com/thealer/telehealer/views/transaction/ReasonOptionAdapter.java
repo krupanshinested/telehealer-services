@@ -44,7 +44,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         holder.etFees.setEnabled(list.get(position).isSelected());
         if (list.get(position).isSelected()) {
             if (list.get(position).getFee() != 0)
-                holder.etFees.setText(String.format(Locale.getDefault(), "%.2d", list.get(position).getFee()));
+                holder.etFees.setText(String.format(Locale.getDefault(), "%2d", list.get(position).getFee()));
             else
                 holder.etFees.setText(null);
         } else

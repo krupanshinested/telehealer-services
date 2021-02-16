@@ -6,10 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.core.io.CharTypes;
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
+import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
@@ -72,13 +74,13 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
 
     private void setUpReason() {
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.VISIT, "Visit", 0));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.MEDICINE, "Medicine", 0));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.SUPPLIES, "Supplies", 0));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.CCM, "CCM", 0));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.RPM, "RMP", 0));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.BHI, "BHI", 0));
-        reasonOptions.add(new ReasonOption(Constants.ChargeReason.CONCIERGE, "Concierge", 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.VISIT, getApplication().getString(R.string.visit), 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.MEDICINE, getApplication().getString(R.string.lbl_medicine), 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.SUPPLIES, getApplication().getString(R.string.lbl_supplies), 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.CCM, getApplication().getString(R.string.ccm), 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.RPM, getApplication().getString(R.string.rpm), 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.BHI, getApplication().getString(R.string.bhi), 0));
+        reasonOptions.add(new ReasonOption(Constants.ChargeReason.CONCIERGE, getApplication().getString(R.string.lbl_concierge), 0));
 
     }
 
@@ -91,12 +93,30 @@ public class AddChargeViewModel extends BaseApiViewModel {
         return null;
     }
 
+    @Nullable
+    public MasterResp.MasterItem getChargeTypeById(int id) {
+        for (MasterResp.MasterItem option : listChargeTypes) {
+            if (option.getId() == id)
+                return option;
+        }
+        return null;
+    }
+
     public boolean isReasonSelected(int value) {
         for (ReasonOption option : reasonOptions) {
             if (option.getValue() == value)
                 return option.isSelected();
         }
         return false;
+    }
+
+    public int getSelectedReasonCount() {
+        int count = 0;
+        for (ReasonOption reasonOption : reasonOptions) {
+            if (reasonOption.isSelected())
+                count++;
+        }
+        return count;
     }
 
     public ArrayList<MasterResp.MasterItem> getListChargeTypes() {

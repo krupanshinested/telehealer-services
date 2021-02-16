@@ -88,6 +88,7 @@ import com.thealer.telehealer.views.signup.medicalAssistant.MedicalAssistantDeta
 import com.thealer.telehealer.views.signup.patient.PatientChoosePaymentFragment;
 import com.thealer.telehealer.views.signup.patient.PatientRegistrationDetailFragment;
 import com.thealer.telehealer.views.signup.patient.PatientUploadInsuranceFragment;
+import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -360,6 +361,12 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             case R.id.medical_assistant_ll:
                 showMedicalAssistantList();
                 break;
+            case R.id.patient_payments: {
+                bundle = new Bundle();
+                TransactionListFragment transactionListFragment = new TransactionListFragment();
+                transactionListFragment.setArguments(bundle);
+                showSubFragment(transactionListFragment);
+            }
         }
     }
 
