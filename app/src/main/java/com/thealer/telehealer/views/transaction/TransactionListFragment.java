@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
+import com.thealer.telehealer.views.common.CustomDialogClickListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
@@ -143,7 +145,7 @@ public class TransactionListFragment extends BaseFragment {
 
             @Override
             public void onRefundClick(int pos) {
-                refundViewModel.processRefund(transactionListViewModel.getTransactions().get(pos).getId(), new RefundReq());
+                showRefundDialog(pos);
             }
 
             @Override
@@ -177,5 +179,40 @@ public class TransactionListFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    private void showRefundDialog(int pos) {
+        Utils.showUserInputDialog(getActivity(),
+                getString(R.string.lbl_refund),
+                getString(R.string.msg_refund_info),
+                getString(R.string.lbl_add_charge),
+                getString(R.string.Done),
+                getString(R.string.Cancel),
+                InputType.TYPE_CLASS_NUMBER,
+                new CustomDialogClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, String inputText) {
+                        if (inputText != null && inputText.length() > 0) {
+                            RefundReq req = new RefundReq();
+                            req.setRefundAmount(Integer.parseInt(inputText));
+                            refundViewModel.processRefund(transactionListViewModel.getTransactions().get(pos).getId(), req);
+                            dialog.dismiss();
+                        } else {
+                            Utils.showAlertDialog(getContext(),
+                                    getString(R.string.error),
+                                    getString(R.string.msg_please_enter_valid_refund_amount),
+                                    getString(R.string.ok),
+                                    null,
+                                    null,
+                                    null);
+                        }
+                    }
+                },
+                new CustomDialogClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, String inputText) {
+                        dialog.dismiss();
+                    }
+                });
     }
 }

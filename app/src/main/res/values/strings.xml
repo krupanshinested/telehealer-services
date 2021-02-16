@@ -1531,5 +1531,7 @@
     <string name="lbl_add_charge">Add Charge</string>
     <string name="lbl_medicine">Medicine</string>
     <string name="lbl_supplies">Supplies</string>
+    <string name="msg_please_enter_valid_refund_amount">Please enter valid refund amount</string>
+    <string name="msg_refund_info">Entered amount will get credited into patient account.</string>
 
 </resources>

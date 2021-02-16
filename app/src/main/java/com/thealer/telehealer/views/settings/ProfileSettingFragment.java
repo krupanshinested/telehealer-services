@@ -187,6 +187,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 medical_history.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
+                    payments_billings.hideSplitter(false);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {
                     billLl.setVisibility(View.GONE);
@@ -198,6 +199,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 medicalAssistantLl.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
+                    payments_billings.hideSplitter(false);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {
                     billLl.setVisibility(View.GONE);

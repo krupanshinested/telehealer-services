@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.text.Editable;
 import android.text.Html;
+import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -939,6 +940,12 @@ public class Utils {
     public static void showUserInputDialog(@NonNull Context context, @Nullable String title, @Nullable String message, @Nullable String editTextHint, @Nullable String positiveText, @Nullable String negativeText,
                                            @Nullable CustomDialogClickListener positiveClickListener, @Nullable CustomDialogClickListener negativeClickListener) {
 
+        showUserInputDialog(context, title, message, editTextHint, positiveText, negativeText, InputType.TYPE_CLASS_TEXT, positiveClickListener, negativeClickListener);
+    }
+
+    public static void showUserInputDialog(@NonNull Context context, @Nullable String title, @Nullable String message, @Nullable String editTextHint, @Nullable String positiveText, @Nullable String negativeText, int inputType,
+                                           @Nullable CustomDialogClickListener positiveClickListener, @Nullable CustomDialogClickListener negativeClickListener) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View view = LayoutInflater.from(context).inflate(R.layout.view_user_input, null);
         builder.setView(view);
@@ -955,6 +962,7 @@ public class Utils {
         cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
         doneTv = (TextView) view.findViewById(R.id.done_tv);
         inputLl = (LinearLayout) view.findViewById(R.id.input_ll);
+        inputEt.setInputType(inputType);
 
         inputEt.addTextChangedListener(new TextWatcher() {
             @Override
