@@ -118,7 +118,7 @@ public class DateRangeView extends LinearLayout {
 
     public void setSelectedToDate(Calendar selectedToDate) {
         this.selectedToDate = selectedToDate;
-        updateDate(tvFromDate, selectedToDate.get(Calendar.YEAR), selectedToDate.get(Calendar.MONTH), selectedToDate.get(Calendar.DAY_OF_MONTH));
+        updateDate(tvToDate, selectedToDate.get(Calendar.YEAR), selectedToDate.get(Calendar.MONTH), selectedToDate.get(Calendar.DAY_OF_MONTH));
     }
 
 
@@ -144,7 +144,8 @@ public class DateRangeView extends LinearLayout {
         layoutToDate.setVisibility(View.GONE);
         tvFromDate.setTextSize(14);
         selectedToDate = null;
-        findViewById(R.id.lbStartDate).setVisibility(GONE);
+        TextView txt = findViewById(R.id.lbStartDate);
+        txt.setText(hintText);
         findViewById(R.id.lbEndDate).setVisibility(GONE);
     }
 }

@@ -77,6 +77,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.activity_add_charge);
         initView();
         initViewModels();
+        setAdapters();
         addChargeViewModel.setSelectedReason(getIntent().getIntExtra(EXTRA_REASON, -1));
         addChargeViewModel.setPatientId(getIntent().getIntExtra(EXTRA_PATIENT_ID, -1));
         String json = getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM);
@@ -147,6 +148,33 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         findViewById(R.id.btnSubmit).setOnClickListener(this);
         findViewById(R.id.btnPending).setOnClickListener(this);
 
+    }
+
+    private void setAdapters() {
+        adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), pos -> {
+            addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
+            adapterReason.notifyItemChanged(pos);
+            showUIByReason(addChargeViewModel.getReasonOptions().get(pos));
+        });
+        rvReason.setAdapter(adapterReason);
+
+        adapterSupplier = new TextFieldAdapter(addChargeViewModel.getSuppliers(), getString(R.string.lbl_supplier_name), new TextFieldAdapter.OnOptionSelected() {
+            @Override
+            public void onRemoveField(int pos) {
+                addChargeViewModel.getSuppliers().remove(pos);
+                adapterSupplier.notifyItemRemoved(pos);
+            }
+        });
+        adapterMedicine = new TextFieldAdapter(addChargeViewModel.getMedicines(), getString(R.string.lbl_medicine_name), new TextFieldAdapter.OnOptionSelected() {
+            @Override
+            public void onRemoveField(int pos) {
+                addChargeViewModel.getMedicines().remove(pos);
+                adapterMedicine.notifyItemRemoved(pos);
+            }
+        });
+
+        rvMedicines.setAdapter(adapterMedicine);
+        rvSuppliers.setAdapter(adapterSupplier);
 
     }
 
@@ -206,7 +234,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     private void setReasonDataFromTransactionItem(AddChargeReq.ChargeDataItem item, ReasonOption reasonOption) {
         if (reasonOption != null) {
-            showUIByReason(reasonOption);
             reasonOption.setFee(item.getAmount());
             reasonOption.setSelected(true);
             switch (reasonOption.getValue()) {
@@ -241,6 +268,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     }
                     break;
             }
+            showUIByReason(reasonOption);
         }
     }
 
@@ -265,35 +293,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             }
             viewDateOfService.setSingleSelection(getString(R.string.lbl_service_date));
             viewDateOfService.setVisibility(View.VISIBLE);
-        }
-        if (!addChargeViewModel.isOnlyVisit()) {
-            adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), pos -> {
-                addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
-                adapterReason.notifyItemChanged(pos);
-                showUIByReason(addChargeViewModel.getReasonOptions().get(pos));
-            });
-            rvReason.setAdapter(adapterReason);
-            ivReason.setVisibility(View.VISIBLE);
-
-
-            adapterSupplier = new TextFieldAdapter(addChargeViewModel.getSuppliers(), getString(R.string.lbl_supplier_name), new TextFieldAdapter.OnOptionSelected() {
-                @Override
-                public void onRemoveField(int pos) {
-                    addChargeViewModel.getSuppliers().remove(pos);
-                    adapterSupplier.notifyItemRemoved(pos);
-                }
-            });
-            adapterMedicine = new TextFieldAdapter(addChargeViewModel.getMedicines(), getString(R.string.lbl_medicine_name), new TextFieldAdapter.OnOptionSelected() {
-                @Override
-                public void onRemoveField(int pos) {
-                    addChargeViewModel.getMedicines().remove(pos);
-                    adapterMedicine.notifyItemRemoved(pos);
-                }
-            });
-
-            rvMedicines.setAdapter(adapterMedicine);
-            rvSuppliers.setAdapter(adapterSupplier);
-
         }
     }
 

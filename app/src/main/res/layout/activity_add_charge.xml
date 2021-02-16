@@ -159,18 +159,21 @@
                 android:id="@+id/ccm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:date_title="@string/ccm" />
 
             <com.thealer.telehealer.views.transaction.DateRangeView
                 android:id="@+id/rpm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:date_title="@string/rpm" />
 
             <com.thealer.telehealer.views.transaction.DateRangeView
                 android:id="@+id/bhi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:date_title="@string/bhi" />
 
 
@@ -178,6 +181,7 @@
                 android:id="@+id/concierge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:date_title="@string/lbl_concierge" />
 
 
@@ -185,7 +189,8 @@
                 android:id="@+id/dateOfService"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:date_title="@string/visit" />
 
             <EditText
                 android:id="@+id/etFees"
