@@ -101,6 +101,9 @@ public class AppPaymentCardUtils {
         String description;
         if (UserType.isUserDoctor()) {
             intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(R.string.proceed));
+            intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
+            intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+            intent.putExtra(ArgumentKeys.SKIP_TITLE, activity.getString(R.string.lbl_not_now));
             description = activity.getString(R.string.msg_payment_gateway_changed);
         } else if (UserType.isUserAssistant()) {
             intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);

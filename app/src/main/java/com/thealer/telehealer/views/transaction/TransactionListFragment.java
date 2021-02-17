@@ -62,6 +62,7 @@ public class TransactionListFragment extends BaseFragment {
         refundViewModel = new ViewModelProvider(this).get(RefundViewModel.class);
         onViewChangeInterface.attachObserver(transactionListViewModel);
         onViewChangeInterface.attachObserver(refundViewModel);
+
         transactionListViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
@@ -81,6 +82,33 @@ public class TransactionListFragment extends BaseFragment {
                 showEmptyState();
                 transactionListViewModel.setApiRequested(false);
                 progressBar.setVisibility(View.GONE);
+                String errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                Utils.showAlertDialog(getContext(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }, null);
+            }
+        });
+
+        refundViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModels) {
+                transactionListViewModel.setPage(1);
+                transactionListViewModel.loadTransactions(true);
+                if (baseApiResponseModels.getMessage() != null)
+                    Utils.showAlertDialog(getContext(), getString(R.string.success),  baseApiResponseModels.getMessage() , getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }, null);
+            }
+        });
+        refundViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
                 String errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
                 Utils.showAlertDialog(getContext(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                     @Override
