@@ -25,13 +25,16 @@ import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.transaction.RefundViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
+import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
@@ -53,6 +56,8 @@ public class TransactionListFragment extends BaseFragment {
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle;
+
+    private TransactionItem selectedTransaction = null;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -79,16 +84,39 @@ public class TransactionListFragment extends BaseFragment {
         transactionListViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
-                showEmptyState();
-                transactionListViewModel.setApiRequested(false);
-                progressBar.setVisibility(View.GONE);
-                String errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                Utils.showAlertDialog(getContext(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                if (transactionListViewModel.isApiRequested()) {
+                    showEmptyState();
+                    transactionListViewModel.setApiRequested(false);
+                    progressBar.setVisibility(View.GONE);
+                    String errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                    Utils.showAlertDialog(getContext(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }, null);
+                } else {
+                    if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                        selectedTransaction = null;
+                        String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                        Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.ok), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, null);
+                    } else {
+                        if (selectedTransaction != null) {
+                            String message = getString(R.string.msg_invalid_credit_card_in_transaction_process, selectedTransaction.getPatientId().getDisplayName());
+                            Utils.showAlertDialog(getContext(), getString(R.string.app_name), message, getString(R.string.lbl_mark_as_completed), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }, null);
+                        }
                     }
-                }, null);
+                }
             }
         });
 
@@ -98,7 +126,7 @@ public class TransactionListFragment extends BaseFragment {
                 transactionListViewModel.setPage(1);
                 transactionListViewModel.loadTransactions(true);
                 if (baseApiResponseModels.getMessage() != null)
-                    Utils.showAlertDialog(getContext(), getString(R.string.success),  baseApiResponseModels.getMessage() , getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    Utils.showAlertDialog(getContext(), getString(R.string.success), baseApiResponseModels.getMessage(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -168,6 +196,7 @@ public class TransactionListFragment extends BaseFragment {
 
             @Override
             public void onProcessPaymentClick(int pos) {
+                selectedTransaction = transactionListViewModel.getTransactions().get(pos);
                 transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId());
             }
 
