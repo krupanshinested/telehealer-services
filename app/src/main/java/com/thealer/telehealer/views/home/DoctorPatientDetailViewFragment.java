@@ -428,36 +428,33 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             }
                         }
                         callTypes.add(getString(R.string.one_way_call));
+                        if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPayment_account_info())) {
+                            if (UserType.isUserDoctor()) {
+                                if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
+                                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+                                }
+                            } else if (UserType.isUserAssistant()) {
+                                if (doctorModel.isPatient_credit_card_required()) {
+                                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+                                }
+                            }
+                        }
+
                         CommonUserApiResponseModel finalCommonUserApiResponseModel = commonUserApiResponseModel;
                         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
                             @Override
                             public void didSelectedItem(int position) {
 
                                 String callType;
-                                switch (position) {
-                                    case 0:
-                                        callType = OpenTokConstants.audio;
-                                        break;
-                                    case 1:
-                                        callType = OpenTokConstants.video;
-                                        break;
-                                    default:
-                                        callType = OpenTokConstants.oneWay;
-                                        break;
-                                }
-
-                                if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPayment_account_info())) {
-                                    if (UserType.isUserDoctor()) {
-                                        if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
-                                            showWithoutCardOptions(finalCommonUserApiResponseModel, callType);
-                                            return;
-                                        }
-                                    } else if (UserType.isUserAssistant()) {
-                                        if (doctorModel.isPatient_credit_card_required()) {
-                                            showWithoutCardOptions(finalCommonUserApiResponseModel, callType);
-                                            return;
-                                        }
-                                    }
+                                if (getString(R.string.audio_call).equals(callTypes.get(position))) {
+                                    callType = OpenTokConstants.audio;
+                                } else if (getString(R.string.video_call).equals(callTypes.get(position))) {
+                                    callType = OpenTokConstants.video;
+                                } else if (getString(R.string.lbl_ask_to_add_credit_card).equals(callTypes.get(position))) {
+                                    askToAddCardViewModel.askToAddCard(finalCommonUserApiResponseModel.getUser_guid(), doctorGuid);
+                                    return;
+                                } else {
+                                    callType = OpenTokConstants.oneWay;
                                 }
                                 startCall(finalCommonUserApiResponseModel, callType);
 
@@ -556,7 +553,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             }
         });
     }
-
+/*
     private void showWithoutCardOptions(CommonUserApiResponseModel finalCommonUserApiResponseModel, String callType) {
         ArrayList<String> options = new ArrayList<>(Arrays.asList(getString(R.string.lbl_continue_anyway), getString(R.string.lbl_ask_to_add_credit_card)));
         new ItemPickerDialog(getContext(), getString(R.string.msg_card_not_added_by_patient), options, new PickerListener() {
@@ -579,7 +576,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
             }
         }).show();
-    }
+    }*/
 
     private void startCall(CommonUserApiResponseModel finalCommonUserApiResponseModel, String callType) {
         String doctorGuid = null, doctorName = null;

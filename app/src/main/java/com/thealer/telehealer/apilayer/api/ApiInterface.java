@@ -554,7 +554,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> checkOutBrainTree(@Body Map<String, Object> param);
 
     @GET("/api/payment/transactions")
-    Observable<TransactionResponse> getTransactions(@Query(PAGINATE) boolean paginate,@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    Observable<TransactionResponse> getTransactions(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("/api/log/vitals")
     Observable<VitalVisitResponse> getVitalVisit(@Query(MONTH) String month);
@@ -711,6 +711,9 @@ public interface ApiInterface {
 
     @POST("/api/charge/add-charge")
     Observable<BaseApiResponseModel> addCharge(@Body() AddChargeReq req);
+
+    @PUT("/charge/update-charge/{id}")
+    Observable<BaseApiResponseModel> updateCharge(@Path("id") int id, @Body() AddChargeReq req);
 
     @GET("/api/charge/paginate")
     Observable<TransactionListResp> transactionPaginate(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);

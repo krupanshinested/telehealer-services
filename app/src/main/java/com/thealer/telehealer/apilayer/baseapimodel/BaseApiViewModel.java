@@ -452,7 +452,10 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             } catch (Exception e1) {
                 e1.printStackTrace();
                 isLoadingLiveData.setValue(false);
-                errorModelLiveData.setValue(new ErrorModel(-1, e1.getMessage(), e1.getMessage()));
+                if (e1 instanceof HttpException)
+                    errorModelLiveData.setValue(new ErrorModel(-1, e1.getMessage(), e1.getMessage()));
+                else
+                    errorModelLiveData.setValue(new ErrorModel(-1, getApplication().getString(R.string.something_went_wrong_try_again), getApplication().getString(R.string.something_went_wrong_try_again)));
             }
         } else if (e instanceof UnknownHostException) {
             isLoadingLiveData.setValue(false);

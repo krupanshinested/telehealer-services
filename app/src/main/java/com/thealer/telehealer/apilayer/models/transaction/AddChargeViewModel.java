@@ -5,13 +5,11 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fasterxml.jackson.core.io.CharTypes;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
-import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
@@ -19,12 +17,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import io.reactivex.Observable;
+
 public class AddChargeViewModel extends BaseApiViewModel {
 
 
     private final ArrayList<MasterResp.MasterItem> listChargeTypes = new ArrayList<>();
 
     private int selectedChargeTypeId = -1;
+
+    private int chargeId = -1;
 
     private int patientId;
     private int fees;
@@ -144,13 +146,13 @@ public class AddChargeViewModel extends BaseApiViewModel {
     }
 
 
-    public void addCharge(AddChargeReq req) {
+    public void addCharge(AddChargeReq req, boolean isUpdate) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().addCharge(req)
-                            .compose(applySchedulers())
+                    Observable<BaseApiResponseModel> observer = isUpdate ? getAuthApiService().updateCharge(chargeId, req) : getAuthApiService().addCharge(req);
+                    observer.compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
@@ -186,5 +188,13 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     public void setOnlyVisit(boolean onlyVisit) {
         isOnlyVisit = onlyVisit;
+    }
+
+    public int getChargeId() {
+        return chargeId;
+    }
+
+    public void setChargeId(int chargeId) {
+        this.chargeId = chargeId;
     }
 }

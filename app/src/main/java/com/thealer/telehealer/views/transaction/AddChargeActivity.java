@@ -223,6 +223,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     public void prepareDataFromTransactionItem(TransactionItem transactionItem) {
         if (transactionItem != null) {
+            addChargeViewModel.setChargeId(transactionItem.getId());
             addChargeViewModel.setSelectedChargeTypeId(transactionItem.getTypeOfCharge().getId());
             if (transactionItem.getChargeData() != null && transactionItem.getChargeData().size() > 0) {
                 for (AddChargeReq.ChargeDataItem item : transactionItem.getChargeData()) {
@@ -382,8 +383,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 break;
             }
             case R.id.btnSubmit: {
-                if (isValid())
-                    addChargeViewModel.addCharge(getReq());
+                if (isValid()) {
+                    addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                }
                 break;
             }
             case R.id.btnPending: {
