@@ -8,12 +8,15 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,6 +36,7 @@ import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
@@ -57,6 +61,14 @@ public class TransactionListFragment extends BaseFragment {
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle;
+
+    private LinearLayout searchLl;
+    private View topView;
+    private CardView searchCv;
+    private EditText searchEt;
+    private ImageView searchClearIv;
+    private View bottomView;
+    private ImageView filterIv;
 
     private TransactionItem selectedTransaction = null;
 
@@ -173,6 +185,14 @@ public class TransactionListFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        searchLl = (LinearLayout) view.findViewById(R.id.search_ll);
+        topView = (View) view.findViewById(R.id.top_view);
+        searchCv = (CardView) view.findViewById(R.id.search_cv);
+        searchEt = (EditText) view.findViewById(R.id.search_et);
+        searchClearIv = (ImageView) view.findViewById(R.id.search_clear_iv);
+        bottomView = (View) view.findViewById(R.id.bottom_view);
+
         rvTransactions = view.findViewById(R.id.rvTransactions);
         progressBar = view.findViewById(R.id.progressbar);
 
@@ -256,6 +276,18 @@ public class TransactionListFragment extends BaseFragment {
                 }
             }
         });
+
+        if (UserType.isUserAssistant()) {
+            searchEt.setHint(getString(R.string.lbl_search_patient));
+            filterIv.setVisibility(View.VISIBLE);
+            filterIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    
+                }
+            });
+        }
+
     }
 
     private void showRefundDialog(int pos) {

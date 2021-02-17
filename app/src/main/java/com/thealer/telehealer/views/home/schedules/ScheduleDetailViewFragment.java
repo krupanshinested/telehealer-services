@@ -37,6 +37,7 @@ import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiRespon
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.CallManager;
@@ -103,6 +104,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private GuestloginViewModel guestloginViewModel;
     private GuestLoginApiResponseModel guestLoginApiResponseModel;
     private PatientInvite patientInvite;
+    private AskToAddCardViewModel askToAddCardViewModel;
 
     @Override
     public void onAttach(Context context) {
@@ -183,7 +185,26 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                     }
                 });
-
+        askToAddCardViewModel = new ViewModelProvider(this).get(AskToAddCardViewModel.class);
+        attachObserverInterface.attachObserver(askToAddCardViewModel);
+        askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                Utils.showAlertDialog(getContext(), getString(R.string.error),
+                        errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                        null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+            }
+        });
     }
 
     private void createPatientInvite() {
@@ -341,22 +362,34 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                     }
                 }
                 callTypes.add(getString(R.string.one_way_call));
+                if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPatient().getPayment_account_info())) {
+                    if (UserType.isUserDoctor()) {
+                        if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
+                            callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+                        }
+                    } else if (UserType.isUserAssistant()) {
+                        if (resultBean.getDoctor().isPatient_credit_card_required()) {
+                            callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+                        }
+                    }
+                }
+
                 ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
                     @Override
                     public void didSelectedItem(int position) {
 
                         String callType;
-                        switch (position) {
-                            case 0:
-                                callType = OpenTokConstants.audio;
-                                break;
-                            case 1:
-                                callType = OpenTokConstants.video;
-                                break;
-                            default:
-                                callType = OpenTokConstants.oneWay;
-                                break;
+                        if (getString(R.string.audio_call).equals(callTypes.get(position))) {
+                            callType = OpenTokConstants.audio;
+                        } else if (getString(R.string.video_call).equals(callTypes.get(position))) {
+                            callType = OpenTokConstants.video;
+                        } else if (getString(R.string.lbl_ask_to_add_credit_card).equals(callTypes.get(position))) {
+                            askToAddCardViewModel.askToAddCard(resultBean.getPatient().getUser_guid(), doctorGuid);
+                            return;
+                        } else {
+                            callType = OpenTokConstants.oneWay;
                         }
+
 
                         CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
                                 resultBean.getPatient().getUser_guid(), resultBean.getPatient(), doctorGuid, doctorName, String.valueOf(resultBean.getSchedule_id()), callType, true, String.valueOf(resultBean.getSchedule_id()));

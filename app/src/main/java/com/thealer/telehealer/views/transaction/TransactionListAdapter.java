@@ -55,6 +55,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
                 holder.actionRow.setVisibility(View.GONE);
             }
         } else if (UserType.isUserAssistant()) {
+            updateActionsForProvider(holder, position);
             holder.doctorRow.setVisibility(View.VISIBLE);
             holder.tvDoctor.setText(list.get(position).getDoctorId().getDisplayName());
 
