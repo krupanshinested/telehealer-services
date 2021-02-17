@@ -31,6 +31,7 @@ import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewMod
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -77,7 +78,7 @@ public class TransactionListFragment extends BaseFragment {
                     showEmptyState();
                 } else {
                     transactionListViewModel.setPage(1);
-                    transactionListViewModel.loadTransactions(true);
+                    loadTransactions(true);
                 }
             }
         });
@@ -124,7 +125,7 @@ public class TransactionListFragment extends BaseFragment {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
                 transactionListViewModel.setPage(1);
-                transactionListViewModel.loadTransactions(true);
+                loadTransactions(true);
                 if (baseApiResponseModels.getMessage() != null)
                     Utils.showAlertDialog(getContext(), getString(R.string.success), baseApiResponseModels.getMessage(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
@@ -146,7 +147,13 @@ public class TransactionListFragment extends BaseFragment {
                 }, null);
             }
         });
-        transactionListViewModel.loadTransactions(true);
+        loadTransactions(true);
+    }
+
+    private void loadTransactions(boolean showProgress) {
+        selectedTransaction = null;
+        transactionListViewModel.loadTransactions(showProgress);
+
     }
 
     private void showEmptyState() {
@@ -197,7 +204,20 @@ public class TransactionListFragment extends BaseFragment {
             @Override
             public void onProcessPaymentClick(int pos) {
                 selectedTransaction = transactionListViewModel.getTransactions().get(pos);
+                if (selectedTransaction.getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESS_FAILED) {
+                    if (selectedTransaction.getMaxRetries() >= Constants.MAX_TRANSACTION_RETRY) {
+                        Utils.showAlertDialog(getContext(), getString(R.string.app_name), getString(R.string.msg_transaction_failed, selectedTransaction.getPatientId().getDisplayName()), getString(R.string.lbl_mark_as_completed), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, null);
+                        return;
+                    }
+                }
                 transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId());
+
+
             }
 
             @Override
@@ -226,7 +246,7 @@ public class TransactionListFragment extends BaseFragment {
                 if (linearLayoutManager.getItemCount() > 0 && linearLayoutManager.getItemCount() < transactionListViewModel.getTotalCount()) {
                     if (linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1) {
                         transactionListViewModel.setPage(transactionListViewModel.getPage() + 1);
-                        transactionListViewModel.loadTransactions(false);
+                        loadTransactions(false);
                         progressBar.setVisibility(View.VISIBLE);
                     } else {
                         progressBar.setVisibility(View.GONE);

@@ -50,6 +50,8 @@ public class TransactionItem extends BaseApiResponseModel {
     @SerializedName("order_id")
     private Object orderId;
 
+    private int maxRetries = Constants.MAX_TRANSACTION_RETRY;
+
     public CommonUserApiResponseModel getDoctorId() {
         return doctorId;
     }
@@ -138,5 +140,13 @@ public class TransactionItem extends BaseApiResponseModel {
                 return context.getString(R.string.lbl_medicine);
         }
         return null;
+    }
+
+    public int getMaxRetries() {
+        return maxRetries;
+    }
+
+    public void setMaxRetries(int maxRetries) {
+        this.maxRetries = maxRetries;
     }
 }

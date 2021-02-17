@@ -206,4 +206,6 @@ public class Constants {
         int CHARGE_PROCESSED = 3;
         int CHARGE_PROCESS_FAILED = 4;
     }
+
+    public static final int MAX_TRANSACTION_RETRY = 3;
 }
