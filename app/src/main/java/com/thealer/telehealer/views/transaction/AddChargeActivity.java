@@ -293,6 +293,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 rvReason.setVisibility(View.GONE);
                 ivReason.setVisibility(View.GONE);
                 layoutReason.setEnabled(false);
+                findViewById(R.id.btnPending).setVisibility(View.GONE);
             }
             viewDateOfService.setSingleSelection(getString(R.string.lbl_service_date));
             viewDateOfService.setVisibility(View.VISIBLE);

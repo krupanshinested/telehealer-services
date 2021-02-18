@@ -104,6 +104,7 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -984,8 +985,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             case RequestID.REQ_CARD_INFO:
             case RequestID.REQ_CARD_EXPIRE:
                 if (UserType.isUserPatient()) {
-                    createPatientInvite();
-                    goToWaitingScreen();
+                    if (resultCode == RESULT_CANCELED) {
+                        createPatientInvite();
+                        goToWaitingScreen();
+                    }
                 }
                 break;
 
