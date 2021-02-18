@@ -34,12 +34,14 @@ import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewMod
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
+import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
@@ -69,6 +71,7 @@ public class TransactionListFragment extends BaseFragment {
     private ImageView searchClearIv;
     private View bottomView;
     private ImageView filterIv;
+    private LinearLayout addCardButton;
 
     private TransactionItem selectedTransaction = null;
 
@@ -185,7 +188,7 @@ public class TransactionListFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        addCardButton = (LinearLayout) view.findViewById(R.id.btnAddCard);
         searchLl = (LinearLayout) view.findViewById(R.id.search_ll);
         topView = (View) view.findViewById(R.id.top_view);
         searchCv = (CardView) view.findViewById(R.id.search_cv);
@@ -200,7 +203,10 @@ public class TransactionListFragment extends BaseFragment {
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
-        toolbarTitle.setText(getString(R.string.lbl_patient_payments));
+        if (UserType.isUserPatient())
+            toolbarTitle.setText(getString(R.string.lbl_payment));
+        else
+            toolbarTitle.setText(getString(R.string.lbl_patient_payments));
 
         rvTransactions.setScrollable(false);
         rvTransactions.setEmptyState(EmptyViewConstants.EMPTY_PAYMENTS);
@@ -211,6 +217,16 @@ public class TransactionListFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 ((OnCloseActionInterface) getActivity()).onClose(false);
+            }
+        });
+
+        if (UserType.isUserPatient())
+            addCardButton.setVisibility(View.VISIBLE);
+
+        addCardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
             }
         });
 
@@ -277,16 +293,16 @@ public class TransactionListFragment extends BaseFragment {
             }
         });
 
-        if (UserType.isUserAssistant()) {
+        /*if (UserType.isUserAssistant()) {
             searchEt.setHint(getString(R.string.lbl_search_patient));
-            filterIv.setVisibility(View.VISIBLE);
+            filterIv.setVisibility(View.GONE);
             filterIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    
+
                 }
             });
-        }
+        }*/
 
     }
 

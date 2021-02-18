@@ -391,6 +391,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 break;
             }
             case R.id.btnPending: {
+                finish();
                 break;
             }
         }

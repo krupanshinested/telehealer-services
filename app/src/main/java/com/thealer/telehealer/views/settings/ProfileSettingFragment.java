@@ -174,10 +174,13 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
         switch (appPreference.getInt(Constants.USER_TYPE)) {
             case Constants.TYPE_PATIENT:
-                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
+                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
-                else {
-                    billLl.setVisibility(View.GONE);
+                    patient_payments.setVisibility(View.VISIBLE);
+                    patient_payments.updateTitle(getString(R.string.lbl_payment));
+                    payments_billings.setVisibility(View.GONE);
+                } else {
+                    patient_payments.setVisibility(View.GONE);
                 }
                 documents.setVisibility(View.VISIBLE);
                 medicalAssistant.setVisibility(View.GONE);

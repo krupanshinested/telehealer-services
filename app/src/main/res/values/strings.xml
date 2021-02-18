@@ -1538,5 +1538,6 @@
     <string name="msg_transaction_failed">We are unable to process this transaction, please contact %s and collect charge in cash.</string>
     <string name="lbl_provider">Provider</string>
     <string name="lbl_search_patient">Search Patient</string>
+    <string name="lbl_charges">Charges</string>
 
 </resources>
