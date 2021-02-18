@@ -48,7 +48,7 @@ public class TransactionItem extends BaseApiResponseModel {
     private MasterResp.MasterItem typeOfCharge;
 
     @SerializedName("order_id")
-    private Object orderId;
+    private String orderId;
 
     private int maxRetries = Constants.MAX_TRANSACTION_RETRY;
 
@@ -92,7 +92,7 @@ public class TransactionItem extends BaseApiResponseModel {
         return typeOfCharge;
     }
 
-    public Object getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 

@@ -226,6 +226,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     public void prepareDataFromTransactionItem(TransactionItem transactionItem) {
         if (transactionItem != null) {
             addChargeViewModel.setChargeId(transactionItem.getId());
+            addChargeViewModel.setPatientId(transactionItem.getPatientId().getUser_id());
+            addChargeViewModel.setOrderId(transactionItem.getOrderId());
             addChargeViewModel.setSelectedChargeTypeId(transactionItem.getTypeOfCharge().getId());
             if (transactionItem.getChargeData() != null && transactionItem.getChargeData().size() > 0) {
                 for (AddChargeReq.ChargeDataItem item : transactionItem.getChargeData()) {
@@ -293,7 +295,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 rvReason.setVisibility(View.GONE);
                 ivReason.setVisibility(View.GONE);
                 layoutReason.setEnabled(false);
-                findViewById(R.id.btnPending).setVisibility(View.GONE);
+                if (getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) == null)
+                    findViewById(R.id.btnPending).setVisibility(View.VISIBLE);
             }
             viewDateOfService.setSingleSelection(getString(R.string.lbl_service_date));
             viewDateOfService.setVisibility(View.VISIBLE);
@@ -520,7 +523,11 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private AddChargeReq getReq() {
         AddChargeReq req = new AddChargeReq();
         req.setTypeOfCharge(addChargeViewModel.getSelectedChargeTypeId());
-        req.setPatientId(addChargeViewModel.getPatientId());
+        if (addChargeViewModel.getPatientId() != -1)
+            req.setPatientId(addChargeViewModel.getPatientId());
+        else{
+            req.setPatientId(null);
+        }
         ArrayList<AddChargeReq.ChargeDataItem> chargeData = new ArrayList<>();
         if (addChargeViewModel.isOnlyVisit()) {
             AddChargeReq.ChargeDataItem chargeDataItem = new AddChargeReq.ChargeDataItem();

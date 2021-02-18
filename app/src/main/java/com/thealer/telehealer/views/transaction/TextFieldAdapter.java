@@ -1,5 +1,7 @@
 package com.thealer.telehealer.views.transaction;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,12 +43,11 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
     public void onBindViewHolder(@NonNull TextFieldVH holder, int position) {
         holder.etField.setHint(hint);
         holder.etField.setText(list.get(position).getValue());
+        holder.watcher.setPosition(position);
         if (list.size() > 1 && position != 0)
             holder.imgRemove.setVisibility(View.VISIBLE);
         else
             holder.imgRemove.setVisibility(View.GONE);
-        holder.etField.removeTextChangedListener(list.get(position).getTextWatcher());
-        holder.etField.addTextChangedListener(list.get(position).getTextWatcher());
     }
 
     @Override
@@ -54,14 +55,14 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
         return list.size();
     }
 
-    public static class TextFieldVH extends RecyclerView.ViewHolder {
+    public class TextFieldVH extends RecyclerView.ViewHolder {
 
         EditText etField;
         ImageView imgRemove;
+        RecyclerTextWatcher watcher = new RecyclerTextWatcher();
 
         public TextFieldVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
-            setIsRecyclable(false);
             imgRemove = itemView.findViewById(R.id.imgRemove);
             imgRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -70,10 +71,35 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
                 }
             });
             etField = itemView.findViewById(R.id.etField);
+            etField.addTextChangedListener(watcher);
         }
     }
 
     interface OnOptionSelected {
         void onRemoveField(int pos);
+    }
+
+    class RecyclerTextWatcher implements TextWatcher {
+
+        int position;
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            list.get(position).setValue(s.toString());
+        }
     }
 }

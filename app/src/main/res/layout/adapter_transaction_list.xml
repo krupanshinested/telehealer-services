@@ -32,7 +32,9 @@
                 android:text="21 Jan 2021 | 03:15 AM" />
         </TableRow>
 
-        <TableRow style="@style/TransactionListRow">
+        <TableRow
+            style="@style/TransactionListRow"
+            android:visibility="gone">
 
             <TextView
                 style="@style/TransactionRowLbl"

@@ -11,7 +11,7 @@ public class AddChargeReq {
     private List<ChargeDataItem> chargeData;
 
     @SerializedName("patient_id")
-    private int patientId;
+    private transient Integer patientId;
 
     @SerializedName("type_of_charge")
     private int typeOfCharge;
@@ -23,7 +23,7 @@ public class AddChargeReq {
         return chargeData;
     }
 
-    public int getPatientId() {
+    public Integer getPatientId() {
         return patientId;
     }
 
@@ -35,7 +35,7 @@ public class AddChargeReq {
         this.chargeData = chargeData;
     }
 
-    public void setPatientId(int patientId) {
+    public void setPatientId(Integer patientId) {
         this.patientId = patientId;
     }
 

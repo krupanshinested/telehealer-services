@@ -195,6 +195,7 @@ public class ArgumentKeys {
     public static final String FEEDBACK_STRING = "FEEDBACK_STRING";
     public static final String STARTED_DATE = "STARTED_DATE";
     public static final String ENDED_DATE = "ENDED_DATE";
+    public static final String PATIENT_ID = "patient_id";
 
     public static final String TO_USER_GUID = "TO_USER_GUID";
 

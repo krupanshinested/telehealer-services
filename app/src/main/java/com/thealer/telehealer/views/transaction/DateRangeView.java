@@ -29,12 +29,14 @@ public class DateRangeView extends LinearLayout {
     private Calendar selectedFromDate = null;
     private Calendar selectedToDate = null;
 
+    private int fromDateType = Constants.TYPE_EXPIRATION;
+
     private OnClickListener onLayoutClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.layoutFromDate:
-                    Utils.showDatePickerDialog(getContext(), Calendar.getInstance(), Constants.TYPE_EXPIRATION, new DatePickerDialog.OnDateSetListener() {
+                    Utils.showDatePickerDialog(getContext(), fromDateType == Constants.TYPE_EXPIRATION ? Calendar.getInstance() : null, fromDateType, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             Calendar calendar = Calendar.getInstance();
@@ -144,8 +146,13 @@ public class DateRangeView extends LinearLayout {
         layoutToDate.setVisibility(View.GONE);
         tvFromDate.setTextSize(14);
         selectedToDate = null;
+        setFromDateType(Constants.TILL_CURRENT_DAY);
         TextView txt = findViewById(R.id.lbStartDate);
         txt.setText(hintText);
         findViewById(R.id.lbEndDate).setVisibility(GONE);
+    }
+
+    public void setFromDateType(int fromDateType) {
+        this.fromDateType = fromDateType;
     }
 }
