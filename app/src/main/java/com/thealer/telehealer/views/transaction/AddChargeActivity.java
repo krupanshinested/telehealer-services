@@ -211,6 +211,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         addChargeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -523,6 +524,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private AddChargeReq getReq() {
         AddChargeReq req = new AddChargeReq();
         req.setTypeOfCharge(addChargeViewModel.getSelectedChargeTypeId());
+        req.setOrderId(addChargeViewModel.getOrderId());
+        if (addChargeViewModel.getPatientId() > 0)
+            req.setPatientId(addChargeViewModel.getPatientId());
+        else {
+            req.setPatientId(null);
+        }
         ArrayList<AddChargeReq.ChargeDataItem> chargeData = new ArrayList<>();
         if (addChargeViewModel.isOnlyVisit()) {
             AddChargeReq.ChargeDataItem chargeDataItem = new AddChargeReq.ChargeDataItem();

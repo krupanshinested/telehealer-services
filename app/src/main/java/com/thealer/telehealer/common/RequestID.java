@@ -35,6 +35,7 @@ public class RequestID {
     public static final int REQ_GUEST_LOGIN = 4003;
     public static final int REQ_CARD_INFO = 4006;
     public static final int REQ_CARD_EXPIRE = 4005;
+    public static final int REQ_UPDATE_LIST = 4007;
 
     public static final String REQ_PASSWORD_RESET_OTP = "REQ_RESET_OTP";
     public static final String REQ_RESET_PASSWORD = "REQ_RESET_PASSWORD";
@@ -65,4 +66,5 @@ public class RequestID {
 
     public static final String REQ_SHOW_DETAIL_VIEW = "REQ_SHOW_DETAIL_VIEW";
     public static final String REQ_ADD_CONNECTION = "REQ_ADD_CONNECTION";
+
 }

@@ -107,7 +107,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         public void afterTextChanged(Editable s) {
             if (!s.toString().isEmpty()) {
                 try {
-                    list.get(position).setFee(Integer.parseInt(s.toString()));
+                    list.get(position).setFee(Integer.parseInt(s.toString().trim()));
                 } catch (Exception e) {
                     e.printStackTrace();
                     list.get(position).setFee(0);

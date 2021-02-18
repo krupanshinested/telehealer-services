@@ -712,7 +712,7 @@ public interface ApiInterface {
     @POST("/api/charge/add-charge")
     Observable<BaseApiResponseModel> addCharge(@Body() AddChargeReq req);
 
-    @PUT("/charge/update-charge/{id}")
+    @PUT("/api/charge/update-charge/{id}")
     Observable<BaseApiResponseModel> updateCharge(@Path("id") int id, @Body() AddChargeReq req);
 
     @GET("/api/charge/paginate")

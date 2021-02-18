@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.transaction;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,6 +38,7 @@ import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListRe
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -263,12 +265,13 @@ public class TransactionListFragment extends BaseFragment {
 
             @Override
             public void onAddChargeClick(int position) {
-                startActivity(new Intent(getActivity(), AddChargeActivity.class));
+                startActivityForResult(new Intent(getActivity(), AddChargeActivity.class), RequestID.REQ_UPDATE_LIST);
             }
 
             @Override
             public void onUpdateChargeClick(int position) {
-                startActivity(new Intent(getActivity(), AddChargeActivity.class).putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))));
+                startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
+                        .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
             }
         }));
 
@@ -339,5 +342,14 @@ public class TransactionListFragment extends BaseFragment {
                         dialog.dismiss();
                     }
                 });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == RequestID.REQ_UPDATE_LIST) {
+            transactionListViewModel.setPage(1);
+            loadTransactions(true);
+        }
     }
 }

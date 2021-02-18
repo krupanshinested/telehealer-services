@@ -148,8 +148,6 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
 
     public void addCharge(AddChargeReq req, boolean isUpdate) {
-        if (getOrderId() != null)
-            req.setOrderId(orderId);
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
