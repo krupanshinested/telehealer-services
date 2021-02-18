@@ -523,11 +523,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private AddChargeReq getReq() {
         AddChargeReq req = new AddChargeReq();
         req.setTypeOfCharge(addChargeViewModel.getSelectedChargeTypeId());
-        if (addChargeViewModel.getPatientId() != -1)
-            req.setPatientId(addChargeViewModel.getPatientId());
-        else{
-            req.setPatientId(null);
-        }
         ArrayList<AddChargeReq.ChargeDataItem> chargeData = new ArrayList<>();
         if (addChargeViewModel.isOnlyVisit()) {
             AddChargeReq.ChargeDataItem chargeDataItem = new AddChargeReq.ChargeDataItem();
