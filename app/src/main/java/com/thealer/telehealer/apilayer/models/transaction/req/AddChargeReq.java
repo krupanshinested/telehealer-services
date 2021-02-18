@@ -16,6 +16,9 @@ public class AddChargeReq {
     @SerializedName("type_of_charge")
     private int typeOfCharge;
 
+    @SerializedName("order_id")
+    private String orderId;
+
     public List<ChargeDataItem> getChargeData() {
         return chargeData;
     }
@@ -38,6 +41,14 @@ public class AddChargeReq {
 
     public void setTypeOfCharge(int typeOfCharge) {
         this.typeOfCharge = typeOfCharge;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
 

@@ -70,6 +70,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     public static String EXTRA_REASON = "reason";
     public static String EXTRA_PATIENT_ID = "patientId";
     public static String EXTRA_TRANSACTION_ITEM = "transactionItem";
+    public static String EXTRA_ORDER_ID = "orderId";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,6 +81,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         setAdapters();
         addChargeViewModel.setSelectedReason(getIntent().getIntExtra(EXTRA_REASON, -1));
         addChargeViewModel.setPatientId(getIntent().getIntExtra(EXTRA_PATIENT_ID, -1));
+        addChargeViewModel.setOrderId(getIntent().getStringExtra(EXTRA_ORDER_ID));
         String json = getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM);
         if (json != null && json.length() > 0) {
             prepareDataFromTransactionItem(new Gson().fromJson(json, TransactionItem.class));

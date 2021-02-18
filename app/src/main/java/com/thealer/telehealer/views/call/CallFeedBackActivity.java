@@ -22,6 +22,7 @@ import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
 import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
 import com.thealer.telehealer.apilayer.models.visits.VisitsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
@@ -86,7 +87,10 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                 if (baseApiResponseModel != null) {
                     finish();
                     if (!UserType.isUserPatient())
-                        startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class));
+                        startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class)
+                                .putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.VISIT)
+                                .putExtra(AddChargeActivity.EXTRA_ORDER_ID, sessionId)
+                        );
                 }
 
                 submit_btn.setEnabled(true);

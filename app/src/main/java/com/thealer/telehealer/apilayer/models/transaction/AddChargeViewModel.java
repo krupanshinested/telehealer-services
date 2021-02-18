@@ -32,6 +32,7 @@ public class AddChargeViewModel extends BaseApiViewModel {
     private int fees;
 
     private boolean isOnlyVisit;
+    private String orderId;
 
     private final ArrayList<TextFieldModel> suppliers = new ArrayList<>();
     private final ArrayList<TextFieldModel> medicines = new ArrayList<>();
@@ -147,6 +148,8 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
 
     public void addCharge(AddChargeReq req, boolean isUpdate) {
+        if (getOrderId() != null)
+            req.setOrderId(orderId);
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -196,5 +199,13 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     public void setChargeId(int chargeId) {
         this.chargeId = chargeId;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 }
