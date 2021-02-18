@@ -305,16 +305,18 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                         viewHolder.titleTv.setTextColor(activity.getColor(R.color.app_gradient_start));
                         break;
                     case APNSPayload.creditCardRequested: {
-                        title = activity.getString(R.string.lbl_add_card).toUpperCase();
-                        description = resultModel.getMessage();
-                        viewHolder.descriptionTv.setVisibility(View.VISIBLE);
-                        viewHolder.bottomView.setVisibility(View.VISIBLE);
-                        viewHolder.titleTv.setTextColor(activity.getColor(R.color.app_gradient_start));
-                        viewHolder.askForCardBtn.setText(R.string.lbl_add_card);
-                        viewHolder.acceptBtn.setVisibility(View.GONE);
-                        viewHolder.rejectBtn.setVisibility(View.GONE);
-                        viewHolder.askForCardBtn.setVisibility(View.VISIBLE);
-                        viewHolder.actionCl.setVisibility(View.VISIBLE);
+                        if (UserType.isUserPatient()) {
+                            title = activity.getString(R.string.lbl_add_card).toUpperCase();
+                            description = resultModel.getMessage();
+                            viewHolder.descriptionTv.setVisibility(View.VISIBLE);
+                            viewHolder.bottomView.setVisibility(View.VISIBLE);
+                            viewHolder.titleTv.setTextColor(activity.getColor(R.color.app_gradient_start));
+                            viewHolder.askForCardBtn.setText(R.string.lbl_add_card);
+                            viewHolder.acceptBtn.setVisibility(View.GONE);
+                            viewHolder.rejectBtn.setVisibility(View.GONE);
+                            viewHolder.askForCardBtn.setVisibility(View.VISIBLE);
+                            viewHolder.actionCl.setVisibility(View.VISIBLE);
+                        }
                         break;
                     }
 

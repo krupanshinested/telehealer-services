@@ -491,7 +491,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> getExperimentalFeature(@Path(ID) String id);
 
     @GET("api/requests-v2")
-    Observable<NotificationApiResponseModel> getNotifications(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuid, @Query(TYPE) String filters);
+    Observable<NotificationApiResponseModel> getNotifications(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuid, @Query(TYPE) String filters, @Query("requestee") boolean requestee);
 
     @PUT("api/requests")
     Observable<BaseApiResponseModel> setNotificationsRead(@Body Map<String, String> body);
