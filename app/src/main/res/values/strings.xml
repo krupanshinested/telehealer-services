@@ -1539,5 +1539,6 @@
     <string name="lbl_provider">Provider</string>
     <string name="lbl_search_patient">Search Patient</string>
     <string name="lbl_charges">Charges</string>
+    <string name="lbl_add_refund">Add Refund</string>
 
 </resources>

@@ -442,8 +442,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
             optionsMenu.findItem(R.id.menu_schedules).setVisible(true);
         } else if (UserType.isUserPatient()) {
-            optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
-            optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
+            optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+            optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
         } else {
             optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
             optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
@@ -783,8 +783,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (optionsMenu != null) {
             if (visible) {
                 if (UserType.isUserPatient()) {
-                    optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
-                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
                 } else if (UserType.isUserDoctor()) {
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);

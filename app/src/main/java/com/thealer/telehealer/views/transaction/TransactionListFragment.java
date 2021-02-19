@@ -313,7 +313,7 @@ public class TransactionListFragment extends BaseFragment {
         Utils.showUserInputDialog(getActivity(),
                 getString(R.string.lbl_refund),
                 getString(R.string.msg_refund_info),
-                getString(R.string.lbl_add_charge),
+                getString(R.string.lbl_add_refund),
                 getString(R.string.Done),
                 getString(R.string.Cancel),
                 InputType.TYPE_CLASS_NUMBER,
