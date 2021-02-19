@@ -51,6 +51,8 @@ public class MasterResp extends BaseApiResponseModel {
         @SerializedName("id")
         private int id;
 
+        private boolean selected;
+
         public void setImage(String image) {
             this.image = image;
         }
@@ -129,6 +131,14 @@ public class MasterResp extends BaseApiResponseModel {
 
         public int getId() {
             return id;
+        }
+
+        public boolean isSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
         }
     }
 }

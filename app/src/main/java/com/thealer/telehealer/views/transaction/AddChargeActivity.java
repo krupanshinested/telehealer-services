@@ -1,6 +1,5 @@
 package com.thealer.telehealer.views.transaction;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,7 +28,6 @@ import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
-import com.thealer.telehealer.views.common.CallPlacingActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -153,7 +151,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void setAdapters() {
-        adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), pos -> {
+        adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), true, pos -> {
             addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
             adapterReason.notifyItemChanged(pos);
             showUIByReason(addChargeViewModel.getReasonOptions().get(pos));

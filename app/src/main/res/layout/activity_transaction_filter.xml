@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.thealer.telehealer.views.home.orders.OrdersCustomView
+        android:id="@+id/doctor_ocv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:arrow_visible="true"
+        app:sub_title_visible="false"
+        app:title_text="@string/Click_here_to_select_doctor"
+        app:view_label="@string/choose_doctor" />
+
+    <com.thealer.telehealer.views.home.orders.OrdersCustomView
+        android:id="@+id/patient_ocv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:arrow_visible="true"
+        app:sub_title_visible="false"
+        app:title_text="@string/Click_here_to_select_patient"
+        app:view_label="@string/choose_patient" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/lbl_type_of_charge"
+        android:textColor="@color/colorBlack" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvChargeType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/lbl_reason"
+        android:textColor="@color/colorBlack" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvReasonType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2" />
+
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+
+        android:background="@drawable/btn_theme_blue"
+        android:text="@string/filter"
+        android:textColor="@color/bt_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnPending"
+        app:layout_constraintTop_toTopOf="@id/btnPending" />
+
+</LinearLayout>

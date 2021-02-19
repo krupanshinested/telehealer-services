@@ -7,13 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
 
 import java.util.List;
@@ -23,10 +21,12 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
 
     private List<ReasonOption> list;
     private OnOptionSelected onOptionSelected;
+    private boolean showFees;
 
-    public ReasonOptionAdapter(List<ReasonOption> list, OnOptionSelected onOptionSelected) {
+    public ReasonOptionAdapter(List<ReasonOption> list, boolean showFees, OnOptionSelected onOptionSelected) {
         this.list = list;
         this.onOptionSelected = onOptionSelected;
+        this.showFees = showFees;
     }
 
 
@@ -41,16 +41,20 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
     public void onBindViewHolder(@NonNull TransactionOptionVH holder, int position) {
         holder.cbReason.setText(list.get(position).getTitle());
         holder.cbReason.setChecked(list.get(position).isSelected());
-        holder.etFees.setEnabled(list.get(position).isSelected());
-        if (list.get(position).isSelected()) {
-            if (list.get(position).getFee() != 0)
-                holder.etFees.setText(String.format(Locale.getDefault(), "%2d", list.get(position).getFee()));
-            else
+        if (showFees) {
+            holder.etFees.setEnabled(list.get(position).isSelected());
+            if (list.get(position).isSelected()) {
+                if (list.get(position).getFee() != 0)
+                    holder.etFees.setText(String.format(Locale.getDefault(), "%2d", list.get(position).getFee()));
+                else
+                    holder.etFees.setText(null);
+            } else
                 holder.etFees.setText(null);
-        } else
-            holder.etFees.setText(null);
 
-        holder.chargeWatcher.setPosition(position);
+            holder.chargeWatcher.setPosition(position);
+        } else {
+            holder.etFees.setVisibility(View.GONE);
+        }
 /*
         holder.etFees.removeTextChangedListener(null);
         holder.etFees.addTextChangedListener(list.get(position).getTextWatcher());*/
@@ -77,7 +81,8 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                 }
             });
             etFees = itemView.findViewById(R.id.etFees);
-            etFees.addTextChangedListener(chargeWatcher);
+            if (showFees)
+                etFees.addTextChangedListener(chargeWatcher);
         }
     }
 

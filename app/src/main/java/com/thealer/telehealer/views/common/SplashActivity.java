@@ -36,6 +36,7 @@ import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.transaction.AddChargeActivity;
+import com.thealer.telehealer.views.transaction.TransactionFilterActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -92,7 +93,8 @@ public class SplashActivity extends BaseActivity {
                 checkAndMoveToNext(savedInstanceState, 1000);
             }
         });
-        appUpdateViewModel.checkForUpdate();
+//        appUpdateViewModel.checkForUpdate();
+        startActivity(new Intent(this, TransactionFilterActivity.class));
     }
 
     private void checkAndMoveToNext(Bundle savedInstanceState, long delay) {
