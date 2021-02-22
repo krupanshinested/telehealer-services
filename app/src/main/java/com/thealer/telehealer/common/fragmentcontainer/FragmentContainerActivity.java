@@ -1,6 +1,7 @@
 package com.thealer.telehealer.common.fragmentcontainer;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -10,12 +11,17 @@ import androidx.fragment.app.FragmentTransaction;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.ChangeTitleInterface;
+import com.thealer.telehealer.views.common.OnCloseActionInterface;
 
-public class FragmentContainerActivity extends BaseActivity {
+public class FragmentContainerActivity extends BaseActivity implements ChangeTitleInterface, OnCloseActionInterface, AttachObserverInterface {
 
     public static final String EXTRA_FRAGMENT = "FragmentClassNamae";
     public static final String EXTRA_BUNDLE = "fragmentArgs";
     public static final String EXTRA_TITLE = "title";
+
+    private TextView toolbarTitle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,6 +31,7 @@ public class FragmentContainerActivity extends BaseActivity {
         String name = getIntent().getStringExtra(EXTRA_FRAGMENT);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
         Bundle bundle = getIntent().getBundleExtra(EXTRA_BUNDLE);
+        toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
 
         try {
             Class className = Class.forName(name);
@@ -53,4 +60,19 @@ public class FragmentContainerActivity extends BaseActivity {
     }
 
 
+    @Override
+    public void onTitleChange(String title) {
+        toolbarTitle.setText(title);
+    }
+
+    @Override
+    public void onClose(boolean isRefreshRequired) {
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

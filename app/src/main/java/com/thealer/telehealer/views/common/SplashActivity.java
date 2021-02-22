@@ -93,8 +93,7 @@ public class SplashActivity extends BaseActivity {
                 checkAndMoveToNext(savedInstanceState, 1000);
             }
         });
-//        appUpdateViewModel.checkForUpdate();
-        startActivity(new Intent(this, TransactionFilterActivity.class));
+        appUpdateViewModel.checkForUpdate();
     }
 
     private void checkAndMoveToNext(Bundle savedInstanceState, long delay) {

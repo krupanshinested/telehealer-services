@@ -211,7 +211,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".views.transaction.TransactionFilterActivity" />
+        <activity
+            android:name=".views.transaction.TransactionFilterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".common.fragmentcontainer.FragmentContainerActivity"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"

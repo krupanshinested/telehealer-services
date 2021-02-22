@@ -205,6 +205,7 @@ public class TransactionListFragment extends BaseFragment {
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        filterIv = view.findViewById(R.id.filter_iv);
         if (UserType.isUserPatient())
             toolbarTitle.setText(getString(R.string.lbl_payment));
         else
@@ -219,6 +220,13 @@ public class TransactionListFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 ((OnCloseActionInterface) getActivity()).onClose(false);
+            }
+        });
+
+        filterIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), TransactionFilterActivity.class));
             }
         });
 
