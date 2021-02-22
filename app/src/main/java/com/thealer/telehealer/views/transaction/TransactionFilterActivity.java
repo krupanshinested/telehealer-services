@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -13,12 +14,15 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.master.MasterApiViewModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.AddChargeViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
+import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
@@ -33,9 +37,11 @@ import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 import java.util.ArrayList;
 
 public class TransactionFilterActivity extends BaseActivity implements View.OnClickListener {
+    public static final String EXTRA_FILTER = "filter";
 
     private RecyclerView rvChargeType;
     private RecyclerView rvReason;
+    private Button btnSubmit;
 
     private ReasonOptionAdapter adapterReason;
     private MasterSelectionAdapter adapterType;
@@ -54,6 +60,7 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
         setContentView(R.layout.activity_transaction_filter);
         doctorOcv = (OrdersCustomView) findViewById(R.id.doctor_ocv);
         patientOcv = (OrdersCustomView) findViewById(R.id.patient_ocv);
+        btnSubmit = findViewById(R.id.btnSubmit);
 
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitle.setText(getString(R.string.filter));
@@ -79,6 +86,7 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
 
         doctorOcv.setOnClickListener(this);
         patientOcv.setOnClickListener(this);
+        btnSubmit.setOnClickListener(this);
     }
 
     private void initViewModels() {
@@ -97,6 +105,11 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                         addChargeViewModel.getListChargeTypes().get(pos).setSelected(!addChargeViewModel.getListChargeTypes().get(pos).isSelected());
                         adapterType.notifyItemChanged(pos);
                     });
+                    String filterJson = getIntent().getStringExtra(EXTRA_FILTER);
+                    if (filterJson != null) {
+                        setDataFromRequest(new Gson().fromJson(filterJson, TransactionListReq.class));
+                    }
+                    rvReason.getAdapter().notifyDataSetChanged();
                     rvChargeType.setAdapter(adapterType);
                 }
             }
@@ -121,36 +134,14 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                 case RequestID.REQ_SELECT_ASSOCIATION_PATIENT:
                     if (data != null && data.getExtras() != null) {
                         patientModel = (CommonUserApiResponseModel) data.getExtras().getSerializable(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL);
-                        setPatientOcv(patientModel.getUserDisplay_name(), patientModel.getDob());
-                        /*selectedPatientDetailModel = (CommonUserApiResponseModel) data.getExtras().getSerializable(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL);
-                        createScheduleViewModel.setPatientCommonModel(selectedPatientDetailModel);
-                        patientSchedulesTimeList.clear();
-                        createScheduleViewModel.getTimeSlots().setValue(new ArrayList<>());
-                        enableOrDisableBtn();*/
+                        setPatientOcv(patientModel.getUserDisplay_name());
                     }
                     break;
                 case RequestID.REQ_SELECT_ASSOCIATION_DOCTOR:
                     if (data != null && data.getExtras() != null) {
 
                         doctorModel = (CommonUserApiResponseModel) data.getExtras().getSerializable(ArgumentKeys.SELECTED_ASSOCIATION_DETAIL);
-                        setDoctorOcv(doctorModel.getUserDisplay_name(), doctorModel.getDoctorSpecialist());
-                      /*  if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) && !doctor.getAppt_requests()) {
-                            Utils.showAlertDialog(getActivity(), getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create)), doctor.getOfficePhoneNo(), getString(R.string.ok)
-                                    , new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Uri uri = Uri.parse("tel:" + doctor.getOfficePhoneNo());
-                                            startActivity(new Intent(Intent.ACTION_DIAL, uri));
-                                        }
-                                    }, null);
-                        } else {
-                   *//*         doctorDetailCommonModel = doctor;
-                            doctorSchedulesTimeList.clear();
-                            createScheduleViewModel.setDoctorCommonModel(doctorDetailCommonModel);
-                            createScheduleViewModel.getTimeSlots().setValue(new ArrayList<>());
-                            enableOrDisableBtn();*//*
-                        }*/
-
+                        setDoctorOcv(doctorModel.getUserDisplay_name());
                     }
                     break;
             }
@@ -183,19 +174,80 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                 }
                 break;
             }
+            case R.id.btnSubmit: {
+                setResult(RESULT_OK, new Intent().putExtra(EXTRA_FILTER, new Gson().toJson(getReq())));
+                finish();
+                break;
+            }
         }
     }
 
+    private TransactionListReq getReq() {
+        TransactionListReq req = new TransactionListReq();
+        TransactionListReq.Filter filter = new TransactionListReq.Filter();
+        if (patientModel != null) {
+            filter.setPatientId(patientModel.getUser_id());
+            filter.setPatientName(patientOcv.getTitleText());
+        }
+        if (doctorModel != null) {
+            filter.setDoctorId(doctorModel.getUser_id());
+            filter.setDoctorName(doctorOcv.getTitleText());
+        }
+        ArrayList<Integer> selectedTypes = new ArrayList<>();
+        for (MasterResp.MasterItem masterItem : addChargeViewModel.getListChargeTypes())
+            if (masterItem.isSelected())
+                selectedTypes.add(masterItem.getId());
+        if (selectedTypes.size() > 0)
+            filter.setTypeOfCharge(selectedTypes);
 
-    private void setPatientOcv(String userDisplay_name, String dob) {
-        patientOcv.setTitleTv(userDisplay_name);
-        patientOcv.setSubtitleTv(dob);
-        patientOcv.setSub_title_visible(true);
+        ArrayList<Integer> selectedReasons = new ArrayList<>();
+        for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions())
+            if (reasonOption.isSelected())
+                selectedReasons.add(reasonOption.getValue());
+        if (selectedReasons.size() > 0)
+            filter.setReasons(selectedReasons);
+
+        req.setFilter(filter);
+        return req;
     }
 
-    private void setDoctorOcv(String doctorDisplayName, String doctorSpecialist) {
+    private void setDataFromRequest(TransactionListReq req) {
+        if (req != null) {
+            TransactionListReq.Filter filter = req.getFilter();
+            if (filter != null) {
+                if (filter.getPatientId() != 0) {
+                    patientModel = new CommonUserApiResponseModel();
+                    patientModel.setUser_id(filter.getPatientId());
+                    setPatientOcv(filter.getPatientName());
+                }
+
+                if (filter.getDoctorId() != 0) {
+                    doctorModel = new CommonUserApiResponseModel();
+                    doctorModel.setUser_id(filter.getDoctorId());
+                    setDoctorOcv(filter.getDoctorName());
+                }
+
+                if (filter.getReasons() != null) {
+                    for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
+                        reasonOption.setSelected(filter.getReasons().contains(reasonOption.getValue()));
+                    }
+                }
+                if (filter.getTypeOfCharge() != null) {
+                    for (MasterResp.MasterItem masterItem : addChargeViewModel.getListChargeTypes()) {
+                        masterItem.setSelected(filter.getTypeOfCharge().contains(masterItem.getId()));
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    private void setPatientOcv(String userDisplay_name) {
+        patientOcv.setTitleTv(userDisplay_name);
+    }
+
+    private void setDoctorOcv(String doctorDisplayName) {
         doctorOcv.setTitleTv(doctorDisplayName);
-        doctorOcv.setSubtitleTv(doctorSpecialist);
-        doctorOcv.setSub_title_visible(true);
     }
 }

@@ -33,6 +33,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.transaction.RefundViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
+import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -74,6 +75,7 @@ public class TransactionListFragment extends BaseFragment {
     private View bottomView;
     private ImageView filterIv;
     private LinearLayout addCardButton;
+    private ImageView filterIndicator;
 
     private TransactionItem selectedTransaction = null;
 
@@ -206,6 +208,7 @@ public class TransactionListFragment extends BaseFragment {
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         filterIv = view.findViewById(R.id.filter_iv);
+        filterIndicator = view.findViewById(R.id.filter_indicatior_iv);
         if (UserType.isUserPatient())
             toolbarTitle.setText(getString(R.string.lbl_payment));
         else
@@ -226,7 +229,8 @@ public class TransactionListFragment extends BaseFragment {
         filterIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), TransactionFilterActivity.class));
+                startActivityForResult(new Intent(getContext(), TransactionFilterActivity.class)
+                        .putExtra(TransactionFilterActivity.EXTRA_FILTER, new Gson().toJson(transactionListViewModel.getFilterReq())), RequestID.REQ_FILTER);
             }
         });
 
@@ -358,6 +362,16 @@ public class TransactionListFragment extends BaseFragment {
         if (resultCode == Activity.RESULT_OK && requestCode == RequestID.REQ_UPDATE_LIST) {
             transactionListViewModel.setPage(1);
             loadTransactions(true);
+        }
+        if (resultCode == Activity.RESULT_OK && requestCode == RequestID.REQ_FILTER) {
+            String filterJson = data.getStringExtra(TransactionFilterActivity.EXTRA_FILTER);
+            if (filterJson != null) {
+                transactionListViewModel.setFilterReq(new Gson().fromJson(filterJson, TransactionListReq.class));
+                transactionListViewModel.setPage(1);
+                loadTransactions(true);
+                filterIndicator.setVisibility(View.VISIBLE);
+            } else
+                filterIndicator.setVisibility(View.GONE);
         }
     }
 }

@@ -83,6 +83,23 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:visibility="visible" />
 
+
+                <ImageView
+                    android:id="@+id/filter_indicatior_iv"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/circular_selected_indicator"
+                    android:tint="@color/red"
+                    android:visibility="gone"
+                    app:layout_anchor="@+id/filter_iv"
+                    app:layout_anchorGravity="end|top"
+                    app:layout_constraintBottom_toBottomOf="@id/filter_iv"
+                    app:layout_constraintEnd_toEndOf="@id/filter_iv"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toStartOf="@id/filter_iv"
+                    app:layout_constraintTop_toTopOf="@id/filter_iv"
+                    app:layout_constraintVertical_bias="0" />
+
                 <LinearLayout
                     android:id="@+id/btnAddCard"
                     android:layout_width="wrap_content"

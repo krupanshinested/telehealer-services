@@ -33,7 +33,7 @@ public class FragmentContainerActivity extends BaseActivity implements ChangeTit
         String name = getIntent().getStringExtra(EXTRA_FRAGMENT);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
         Bundle bundle = getIntent().getBundleExtra(EXTRA_BUNDLE);
-        boolean isShowToolbar = getIntent().getBooleanExtra(EXTRA_SHOW_TOOLBAR, false);
+        boolean isShowToolbar = getIntent().getBooleanExtra(EXTRA_SHOW_TOOLBAR, true);
         if (!isShowToolbar)
             findViewById(R.id.appbar).setVisibility(View.GONE);
         else
@@ -64,7 +64,8 @@ public class FragmentContainerActivity extends BaseActivity implements ChangeTit
 
     @Override
     public void onTitleChange(String title) {
-        toolbarTitle.setText(title);
+        if (title != null)
+            toolbarTitle.setText(title);
     }
 
     @Override

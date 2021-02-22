@@ -153,6 +153,7 @@ public class PaymentContentActivity extends ContentActivity {
         bundle.putString(ArgumentKeys.WEB_VIEW_URL, url);
         bundle.putString(ArgumentKeys.VIEW_TITLE, "");
         startActivityForResult(new Intent(this, FragmentContainerActivity.class)
+                .putExtra(FragmentContainerActivity.EXTRA_SHOW_TOOLBAR, false)
                 .putExtra(FragmentContainerActivity.EXTRA_FRAGMENT, WebViewFragment.class.getName())
                 .putExtra(FragmentContainerActivity.EXTRA_BUNDLE, bundle), RequestID.REQ_OAUTH);
     }

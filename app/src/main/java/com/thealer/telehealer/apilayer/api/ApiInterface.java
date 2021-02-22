@@ -76,6 +76,7 @@ import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
+import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
@@ -719,8 +720,8 @@ public interface ApiInterface {
     @PUT("/api/charge/update-charge/{id}")
     Observable<BaseApiResponseModel> updateCharge(@Path("id") int id, @Body() AddChargeReq req);
 
-    @GET("/api/charge/paginate")
-    Observable<TransactionListResp> transactionPaginate(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+    @POST("/api/charge/paginate")
+    Observable<TransactionListResp> transactionPaginate(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Body() TransactionListReq req);
 
     @POST("/api/charge/process-payment/{id}")
     Observable<BaseApiResponseModel> processPayment(@Path("id") int id);

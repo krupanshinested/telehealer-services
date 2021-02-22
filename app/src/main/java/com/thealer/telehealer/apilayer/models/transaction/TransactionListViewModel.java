@@ -8,6 +8,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
+import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.Constants;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 public class TransactionListViewModel extends BaseApiViewModel {
 
     private ArrayList<TransactionItem> transactions = new ArrayList<>();
+    private TransactionListReq filterReq = new TransactionListReq();
 
     private int page = 1;
     private int totalCount;
@@ -32,7 +34,7 @@ public class TransactionListViewModel extends BaseApiViewModel {
             isApiRequested = true;
             fetchToken(status -> {
                 if (status) {
-                    getAuthApiService().transactionPaginate(true, page, Constants.PAGINATION_SIZE)
+                    getAuthApiService().transactionPaginate(true, page, Constants.PAGINATION_SIZE, filterReq)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<TransactionListResp>(getProgress(isShowProgress)) {
                                 @Override
@@ -94,5 +96,13 @@ public class TransactionListViewModel extends BaseApiViewModel {
 
     public void setApiRequested(boolean apiRequested) {
         isApiRequested = apiRequested;
+    }
+
+    public void setFilterReq(TransactionListReq filterReq) {
+        this.filterReq = filterReq;
+    }
+
+    public TransactionListReq getFilterReq() {
+        return filterReq;
     }
 }
