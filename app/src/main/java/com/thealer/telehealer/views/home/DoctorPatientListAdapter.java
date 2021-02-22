@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -24,6 +25,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.stripe.AppOAuthUtils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.monitoring.diet.DietListingFragment;
@@ -95,9 +97,12 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                     viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
-                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
-                            );
+                            if (AppOAuthUtils.checkForOAuth(fragmentActivity, UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info())) {
+                                fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
+                                        .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+                                );
+                            }
+
                         }
                     });
 

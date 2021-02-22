@@ -1,6 +1,7 @@
 package com.thealer.telehealer.common.fragmentcontainer;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ public class FragmentContainerActivity extends BaseActivity implements ChangeTit
     public static final String EXTRA_FRAGMENT = "FragmentClassNamae";
     public static final String EXTRA_BUNDLE = "fragmentArgs";
     public static final String EXTRA_TITLE = "title";
+    public static final String EXTRA_SHOW_TOOLBAR = "show_toolbar";
 
     private TextView toolbarTitle;
 
@@ -31,18 +33,18 @@ public class FragmentContainerActivity extends BaseActivity implements ChangeTit
         String name = getIntent().getStringExtra(EXTRA_FRAGMENT);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
         Bundle bundle = getIntent().getBundleExtra(EXTRA_BUNDLE);
-        toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+        boolean isShowToolbar = getIntent().getBooleanExtra(EXTRA_SHOW_TOOLBAR, false);
+        if (!isShowToolbar)
+            findViewById(R.id.appbar).setVisibility(View.GONE);
+        else
+            toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
 
         try {
             Class className = Class.forName(name);
             BaseFragment object = (BaseFragment) className.newInstance();
             object.setArguments(bundle);
             makeFragmentVisible(object, title);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
 

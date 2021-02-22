@@ -1541,5 +1541,6 @@
     <string name="lbl_charges">Charges</string>
     <string name="lbl_add_refund">Add Refund</string>
     <string name="lbl_apply">Apply</string>
+    <string name="msg_provide_stripe_information">You need to provide information for stripe acccount.</string>
 
 </resources>

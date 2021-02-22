@@ -183,6 +183,7 @@ public class ArgumentKeys {
     public static final String OK_BUTTON_TITLE = "OK_BUTTON_TITLE";
     public static final String IS_BUTTON_NEEDED = "is_button_needed";
     public static final String IS_HAVE_CUSTOM_CLICK = "IS_HAVE_CUSTOM_CLICK";
+    public static final String IS_FOR_OAUTH = "IS_FOR_OAUTH";
 
     public static final String IS_SKIPPED = "IS_SKIPPED";
     public static final String CALL_INITIATE_MODEL = "CALL_INITIATE_MODEL";

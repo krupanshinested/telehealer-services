@@ -36,6 +36,7 @@ public class RequestID {
     public static final int REQ_CARD_INFO = 4006;
     public static final int REQ_CARD_EXPIRE = 4005;
     public static final int REQ_UPDATE_LIST = 4007;
+    public static final int REQ_OAUTH = 4008;
 
     public static final String REQ_PASSWORD_RESET_OTP = "REQ_RESET_OTP";
     public static final String REQ_RESET_PASSWORD = "REQ_RESET_PASSWORD";

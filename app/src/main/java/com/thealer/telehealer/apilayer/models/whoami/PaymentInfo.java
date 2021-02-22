@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.whoami;
 
 import com.google.gson.annotations.SerializedName;
+import com.thealer.telehealer.common.Constants;
 
 import java.io.Serializable;
 
@@ -52,5 +53,9 @@ public class PaymentInfo implements Serializable {
 
     public void setSavedCardsCount(int savedCardsCount) {
         this.savedCardsCount = savedCardsCount;
+    }
+
+    public boolean isOathNotConnected() {
+        return !Constants.OAuthStatus.CONNECTED.equals(oauthStatus);
     }
 }

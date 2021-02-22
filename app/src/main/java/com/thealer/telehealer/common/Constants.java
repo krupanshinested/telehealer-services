@@ -208,4 +208,11 @@ public class Constants {
     }
 
     public static final int MAX_TRANSACTION_RETRY = 3;
+
+    public interface OAuthStatus {
+        String NOT_CONNECTED = "not_connected";
+        String CONNECTED = "connected";
+        String PAYOUT_DISABLED = "payouts_disabled";
+
+    }
 }

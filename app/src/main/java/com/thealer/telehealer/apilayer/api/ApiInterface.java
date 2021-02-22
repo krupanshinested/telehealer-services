@@ -4,6 +4,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeClientToken;
 import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
 import com.thealer.telehealer.apilayer.models.Braintree.DefaultCardResp;
+import com.thealer.telehealer.apilayer.models.Braintree.OAuthURLResp;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileResponseModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.DeleteEducationalVideoResponse;
@@ -699,6 +700,9 @@ public interface ApiInterface {
 
     @GET("api/stripe/default-card")
     Observable<DefaultCardResp> getDefaultCard();
+
+    @GET("api/stripe/oauth/get-url")
+    Observable<OAuthURLResp> getOAuthUrl();
 
     @GET("/version/active-version/{appType}")
     Observable<AppUpdateResponse> fetchLatestVersion(@Path("appType") int appType);
