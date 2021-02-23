@@ -333,10 +333,21 @@ public class TransactionListFragment extends BaseFragment {
                     @Override
                     public void onClick(DialogInterface dialog, String inputText) {
                         if (inputText != null && inputText.length() > 0) {
-                            RefundReq req = new RefundReq();
-                            req.setRefundAmount(Integer.parseInt(inputText));
-                            refundViewModel.processRefund(transactionListViewModel.getTransactions().get(pos).getId(), req);
-                            dialog.dismiss();
+                            int amount = Integer.parseInt(inputText);
+                            if (amount == 0 || amount > transactionListViewModel.getTransactions().get(pos).getAmount()) {
+                                Utils.showAlertDialog(getContext(),
+                                        getString(R.string.error),
+                                        getString(R.string.msg_please_enter_valid_refund_amount),
+                                        getString(R.string.ok),
+                                        null,
+                                        null,
+                                        null);
+                            } else {
+                                RefundReq req = new RefundReq();
+                                req.setRefundAmount(Integer.parseInt(inputText));
+                                refundViewModel.processRefund(transactionListViewModel.getTransactions().get(pos).getId(), req);
+                                dialog.dismiss();
+                            }
                         } else {
                             Utils.showAlertDialog(getContext(),
                                     getString(R.string.error),

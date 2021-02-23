@@ -717,17 +717,17 @@ public interface ApiInterface {
     @POST("/api/charge/add-charge")
     Observable<BaseApiResponseModel> addCharge(@Body() AddChargeReq req);
 
-    @PUT("/api/charge/update-charge/{id}")
-    Observable<BaseApiResponseModel> updateCharge(@Path("id") int id, @Body() AddChargeReq req);
+    @PUT("/api/charge/update-charge")
+    Observable<BaseApiResponseModel> updateCharge(@Query("id") int id, @Body() AddChargeReq req);
 
     @POST("/api/charge/paginate")
     Observable<TransactionListResp> transactionPaginate(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Body() TransactionListReq req);
 
-    @POST("/api/charge/process-payment/{id}")
-    Observable<BaseApiResponseModel> processPayment(@Path("id") int id);
+    @POST("/api/charge/process-payment")
+    Observable<BaseApiResponseModel> processPayment(@Query("id") int id);
 
-    @POST("/api/charge/process-refund/{id}")
-    Observable<BaseApiResponseModel> processRefund(@Path("id") int id, @Body() RefundReq req);
+    @POST("/api/charge/process-refund")
+    Observable<BaseApiResponseModel> processRefund(@Query("id") int id, @Body() RefundReq req);
 
 
 }
