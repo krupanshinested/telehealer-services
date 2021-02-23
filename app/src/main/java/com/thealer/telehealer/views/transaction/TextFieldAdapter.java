@@ -43,6 +43,8 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
     public void onBindViewHolder(@NonNull TextFieldVH holder, int position) {
         holder.etField.setHint(hint);
         holder.etField.setText(list.get(position).getValue());
+        holder.etField.removeTextChangedListener(holder.watcher);
+        holder.etField.addTextChangedListener(holder.watcher);
         holder.watcher.setPosition(position);
         if (list.size() > 1 && position != 0)
             holder.imgRemove.setVisibility(View.VISIBLE);
@@ -71,7 +73,6 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
                 }
             });
             etField = itemView.findViewById(R.id.etField);
-            etField.addTextChangedListener(watcher);
         }
     }
 

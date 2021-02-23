@@ -162,14 +162,14 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onRemoveField(int pos) {
                 addChargeViewModel.getSuppliers().remove(pos);
-                adapterSupplier.notifyItemRemoved(pos);
+                adapterSupplier.notifyDataSetChanged();
             }
         });
         adapterMedicine = new TextFieldAdapter(addChargeViewModel.getMedicines(), getString(R.string.lbl_medicine_name), new TextFieldAdapter.OnOptionSelected() {
             @Override
             public void onRemoveField(int pos) {
                 addChargeViewModel.getMedicines().remove(pos);
-                adapterMedicine.notifyItemRemoved(pos);
+                adapterMedicine.notifyDataSetChanged();
             }
         });
 
