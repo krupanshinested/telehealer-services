@@ -97,12 +97,9 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                     viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (AppOAuthUtils.checkForOAuth(fragmentActivity, UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info())) {
-                                fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
-                                        .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
-                                );
-                            }
-
+                            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
+                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+                            );
                         }
                     });
 

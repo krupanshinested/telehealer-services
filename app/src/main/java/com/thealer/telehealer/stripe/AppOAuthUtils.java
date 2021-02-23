@@ -5,17 +5,19 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 
 public class AppOAuthUtils {
 
-    public static boolean checkForOAuth(Activity activity, PaymentInfo paymentInfo) {
+    public static boolean checkForOAuth(Fragment fragment, PaymentInfo paymentInfo) {
         if (UserType.isUserDoctor() && paymentInfo.isOathNotConnected()) {
-            activity.startActivityForResult(getOAuthNotConnectedIntent(activity), 1);
+            fragment.startActivityForResult(getOAuthNotConnectedIntent(fragment.getActivity()), RequestID.REQ_OAUTH);
             return false;
         }
         return true;
@@ -27,8 +29,8 @@ public class AppOAuthUtils {
         String description;
 
         intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, activity.getString(R.string.proceed));
-        intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, false);
-        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, false);
+        intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
+        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
         intent.putExtra(ArgumentKeys.IS_FOR_OAUTH, true);
         intent.putExtra(ArgumentKeys.SKIP_TITLE, activity.getString(R.string.lbl_not_now));
         description = activity.getString(R.string.msg_provide_stripe_information);

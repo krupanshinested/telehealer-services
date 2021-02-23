@@ -45,6 +45,7 @@ import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.stripe.AppOAuthUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.call.CallNetworkTestActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -197,12 +198,6 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             appointment_request.updateSwitch(false);
         }
 
-        if (whoAmIApiResponseModel != null) {
-            enable_patient_card.updateSwitch(whoAmIApiResponseModel.isPatient_credit_card_required());
-        } else {
-            enable_patient_card.updateSwitch(false);
-        }
-
     }
 
     private void initView(View view) {
@@ -322,6 +317,11 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         }
 
         whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+        if (whoAmIApiResponseModel != null) {
+            enable_patient_card.updateSwitch(whoAmIApiResponseModel.isPatient_credit_card_required());
+        } else {
+            enable_patient_card.updateSwitch(false);
+        }
     }
 
     private void addListenerOnButton() {
@@ -453,7 +453,12 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 profileUpdate.updateSecureMessage(secure_message.getSwitchStatus(), true);
             case R.id.enable_patient_card:
                 enable_patient_card.toggleSwitch();
-                profileUpdate.updatePatientCreditCard(enable_patient_card.getSwitchStatus(), true);
+                if (enable_patient_card.getSwitchStatus()) {
+                    if (AppOAuthUtils.checkForOAuth(this, UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info()))
+                        profileUpdate.updatePatientCreditCard(enable_patient_card.getSwitchStatus(), true);
+                } else {
+                    profileUpdate.updatePatientCreditCard(enable_patient_card.getSwitchStatus(), true);
+                }
         }
     }
 
@@ -528,6 +533,14 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                     updateQuickLoginSwitch();
                 }
                 break;
+            case RequestID.REQ_OAUTH: {
+                if (resultCode == Activity.RESULT_OK) {
+                    profileUpdate.updatePatientCreditCard(true, true);
+                } else {
+                    enable_patient_card.toggleSwitch();
+                    profileUpdate.updatePatientCreditCard(enable_patient_card.getSwitchStatus(), true);
+                }
+            }
         }
     }
 
@@ -539,4 +552,5 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         String[] value = selectedItem.split("\\s", 2);
         return value[0];
     }
+
 }

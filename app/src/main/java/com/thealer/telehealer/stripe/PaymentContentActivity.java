@@ -93,6 +93,7 @@ public class PaymentContentActivity extends ContentActivity {
         whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -100,6 +101,7 @@ public class PaymentContentActivity extends ContentActivity {
         whoAmIApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel baseApiResponseModel) {
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
