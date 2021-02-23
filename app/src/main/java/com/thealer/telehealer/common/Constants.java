@@ -203,8 +203,9 @@ public class Constants {
     public interface ChargeStatus {
         int CHARGE_PENDING = 1;
         int CHARGE_ADDED = 2;
-        int CHARGE_PROCESSED = 3;
-        int CHARGE_PROCESS_FAILED = 4;
+        int CHARGE_PROCESS_INITIATED = 3;
+        int CHARGE_PROCESSED = 4;
+        int CHARGE_PROCESS_FAILED = 5;
     }
 
     public static final int MAX_TRANSACTION_RETRY = 3;

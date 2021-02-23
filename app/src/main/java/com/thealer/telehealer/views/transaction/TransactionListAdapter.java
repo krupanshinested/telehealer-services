@@ -86,6 +86,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
                 holder.btnProcessPayment.setVisibility(View.GONE);
                 break;
             }
+            case Constants.ChargeStatus.CHARGE_PROCESS_INITIATED: {
+                holder.actionRow.setVisibility(View.GONE);
+                break;
+            }
             case Constants.ChargeStatus.CHARGE_PROCESS_FAILED: {
                 holder.btnProcessPayment.setVisibility(View.VISIBLE);
                 holder.btnReceipt.setVisibility(View.GONE);
@@ -162,6 +166,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
                     onOptionSelected.onProcessPaymentClick(getAdapterPosition());
                 }
             });
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onOptionSelected.onItemClick(getAdapterPosition());
+                }
+            });
         }
     }
 
@@ -176,6 +186,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         void onAddChargeClick(int position);
 
         void onUpdateChargeClick(int position);
+
+        void onItemClick(int position);
 
     }
 }

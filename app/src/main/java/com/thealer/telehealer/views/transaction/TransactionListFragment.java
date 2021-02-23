@@ -285,6 +285,11 @@ public class TransactionListFragment extends BaseFragment {
                 startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
                         .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
             }
+
+            @Override
+            public void onItemClick(int position) {
+                startActivity(new Intent(getActivity(), TransactionDetailsActivity.class).putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, new Gson().toJson(transactionListViewModel.getTransactions().get(position))));
+            }
         }));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

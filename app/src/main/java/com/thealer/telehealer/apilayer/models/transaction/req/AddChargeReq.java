@@ -1,8 +1,14 @@
 package com.thealer.telehealer.apilayer.models.transaction.req;
 
+import android.content.Context;
+import android.text.TextUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
+import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.Constants;
 
 public class AddChargeReq {
 
@@ -85,6 +91,26 @@ public class AddChargeReq {
 
         public void setDescription(Description description) {
             this.description = description;
+        }
+
+        public String getReasonString(Context context) {
+            switch (reason) {
+                case Constants.ChargeReason.VISIT:
+                    return context.getString(R.string.visit);
+                case Constants.ChargeReason.RPM:
+                    return context.getString(R.string.rpm);
+                case Constants.ChargeReason.CCM:
+                    return context.getString(R.string.ccm);
+                case Constants.ChargeReason.BHI:
+                    return context.getString(R.string.bhi);
+                case Constants.ChargeReason.CONCIERGE:
+                    return context.getString(R.string.lbl_concierge);
+                case Constants.ChargeReason.SUPPLIES:
+                    return context.getString(R.string.lbl_supplies);
+                case Constants.ChargeReason.MEDICINE:
+                    return context.getString(R.string.lbl_medicine);
+            }
+            return null;
         }
     }
 

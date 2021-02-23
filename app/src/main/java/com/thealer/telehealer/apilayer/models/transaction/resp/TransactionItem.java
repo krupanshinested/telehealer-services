@@ -50,6 +50,8 @@ public class TransactionItem extends BaseApiResponseModel {
     @SerializedName("order_id")
     private String orderId;
 
+    private List<RefundItem> refunds;
+
     private int maxRetries = Constants.MAX_TRANSACTION_RETRY;
 
     public CommonUserApiResponseModel getDoctorId() {
@@ -103,6 +105,8 @@ public class TransactionItem extends BaseApiResponseModel {
                 return "Pending Payment";
             case Constants.ChargeStatus.CHARGE_PENDING:
                 return "Pending Add charge";
+            case Constants.ChargeStatus.CHARGE_PROCESS_INITIATED:
+                return "Payment initiated";
             case Constants.ChargeStatus.CHARGE_PROCESS_FAILED:
                 return "Payment Failed";
             case Constants.ChargeStatus.CHARGE_PROCESSED:
@@ -116,31 +120,12 @@ public class TransactionItem extends BaseApiResponseModel {
         ArrayList<String> reasons = new ArrayList<>();
         if (chargeData != null && chargeData.size() > 0) {
             for (AddChargeReq.ChargeDataItem item : chargeData) {
-                reasons.add(getReasonByConstant(item.getReason(), context));
+                reasons.add(item.getReasonString(context));
             }
         }
         return TextUtils.join(",", reasons);
     }
 
-    private String getReasonByConstant(int constant, Context context) {
-        switch (constant) {
-            case Constants.ChargeReason.VISIT:
-                return context.getString(R.string.visit);
-            case Constants.ChargeReason.RPM:
-                return context.getString(R.string.rpm);
-            case Constants.ChargeReason.CCM:
-                return context.getString(R.string.ccm);
-            case Constants.ChargeReason.BHI:
-                return context.getString(R.string.bhi);
-            case Constants.ChargeReason.CONCIERGE:
-                return context.getString(R.string.lbl_concierge);
-            case Constants.ChargeReason.SUPPLIES:
-                return context.getString(R.string.lbl_supplies);
-            case Constants.ChargeReason.MEDICINE:
-                return context.getString(R.string.lbl_medicine);
-        }
-        return null;
-    }
 
     public int getMaxRetries() {
         return maxRetries;
@@ -148,5 +133,13 @@ public class TransactionItem extends BaseApiResponseModel {
 
     public void setMaxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
+    }
+
+    public List<RefundItem> getRefunds() {
+        return refunds;
+    }
+
+    public void setRefunds(List<RefundItem> refunds) {
+        this.refunds = refunds;
     }
 }

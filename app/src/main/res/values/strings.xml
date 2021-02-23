@@ -1542,5 +1542,7 @@
     <string name="lbl_add_refund">Add Refund</string>
     <string name="lbl_apply">Apply</string>
     <string name="msg_provide_stripe_information">You need to provide information for stripe acccount.</string>
+    <string name="lbl_total">Total</string>
+    <string name="lbl_refunds">Refunds</string>
 
 </resources>
