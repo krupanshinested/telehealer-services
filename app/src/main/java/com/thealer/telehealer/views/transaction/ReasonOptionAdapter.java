@@ -48,8 +48,10 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                     holder.etFees.setText(String.format(Locale.getDefault(), "%2d", list.get(position).getFee()));
                 else
                     holder.etFees.setText(null);
-            } else
+            } else {
+                list.get(position).setFee(0);
                 holder.etFees.setText(null);
+            }
         } else {
             holder.etFees.setVisibility(View.GONE);
         }
@@ -90,7 +92,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                     @Override
                     public void afterTextChanged(Editable s) {
                         try {
-                            list.get(getAdapterPosition()).setFee(Integer.parseInt(s.toString()));
+                            list.get(getAdapterPosition()).setFee(Integer.parseInt(s.toString().trim()));
                         } catch (Exception e) {
                             e.printStackTrace();
                             list.get(getAdapterPosition()).setFee(0);

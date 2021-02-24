@@ -137,7 +137,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void afterTextChanged(Editable s) {
                 try {
-                    addChargeViewModel.setFees(Integer.parseInt(s.toString()));
+                    addChargeViewModel.setFees(Integer.parseInt(s.toString().trim()));
                 } catch (Exception e) {
                     addChargeViewModel.setFees(0);
                 }
@@ -154,7 +154,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), true, pos -> {
             addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
             adapterReason.notifyItemChanged(pos);
-            showUIByReason(addChargeViewModel.getReasonOptions().get(pos));
+            showUIByReason(addChargeViewModel.getReasonOptions().get(pos), true);
         });
         rvReason.setAdapter(adapterReason);
 
@@ -233,6 +233,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     setReasonDataFromTransactionItem(item, addChargeViewModel.getReasonByValue(item.getReason()));
                 }
             }
+            adapterReason.notifyDataSetChanged();
+            adapterMedicine.notifyDataSetChanged();
+            adapterSupplier.notifyDataSetChanged();
         }
     }
 
@@ -272,13 +275,13 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     }
                     break;
             }
-            showUIByReason(reasonOption);
+            showUIByReason(reasonOption, false);
         }
     }
 
     private void updateUI() {
         for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
-            showUIByReason(reasonOption);
+            showUIByReason(reasonOption, true);
         }
     }
 
@@ -302,22 +305,22 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private void showUIByReason(ReasonOption reasonOption) {
+    private void showUIByReason(ReasonOption reasonOption, boolean resetOld) {
         switch (reasonOption.getValue()) {
             case Constants.ChargeReason.BHI: {
-                viewBHI.show(reasonOption.isSelected());
+                viewBHI.show(reasonOption.isSelected(), resetOld);
                 break;
             }
             case Constants.ChargeReason.CCM: {
-                viewCCM.show(reasonOption.isSelected());
+                viewCCM.show(reasonOption.isSelected(), resetOld);
                 break;
             }
             case Constants.ChargeReason.RPM: {
-                viewRPM.show(reasonOption.isSelected());
+                viewRPM.show(reasonOption.isSelected(), resetOld);
                 break;
             }
             case Constants.ChargeReason.CONCIERGE: {
-                viewConcierge.show(reasonOption.isSelected());
+                viewConcierge.show(reasonOption.isSelected(), resetOld);
                 break;
             }
             case Constants.ChargeReason.MEDICINE: {

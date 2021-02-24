@@ -131,12 +131,17 @@ public class DateRangeView extends LinearLayout {
             tvTitle.setVisibility(GONE);
     }
 
-    public void show(boolean isShow) {
-        selectedFromDate = null;
-        selectedToDate = null;
+    public void show(boolean isShow, boolean resetOld) {
+        if (resetOld) {
+            selectedFromDate = null;
+            selectedToDate = null;
+            tvFromDate.setText(null);
+            tvToDate.setText(null);
+        }
         if (isShow) {
             setVisibility(VISIBLE);
         } else {
+
             setVisibility(GONE);
         }
     }
