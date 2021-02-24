@@ -43,9 +43,6 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
     public void onBindViewHolder(@NonNull TextFieldVH holder, int position) {
         holder.etField.setHint(hint);
         holder.etField.setText(list.get(position).getValue());
-        holder.etField.removeTextChangedListener(holder.watcher);
-        holder.etField.addTextChangedListener(holder.watcher);
-        holder.watcher.setPosition(position);
         if (list.size() > 1 && position != 0)
             holder.imgRemove.setVisibility(View.VISIBLE);
         else
@@ -61,7 +58,6 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
 
         EditText etField;
         ImageView imgRemove;
-        RecyclerTextWatcher watcher = new RecyclerTextWatcher();
 
         public TextFieldVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
@@ -73,34 +69,26 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
                 }
             });
             etField = itemView.findViewById(R.id.etField);
+            etField.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    list.get(getAdapterPosition()).setValue(s.toString());
+                }
+            });
         }
     }
 
     interface OnOptionSelected {
         void onRemoveField(int pos);
-    }
-
-    class RecyclerTextWatcher implements TextWatcher {
-
-        int position;
-
-        public void setPosition(int position) {
-            this.position = position;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            list.get(position).setValue(s.toString());
-        }
     }
 }

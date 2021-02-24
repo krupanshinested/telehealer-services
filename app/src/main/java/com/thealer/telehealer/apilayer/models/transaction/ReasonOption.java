@@ -13,28 +13,6 @@ public class ReasonOption {
 
     private boolean isSelected;
 
-    private TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            try {
-                fee = Integer.parseInt(s.toString());
-            } catch (NumberFormatException numberFormatException) {
-                fee = 0;
-            }
-
-        }
-    };
-
     public ReasonOption(int value, String title, int fee) {
         this.value = value;
         this.title = title;
@@ -71,9 +49,5 @@ public class ReasonOption {
 
     public void setSelected(boolean selected) {
         isSelected = selected;
-    }
-
-    public TextWatcher getTextWatcher() {
-        return textWatcher;
     }
 }

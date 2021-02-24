@@ -50,14 +50,9 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                     holder.etFees.setText(null);
             } else
                 holder.etFees.setText(null);
-
-            holder.chargeWatcher.setPosition(position);
         } else {
             holder.etFees.setVisibility(View.GONE);
         }
-/*
-        holder.etFees.removeTextChangedListener(null);
-        holder.etFees.addTextChangedListener(list.get(position).getTextWatcher());*/
     }
 
     @Override
@@ -69,7 +64,6 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
 
         CheckBox cbReason;
         EditText etFees;
-        ChargeWatcher chargeWatcher = new ChargeWatcher();
 
         public TransactionOptionVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
@@ -82,42 +76,31 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
             });
             etFees = itemView.findViewById(R.id.etFees);
             if (showFees)
-                etFees.addTextChangedListener(chargeWatcher);
+                etFees.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        try {
+                            list.get(getAdapterPosition()).setFee(Integer.parseInt(s.toString()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            list.get(getAdapterPosition()).setFee(0);
+                        }
+                    }
+                });
         }
     }
 
     interface OnOptionSelected {
         void onSelected(int pos);
-    }
-
-    class ChargeWatcher implements TextWatcher {
-
-        int position;
-
-        public void setPosition(int position) {
-            this.position = position;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            if (!s.toString().isEmpty()) {
-                try {
-                    list.get(position).setFee(Integer.parseInt(s.toString().trim()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    list.get(position).setFee(0);
-                }
-            }
-        }
     }
 }
