@@ -53,7 +53,10 @@ public class TransactionItem extends BaseApiResponseModel {
     private List<RefundItem> refunds;
 
     @SerializedName("retry_count")
-    private int maxRetries = Constants.MAX_TRANSACTION_RETRY;
+    private int maxRetries;
+
+    @SerializedName("error_description")
+    private String errorDescription;
 
     public CommonUserApiResponseModel getDoctorId() {
         return doctorId;
@@ -107,6 +110,7 @@ public class TransactionItem extends BaseApiResponseModel {
             case Constants.ChargeStatus.CHARGE_PENDING:
                 return "Pending Add charge";
             case Constants.ChargeStatus.CHARGE_PROCESS_INITIATED:
+            case Constants.ChargeStatus.CHARGE_PROCESS_IN_STRIPE:
                 return "Payment initiated";
             case Constants.ChargeStatus.CHARGE_PROCESS_FAILED:
                 return "Payment Failed";
@@ -142,5 +146,13 @@ public class TransactionItem extends BaseApiResponseModel {
 
     public void setRefunds(List<RefundItem> refunds) {
         this.refunds = refunds;
+    }
+
+    public String getErrorDescription() {
+        return errorDescription;
+    }
+
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
     }
 }

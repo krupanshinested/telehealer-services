@@ -204,8 +204,9 @@ public class Constants {
         int CHARGE_PENDING = 1;
         int CHARGE_ADDED = 2;
         int CHARGE_PROCESS_INITIATED = 3;
-        int CHARGE_PROCESSED = 4;
-        int CHARGE_PROCESS_FAILED = 5;
+        int CHARGE_PROCESS_IN_STRIPE = 4;
+        int CHARGE_PROCESSED = 5;
+        int CHARGE_PROCESS_FAILED = 6;
     }
 
     public static final int MAX_TRANSACTION_RETRY = 3;

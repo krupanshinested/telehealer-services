@@ -70,6 +70,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     }
 
     private void updateActionsForProvider(@NonNull TransactionListVH holder, int position) {
+        holder.failureReasonRow.setVisibility(View.GONE);
+        holder.actionRow.setVisibility(View.VISIBLE);
         switch (list.get(position).getChargeStatus()) {
             case Constants.ChargeStatus.CHARGE_ADDED: {
                 holder.btnProcessPayment.setVisibility(View.VISIBLE);
@@ -86,11 +88,16 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
                 holder.btnProcessPayment.setVisibility(View.GONE);
                 break;
             }
-            case Constants.ChargeStatus.CHARGE_PROCESS_INITIATED: {
+            case Constants.ChargeStatus.CHARGE_PROCESS_INITIATED:
+            case Constants.ChargeStatus.CHARGE_PROCESS_IN_STRIPE: {
                 holder.actionRow.setVisibility(View.GONE);
                 break;
             }
             case Constants.ChargeStatus.CHARGE_PROCESS_FAILED: {
+                if (list.get(position).getErrorDescription() != null && list.get(position).getErrorDescription().length() > 0) {
+                    holder.failureReasonRow.setVisibility(View.VISIBLE);
+                    holder.tvFailureReason.setText(list.get(position).getErrorDescription());
+                }
                 holder.btnProcessPayment.setVisibility(View.VISIBLE);
                 holder.btnReceipt.setVisibility(View.GONE);
                 holder.btnRefundClick.setVisibility(View.GONE);
@@ -138,8 +145,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         Button btnReceipt;
         Button btnProcessPayment;
         Button btnRefundClick;
-        TextView tvStatus, tvDate, tvDateOfService, tvPatient, tvChargeType, tvReason, tvCharge, tvDoctor;
-        View doctorRow, patientRow;
+        TextView tvStatus, tvDate, tvDateOfService, tvPatient, tvChargeType, tvReason, tvCharge, tvDoctor, tvFailureReason;
+        View doctorRow, patientRow, failureReasonRow;
         View actionRow;
 
         public TransactionListVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
@@ -155,10 +162,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             tvReason = itemView.findViewById(R.id.tvReason);
             tvCharge = itemView.findViewById(R.id.tvCharge);
             tvDoctor = itemView.findViewById(R.id.tvDoctor);
+            tvFailureReason = itemView.findViewById(R.id.tvFailureReason);
 
             actionRow = itemView.findViewById(R.id.actionRow);
             doctorRow = itemView.findViewById(R.id.doctorRow);
             patientRow = itemView.findViewById(R.id.patientRow);
+            failureReasonRow = itemView.findViewById(R.id.rowFailureReason);
 
             btnProcessPayment.setOnClickListener(new View.OnClickListener() {
                 @Override

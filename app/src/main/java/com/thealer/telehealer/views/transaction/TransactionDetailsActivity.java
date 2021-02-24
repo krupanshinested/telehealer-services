@@ -25,8 +25,8 @@ public class TransactionDetailsActivity extends BaseActivity {
 
     public static final String EXTRA_TRANSACTION = "transaction";
 
-    TextView tvStatus, tvDate, tvPatient, tvChargeType, tvCharge, tvDoctor, tvRefund;
-    View doctorRow, patientRow;
+    TextView tvStatus, tvDate, tvPatient, tvChargeType, tvCharge, tvDoctor, tvRefund, tvFailureReason;
+    View doctorRow, patientRow, failureReasonRow;
     private RecyclerView rvReasonCharges, rvRefunds;
 
     private TransactionItem transactionItem;
@@ -47,9 +47,11 @@ public class TransactionDetailsActivity extends BaseActivity {
         tvCharge = findViewById(R.id.tvCharge);
         tvDoctor = findViewById(R.id.tvDoctor);
         tvRefund = findViewById(R.id.tvRefund);
+        tvFailureReason = findViewById(R.id.tvFailureReason);
 
         doctorRow = findViewById(R.id.doctorRow);
         patientRow = findViewById(R.id.patientRow);
+        failureReasonRow = findViewById(R.id.rowFailureReason);
 
 
         String json = getIntent().getStringExtra(EXTRA_TRANSACTION);
@@ -130,6 +132,11 @@ public class TransactionDetailsActivity extends BaseActivity {
         tvCharge.setText(String.format("$ %d", transactionItem.getAmount()));
         tvChargeType.setText(transactionItem.getTypeOfCharge().getName());
         tvDate.setText(Utils.getFormatedDateTime(transactionItem.getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));
+
+        if (transactionItem.getErrorDescription() != null && transactionItem.getErrorDescription().length() > 0) {
+            failureReasonRow.setVisibility(View.VISIBLE);
+            tvFailureReason.setText(transactionItem.getErrorDescription());
+        }
         if (UserType.isUserPatient()) {
             patientRow.setVisibility(View.GONE);
 

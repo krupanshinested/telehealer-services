@@ -123,6 +123,20 @@
         </TableRow>
 
         <TableRow
+            android:id="@+id/rowFailureReason"
+            style="@style/TransactionListRow">
+
+            <TextView
+                style="@style/TransactionRowLbl"
+                android:text="@string/lbl_failure_reason" />
+
+            <TextView
+                android:id="@+id/tvFailureReason"
+                style="@style/TransactionRowValue"
+                android:text="Success" />
+        </TableRow>
+
+        <TableRow
             android:id="@+id/actionRow"
             android:layout_marginStart="15dp"
             android:layout_marginTop="14dp"
