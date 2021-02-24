@@ -216,4 +216,9 @@ public class Constants {
         String PAYOUT_DISABLED = "payouts_disabled";
 
     }
+
+    public interface PaymentMode {
+        int STRIPE = 1;
+        int CASH = 2;
+    }
 }

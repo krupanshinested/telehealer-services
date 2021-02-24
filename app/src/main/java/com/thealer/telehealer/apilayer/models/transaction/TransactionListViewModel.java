@@ -15,6 +15,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TransactionListViewModel extends BaseApiViewModel {
 
@@ -54,10 +55,14 @@ public class TransactionListViewModel extends BaseApiViewModel {
         }
     }
 
-    public void processPayment(int id) {
+    public void processPayment(int id, int paymentMode) {
+
+        HashMap<String, Object> req = new HashMap<>();
+        req.put("payment_mode", paymentMode);
+
         fetchToken(status -> {
             if (status) {
-                getAuthApiService().processPayment(id)
+                getAuthApiService().processPayment(id, req)
                         .compose(applySchedulers())
                         .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                             @Override

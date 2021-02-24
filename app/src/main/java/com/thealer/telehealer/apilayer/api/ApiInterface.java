@@ -724,7 +724,7 @@ public interface ApiInterface {
     Observable<TransactionListResp> transactionPaginate(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Body() TransactionListReq req);
 
     @POST("/api/charge/process-payment")
-    Observable<BaseApiResponseModel> processPayment(@Query("id") int id);
+    Observable<BaseApiResponseModel> processPayment(@Query("id") int id, @Body HashMap<String, Object> req);
 
     @POST("/api/charge/process-refund")
     Observable<BaseApiResponseModel> processRefund(@Query("id") int id, @Body() RefundReq req);

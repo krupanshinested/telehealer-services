@@ -1533,7 +1533,7 @@
     <string name="lbl_supplies">Supplies</string>
     <string name="msg_please_enter_valid_refund_amount">Please enter valid refund amount</string>
     <string name="msg_refund_info">Entered amount will get credited into patient account.</string>
-    <string name="lbl_mark_as_completed">Mark As Completed</string>
+    <string name="lbl_proceed_offline">Proceed Offline</string>
     <string name="msg_invalid_credit_card_in_transaction_process">%s has no valid credit card, please collect charge in cash</string>
     <string name="msg_transaction_failed">We are unable to process this transaction, please contact %s and collect charge in cash.</string>
     <string name="lbl_provider">Provider</string>

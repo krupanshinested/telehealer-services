@@ -52,6 +52,7 @@ public class TransactionItem extends BaseApiResponseModel {
 
     private List<RefundItem> refunds;
 
+    @SerializedName("retry_count")
     private int maxRetries = Constants.MAX_TRANSACTION_RETRY;
 
     public CommonUserApiResponseModel getDoctorId() {

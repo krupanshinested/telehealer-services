@@ -26,10 +26,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.RefundViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
@@ -46,10 +47,14 @@ import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
-import com.thealer.telehealer.views.common.CallPlacingActivity;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
+import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -57,6 +62,7 @@ public class TransactionListFragment extends BaseFragment {
 
     private TransactionListViewModel transactionListViewModel;
     private RefundViewModel refundViewModel;
+    private AskToAddCardViewModel askToAddCardViewModel;
     private OnViewChangeInterface onViewChangeInterface;
 
     private CustomRecyclerView rvTransactions;
@@ -85,8 +91,30 @@ public class TransactionListFragment extends BaseFragment {
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         transactionListViewModel = new ViewModelProvider(this).get(TransactionListViewModel.class);
         refundViewModel = new ViewModelProvider(this).get(RefundViewModel.class);
+        askToAddCardViewModel = new ViewModelProvider(this).get(AskToAddCardViewModel.class);
         onViewChangeInterface.attachObserver(transactionListViewModel);
         onViewChangeInterface.attachObserver(refundViewModel);
+        onViewChangeInterface.attachObserver(askToAddCardViewModel);
+
+
+        askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                Utils.showAlertDialog(getContext(), getString(R.string.error),
+                        errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                        null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+            }
+        });
 
         transactionListViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -116,25 +144,26 @@ public class TransactionListFragment extends BaseFragment {
                         }
                     }, null);
                 } else {
-                    if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
-                        selectedTransaction = null;
-                        String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                        Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.ok), getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }, null);
-                    } else {
-                        if (selectedTransaction != null) {
-                            String message = getString(R.string.msg_invalid_credit_card_in_transaction_process, selectedTransaction.getPatientId().getDisplayName());
-                            Utils.showAlertDialog(getContext(), getString(R.string.app_name), message, getString(R.string.lbl_mark_as_completed), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    String json = errorModel.getResponse();
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+
+                        if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                            selectedTransaction = null;
+                            String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                            Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.ok), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
                                 }
                             }, null);
+                        } else {
+                            if (selectedTransaction != null) {
+                                showPatientCardErrorOptions();
+                            }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -167,6 +196,32 @@ public class TransactionListFragment extends BaseFragment {
             }
         });
         loadTransactions(true);
+    }
+
+    private void showPatientCardErrorOptions() {
+        ArrayList<String> options = new ArrayList<>();
+        options.add(getString(R.string.lbl_ask_to_add_credit_card));
+        options.add(getString(R.string.lbl_proceed_offline));
+        String message = getString(R.string.msg_invalid_credit_card_in_transaction_process, selectedTransaction.getPatientId().getDisplayName());
+        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), message, options, new PickerListener() {
+            @Override
+            public void didSelectedItem(int position) {
+
+                if (getString(R.string.lbl_ask_to_add_credit_card).equals(options.get(position))) {
+                    askToAddCardViewModel.askToAddCard(selectedTransaction.getPatientId().getUser_guid(), selectedTransaction.getDoctorId().getUser_guid());
+                } else if (getString(R.string.lbl_proceed_offline).equals(options.get(position))) {
+                    transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                }
+
+            }
+
+            @Override
+            public void didCancelled() {
+
+            }
+        });
+        itemPickerDialog.setCancelable(false);
+        itemPickerDialog.show();
     }
 
     private void loadTransactions(boolean showProgress) {
@@ -217,6 +272,7 @@ public class TransactionListFragment extends BaseFragment {
         rvTransactions.setScrollable(false);
         rvTransactions.setEmptyState(EmptyViewConstants.EMPTY_PAYMENTS);
         rvTransactions.hideEmptyState();
+        rvTransactions.getSwipeLayout().setEnabled(false);
 
 
         backIv.setOnClickListener(new View.OnClickListener() {
@@ -256,16 +312,14 @@ public class TransactionListFragment extends BaseFragment {
                 selectedTransaction = transactionListViewModel.getTransactions().get(pos);
                 if (selectedTransaction.getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESS_FAILED) {
                     if (selectedTransaction.getMaxRetries() >= Constants.MAX_TRANSACTION_RETRY) {
-                        Utils.showAlertDialog(getContext(), getString(R.string.app_name), getString(R.string.msg_transaction_failed, selectedTransaction.getPatientId().getDisplayName()), getString(R.string.lbl_mark_as_completed), getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
+                        Utils.showAlertDialog(getContext(), getString(R.string.app_name), getString(R.string.msg_transaction_failed, selectedTransaction.getPatientId().getDisplayName()), getString(R.string.lbl_proceed_offline), getString(R.string.cancel), (dialog, which) -> {
+                            transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId(), Constants.PaymentMode.CASH);
+                            dialog.dismiss();
                         }, null);
                         return;
                     }
                 }
-                transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId());
+                transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId(), Constants.PaymentMode.STRIPE);
 
 
             }
