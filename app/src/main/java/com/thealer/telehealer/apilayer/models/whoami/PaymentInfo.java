@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import com.thealer.telehealer.common.Constants;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class PaymentInfo implements Serializable {
 
@@ -21,6 +22,9 @@ public class PaymentInfo implements Serializable {
 
     @SerializedName("saved_cards_count")
     private int savedCardsCount;
+
+    @SerializedName("currently_due")
+    private List<String> currentlyDue;
 
     public String getOauthStatus() {
         return oauthStatus;
@@ -55,7 +59,11 @@ public class PaymentInfo implements Serializable {
         this.savedCardsCount = savedCardsCount;
     }
 
-    public boolean isOathNotConnected() {
-        return !Constants.OAuthStatus.CONNECTED.equals(oauthStatus);
+    public List<String> getCurrentlyDue() {
+        return currentlyDue;
+    }
+
+    public void setCurrentlyDue(List<String> currentlyDue) {
+        this.currentlyDue = currentlyDue;
     }
 }

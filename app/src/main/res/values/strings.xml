@@ -1544,5 +1544,6 @@
     <string name="msg_provide_stripe_information">You need to provide information for stripe acccount.</string>
     <string name="lbl_total">Total</string>
     <string name="lbl_refunds">Refunds</string>
+    <string name="msg_missing_info_in_stripe">Following Information is missing or invalid in your Stripe account.\n\n%s</string>
 
 </resources>
