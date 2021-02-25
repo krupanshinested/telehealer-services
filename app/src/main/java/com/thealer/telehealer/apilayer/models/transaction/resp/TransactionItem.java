@@ -58,6 +58,9 @@ public class TransactionItem extends BaseApiResponseModel {
     @SerializedName("error_description")
     private String errorDescription;
 
+    @SerializedName("payment_mode")
+    private int paymentMode;
+
     public CommonUserApiResponseModel getDoctorId() {
         return doctorId;
     }
@@ -154,5 +157,13 @@ public class TransactionItem extends BaseApiResponseModel {
 
     public void setErrorDescription(String errorDescription) {
         this.errorDescription = errorDescription;
+    }
+
+    public int getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(int paymentMode) {
+        this.paymentMode = paymentMode;
     }
 }

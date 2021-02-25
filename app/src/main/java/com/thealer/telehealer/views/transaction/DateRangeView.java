@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.transaction;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
@@ -29,14 +30,14 @@ public class DateRangeView extends LinearLayout {
     private Calendar selectedFromDate = null;
     private Calendar selectedToDate = null;
 
-    private int fromDateType = Constants.TYPE_EXPIRATION;
+    private boolean isSingleSelection;
 
     private OnClickListener onLayoutClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.layoutFromDate:
-                    Utils.showDatePickerDialog(getContext(), fromDateType == Constants.TYPE_EXPIRATION ? Calendar.getInstance() : null, fromDateType, new DatePickerDialog.OnDateSetListener() {
+                    showDatePickerDialog(selectedFromDate, isSingleSelection ? null : Calendar.getInstance(), new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             Calendar calendar = Calendar.getInstance();
@@ -47,7 +48,7 @@ public class DateRangeView extends LinearLayout {
                     });
                     break;
                 case R.id.layoutTomDate:
-                    Utils.showDatePickerDialog(getContext(), selectedFromDate != null ? selectedFromDate : Calendar.getInstance(), Constants.TYPE_EXPIRATION, new DatePickerDialog.OnDateSetListener() {
+                    showDatePickerDialog(selectedToDate, selectedFromDate, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             Calendar calendar = Calendar.getInstance();
@@ -147,17 +148,37 @@ public class DateRangeView extends LinearLayout {
     }
 
     public void setSingleSelection(String hintText) {
+        isSingleSelection = true;
         tvFromDate.setHint(hintText);
         layoutToDate.setVisibility(View.GONE);
         tvFromDate.setTextSize(14);
         selectedToDate = null;
-        setFromDateType(Constants.TILL_CURRENT_DAY);
         TextView txt = findViewById(R.id.lbStartDate);
         txt.setText(hintText);
         findViewById(R.id.lbEndDate).setVisibility(GONE);
     }
 
-    public void setFromDateType(int fromDateType) {
-        this.fromDateType = fromDateType;
+
+    private void showDatePickerDialog(Calendar selectedDate, Calendar minDate, DatePickerDialog.OnDateSetListener dateSetListener) {
+        Calendar calendar = selectedDate != null ? selectedDate : Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+
+        DatePickerDialog.OnDateSetListener onDateSetListener = dateSetListener;
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), onDateSetListener, year, month, day);
+
+        if (minDate != null) {
+            datePickerDialog.getDatePicker().setMinDate(minDate.getTimeInMillis());
+        }
+
+
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getContext().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        datePickerDialog.show();
     }
 }
