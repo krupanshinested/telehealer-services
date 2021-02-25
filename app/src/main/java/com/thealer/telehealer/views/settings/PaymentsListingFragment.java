@@ -27,6 +27,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -126,6 +127,9 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             //addCardButton.performClick();
         } else
             transactionApiViewModel.getTransactions();
+        if (UserType.isUserAssistant()) {
+            addCardButton.setVisibility(View.GONE);
+        }
     }
 
     private void addObserver() {

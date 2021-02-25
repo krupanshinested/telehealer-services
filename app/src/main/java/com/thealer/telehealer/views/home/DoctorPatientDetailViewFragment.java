@@ -168,6 +168,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
 
         getUsersApiViewModel = new ViewModelProvider(this).get(GetUsersApiViewModel.class);
+        attachObserverInterface.attachObserver(getUsersApiViewModel);
         getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
