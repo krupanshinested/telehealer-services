@@ -38,10 +38,12 @@ import java.util.ArrayList;
 
 public class TransactionFilterActivity extends BaseActivity implements View.OnClickListener {
     public static final String EXTRA_FILTER = "filter";
+    public static final String EXTRA_IS_RESET = "is_reset";
 
     private RecyclerView rvChargeType;
     private RecyclerView rvReason;
     private Button btnSubmit;
+    private Button btnReset;
 
     private ReasonOptionAdapter adapterReason;
     private MasterSelectionAdapter adapterType;
@@ -61,6 +63,7 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
         doctorOcv = (OrdersCustomView) findViewById(R.id.doctor_ocv);
         patientOcv = (OrdersCustomView) findViewById(R.id.patient_ocv);
         btnSubmit = findViewById(R.id.btnSubmit);
+        btnReset = findViewById(R.id.btnReset);
 
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitle.setText(getString(R.string.filter));
@@ -87,6 +90,14 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
         doctorOcv.setOnClickListener(this);
         patientOcv.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
+        btnReset.setOnClickListener(this);
+
+        findViewById(R.id.back_iv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     private void initViewModels() {
@@ -178,6 +189,21 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                 setResult(RESULT_OK, new Intent().putExtra(EXTRA_FILTER, new Gson().toJson(getReq())));
                 finish();
                 break;
+            }
+            case R.id.btnReset: {
+                /*patientModel = null;
+                doctorModel = null;
+                setDoctorOcv(null);
+                setPatientOcv(null);
+                for (MasterResp.MasterItem masterItem : addChargeViewModel.getListChargeTypes()) {
+                    masterItem.setSelected(false);
+                }
+                for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
+                    reasonOption.setSelected(false);
+                }
+                */
+                setResult(RESULT_OK, new Intent().putExtra(EXTRA_IS_RESET, true));
+                finish();
             }
         }
     }
