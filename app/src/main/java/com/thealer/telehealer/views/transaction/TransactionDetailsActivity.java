@@ -25,9 +25,9 @@ public class TransactionDetailsActivity extends BaseActivity {
 
     public static final String EXTRA_TRANSACTION = "transaction";
 
-    TextView tvStatus, tvDate, tvPatient, tvChargeType, tvCharge, tvDoctor, tvRefund, tvFailureReason;
+    TextView tvStatus, tvDate, tvPatient, tvChargeType, tvCharge, tvDoctor, tvRefund, tvRefundDate, tvFailureReason;
     View doctorRow, patientRow, failureReasonRow;
-    private RecyclerView rvReasonCharges, rvRefunds;
+    private RecyclerView rvReasonCharges;//, rvRefunds;
 
     private TransactionItem transactionItem;
 
@@ -36,7 +36,7 @@ public class TransactionDetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_details);
         rvReasonCharges = findViewById(R.id.rvReasonCharges);
-        rvRefunds = findViewById(R.id.rvRefunds);
+//        rvRefunds = findViewById(R.id.rvRefunds);
 
         tvStatus = findViewById(R.id.tvStatus);
         tvDate = findViewById(R.id.tvDate);
@@ -48,10 +48,18 @@ public class TransactionDetailsActivity extends BaseActivity {
         tvDoctor = findViewById(R.id.tvDoctor);
         tvRefund = findViewById(R.id.tvRefund);
         tvFailureReason = findViewById(R.id.tvFailureReason);
+        tvRefundDate = findViewById(R.id.tvRefundDate);
 
         doctorRow = findViewById(R.id.doctorRow);
         patientRow = findViewById(R.id.patientRow);
         failureReasonRow = findViewById(R.id.rowFailureReason);
+
+        findViewById(R.id.back_iv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
 
         String json = getIntent().getStringExtra(EXTRA_TRANSACTION);
@@ -59,7 +67,7 @@ public class TransactionDetailsActivity extends BaseActivity {
             transactionItem = new Gson().fromJson(json, TransactionItem.class);
         }
         rvReasonCharges.setNestedScrollingEnabled(false);
-        rvRefunds.setNestedScrollingEnabled(false);
+//        rvRefunds.setNestedScrollingEnabled(false);
 
         prepareReasonList();
         prepareRefundList();
@@ -71,7 +79,7 @@ public class TransactionDetailsActivity extends BaseActivity {
         if (transactionItem.getRefunds() == null || transactionItem.getRefunds().size() == 0) {
             findViewById(R.id.rowRefunds).setVisibility(View.GONE);
             tvRefund.setVisibility(View.GONE);
-            rvRefunds.setVisibility(View.GONE);
+//            rvRefunds.setVisibility(View.GONE);
             return;
         }
         ArrayList<DetailAmountModel> refundAmounts = new ArrayList<>();
@@ -85,8 +93,9 @@ public class TransactionDetailsActivity extends BaseActivity {
             totalRefund += amountModel.getAmount();
         }
         tvRefund.setText(String.format("$ %d", totalRefund));
-        DetailAmountAdapter adapter = new DetailAmountAdapter(refundAmounts);
-        rvRefunds.setAdapter(adapter);
+        tvRefundDate.setText(refundAmounts.get(0).getDetails());
+        /*DetailAmountAdapter adapter = new DetailAmountAdapter(refundAmounts);
+        rvRefunds.setAdapter(adapter);*/
     }
 
     private void prepareReasonList() {

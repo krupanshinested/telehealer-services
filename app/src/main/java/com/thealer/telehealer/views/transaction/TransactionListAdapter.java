@@ -108,7 +108,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
                 holder.btnReceipt.setVisibility(View.VISIBLE);
                 holder.btnReceipt.setText(R.string.lbl_receipt);
                 ((LinearLayout.LayoutParams) holder.btnReceipt.getLayoutParams()).weight = 0.5f;
-                holder.btnRefundClick.setVisibility(View.VISIBLE);
+                if (list.get(position).getRefunds() == null || list.get(position).getRefunds().size() == 0)
+                    holder.btnRefundClick.setVisibility(View.VISIBLE);
                 break;
             }
         }

@@ -9,11 +9,10 @@
 
     <ImageView
         android:id="@+id/close_iv"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:layout_margin="15dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
+        android:padding="10dp"
         android:src="@drawable/ic_close_red_24dp"
         android:tint="@color/colorBlack"
         app:layout_constraintRight_toRightOf="parent"
