@@ -288,6 +288,12 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                 }
                 break;
             case R.id.close_iv:
+                if (!UserType.isUserPatient())
+                    startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class)
+                            .putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.VISIT)
+                            .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, getIntent().getIntExtra(ArgumentKeys.PATIENT_ID, -1))
+                            .putExtra(AddChargeActivity.EXTRA_ORDER_ID, sessionId)
+                    );
                 finish();
                 break;
             case R.id.first_item:

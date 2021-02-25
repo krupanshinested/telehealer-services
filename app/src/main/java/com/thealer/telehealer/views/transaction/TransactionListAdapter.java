@@ -43,6 +43,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         holder.tvReason.setText(list.get(position).getCommaSeparatedReason(holder.itemView.getContext()));
         holder.tvChargeType.setText(list.get(position).getTypeOfCharge().getName());
         holder.tvDate.setText(Utils.getFormatedDateTime(list.get(position).getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));
+        holder.failureReasonRow.setVisibility(View.GONE);
         if (UserType.isUserPatient()) {
             holder.patientRow.setVisibility(View.GONE);
 
@@ -70,7 +71,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     }
 
     private void updateActionsForProvider(@NonNull TransactionListVH holder, int position) {
-        holder.failureReasonRow.setVisibility(View.GONE);
         holder.actionRow.setVisibility(View.VISIBLE);
         switch (list.get(position).getChargeStatus()) {
             case Constants.ChargeStatus.CHARGE_ADDED: {
