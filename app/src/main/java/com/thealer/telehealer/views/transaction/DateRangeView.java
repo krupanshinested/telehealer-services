@@ -32,6 +32,7 @@ public class DateRangeView extends LinearLayout {
 
     private boolean isSingleSelection;
 
+
     private OnClickListener onLayoutClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -44,6 +45,13 @@ public class DateRangeView extends LinearLayout {
                             calendar.set(year, month, dayOfMonth);
                             selectedFromDate = calendar;
                             updateDate(tvFromDate, year, month, dayOfMonth);
+
+                            if (getSelectedFromDate() != null && getSelectedToDate() == null) {
+                                Calendar afterMonth = Calendar.getInstance();
+                                afterMonth.setTimeInMillis(calendar.getTimeInMillis());
+                                afterMonth.add(Calendar.MONTH, 1);
+                                setSelectedToDate(afterMonth);
+                            }
                         }
                     });
                     break;
@@ -138,6 +146,12 @@ public class DateRangeView extends LinearLayout {
             selectedToDate = null;
             tvFromDate.setText(null);
             tvToDate.setText(null);
+            if (isShow) {
+                setSelectedFromDate(Calendar.getInstance());
+                Calendar afterMonth = Calendar.getInstance();
+                afterMonth.add(Calendar.MONTH, 1);
+                setSelectedToDate(afterMonth);
+            }
         }
         if (isShow) {
             setVisibility(VISIBLE);

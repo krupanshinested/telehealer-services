@@ -35,6 +35,7 @@ import com.thealer.telehealer.views.home.SelectAssociationFragment;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class TransactionFilterActivity extends BaseActivity implements View.OnClickListener {
     public static final String EXTRA_FILTER = "filter";
@@ -56,6 +57,8 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
     private CommonUserApiResponseModel doctorModel;
     private CommonUserApiResponseModel patientModel;
 
+    private DateRangeView dateFilter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +67,7 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
         patientOcv = (OrdersCustomView) findViewById(R.id.patient_ocv);
         btnSubmit = findViewById(R.id.btnSubmit);
         btnReset = findViewById(R.id.btnReset);
+        dateFilter = findViewById(R.id.dateFilter);
 
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitle.setText(getString(R.string.filter));
@@ -186,6 +190,12 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                 break;
             }
             case R.id.btnSubmit: {
+                if (dateFilter.getSelectedToDate() != null) {
+                    if (dateFilter.getSelectedFromDate().getTimeInMillis() > dateFilter.getSelectedToDate().getTimeInMillis()) {
+                        Utils.showAlertDialog(this, getString(R.string.error), getString(R.string.msg_please_select_valid_date_range_for_any, getString(R.string.filter)), getString(R.string.ok), null, null, null);
+                        return;
+                    }
+                }
                 setResult(RESULT_OK, new Intent().putExtra(EXTRA_FILTER, new Gson().toJson(getReq())));
                 finish();
                 break;
@@ -202,7 +212,13 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                     reasonOption.setSelected(false);
                 }
                 */
-                setResult(RESULT_OK, new Intent().putExtra(EXTRA_IS_RESET, true));
+
+                dateFilter.setSelectedToDate(Calendar.getInstance());
+                Calendar fromDate = Calendar.getInstance();
+                fromDate.add(Calendar.MONTH, -1);
+                dateFilter.setSelectedFromDate(fromDate);
+
+                setResult(RESULT_OK, new Intent().putExtra(EXTRA_IS_RESET, true).putExtra(EXTRA_FILTER, new Gson().toJson(getReq())));
                 finish();
             }
         }
@@ -218,6 +234,12 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
         if (doctorModel != null) {
             filter.setDoctorId(doctorModel.getUser_id());
             filter.setDoctorName(doctorOcv.getTitleText());
+        }
+        if (dateFilter.getSelectedFromDate() != null) {
+            filter.setFromDate(Utils.getUTCDateFromCalendar(dateFilter.getSelectedFromDate()));
+        }
+        if (dateFilter.getSelectedToDate() != null) {
+            filter.setToDate(Utils.getUTCDateFromCalendar(dateFilter.getSelectedToDate()));
         }
         ArrayList<Integer> selectedTypes = new ArrayList<>();
         for (MasterResp.MasterItem masterItem : addChargeViewModel.getListChargeTypes())
@@ -252,6 +274,13 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                     doctorModel.setUser_id(filter.getDoctorId());
                     setDoctorOcv(filter.getDoctorName());
                 }
+
+                if (filter.getFromDate() != null)
+                    dateFilter.setSelectedFromDate(Utils.getCalendar(filter.getFromDate()));
+
+                if (filter.getToDate() != null)
+                    dateFilter.setSelectedToDate(Utils.getCalendar(filter.getToDate()));
+
 
                 if (filter.getReasons() != null) {
                     for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {

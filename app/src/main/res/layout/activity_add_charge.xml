@@ -47,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
 
-                    android:hint="@string/lbl_type_of_charge"
+                    android:hint="@string/lbl_charge_type"
                     android:textColorHint="@color/colorBlack_50"
                     android:textSize="14sp" />
 

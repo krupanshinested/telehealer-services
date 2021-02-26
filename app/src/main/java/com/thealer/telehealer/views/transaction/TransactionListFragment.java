@@ -434,13 +434,6 @@ public class TransactionListFragment extends BaseFragment {
             loadTransactions(true);
         }
         if (resultCode == Activity.RESULT_OK && requestCode == RequestID.REQ_FILTER) {
-            if (data.getBooleanExtra(TransactionFilterActivity.EXTRA_IS_RESET, false)) {
-                filterIndicator.setVisibility(View.GONE);
-                transactionListViewModel.setFilterReq(new TransactionListReq());
-                transactionListViewModel.setPage(1);
-                loadTransactions(true);
-                return;
-            }
             String filterJson = data.getStringExtra(TransactionFilterActivity.EXTRA_FILTER);
             if (filterJson != null) {
                 transactionListViewModel.setFilterReq(new Gson().fromJson(filterJson, TransactionListReq.class));
@@ -449,6 +442,10 @@ public class TransactionListFragment extends BaseFragment {
                 filterIndicator.setVisibility(View.VISIBLE);
             } else
                 filterIndicator.setVisibility(View.GONE);
+            if (data.getBooleanExtra(TransactionFilterActivity.EXTRA_IS_RESET, false)) {
+                filterIndicator.setVisibility(View.GONE);
+            }
+
         }
     }
 }

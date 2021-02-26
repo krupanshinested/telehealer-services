@@ -12,9 +12,11 @@ import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class TransactionListViewModel extends BaseApiViewModel {
@@ -28,6 +30,11 @@ public class TransactionListViewModel extends BaseApiViewModel {
 
     public TransactionListViewModel(@NonNull Application application) {
         super(application);
+        filterReq.setFilter(new TransactionListReq.Filter());
+        filterReq.getFilter().setToDate(Utils.getUTCDateFromCalendar(Calendar.getInstance()));
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -1);
+        filterReq.getFilter().setFromDate(Utils.getUTCDateFromCalendar(calendar));
     }
 
     public void loadTransactions(boolean isShowProgress) {

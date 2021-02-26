@@ -131,7 +131,7 @@
 
                     <TextView
                         style="@style/TransactionRowLbl"
-                        android:text="@string/lbl_type_of_charge" />
+                        android:text="@string/lbl_charge_type" />
 
                     <TextView
                         android:id="@+id/tvChargeType"

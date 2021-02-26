@@ -36,6 +36,9 @@ public class TransactionListReq {
         private String patientName;
         private String doctorName;
 
+        private String fromDate;
+        private String toDate;
+
         public void setPatientId(int patientId) {
             this.patientId = patientId;
         }
@@ -82,6 +85,22 @@ public class TransactionListReq {
 
         public void setDoctorName(String doctorName) {
             this.doctorName = doctorName;
+        }
+
+        public String getFromDate() {
+            return fromDate;
+        }
+
+        public void setFromDate(String fromDate) {
+            this.fromDate = fromDate;
+        }
+
+        public String getToDate() {
+            return toDate;
+        }
+
+        public void setToDate(String toDate) {
+            this.toDate = toDate;
         }
     }
 }

@@ -37,11 +37,19 @@
             app:title_text="@string/Click_here_to_select_patient"
             app:view_label="@string/choose_patient" />
 
+        <com.thealer.telehealer.views.transaction.DateRangeView
+            android:id="@+id/dateFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp" />
+
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="@string/lbl_type_of_charge"
+            android:text="@string/lbl_charge_type"
             android:textColor="@color/colorBlack" />
 
         <androidx.recyclerview.widget.RecyclerView
