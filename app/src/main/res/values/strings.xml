@@ -1519,6 +1519,7 @@
     <string name="msg_please_select_date_of_service">Please select date of service.</string>
     <string name="msg_please_select_charge_type">Please select charge type</string>
     <string name="msg_please_enter_fees_for_any">Please enter fees for %s</string>
+    <string name="msg_any_fees_should_be_greater_than_minimum">Fees for %s should be greater than $%.2f.</string>
     <string name="msg_please_select_start_date_for_any">Please select start date for %s</string>
     <string name="msg_please_select_end_date_for_any">Please select end date for %s</string>
     <string name="msg_please_select_valid_date_range_for_any">Please select valid date range for %s</string>
@@ -1531,7 +1532,9 @@
     <string name="lbl_add_charge">Add Charge</string>
     <string name="lbl_medicine">Medicine</string>
     <string name="lbl_supplies">Supplies</string>
-    <string name="msg_please_enter_valid_refund_amount">Please enter valid refund amount</string>
+    <string name="msg_please_enter_valid_refund_amount">Please enter refund amount.</string>
+    <string name="msg_refund_amount_should_not_exceed_charge_amount">Refund amount should not exceed charge amount.</string>
+    <string name="msg_refund_amount_should_be_greater_than_minimum">Refund amount should be greater than $%.2f.</string>
     <string name="msg_refund_info">Entered amount will get credited into patient account.</string>
     <string name="lbl_proceed_offline">Proceed Offline</string>
     <string name="msg_invalid_credit_card_in_transaction_process">%s has no valid credit card, please collect charge in cash</string>

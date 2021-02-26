@@ -4,7 +4,7 @@ public class DetailAmountModel {
 
     private String title;
     private String details;
-    private int amount;
+    private double amount;
 
     public String getTitle() {
         return title;
@@ -22,11 +22,13 @@ public class DetailAmountModel {
         this.details = details;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+
+
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 }

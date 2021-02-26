@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.transaction.DetailAmountModel;
+import com.thealer.telehealer.common.Utils;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class DetailAmountAdapter extends RecyclerView.Adapter<DetailAmountAdapte
             holder.title.setVisibility(View.GONE);
         else
             holder.subTitle.setText(list.get(position).getDetails());
-        holder.amount.setText(String.format("$ %d", list.get(position).getAmount()));
+        holder.amount.setText(Utils.getFormattedCurrency(list.get(position).getAmount()));
     }
 
     @Override

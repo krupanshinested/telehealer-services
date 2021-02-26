@@ -39,7 +39,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     @Override
     public void onBindViewHolder(@NonNull TransactionListVH holder, int position) {
         holder.tvStatus.setText(list.get(position).getStatusString());
-        holder.tvCharge.setText(String.format("($) %d", list.get(position).getAmount()));
+        holder.tvCharge.setText(list.get(position).getAmountString());
         holder.tvReason.setText(list.get(position).getCommaSeparatedReason(holder.itemView.getContext()));
         holder.tvChargeType.setText(list.get(position).getTypeOfCharge().getName());
         holder.tvDate.setText(Utils.getFormatedDateTime(list.get(position).getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));

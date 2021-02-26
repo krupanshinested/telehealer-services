@@ -9,11 +9,11 @@ public class ReasonOption {
 
     private int value;
 
-    private int fee;
+    private double fee;
 
     private boolean isSelected;
 
-    public ReasonOption(int value, String title, int fee) {
+    public ReasonOption(int value, String title, double fee) {
         this.value = value;
         this.title = title;
         this.fee = fee;
@@ -35,11 +35,11 @@ public class ReasonOption {
         this.value = value;
     }
 
-    public int getFee() {
+    public double getFee() {
         return fee;
     }
 
-    public void setFee(int fee) {
+    public void setFee(double fee) {
         this.fee = fee;
     }
 

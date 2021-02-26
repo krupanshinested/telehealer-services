@@ -184,6 +184,8 @@ public class Constants {
 
     public static final String did_subscriber_connected = "did_subscriber_connected";
 
+    public static final double STRIPE_MIN_AMOUNT = 0.50;
+
 
     public interface MasterCodes {
         String TYPE_OF_CHARGE = "TYPE_OF_CHARGE";

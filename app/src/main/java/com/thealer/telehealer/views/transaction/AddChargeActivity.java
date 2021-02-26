@@ -426,6 +426,10 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                         showError(getString(R.string.msg_please_enter_fees_for_any, reasonOption.getTitle()));
                         return false;
                     }
+                    if (reasonOption.getFee() <= Constants.STRIPE_MIN_AMOUNT) {
+                        showError(getString(R.string.msg_any_fees_should_be_greater_than_minimum, reasonOption.getTitle(), Constants.STRIPE_MIN_AMOUNT));
+                        return false;
+                    }
                     switch (reasonOption.getValue()) {
                         case Constants.ChargeReason.BHI: {
                             if (hasDateError(reasonOption, viewBHI.getSelectedFromDate(), viewBHI.getSelectedToDate())) {

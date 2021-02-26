@@ -35,6 +35,7 @@
             app:layout_constraintTop_toBottomOf="@+id/title_tv"
             tools:text="@string/dummy_text" />
 
+
         <LinearLayout
             android:id="@+id/input_ll"
             android:layout_width="match_parent"
@@ -60,6 +61,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/message_tv" />
 
+
+            <TextView
+                android:id="@+id/error_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="start"
+                android:textColor="@color/red"
+                android:visibility="gone"
+                tools:text="@string/dummy_text" />
         </LinearLayout>
 
 

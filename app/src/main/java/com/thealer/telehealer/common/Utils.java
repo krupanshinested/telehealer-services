@@ -1683,6 +1683,10 @@ public class Utils {
         builder.show();
     }
 
+    public static String getFormattedCurrency(double amount) {
+        return String.format("$%.2f", amount);
+    }
+
     public interface OnMultipleChoiceInterface {
         void onSelected(boolean[] selectedList);
     }

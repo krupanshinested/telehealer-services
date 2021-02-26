@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.transaction;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -387,21 +388,24 @@ public class TransactionListFragment extends BaseFragment {
                 getString(R.string.lbl_add_refund),
                 getString(R.string.Done),
                 getString(R.string.Cancel),
-                InputType.TYPE_CLASS_NUMBER,
+                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL,
                 new CustomDialogClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, String inputText) {
                         if (inputText != null && inputText.length() > 0) {
-                            int amount = Integer.parseInt(inputText);
-                            if (amount == 0 || amount > transactionListViewModel.getTransactions().get(pos).getAmount()) {
-                                Utils.showAlertDialog(getContext(),
-                                        getString(R.string.error),
-                                        getString(R.string.msg_please_enter_valid_refund_amount),
-                                        getString(R.string.ok),
-                                        null,
-                                        null,
-                                        null);
+                            TextView textView = ((Dialog) dialog).findViewById(R.id.error_tv);
+                            double amount = Double.parseDouble(inputText);
+                            if (amount == 0) {
+                                textView.setText(getString(R.string.msg_please_enter_valid_refund_amount));
+                                textView.setVisibility(View.VISIBLE);
+                            } else if (amount < Constants.STRIPE_MIN_AMOUNT) {
+                                textView.setText(getString(R.string.msg_refund_amount_should_be_greater_than_minimum, Constants.STRIPE_MIN_AMOUNT));
+                                textView.setVisibility(View.VISIBLE);
+                            } else if (amount > transactionListViewModel.getTransactions().get(pos).getAmount()) {
+                                textView.setText(getString(R.string.msg_refund_amount_should_not_exceed_charge_amount));
+                                textView.setVisibility(View.VISIBLE);
                             } else {
+                                textView.setVisibility(View.GONE);
                                 RefundReq req = new RefundReq();
                                 req.setRefundAmount(Integer.parseInt(inputText));
                                 refundViewModel.processRefund(transactionListViewModel.getTransactions().get(pos).getId(), req);

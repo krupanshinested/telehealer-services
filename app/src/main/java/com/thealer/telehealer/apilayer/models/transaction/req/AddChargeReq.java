@@ -64,7 +64,7 @@ public class AddChargeReq {
         private int reason;
 
         @SerializedName("amount")
-        private int amount;
+        private double amount;
 
         @SerializedName("description")
         private Description description;
@@ -73,7 +73,7 @@ public class AddChargeReq {
             return reason;
         }
 
-        public int getAmount() {
+        public double getAmount() {
             return amount;
         }
 
@@ -85,7 +85,7 @@ public class AddChargeReq {
             this.reason = reason;
         }
 
-        public void setAmount(int amount) {
+        public void setAmount(double amount) {
             this.amount = amount;
         }
 

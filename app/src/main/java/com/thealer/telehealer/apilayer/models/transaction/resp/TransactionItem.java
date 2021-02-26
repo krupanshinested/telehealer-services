@@ -14,6 +14,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.Utils;
 
 public class TransactionItem extends BaseApiResponseModel {
 
@@ -21,7 +22,7 @@ public class TransactionItem extends BaseApiResponseModel {
     private CommonUserApiResponseModel doctorId;
 
     @SerializedName("amount")
-    private int amount;
+    private double amount;
 
     @SerializedName("charge_status")
     private int chargeStatus;
@@ -65,7 +66,7 @@ public class TransactionItem extends BaseApiResponseModel {
         return doctorId;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
@@ -122,6 +123,10 @@ public class TransactionItem extends BaseApiResponseModel {
             default:
                 return "Pending";
         }
+    }
+
+    public String getAmountString() {
+        return Utils.getFormattedCurrency(getAmount());
     }
 
     public String getCommaSeparatedReason(Context context) {

@@ -138,7 +138,7 @@ public class TransactionDetailsActivity extends BaseActivity {
 
     void updateUI() {
         tvStatus.setText(transactionItem.getStatusString());
-        tvCharge.setText(String.format("$ %d", transactionItem.getAmount()));
+        tvCharge.setText(transactionItem.getAmountString());
         tvChargeType.setText(transactionItem.getTypeOfCharge().getName());
         tvDate.setText(Utils.getFormatedDateTime(transactionItem.getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));
 
