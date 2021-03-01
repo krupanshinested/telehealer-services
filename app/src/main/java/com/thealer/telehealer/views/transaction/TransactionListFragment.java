@@ -395,19 +395,20 @@ public class TransactionListFragment extends BaseFragment {
                         if (inputText != null && inputText.length() > 0) {
                             TextView textView = ((Dialog) dialog).findViewById(R.id.error_tv);
                             double amount = Double.parseDouble(inputText);
+                            TransactionItem transactionItem = transactionListViewModel.getTransactions().get(pos);
                             if (amount == 0) {
                                 textView.setText(getString(R.string.msg_please_enter_valid_refund_amount));
                                 textView.setVisibility(View.VISIBLE);
                             } else if (amount < Constants.STRIPE_MIN_AMOUNT) {
                                 textView.setText(getString(R.string.msg_refund_amount_should_be_greater_than_minimum, Constants.STRIPE_MIN_AMOUNT));
                                 textView.setVisibility(View.VISIBLE);
-                            } else if (amount > transactionListViewModel.getTransactions().get(pos).getAmount()) {
+                            } else if (amount > transactionItem.getAmount()) {
                                 textView.setText(getString(R.string.msg_refund_amount_should_not_exceed_charge_amount));
                                 textView.setVisibility(View.VISIBLE);
                             } else {
                                 textView.setVisibility(View.GONE);
                                 RefundReq req = new RefundReq();
-                                req.setRefundAmount(Integer.parseInt(inputText));
+                                req.setRefundAmount(Double.parseDouble(inputText));
                                 refundViewModel.processRefund(transactionListViewModel.getTransactions().get(pos).getId(), req);
                                 dialog.dismiss();
                             }

@@ -4,16 +4,16 @@ import com.google.gson.annotations.SerializedName;
 
 public class RefundItem {
 
-    private int amount;
+    private double amount;
 
     @SerializedName("created_at")
     private String createdAt;
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 

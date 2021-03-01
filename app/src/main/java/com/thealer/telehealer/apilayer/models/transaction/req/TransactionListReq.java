@@ -36,7 +36,10 @@ public class TransactionListReq {
         private String patientName;
         private String doctorName;
 
+        @SerializedName("start_date")
         private String fromDate;
+
+        @SerializedName("end_date")
         private String toDate;
 
         public void setPatientId(int patientId) {

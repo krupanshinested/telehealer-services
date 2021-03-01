@@ -44,6 +44,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         holder.tvChargeType.setText(list.get(position).getTypeOfCharge().getName());
         holder.tvDate.setText(Utils.getFormatedDateTime(list.get(position).getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));
         holder.failureReasonRow.setVisibility(View.GONE);
+        if (list.get(position).getTotalRefund() > 0) {
+            holder.tvTotalRefund.setText(Utils.getFormattedCurrency(list.get(position).getTotalRefund()));
+            holder.refundRow.setVisibility(View.VISIBLE);
+        } else
+            holder.refundRow.setVisibility(View.GONE);
         if (UserType.isUserPatient()) {
             holder.patientRow.setVisibility(View.GONE);
 
@@ -109,7 +114,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
                 holder.btnReceipt.setText(R.string.lbl_receipt);
                 ((LinearLayout.LayoutParams) holder.btnReceipt.getLayoutParams()).weight = 0.5f;
                 if (list.get(position).getPaymentMode() == Constants.PaymentMode.STRIPE) {
-                    if (list.get(position).getRefunds() == null || list.get(position).getRefunds().size() == 0)
+                    if (list.get(position).getTotalRefund() < list.get(position).getAmount())
                         holder.btnRefundClick.setVisibility(View.VISIBLE);
                     else
                         holder.btnRefundClick.setVisibility(View.GONE);
@@ -151,8 +156,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         Button btnReceipt;
         Button btnProcessPayment;
         Button btnRefundClick;
-        TextView tvStatus, tvDate, tvDateOfService, tvPatient, tvChargeType, tvReason, tvCharge, tvDoctor, tvFailureReason;
-        View doctorRow, patientRow, failureReasonRow;
+        TextView tvStatus, tvDate, tvDateOfService, tvPatient, tvChargeType, tvReason, tvCharge, tvDoctor, tvFailureReason, tvTotalRefund;
+        View doctorRow, patientRow, failureReasonRow, refundRow;
         View actionRow;
 
         public TransactionListVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
@@ -169,11 +174,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             tvCharge = itemView.findViewById(R.id.tvCharge);
             tvDoctor = itemView.findViewById(R.id.tvDoctor);
             tvFailureReason = itemView.findViewById(R.id.tvFailureReason);
+            tvTotalRefund = itemView.findViewById(R.id.tvTotalRefund);
 
             actionRow = itemView.findViewById(R.id.actionRow);
             doctorRow = itemView.findViewById(R.id.doctorRow);
             patientRow = itemView.findViewById(R.id.patientRow);
             failureReasonRow = itemView.findViewById(R.id.rowFailureReason);
+            refundRow = itemView.findViewById(R.id.refundRow);
 
             btnProcessPayment.setOnClickListener(new View.OnClickListener() {
                 @Override

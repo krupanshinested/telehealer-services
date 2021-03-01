@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName;
 public class RefundReq {
 
     @SerializedName("refund_amount")
-    private int refundAmount;
+    private double refundAmount;
 
-    public int getRefundAmount() {
+    public double getRefundAmount() {
         return refundAmount;
     }
 
-    public void setRefundAmount(int refundAmount) {
+    public void setRefundAmount(double refundAmount) {
         this.refundAmount = refundAmount;
     }
 }

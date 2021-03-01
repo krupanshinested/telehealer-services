@@ -62,6 +62,8 @@ public class TransactionItem extends BaseApiResponseModel {
     @SerializedName("payment_mode")
     private int paymentMode;
 
+    private double totalRefund;
+
     public CommonUserApiResponseModel getDoctorId() {
         return doctorId;
     }
@@ -170,5 +172,13 @@ public class TransactionItem extends BaseApiResponseModel {
 
     public void setPaymentMode(int paymentMode) {
         this.paymentMode = paymentMode;
+    }
+
+    public double getTotalRefund() {
+        return totalRefund;
+    }
+
+    public void setTotalRefund(double totalRefund) {
+        this.totalRefund = totalRefund;
     }
 }

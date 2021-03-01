@@ -9,6 +9,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
 import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
+import com.thealer.telehealer.apilayer.models.transaction.resp.RefundItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.Constants;
@@ -42,7 +43,7 @@ public class TransactionListViewModel extends BaseApiViewModel {
             isApiRequested = true;
             fetchToken(status -> {
                 if (status) {
-                    getAuthApiService().transactionPaginate(true, page, Constants.PAGINATION_SIZE, filterReq)
+                    getAuthApiService().transactionPaginate(true, page, 5, filterReq)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<TransactionListResp>(getProgress(isShowProgress)) {
                                 @Override
@@ -50,6 +51,16 @@ public class TransactionListViewModel extends BaseApiViewModel {
                                     isApiRequested = false;
                                     if (page == 1) {
                                         transactions.clear();
+                                    }
+                                    for (TransactionItem item : response.getResult()) {
+                                        if (item.getRefunds() != null && item.getRefunds().size() > 0) {
+                                            double totalRefund = 0;
+                                            for (RefundItem refund :
+                                                    item.getRefunds()) {
+                                                totalRefund += refund.getAmount();
+                                            }
+                                            item.setTotalRefund(totalRefund);
+                                        }
                                     }
                                     transactions.addAll(response.getResult());
                                     totalCount = response.getCount();

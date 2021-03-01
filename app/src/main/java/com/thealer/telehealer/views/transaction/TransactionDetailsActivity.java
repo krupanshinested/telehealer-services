@@ -25,9 +25,9 @@ public class TransactionDetailsActivity extends BaseActivity {
 
     public static final String EXTRA_TRANSACTION = "transaction";
 
-    TextView tvStatus, tvDate, tvPatient, tvChargeType, tvCharge, tvDoctor, tvRefund, tvRefundDate, tvFailureReason;
+    TextView tvStatus, tvDate, tvPatient, tvChargeType, tvCharge, tvDoctor, tvRefund, tvFailureReason;
     View doctorRow, patientRow, failureReasonRow;
-    private RecyclerView rvReasonCharges;//, rvRefunds;
+    private RecyclerView rvReasonCharges, rvRefunds;
 
     private TransactionItem transactionItem;
 
@@ -36,7 +36,7 @@ public class TransactionDetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_details);
         rvReasonCharges = findViewById(R.id.rvReasonCharges);
-//        rvRefunds = findViewById(R.id.rvRefunds);
+        rvRefunds = findViewById(R.id.rvRefunds);
 
         tvStatus = findViewById(R.id.tvStatus);
         tvDate = findViewById(R.id.tvDate);
@@ -48,7 +48,6 @@ public class TransactionDetailsActivity extends BaseActivity {
         tvDoctor = findViewById(R.id.tvDoctor);
         tvRefund = findViewById(R.id.tvRefund);
         tvFailureReason = findViewById(R.id.tvFailureReason);
-        tvRefundDate = findViewById(R.id.tvRefundDate);
 
         doctorRow = findViewById(R.id.doctorRow);
         patientRow = findViewById(R.id.patientRow);
@@ -67,7 +66,7 @@ public class TransactionDetailsActivity extends BaseActivity {
             transactionItem = new Gson().fromJson(json, TransactionItem.class);
         }
         rvReasonCharges.setNestedScrollingEnabled(false);
-//        rvRefunds.setNestedScrollingEnabled(false);
+        rvRefunds.setNestedScrollingEnabled(false);
 
         prepareReasonList();
         prepareRefundList();
@@ -79,23 +78,20 @@ public class TransactionDetailsActivity extends BaseActivity {
         if (transactionItem.getRefunds() == null || transactionItem.getRefunds().size() == 0) {
             findViewById(R.id.rowRefunds).setVisibility(View.GONE);
             tvRefund.setVisibility(View.GONE);
-//            rvRefunds.setVisibility(View.GONE);
+            rvRefunds.setVisibility(View.GONE);
             return;
         }
         ArrayList<DetailAmountModel> refundAmounts = new ArrayList<>();
-        int totalRefund = 0;
         for (RefundItem refundItem : transactionItem.getRefunds()) {
             DetailAmountModel amountModel = new DetailAmountModel();
             amountModel.setTitle(getString(R.string.lbl_refund));
             amountModel.setAmount(refundItem.getAmount());
             amountModel.setDetails(Utils.getFormatedDateTime(refundItem.getCreatedAt(), "MM/dd/yyyy"));
             refundAmounts.add(amountModel);
-            totalRefund += amountModel.getAmount();
         }
-        tvRefund.setText(String.format("$ %d", totalRefund));
-        tvRefundDate.setText(refundAmounts.get(0).getDetails());
-        /*DetailAmountAdapter adapter = new DetailAmountAdapter(refundAmounts);
-        rvRefunds.setAdapter(adapter);*/
+        tvRefund.setText(Utils.getFormattedCurrency(transactionItem.getTotalRefund()));
+        DetailAmountAdapter adapter = new DetailAmountAdapter(refundAmounts);
+        rvRefunds.setAdapter(adapter);
     }
 
     private void prepareReasonList() {

@@ -169,14 +169,6 @@
 
             </TableLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvReasonCharges"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="2"
-                tools:listitem="@layout/adapter_detail_amount" />
-
             <LinearLayout
                 android:id="@+id/rowTotal"
                 style="@style/TransactionListRow"
@@ -202,13 +194,13 @@
                     android:textSize="20sp" />
             </LinearLayout>
 
-            <View
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvReasonCharges"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="@color/colorGrey_light" />
-
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="2"
+                tools:listitem="@layout/adapter_detail_amount" />
 
             <LinearLayout
                 android:id="@+id/rowRefunds"
@@ -218,28 +210,12 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/TransactionRowLbl"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_refund"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/tvRefundDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:textSize="14sp"
-                        tools:text="kdkdkd" />
-
-                </LinearLayout>
+                    android:text="@string/lbl_refund"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tvRefund"
@@ -251,14 +227,13 @@
                     android:textSize="20sp" />
             </LinearLayout>
 
-            <!--<androidx.recyclerview.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRefunds"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="2"
-                tools:listitem="@layout/adapter_detail_amount" />-->
+                tools:listitem="@layout/adapter_detail_amount" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

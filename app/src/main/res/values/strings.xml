@@ -1504,7 +1504,7 @@
     <string name="lbl_from_date">From Date</string>
     <string name="lbl_to_date">To Date</string>
     <string name="lbl_service_date">Date of service</string>
-    <string name="lbl_transaction_date_time"><![CDATA[Transaction Date & Time]]></string>
+    <string name="lbl_transaction_date_time"><![CDATA[Date & Time]]></string>
     <string name="lbl_patient">Patient</string>
     <string name="lbl_charge">Charge</string>
     <string name="lbl_status">Status</string>
@@ -1550,5 +1550,6 @@
     <string name="msg_missing_info_in_stripe">Following Information is missing or invalid in your Stripe account.\n\n%s</string>
     <string name="lbl_failure_reason">Failure Reason</string>
     <string name="lbl_reset">Reset</string>
+    <string name="lbl_total_refund">Total Refund</string>
 
 </resources>
