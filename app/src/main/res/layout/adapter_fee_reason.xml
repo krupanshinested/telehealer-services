@@ -1,35 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
     android:layout_marginTop="10dp"
+    android:background="@drawable/border_black"
     android:gravity="center"
-    android:paddingHorizontal="12dp">
+    android:orientation="vertical"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="10dp">
 
-
-    <CheckBox
-        android:id="@+id/item_cb"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:textColor="@color/colorBlack_50"
-        android:textSize="12sp"
-        tools:text="@string/dummy_text" />
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/item_cb"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorBlack_50"
+            android:textSize="12sp"
+            tools:text="@string/dummy_text" />
 
 
-    <EditText
-        android:id="@+id/etFees"
-        style="@style/AddChargeEditText"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="0dp"
-        android:hint="@string/lbl_add_fees"
-        android:inputType="numberDecimal"
-        android:paddingStart="8dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="4dp"
-        android:textSize="12sp" />
+        <EditText
+            android:id="@+id/etFees"
+            style="@style/AddChargeEditText"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="0dp"
+            android:hint="@string/lbl_add_fees"
+            android:inputType="numberDecimal"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="4dp"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <com.thealer.telehealer.views.transaction.DateView
+        android:id="@+id/singleDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <com.thealer.telehealer.views.transaction.DateRangeView
+        android:id="@+id/dateRange"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTextFields"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/imgAddField"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="end"
+        android:padding="4dp"
+        android:src="@drawable/ic_add_circle_black_24dp"
+        android:visibility="gone"
+        app:tint="@color/bt_theme_orange" />
 
 </LinearLayout>

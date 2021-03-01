@@ -21,8 +21,11 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.master.MasterApiViewModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.AddChargeViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.DateRangeReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
+import com.thealer.telehealer.apilayer.models.transaction.SingleDateReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.TextFieldModel;
+import com.thealer.telehealer.apilayer.models.transaction.TextFieldReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.Constants;
@@ -32,6 +35,7 @@ import com.thealer.telehealer.views.base.BaseActivity;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class AddChargeActivity extends BaseActivity implements View.OnClickListener {
 
@@ -41,13 +45,10 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     private RecyclerView rvChargeType;
     private RecyclerView rvReason;
-    private RecyclerView rvSuppliers;
-    private RecyclerView rvMedicines;
+
     private TextView tvChargeType;
     private TextView tvReason;
     private ImageView ivReason;
-    private ImageView imgAddSupplier;
-    private ImageView imgAddMedicine;
 
     private EditText etTextField;
 
@@ -55,13 +56,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private AddChargeViewModel addChargeViewModel;
 
     private ReasonOptionAdapter adapterReason;
-    private TextFieldAdapter adapterSupplier;
-    private TextFieldAdapter adapterMedicine;
-
-    private DateRangeView viewBHI;
-    private DateRangeView viewCCM;
-    private DateRangeView viewConcierge;
-    private DateRangeView viewRPM;
     private DateRangeView viewDateOfService;
 
 
@@ -83,8 +77,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         String json = getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM);
         if (json != null && json.length() > 0) {
             prepareDataFromTransactionItem(new Gson().fromJson(json, TransactionItem.class));
-        } else {
-            updateUI();
         }
         masterApiViewModel.fetchMasters();
         checkForVisitAndSetUI();
@@ -100,25 +92,11 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         tvReason = findViewById(R.id.tvReason);
         ivReason = findViewById(R.id.ivReasonArrow);
 
-        viewBHI = findViewById(R.id.bhi);
-        viewCCM = findViewById(R.id.ccm);
-        viewRPM = findViewById(R.id.rpm);
-        viewConcierge = findViewById(R.id.concierge);
         viewDateOfService = findViewById(R.id.dateOfService);
 
 
         etTextField = findViewById(R.id.etTextField);
         etFees = findViewById(R.id.etFees);
-
-        rvSuppliers = findViewById(R.id.rvSuppliers);
-        rvMedicines = findViewById(R.id.rvMedicines);
-
-        imgAddMedicine = findViewById(R.id.imgAddMedicine);
-        imgAddSupplier = findViewById(R.id.imgAddSupplier);
-
-        imgAddMedicine.setOnClickListener(this);
-        imgAddSupplier.setOnClickListener(this);
-
         layoutChargeType.setOnClickListener(this);
 
         rvReason.setNestedScrollingEnabled(false);
@@ -154,27 +132,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), true, pos -> {
             addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
             adapterReason.notifyItemChanged(pos);
-            showUIByReason(addChargeViewModel.getReasonOptions().get(pos), true);
         });
         rvReason.setAdapter(adapterReason);
-
-        adapterSupplier = new TextFieldAdapter(addChargeViewModel.getSuppliers(), getString(R.string.lbl_supplier_name), new TextFieldAdapter.OnOptionSelected() {
-            @Override
-            public void onRemoveField(int pos) {
-                addChargeViewModel.getSuppliers().remove(pos);
-                adapterSupplier.notifyDataSetChanged();
-            }
-        });
-        adapterMedicine = new TextFieldAdapter(addChargeViewModel.getMedicines(), getString(R.string.lbl_medicine_name), new TextFieldAdapter.OnOptionSelected() {
-            @Override
-            public void onRemoveField(int pos) {
-                addChargeViewModel.getMedicines().remove(pos);
-                adapterMedicine.notifyDataSetChanged();
-            }
-        });
-
-        rvMedicines.setAdapter(adapterMedicine);
-        rvSuppliers.setAdapter(adapterSupplier);
 
     }
 
@@ -234,8 +193,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 }
             }
             adapterReason.notifyDataSetChanged();
-            adapterMedicine.notifyDataSetChanged();
-            adapterSupplier.notifyDataSetChanged();
         }
     }
 
@@ -243,45 +200,32 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         if (reasonOption != null) {
             reasonOption.setFee(item.getAmount());
             reasonOption.setSelected(true);
-            switch (reasonOption.getValue()) {
-                case Constants.ChargeReason.BHI:
-                    setDateInDateRangeView(item.getDescription(), viewBHI);
-                    break;
-                case Constants.ChargeReason.CCM:
-                    setDateInDateRangeView(item.getDescription(), viewCCM);
-                    break;
-                case Constants.ChargeReason.RPM:
-                    setDateInDateRangeView(item.getDescription(), viewRPM);
-                    break;
-                case Constants.ChargeReason.CONCIERGE:
-                    setDateInDateRangeView(item.getDescription(), viewConcierge);
-                    break;
-                case Constants.ChargeReason.VISIT:
-                    setDateInDateRangeView(item.getDescription(), viewDateOfService);
-                    etFees.setText(item.getAmount() + "");
-                    break;
-                case Constants.ChargeReason.MEDICINE:
-                    if (item.getDescription().getMedicines() != null && item.getDescription().getMedicines().size() != 0) {
-                        for (String medicine : item.getDescription().getMedicines()) {
-                            addChargeViewModel.getMedicines().add(new TextFieldModel(medicine));
-                        }
-                    }
-                    break;
-                case Constants.ChargeReason.SUPPLIES:
-                    if (item.getDescription().getSuppliers() != null && item.getDescription().getSuppliers().size() != 0) {
-                        for (String supplier : item.getDescription().getSuppliers()) {
-                            addChargeViewModel.getSuppliers().add(new TextFieldModel(supplier));
-                        }
-                    }
-                    break;
+            if (reasonOption instanceof SingleDateReasonOption) {
+                ((SingleDateReasonOption) reasonOption).setDate(Utils.getCalendar(item.getDescription().getDateOfService()));
             }
-            showUIByReason(reasonOption, false);
-        }
-    }
-
-    private void updateUI() {
-        for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
-            showUIByReason(reasonOption, true);
+            if (reasonOption instanceof DateRangeReasonOption) {
+                ((DateRangeReasonOption) reasonOption).setStartDate(Utils.getCalendar(item.getDescription().getStartDate()));
+                ((DateRangeReasonOption) reasonOption).setEndDate(Utils.getCalendar(item.getDescription().getEndDate()));
+            }
+            if (reasonOption instanceof TextFieldReasonOption) {
+                ((TextFieldReasonOption) reasonOption).setTextFieldValues(new ArrayList<>());
+                List<String> fieldValues = null;
+                if (reasonOption.getValue() == Constants.ChargeReason.MEDICINE) {
+                    if (item.getDescription().getMedicines() != null && item.getDescription().getMedicines().size() != 0) {
+                        fieldValues = item.getDescription().getMedicines();
+                    }
+                }
+                if (reasonOption.getValue() == Constants.ChargeReason.SUPPLIES) {
+                    if (item.getDescription().getSuppliers() != null && item.getDescription().getSuppliers().size() != 0) {
+                        fieldValues = item.getDescription().getSuppliers();
+                    }
+                }
+                if (fieldValues != null && fieldValues.size() > 0) {
+                    for (String value : fieldValues) {
+                        ((TextFieldReasonOption) reasonOption).getTextFieldValues().add(new TextFieldModel(value));
+                    }
+                }
+            }
         }
     }
 
@@ -300,68 +244,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 if (getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) == null)
                     findViewById(R.id.btnPending).setVisibility(View.VISIBLE);
             }
-            viewDateOfService.setSingleSelection(getString(R.string.lbl_service_date));
             viewDateOfService.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void showUIByReason(ReasonOption reasonOption, boolean resetOld) {
-        switch (reasonOption.getValue()) {
-            case Constants.ChargeReason.BHI: {
-                viewBHI.show(reasonOption.isSelected(), resetOld);
-                break;
-            }
-            case Constants.ChargeReason.CCM: {
-                viewCCM.show(reasonOption.isSelected(), resetOld);
-                break;
-            }
-            case Constants.ChargeReason.RPM: {
-                viewRPM.show(reasonOption.isSelected(), resetOld);
-                break;
-            }
-            case Constants.ChargeReason.CONCIERGE: {
-                viewConcierge.show(reasonOption.isSelected(), resetOld);
-                break;
-            }
-            case Constants.ChargeReason.MEDICINE: {
-                if (reasonOption.isSelected()) {
-                    if (addChargeViewModel.getMedicines().size() == 0) {
-                        addChargeViewModel.getMedicines().add(new TextFieldModel());
-                        adapterMedicine.notifyDataSetChanged();
-                    }
-                    rvMedicines.setVisibility(View.VISIBLE);
-                    imgAddMedicine.setVisibility(View.VISIBLE);
-                } else {
-                    rvMedicines.setVisibility(View.GONE);
-                    imgAddMedicine.setVisibility(View.GONE);
-                    addChargeViewModel.getMedicines().clear();
-                }
-                break;
-            }
-            case Constants.ChargeReason.SUPPLIES: {
-                if (reasonOption.isSelected()) {
-                    if (addChargeViewModel.getSuppliers().size() == 0) {
-                        addChargeViewModel.getSuppliers().add(new TextFieldModel());
-                        adapterSupplier.notifyDataSetChanged();
-                    }
-                    rvSuppliers.setVisibility(View.VISIBLE);
-                    imgAddSupplier.setVisibility(View.VISIBLE);
-                } else {
-                    rvSuppliers.setVisibility(View.GONE);
-                    imgAddSupplier.setVisibility(View.GONE);
-                    addChargeViewModel.getSuppliers().clear();
-                }
-                break;
-            }
-            case Constants.ChargeReason.VISIT: {
-                if (reasonOption.isSelected()) {
-                    viewDateOfService.setVisibility(View.VISIBLE);
-                } else {
-                    viewDateOfService.setVisibility(View.GONE);
-                }
-                viewDateOfService.setSingleSelection(getString(R.string.lbl_service_date));
-                break;
-            }
         }
     }
 
@@ -380,16 +263,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 else
                     rvReason.setVisibility(View.VISIBLE);
                 break;
-            case R.id.imgAddSupplier: {
-                addChargeViewModel.getSuppliers().add(new TextFieldModel());
-                adapterSupplier.notifyDataSetChanged();
-                break;
-            }
-            case R.id.imgAddMedicine: {
-                addChargeViewModel.getMedicines().add(new TextFieldModel());
-                adapterMedicine.notifyDataSetChanged();
-                break;
-            }
             case R.id.btnSubmit: {
                 if (isValid()) {
                     addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
@@ -430,31 +303,24 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                         showError(getString(R.string.msg_any_fees_should_be_greater_than_minimum, reasonOption.getTitle(), Constants.STRIPE_MIN_AMOUNT));
                         return false;
                     }
+
+                    if (reasonOption instanceof DateRangeReasonOption) {
+                        if (hasDateError((DateRangeReasonOption) reasonOption)) {
+                            return false;
+                        }
+                    }
+                    if (reasonOption instanceof SingleDateReasonOption) {
+                        if (((SingleDateReasonOption) reasonOption).getDate() == null) {
+                            showError(getString(R.string.msg_please_select_date_of_service));
+                            return false;
+                        }
+
+                    }
+                    if (reasonOption instanceof  TextFieldReasonOption)
+                    {
+
+                    }
                     switch (reasonOption.getValue()) {
-                        case Constants.ChargeReason.BHI: {
-                            if (hasDateError(reasonOption, viewBHI.getSelectedFromDate(), viewBHI.getSelectedToDate())) {
-                                return false;
-                            }
-                            break;
-                        }
-                        case Constants.ChargeReason.CCM: {
-                            if (hasDateError(reasonOption, viewCCM.getSelectedFromDate(), viewCCM.getSelectedToDate())) {
-                                return false;
-                            }
-                            break;
-                        }
-                        case Constants.ChargeReason.RPM: {
-                            if (hasDateError(reasonOption, viewRPM.getSelectedFromDate(), viewRPM.getSelectedToDate())) {
-                                return false;
-                            }
-                            break;
-                        }
-                        case Constants.ChargeReason.CONCIERGE: {
-                            if (hasDateError(reasonOption, viewConcierge.getSelectedFromDate(), viewConcierge.getSelectedToDate())) {
-                                return false;
-                            }
-                            break;
-                        }
                         case Constants.ChargeReason.MEDICINE: {
                             if (addChargeViewModel.getMedicines().size() == 1) {
                                 if (addChargeViewModel.getMedicines().get(0).getValue() == null || addChargeViewModel.getMedicines().get(0).getValue().isEmpty()) {
@@ -506,16 +372,16 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         return true;
     }
 
-    private boolean hasDateError(ReasonOption reasonOption, Calendar start, Calendar end) {
-        if (start == null) {
+    private boolean hasDateError(DateRangeReasonOption reasonOption) {
+        if (reasonOption.getStartDate() == null) {
             showError(getString(R.string.msg_please_select_start_date_for_any, reasonOption.getTitle()));
             return true;
         }
-        if (end == null) {
+        if (reasonOption.getEndDate() == null) {
             showError(getString(R.string.msg_please_select_end_date_for_any, reasonOption.getTitle()));
             return true;
         }
-        if (start.after(end)) {
+        if (reasonOption.getStartDate().after(reasonOption.getEndDate())) {
             showError(getString(R.string.msg_please_select_valid_date_range_for_any, reasonOption.getTitle()));
             return true;
         }

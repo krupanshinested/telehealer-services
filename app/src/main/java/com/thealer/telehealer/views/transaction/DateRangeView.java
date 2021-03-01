@@ -21,55 +21,9 @@ import java.util.Calendar;
 public class DateRangeView extends LinearLayout {
 
 
-    private LinearLayout layoutFromDate;
-    private LinearLayout layoutToDate;
-    private TextView tvFromDate;
-    private TextView tvToDate;
+    private DateView fromDateView;
+    private DateView toDateView;
     private TextView tvTitle;
-
-    private Calendar selectedFromDate = null;
-    private Calendar selectedToDate = null;
-
-    private boolean isSingleSelection;
-
-
-    private OnClickListener onLayoutClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.layoutFromDate:
-                    showDatePickerDialog(selectedFromDate, isSingleSelection ? null : Calendar.getInstance(), new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.set(year, month, dayOfMonth);
-                            selectedFromDate = calendar;
-                            updateDate(tvFromDate, year, month, dayOfMonth);
-
-                            if (getSelectedFromDate() != null && getSelectedToDate() == null) {
-                                Calendar afterMonth = Calendar.getInstance();
-                                afterMonth.setTimeInMillis(calendar.getTimeInMillis());
-                                afterMonth.add(Calendar.MONTH, 1);
-                                setSelectedToDate(afterMonth);
-                            }
-                        }
-                    });
-                    break;
-                case R.id.layoutTomDate:
-                    showDatePickerDialog(selectedToDate, selectedFromDate, new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.set(year, month, dayOfMonth);
-                            selectedToDate = calendar;
-                            updateDate(tvToDate, year, month, dayOfMonth);
-                        }
-                    });
-                    break;
-            }
-        }
-    };
-
 
     public DateRangeView(Context context) {
         super(context);
@@ -93,14 +47,25 @@ public class DateRangeView extends LinearLayout {
 
     private void init(AttributeSet attrs) {
         inflate(getContext(), R.layout.layout_add_charge_date, this);
-        layoutFromDate = findViewById(R.id.layoutFromDate);
-        layoutToDate = findViewById(R.id.layoutTomDate);
-        tvFromDate = findViewById(R.id.tvFromDate);
-        tvToDate = findViewById(R.id.tvToDate);
+        fromDateView = findViewById(R.id.fromDateView);
+        toDateView = findViewById(R.id.toDateView);
         tvTitle = findViewById(R.id.tv_title);
+        fromDateView.setHint(getContext().getString(R.string.lbl_start_date));
+        toDateView.setHint(getContext().getString(R.string.lbl_end_date));
 
-        layoutFromDate.setOnClickListener(onLayoutClick);
-        layoutToDate.setOnClickListener(onLayoutClick);
+        fromDateView.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                if (getSelectedFromDate() != null && getSelectedToDate() == null) {
+                    Calendar afterMonth = Calendar.getInstance();
+                    afterMonth.setTimeInMillis(fromDateView.getSelectedDate().getTimeInMillis());
+                    afterMonth.add(Calendar.MONTH, 1);
+                    setSelectedToDate(afterMonth);
+                }
+                toDateView.setMinDate(fromDateView.getSelectedDate());
+            }
+        });
+
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.DateRangeView);
             String title = typedArray.getString(R.styleable.DateRangeView_date_title);
@@ -109,27 +74,20 @@ public class DateRangeView extends LinearLayout {
     }
 
 
-    private void updateDate(TextView dateTextView, int year, int month, int dayOfMonth) {
-        dateTextView.setText(Utils.getFormatedDate(year, month, dayOfMonth));
-    }
-
     public Calendar getSelectedFromDate() {
-        return selectedFromDate;
+        return fromDateView.getSelectedDate();
     }
 
     public void setSelectedFromDate(Calendar selectedFromDate) {
-        this.selectedFromDate = selectedFromDate;
-        updateDate(tvFromDate, selectedFromDate.get(Calendar.YEAR), selectedFromDate.get(Calendar.MONTH), selectedFromDate.get(Calendar.DAY_OF_MONTH));
-
+        fromDateView.setSelectedDate(selectedFromDate);
     }
 
     public Calendar getSelectedToDate() {
-        return selectedToDate;
+        return toDateView.getSelectedDate();
     }
 
     public void setSelectedToDate(Calendar selectedToDate) {
-        this.selectedToDate = selectedToDate;
-        updateDate(tvToDate, selectedToDate.get(Calendar.YEAR), selectedToDate.get(Calendar.MONTH), selectedToDate.get(Calendar.DAY_OF_MONTH));
+        toDateView.setSelectedDate(selectedToDate);
     }
 
 
@@ -142,10 +100,8 @@ public class DateRangeView extends LinearLayout {
 
     public void show(boolean isShow, boolean resetOld) {
         if (resetOld) {
-            selectedFromDate = null;
-            selectedToDate = null;
-            tvFromDate.setText(null);
-            tvToDate.setText(null);
+            fromDateView.setSelectedDate(null);
+            toDateView.setSelectedDate(null);
             if (isShow) {
                 setSelectedFromDate(Calendar.getInstance());
                 Calendar afterMonth = Calendar.getInstance();
@@ -159,40 +115,5 @@ public class DateRangeView extends LinearLayout {
 
             setVisibility(GONE);
         }
-    }
-
-    public void setSingleSelection(String hintText) {
-        isSingleSelection = true;
-        tvFromDate.setHint(hintText);
-        layoutToDate.setVisibility(View.GONE);
-        tvFromDate.setTextSize(14);
-        selectedToDate = null;
-        TextView txt = findViewById(R.id.lbStartDate);
-        txt.setText(hintText);
-        findViewById(R.id.lbEndDate).setVisibility(GONE);
-    }
-
-
-    private void showDatePickerDialog(Calendar selectedDate, Calendar minDate, DatePickerDialog.OnDateSetListener dateSetListener) {
-        Calendar calendar = selectedDate != null ? selectedDate : Calendar.getInstance();
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH);
-        int year = calendar.get(Calendar.YEAR);
-
-        DatePickerDialog.OnDateSetListener onDateSetListener = dateSetListener;
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), onDateSetListener, year, month, day);
-
-        if (minDate != null) {
-            datePickerDialog.getDatePicker().setMinDate(minDate.getTimeInMillis());
-        }
-
-
-        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getContext().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        datePickerDialog.show();
     }
 }

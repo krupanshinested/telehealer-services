@@ -7,12 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.transaction.DateRangeReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
+import com.thealer.telehealer.apilayer.models.transaction.SingleDateReasonOption;
+import com.thealer.telehealer.apilayer.models.transaction.TextFieldModel;
+import com.thealer.telehealer.apilayer.models.transaction.TextFieldReasonOption;
 
 import java.util.List;
 import java.util.Locale;
@@ -52,9 +58,56 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                 list.get(position).setFee(0);
                 holder.etFees.setText(null);
             }
+
+            holder.rvTextFields.setVisibility(View.GONE);
+            holder.imgAddField.setVisibility(View.GONE);
+            holder.dateRangeView.setVisibility(View.GONE);
+            holder.singleDate.setVisibility(View.GONE);
+            if (list.get(position) instanceof TextFieldReasonOption) {
+                setTextFieldsUI(holder, (TextFieldReasonOption) list.get(position));
+            }
+            if (list.get(position) instanceof DateRangeReasonOption) {
+                setDateRangeUI(holder, (DateRangeReasonOption) list.get(position));
+            }
+            if (list.get(position) instanceof SingleDateReasonOption) {
+                setSingleDateUI(holder, (SingleDateReasonOption) list.get(position));
+            }
         } else {
             holder.etFees.setVisibility(View.GONE);
         }
+    }
+
+    private void setSingleDateUI(TransactionOptionVH holder, SingleDateReasonOption reasonOption) {
+        if (reasonOption.isSelected())
+            holder.singleDate.setVisibility(View.VISIBLE);
+        else {
+            holder.singleDate.setVisibility(View.GONE);
+            holder.singleDate.setSelectedDate(null);
+        }
+
+    }
+
+    private void setDateRangeUI(TransactionOptionVH holder, DateRangeReasonOption reasonOption) {
+        if (reasonOption.isSelected()) {
+            holder.dateRangeView.setVisibility(View.VISIBLE);
+        } else
+            holder.dateRangeView.setVisibility(View.GONE);
+    }
+
+    private void setTextFieldsUI(@NonNull TransactionOptionVH holder, TextFieldReasonOption reasonOption) {
+        if (reasonOption.isSelected()) {
+
+            if (reasonOption.getTextFieldValues().size() == 0) {
+                reasonOption.getTextFieldValues().add(new TextFieldModel());
+            }
+            holder.rvTextFields.setVisibility(View.VISIBLE);
+            holder.imgAddField.setVisibility(View.VISIBLE);
+        } else {
+            holder.rvTextFields.setVisibility(View.GONE);
+            holder.imgAddField.setVisibility(View.GONE);
+            reasonOption.getTextFieldValues().clear();
+        }
+        holder.textFieldAdapter.setData(reasonOption.getTitle(), reasonOption.getTextFieldValues());
     }
 
     @Override
@@ -66,6 +119,14 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
 
         CheckBox cbReason;
         EditText etFees;
+        RecyclerView rvTextFields;
+
+        ImageView imgAddField;
+
+        TextFieldAdapter textFieldAdapter;
+
+        DateRangeView dateRangeView;
+        DateView singleDate;
 
         public TransactionOptionVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
@@ -99,6 +160,24 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                         }
                     }
                 });
+            rvTextFields = itemView.findViewById(R.id.rvTextFields);
+            textFieldAdapter = new TextFieldAdapter();
+            rvTextFields.setAdapter(textFieldAdapter);
+
+            imgAddField = itemView.findViewById(R.id.imgAddField);
+            imgAddField.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (list.get(getAdapterPosition()) instanceof TextFieldReasonOption) {
+                        ((TextFieldReasonOption) list.get(getAdapterPosition())).getTextFieldValues().add(new TextFieldModel());
+                        notifyDataSetChanged();
+                    }
+                }
+            });
+
+            dateRangeView = itemView.findViewById(R.id.dateRange);
+            singleDate = itemView.findViewById(R.id.singleDate);
+            singleDate.setHint(itemView.getContext().getString(R.string.lbl_service_date));
         }
     }
 

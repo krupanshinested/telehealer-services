@@ -22,13 +22,12 @@ import java.util.Locale;
 public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.TextFieldVH> {
 
     private List<TextFieldModel> list;
-    private OnOptionSelected onOptionSelected;
     private String hint;
 
-    public TextFieldAdapter(List<TextFieldModel> list, String hint, OnOptionSelected onOptionSelected) {
+    public void setData(String hint, List<TextFieldModel> list) {
         this.list = list;
         this.hint = hint;
-        this.onOptionSelected = onOptionSelected;
+        notifyDataSetChanged();
     }
 
 
@@ -36,7 +35,7 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
     @Override
     public TextFieldVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_textfield_list, parent, false);
-        return new TextFieldVH(view, onOptionSelected);
+        return new TextFieldVH(view);
     }
 
     @Override
@@ -59,13 +58,14 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
         EditText etField;
         ImageView imgRemove;
 
-        public TextFieldVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
+        public TextFieldVH(@NonNull View itemView) {
             super(itemView);
             imgRemove = itemView.findViewById(R.id.imgRemove);
             imgRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onOptionSelected.onRemoveField(getAdapterPosition());
+                    list.remove(getAdapterPosition());
+                    notifyDataSetChanged();
                 }
             });
             etField = itemView.findViewById(R.id.etField);
@@ -86,9 +86,5 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
                 }
             });
         }
-    }
-
-    interface OnOptionSelected {
-        void onRemoveField(int pos);
     }
 }

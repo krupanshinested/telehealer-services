@@ -105,47 +105,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:background="@drawable/border_black"
                 android:clipToPadding="false"
                 android:paddingBottom="6dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvSuppliers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:visibility="gone"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-            <ImageView
-                android:id="@+id/imgAddSupplier"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="end"
-                android:padding="4dp"
-                android:src="@drawable/ic_add_circle_black_24dp"
-                android:visibility="gone"
-                app:tint="@color/bt_theme_orange" />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvMedicines"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:visibility="gone"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-            <ImageView
-                android:id="@+id/imgAddMedicine"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="end"
-                android:padding="4dp"
-                android:src="@drawable/ic_add_circle_black_24dp"
-                android:visibility="gone"
-                app:tint="@color/bt_theme_orange" />
 
 
             <EditText
