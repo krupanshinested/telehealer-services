@@ -34,9 +34,6 @@ public class AddChargeViewModel extends BaseApiViewModel {
     private boolean isOnlyVisit;
     private String orderId;
 
-    private final ArrayList<TextFieldModel> suppliers = new ArrayList<>();
-    private final ArrayList<TextFieldModel> medicines = new ArrayList<>();
-
     private final List<ReasonOption> reasonOptions = new ArrayList<>();
 
 
@@ -136,14 +133,6 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     public int getSelectedChargeTypeId() {
         return selectedChargeTypeId;
-    }
-
-    public ArrayList<TextFieldModel> getMedicines() {
-        return medicines;
-    }
-
-    public ArrayList<TextFieldModel> getSuppliers() {
-        return suppliers;
     }
 
 

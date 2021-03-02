@@ -1,11 +1,13 @@
 package com.thealer.telehealer.views.transaction;
 
+import android.app.DatePickerDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +22,7 @@ import com.thealer.telehealer.apilayer.models.transaction.SingleDateReasonOption
 import com.thealer.telehealer.apilayer.models.transaction.TextFieldModel;
 import com.thealer.telehealer.apilayer.models.transaction.TextFieldReasonOption;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -51,7 +54,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
             holder.etFees.setEnabled(list.get(position).isSelected());
             if (list.get(position).isSelected()) {
                 if (list.get(position).getFee() != 0)
-                    holder.etFees.setText(String.format(Locale.getDefault(), "%2d", list.get(position).getFee()));
+                    holder.etFees.setText(String.format(Locale.getDefault(), "%.2f", list.get(position).getFee()));
                 else
                     holder.etFees.setText(null);
             } else {
@@ -176,8 +179,30 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
             });
 
             dateRangeView = itemView.findViewById(R.id.dateRange);
+            dateRangeView.setOnDateSelectedListener(new DateRangeView.OnDateSelectedListener() {
+                @Override
+                public void onStartSelected(Calendar calendar) {
+                    if (list.get(getAdapterPosition()) instanceof DateRangeReasonOption) {
+                        ((DateRangeReasonOption) list.get(getAdapterPosition())).setStartDate(calendar);
+                    }
+                }
+
+                @Override
+                public void onEndSelected(Calendar calendar) {
+                    if (list.get(getAdapterPosition()) instanceof DateRangeReasonOption) {
+                        ((DateRangeReasonOption) list.get(getAdapterPosition())).setEndDate(calendar);
+                    }
+                }
+            });
+
             singleDate = itemView.findViewById(R.id.singleDate);
             singleDate.setHint(itemView.getContext().getString(R.string.lbl_service_date));
+            singleDate.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    ((SingleDateReasonOption) list.get(getAdapterPosition())).setDate(singleDate.getSelectedDate());
+                }
+            });
         }
     }
 

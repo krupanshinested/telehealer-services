@@ -316,50 +316,16 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                         }
 
                     }
-                    if (reasonOption instanceof  TextFieldReasonOption)
-                    {
-
-                    }
-                    switch (reasonOption.getValue()) {
-                        case Constants.ChargeReason.MEDICINE: {
-                            if (addChargeViewModel.getMedicines().size() == 1) {
-                                if (addChargeViewModel.getMedicines().get(0).getValue() == null || addChargeViewModel.getMedicines().get(0).getValue().isEmpty()) {
+                    if (reasonOption instanceof TextFieldReasonOption) {
+                        TextFieldReasonOption textFieldReasonOption = (TextFieldReasonOption) reasonOption;
+                        for (TextFieldModel textFieldModel : textFieldReasonOption.getTextFieldValues()) {
+                            if (textFieldModel.getValue() == null || textFieldModel.getValue().isEmpty()) {
+                                if (reasonOption.getValue() == Constants.ChargeReason.MEDICINE)
                                     showError(getString(R.string.msg_please_enter_medicine_name));
-                                    return false;
-                                }
-                            } else {
-                                for (TextFieldModel textFieldModel : addChargeViewModel.getMedicines()) {
-                                    if (textFieldModel.getValue() == null || textFieldModel.getValue().isEmpty()) {
-                                        showError(getString(R.string.msg_please_enter_medicine_name));
-                                        return false;
-                                    }
-                                }
-
-                            }
-                            break;
-                        }
-                        case Constants.ChargeReason.SUPPLIES: {
-                            if (addChargeViewModel.getSuppliers().size() == 1) {
-                                if (addChargeViewModel.getSuppliers().get(0).getValue() == null || addChargeViewModel.getSuppliers().get(0).getValue().isEmpty()) {
+                                else if (reasonOption.getValue() == Constants.ChargeReason.SUPPLIES)
                                     showError(getString(R.string.msg_please_enter_supplier_name));
-                                    return false;
-                                }
-                            } else {
-                                for (TextFieldModel textFieldModel : addChargeViewModel.getSuppliers()) {
-                                    if (textFieldModel.getValue() == null || textFieldModel.getValue().isEmpty()) {
-                                        showError(getString(R.string.msg_please_enter_supplier_name));
-                                        return false;
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                        case Constants.ChargeReason.VISIT: {
-                            if (viewDateOfService.getSelectedFromDate() == null) {
-                                showError(getString(R.string.msg_please_select_date_of_service));
                                 return false;
                             }
-                            break;
                         }
                     }
                 }
@@ -427,73 +393,28 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     private AddChargeReq.Description getDescriptionByReason(ReasonOption reasonOption) {
         AddChargeReq.Description description = new AddChargeReq.Description();
-        switch (reasonOption.getValue()) {
-            case Constants.ChargeReason.VISIT: {
-                description.setDateOfService(Utils.getUTCDateFromCalendar(viewDateOfService.getSelectedFromDate()));
-                break;
-            }
-            case Constants.ChargeReason.BHI: {
-                setDateInDescription(description, viewBHI);
-                break;
-            }
-            case Constants.ChargeReason.CCM: {
-                setDateInDescription(description, viewCCM);
-                break;
-            }
-            case Constants.ChargeReason.RPM: {
-                setDateInDescription(description, viewRPM);
-                break;
-            }
-            case Constants.ChargeReason.CONCIERGE: {
-                setDateInDescription(description, viewConcierge);
-                break;
-            }
-            case Constants.ChargeReason.MEDICINE: {
-                ArrayList<String> medicines = new ArrayList<>();
-                for (TextFieldModel textFieldModel : addChargeViewModel.getMedicines()) {
-                    medicines.add(textFieldModel.getValue());
+        if (reasonOption instanceof SingleDateReasonOption) {
+            description.setDateOfService(Utils.getUTCDateFromCalendar(((SingleDateReasonOption) reasonOption).getDate()));
+        }
+        if (reasonOption instanceof DateRangeReasonOption) {
+            DateRangeReasonOption dateRangeReasonOption = ((DateRangeReasonOption) reasonOption);
+            description.setStartDate(Utils.getUTCDateFromCalendar(dateRangeReasonOption.getStartDate()));
+            description.setEndDate(Utils.getUTCDateFromCalendar(dateRangeReasonOption.getEndDate()));
+        }
+        if (reasonOption instanceof TextFieldReasonOption) {
+            if (reasonOption.getValue() == Constants.ChargeReason.SUPPLIES) {
+                description.setSuppliers(new ArrayList<>());
+                for (TextFieldModel model : ((TextFieldReasonOption) reasonOption).getTextFieldValues()) {
+                    description.getSuppliers().add(model.getValue());
                 }
-                description.setMedicines(medicines);
-                break;
             }
-            case Constants.ChargeReason.SUPPLIES: {
-                ArrayList<String> supplier = new ArrayList<>();
-                for (TextFieldModel textFieldModel : addChargeViewModel.getSuppliers()) {
-                    supplier.add(textFieldModel.getValue());
+            if (reasonOption.getValue() == Constants.ChargeReason.MEDICINE) {
+                description.setMedicines(new ArrayList<>());
+                for (TextFieldModel model : ((TextFieldReasonOption) reasonOption).getTextFieldValues()) {
+                    description.getMedicines().add(model.getValue());
                 }
-                description.setSuppliers(supplier);
-                break;
             }
         }
         return description;
     }
-
-    private void setDateInDescription(AddChargeReq.Description description, DateRangeView dateRangeView) {
-        description.setStartDate(Utils.getUTCDateFromCalendar(dateRangeView.getSelectedFromDate()));
-        description.setEndDate(Utils.getUTCDateFromCalendar(dateRangeView.getSelectedToDate()));
-    }
-
-    private void setDateInDateRangeView(AddChargeReq.Description description, DateRangeView dateRangeView) {
-        if (description.getDateOfService() != null) {
-            Date startDate = Utils.getDateFromString(description.getDateOfService());
-            if (startDate != null) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(startDate.getTime());
-                dateRangeView.setSelectedFromDate(calendar);
-            }
-        } else {
-            Date startDate = Utils.getDateFromString(description.getStartDate());
-            Date endDate = Utils.getDateFromString(description.getEndDate());
-            if (startDate != null && endDate != null) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(startDate.getTime());
-                dateRangeView.setSelectedFromDate(calendar);
-                Calendar calendar2 = Calendar.getInstance();
-                calendar2.setTimeInMillis(endDate.getTime());
-                dateRangeView.setSelectedToDate(calendar2);
-            }
-        }
-    }
-
-
 }
