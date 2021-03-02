@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.transaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,10 @@ public class DetailAmountAdapter extends RecyclerView.Adapter<DetailAmountAdapte
             holder.title.setVisibility(View.GONE);
         else
             holder.subTitle.setText(list.get(position).getDetails());
+        if (list.get(position).isShowReceipt())
+            holder.imgReceipt.setVisibility(View.VISIBLE);
+        else
+            holder.imgReceipt.setVisibility(View.GONE);
         holder.amount.setText(Utils.getFormattedCurrency(list.get(position).getAmount()));
     }
 
@@ -54,6 +59,7 @@ public class DetailAmountAdapter extends RecyclerView.Adapter<DetailAmountAdapte
         TextView title;
         TextView subTitle;
         TextView amount;
+        ImageView imgReceipt;
 
 
         public DetailAmountVH(@NonNull View itemView) {
@@ -61,6 +67,7 @@ public class DetailAmountAdapter extends RecyclerView.Adapter<DetailAmountAdapte
             title = itemView.findViewById(R.id.titleTv);
             subTitle = itemView.findViewById(R.id.subTitleTv);
             amount = itemView.findViewById(R.id.amount_tv);
+            imgReceipt = itemView.findViewById(R.id.imgReceipt);
         }
     }
 

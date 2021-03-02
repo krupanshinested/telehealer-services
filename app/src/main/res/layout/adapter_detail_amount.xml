@@ -43,10 +43,23 @@
         android:textColor="@color/app_gradient_start"
         android:textSize="@dimen/title_size"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/titleTv"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/imgReceipt"
+        app:layout_constraintStart_toEndOf="@id/titleTv"
+
         app:layout_constraintTop_toTopOf="parent"
         tools:text="kdkdkd" />
+
+    <ImageView
+        android:id="@+id/imgReceipt"
+        android:layout_width="42dp"
+        android:layout_height="0dp"
+        android:src="@drawable/emptystate_no_document"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/amount_tv"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <View
         android:layout_width="0dp"

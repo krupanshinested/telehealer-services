@@ -5,6 +5,7 @@ public class DetailAmountModel {
     private String title;
     private String details;
     private double amount;
+    private boolean showReceipt;
 
     public String getTitle() {
         return title;
@@ -27,8 +28,15 @@ public class DetailAmountModel {
     }
 
 
-
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public boolean isShowReceipt() {
+        return showReceipt;
+    }
+
+    public void setShowReceipt(boolean showReceipt) {
+        this.showReceipt = showReceipt;
     }
 }

@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.transaction;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import com.thealer.telehealer.apilayer.models.transaction.DetailAmountModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.RefundItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -25,9 +27,10 @@ public class TransactionDetailsActivity extends BaseActivity {
 
     public static final String EXTRA_TRANSACTION = "transaction";
 
-    TextView tvStatus, tvDate, tvPatient, tvChargeType, tvCharge, tvDoctor, tvRefund, tvFailureReason;
-    View doctorRow, patientRow, failureReasonRow;
+    private TextView tvStatus, tvDate, tvPatient, tvChargeType, tvCharge, tvDoctor, tvRefund, tvFailureReason;
+    private View doctorRow, patientRow, failureReasonRow;
     private RecyclerView rvReasonCharges, rvRefunds;
+    private ImageView imgReceipt;
 
     private TransactionItem transactionItem;
 
@@ -40,6 +43,7 @@ public class TransactionDetailsActivity extends BaseActivity {
 
         tvStatus = findViewById(R.id.tvStatus);
         tvDate = findViewById(R.id.tvDate);
+        imgReceipt = findViewById(R.id.imgReceipt);
 
         tvPatient = findViewById(R.id.tvPatient);
         tvChargeType = findViewById(R.id.tvChargeType);
@@ -68,8 +72,16 @@ public class TransactionDetailsActivity extends BaseActivity {
         rvReasonCharges.setNestedScrollingEnabled(false);
         rvRefunds.setNestedScrollingEnabled(false);
 
-        prepareReasonList();
-        prepareRefundList();
+        if (transactionItem.getChargeStatus() != Constants.ChargeStatus.CHARGE_PENDING) {
+            prepareReasonList();
+            prepareRefundList();
+            if (transactionItem.getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESSED) {
+                imgReceipt.setVisibility(View.VISIBLE);
+            }
+        } else {
+            findViewById(R.id.rowTotal).setVisibility(View.GONE);
+            findViewById(R.id.rowRefunds).setVisibility(View.GONE);
+        }
 
         updateUI();
     }
@@ -86,6 +98,7 @@ public class TransactionDetailsActivity extends BaseActivity {
             DetailAmountModel amountModel = new DetailAmountModel();
             amountModel.setTitle(getString(R.string.lbl_refund));
             amountModel.setAmount(refundItem.getAmount());
+            amountModel.setShowReceipt(true);
             amountModel.setDetails(Utils.getFormatedDateTime(refundItem.getCreatedAt(), "MM/dd/yyyy"));
             refundAmounts.add(amountModel);
         }
