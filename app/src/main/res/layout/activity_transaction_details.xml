@@ -201,7 +201,9 @@
                     android:id="@+id/imgReceipt"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:src="@drawable/emptystate_no_document"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_settings_document"
+                    android:tint="@color/app_gradient_start"
                     android:visibility="gone" />
 
             </LinearLayout>
