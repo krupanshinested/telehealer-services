@@ -42,7 +42,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
     @NonNull
     @Override
     public TransactionOptionVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_fee_reason, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(showFees ? R.layout.adapter_fee_reason : R.layout.adapter_filter_checkbox, parent, false);
         return new TransactionOptionVH(view, onOptionSelected);
     }
 
@@ -75,8 +75,6 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
             if (list.get(position) instanceof SingleDateReasonOption) {
                 setSingleDateUI(holder, (SingleDateReasonOption) list.get(position));
             }
-        } else {
-            holder.etFees.setVisibility(View.GONE);
         }
     }
 
@@ -92,9 +90,14 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
 
     private void setDateRangeUI(TransactionOptionVH holder, DateRangeReasonOption reasonOption) {
         if (reasonOption.isSelected()) {
+            holder.dateRangeView.setSelectedFromDate(reasonOption.getStartDate());
+            holder.dateRangeView.setSelectedToDate(reasonOption.getEndDate());
             holder.dateRangeView.setVisibility(View.VISIBLE);
-        } else
+        } else {
+            holder.dateRangeView.setSelectedFromDate(null);
+            holder.dateRangeView.setSelectedToDate(null);
             holder.dateRangeView.setVisibility(View.GONE);
+        }
     }
 
     private void setTextFieldsUI(@NonNull TransactionOptionVH holder, TextFieldReasonOption reasonOption) {
@@ -140,8 +143,8 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                     onOptionSelected.onSelected(getAdapterPosition());
                 }
             });
-            etFees = itemView.findViewById(R.id.etFees);
-            if (showFees)
+            if (showFees) {
+                etFees = itemView.findViewById(R.id.etFees);
                 etFees.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -163,46 +166,47 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                         }
                     }
                 });
-            rvTextFields = itemView.findViewById(R.id.rvTextFields);
-            textFieldAdapter = new TextFieldAdapter();
-            rvTextFields.setAdapter(textFieldAdapter);
+                rvTextFields = itemView.findViewById(R.id.rvTextFields);
+                textFieldAdapter = new TextFieldAdapter();
+                rvTextFields.setAdapter(textFieldAdapter);
 
-            imgAddField = itemView.findViewById(R.id.imgAddField);
-            imgAddField.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (list.get(getAdapterPosition()) instanceof TextFieldReasonOption) {
-                        ((TextFieldReasonOption) list.get(getAdapterPosition())).getTextFieldValues().add(new TextFieldModel());
-                        notifyDataSetChanged();
+                imgAddField = itemView.findViewById(R.id.imgAddField);
+                imgAddField.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (list.get(getAdapterPosition()) instanceof TextFieldReasonOption) {
+                            ((TextFieldReasonOption) list.get(getAdapterPosition())).getTextFieldValues().add(new TextFieldModel());
+                            notifyDataSetChanged();
+                        }
                     }
-                }
-            });
+                });
 
-            dateRangeView = itemView.findViewById(R.id.dateRange);
-            dateRangeView.setOnDateSelectedListener(new DateRangeView.OnDateSelectedListener() {
-                @Override
-                public void onStartSelected(Calendar calendar) {
-                    if (list.get(getAdapterPosition()) instanceof DateRangeReasonOption) {
-                        ((DateRangeReasonOption) list.get(getAdapterPosition())).setStartDate(calendar);
+                dateRangeView = itemView.findViewById(R.id.dateRange);
+                dateRangeView.setOnDateSelectedListener(new DateRangeView.OnDateSelectedListener() {
+                    @Override
+                    public void onStartSelected(Calendar calendar) {
+                        if (list.get(getAdapterPosition()) instanceof DateRangeReasonOption) {
+                            ((DateRangeReasonOption) list.get(getAdapterPosition())).setStartDate(calendar);
+                        }
                     }
-                }
 
-                @Override
-                public void onEndSelected(Calendar calendar) {
-                    if (list.get(getAdapterPosition()) instanceof DateRangeReasonOption) {
-                        ((DateRangeReasonOption) list.get(getAdapterPosition())).setEndDate(calendar);
+                    @Override
+                    public void onEndSelected(Calendar calendar) {
+                        if (list.get(getAdapterPosition()) instanceof DateRangeReasonOption) {
+                            ((DateRangeReasonOption) list.get(getAdapterPosition())).setEndDate(calendar);
+                        }
                     }
-                }
-            });
+                });
 
-            singleDate = itemView.findViewById(R.id.singleDate);
-            singleDate.setHint(itemView.getContext().getString(R.string.lbl_service_date));
-            singleDate.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                    ((SingleDateReasonOption) list.get(getAdapterPosition())).setDate(singleDate.getSelectedDate());
-                }
-            });
+                singleDate = itemView.findViewById(R.id.singleDate);
+                singleDate.setHint(itemView.getContext().getString(R.string.lbl_service_date));
+                singleDate.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        ((SingleDateReasonOption) list.get(getAdapterPosition())).setDate(singleDate.getSelectedDate());
+                    }
+                });
+            }
         }
     }
 

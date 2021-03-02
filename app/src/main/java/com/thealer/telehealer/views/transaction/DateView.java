@@ -58,8 +58,7 @@ public class DateView extends LinearLayout {
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(year, month, dayOfMonth);
-                        selectedDate = calendar;
-                        updateDate(tvDate, year, month, dayOfMonth);
+                        setSelectedDate(calendar);
                         if (onDateSetListener != null)
                             onDateSetListener.onDateSet(view, year, month, dayOfMonth);
                     }

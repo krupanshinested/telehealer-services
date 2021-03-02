@@ -218,7 +218,12 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                 fromDate.add(Calendar.MONTH, -1);
                 dateFilter.setSelectedFromDate(fromDate);
 
-                setResult(RESULT_OK, new Intent().putExtra(EXTRA_IS_RESET, true).putExtra(EXTRA_FILTER, new Gson().toJson(getReq())));
+                TransactionListReq req = new TransactionListReq();
+                req.setFilter(new TransactionListReq.Filter());
+                req.getFilter().setFromDate(Utils.getUTCDateFromCalendar(dateFilter.getSelectedFromDate()));
+                req.getFilter().setToDate(Utils.getUTCDateFromCalendar(dateFilter.getSelectedToDate()));
+
+                setResult(RESULT_OK, new Intent().putExtra(EXTRA_IS_RESET, true).putExtra(EXTRA_FILTER, new Gson().toJson(req)));
                 finish();
             }
         }

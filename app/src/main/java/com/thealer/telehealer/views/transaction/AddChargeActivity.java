@@ -50,13 +50,11 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private TextView tvReason;
     private ImageView ivReason;
 
-    private EditText etTextField;
-
     private MasterApiViewModel masterApiViewModel;
     private AddChargeViewModel addChargeViewModel;
 
     private ReasonOptionAdapter adapterReason;
-    private DateRangeView viewDateOfService;
+    private DateView viewDateOfService;
 
 
     public static String EXTRA_REASON = "reason";
@@ -80,6 +78,15 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         }
         masterApiViewModel.fetchMasters();
         checkForVisitAndSetUI();
+
+        TextView textView = findViewById(R.id.toolbar_title);
+        textView.setText(R.string.lbl_transaction);
+        findViewById(R.id.back_iv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
 
@@ -95,7 +102,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         viewDateOfService = findViewById(R.id.dateOfService);
 
 
-        etTextField = findViewById(R.id.etTextField);
         etFees = findViewById(R.id.etFees);
         layoutChargeType.setOnClickListener(this);
 
@@ -122,9 +128,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
             }
         });
-
         findViewById(R.id.btnSubmit).setOnClickListener(this);
-        findViewById(R.id.btnPending).setOnClickListener(this);
 
     }
 
@@ -241,8 +245,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 rvReason.setVisibility(View.GONE);
                 ivReason.setVisibility(View.GONE);
                 layoutReason.setEnabled(false);
-                if (getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) == null)
-                    findViewById(R.id.btnPending).setVisibility(View.VISIBLE);
             }
             viewDateOfService.setVisibility(View.VISIBLE);
         }
@@ -269,10 +271,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 }
                 break;
             }
-            case R.id.btnPending: {
-                finish();
-                break;
-            }
         }
     }
 
@@ -282,7 +280,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             return false;
         }
         if (addChargeViewModel.isOnlyVisit()) {
-            if (viewDateOfService.getSelectedFromDate() == null) {
+            if (viewDateOfService.getSelectedDate() == null) {
                 showError(getString(R.string.msg_please_select_date_of_service));
                 return false;
             }
@@ -373,7 +371,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             chargeDataItem.setAmount(addChargeViewModel.getFees());
             chargeDataItem.setReason(Constants.ChargeReason.VISIT);
             AddChargeReq.Description description = new AddChargeReq.Description();
-            description.setDateOfService(Utils.getUTCDateFromCalendar(viewDateOfService.getSelectedFromDate()));
+            description.setDateOfService(Utils.getUTCDateFromCalendar(viewDateOfService.getSelectedDate()));
             chargeDataItem.setDescription(description);
             chargeData.add(chargeDataItem);
         } else {

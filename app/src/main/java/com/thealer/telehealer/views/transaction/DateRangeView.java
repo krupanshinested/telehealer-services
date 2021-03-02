@@ -64,15 +64,17 @@ public class DateRangeView extends LinearLayout {
                     afterMonth.add(Calendar.MONTH, 1);
                     setSelectedToDate(afterMonth);
                 }
-                onDateSelectedListener.onStartSelected(fromDateView.getSelectedDate());
                 toDateView.setMinDate(fromDateView.getSelectedDate());
+                if (onDateSelectedListener != null)
+                    onDateSelectedListener.onStartSelected(fromDateView.getSelectedDate());
             }
         });
 
         toDateView.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                onDateSelectedListener.onEndSelected(toDateView.getSelectedDate());
+                if (onDateSelectedListener != null)
+                    onDateSelectedListener.onEndSelected(toDateView.getSelectedDate());
             }
         });
 
@@ -90,6 +92,8 @@ public class DateRangeView extends LinearLayout {
 
     public void setSelectedFromDate(Calendar selectedFromDate) {
         fromDateView.setSelectedDate(selectedFromDate);
+        if (onDateSelectedListener != null)
+            onDateSelectedListener.onStartSelected(fromDateView.getSelectedDate());
     }
 
     public Calendar getSelectedToDate() {
@@ -98,6 +102,8 @@ public class DateRangeView extends LinearLayout {
 
     public void setSelectedToDate(Calendar selectedToDate) {
         toDateView.setSelectedDate(selectedToDate);
+        if (onDateSelectedListener != null)
+            onDateSelectedListener.onEndSelected(toDateView.getSelectedDate());
     }
 
 

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,7 +33,7 @@ public class MasterSelectionAdapter extends RecyclerView.Adapter<MasterSelection
     @NonNull
     @Override
     public TransactionOptionVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_fee_reason, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_filter_checkbox, parent, false);
         return new TransactionOptionVH(view, onOptionSelected);
     }
 
@@ -57,7 +58,6 @@ public class MasterSelectionAdapter extends RecyclerView.Adapter<MasterSelection
         public TransactionOptionVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
             cbReason = itemView.findViewById(R.id.item_cb);
-            itemView.findViewById(R.id.etFees).setVisibility(View.GONE);
             cbReason.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

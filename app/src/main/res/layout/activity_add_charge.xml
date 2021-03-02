@@ -4,7 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bt_white"
     android:orientation="vertical">
+
+
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/appbar_back_with_title_app_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -16,22 +25,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/app_name_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:padding="20dp"
-                android:text="@string/lbl_transaction"
-                android:textColor="@color/colorBlack"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Transaction" />
 
             <LinearLayout
                 android:id="@+id/layoutChargeType"
@@ -109,50 +105,11 @@
                 android:paddingBottom="6dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-
-            <EditText
-                android:id="@+id/etTextField"
-                style="@style/AddChargeEditText"
-                android:hint="@string/lbl_supplier_name"
-                android:inputType="text"
-                android:visibility="gone" />
-
-            <com.thealer.telehealer.views.transaction.DateRangeView
-                android:id="@+id/ccm"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:date_title="@string/ccm" />
-
-            <com.thealer.telehealer.views.transaction.DateRangeView
-                android:id="@+id/rpm"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:date_title="@string/rpm" />
-
-            <com.thealer.telehealer.views.transaction.DateRangeView
-                android:id="@+id/bhi"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:date_title="@string/bhi" />
-
-
-            <com.thealer.telehealer.views.transaction.DateRangeView
-                android:id="@+id/concierge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:date_title="@string/lbl_concierge" />
-
-
-            <com.thealer.telehealer.views.transaction.DateRangeView
+            <com.thealer.telehealer.views.transaction.DateView
                 android:id="@+id/dateOfService"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:date_title="@string/visit" />
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/etFees"
@@ -162,42 +119,11 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btnSubmit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp">
-
-        <Button
-            android:id="@+id/btnPending"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginBottom="24dp"
-            android:layout_weight="1"
-            android:background="@drawable/btn_theme_orange"
-            android:text="@string/pending"
-            android:textColor="@color/bt_white"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btnSubmit"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="1" />
-
-        <Button
-            android:id="@+id/btnSubmit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
-            android:layout_weight="1"
-            android:background="@drawable/btn_theme_blue"
-            android:text="@string/submit"
-            android:textColor="@color/bt_white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btnPending"
-            app:layout_constraintTop_toTopOf="@id/btnPending" />
-
-    </LinearLayout>
+        android:background="@drawable/button_enable_disable_selector"
+        android:text="@string/submit"
+        android:textColor="@color/bt_white" />
 </LinearLayout>
