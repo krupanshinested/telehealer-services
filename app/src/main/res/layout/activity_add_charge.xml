@@ -119,11 +119,28 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <Button
-        android:id="@+id/btnSubmit"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_enable_disable_selector"
-        android:text="@string/submit"
-        android:textColor="@color/bt_white" />
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnSubmitProcess"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/bt_theme_blue"
+            android:text="@string/lbl_save_and_process_payment"
+            android:textColor="@color/bt_white"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/bt_theme_green"
+            android:text="@string/save"
+            android:textColor="@color/bt_white"
+            android:textSize="12sp" />
+    </LinearLayout>
 </LinearLayout>

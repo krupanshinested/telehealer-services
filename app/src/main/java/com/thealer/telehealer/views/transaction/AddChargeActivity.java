@@ -129,6 +129,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             }
         });
         findViewById(R.id.btnSubmit).setOnClickListener(this);
+        findViewById(R.id.btnSubmitProcess).setOnClickListener(this);
 
     }
 
@@ -271,6 +272,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 }
                 break;
             }
+            case R.id.btnSubmitProcess: {
+
+            }
         }
     }
 
@@ -284,19 +288,20 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 showError(getString(R.string.msg_please_select_date_of_service));
                 return false;
             }
-            if (etFees.getText().length() == 0 || addChargeViewModel.getFees() == 0) {
+            if (etFees.getText().length() == 0) {
                 showError(getString(R.string.msg_please_enter_fees));
+                return false;
+            }
+            if (addChargeViewModel.getFees() <= Constants.STRIPE_MIN_AMOUNT) {
+                showError(getString(R.string.msg_any_fees_should_be_greater_than_minimum, getString(R.string.visit), Constants.STRIPE_MIN_AMOUNT));
                 return false;
             }
         } else {
             int selectedCount = 0;
+            double totalFees = 0;
             for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
                 if (reasonOption.isSelected()) {
                     selectedCount++;
-                    if (reasonOption.getFee() == 0) {
-                        showError(getString(R.string.msg_please_enter_fees_for_any, reasonOption.getTitle()));
-                        return false;
-                    }
                     if (reasonOption.getFee() <= Constants.STRIPE_MIN_AMOUNT) {
                         showError(getString(R.string.msg_any_fees_should_be_greater_than_minimum, reasonOption.getTitle(), Constants.STRIPE_MIN_AMOUNT));
                         return false;
@@ -326,10 +331,15 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                             }
                         }
                     }
+                    totalFees += reasonOption.getFee();
                 }
             }
             if (selectedCount == 0) {
                 showError(getString(R.string.msg_please_select_a_reason));
+                return false;
+            }
+            if (totalFees < 1) {
+                showError(getString(R.string.msg_total_amount_should_be_greater_than_one));
                 return false;
             }
         }
