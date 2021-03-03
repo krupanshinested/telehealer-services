@@ -75,13 +75,12 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     private void setUpReason() {
         reasonOptions.add(new SingleDateReasonOption(Constants.ChargeReason.VISIT, getApplication().getString(R.string.visit), 0));
-        reasonOptions.add(new TextFieldReasonOption(Constants.ChargeReason.MEDICINE, getApplication().getString(R.string.lbl_medicine), new ArrayList<>()));
-        reasonOptions.add(new TextFieldReasonOption(Constants.ChargeReason.SUPPLIES, getApplication().getString(R.string.lbl_supplies), new ArrayList<>()));
         reasonOptions.add(new DateRangeReasonOption(Constants.ChargeReason.CCM, getApplication().getString(R.string.ccm), 0));
         reasonOptions.add(new DateRangeReasonOption(Constants.ChargeReason.RPM, getApplication().getString(R.string.rpm), 0));
         reasonOptions.add(new DateRangeReasonOption(Constants.ChargeReason.BHI, getApplication().getString(R.string.bhi), 0));
+        reasonOptions.add(new TextFieldReasonOption(Constants.ChargeReason.MEDICINE, getApplication().getString(R.string.lbl_medicine), new ArrayList<>()));
+        reasonOptions.add(new TextFieldReasonOption(Constants.ChargeReason.SUPPLIES, getApplication().getString(R.string.lbl_supplies), new ArrayList<>()));
         reasonOptions.add(new DateRangeReasonOption(Constants.ChargeReason.CONCIERGE, getApplication().getString(R.string.lbl_concierge), 0));
-
     }
 
     @Nullable
