@@ -41,14 +41,11 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
     public static final String EXTRA_FILTER = "filter";
     public static final String EXTRA_IS_RESET = "is_reset";
 
-    private RecyclerView rvChargeType;
     private RecyclerView rvReason;
     private Button btnSubmit;
     private Button btnReset;
 
     private ReasonOptionAdapter adapterReason;
-    private MasterSelectionAdapter adapterType;
-    private MasterApiViewModel masterApiViewModel;
     private AddChargeViewModel addChargeViewModel;
 
     private OrdersCustomView doctorOcv;
@@ -72,7 +69,6 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitle.setText(getString(R.string.filter));
 
-        rvChargeType = findViewById(R.id.rvChargeType);
         rvReason = findViewById(R.id.rvReasonType);
 
 
@@ -83,7 +79,6 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
             adapterReason.notifyItemChanged(pos);
         });
         rvReason.setAdapter(adapterReason);
-        masterApiViewModel.fetchMasters();
 
         if (UserType.isUserPatient()) {
             patientOcv.setVisibility(View.GONE);
@@ -105,30 +100,13 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
     }
 
     private void initViewModels() {
-        masterApiViewModel = new ViewModelProvider(this).get(MasterApiViewModel.class);
         addChargeViewModel = new ViewModelProvider(this).get(AddChargeViewModel.class);
-        attachObserver(masterApiViewModel);
         attachObserver(addChargeViewModel);
 
-        masterApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel instanceof MasterResp) {
-                    MasterResp resp = (MasterResp) baseApiResponseModel;
-                    addChargeViewModel.setUpChargeTypeFromMasters(resp);
-                    adapterType = new MasterSelectionAdapter(addChargeViewModel.getListChargeTypes(), pos -> {
-                        addChargeViewModel.getListChargeTypes().get(pos).setSelected(!addChargeViewModel.getListChargeTypes().get(pos).isSelected());
-                        adapterType.notifyItemChanged(pos);
-                    });
-                    String filterJson = getIntent().getStringExtra(EXTRA_FILTER);
-                    if (filterJson != null) {
-                        setDataFromRequest(new Gson().fromJson(filterJson, TransactionListReq.class));
-                    }
-                    rvReason.getAdapter().notifyDataSetChanged();
-                    rvChargeType.setAdapter(adapterType);
-                }
-            }
-        });
+        String filterJson = getIntent().getStringExtra(EXTRA_FILTER);
+        if (filterJson != null) {
+            setDataFromRequest(new Gson().fromJson(filterJson, TransactionListReq.class));
+        }
     }
 
     private void showAssociationSelection(int requestCode, String searchType, String user_guid) {
@@ -246,13 +224,6 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
         if (dateFilter.getSelectedToDate() != null) {
             filter.setToDate(Utils.getUTCDateFromCalendar(dateFilter.getSelectedToDate()));
         }
-        ArrayList<Integer> selectedTypes = new ArrayList<>();
-        for (MasterResp.MasterItem masterItem : addChargeViewModel.getListChargeTypes())
-            if (masterItem.isSelected())
-                selectedTypes.add(masterItem.getId());
-        if (selectedTypes.size() > 0)
-            filter.setTypeOfCharge(selectedTypes);
-
         ArrayList<Integer> selectedReasons = new ArrayList<>();
         for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions())
             if (reasonOption.isSelected())
@@ -290,11 +261,6 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                 if (filter.getReasons() != null) {
                     for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
                         reasonOption.setSelected(filter.getReasons().contains(reasonOption.getValue()));
-                    }
-                }
-                if (filter.getTypeOfCharge() != null) {
-                    for (MasterResp.MasterItem masterItem : addChargeViewModel.getListChargeTypes()) {
-                        masterItem.setSelected(filter.getTypeOfCharge().contains(masterItem.getId()));
                     }
                 }
             }
