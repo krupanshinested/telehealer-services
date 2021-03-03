@@ -11,11 +11,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.DateRangeReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.SingleDateReasonOption;
@@ -31,6 +33,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
     private List<ReasonOption> list;
     private OnOptionSelected onOptionSelected;
     private boolean showFees;
+    private List<MasterResp.MasterItem> typeMasters;
 
     public ReasonOptionAdapter(List<ReasonOption> list, boolean showFees, OnOptionSelected onOptionSelected) {
         this.list = list;
@@ -52,11 +55,16 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         holder.cbReason.setChecked(list.get(position).isSelected());
         if (showFees) {
             holder.etFees.setEnabled(list.get(position).isSelected());
+            holder.llChargeType.setVisibility(View.GONE);
+            holder.tvChargeType.setText(null);
+
             if (list.get(position).isSelected()) {
                 if (list.get(position).getFee() != 0)
                     holder.etFees.setText(String.format(Locale.getDefault(), "%.2f", list.get(position).getFee()));
                 else
                     holder.etFees.setText(null);
+                holder.llChargeType.setVisibility(View.VISIBLE);
+                holder.tvChargeType.setText(list.get(position).getChargeTypeName());
             } else {
                 list.get(position).setFee(0);
                 holder.etFees.setText(null);
@@ -121,11 +129,16 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         return list.size();
     }
 
+    public void setTypeMasters(List<MasterResp.MasterItem> typeMasters) {
+        this.typeMasters = typeMasters;
+    }
+
     public class TransactionOptionVH extends RecyclerView.ViewHolder {
 
         CheckBox cbReason;
         EditText etFees;
         RecyclerView rvTextFields;
+        TextView tvChargeType;
 
         ImageView imgAddField;
 
@@ -133,6 +146,9 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
 
         DateRangeView dateRangeView;
         DateView singleDate;
+        RecyclerView rvChargeType;
+
+        LinearLayout llChargeType;
 
         public TransactionOptionVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
@@ -204,6 +220,26 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         ((SingleDateReasonOption) list.get(getAdapterPosition())).setDate(singleDate.getSelectedDate());
+                    }
+                });
+
+                llChargeType = itemView.findViewById(R.id.layoutChargeType);
+                rvChargeType = itemView.findViewById(R.id.rvChargeType);
+                tvChargeType = itemView.findViewById(R.id.tvChargeType);
+                MasterOptionAdapter adapterType = new MasterOptionAdapter(typeMasters, pos -> {
+                    rvChargeType.setVisibility(View.GONE);
+                    tvChargeType.setText(typeMasters.get(pos).getName());
+                    list.get(pos).setChargeTypeCode(typeMasters.get(pos).getCode());
+                    list.get(pos).setChargeTypeName(typeMasters.get(pos).getName());
+                });
+                rvChargeType.setAdapter(adapterType);
+                llChargeType.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (rvChargeType.getVisibility() == View.VISIBLE)
+                            rvChargeType.setVisibility(View.GONE);
+                        else
+                            rvChargeType.setVisibility(View.VISIBLE);
                     }
                 });
             }

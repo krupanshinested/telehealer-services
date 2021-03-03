@@ -39,16 +39,8 @@ import java.util.List;
 
 public class AddChargeActivity extends BaseActivity implements View.OnClickListener {
 
-    private LinearLayout layoutChargeType;
-    private LinearLayout layoutReason;
-    private EditText etFees;
 
-    private RecyclerView rvChargeType;
     private RecyclerView rvReason;
-
-    private TextView tvChargeType;
-    private TextView tvReason;
-    private ImageView ivReason;
 
     private MasterApiViewModel masterApiViewModel;
     private AddChargeViewModel addChargeViewModel;
@@ -68,7 +60,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.activity_add_charge);
         initView();
         initViewModels();
-        setAdapters();
         addChargeViewModel.setSelectedReason(getIntent().getIntExtra(EXTRA_REASON, -1));
         addChargeViewModel.setPatientId(getIntent().getIntExtra(EXTRA_PATIENT_ID, -1));
         addChargeViewModel.setOrderId(getIntent().getStringExtra(EXTRA_ORDER_ID));
@@ -91,43 +82,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
 
     private void initView() {
-        layoutChargeType = findViewById(R.id.layoutChargeType);
-        layoutReason = findViewById(R.id.layoutReason);
-        rvChargeType = findViewById(R.id.rvChargeType);
         rvReason = findViewById(R.id.rvReasonType);
-        tvChargeType = findViewById(R.id.tvChargeType);
-        tvReason = findViewById(R.id.tvReason);
-        ivReason = findViewById(R.id.ivReasonArrow);
 
         viewDateOfService = findViewById(R.id.dateOfService);
 
-
-        etFees = findViewById(R.id.etFees);
-        layoutChargeType.setOnClickListener(this);
-
         rvReason.setNestedScrollingEnabled(false);
 
-        etFees.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    addChargeViewModel.setFees(Integer.parseInt(s.toString().trim()));
-                } catch (Exception e) {
-                    addChargeViewModel.setFees(0);
-                }
-
-            }
-        });
         findViewById(R.id.btnSubmit).setOnClickListener(this);
         findViewById(R.id.btnSubmitProcess).setOnClickListener(this);
 
@@ -138,6 +98,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
             adapterReason.notifyItemChanged(pos);
         });
+        adapterReason.setTypeMasters(addChargeViewModel.getListChargeTypes());
         rvReason.setAdapter(adapterReason);
 
     }
@@ -154,18 +115,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 if (baseApiResponseModel instanceof MasterResp) {
                     MasterResp resp = (MasterResp) baseApiResponseModel;
                     addChargeViewModel.setUpChargeTypeFromMasters(resp);
-                    if (addChargeViewModel.getSelectedChargeTypeId() != -1) {
-                        MasterResp.MasterItem masterItem = addChargeViewModel.getChargeTypeById(addChargeViewModel.getSelectedChargeTypeId());
-                        if (masterItem != null) {
-                            tvChargeType.setText(masterItem.getName());
-                        }
-                    }
-                    MasterOptionAdapter adapterType = new MasterOptionAdapter(addChargeViewModel.getListChargeTypes(), pos -> {
-                        rvChargeType.setVisibility(View.GONE);
-                        tvChargeType.setText(addChargeViewModel.getListChargeTypes().get(pos).getName());
-                        addChargeViewModel.setSelectedChargeTypeId(addChargeViewModel.getListChargeTypes().get(pos).getId());
-                    });
-                    rvChargeType.setAdapter(adapterType);
+                    setAdapters();
                 }
             }
         });
@@ -240,12 +190,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         if (addChargeViewModel.isReasonSelected(Constants.ChargeReason.VISIT)) {
             if (selectedCount == 1) {
                 addChargeViewModel.setOnlyVisit(true);
-                layoutReason.setVisibility(View.VISIBLE);
-                etFees.setVisibility(View.VISIBLE);
-                tvReason.setText(getString(R.string.visit));
                 rvReason.setVisibility(View.GONE);
-                ivReason.setVisibility(View.GONE);
-                layoutReason.setEnabled(false);
                 viewDateOfService.setVisibility(View.VISIBLE);
             }
         }
@@ -254,12 +199,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.layoutChargeType:
-                if (rvChargeType.getVisibility() == View.VISIBLE)
-                    rvChargeType.setVisibility(View.GONE);
-                else
-                    rvChargeType.setVisibility(View.VISIBLE);
-                break;
             case R.id.layoutReason:
                 if (rvReason.getVisibility() == View.VISIBLE)
                     rvReason.setVisibility(View.GONE);
@@ -286,10 +225,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         if (addChargeViewModel.isOnlyVisit()) {
             if (viewDateOfService.getSelectedDate() == null) {
                 showError(getString(R.string.msg_please_select_date_of_service));
-                return false;
-            }
-            if (etFees.getText().length() == 0) {
-                showError(getString(R.string.msg_please_enter_fees));
                 return false;
             }
             if (addChargeViewModel.getFees() <= Constants.STRIPE_MIN_AMOUNT) {

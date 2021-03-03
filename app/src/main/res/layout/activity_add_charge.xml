@@ -29,44 +29,6 @@
             android:layout_marginEnd="12dp"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/layoutChargeType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_black"
-                android:gravity="center"
-                android:padding="12dp">
-
-                <TextView
-                    android:id="@+id/tvChargeType"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-
-                    android:hint="@string/lbl_charge_type"
-                    android:textColorHint="@color/colorBlack_50"
-                    android:textSize="14sp" />
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_keyboard_arrow_down_24dp"
-                    app:tint="@color/colorGrey" />
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvChargeType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_black"
-                android:clipToPadding="false"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
-                android:visibility="gone"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="5"
-                tools:visibility="visible" />
-
 
             <LinearLayout
                 android:id="@+id/layoutReason"

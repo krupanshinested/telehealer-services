@@ -13,6 +13,9 @@ public class ReasonOption {
 
     private boolean isSelected;
 
+    private String chargeTypeCode;
+    private String chargeTypeName;
+
     public ReasonOption(int value, String title, double fee) {
         this.value = value;
         this.title = title;
@@ -49,5 +52,21 @@ public class ReasonOption {
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    public String getChargeTypeName() {
+        return chargeTypeName;
+    }
+
+    public void setChargeTypeName(String chargeTypeName) {
+        this.chargeTypeName = chargeTypeName;
+    }
+
+    public String getChargeTypeCode() {
+        return chargeTypeCode;
+    }
+
+    public void setChargeTypeCode(String chargeTypeCode) {
+        this.chargeTypeCode = chargeTypeCode;
     }
 }

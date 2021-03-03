@@ -26,12 +26,19 @@
             android:textSize="12sp"
             tools:text="@string/dummy_text" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="$"
+            android:textSize="12sp" />
 
         <EditText
             android:id="@+id/etFees"
             style="@style/AddChargeEditText"
             android:layout_width="wrap_content"
             android:layout_marginTop="0dp"
+            android:background="@drawable/et_black"
             android:hint="@string/lbl_add_fees"
             android:inputType="numberDecimal"
             android:paddingStart="8dp"
@@ -41,6 +48,55 @@
             android:textSize="12sp" />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/layoutChargeType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/et_black"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="10dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvChargeType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+
+                android:hint="@string/lbl_charge_type"
+                android:textColorHint="@color/colorBlack_50"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_keyboard_arrow_down_24dp"
+                app:tint="@color/colorGrey" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvChargeType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bt_white"
+            android:clipToPadding="false"
+            android:elevation="5dp"
+            android:translationZ="5dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="5"
+            tools:visibility="visible" />
+    </FrameLayout>
+
 
     <com.thealer.telehealer.views.transaction.DateView
         android:id="@+id/singleDate"
