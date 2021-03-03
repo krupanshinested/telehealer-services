@@ -245,8 +245,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 rvReason.setVisibility(View.GONE);
                 ivReason.setVisibility(View.GONE);
                 layoutReason.setEnabled(false);
+                viewDateOfService.setVisibility(View.VISIBLE);
             }
-            viewDateOfService.setVisibility(View.VISIBLE);
         }
     }
 

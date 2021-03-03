@@ -201,7 +201,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             case Constants.TYPE_MEDICAL_ASSISTANT:
                 medicalAssistantLl.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
-                    billLl.setVisibility(View.VISIBLE);
+                    billLl.setVisibility(View.GONE);
                     payments_billings.hideSplitter(false);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {
