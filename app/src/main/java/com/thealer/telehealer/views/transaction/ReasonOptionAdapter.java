@@ -6,6 +6,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -14,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
@@ -23,7 +26,9 @@ import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.SingleDateReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.TextFieldModel;
 import com.thealer.telehealer.apilayer.models.transaction.TextFieldReasonOption;
+import com.thealer.telehealer.common.HintAdapter;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +38,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
     private List<ReasonOption> list;
     private OnOptionSelected onOptionSelected;
     private boolean showFees;
-    private List<MasterResp.MasterItem> typeMasters;
+    private ArrayList<MasterResp.MasterItem> typeMasters;
 
     public ReasonOptionAdapter(List<ReasonOption> list, boolean showFees, OnOptionSelected onOptionSelected) {
         this.list = list;
@@ -55,19 +60,21 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         holder.cbReason.setChecked(list.get(position).isSelected());
         if (showFees) {
             holder.etFees.setEnabled(list.get(position).isSelected());
-            holder.llChargeType.setVisibility(View.GONE);
-            holder.tvChargeType.setText(null);
+            holder.chargeType.setVisibility(View.GONE);
 
             if (list.get(position).isSelected()) {
                 if (list.get(position).getFee() != 0)
                     holder.etFees.setText(String.format(Locale.getDefault(), "%.2f", list.get(position).getFee()));
                 else
                     holder.etFees.setText(null);
-                holder.llChargeType.setVisibility(View.VISIBLE);
-                holder.tvChargeType.setText(list.get(position).getChargeTypeName());
+                holder.chargeType.setVisibility(View.VISIBLE);
+                holder.chargeType.setSelection(getPositionFromMasterCode(list.get(position).getChargeTypeCode()));
             } else {
                 list.get(position).setFee(0);
+                list.get(position).setChargeTypeName(null);
+                list.get(position).setChargeTypeCode(null);
                 holder.etFees.setText(null);
+                holder.chargeType.setSelection(0);
             }
 
             holder.rvTextFields.setVisibility(View.GONE);
@@ -86,12 +93,23 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         }
     }
 
+    private int getPositionFromMasterCode(String chargeTypeCode) {
+        for (int i = 0; i < typeMasters.size(); i++) {
+            MasterResp.MasterItem masterItem = typeMasters.get(i);
+            if (masterItem.getCode().equals(chargeTypeCode))
+                return i;
+        }
+        return 0;
+    }
+
     private void setSingleDateUI(TransactionOptionVH holder, SingleDateReasonOption reasonOption) {
-        if (reasonOption.isSelected())
+        if (reasonOption.isSelected()) {
             holder.singleDate.setVisibility(View.VISIBLE);
-        else {
+            holder.singleDate.setSelectedDate(reasonOption.getDate());
+        } else {
             holder.singleDate.setVisibility(View.GONE);
             holder.singleDate.setSelectedDate(null);
+            reasonOption.setDate(null);
         }
 
     }
@@ -105,6 +123,8 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
             holder.dateRangeView.setSelectedFromDate(null);
             holder.dateRangeView.setSelectedToDate(null);
             holder.dateRangeView.setVisibility(View.GONE);
+            reasonOption.setStartDate(null);
+            reasonOption.setEndDate(null);
         }
     }
 
@@ -129,8 +149,14 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         return list.size();
     }
 
-    public void setTypeMasters(List<MasterResp.MasterItem> typeMasters) {
+    public void setTypeMasters(ArrayList<MasterResp.MasterItem> typeMasters) {
         this.typeMasters = typeMasters;
+        if (typeMasters != null) {
+            MasterResp.MasterItem masterItem = new MasterResp.MasterItem();
+            masterItem.setCode("NONE");
+            masterItem.setName("Charge Type");
+            this.typeMasters.add(0, masterItem);
+        }
     }
 
     public class TransactionOptionVH extends RecyclerView.ViewHolder {
@@ -138,7 +164,6 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         CheckBox cbReason;
         EditText etFees;
         RecyclerView rvTextFields;
-        TextView tvChargeType;
 
         ImageView imgAddField;
 
@@ -148,7 +173,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         DateView singleDate;
         RecyclerView rvChargeType;
 
-        LinearLayout llChargeType;
+        AppCompatSpinner chargeType;
 
         public TransactionOptionVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
@@ -222,24 +247,23 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                         ((SingleDateReasonOption) list.get(getAdapterPosition())).setDate(singleDate.getSelectedDate());
                     }
                 });
-
-                llChargeType = itemView.findViewById(R.id.layoutChargeType);
-                rvChargeType = itemView.findViewById(R.id.rvChargeType);
-                tvChargeType = itemView.findViewById(R.id.tvChargeType);
-                MasterOptionAdapter adapterType = new MasterOptionAdapter(typeMasters, pos -> {
-                    rvChargeType.setVisibility(View.GONE);
-                    tvChargeType.setText(typeMasters.get(pos).getName());
-                    list.get(pos).setChargeTypeCode(typeMasters.get(pos).getCode());
-                    list.get(pos).setChargeTypeName(typeMasters.get(pos).getName());
-                });
-                rvChargeType.setAdapter(adapterType);
-                llChargeType.setOnClickListener(new View.OnClickListener() {
+                chargeType = itemView.findViewById(R.id.layoutChargeType);
+                chargeType.setAdapter(new HintAdapter<MasterResp.MasterItem>(itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, typeMasters));
+                chargeType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
-                    public void onClick(View v) {
-                        if (rvChargeType.getVisibility() == View.VISIBLE)
-                            rvChargeType.setVisibility(View.GONE);
-                        else
-                            rvChargeType.setVisibility(View.VISIBLE);
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if (!"NONE".equals(typeMasters.get(position).getCode())) {
+                            list.get(getAdapterPosition()).setChargeTypeName(typeMasters.get(position).getName());
+                            list.get(getAdapterPosition()).setChargeTypeCode(typeMasters.get(position).getCode());
+                        } else {
+                            list.get(getAdapterPosition()).setChargeTypeName(null);
+                            list.get(getAdapterPosition()).setChargeTypeCode(null);
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
                     }
                 });
             }

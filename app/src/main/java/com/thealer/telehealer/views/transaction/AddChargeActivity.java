@@ -199,12 +199,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.layoutReason:
-                if (rvReason.getVisibility() == View.VISIBLE)
-                    rvReason.setVisibility(View.GONE);
-                else
-                    rvReason.setVisibility(View.VISIBLE);
-                break;
             case R.id.btnSubmit: {
                 if (isValid()) {
                     addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);

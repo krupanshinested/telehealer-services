@@ -49,12 +49,12 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <!--<FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/layoutChargeType"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -95,7 +95,14 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="5"
             tools:visibility="visible" />
-    </FrameLayout>
+    </FrameLayout>-->
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/layoutChargeType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/et_black"
+        android:spinnerMode="dropdown" />
 
 
     <com.thealer.telehealer.views.transaction.DateView
