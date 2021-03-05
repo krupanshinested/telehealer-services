@@ -41,7 +41,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         holder.tvStatus.setText(list.get(position).getStatusString());
         holder.tvCharge.setText(list.get(position).getAmountString());
         holder.tvReason.setText(list.get(position).getCommaSeparatedReason(holder.itemView.getContext()));
-        holder.tvChargeType.setText(list.get(position).getTypeOfCharge().getName());
         holder.tvDate.setText(Utils.getFormatedDateTime(list.get(position).getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));
         holder.failureReasonRow.setVisibility(View.GONE);
         if (list.get(position).getTotalRefund() > 0) {
@@ -156,7 +155,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         Button btnReceipt;
         Button btnProcessPayment;
         Button btnRefundClick;
-        TextView tvStatus, tvDate, tvDateOfService, tvPatient, tvChargeType, tvReason, tvCharge, tvDoctor, tvFailureReason, tvTotalRefund;
+        TextView tvStatus, tvDate, tvDateOfService, tvPatient, tvReason, tvCharge, tvDoctor, tvFailureReason, tvTotalRefund;
         View doctorRow, patientRow, failureReasonRow, refundRow;
         View actionRow;
 
@@ -169,7 +168,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             tvDate = itemView.findViewById(R.id.tvDate);
             tvDateOfService = itemView.findViewById(R.id.tvDateOfService);
             tvPatient = itemView.findViewById(R.id.tvPatient);
-            tvChargeType = itemView.findViewById(R.id.tvChargeType);
             tvReason = itemView.findViewById(R.id.tvReason);
             tvCharge = itemView.findViewById(R.id.tvCharge);
             tvDoctor = itemView.findViewById(R.id.tvDoctor);

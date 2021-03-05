@@ -27,7 +27,7 @@ public class TransactionDetailsActivity extends BaseActivity {
 
     public static final String EXTRA_TRANSACTION = "transaction";
 
-    private TextView tvStatus, tvDate, tvPatient, tvChargeType, tvCharge, tvDoctor, tvRefund, tvFailureReason;
+    private TextView tvStatus, tvDate, tvPatient, tvCharge, tvDoctor, tvRefund, tvFailureReason;
     private View doctorRow, patientRow, failureReasonRow;
     private RecyclerView rvReasonCharges, rvRefunds;
     private ImageView imgReceipt;
@@ -46,7 +46,6 @@ public class TransactionDetailsActivity extends BaseActivity {
         imgReceipt = findViewById(R.id.imgReceipt);
 
         tvPatient = findViewById(R.id.tvPatient);
-        tvChargeType = findViewById(R.id.tvChargeType);
 
         tvCharge = findViewById(R.id.tvCharge);
         tvDoctor = findViewById(R.id.tvDoctor);
@@ -117,7 +116,10 @@ public class TransactionDetailsActivity extends BaseActivity {
         ArrayList<DetailAmountModel> reasonAmounts = new ArrayList<>();
         for (AddChargeReq.ChargeDataItem dataItem : transactionItem.getChargeData()) {
             DetailAmountModel amountModel = new DetailAmountModel();
-            amountModel.setTitle(dataItem.getReasonString(this));
+            if (dataItem.getTypeOfChargeName() != null)
+                amountModel.setTitle(String.format("%s (%s)", dataItem.getReasonString(this), dataItem.getTypeOfChargeName()));
+            else
+                amountModel.setTitle(dataItem.getReasonString(this));
             amountModel.setAmount(dataItem.getAmount());
 
             AddChargeReq.Description description = dataItem.getDescription();
@@ -148,7 +150,6 @@ public class TransactionDetailsActivity extends BaseActivity {
     void updateUI() {
         tvStatus.setText(transactionItem.getStatusString());
         tvCharge.setText(transactionItem.getAmountString());
-        tvChargeType.setText(transactionItem.getTypeOfCharge().getName());
         tvDate.setText(Utils.getFormatedDateTime(transactionItem.getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));
 
         if (transactionItem.getErrorDescription() != null && transactionItem.getErrorDescription().length() > 0) {

@@ -35,6 +35,7 @@ public class TransactionListViewModel extends BaseApiViewModel {
 
     public void loadTransactions(boolean isShowProgress) {
         if (filterReq == null) {
+            filterReq = new TransactionListReq();
             filterReq.setFilter(new TransactionListReq.Filter());
             filterReq.getFilter().setToDate(Utils.getUTCDateFromCalendar(Calendar.getInstance()));
             Calendar calendar = Calendar.getInstance();

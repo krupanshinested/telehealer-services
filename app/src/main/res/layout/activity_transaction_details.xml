@@ -131,19 +131,6 @@
 
                     <TextView
                         style="@style/TransactionRowLbl"
-                        android:text="@string/lbl_charge_type" />
-
-                    <TextView
-                        android:id="@+id/tvChargeType"
-                        style="@style/TransactionRowValue.Details"
-                        android:text="Co-Pay" />
-                </TableRow>
-
-
-                <TableRow style="@style/TransactionListRow">
-
-                    <TextView
-                        style="@style/TransactionRowLbl"
                         android:text="@string/lbl_status" />
 
                     <TextView
