@@ -76,10 +76,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         addChargeViewModel.setSelectedReason(getIntent().getIntExtra(EXTRA_REASON, -1));
         addChargeViewModel.setPatientId(getIntent().getIntExtra(EXTRA_PATIENT_ID, -1));
         addChargeViewModel.setOrderId(getIntent().getStringExtra(EXTRA_ORDER_ID));
-        String json = getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM);
-        if (json != null && json.length() > 0) {
-            prepareDataFromTransactionItem(new Gson().fromJson(json, TransactionItem.class));
-        }
         masterApiViewModel.fetchMasters();
         checkForVisitAndSetUI();
 
@@ -129,6 +125,10 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 if (baseApiResponseModel instanceof MasterResp) {
                     MasterResp resp = (MasterResp) baseApiResponseModel;
                     addChargeViewModel.setUpChargeTypeFromMasters(resp);
+                    String json = getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM);
+                    if (json != null && json.length() > 0) {
+                        prepareDataFromTransactionItem(new Gson().fromJson(json, TransactionItem.class));
+                    }
                     setAdapters();
                 }
             }
@@ -260,7 +260,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     setReasonDataFromTransactionItem(item, addChargeViewModel.getReasonByValue(item.getReason()));
                 }
             }
-            adapterReason.notifyDataSetChanged();
         }
     }
 
@@ -268,6 +267,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         if (reasonOption != null) {
             reasonOption.setFee(item.getAmount());
             reasonOption.setSelected(true);
+            reasonOption.setChargeTypeCode(item.getTypeOfChargeCode());
+            reasonOption.setChargeTypeName(item.getTypeOfChargeName());
             if (reasonOption instanceof SingleDateReasonOption) {
                 ((SingleDateReasonOption) reasonOption).setDate(Utils.getCalendar(item.getDescription().getDateOfService()));
             }

@@ -259,7 +259,7 @@
         <item name="colorPrimary">@color/app_gradient_start</item>
         <item name="colorPrimaryDark">@color/app_status_bar_color1</item>
         <item name="colorAccent">@color/app_status_bar_color1</item>
-        <item name="colorControlNormal">@color/app_status_bar_color1</item>
+            <item name="colorControlNormal">@color/app_status_bar_color1</item>
         <item name="titleTextColor">@color/colorWhite</item>
     </style>
 
@@ -282,6 +282,9 @@
 
     <style name="TransactionRowValue">
         <item name="android:textColor">@color/colorBlack</item>
+        <item name="singleLine">true</item>
+        <item name="maxLines">1</item>
+        <item name="android:ellipsize">end</item>
         <item name="android:textSize">12sp</item>
         <item name="android:gravity">end</item>
         <item name="android:layout_weight">1</item>

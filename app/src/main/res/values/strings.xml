@@ -1489,7 +1489,7 @@
     <string name="lbl_add_patients">Add Patients</string>
     <string name="lbl_add_providers">Add Providers</string>
     <string name="lbl_payment">Payment</string>
-    <string name="lbl_patient_credit_card">Patient Credit Card</string>
+    <string name="lbl_receive_patient_payments">Receive Patient Payments</string>
     <string name="lbl_not_now">Not Now</string>
     <string name="lbl_payment_method">Payment Method</string>
     <string name="msg_patient_card_not_added">Please enter credit card detail here to proceed the payment online.</string>
@@ -1535,7 +1535,7 @@
     <string name="msg_please_enter_valid_refund_amount">Please enter refund amount.</string>
     <string name="msg_refund_amount_should_not_exceed_charge_amount">Refund amount should not exceed charge amount.</string>
     <string name="msg_refund_amount_should_be_greater_than_minimum">Refund amount should be greater than $%.2f.</string>
-    <string name="msg_refund_info">Entered amount will get credited into patient account.</string>
+    <string name="msg_refund_info">Entered amount will be credited in patient account.</string>
     <string name="lbl_proceed_offline">Proceed Offline</string>
     <string name="msg_invalid_credit_card_in_transaction_process">%s has no valid credit card, please collect charge in cash</string>
     <string name="msg_transaction_failed">We are unable to process this transaction, please contact %s and collect charge in cash.</string>

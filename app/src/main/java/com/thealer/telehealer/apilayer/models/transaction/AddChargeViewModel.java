@@ -141,14 +141,24 @@ public class AddChargeViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    Observable<AddChargeResp> observer = isUpdate ? getAuthApiService().updateCharge(chargeId, req) : getAuthApiService().addCharge(req);
-                    observer.compose(applySchedulers())
-                            .subscribe(new RAObserver<AddChargeResp>(Constants.SHOW_PROGRESS) {
-                                @Override
-                                public void onSuccess(AddChargeResp baseApiResponseModel) {
-                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
-                                }
-                            });
+                    if (isUpdate) {
+                        getAuthApiService().updateCharge(chargeId, req).compose(applySchedulers())
+                                .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                    @Override
+                                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                        baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                    }
+                                });
+                    } else {
+                        getAuthApiService().addCharge(req).compose(applySchedulers())
+                                .subscribe(new RAObserver<AddChargeResp>(Constants.SHOW_PROGRESS) {
+                                    @Override
+                                    public void onSuccess(AddChargeResp baseApiResponseModel) {
+                                        baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                    }
+                                });
+                    }
+
 
                 }
             }
