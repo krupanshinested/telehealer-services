@@ -19,9 +19,6 @@ public class AddChargeReq {
     @SerializedName("patient_id")
     private Integer patientId;
 
-    @SerializedName("type_of_charge")
-    private int typeOfCharge;
-
     @SerializedName("order_id")
     private String orderId;
 
@@ -33,9 +30,6 @@ public class AddChargeReq {
         return patientId;
     }
 
-    public int getTypeOfCharge() {
-        return typeOfCharge;
-    }
 
     public void setChargeData(List<ChargeDataItem> chargeData) {
         this.chargeData = chargeData;
@@ -45,9 +39,6 @@ public class AddChargeReq {
         this.patientId = patientId;
     }
 
-    public void setTypeOfCharge(int typeOfCharge) {
-        this.typeOfCharge = typeOfCharge;
-    }
 
     public String getOrderId() {
         return orderId;

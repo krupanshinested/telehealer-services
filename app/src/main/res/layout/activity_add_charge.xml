@@ -38,7 +38,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/bt_theme_blue"
+            android:background="@color/bt_theme_green"
             android:text="@string/lbl_save_and_process_payment"
             android:textColor="@color/bt_white"
             android:textSize="12sp" />
@@ -48,7 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/bt_theme_green"
+            android:background="@color/app_gradient_start"
             android:text="@string/save"
             android:textColor="@color/bt_white"
             android:textSize="12sp" />

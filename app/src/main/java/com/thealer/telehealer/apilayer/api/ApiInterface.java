@@ -77,6 +77,7 @@ import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
+import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
@@ -715,10 +716,10 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> askToAddCard(@Body() HashMap<String, String> req);
 
     @POST("/api/charge/add-charge")
-    Observable<BaseApiResponseModel> addCharge(@Body() AddChargeReq req);
+    Observable<AddChargeResp> addCharge(@Body() AddChargeReq req);
 
     @PUT("/api/charge/update-charge")
-    Observable<BaseApiResponseModel> updateCharge(@Query("id") int id, @Body() AddChargeReq req);
+    Observable<AddChargeResp> updateCharge(@Query("id") int id, @Body() AddChargeReq req);
 
     @POST("/api/charge/paginate")
     Observable<TransactionListResp> transactionPaginate(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Body() TransactionListReq req);

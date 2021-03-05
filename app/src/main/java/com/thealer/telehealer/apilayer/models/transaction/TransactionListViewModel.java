@@ -23,7 +23,7 @@ import java.util.HashMap;
 public class TransactionListViewModel extends BaseApiViewModel {
 
     private ArrayList<TransactionItem> transactions = new ArrayList<>();
-    private TransactionListReq filterReq = new TransactionListReq();
+    private TransactionListReq filterReq;
 
     private int page = 1;
     private int totalCount;
@@ -31,14 +31,16 @@ public class TransactionListViewModel extends BaseApiViewModel {
 
     public TransactionListViewModel(@NonNull Application application) {
         super(application);
-        filterReq.setFilter(new TransactionListReq.Filter());
-        filterReq.getFilter().setToDate(Utils.getUTCDateFromCalendar(Calendar.getInstance()));
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -1);
-        filterReq.getFilter().setFromDate(Utils.getUTCDateFromCalendar(calendar));
     }
 
     public void loadTransactions(boolean isShowProgress) {
+        if (filterReq == null) {
+            filterReq.setFilter(new TransactionListReq.Filter());
+            filterReq.getFilter().setToDate(Utils.getUTCDateFromCalendar(Calendar.getInstance()));
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MONTH, -1);
+            filterReq.getFilter().setFromDate(Utils.getUTCDateFromCalendar(calendar));
+        }
         if (!isApiRequested) {
             isApiRequested = true;
             fetchToken(status -> {

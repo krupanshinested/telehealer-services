@@ -1552,6 +1552,6 @@
     <string name="lbl_reset">Reset</string>
     <string name="lbl_total_refund">Total Refund</string>
     <string name="lbl_save_and_process_payment">Save &amp; Process Payment</string>
-    <string name="msg_total_amount_should_be_greater_than_one">Total amount should be greater than 1.</string>
+    <string name="msg_total_amount_should_be_greater_than_one">Total amount should be greater than $1.</string>
 
 </resources>

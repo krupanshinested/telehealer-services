@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.transaction;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,16 +22,26 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.master.MasterApiViewModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.AddChargeViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.DateRangeReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.ReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.SingleDateReasonOption;
 import com.thealer.telehealer.apilayer.models.transaction.TextFieldModel;
 import com.thealer.telehealer.apilayer.models.transaction.TextFieldReasonOption;
+import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
+import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
+import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
+import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,6 +55,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     private MasterApiViewModel masterApiViewModel;
     private AddChargeViewModel addChargeViewModel;
+    private TransactionListViewModel transactionListViewModel;
+    private AskToAddCardViewModel askToAddCardViewModel;
+
 
     private ReasonOptionAdapter adapterReason;
 
@@ -102,8 +116,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private void initViewModels() {
         masterApiViewModel = new ViewModelProvider(this).get(MasterApiViewModel.class);
         addChargeViewModel = new ViewModelProvider(this).get(AddChargeViewModel.class);
+        transactionListViewModel = new ViewModelProvider(this).get(TransactionListViewModel.class);
+        askToAddCardViewModel = new ViewModelProvider(this).get(AskToAddCardViewModel.class);
         attachObserver(masterApiViewModel);
         attachObserver(addChargeViewModel);
+        attachObserver(transactionListViewModel);
+        attachObserver(askToAddCardViewModel);
 
         masterApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -119,8 +137,15 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         addChargeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                setResult(RESULT_OK);
-                finish();
+                if (addChargeViewModel.isSaveAndProcess()) {
+                    if (baseApiResponseModel instanceof AddChargeResp) {
+                        addChargeViewModel.setAddedTransaction(((AddChargeResp) baseApiResponseModel).getData());
+                        transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.STRIPE);
+                    }
+                } else {
+                    setResult(RESULT_OK);
+                    finish();
+                }
             }
         });
         addChargeViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
@@ -130,6 +155,99 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.error), errorMessage, getString(R.string.ok), null, (dialog, which) -> dialog.dismiss(), null);
             }
         });
+
+        transactionListViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModels) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+        transactionListViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                String json = errorModel.getResponse();
+                try {
+                    JSONObject jsonObject = new JSONObject(json);
+
+                    if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                        String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                        Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.error), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                setResult(RESULT_CANCELED);
+                                finish();
+                            }
+                        }, null);
+                    } else {
+                        if (addChargeViewModel.getAddedTransaction() != null) {
+                            showPatientCardErrorOptions();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        askToAddCardViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel responseModel) {
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        });
+
+
+        askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.error),
+                        errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                        null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+            }
+        });
+
+
+    }
+
+    private void showPatientCardErrorOptions() {
+        ArrayList<String> options = new ArrayList<>();
+        options.add(getString(R.string.lbl_ask_to_add_credit_card));
+        options.add(getString(R.string.lbl_proceed_offline));
+        String message = getString(R.string.msg_invalid_credit_card_in_transaction_process, addChargeViewModel.getAddedTransaction().getPatientId().getDisplayName());
+        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(this, message, options, new PickerListener() {
+            @Override
+            public void didSelectedItem(int position) {
+
+                if (getString(R.string.lbl_ask_to_add_credit_card).equals(options.get(position))) {
+                    askToAddCardViewModel.askToAddCard(addChargeViewModel.getAddedTransaction().getPatientId().getUser_guid(), addChargeViewModel.getAddedTransaction().getDoctorId().getUser_guid());
+                } else if (getString(R.string.lbl_proceed_offline).equals(options.get(position))) {
+                    transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
+                }
+
+            }
+
+            @Override
+            public void didCancelled() {
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        });
+        itemPickerDialog.setCancelable(false);
+        itemPickerDialog.show();
     }
 
     public void prepareDataFromTransactionItem(TransactionItem transactionItem) {
@@ -137,7 +255,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             addChargeViewModel.setChargeId(transactionItem.getId());
             addChargeViewModel.setPatientId(transactionItem.getPatientId().getUser_id());
             addChargeViewModel.setOrderId(transactionItem.getOrderId());
-            addChargeViewModel.setSelectedChargeTypeId(transactionItem.getTypeOfCharge().getId());
             if (transactionItem.getChargeData() != null && transactionItem.getChargeData().size() > 0) {
                 for (AddChargeReq.ChargeDataItem item : transactionItem.getChargeData()) {
                     setReasonDataFromTransactionItem(item, addChargeViewModel.getReasonByValue(item.getReason()));
@@ -201,26 +318,20 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 break;
             }
             case R.id.btnSubmitProcess: {
-
+                if (isValid()) {
+                    addChargeViewModel.setSaveAndProcess(true);
+                    addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                }
             }
         }
     }
 
     private boolean isValid() {
-        if (addChargeViewModel.getSelectedChargeTypeId() == -1) {
-            showError(getString(R.string.msg_please_select_charge_type));
-            return false;
-        }
         int selectedCount = 0;
         double totalFees = 0;
         for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions()) {
             if (reasonOption.isSelected()) {
                 selectedCount++;
-                if (reasonOption.getFee() <= Constants.STRIPE_MIN_AMOUNT) {
-                    showError(getString(R.string.msg_any_fees_should_be_greater_than_minimum, reasonOption.getTitle(), Constants.STRIPE_MIN_AMOUNT));
-                    return false;
-                }
-
                 if (reasonOption instanceof DateRangeReasonOption) {
                     if (hasDateError((DateRangeReasonOption) reasonOption)) {
                         return false;
@@ -281,7 +392,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     private AddChargeReq getReq() {
         AddChargeReq req = new AddChargeReq();
-        req.setTypeOfCharge(addChargeViewModel.getSelectedChargeTypeId());
         req.setOrderId(addChargeViewModel.getOrderId());
         if (addChargeViewModel.getPatientId() > 0)
             req.setPatientId(addChargeViewModel.getPatientId());

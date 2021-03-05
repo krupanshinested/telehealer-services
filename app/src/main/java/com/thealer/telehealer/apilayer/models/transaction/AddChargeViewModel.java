@@ -10,6 +10,8 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
+import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
+import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
@@ -24,14 +26,16 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     private final ArrayList<MasterResp.MasterItem> listChargeTypes = new ArrayList<>();
 
-    private int selectedChargeTypeId = -1;
-
     private int chargeId = -1;
 
     private int patientId;
     private int fees;
 
     private boolean isOnlyVisit;
+    private boolean isSaveAndProcess;
+
+    private TransactionItem addedTransaction;
+
     private String orderId;
 
     private final List<ReasonOption> reasonOptions = new ArrayList<>();
@@ -132,25 +136,16 @@ public class AddChargeViewModel extends BaseApiViewModel {
         return reasonOptions;
     }
 
-    public void setSelectedChargeTypeId(int selectedChargeTypeId) {
-        this.selectedChargeTypeId = selectedChargeTypeId;
-    }
-
-    public int getSelectedChargeTypeId() {
-        return selectedChargeTypeId;
-    }
-
-
     public void addCharge(AddChargeReq req, boolean isUpdate) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    Observable<BaseApiResponseModel> observer = isUpdate ? getAuthApiService().updateCharge(chargeId, req) : getAuthApiService().addCharge(req);
+                    Observable<AddChargeResp> observer = isUpdate ? getAuthApiService().updateCharge(chargeId, req) : getAuthApiService().addCharge(req);
                     observer.compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAObserver<AddChargeResp>(Constants.SHOW_PROGRESS) {
                                 @Override
-                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                public void onSuccess(AddChargeResp baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
@@ -199,5 +194,21 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     public void setOrderId(String orderId) {
         this.orderId = orderId;
+    }
+
+    public boolean isSaveAndProcess() {
+        return isSaveAndProcess;
+    }
+
+    public void setSaveAndProcess(boolean saveAndProcess) {
+        isSaveAndProcess = saveAndProcess;
+    }
+
+    public TransactionItem getAddedTransaction() {
+        return addedTransaction;
+    }
+
+    public void setAddedTransaction(TransactionItem addedTransaction) {
+        this.addedTransaction = addedTransaction;
     }
 }
