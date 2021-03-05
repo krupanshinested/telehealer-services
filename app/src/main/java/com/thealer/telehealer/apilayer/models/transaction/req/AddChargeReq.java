@@ -69,6 +69,13 @@ public class AddChargeReq {
         @SerializedName("description")
         private Description description;
 
+        @SerializedName("type_of_charge_name")
+        private String typeOfChargeName;
+
+        @SerializedName("type_of_charge_code")
+        private String typeOfChargeCode;
+
+
         public int getReason() {
             return reason;
         }
@@ -111,6 +118,22 @@ public class AddChargeReq {
                     return context.getString(R.string.lbl_medicine);
             }
             return null;
+        }
+
+        public String getTypeOfChargeCode() {
+            return typeOfChargeCode;
+        }
+
+        public void setTypeOfChargeCode(String typeOfChargeCode) {
+            this.typeOfChargeCode = typeOfChargeCode;
+        }
+
+        public String getTypeOfChargeName() {
+            return typeOfChargeName;
+        }
+
+        public void setTypeOfChargeName(String typeOfChargeName) {
+            this.typeOfChargeName = typeOfChargeName;
         }
     }
 

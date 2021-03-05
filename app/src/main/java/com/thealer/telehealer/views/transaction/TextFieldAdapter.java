@@ -50,7 +50,7 @@ public class TextFieldAdapter extends RecyclerView.Adapter<TextFieldAdapter.Text
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list != null ? list.size() : 0;
     }
 
     public class TextFieldVH extends RecyclerView.ViewHolder {

@@ -95,7 +95,11 @@ public class SplashActivity extends BaseActivity {
                 checkAndMoveToNext(savedInstanceState, 1000);
             }
         });
-        appUpdateViewModel.checkForUpdate();
+//        appUpdateViewModel.checkForUpdate();
+        startActivity(new Intent(this, AddChargeActivity.class)
+                .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, getIntent().getIntExtra(ArgumentKeys.PATIENT_ID, -1))
+                .putExtra(AddChargeActivity.EXTRA_ORDER_ID, "")
+        );
     }
 
     private void checkAndMoveToNext(Bundle savedInstanceState, long delay) {

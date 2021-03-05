@@ -58,16 +58,18 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
     public void onBindViewHolder(@NonNull TransactionOptionVH holder, int position) {
         holder.cbReason.setText(list.get(position).getTitle());
         holder.cbReason.setChecked(list.get(position).isSelected());
+        if (list.get(position).isDisableSelection())
+            holder.cbReason.setClickable(false);
         if (showFees) {
             holder.etFees.setEnabled(list.get(position).isSelected());
-            holder.chargeType.setVisibility(View.GONE);
+            holder.chargeTypeLayout.setVisibility(View.GONE);
 
             if (list.get(position).isSelected()) {
                 if (list.get(position).getFee() != 0)
                     holder.etFees.setText(String.format(Locale.getDefault(), "%.2f", list.get(position).getFee()));
                 else
                     holder.etFees.setText(null);
-                holder.chargeType.setVisibility(View.VISIBLE);
+                holder.chargeTypeLayout.setVisibility(View.VISIBLE);
                 holder.chargeType.setSelection(getPositionFromMasterCode(list.get(position).getChargeTypeCode()));
             } else {
                 list.get(position).setFee(0);
@@ -171,9 +173,9 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
 
         DateRangeView dateRangeView;
         DateView singleDate;
-        RecyclerView rvChargeType;
 
         AppCompatSpinner chargeType;
+        View chargeTypeLayout;
 
         public TransactionOptionVH(@NonNull View itemView, OnOptionSelected onOptionSelected) {
             super(itemView);
@@ -247,7 +249,9 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
                         ((SingleDateReasonOption) list.get(getAdapterPosition())).setDate(singleDate.getSelectedDate());
                     }
                 });
-                chargeType = itemView.findViewById(R.id.layoutChargeType);
+
+                chargeTypeLayout = itemView.findViewById(R.id.layoutChargeType);
+                chargeType = itemView.findViewById(R.id.spinnerChargeType);
                 chargeType.setAdapter(new HintAdapter<MasterResp.MasterItem>(itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, typeMasters));
                 chargeType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override

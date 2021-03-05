@@ -16,6 +16,8 @@ public class ReasonOption {
     private String chargeTypeCode;
     private String chargeTypeName;
 
+    private boolean disableSelection;
+
     public ReasonOption(int value, String title, double fee) {
         this.value = value;
         this.title = title;
@@ -68,5 +70,13 @@ public class ReasonOption {
 
     public void setChargeTypeCode(String chargeTypeCode) {
         this.chargeTypeCode = chargeTypeCode;
+    }
+
+    public boolean isDisableSelection() {
+        return disableSelection;
+    }
+
+    public void setDisableSelection(boolean disableSelection) {
+        this.disableSelection = disableSelection;
     }
 }
