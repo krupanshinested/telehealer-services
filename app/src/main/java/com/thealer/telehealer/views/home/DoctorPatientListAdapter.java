@@ -90,7 +90,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 viewHolder.titleTv.setText(userModel.getUserDisplay_name());
                 loadAvatar(viewHolder.avatarCiv, userModel.getUser_avatar());
 
-                if (UserType.isUserDoctor() && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
+                if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
                     viewHolder.actionIv.setVisibility(View.VISIBLE);
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
                     viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info());
@@ -103,8 +103,6 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                         }
                     });
 
-                } else if (UserType.isUserAssistant()) {
-                    viewHolder.actionIv.setVisibility(View.GONE);
                 } else if (UserType.isUserPatient()) {
                     viewHolder.actionIv.setVisibility(View.GONE);
                 }
