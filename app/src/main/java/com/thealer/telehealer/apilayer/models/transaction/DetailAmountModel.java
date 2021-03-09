@@ -6,6 +6,7 @@ public class DetailAmountModel {
     private String details;
     private double amount;
     private boolean showReceipt;
+    private String receiptURL;
 
     public String getTitle() {
         return title;
@@ -38,5 +39,13 @@ public class DetailAmountModel {
 
     public void setShowReceipt(boolean showReceipt) {
         this.showReceipt = showReceipt;
+    }
+
+    public String getReceiptURL() {
+        return receiptURL;
+    }
+
+    public void setReceiptURL(String receiptURL) {
+        this.receiptURL = receiptURL;
     }
 }

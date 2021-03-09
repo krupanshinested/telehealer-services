@@ -7,11 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
-import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
@@ -45,9 +42,6 @@ public class TransactionItem extends BaseApiResponseModel {
     @SerializedName("id")
     private int id;
 
-    @SerializedName("type_of_charge")
-    private MasterResp.MasterItem typeOfCharge;
-
     @SerializedName("order_id")
     private String orderId;
 
@@ -63,6 +57,10 @@ public class TransactionItem extends BaseApiResponseModel {
     private int paymentMode;
 
     private double totalRefund;
+
+    @SerializedName("transactions")
+    private List<TransactionRecord> transactionRecord;
+
 
     public CommonUserApiResponseModel getDoctorId() {
         return doctorId;
@@ -100,9 +98,6 @@ public class TransactionItem extends BaseApiResponseModel {
         return id;
     }
 
-    public MasterResp.MasterItem getTypeOfCharge() {
-        return typeOfCharge;
-    }
 
     public String getOrderId() {
         return orderId;
@@ -180,5 +175,25 @@ public class TransactionItem extends BaseApiResponseModel {
 
     public void setTotalRefund(double totalRefund) {
         this.totalRefund = totalRefund;
+    }
+
+    public List<TransactionRecord> getTransactionRecord() {
+        return transactionRecord;
+    }
+
+    public void setTransactionRecord(List<TransactionRecord> transactionRecord) {
+        this.transactionRecord = transactionRecord;
+    }
+
+    public String getTransactionReceipt() {
+        if (getTransactionRecord() == null)
+            return null;
+        if (getTransactionRecord().size() == 0)
+            return null;
+        for (TransactionRecord record : getTransactionRecord()) {
+            if ("succeeded".equals(record.getStatus()))
+                return record.getInvoicePath();
+        }
+        return null;
     }
 }

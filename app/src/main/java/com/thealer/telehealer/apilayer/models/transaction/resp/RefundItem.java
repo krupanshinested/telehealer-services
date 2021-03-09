@@ -9,6 +9,9 @@ public class RefundItem {
     @SerializedName("created_at")
     private String createdAt;
 
+    @SerializedName("invoice_path")
+    private String invoicePath;
+
     public double getAmount() {
         return amount;
     }
@@ -23,5 +26,13 @@ public class RefundItem {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getInvoicePath() {
+        return invoicePath;
+    }
+
+    public void setInvoicePath(String invoicePath) {
+        this.invoicePath = invoicePath;
     }
 }

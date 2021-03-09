@@ -432,13 +432,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         callTypes.add(getString(R.string.one_way_call));
                         if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPayment_account_info())) {
                             if (UserType.isUserDoctor()) {
-                                if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
-                                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
-                                }
+                                callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
                             } else if (UserType.isUserAssistant()) {
-                                if (doctorModel.isPatient_credit_card_required()) {
-                                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
-                                }
+                                callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
                             }
                         }
 

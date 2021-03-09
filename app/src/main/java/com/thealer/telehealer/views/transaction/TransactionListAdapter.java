@@ -54,8 +54,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             holder.doctorRow.setVisibility(View.VISIBLE);
             holder.tvDoctor.setText(list.get(position).getDoctorId().getDisplayName());
             if (list.get(position).getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESSED) {
-                holder.btnReceipt.setVisibility(View.VISIBLE);
-                holder.actionRow.setVisibility(View.VISIBLE);
+                boolean hasReceipt = list.get(position).getTransactionReceipt() != null && list.get(position).getTransactionReceipt().length() > 0;
+                holder.btnReceipt.setVisibility(hasReceipt ? View.VISIBLE : View.GONE);
+                holder.actionRow.setVisibility(hasReceipt ? View.VISIBLE : View.GONE);
             } else {
                 holder.actionRow.setVisibility(View.GONE);
             }

@@ -18,10 +18,12 @@ import java.util.List;
 public class DetailAmountAdapter extends RecyclerView.Adapter<DetailAmountAdapter.DetailAmountVH> {
 
     private List<DetailAmountModel> list;
+    private OnOptionSelected onOptionSelected;
 
 
-    public DetailAmountAdapter(List<DetailAmountModel> list) {
+    public DetailAmountAdapter(List<DetailAmountModel> list, OnOptionSelected onOptionSelected) {
         this.list = list;
+        this.onOptionSelected = onOptionSelected;
     }
 
 
@@ -54,7 +56,7 @@ public class DetailAmountAdapter extends RecyclerView.Adapter<DetailAmountAdapte
         return list.size();
     }
 
-    public static class DetailAmountVH extends RecyclerView.ViewHolder {
+    public class DetailAmountVH extends RecyclerView.ViewHolder {
 
         TextView title;
         TextView subTitle;
@@ -68,10 +70,17 @@ public class DetailAmountAdapter extends RecyclerView.Adapter<DetailAmountAdapte
             subTitle = itemView.findViewById(R.id.subTitleTv);
             amount = itemView.findViewById(R.id.amount_tv);
             imgReceipt = itemView.findViewById(R.id.imgReceipt);
+            imgReceipt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onOptionSelected != null)
+                        onOptionSelected.onReceiptClick(getAdapterPosition());
+                }
+            });
         }
     }
 
     interface OnOptionSelected {
-        void onSelected(int pos);
+        void onReceiptClick(int pos);
     }
 }

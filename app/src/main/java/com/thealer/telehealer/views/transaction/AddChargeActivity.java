@@ -87,6 +87,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 onBackPressed();
             }
         });
+
     }
 
 
@@ -96,7 +97,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
         findViewById(R.id.btnSubmit).setOnClickListener(this);
         findViewById(R.id.btnSubmitProcess).setOnClickListener(this);
-
     }
 
     private void setAdapters() {
@@ -260,6 +260,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     setReasonDataFromTransactionItem(item, addChargeViewModel.getReasonByValue(item.getReason()));
                 }
             }
+            findViewById(R.id.btnSubmitProcess).setVisibility(View.GONE);
         }
     }
 

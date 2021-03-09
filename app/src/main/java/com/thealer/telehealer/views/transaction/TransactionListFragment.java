@@ -45,6 +45,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
+import com.thealer.telehealer.common.fragmentcontainer.FragmentContainerActivity;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -52,6 +53,8 @@ import com.thealer.telehealer.views.common.CustomDialogClickListener;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.common.PdfViewerFragment;
+import com.thealer.telehealer.views.home.SelectAssociationFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import org.json.JSONException;
@@ -305,7 +308,13 @@ public class TransactionListFragment extends BaseFragment {
         rvTransactions.getRecyclerView().setAdapter(new TransactionListAdapter(transactionListViewModel.getTransactions(), new TransactionListAdapter.OnOptionSelected() {
             @Override
             public void onReceiptClick(int pos) {
-
+                Bundle bundle = new Bundle();
+                bundle.putString(ArgumentKeys.PDF_URL, transactionListViewModel.getTransactions().get(pos).getTransactionReceipt());
+                bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.lbl_receipt));
+                startActivity(new Intent(getActivity(), FragmentContainerActivity.class)
+                        .putExtra(FragmentContainerActivity.EXTRA_FRAGMENT, PdfViewerFragment.class.getName())
+                        .putExtra(FragmentContainerActivity.EXTRA_SHOW_TOOLBAR, false)
+                        .putExtra(FragmentContainerActivity.EXTRA_BUNDLE, bundle));
             }
 
             @Override

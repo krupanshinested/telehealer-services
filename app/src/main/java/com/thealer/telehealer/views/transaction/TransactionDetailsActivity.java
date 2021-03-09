@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.transaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,10 +16,13 @@ import com.thealer.telehealer.apilayer.models.transaction.DetailAmountModel;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.RefundItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.fragmentcontainer.FragmentContainerActivity;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.common.PdfViewerFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +79,19 @@ public class TransactionDetailsActivity extends BaseActivity {
             prepareReasonList();
             prepareRefundList();
             if (transactionItem.getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESSED) {
-                imgReceipt.setVisibility(View.VISIBLE);
+                imgReceipt.setVisibility(transactionItem.getTransactionReceipt() != null && transactionItem.getTransactionReceipt().length() > 0 ? View.VISIBLE : View.GONE);
+                imgReceipt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ArgumentKeys.PDF_URL, transactionItem.getTransactionReceipt());
+                        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.lbl_receipt));
+                        startActivity(new Intent(TransactionDetailsActivity.this, FragmentContainerActivity.class)
+                                .putExtra(FragmentContainerActivity.EXTRA_FRAGMENT, PdfViewerFragment.class.getName())
+                                .putExtra(FragmentContainerActivity.EXTRA_SHOW_TOOLBAR, false)
+                                .putExtra(FragmentContainerActivity.EXTRA_BUNDLE, bundle));
+                    }
+                });
             }
         } else {
             findViewById(R.id.rowTotal).setVisibility(View.GONE);
@@ -97,12 +113,21 @@ public class TransactionDetailsActivity extends BaseActivity {
             DetailAmountModel amountModel = new DetailAmountModel();
             amountModel.setTitle(getString(R.string.lbl_refund));
             amountModel.setAmount(refundItem.getAmount());
-            amountModel.setShowReceipt(true);
+            amountModel.setShowReceipt(refundItem.getInvoicePath() != null && refundItem.getInvoicePath().length() > 0);
+            amountModel.setReceiptURL(refundItem.getInvoicePath());
             amountModel.setDetails(Utils.getFormatedDateTime(refundItem.getCreatedAt(), "MM/dd/yyyy"));
             refundAmounts.add(amountModel);
         }
         tvRefund.setText(Utils.getFormattedCurrency(transactionItem.getTotalRefund()));
-        DetailAmountAdapter adapter = new DetailAmountAdapter(refundAmounts);
+        DetailAmountAdapter adapter = new DetailAmountAdapter(refundAmounts, pos -> {
+            Bundle bundle = new Bundle();
+            bundle.putString(ArgumentKeys.PDF_URL, refundAmounts.get(pos).getReceiptURL());
+            bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.lbl_receipt));
+            startActivity(new Intent(this, FragmentContainerActivity.class)
+                    .putExtra(FragmentContainerActivity.EXTRA_FRAGMENT, PdfViewerFragment.class.getName())
+                    .putExtra(FragmentContainerActivity.EXTRA_SHOW_TOOLBAR, false)
+                    .putExtra(FragmentContainerActivity.EXTRA_BUNDLE, bundle));
+        });
         rvRefunds.setAdapter(adapter);
     }
 
@@ -143,7 +168,7 @@ public class TransactionDetailsActivity extends BaseActivity {
             }
             reasonAmounts.add(amountModel);
         }
-        DetailAmountAdapter adapter = new DetailAmountAdapter(reasonAmounts);
+        DetailAmountAdapter adapter = new DetailAmountAdapter(reasonAmounts, null);
         rvReasonCharges.setAdapter(adapter);
     }
 
