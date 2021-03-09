@@ -6,11 +6,15 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +58,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
     private AssociationApiResponseModel associationApiResponseModel;
     private OnCloseActionInterface onCloseActionInterface;
     private SearchCellView searchView;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -67,7 +72,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
-                    if (page == 1){
+                    if (page == 1) {
                         toolbarTitle.setText(Utils.getPaginatedTitle(getString(R.string.medical_assistant), associationApiResponseModel.getCount()));
                     }
                     updateAdapter();
@@ -120,7 +125,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
 
         medicalAssistantCrv.setEmptyState(EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN);
 
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), false, getArguments(), false);
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), false, getArguments(), null);
 
         medicalAssistantCrv.getRecyclerView().setAdapter(doctorPatientListAdapter);
 

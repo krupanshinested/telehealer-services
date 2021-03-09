@@ -45,11 +45,11 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     private boolean isDietView;
     private Bundle bundle;
     private List<AssociationAdapterListModel> adapterListModels;
-    private boolean canViewCardStatus;
+    private CommonUserApiResponseModel doctorModel;
 
-    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle, boolean canViewCardStatus) {
+    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle, CommonUserApiResponseModel doctorModel) {
         fragmentActivity = activity;
-        this.canViewCardStatus = canViewCardStatus;
+        this.doctorModel = doctorModel;
         adapterListModels = new ArrayList<>();
         onActionCompleteInterface = (OnActionCompleteInterface) activity;
         this.isDietView = isDietView;
@@ -92,12 +92,14 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
                     viewHolder.actionIv.setVisibility(View.VISIBLE);
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
-                    viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), canViewCardStatus);
+                    if (doctorModel != null)
+                        viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
                     viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
                                     .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+                                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
                             );
                         }
                     });

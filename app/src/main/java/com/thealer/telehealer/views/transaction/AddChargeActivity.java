@@ -66,6 +66,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     public static String EXTRA_PATIENT_ID = "patientId";
     public static String EXTRA_TRANSACTION_ITEM = "transactionItem";
     public static String EXTRA_ORDER_ID = "orderId";
+    public static String EXTRA_DOCTOR_ID = "doctorId";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,6 +76,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         initViewModels();
         addChargeViewModel.setSelectedReason(getIntent().getIntExtra(EXTRA_REASON, -1));
         addChargeViewModel.setPatientId(getIntent().getIntExtra(EXTRA_PATIENT_ID, -1));
+        addChargeViewModel.setDoctorId(getIntent().getIntExtra(EXTRA_DOCTOR_ID, -1));
         addChargeViewModel.setOrderId(getIntent().getStringExtra(EXTRA_ORDER_ID));
         masterApiViewModel.fetchMasters();
         checkForVisitAndSetUI();
@@ -256,6 +258,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         if (transactionItem != null) {
             addChargeViewModel.setChargeId(transactionItem.getId());
             addChargeViewModel.setPatientId(transactionItem.getPatientId().getUser_id());
+            addChargeViewModel.setDoctorId(transactionItem.getDoctorId().getUser_id());
             addChargeViewModel.setOrderId(transactionItem.getOrderId());
             if (transactionItem.getChargeData() != null && transactionItem.getChargeData().size() > 0) {
                 for (AddChargeReq.ChargeDataItem item : transactionItem.getChargeData()) {
@@ -397,6 +400,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private AddChargeReq getReq() {
         AddChargeReq req = new AddChargeReq();
         req.setOrderId(addChargeViewModel.getOrderId());
+        req.setDoctorId(addChargeViewModel.getDoctorId());
         if (addChargeViewModel.getPatientId() > 0)
             req.setPatientId(addChargeViewModel.getPatientId());
         else {

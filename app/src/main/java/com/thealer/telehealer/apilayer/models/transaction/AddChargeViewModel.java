@@ -29,6 +29,7 @@ public class AddChargeViewModel extends BaseApiViewModel {
     private int chargeId = -1;
 
     private int patientId;
+    private int doctorId;
     private int fees;
 
     private boolean isOnlyVisit;
@@ -220,5 +221,13 @@ public class AddChargeViewModel extends BaseApiViewModel {
 
     public void setAddedTransaction(TransactionItem addedTransaction) {
         this.addedTransaction = addedTransaction;
+    }
+
+    public int getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(int doctorId) {
+        this.doctorId = doctorId;
     }
 }

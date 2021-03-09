@@ -208,15 +208,15 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         doctorPatientListRv = doctorPatientListCrv.getRecyclerView();
 
-        boolean canViewCardStatus = false;
+        CommonUserApiResponseModel doctorModel = null;
         //if user is assistant and this is provider details then showCardStatus from provider data
         if (UserType.isUserAssistant()) {
             if (commonUserApiResponseModel != null && Constants.ROLE_DOCTOR.equals(commonUserApiResponseModel.getRole())) {
-                canViewCardStatus = commonUserApiResponseModel.isCan_view_card_status();
+                doctorModel = commonUserApiResponseModel;
             }
         }
 
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, getArguments(), canViewCardStatus);
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, getArguments(), doctorModel);
 
 
         doctorPatientListRv.setAdapter(doctorPatientListAdapter);
