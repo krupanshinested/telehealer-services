@@ -60,6 +60,15 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             } else {
                 holder.actionRow.setVisibility(View.GONE);
             }
+
+            holder.btnReceipt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onOptionSelected.onReceiptClick(position);
+                }
+            });
+
+
         } else if (UserType.isUserAssistant()) {
             updateActionsForProvider(holder, position);
             holder.doctorRow.setVisibility(View.VISIBLE);

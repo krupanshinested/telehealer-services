@@ -36,8 +36,15 @@ public class FragmentContainerActivity extends BaseActivity implements ChangeTit
         boolean isShowToolbar = getIntent().getBooleanExtra(EXTRA_SHOW_TOOLBAR, true);
         if (!isShowToolbar)
             findViewById(R.id.appbar).setVisibility(View.GONE);
-        else
+        else {
             toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+            findViewById(R.id.back_iv).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
 
         try {
             Class className = Class.forName(name);
