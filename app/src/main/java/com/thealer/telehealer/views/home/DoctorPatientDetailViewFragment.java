@@ -233,8 +233,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             boolean canViewCardStatus = false;
                             if (UserType.isUserDoctor())
                                 canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
-                            else
+                            else if (UserType.isUserAssistant())
                                 canViewCardStatus = resultBean != null && resultBean.isCan_view_card_status();
+                            else
+                                canViewCardStatus = doctorModel != null && doctorModel.isCan_view_card_status();
 
                             if (canViewCardStatus) {
                                 if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info())) {

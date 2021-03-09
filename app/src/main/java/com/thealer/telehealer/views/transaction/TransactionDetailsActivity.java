@@ -115,7 +115,7 @@ public class TransactionDetailsActivity extends BaseActivity {
             amountModel.setAmount(refundItem.getAmount());
             amountModel.setShowReceipt(refundItem.getInvoicePath() != null && refundItem.getInvoicePath().length() > 0);
             amountModel.setReceiptURL(refundItem.getInvoicePath());
-            amountModel.setDetails(Utils.getFormatedDateTime(refundItem.getCreatedAt(), "MM/dd/yyyy"));
+            amountModel.setDetails(Utils.getFormattedDateWithoutTimeZone(refundItem.getCreatedAt(), "MM/dd/yyyy"));
             refundAmounts.add(amountModel);
         }
         tvRefund.setText(Utils.getFormattedCurrency(transactionItem.getTotalRefund()));
@@ -158,11 +158,11 @@ public class TransactionDetailsActivity extends BaseActivity {
                     amountModel.setDetails(TextUtils.join(",", supplies));
 
                 if (description.getStartDate() != null && description.getEndDate() != null) {
-                    String subTitle = Utils.getFormatedDateTime(description.getStartDate(), "MM/dd/yyyy") + " - " + Utils.getFormatedDateTime(description.getEndDate(), "MM/dd/yyyy");
+                    String subTitle = Utils.getFormattedDateWithoutTimeZone(description.getStartDate(), "MM/dd/yyyy") + " - " + Utils.getFormattedDateWithoutTimeZone(description.getEndDate(), "MM/dd/yyyy");
                     amountModel.setDetails(subTitle);
                 }
                 if (description.getDateOfService() != null) {
-                    String subTitle = Utils.getFormatedDateTime(description.getDateOfService(), "MM/dd/yyyy");
+                    String subTitle = Utils.getFormattedDateWithoutTimeZone(description.getDateOfService(), "MM/dd/yyyy");
                     amountModel.setDetails(subTitle);
                 }
             }

@@ -777,6 +777,18 @@ public class Utils {
         return "";
     }
 
+    public static String getFormattedDateWithoutTimeZone(String created_at, String format) {
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
+        DateFormat returnFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+        try {
+            return returnFormat.format(dateFormat.parse(created_at));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
     public static void hideKeyboard(Activity activity) {
         try {
             View view = activity.getCurrentFocus();
