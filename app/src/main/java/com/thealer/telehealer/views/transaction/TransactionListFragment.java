@@ -155,12 +155,18 @@ public class TransactionListFragment extends BaseFragment {
                         if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
                             selectedTransaction = null;
                             String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                            Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.ok), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                                    dialog.dismiss();
+                                }
+                            }, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
                                 }
-                            }, null);
+                            });
                         } else {
                             if (selectedTransaction != null) {
                                 showPatientCardErrorOptions();
@@ -204,7 +210,9 @@ public class TransactionListFragment extends BaseFragment {
 
     private void showPatientCardErrorOptions() {
         ArrayList<String> options = new ArrayList<>();
-        options.add(getString(R.string.lbl_ask_to_add_credit_card));
+        if (selectedTransaction.getDoctorId() != null)
+            if (selectedTransaction.getDoctorId().isCan_view_card_status())
+                options.add(getString(R.string.lbl_ask_to_add_credit_card));
         options.add(getString(R.string.lbl_proceed_offline));
         String message = getString(R.string.msg_invalid_credit_card_in_transaction_process, selectedTransaction.getPatientId().getDisplayName());
         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), message, options, new PickerListener() {

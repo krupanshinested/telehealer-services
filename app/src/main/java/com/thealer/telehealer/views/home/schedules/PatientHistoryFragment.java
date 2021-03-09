@@ -127,11 +127,14 @@ public class PatientHistoryFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (appPreference.getBoolean(PreferenceConstants.IS_PAYMENT_PRE_AUTH_SHOWN)) {
-                    if (AppPaymentCardUtils.hasValidPaymentCard(whoAmIApiResponseModel.getPayment_account_info()))
+                    if (createScheduleViewModel.getDoctorCommonModel().isCan_view_card_status()) {
+                        if (AppPaymentCardUtils.hasValidPaymentCard(whoAmIApiResponseModel.getPayment_account_info()))
+                            createSchedule();
+                        else {
+                            AppPaymentCardUtils.handleCardCasesFromPaymentInfo(PatientHistoryFragment.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                        }
+                    } else
                         createSchedule();
-                    else {
-                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(PatientHistoryFragment.this, whoAmIApiResponseModel.getPayment_account_info(), null);
-                    }
                 } else {
                     appPreference.setBoolean(PreferenceConstants.IS_PAYMENT_PRE_AUTH_SHOWN, true);
                     Bundle bundle = new Bundle();
@@ -197,11 +200,16 @@ public class PatientHistoryFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RequestID.REQ_CONTENT_VIEW && resultCode == Activity.RESULT_OK) {
-            if (AppPaymentCardUtils.hasValidPaymentCard(whoAmIApiResponseModel.getPayment_account_info()))
+            if (createScheduleViewModel.getDoctorCommonModel().isCan_view_card_status()) {
+                if (AppPaymentCardUtils.hasValidPaymentCard(whoAmIApiResponseModel.getPayment_account_info()))
+                    createSchedule();
+                else {
+                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(PatientHistoryFragment.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                }
+            } else {
                 createSchedule();
-            else {
-                AppPaymentCardUtils.handleCardCasesFromPaymentInfo(PatientHistoryFragment.this, whoAmIApiResponseModel.getPayment_account_info(), null);
             }
+
         }
         if (requestCode == RequestID.REQ_CARD_EXPIRE || requestCode == RequestID.REQ_CARD_INFO) {
             createSchedule();

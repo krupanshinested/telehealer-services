@@ -147,21 +147,30 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
                         guestLoginApiResponseModel = (GuestLoginApiResponseModel) baseApiResponseModel;
                         if (guestLoginApiResponseModel.isSuccess()) {
-                            if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info())) {
-                                Bundle bundle = new Bundle();
-                                bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
-                                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                                bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
-                                bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
-                                LocalBroadcastManager
-                                        .getInstance(getActivity())
-                                        .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                                .putExtras(bundle));
-                                AppPaymentCardUtils.handleCardCasesFromPaymentInfo(ScheduleDetailViewFragment.this, guestLoginApiResponseModel.getPayment_account_info(), null);
-                            } else {
-                                callSuccessDialogBroadcast();
-                                createPatientInvite();
+                            boolean canViewCardStatus = false;
+                            if (UserType.isUserDoctor())
+                                canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
+                            else
+                                canViewCardStatus = resultBean.getDoctor() != null && resultBean.getDoctor().isCan_view_card_status();
+
+                            if (canViewCardStatus) {
+                                if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info())) {
+                                    Bundle bundle = new Bundle();
+                                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+                                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
+                                    bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+                                    LocalBroadcastManager
+                                            .getInstance(getActivity())
+                                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                                    .putExtras(bundle));
+                                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(ScheduleDetailViewFragment.this, guestLoginApiResponseModel.getPayment_account_info(), null);
+                                    return;
+                                }
                             }
+                            callSuccessDialogBroadcast();
+                            createPatientInvite();
+
                         } else {
                             showToast(guestLoginApiResponseModel.getMessage());
                         }
@@ -364,11 +373,11 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 callTypes.add(getString(R.string.one_way_call));
                 if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPatient().getPayment_account_info())) {
                     if (UserType.isUserDoctor()) {
-                        if (UserDetailPreferenceManager.getWhoAmIResponse().isPatient_credit_card_required()) {
+                        if (UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status()) {
                             callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
                         }
                     } else if (UserType.isUserAssistant()) {
-                        if (resultBean.getDoctor().isPatient_credit_card_required()) {
+                        if (resultBean.getDoctor().isCan_view_card_status()) {
                             callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
                         }
                     }

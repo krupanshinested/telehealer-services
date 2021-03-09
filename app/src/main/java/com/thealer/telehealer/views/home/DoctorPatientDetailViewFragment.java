@@ -7,7 +7,6 @@ import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -52,8 +51,6 @@ import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiResponseModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.GetUserDetails;
@@ -62,7 +59,6 @@ import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
-import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
@@ -73,15 +69,12 @@ import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
-import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
-import com.thealer.telehealer.views.common.SuccessViewInterface;
-import com.thealer.telehealer.views.guestlogin.GuestLoginActivity;
 import com.thealer.telehealer.views.guestlogin.screens.GuestLoginScreensActivity;
 import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
@@ -91,11 +84,11 @@ import com.thealer.telehealer.views.home.orders.OrdersListFragment;
 import com.thealer.telehealer.views.home.orders.document.DocumentListFragment;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
 import com.thealer.telehealer.views.home.schedules.CreateNewScheduleActivity;
+import com.thealer.telehealer.views.home.schedules.ScheduleDetailViewFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -237,21 +230,29 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
                         guestLoginApiResponseModel = (GuestLoginApiResponseModel) baseApiResponseModel;
                         if (guestLoginApiResponseModel.isSuccess()) {
-                            if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info())) {
-                                Bundle bundle = new Bundle();
-                                bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
-                                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                                bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
-                                bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
-                                LocalBroadcastManager
-                                        .getInstance(getActivity())
-                                        .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                                .putExtras(bundle));
-                                AppPaymentCardUtils.handleCardCasesFromPaymentInfo(DoctorPatientDetailViewFragment.this, guestLoginApiResponseModel.getPayment_account_info(), null);
-                            } else {
-                                callSuccessDialogBroadcast();
-                                createPatientInvite();
+                            boolean canViewCardStatus = false;
+                            if (UserType.isUserDoctor())
+                                canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
+                            else
+                                canViewCardStatus = resultBean != null && resultBean.isCan_view_card_status();
+
+                            if (canViewCardStatus) {
+                                if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info())) {
+                                    Bundle bundle = new Bundle();
+                                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+                                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
+                                    bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+                                    LocalBroadcastManager
+                                            .getInstance(getActivity())
+                                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                                    .putExtras(bundle));
+                                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(DoctorPatientDetailViewFragment.this, guestLoginApiResponseModel.getPayment_account_info(), null);
+                                    return;
+                                }
                             }
+                            callSuccessDialogBroadcast();
+                            createPatientInvite();
 
                         } else {
                             showToast(guestLoginApiResponseModel.getMessage());
@@ -432,9 +433,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         callTypes.add(getString(R.string.one_way_call));
                         if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPayment_account_info())) {
                             if (UserType.isUserDoctor()) {
-                                callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+                                if (UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status())
+                                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
                             } else if (UserType.isUserAssistant()) {
-                                callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+                                if (doctorModel != null && doctorModel.isCan_view_card_status())
+                                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
                             }
                         }
 
@@ -931,7 +934,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 }
             });
             if (Constants.ROLE_PATIENT.equals(resultBean.getRole())) {
-                AppPaymentCardUtils.setCardStatusImage(hasCardIV, resultBean.getPayment_account_info());
+                boolean canViewCardStatus = false;
+                if (UserType.isUserAssistant()) {
+                    if (doctorModel != null)
+                        canViewCardStatus = doctorModel.isCan_view_card_status();
+                }
+                AppPaymentCardUtils.setCardStatusImage(hasCardIV, resultBean.getPayment_account_info(), canViewCardStatus);
             } else
                 hasCardIV.setVisibility(View.GONE);
         }

@@ -225,7 +225,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     private void showPatientCardErrorOptions() {
         ArrayList<String> options = new ArrayList<>();
-        options.add(getString(R.string.lbl_ask_to_add_credit_card));
+        if (addChargeViewModel.getAddedTransaction().getDoctorId() != null)
+            if (addChargeViewModel.getAddedTransaction().getDoctorId().isCan_view_card_status())
+                options.add(getString(R.string.lbl_ask_to_add_credit_card));
         options.add(getString(R.string.lbl_proceed_offline));
         String message = getString(R.string.msg_invalid_credit_card_in_transaction_process, addChargeViewModel.getAddedTransaction().getPatientId().getDisplayName());
         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(this, message, options, new PickerListener() {

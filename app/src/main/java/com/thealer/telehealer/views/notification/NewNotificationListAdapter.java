@@ -1,7 +1,6 @@
 package com.thealer.telehealer.views.notification;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -173,10 +172,15 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 viewHolder.actionCl.setVisibility(View.VISIBLE);
                                 if (!UserType.isUserPatient()) {
                                     viewHolder.hasCardIV.setVisibility(View.VISIBLE);
-                                    AppPaymentCardUtils.setCardStatusImage(viewHolder.hasCardIV, patientModel.getPayment_account_info());
-                                    if (!AppPaymentCardUtils.hasValidPaymentCard(patientModel.getPayment_account_info())) {
+                                    boolean canViewCardStatus = false;
+                                    if (doctorModel != null && doctorModel.isCan_view_card_status())
+                                        canViewCardStatus = doctorModel.isCan_view_card_status();
+                                    AppPaymentCardUtils.setCardStatusImage(viewHolder.hasCardIV, patientModel.getPayment_account_info(), canViewCardStatus);
+                                    if (canViewCardStatus && !AppPaymentCardUtils.hasValidPaymentCard(patientModel.getPayment_account_info())) {
                                         viewHolder.askForCardBtn.setVisibility(View.VISIBLE);
-                                    }
+                                    } else
+                                        viewHolder.askForCardBtn.setVisibility(View.GONE);
+
                                 }
                                 break;
                             case REQUEST_STATUS_ACCEPTED:

@@ -43,6 +43,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     private String last_active;
     private boolean secure_message;
     private boolean patient_credit_card_required;
+    private boolean can_view_card_status;
     private PaymentInfo payment_account_info;
 
     public UserBean() {
@@ -292,5 +293,13 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
 
     public void setPayment_account_info(PaymentInfo payment_account_info) {
         this.payment_account_info = payment_account_info;
+    }
+
+    public boolean isCan_view_card_status() {
+        return can_view_card_status;
+    }
+
+    public void setCan_view_card_status(boolean can_view_card_status) {
+        this.can_view_card_status = can_view_card_status;
     }
 }

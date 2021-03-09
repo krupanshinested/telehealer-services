@@ -14,9 +14,8 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.views.common.ContentActivity;
-import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 
 public class AppPaymentCardUtils {
 
@@ -144,14 +143,20 @@ public class AppPaymentCardUtils {
         return intent;
     }
 
-    public static void setCardStatusImage(ImageView imageView, @Nullable PaymentInfo paymentInfo) {
-        if (paymentInfo != null) {
-            imageView.setVisibility(View.VISIBLE);
-            if (hasValidPaymentCard(paymentInfo)) {
-                imageView.setImageResource(R.drawable.ic_card_enabled);
-            } else {
-                imageView.setImageResource(R.drawable.ic_card_disabled);
-            }
+    public static void setCardStatusImage(ImageView imageView, @Nullable PaymentInfo paymentInfo, boolean canViewCardStatus) {
+        if (UserType.isUserDoctor())
+            canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
+
+        if (canViewCardStatus) {
+            if (paymentInfo != null) {
+                imageView.setVisibility(View.VISIBLE);
+                if (hasValidPaymentCard(paymentInfo)) {
+                    imageView.setImageResource(R.drawable.ic_card_enabled);
+                } else {
+                    imageView.setImageResource(R.drawable.ic_card_disabled);
+                }
+            } else
+                imageView.setVisibility(View.GONE);
         } else
             imageView.setVisibility(View.GONE);
     }

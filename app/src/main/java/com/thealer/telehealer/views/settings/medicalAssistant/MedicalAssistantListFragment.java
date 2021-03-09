@@ -2,7 +2,7 @@ package com.thealer.telehealer.views.settings.medicalAssistant;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -120,7 +120,7 @@ public class MedicalAssistantListFragment extends BaseFragment {
 
         medicalAssistantCrv.setEmptyState(EmptyViewConstants.EMPTY_MEDICAL_ASSISTANT_WITH_BTN);
 
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), false, getArguments());
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), false, getArguments(), false);
 
         medicalAssistantCrv.getRecyclerView().setAdapter(doctorPatientListAdapter);
 

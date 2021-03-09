@@ -23,6 +23,8 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.transaction.AddChargeActivity;
@@ -255,9 +257,14 @@ public class CustomUserListItemView extends ConstraintLayout {
         }
     }
 
-    public void showCardStatus(PaymentInfo paymentInfo) {
-        AppPaymentCardUtils.setCardStatusImage(hasCardIV, paymentInfo);
-        addChargeBtn.setVisibility(VISIBLE);
+    public void showCardStatus(PaymentInfo paymentInfo, boolean canViewCardStatus) {
+        AppPaymentCardUtils.setCardStatusImage(hasCardIV, paymentInfo, canViewCardStatus);
+        if (UserType.isUserDoctor())
+            canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
+        if (canViewCardStatus) {
+            addChargeBtn.setVisibility(VISIBLE);
+        } else
+            addChargeBtn.setVisibility(GONE);
     }
 
     public CustomButton getAddChargeBtn() {

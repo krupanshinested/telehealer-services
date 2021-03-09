@@ -110,6 +110,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                     whoAmIApiResponseModel.setConnection_requests(connection_request.getSwitchStatus());
                     whoAmIApiResponseModel.setAppt_requests(appointment_request.getSwitchStatus());
                     whoAmIApiResponseModel.setPatient_credit_card_required(enable_patient_card.getSwitchStatus());
+                    whoAmIApiResponseModel.setCan_view_card_status(enable_patient_card.getSwitchStatus());
                     GeneralSettingsFragment.this.whoAmIApiResponseModel = whoAmIApiResponseModel;
 
                     if (!TextUtils.isEmpty(selectedItem)) {
@@ -318,7 +319,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
 
         whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
         if (whoAmIApiResponseModel != null) {
-            enable_patient_card.updateSwitch(whoAmIApiResponseModel.isPatient_credit_card_required());
+            enable_patient_card.updateSwitch(whoAmIApiResponseModel.isPatient_credit_card_required() && whoAmIApiResponseModel.isCan_view_card_status());
         } else {
             enable_patient_card.updateSwitch(false);
         }

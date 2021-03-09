@@ -17,15 +17,12 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.stripe.AppOAuthUtils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.monitoring.diet.DietListingFragment;
@@ -48,9 +45,11 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     private boolean isDietView;
     private Bundle bundle;
     private List<AssociationAdapterListModel> adapterListModels;
+    private boolean canViewCardStatus;
 
-    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle) {
+    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle, boolean canViewCardStatus) {
         fragmentActivity = activity;
+        this.canViewCardStatus = canViewCardStatus;
         adapterListModels = new ArrayList<>();
         onActionCompleteInterface = (OnActionCompleteInterface) activity;
         this.isDietView = isDietView;
@@ -93,7 +92,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
                     viewHolder.actionIv.setVisibility(View.VISIBLE);
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
-                    viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info());
+                    viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), canViewCardStatus);
                     viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
