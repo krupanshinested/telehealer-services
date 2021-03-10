@@ -206,6 +206,10 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
         notifyDataSetChanged();
     }
 
+    public void setDoctorModel(CommonUserApiResponseModel doctorModel) {
+        this.doctorModel = doctorModel;
+    }
+
 
     public class HeaderHolder extends RecyclerView.ViewHolder {
         private TextView headerTv;

@@ -29,6 +29,7 @@ import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
@@ -214,9 +215,10 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             if (commonUserApiResponseModel != null && Constants.ROLE_DOCTOR.equals(commonUserApiResponseModel.getRole())) {
                 doctorModel = commonUserApiResponseModel;
             }
-        }
+        } else if (UserType.isUserDoctor())
+            doctorModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, getArguments(), doctorModel);
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, getArguments(),doctorModel);
 
 
         doctorPatientListRv.setAdapter(doctorPatientListAdapter);

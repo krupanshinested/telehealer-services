@@ -43,6 +43,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         holder.tvReason.setText(list.get(position).getCommaSeparatedReason(holder.itemView.getContext()));
         holder.tvDate.setText(Utils.getFormatedDateTime(list.get(position).getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));
         holder.failureReasonRow.setVisibility(View.GONE);
+        if (list.get(position).getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESS_FAILED) {
+            holder.itemView.findViewById(R.id.container).setBackgroundResource(R.drawable.border_red);
+        } else
+            holder.itemView.findViewById(R.id.container).setBackground(null);
         if (list.get(position).getTotalRefund() > 0) {
             holder.tvTotalRefund.setText(Utils.getFormattedCurrency(list.get(position).getTotalRefund()));
             holder.refundRow.setVisibility(View.VISIBLE);

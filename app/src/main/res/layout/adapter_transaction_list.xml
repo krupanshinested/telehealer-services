@@ -12,186 +12,191 @@
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true">
 
-    <TableLayout
+    <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp">
+        android:layout_height="wrap_content">
 
-        <TableRow style="@style/TransactionListRow">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp">
 
-            <TextView
-                style="@style/TransactionRowLbl"
+            <TableRow style="@style/TransactionListRow">
 
-                android:text="@string/lbl_transaction_date_time" />
+                <TextView
+                    style="@style/TransactionRowLbl"
 
-            <TextView
-                android:id="@+id/tvDate"
-                style="@style/TransactionRowValue"
-                android:text="21 Jan 2021 | 03:15 AM" />
-        </TableRow>
+                    android:text="@string/lbl_transaction_date_time" />
 
-        <TableRow
-            style="@style/TransactionListRow"
-            android:visibility="gone">
+                <TextView
+                    android:id="@+id/tvDate"
+                    style="@style/TransactionRowValue"
+                    android:text="21 Jan 2021 | 03:15 AM" />
+            </TableRow>
 
-            <TextView
-                style="@style/TransactionRowLbl"
-                android:text="@string/lbl_service_date" />
+            <TableRow
+                style="@style/TransactionListRow"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tvDateOfService"
-                style="@style/TransactionRowValue"
-                android:text="20 Jan 2021" />
-        </TableRow>
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_service_date" />
 
-        <TableRow
-            android:id="@+id/patientRow"
-            style="@style/TransactionListRow">
+                <TextView
+                    android:id="@+id/tvDateOfService"
+                    style="@style/TransactionRowValue"
+                    android:text="20 Jan 2021" />
+            </TableRow>
 
-            <TextView
-                style="@style/TransactionRowLbl"
-                android:text="@string/lbl_patient" />
+            <TableRow
+                android:id="@+id/patientRow"
+                style="@style/TransactionListRow">
 
-            <TextView
-                android:id="@+id/tvPatient"
-                style="@style/TransactionRowValue"
-                android:text="Bella Tallyer" />
-        </TableRow>
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_patient" />
 
-        <TableRow
-            android:id="@+id/doctorRow"
-            style="@style/TransactionListRow">
+                <TextView
+                    android:id="@+id/tvPatient"
+                    style="@style/TransactionRowValue"
+                    android:text="Bella Tallyer" />
+            </TableRow>
 
-            <TextView
-                style="@style/TransactionRowLbl"
-                android:text="@string/lbl_provider" />
+            <TableRow
+                android:id="@+id/doctorRow"
+                style="@style/TransactionListRow">
 
-            <TextView
-                android:id="@+id/tvDoctor"
-                style="@style/TransactionRowValue"
-                android:text="Bella Tallyer" />
-        </TableRow>
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_provider" />
 
-        <TableRow style="@style/TransactionListRow">
+                <TextView
+                    android:id="@+id/tvDoctor"
+                    style="@style/TransactionRowValue"
+                    android:text="Bella Tallyer" />
+            </TableRow>
 
-            <TextView
-                style="@style/TransactionRowLbl"
-                android:text="@string/lbl_reason" />
+            <TableRow style="@style/TransactionListRow">
 
-            <TextView
-                android:id="@+id/tvReason"
-                style="@style/TransactionRowValue"
-                android:ellipsize="end"
-                android:maxWidth="100dp"
-                android:maxLines="1"
-                android:text="Medicine,MedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicine" />
-        </TableRow>
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_reason" />
 
-        <TableRow style="@style/TransactionListRow">
+                <TextView
+                    android:id="@+id/tvReason"
+                    style="@style/TransactionRowValue"
+                    android:ellipsize="end"
+                    android:maxWidth="100dp"
+                    android:maxLines="1"
+                    android:text="Medicine,MedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicineMedicine" />
+            </TableRow>
 
-            <TextView
-                style="@style/TransactionRowLbl"
-                android:text="@string/lbl_charge" />
+            <TableRow style="@style/TransactionListRow">
 
-            <TextView
-                android:id="@+id/tvCharge"
-                style="@style/TransactionRowValue"
-                android:text=" $28.00" />
-        </TableRow>
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_charge" />
 
-        <TableRow style="@style/TransactionListRow">
+                <TextView
+                    android:id="@+id/tvCharge"
+                    style="@style/TransactionRowValue"
+                    android:text=" $28.00" />
+            </TableRow>
 
-            <TextView
-                style="@style/TransactionRowLbl"
-                android:text="@string/lbl_status" />
+            <TableRow style="@style/TransactionListRow">
 
-            <TextView
-                android:id="@+id/tvStatus"
-                style="@style/TransactionRowValue"
-                android:text="Success" />
-        </TableRow>
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_status" />
 
-        <TableRow
-            android:id="@+id/rowFailureReason"
-            style="@style/TransactionListRow">
+                <TextView
+                    android:id="@+id/tvStatus"
+                    style="@style/TransactionRowValue"
+                    android:text="Success" />
+            </TableRow>
 
-            <TextView
-                style="@style/TransactionRowLbl"
-                android:text="@string/lbl_failure_reason" />
+            <TableRow
+                android:id="@+id/rowFailureReason"
+                style="@style/TransactionListRow">
 
-            <TextView
-                android:id="@+id/tvFailureReason"
-                style="@style/TransactionRowValue"
-                android:text="Success" />
-        </TableRow>
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_failure_reason" />
 
-        <TableRow
-            android:id="@+id/refundRow"
-            style="@style/TransactionListRow"
-            android:visibility="gone">
+                <TextView
+                    android:id="@+id/tvFailureReason"
+                    style="@style/TransactionRowValue"
+                    android:text="Success" />
+            </TableRow>
 
-            <TextView
-                style="@style/TransactionRowLbl"
-                android:text="@string/lbl_total_refund" />
+            <TableRow
+                android:id="@+id/refundRow"
+                style="@style/TransactionListRow"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tvTotalRefund"
-                style="@style/TransactionRowValue"
-                android:text="Success" />
-        </TableRow>
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_total_refund" />
 
-        <TableRow
-            android:id="@+id/actionRow"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="14dp"
-            android:gravity="center">
+                <TextView
+                    android:id="@+id/tvTotalRefund"
+                    style="@style/TransactionRowValue"
+                    android:text="Success" />
+            </TableRow>
 
-            <Button
-                android:id="@+id/btnRefund"
-                style="?attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="15dp"
-                android:layout_weight=".5"
-                android:background="@drawable/btn_theme_orange"
-                android:text="@string/lbl_refund"
-                android:textAllCaps="false"
-                android:textColor="@color/bt_white"
-                android:visibility="gone"
-                tools:visibility="visible" />
+            <TableRow
+                android:id="@+id/actionRow"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="14dp"
+                android:gravity="center">
 
-            <Button
-                android:id="@+id/btnReciept"
-                style="?attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="15dp"
-                android:layout_weight=".5"
-                android:background="@drawable/btn_theme_blue"
-                android:text="@string/lbl_receipt"
-                android:textAllCaps="false"
-                android:textColor="@color/bt_white"
-                android:visibility="gone"
-                tools:visibility="visible" />
+                <Button
+                    android:id="@+id/btnRefund"
+                    style="?attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/btn_theme_orange"
+                    android:text="@string/lbl_refund"
+                    android:textAllCaps="false"
+                    android:textColor="@color/bt_white"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
-
-            <Button
-                android:id="@+id/btnProcessPayment"
-                style="?attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="15dp"
-                android:layout_weight="1"
-                android:background="@drawable/btn_theme_green"
-                android:text="@string/lbl_process_payment"
-                android:textAllCaps="false"
-                android:textColor="@color/bt_white"
-                android:visibility="gone"
-                tools:visibility="visible" />
-        </TableRow>
+                <Button
+                    android:id="@+id/btnReciept"
+                    style="?attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/btn_theme_blue"
+                    android:text="@string/lbl_receipt"
+                    android:textAllCaps="false"
+                    android:textColor="@color/bt_white"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
 
-    </TableLayout>
+                <Button
+                    android:id="@+id/btnProcessPayment"
+                    style="?attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_theme_green"
+                    android:text="@string/lbl_process_payment"
+                    android:textAllCaps="false"
+                    android:textColor="@color/bt_white"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </TableRow>
+
+
+        </TableLayout>
+    </FrameLayout>
 </androidx.cardview.widget.CardView>

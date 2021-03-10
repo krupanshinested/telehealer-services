@@ -36,6 +36,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.settings.ProfileUpdate;
 import com.thealer.telehealer.apilayer.models.userStatus.UpdateStatusApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.DateUtil;
@@ -73,6 +74,8 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     private ProfileCellView signature, appointment_slots, available_time;
     private LinearLayout deleteView, rpmLl, appointmentView, encounterView;
 
+    private WhoAmIApiViewModel whoAmIApiViewModel;
+
     private OnActionCompleteInterface actionCompleteInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private AttachObserverInterface attachObserverInterface;
@@ -100,34 +103,30 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         profileUpdate = new ViewModelProvider(this).get(ProfileUpdate.class);
-
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
+        attachObserverInterface.attachObserver(whoAmIApiViewModel);
         profileUpdate.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
-                if (whoAmIApiResponseModel != null) {
-                    whoAmIApiResponseModel.setSecure_message(secure_message.getSwitchStatus());
-                    whoAmIApiResponseModel.setConnection_requests(connection_request.getSwitchStatus());
-                    whoAmIApiResponseModel.setAppt_requests(appointment_request.getSwitchStatus());
-                    whoAmIApiResponseModel.setPatient_credit_card_required(enable_patient_card.getSwitchStatus());
-                    whoAmIApiResponseModel.setCan_view_card_status(enable_patient_card.getSwitchStatus());
-                    GeneralSettingsFragment.this.whoAmIApiResponseModel = whoAmIApiResponseModel;
+                whoAmIApiViewModel.assignWhoAmI();
+            }
+        });
+
+        whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel responseModel) {
+                if (responseModel instanceof WhoAmIApiResponseModel) {
+                    whoAmIApiResponseModel = (WhoAmIApiResponseModel) responseModel;
 
                     if (!TextUtils.isEmpty(selectedItem)) {
-                        whoAmIApiResponseModel.setAppt_length(Integer.parseInt(getAppointmentSlotValue(selectedItem)));
                         appointment_slots.updateUI(false);
                         appointment_slots.updateValue(getAppointmentSlotValue(selectedItem));
                     }
 
                     if (!TextUtils.isEmpty(startTime) && !TextUtils.isEmpty(endTime)) {
-                        whoAmIApiResponseModel.setAppt_end_time(endTime);
-                        whoAmIApiResponseModel.setAppt_start_time(startTime);
                         available_time.updateUI(false);
                         updateAvaibleTime(whoAmIApiResponseModel.getAppt_start_time(), whoAmIApiResponseModel.getAppt_end_time());
                     }
-
-                    UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
-
                 }
             }
         });
@@ -319,7 +318,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
 
         whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
         if (whoAmIApiResponseModel != null) {
-            enable_patient_card.updateSwitch(whoAmIApiResponseModel.isPatient_credit_card_required() && whoAmIApiResponseModel.isCan_view_card_status());
+            enable_patient_card.updateSwitch(whoAmIApiResponseModel.isPatient_credit_card_required());
         } else {
             enable_patient_card.updateSwitch(false);
         }
