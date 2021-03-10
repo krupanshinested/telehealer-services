@@ -232,6 +232,17 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 options.add(getString(R.string.lbl_ask_to_add_credit_card));
         options.add(getString(R.string.lbl_proceed_offline));
         String message = getString(R.string.msg_invalid_credit_card_in_transaction_process, addChargeViewModel.getAddedTransaction().getPatientId().getDisplayName());
+
+        if (options.size() == 1) {
+            Utils.showAlertDialog(this, getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
+                    dialog.dismiss();
+                }
+            }, (dialog, which) -> dialog.dismiss()).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
+            return;
+        }
         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(this, message, options, new PickerListener() {
             @Override
             public void didSelectedItem(int position) {
@@ -246,10 +257,10 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             public void didCancelled() {
-                setResult(RESULT_CANCELED);
-                finish();
+
             }
         });
+        itemPickerDialog.getWindow().setBackgroundDrawableResource(R.drawable.border_red);
         itemPickerDialog.setCancelable(false);
         itemPickerDialog.show();
     }

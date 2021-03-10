@@ -161,12 +161,7 @@ public class TransactionListFragment extends BaseFragment {
                                     transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
                                     dialog.dismiss();
                                 }
-                            }, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
+                            }, (dialog, which) -> dialog.dismiss()).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
                         } else {
                             if (selectedTransaction != null) {
                                 showPatientCardErrorOptions();
@@ -215,6 +210,17 @@ public class TransactionListFragment extends BaseFragment {
                 options.add(getString(R.string.lbl_ask_to_add_credit_card));
         options.add(getString(R.string.lbl_proceed_offline));
         String message = getString(R.string.msg_invalid_credit_card_in_transaction_process, selectedTransaction.getPatientId().getDisplayName());
+
+        if (options.size() == 1) {
+            Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                    dialog.dismiss();
+                }
+            }, (dialog, which) -> dialog.dismiss()).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
+            return;
+        }
         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), message, options, new PickerListener() {
             @Override
             public void didSelectedItem(int position) {
