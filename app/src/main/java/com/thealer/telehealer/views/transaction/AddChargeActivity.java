@@ -257,7 +257,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             public void didCancelled() {
-
+                setResult(RESULT_CANCELED);
+                finish();
             }
         });
         itemPickerDialog.getWindow().setBackgroundDrawableResource(R.drawable.border_red);
