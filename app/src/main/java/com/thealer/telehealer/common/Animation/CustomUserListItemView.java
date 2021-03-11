@@ -259,12 +259,7 @@ public class CustomUserListItemView extends ConstraintLayout {
 
     public void showCardStatus(PaymentInfo paymentInfo, boolean canViewCardStatus) {
         AppPaymentCardUtils.setCardStatusImage(hasCardIV, paymentInfo, canViewCardStatus);
-        if (UserType.isUserDoctor())
-            canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
-        if (canViewCardStatus) {
-            addChargeBtn.setVisibility(VISIBLE);
-        } else
-            addChargeBtn.setVisibility(GONE);
+        addChargeBtn.setVisibility(VISIBLE);
     }
 
     public CustomButton getAddChargeBtn() {

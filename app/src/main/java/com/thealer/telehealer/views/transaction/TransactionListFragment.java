@@ -128,6 +128,7 @@ public class TransactionListFragment extends BaseFragment {
                     progressBar.setVisibility(View.GONE);
                     showEmptyState();
                 } else {
+                    selectedTransaction = null;
                     transactionListViewModel.setPage(1);
                     loadTransactions(true);
                 }
@@ -149,26 +150,35 @@ public class TransactionListFragment extends BaseFragment {
                     }, null);
                 } else {
                     String json = errorModel.getResponse();
-                    try {
-                        JSONObject jsonObject = new JSONObject(json);
+                    if (json != null) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(json);
 
-                        if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
-                            selectedTransaction = null;
-                            String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                            Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                            if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                                String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                                Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                                        dialog.dismiss();
+                                    }
+                                }, (dialog, which) -> {
+                                    selectedTransaction = null;
                                     dialog.dismiss();
+                                }).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
+                            } else {
+                                if (selectedTransaction != null) {
+                                    showPatientCardErrorOptions();
                                 }
-                            }, (dialog, which) -> dialog.dismiss()).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
-                        } else {
-                            if (selectedTransaction != null) {
-                                showPatientCardErrorOptions();
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    } else {
+                        Utils.showAlertDialog(getContext(), getString(R.string.error), getString(R.string.something_went_wrong_try_again), null, getString(R.string.cancel), null, (dialog, which) -> {
+                            selectedTransaction = null;
+                            dialog.dismiss();
+                        });
                     }
                 }
             }
@@ -238,6 +248,7 @@ public class TransactionListFragment extends BaseFragment {
 
             }
         });
+        itemPickerDialog.getWindow().setBackgroundDrawableResource(R.drawable.border_red);
         itemPickerDialog.setCancelable(false);
         itemPickerDialog.show();
     }
