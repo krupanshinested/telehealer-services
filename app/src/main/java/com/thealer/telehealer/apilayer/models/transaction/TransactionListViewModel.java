@@ -77,7 +77,7 @@ public class TransactionListViewModel extends BaseApiViewModel {
     }
 
     public void processPayment(int id, int paymentMode) {
-
+        setApiRequested(false);
         HashMap<String, Object> req = new HashMap<>();
         req.put("payment_mode", paymentMode);
 

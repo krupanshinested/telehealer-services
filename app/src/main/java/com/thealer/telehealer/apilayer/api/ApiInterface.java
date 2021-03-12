@@ -330,7 +330,7 @@ public interface ApiInterface {
     @POST("api/referrals/" + OrderConstant.ORDER_TYPE_PRESCRIPTIONS)
     Observable<OrdersBaseApiResponseModel> createPrescription(@Query(SYNC_CREATE) boolean sync_create, @Body CreatePrescriptionRequestModel createPrescriptionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @GET("api/users")
+    @GET("api/users-v2")
     Observable<ArrayList<CommonUserApiResponseModel>> getUsersByGuid(@Query(FILTER_USER_GUID_IN) String data);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_SPECIALIST)

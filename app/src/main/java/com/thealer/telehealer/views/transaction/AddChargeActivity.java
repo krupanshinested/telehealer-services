@@ -240,7 +240,10 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
                     dialog.dismiss();
                 }
-            }, (dialog, which) -> dialog.dismiss()).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
+            }, (dialog, which) -> {
+                setResult(RESULT_CANCELED);
+                finish();
+            }).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
             return;
         }
         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(this, message, options, new PickerListener() {
@@ -412,7 +415,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private AddChargeReq getReq() {
         AddChargeReq req = new AddChargeReq();
         req.setOrderId(addChargeViewModel.getOrderId());
-        req.setDoctorId(addChargeViewModel.getDoctorId());
+        if (req.getDoctorId() != -1)
+            req.setDoctorId(addChargeViewModel.getDoctorId());
         if (addChargeViewModel.getPatientId() > 0)
             req.setPatientId(addChargeViewModel.getPatientId());
         else {

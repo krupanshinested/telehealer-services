@@ -23,7 +23,7 @@ public class AddChargeReq {
     private String orderId;
 
     @SerializedName("doctor_id")
-    private Integer doctorId;
+    private int doctorId;
 
     public List<ChargeDataItem> getChargeData() {
         return chargeData;
@@ -51,11 +51,11 @@ public class AddChargeReq {
         this.orderId = orderId;
     }
 
-    public Integer getDoctorId() {
+    public int getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(Integer doctorId) {
+    public void setDoctorId(int doctorId) {
         this.doctorId = doctorId;
     }
 

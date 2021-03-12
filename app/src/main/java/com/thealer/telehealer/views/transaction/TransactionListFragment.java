@@ -124,6 +124,7 @@ public class TransactionListFragment extends BaseFragment {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
                 if (baseApiResponseModels instanceof TransactionListResp) {
+                    transactionListViewModel.setApiRequested(false);
                     rvTransactions.getRecyclerView().getAdapter().notifyDataSetChanged();
                     progressBar.setVisibility(View.GONE);
                     showEmptyState();
