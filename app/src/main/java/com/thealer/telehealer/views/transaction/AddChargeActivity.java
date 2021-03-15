@@ -145,8 +145,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                         transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.STRIPE);
                     }
                 } else {
-                    setResult(RESULT_OK);
-                    finish();
+                    Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.success), baseApiResponseModel.getMessage(), getString(R.string.ok), null, (dialog, which) -> {
+                        dialog.dismiss();
+                        setResult(RESULT_OK);
+                        finish();
+                    }, null);
+
                 }
             }
         });
