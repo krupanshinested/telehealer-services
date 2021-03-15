@@ -1,5 +1,6 @@
 package com.thealer.telehealer.apilayer.models.Payments;
 
+import com.google.gson.annotations.SerializedName;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 
 public class Transaction implements Serializable {
 
+    @SerializedName("transaction_id")
     private String id;
     private String created_at;
     private String amount;
@@ -57,10 +59,10 @@ public class Transaction implements Serializable {
 
 
     public String getCreatedMonthYear() {
-        return Utils.getStringFromDate(getCreatedDate(),"MMM yyyy");
+        return Utils.getStringFromDate(getCreatedDate(), "MMM yyyy");
     }
 
     public String getCreatedMonthYearWithDash() {
-        return Utils.getStringFromDate(getCreatedDate(),"yyyy-MM");
+        return Utils.getStringFromDate(getCreatedDate(), "yyyy-MM");
     }
 }

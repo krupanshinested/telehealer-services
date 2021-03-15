@@ -367,7 +367,8 @@ public class TransactionListFragment extends BaseFragment {
 
             @Override
             public void onAddChargeClick(int position) {
-                startActivityForResult(new Intent(getActivity(), AddChargeActivity.class), RequestID.REQ_UPDATE_LIST);
+                startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
+                        .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
             }
 
             @Override

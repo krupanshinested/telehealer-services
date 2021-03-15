@@ -178,7 +178,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                setResult(RESULT_CANCELED);
+                                setResult(RESULT_OK);
                                 finish();
                             }
                         }, null);
@@ -285,34 +285,36 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void setReasonDataFromTransactionItem(AddChargeReq.ChargeDataItem item, ReasonOption reasonOption) {
-        if (reasonOption != null) {
+        if (reasonOption != null && item != null) {
             reasonOption.setFee(item.getAmount());
             reasonOption.setSelected(true);
             reasonOption.setChargeTypeCode(item.getTypeOfChargeCode());
             reasonOption.setChargeTypeName(item.getTypeOfChargeName());
-            if (reasonOption instanceof SingleDateReasonOption) {
-                ((SingleDateReasonOption) reasonOption).setDate(Utils.getCalendar(item.getDescription().getDateOfService()));
-            }
-            if (reasonOption instanceof DateRangeReasonOption) {
-                ((DateRangeReasonOption) reasonOption).setStartDate(Utils.getCalendar(item.getDescription().getStartDate()));
-                ((DateRangeReasonOption) reasonOption).setEndDate(Utils.getCalendar(item.getDescription().getEndDate()));
-            }
-            if (reasonOption instanceof TextFieldReasonOption) {
-                ((TextFieldReasonOption) reasonOption).setTextFieldValues(new ArrayList<>());
-                List<String> fieldValues = null;
-                if (reasonOption.getValue() == Constants.ChargeReason.MEDICINE) {
-                    if (item.getDescription().getMedicines() != null && item.getDescription().getMedicines().size() != 0) {
-                        fieldValues = item.getDescription().getMedicines();
-                    }
+            if (item.getDescription() != null) {
+                if (reasonOption instanceof SingleDateReasonOption) {
+                    ((SingleDateReasonOption) reasonOption).setDate(Utils.getCalendar(item.getDescription().getDateOfService()));
                 }
-                if (reasonOption.getValue() == Constants.ChargeReason.SUPPLIES) {
-                    if (item.getDescription().getSuppliers() != null && item.getDescription().getSuppliers().size() != 0) {
-                        fieldValues = item.getDescription().getSuppliers();
-                    }
+                if (reasonOption instanceof DateRangeReasonOption) {
+                    ((DateRangeReasonOption) reasonOption).setStartDate(Utils.getCalendar(item.getDescription().getStartDate()));
+                    ((DateRangeReasonOption) reasonOption).setEndDate(Utils.getCalendar(item.getDescription().getEndDate()));
                 }
-                if (fieldValues != null && fieldValues.size() > 0) {
-                    for (String value : fieldValues) {
-                        ((TextFieldReasonOption) reasonOption).getTextFieldValues().add(new TextFieldModel(value));
+                if (reasonOption instanceof TextFieldReasonOption) {
+                    ((TextFieldReasonOption) reasonOption).setTextFieldValues(new ArrayList<>());
+                    List<String> fieldValues = null;
+                    if (reasonOption.getValue() == Constants.ChargeReason.MEDICINE) {
+                        if (item.getDescription().getMedicines() != null && item.getDescription().getMedicines().size() != 0) {
+                            fieldValues = item.getDescription().getMedicines();
+                        }
+                    }
+                    if (reasonOption.getValue() == Constants.ChargeReason.SUPPLIES) {
+                        if (item.getDescription().getSuppliers() != null && item.getDescription().getSuppliers().size() != 0) {
+                            fieldValues = item.getDescription().getSuppliers();
+                        }
+                    }
+                    if (fieldValues != null && fieldValues.size() > 0) {
+                        for (String value : fieldValues) {
+                            ((TextFieldReasonOption) reasonOption).getTextFieldValues().add(new TextFieldModel(value));
+                        }
                     }
                 }
             }
