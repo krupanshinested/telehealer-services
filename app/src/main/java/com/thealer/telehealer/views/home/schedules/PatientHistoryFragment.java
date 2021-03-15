@@ -212,7 +212,8 @@ public class PatientHistoryFragment extends BaseFragment {
 
         }
         if (requestCode == RequestID.REQ_CARD_EXPIRE || requestCode == RequestID.REQ_CARD_INFO) {
-            createSchedule();
+            if (resultCode == Activity.RESULT_OK || data.getBooleanExtra(ArgumentKeys.IS_SKIPPED, false))
+                createSchedule();
         }
     }
 }

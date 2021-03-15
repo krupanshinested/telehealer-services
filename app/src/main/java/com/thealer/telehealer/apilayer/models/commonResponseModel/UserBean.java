@@ -296,8 +296,8 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     }
 
     public boolean isCan_view_card_status() {
-//        return false;
-        return can_view_card_status;
+        return true;
+//        return can_view_card_status;
     }
 
     public void setCan_view_card_status(boolean can_view_card_status) {

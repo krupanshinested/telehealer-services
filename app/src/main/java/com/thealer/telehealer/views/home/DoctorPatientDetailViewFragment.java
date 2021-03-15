@@ -7,6 +7,7 @@ import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -992,7 +993,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             case RequestID.REQ_CARD_INFO:
             case RequestID.REQ_CARD_EXPIRE:
                 if (UserType.isUserPatient()) {
-                    if (resultCode == RESULT_CANCELED) {
+                    if (resultCode == RESULT_CANCELED && data.getBooleanExtra(ArgumentKeys.IS_SKIPPED, false)) {
                         createPatientInvite();
                         goToWaitingScreen();
                     }
