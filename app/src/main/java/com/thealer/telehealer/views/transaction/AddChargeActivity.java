@@ -79,7 +79,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         addChargeViewModel.setDoctorId(getIntent().getIntExtra(EXTRA_DOCTOR_ID, -1));
         addChargeViewModel.setOrderId(getIntent().getStringExtra(EXTRA_ORDER_ID));
         masterApiViewModel.fetchMasters();
-        checkForVisitAndSetUI();
 
         TextView textView = findViewById(R.id.toolbar_title);
         textView.setText(R.string.lbl_transaction);
@@ -132,6 +131,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                         prepareDataFromTransactionItem(new Gson().fromJson(json, TransactionItem.class));
                     }
                     setAdapters();
+                    checkForVisitAndSetUI();
                 }
             }
         });
@@ -325,9 +325,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         if (addChargeViewModel.isReasonSelected(Constants.ChargeReason.VISIT)) {
             if (selectedCount == 1) {
                 addChargeViewModel.setOnlyVisit(true);
+
+                for (int i = addChargeViewModel.getReasonOptions().size() - 1; i > 0; i--) {
+                    addChargeViewModel.getReasonOptions().remove(i);
+                }
             }
         }
-        addChargeViewModel.setUpReason();
     }
 
     @Override

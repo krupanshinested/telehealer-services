@@ -178,7 +178,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     billLl.setVisibility(View.VISIBLE);
                     patient_payments.setVisibility(View.VISIBLE);
                     patient_payments.updateTitle(getString(R.string.lbl_payment));
-                    payments_billings.setVisibility(View.GONE);
+                    payments_billings.hideSplitter(false);
+                    payments_billings.setVisibility(View.VISIBLE);
                 } else {
                     patient_payments.setVisibility(View.GONE);
                 }
