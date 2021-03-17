@@ -334,7 +334,7 @@ public class TransactionListFragment extends BaseFragment {
         rvTransactions.getRecyclerView().setAdapter(new TransactionListAdapter(transactionListViewModel.getTransactions(), new TransactionListAdapter.OnOptionSelected() {
             @Override
             public void onReceiptClick(int pos) {
-                String url = null;//transactionListViewModel.getTransactions().get(pos).getTransactionReceipt();
+                String url = transactionListViewModel.getTransactions().get(pos).getTransactionReceipt();
                 if (url == null || url.isEmpty()) {
                     Utils.showAlertDialog(getContext(), getString(R.string.error), getString(R.string.msg_receipt_not_generated_yet_please_try_again_later), getString(R.string.ok), null, (dialog, which) -> {
                         dialog.dismiss();

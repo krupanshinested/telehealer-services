@@ -165,8 +165,11 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         transactionListViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
-                setResult(RESULT_OK);
-                finish();
+                Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.success), baseApiResponseModels.getMessage(), getString(R.string.ok), null, (dialog, which) -> {
+                    dialog.dismiss();
+                    setResult(RESULT_OK);
+                    finish();
+                }, null);
             }
         });
         transactionListViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
@@ -178,14 +181,17 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
                     if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
                         String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                        Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.error), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                        Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
                                 dialog.dismiss();
-                                setResult(RESULT_OK);
-                                finish();
                             }
-                        }, null);
+                        }, (dialog, which) -> {
+                            dialog.dismiss();
+                            setResult(RESULT_CANCELED);
+                            finish();
+                        }).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
                     } else {
                         if (addChargeViewModel.getAddedTransaction() != null) {
                             showPatientCardErrorOptions();
@@ -216,11 +222,15 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
+                                setResult(RESULT_CANCELED);
+                                finish();
                             }
                         }, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
+                                setResult(RESULT_CANCELED);
+                                finish();
                             }
                         });
             }
