@@ -295,7 +295,7 @@ public class TransactionListFragment extends BaseFragment {
         filterIv = view.findViewById(R.id.filter_iv);
         filterIndicator = view.findViewById(R.id.filter_indicatior_iv);
         if (UserType.isUserPatient())
-            toolbarTitle.setText(getString(R.string.lbl_payment));
+            toolbarTitle.setText(getString(R.string.lbl_charges));
         else
             toolbarTitle.setText(getString(R.string.lbl_patient_payments));
 

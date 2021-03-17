@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +27,6 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
-import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import config.AppConfig;
@@ -48,7 +45,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private ProfileCellView profile, medical_history, settings, email_id,
             phone_number, change_password, checkCallQuality, logs,
-            feedback, terms_and_condition, privacy_policy, payments_billings, educational_video, patient_payments;
+            feedback, terms_and_condition, privacy_policy, add_card, educational_video, patient_payments;
     private View signOut;
 
     private ProfileUpdate profileUpdate;
@@ -110,7 +107,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         terms_and_condition = baseView.findViewById(R.id.terms_and_condition);
         privacy_policy = baseView.findViewById(R.id.privacy_policy);
         signOut = baseView.findViewById(R.id.signOut);
-        payments_billings = baseView.findViewById(R.id.payments_billings);
+        add_card = baseView.findViewById(R.id.add_card);
         patient_payments = baseView.findViewById(R.id.patient_payments);
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
@@ -165,7 +162,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         terms_and_condition.setOnClickListener(this);
         privacy_policy.setOnClickListener(this);
         signOut.setOnClickListener(this);
-        payments_billings.setOnClickListener(this);
+        add_card.setOnClickListener(this);
         medicalAssistantLl.setOnClickListener(this);
         patient_payments.setOnClickListener(this);
 
@@ -177,9 +174,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
                     patient_payments.setVisibility(View.VISIBLE);
-                    patient_payments.updateTitle(getString(R.string.lbl_payment));
-                    payments_billings.hideSplitter(false);
-                    payments_billings.setVisibility(View.VISIBLE);
+                    patient_payments.updateTitle(getString(R.string.lbl_charges));
+                    add_card.setVisibility(View.GONE);
                 } else {
                     patient_payments.setVisibility(View.GONE);
                 }
@@ -191,7 +187,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 medical_history.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
-                    payments_billings.hideSplitter(false);
+                    add_card.setVisibility(View.VISIBLE);
+                    add_card.hideSplitter(false);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {
                     billLl.setVisibility(View.GONE);
@@ -203,8 +200,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 medicalAssistantLl.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
-                    payments_billings.hideSplitter(false);
-                    payments_billings.setVisibility(View.GONE);
+                    add_card.hideSplitter(false);
+                    add_card.setVisibility(View.GONE);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {
                     billLl.setVisibility(View.GONE);

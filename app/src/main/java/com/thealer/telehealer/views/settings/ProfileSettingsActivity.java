@@ -58,6 +58,7 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
+import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.EducationalVideo.EducationalListVideoFragment;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.call.CallNetworkTestActivity;
@@ -260,7 +261,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.LICENCE_UPDATE) {
                 showUserProfile();
             } else if (getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == ArgumentKeys.PAYMENT_INFO) {
-                didSelecteItem(R.id.payments_billings);
+                didSelecteItem(R.id.add_card);
             }
         }
     }
@@ -354,9 +355,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                     signoutApiViewModel.signOut();
                 }
                 break;
-            case R.id.payments_billings:
-                PaymentsListingFragment paymentsListingFragment = new PaymentsListingFragment();
-                showSubFragment(paymentsListingFragment);
+            case R.id.add_card:
+                startActivity(new Intent(this, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
                 break;
             case R.id.medical_assistant_ll:
                 showMedicalAssistantList();
