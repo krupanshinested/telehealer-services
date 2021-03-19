@@ -190,7 +190,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                         }, (dialog, which) -> {
                             dialog.dismiss();
                             setResult(RESULT_CANCELED);
-                            finish();
+                            confirmCharges();
                         }).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
                     } else {
                         if (addChargeViewModel.getAddedTransaction() != null) {
@@ -237,6 +237,19 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         });
 
 
+    }
+
+    private void confirmCharges() {
+        Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.success),
+                         getString(R.string.charge_successfully_added),
+                null, getString(R.string.cancel),null, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        setResult(RESULT_CANCELED);
+                        finish();
+                    }
+                });
     }
 
     private void showPatientCardErrorOptions() {
