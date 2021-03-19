@@ -40,6 +40,7 @@
             android:layout_marginTop="0dp"
             android:background="@drawable/et_black"
             android:hint="@string/lbl_add_fees"
+            android:imeOptions="actionDone"
             android:inputType="numberDecimal"
             android:paddingStart="8dp"
             android:paddingTop="4dp"
