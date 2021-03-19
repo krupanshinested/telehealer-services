@@ -1556,5 +1556,6 @@
     <string name="lbl_online">Online</string>
     <string name="lbl_offline">Offline</string>
     <string name="msg_receipt_not_generated_yet_please_try_again_later">Receipt not generated yet,please try again later.</string>
+    <string name="charge_successfully_added">Your charge has been added successfully</string>
 
 </resources>
