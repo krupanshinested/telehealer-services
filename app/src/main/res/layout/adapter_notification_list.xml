@@ -107,6 +107,17 @@
                     app:layout_constraintBottom_toBottomOf="@+id/list_title_tv"
                     app:layout_constraintEnd_toEndOf="parent" />
 
+                <ImageView
+                    android:id="@+id/card_iv"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_card_enabled"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/list_sub_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/info_iv" />
+
                 <View
                     android:id="@+id/bottom_view"
                     android:layout_width="match_parent"
@@ -123,9 +134,9 @@
             <TextView
                 android:id="@+id/description_tv"
                 style="@style/text_title_dark"
+                android:gravity="center|left"
                 android:textSize="12sp"
                 android:visibility="gone"
-                android:gravity="center|left"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/user_detail_cl"
                 tools:text="@string/dummy_text" />
@@ -315,7 +326,8 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/slot_cl">
+                app:layout_constraintTop_toBottomOf="@+id/slot_cl"
+                tools:visibility="visible">
 
                 <com.thealer.telehealer.common.CustomButton
                     android:id="@+id/accept_btn"
@@ -329,7 +341,7 @@
                     android:textSize="12sp"
                     app:app_gradient="true"
                     app:corner_radius="25dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/btn_barrier"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:text_color="@color/colorWhite" />
@@ -342,9 +354,39 @@
                     android:text="@string/reject"
                     android:textColor="@color/red"
                     android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/accept_btn"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/btn_barrier"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="accept_btn,reject_btn" />
+
+
+                <Button
+                    android:id="@+id/ask_for_card_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/btn_theme_green"
+                    android:gravity="center"
+                    android:stateListAnimator="@null"
+                    android:text="@string/lbl_ask_to_add_credit_card"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="12dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_barrier"
+                    app:layout_constraintWidth_max="@dimen/max_width"
+                    tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

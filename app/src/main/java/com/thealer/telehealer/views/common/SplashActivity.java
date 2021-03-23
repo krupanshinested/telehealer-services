@@ -23,6 +23,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
@@ -31,10 +32,13 @@ import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.appupdate.AppUpdateResponse;
 import com.thealer.telehealer.views.appupdate.AppUpdateViewModel;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.call.CallFeedBackActivity;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
+import com.thealer.telehealer.views.transaction.AddChargeActivity;
+import com.thealer.telehealer.views.transaction.TransactionFilterActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -92,7 +96,6 @@ public class SplashActivity extends BaseActivity {
             }
         });
         appUpdateViewModel.checkForUpdate();
-
     }
 
     private void checkAndMoveToNext(Bundle savedInstanceState, long delay) {

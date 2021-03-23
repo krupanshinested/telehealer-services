@@ -1,16 +1,20 @@
 package com.thealer.telehealer.views.home.schedules;
 
 import android.app.Activity;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +26,12 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.apilayer.models.settings.ProfileUpdate;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -45,6 +51,7 @@ public class PatientHistoryFragment extends BaseFragment {
     private SchedulesApiViewModel schedulesApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private WhoAmIApiResponseModel whoAmIApiResponseModel;
+    private WhoAmIApiViewModel whoAmIApiViewModel;
     private ProfileUpdate profileUpdate;
 
     @Override
@@ -55,8 +62,10 @@ public class PatientHistoryFragment extends BaseFragment {
         profileUpdate = new ViewModelProvider(getActivity()).get(ProfileUpdate.class);
         createScheduleViewModel = new ViewModelProvider(getActivity()).get(CreateScheduleViewModel.class);
         schedulesApiViewModel = new ViewModelProvider(this).get(SchedulesApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserverInterface.attachObserver(schedulesApiViewModel);
         attachObserverInterface.attachObserver(profileUpdate);
+        attachObserverInterface.attachObserver(whoAmIApiViewModel);
 
         schedulesApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -86,6 +95,19 @@ public class PatientHistoryFragment extends BaseFragment {
                 }
             }
         });
+
+
+        whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
+                    if (baseApiResponseModel instanceof WhoAmIApiResponseModel)
+                        whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                }
+            }
+        });
+        whoAmIApiViewModel.assignWhoAmI();
+
     }
 
     @Nullable
@@ -105,7 +127,14 @@ public class PatientHistoryFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (appPreference.getBoolean(PreferenceConstants.IS_PAYMENT_PRE_AUTH_SHOWN)) {
-                    createSchedule();
+                    if (createScheduleViewModel.getDoctorCommonModel().isCan_view_card_status()) {
+                        if (AppPaymentCardUtils.hasValidPaymentCard(whoAmIApiResponseModel.getPayment_account_info()))
+                            createSchedule();
+                        else {
+                            AppPaymentCardUtils.handleCardCasesFromPaymentInfo(PatientHistoryFragment.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                        }
+                    } else
+                        createSchedule();
                 } else {
                     appPreference.setBoolean(PreferenceConstants.IS_PAYMENT_PRE_AUTH_SHOWN, true);
                     Bundle bundle = new Bundle();
@@ -171,7 +200,20 @@ public class PatientHistoryFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RequestID.REQ_CONTENT_VIEW && resultCode == Activity.RESULT_OK) {
-            createSchedule();
+            if (createScheduleViewModel.getDoctorCommonModel().isCan_view_card_status()) {
+                if (AppPaymentCardUtils.hasValidPaymentCard(whoAmIApiResponseModel.getPayment_account_info()))
+                    createSchedule();
+                else {
+                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(PatientHistoryFragment.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                }
+            } else {
+                createSchedule();
+            }
+
+        }
+        if (requestCode == RequestID.REQ_CARD_EXPIRE || requestCode == RequestID.REQ_CARD_INFO) {
+            if (resultCode == Activity.RESULT_OK || data.getBooleanExtra(ArgumentKeys.IS_SKIPPED, false))
+                createSchedule();
         }
     }
 }

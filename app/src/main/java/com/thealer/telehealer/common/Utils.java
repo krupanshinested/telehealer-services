@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.text.Editable;
 import android.text.Html;
+import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -123,6 +124,7 @@ public class Utils {
     public static final String yyyy_mm_dd = "yyyy-MM-dd";
     public static final String mmm_dd = "MMM dd";
     public static final String mmm_yyyy = "MMM yyyy";
+    public static final String dd_mmm_yyyy_hh_mm_a = "dd MMM yyyy | hh:mm a";
     public static String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     private static FancyShowCaseView fancyShowCaseView;
@@ -161,7 +163,7 @@ public class Utils {
         vibrator.vibrate(50);
     }
 
-    public static Dialog showDatePickerDialog(FragmentActivity activity, Calendar minCalendar, int type, DatePickerDialog.OnDateSetListener dateSetListener) {
+    public static Dialog showDatePickerDialog(Context activity, Calendar minCalendar, int type, DatePickerDialog.OnDateSetListener dateSetListener) {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
@@ -775,6 +777,18 @@ public class Utils {
         return "";
     }
 
+    public static String getFormattedDateWithoutTimeZone(String created_at, String format) {
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
+        DateFormat returnFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+        try {
+            return returnFormat.format(dateFormat.parse(created_at));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
     public static void hideKeyboard(Activity activity) {
         try {
             View view = activity.getCurrentFocus();
@@ -938,6 +952,12 @@ public class Utils {
     public static void showUserInputDialog(@NonNull Context context, @Nullable String title, @Nullable String message, @Nullable String editTextHint, @Nullable String positiveText, @Nullable String negativeText,
                                            @Nullable CustomDialogClickListener positiveClickListener, @Nullable CustomDialogClickListener negativeClickListener) {
 
+        showUserInputDialog(context, title, message, editTextHint, positiveText, negativeText, InputType.TYPE_CLASS_TEXT, positiveClickListener, negativeClickListener);
+    }
+
+    public static void showUserInputDialog(@NonNull Context context, @Nullable String title, @Nullable String message, @Nullable String editTextHint, @Nullable String positiveText, @Nullable String negativeText, int inputType,
+                                           @Nullable CustomDialogClickListener positiveClickListener, @Nullable CustomDialogClickListener negativeClickListener) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View view = LayoutInflater.from(context).inflate(R.layout.view_user_input, null);
         builder.setView(view);
@@ -954,6 +974,7 @@ public class Utils {
         cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
         doneTv = (TextView) view.findViewById(R.id.done_tv);
         inputLl = (LinearLayout) view.findViewById(R.id.input_ll);
+        inputEt.setInputType(inputType);
 
         inputEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -1674,6 +1695,10 @@ public class Utils {
         builder.show();
     }
 
+    public static String getFormattedCurrency(double amount) {
+        return String.format("$%.2f", amount);
+    }
+
     public interface OnMultipleChoiceInterface {
         void onSelected(boolean[] selectedList);
     }
@@ -1752,4 +1777,10 @@ public class Utils {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
+
+    public static String getUTCDateFromCalendar(Calendar calendar) {
+        return new SimpleDateFormat(UTCFormat, Locale.getDefault()).format(calendar.getTimeInMillis());
+    }
+
+
 }

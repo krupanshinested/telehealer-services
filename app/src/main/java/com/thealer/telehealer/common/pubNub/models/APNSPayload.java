@@ -36,6 +36,8 @@ public class APNSPayload implements Serializable {
     public static final String kickOutwaitingRoom = "kickOutwaitingRoom";
     public static final String newUserEnteredWaitingRoom = "newUserEnteredWaitingRoom";
     public static final String creditCardExpired = "creditcard";
+    public static final String creditCardRequested = "creditCardRequested";
+    public static final String charge = "charge";
 
 
     private HashMap<String, Object> aps;

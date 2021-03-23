@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/app_background_gradient">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:theme="@style/toolbar_menu_light"
+            app:contentInsetEnd="0dp"
+            app:contentInsetStart="0dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/back_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_arrow_back_black_24dp"
+                    android:tint="@color/colorWhite"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/cancel_tv"
+                    style="@style/text_sub_title_lignt_bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/Cancel"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    style="@style/text_sub_title_lignt_bold"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:ellipsize="end"
+                    android:ems="3"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/details"
+                    android:textSize="@dimen/toolbar_title"
+                    app:layout_constraintBottom_toTopOf="@+id/back_iv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp">
+
+                <TableRow style="@style/TransactionListRow">
+
+                    <TextView
+                        style="@style/TransactionRowLbl"
+                        android:text="@string/lbl_transaction_date_time" />
+
+                    <TextView
+                        android:id="@+id/tvDate"
+                        style="@style/TransactionRowValue.Details"
+                        android:text="21 Jan 2021 | 03:15 AM" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/patientRow"
+                    style="@style/TransactionListRow">
+
+                    <TextView
+                        style="@style/TransactionRowLbl"
+                        android:text="@string/lbl_patient" />
+
+                    <TextView
+                        android:id="@+id/tvPatient"
+                        style="@style/TransactionRowValue.Details"
+                        android:text="Bella Tallyer" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/doctorRow"
+                    style="@style/TransactionListRow">
+
+                    <TextView
+                        style="@style/TransactionRowLbl"
+                        android:text="@string/lbl_provider" />
+
+                    <TextView
+                        android:id="@+id/tvDoctor"
+                        style="@style/TransactionRowValue.Details"
+                        android:text="Bella Tallyer" />
+                </TableRow>
+
+                <TableRow style="@style/TransactionListRow">
+
+                    <TextView
+                        style="@style/TransactionRowLbl"
+                        android:text="@string/lbl_status" />
+
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        style="@style/TransactionRowValue.Details"
+                        android:text="Success" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/rowFailureReason"
+                    style="@style/TransactionListRow"
+                    android:visibility="gone">
+
+                    <TextView
+                        style="@style/TransactionRowLbl"
+                        android:text="@string/lbl_failure_reason" />
+
+                    <TextView
+                        android:id="@+id/tvFailureReason"
+                        style="@style/TransactionRowValue"
+                        android:text="Success" />
+                </TableRow>
+
+            </TableLayout>
+
+            <LinearLayout
+                android:id="@+id/rowTotal"
+                style="@style/TransactionListRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="0dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/lbl_total"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvCharge"
+                    style="@style/TransactionRowValue.Details"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_weight="1"
+                    android:text=" $28.00"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/imgReceipt"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_settings_document"
+                    android:tint="@color/app_gradient_start"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvReasonCharges"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="2"
+                tools:listitem="@layout/adapter_detail_amount" />
+
+            <LinearLayout
+                android:id="@+id/rowRefunds"
+                style="@style/TransactionListRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_refund"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvRefund"
+                    style="@style/TransactionRowValue.Details"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text=" $28.00"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRefunds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="2"
+                tools:listitem="@layout/adapter_detail_amount" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

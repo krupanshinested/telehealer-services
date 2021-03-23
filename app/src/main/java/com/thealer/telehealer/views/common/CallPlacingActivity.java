@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -25,17 +26,15 @@ import com.stripe.android.CustomerSession;
 import com.stripe.android.SetupIntentResult;
 import com.stripe.android.Stripe;
 import com.stripe.android.model.ConfirmSetupIntentParams;
-import com.stripe.android.model.PaymentMethod;
-import com.stripe.android.view.BillingAddressFields;
 import com.stripe.android.view.PaymentMethodsActivityStarter;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.Braintree.StripeViewModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.CallSettings;
@@ -52,12 +51,12 @@ import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.stripe.SetUpIntentResp;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.call.CallActivity;
-import com.thealer.telehealer.views.home.HomeActivity;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -168,12 +167,22 @@ public class CallPlacingActivity extends BaseActivity {
 
             String errorMessage = null;
             if (errorModel != null) {
-                if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
-                    errorMessage = errorModel.getMessage();
-                } else {
-                    AppPaymentCardUtils.handleCardCasesFromErrorModel(this, errorModel, callRequest.getDoctorName());
-                }
 
+                String json = errorModel.getResponse();
+                if (json != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                            errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                        } else {
+                            AppPaymentCardUtils.handleCardCasesFromErrorModel(this, errorModel, callRequest.getDoctorName());
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    errorMessage = getString(R.string.something_went_wrong_try_again);
+                }
             } else {
                 errorMessage = getString(R.string.something_went_wrong_try_again);
             }

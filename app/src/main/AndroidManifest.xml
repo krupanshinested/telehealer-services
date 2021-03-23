@@ -203,10 +203,23 @@
             android:name=".views.settings.accessLogs.AccessLogActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".views.transaction.AddChargeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
             android:name=".stripe.PaymentContentActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".views.transaction.TransactionFilterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".common.fragmentcontainer.FragmentContainerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.transaction.TransactionDetailsActivity"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"

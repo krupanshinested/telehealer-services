@@ -1,15 +1,25 @@
 package com.thealer.telehealer.views.common;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.appbar.AppBarLayout;
+
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.ConsoleMessage;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -18,6 +28,8 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.views.base.BaseFragment;
+
+import org.json.JSONObject;
 
 /**
  * Created by rsekar on 11/15/18.
@@ -71,9 +83,44 @@ public class WebViewFragment extends BaseFragment {
         }
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                handleStripeCallback(view, url);
+            }
+        });
         webView.setWebChromeClient(new WebChromeClient());
 
+
         webView.loadUrl(url);
+    }
+
+    private void handleStripeCallback(WebView view, String url) {
+        if (url.contains("/stripe/oauth/callback?")) {
+            view.evaluateJavascript("document.body.getElementsByTagName('pre')[0].innerHTML", new ValueCallback<String>() {
+                @Override
+                public void onReceiveValue(String value) {
+                    try {
+                        if (value != null) {
+                            JSONObject object = new JSONObject(value.substring(1, value.length() - 1).replace("\\", ""));
+                            if (object.length() > 0) {
+                                if (object.has("success")) {
+                                    if (object.getBoolean("success")) {
+                                        getActivity().setResult(Activity.RESULT_OK);
+                                    }
+                                    getActivity().finish();
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+        }
     }
 }

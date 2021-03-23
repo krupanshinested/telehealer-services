@@ -80,6 +80,7 @@ import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import java.util.Calendar;
 import java.util.List;
@@ -203,11 +204,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
-                        AppPaymentCardUtils.handleCardCasesFromWhoAmI(HomeActivity.this, whoAmIApiResponseModel, null);
+                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
                 }
             }
         });
-        whoAmIApiViewModel.checkWhoAmI();
+        whoAmIApiViewModel.assignWhoAmI();
 
 
         signoutApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -438,8 +439,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
             optionsMenu.findItem(R.id.menu_schedules).setVisible(true);
         } else if (UserType.isUserPatient()) {
-            optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
-            optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
+            optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+            optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
         } else {
             optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
             optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
@@ -552,6 +553,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         setDoctorPatientTitle();
         DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
         setFragment(doctorPatientListingFragment);
+
+        /*TransactionListFragment transactionListFragment = new TransactionListFragment();
+        setFragment(transactionListFragment);*/
     }
 
     private void setDoctorPatientTitle() {
@@ -776,8 +780,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (optionsMenu != null) {
             if (visible) {
                 if (UserType.isUserPatient()) {
-                    optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
-                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
                 } else if (UserType.isUserDoctor()) {
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);

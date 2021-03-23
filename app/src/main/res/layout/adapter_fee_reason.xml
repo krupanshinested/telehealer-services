@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/border_black"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/item_cb"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorBlack_50"
+            android:textSize="12sp"
+            tools:text="@string/dummy_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="$"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/etFees"
+            style="@style/AddChargeEditText"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/et_black"
+            android:hint="@string/lbl_add_fees"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="4dp"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <!--<FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/et_black"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="10dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvChargeType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+
+                android:hint="@string/lbl_charge_type"
+                android:textColorHint="@color/colorBlack_50"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_keyboard_arrow_down_24dp"
+                app:tint="@color/colorGrey" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvChargeType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bt_white"
+            android:clipToPadding="false"
+            android:elevation="5dp"
+            android:translationZ="5dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="5"
+            tools:visibility="visible" />
+    </FrameLayout>-->
+
+    <FrameLayout
+        android:id="@+id/layoutChargeType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spinnerChargeType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/et_black"
+            android:spinnerMode="dropdown" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/ic_keyboard_arrow_down_24dp"
+            android:tint="@color/colorBlack" />
+    </FrameLayout>
+
+
+    <com.thealer.telehealer.views.transaction.DateView
+        android:id="@+id/singleDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <com.thealer.telehealer.views.transaction.DateRangeView
+        android:id="@+id/dateRange"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTextFields"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/imgAddField"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="end"
+        android:padding="4dp"
+        android:src="@drawable/ic_add_circle_black_24dp"
+        android:visibility="gone"
+        app:tint="@color/bt_theme_orange" />
+
+</LinearLayout>

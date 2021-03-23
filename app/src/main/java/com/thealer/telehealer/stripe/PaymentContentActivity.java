@@ -25,11 +25,18 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.Braintree.DefaultCardResp;
+import com.thealer.telehealer.apilayer.models.Braintree.OAuthURLResp;
 import com.thealer.telehealer.apilayer.models.Braintree.StripeViewModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.fragmentcontainer.FragmentContainerActivity;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.ContentActivity;
+import com.thealer.telehealer.views.common.WebViewFragment;
+import com.thealer.telehealer.views.home.SelectAssociationFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,16 +46,19 @@ public class PaymentContentActivity extends ContentActivity {
 
     private boolean isHeadLess = false;
     private boolean canGoBack = false;
+    private boolean isForOAuth = false;
 
     private Stripe stripe = new Stripe(application, BuildConfig.STRIPE_KEY);
 
     private StripeViewModel stripeViewModel;
+    private WhoAmIApiViewModel whoAmIApiViewModel;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         isHeadLess = getIntent().getBooleanExtra(ArgumentKeys.IS_HEAD_LESS, false);
         canGoBack = getIntent().getBooleanExtra(ArgumentKeys.IS_CLOSE_NEEDED, false);
+        isForOAuth = getIntent().getBooleanExtra(ArgumentKeys.IS_FOR_OAUTH, false);
         initStripe();
         super.onCreate(savedInstanceState);
 
@@ -67,13 +77,36 @@ public class PaymentContentActivity extends ContentActivity {
 
     @Override
     public void performActionClick() {
-        stripeViewModel.getDefaultCard();
-        CustomerSession.initCustomerSession(this, new AppEphemeralKeyProvider(stripeViewModel.getAuthApiService()));
+        if (isForOAuth) {
+            stripeViewModel.getOAuthUrl();
+        } else {
+            stripeViewModel.getDefaultCard();
+            CustomerSession.initCustomerSession(this, new AppEphemeralKeyProvider(stripeViewModel.getAuthApiService()));
+        }
     }
 
 
     private void initStripe() {
         stripeViewModel = new ViewModelProvider(this).get(StripeViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
+
+        whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+
+        whoAmIApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel baseApiResponseModel) {
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        });
+        attachObserver(whoAmIApiViewModel);
+
 
         stripeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -88,6 +121,8 @@ public class PaymentContentActivity extends ContentActivity {
                     finish();
                 } else if (baseApiResponseModel instanceof DefaultCardResp) {
                     openPayment();
+                } else if (baseApiResponseModel instanceof OAuthURLResp) {
+                    openOAuthWebView(((OAuthURLResp) baseApiResponseModel).getoAuthURL());
                 }
 
 
@@ -96,8 +131,14 @@ public class PaymentContentActivity extends ContentActivity {
         stripeViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-                if (errorModel != null)
-                    openPayment();
+                if (errorModel != null) {
+                    if (isForOAuth) {
+                        Utils.showAlertDialog(PaymentContentActivity.this, getString(R.string.error), errorModel.getMessage(), getString(R.string.ok), null, null, null);
+                    } else {
+                        openPayment();
+                    }
+
+                }
             }
         });
 
@@ -106,6 +147,17 @@ public class PaymentContentActivity extends ContentActivity {
 
     private void openPayment() {
         stripeViewModel.openPaymentScreen(this);
+    }
+
+    private void openOAuthWebView(String url) {
+        Bundle bundle = new Bundle();
+
+        bundle.putString(ArgumentKeys.WEB_VIEW_URL, url);
+        bundle.putString(ArgumentKeys.VIEW_TITLE, "");
+        startActivityForResult(new Intent(this, FragmentContainerActivity.class)
+                .putExtra(FragmentContainerActivity.EXTRA_SHOW_TOOLBAR, false)
+                .putExtra(FragmentContainerActivity.EXTRA_FRAGMENT, WebViewFragment.class.getName())
+                .putExtra(FragmentContainerActivity.EXTRA_BUNDLE, bundle), RequestID.REQ_OAUTH);
     }
 
     @Override
@@ -154,6 +206,10 @@ public class PaymentContentActivity extends ContentActivity {
                     if (isHeadLess)
                         performSkipClick();
                 }
+            }
+        } else if (requestCode == RequestID.REQ_OAUTH) {
+            if (resultCode == RESULT_OK) {
+                whoAmIApiViewModel.assignWhoAmI();
             }
         }
     }

@@ -2,6 +2,7 @@ package com.thealer.telehealer.apilayer.models.guestviewmodel;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 
 /**
  * Created by Aswin on 01,November,2018
@@ -13,6 +14,7 @@ public class GuestLoginApiResponseModel extends BaseApiResponseModel {
     private String token;
     private CommonUserApiResponseModel doctor_details;
     private Data data;
+    private PaymentInfo payment_account_info;
 
     public CommonUserApiResponseModel getDoctor_details() {
         return doctor_details;
@@ -22,13 +24,11 @@ public class GuestLoginApiResponseModel extends BaseApiResponseModel {
         this.doctor_details = doctor_details;
     }
 
-    public Data getData ()
-    {
+    public Data getData() {
         return data;
     }
 
-    public void setData (Data data)
-    {
+    public void setData(Data data) {
         this.data = data;
     }
 
@@ -54,6 +54,14 @@ public class GuestLoginApiResponseModel extends BaseApiResponseModel {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public PaymentInfo getPayment_account_info() {
+        return payment_account_info;
+    }
+
+    public void setPayment_account_info(PaymentInfo payment_account_info) {
+        this.payment_account_info = payment_account_info;
     }
 
     public class Data {

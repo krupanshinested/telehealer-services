@@ -1,8 +1,12 @@
 package com.thealer.telehealer.apilayer.models.whoami;
 
 import com.google.gson.annotations.SerializedName;
+import com.thealer.telehealer.common.Constants;
 
-public class PaymentInfo {
+import java.io.Serializable;
+import java.util.List;
+
+public class PaymentInfo implements Serializable {
 
     @SerializedName("oauth_status")
     private String oauthStatus;
@@ -18,6 +22,9 @@ public class PaymentInfo {
 
     @SerializedName("saved_cards_count")
     private int savedCardsCount;
+
+    @SerializedName("currently_due")
+    private List<String> currentlyDue;
 
     public String getOauthStatus() {
         return oauthStatus;
@@ -50,5 +57,13 @@ public class PaymentInfo {
 
     public void setSavedCardsCount(int savedCardsCount) {
         this.savedCardsCount = savedCardsCount;
+    }
+
+    public List<String> getCurrentlyDue() {
+        return currentlyDue;
+    }
+
+    public void setCurrentlyDue(List<String> currentlyDue) {
+        this.currentlyDue = currentlyDue;
     }
 }

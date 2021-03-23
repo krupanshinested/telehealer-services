@@ -145,6 +145,23 @@ public class StripeViewModel extends BaseApiViewModel {
         });
     }
 
+    public void getOAuthUrl() {
+        fetchToken(status -> {
+            if (status) {
+                getAuthApiService().getOAuthUrl()
+                        .compose(applySchedulers())
+                        .subscribe(new RAObserver<OAuthURLResp>(Constants.SHOW_PROGRESS) {
+                            @Override
+                            public void onSuccess(OAuthURLResp model) {
+                                baseApiResponseModelMutableLiveData.setValue(model);
+                            }
+                        });
+
+            }
+        });
+    }
+
+
     public void openPaymentScreen(Activity activity) {
         new PaymentMethodsActivityStarter(activity).startForResult(new PaymentMethodsActivityStarter.Args(getPaymentMethodId(), 0, false, Arrays.asList(PaymentMethod.Type.Card), null, null, BillingAddressFields.None, false, false, true));
     }

@@ -1,6 +1,8 @@
 package com.thealer.telehealer.views.home;
 
+import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
@@ -24,6 +26,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.monitoring.diet.DietListingFragment;
+import com.thealer.telehealer.views.transaction.AddChargeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +45,11 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     private boolean isDietView;
     private Bundle bundle;
     private List<AssociationAdapterListModel> adapterListModels;
+    private CommonUserApiResponseModel doctorModel;
 
-    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle) {
+    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle, CommonUserApiResponseModel doctorModel) {
         fragmentActivity = activity;
+        this.doctorModel = doctorModel;
         adapterListModels = new ArrayList<>();
         onActionCompleteInterface = (OnActionCompleteInterface) activity;
         this.isDietView = isDietView;
@@ -84,10 +89,22 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 viewHolder.titleTv.setText(userModel.getUserDisplay_name());
                 loadAvatar(viewHolder.avatarCiv, userModel.getUser_avatar());
 
-                if (UserType.isUserDoctor()) {
+                if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
                     viewHolder.actionIv.setVisibility(View.VISIBLE);
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
-                } else if (UserType.isUserPatient() || UserType.isUserAssistant()) {
+                    if (doctorModel != null)
+                        viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
+                    viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
+                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+                                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
+                            );
+                        }
+                    });
+
+                } else if (UserType.isUserPatient()) {
                     viewHolder.actionIv.setVisibility(View.GONE);
                 }
                 viewHolder.subTitleTv.setText(userModel.getDisplayInfo());
@@ -187,6 +204,10 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
         }
 
         notifyDataSetChanged();
+    }
+
+    public void setDoctorModel(CommonUserApiResponseModel doctorModel) {
+        this.doctorModel = doctorModel;
     }
 
 

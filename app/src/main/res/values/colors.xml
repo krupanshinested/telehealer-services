@@ -4,6 +4,7 @@
     <color name="colorWhiteWithLessAlpha">#b7ffffff</color>
     <color name="colorBlack">#000000</color>
     <color name="colorBlack_50">#70000000</color>
+    <color name="colorBlack_14">#24000000</color>
     <color name="colorGrey">#808080</color>
     <color name="colorGrey_light">#D6D6D6</color>
     <color name="color_grey_light_background">#EEEEEE</color>
@@ -39,4 +40,9 @@
 
     <color name="bt_white">@color/colorWhite</color>
     <color name="bt_very_light_gray">#E2E2E3</color>
+
+    <color name="bt_theme_green">#63EE63</color>
+    <color name="bt_theme_orange">#FF9233</color>
+    <color name="bt_theme_blue">#3B9EFF</color>
+
 </resources>
