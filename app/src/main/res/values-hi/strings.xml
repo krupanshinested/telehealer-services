@@ -1348,4 +1348,5 @@
     <string name="lbl_administrative_document">प्रशासनिक दस्तावेज</string>
     <string name="msg_add_slot">आप 3 अपॉइंटमेंट स्लॉट तक का अनुरोध कर सकते हैं</string>
     <string name="charge_successfully_added">Your charge has been added successfully</string>
+    <string name="confirm_vital_charges">Please confirm to process charges</string>
 </resources>

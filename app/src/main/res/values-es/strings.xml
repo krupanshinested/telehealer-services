@@ -1360,4 +1360,5 @@
     <string name="lbl_administrative_document">Documentos administrativos</string>
     <string name="msg_add_slot">Puede solicitar hasta 3 espacios para citas</string>
     <string name="charge_successfully_added">Your charge has been added successfully</string>
+    <string name="confirm_vital_charges">Please confirm to process charges</string>
 </resources>

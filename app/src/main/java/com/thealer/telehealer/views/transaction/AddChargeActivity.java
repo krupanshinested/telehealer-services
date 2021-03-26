@@ -367,14 +367,24 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnSubmit: {
                 if (isValid()) {
-                    addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                    Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.alert),getString(R.string.confirm_vital_charges) , getString(R.string.yes), getString(R.string.no), (dialog, which) -> {
+                        dialog.dismiss();
+                        addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                    }, ((dialog, which) -> {
+                        dialog.dismiss();
+                    }));
                 }
                 break;
             }
             case R.id.btnSubmitProcess: {
                 if (isValid()) {
-                    addChargeViewModel.setSaveAndProcess(true);
-                    addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                    Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.alert),getString(R.string.confirm_vital_charges) , getString(R.string.yes), getString(R.string.no), (dialog, which) -> {
+                        dialog.dismiss();
+                        addChargeViewModel.setSaveAndProcess(true);
+                        addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                    }, ((dialog, which) -> {
+                        dialog.dismiss();
+                    }));
                 }
             }
         }
