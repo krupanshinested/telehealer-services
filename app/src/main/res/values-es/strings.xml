@@ -1359,6 +1359,7 @@
     <string name="lbl_medical_document">Documentos medicos</string>
     <string name="lbl_administrative_document">Documentos administrativos</string>
     <string name="msg_add_slot">Puede solicitar hasta 3 espacios para citas</string>
-    <string name="charge_successfully_added">Your charge has been added successfully</string>
-    <string name="confirm_vital_charges">Please confirm to process charges</string>
+    <string name="charge_successfully_added">Su cargo se ha agregado correctamente</string>
+    <string name="confirm_vital_charges">Confirme para procesar los cargos</string>
+    <string name="broadcast_messages">Mensajes de difusión</string>
 </resources>

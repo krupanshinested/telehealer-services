@@ -76,6 +76,7 @@ import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OptionsSelectionAdapter;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.home.broadcastMessages.ChoosePatientActivity;
 import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
@@ -1494,7 +1495,8 @@ public class Utils {
         pendingInvitesTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         broadCastMessageTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         pendingInvitesTv.setText(R.string.pending_invites);
-        broadCastMessageTv.setVisibility(View.GONE);
+        broadCastMessageTv.setText(R.string.broadcast_messages);
+        broadCastMessageTv.setVisibility(View.VISIBLE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
 
         pendingInvitesTv.setOnClickListener(new View.OnClickListener() {
@@ -1503,6 +1505,14 @@ public class Utils {
                 alertDialog.dismiss();
                 context.startActivity(new Intent(context, PendingInvitesActivity.class));
 
+            }
+        });
+
+        broadCastMessageTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                context.startActivity(new Intent(context, ChoosePatientActivity.class));
             }
         });
 
