@@ -9,6 +9,13 @@
         android:id="@+id/appbar"
         layout="@layout/appbar_back_with_title_app_color" />
 
+    <com.thealer.telehealer.views.common.SearchCellView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar"
+        android:id="@+id/search_view" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_patient_list"
@@ -17,8 +24,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appbar"
+        app:layout_constraintTop_toBottomOf="@+id/search_view"
         tools:itemCount="3"
-        tools:listitem="@layout/paintent_waiting_list_row"/>
+        android:visibility="visible"
+        tools:listitem="@layout/choose_patient_raw"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
