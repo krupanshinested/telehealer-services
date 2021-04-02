@@ -17,16 +17,26 @@
         app:layout_constraintTop_toBottomOf="@+id/appbar"
         android:id="@+id/search_view" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_patient_list"
+    <com.thealer.telehealer.common.CustomRecyclerView
+        android:id="@+id/doctor_patient_list_crv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_view"
-        tools:itemCount="3"
-        android:visibility="visible"
-        tools:listitem="@layout/choose_patient_raw"/>
+        app:layout_constraintBottom_toTopOf="@id/btnNext"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_view"
+        tools:listitem="@layout/choose_patient_raw" />
 
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:background="@color/app_gradient_start"
+        android:text="@string/next"
+        android:textColor="@color/bt_white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
