@@ -26,7 +26,6 @@ public class AssociationApiViewModel extends BaseApiViewModel {
     }
 
     public void getAssociationList(@Nullable String search, int page, String doctorGuid, boolean showProgress, boolean isMedicalAssistant) {
-        Log.e("neem", "getAssociationList: \n Search String => "+search+"\n Doctor String => "+doctorGuid );
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {

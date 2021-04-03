@@ -2,6 +2,7 @@ package com.thealer.telehealer.apilayer.manager;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.util.Log;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
@@ -125,7 +126,6 @@ public class RetrofitManager extends ContextWrapper {
                     .header(Constants.HEADER_AUTH_TOKEN, token)
                     .method(original.method(), original.body())
                     .build();
-
             return chain.proceed(request);
         });
 

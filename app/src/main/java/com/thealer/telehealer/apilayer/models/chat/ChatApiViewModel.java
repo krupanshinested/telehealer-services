@@ -1,17 +1,14 @@
 package com.thealer.telehealer.apilayer.models.chat;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.Signal.SignalModels.SignalKey;
 import com.thealer.telehealer.common.Signal.SignalModels.SignalKeyPostModel;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.home.chat.PubnubUserStatusInterface;
@@ -40,6 +37,23 @@ public class ChatApiViewModel extends BaseApiViewModel {
                 }
             }
         });
+    }
+
+    public void getBroadcastUserKeys(@NonNull String guidList, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                getAuthApiService().getBroadcastUserKeys(guidList)
+                        .compose(applySchedulers())
+                        .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                            @Override
+                            public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                            }
+                        });
+            }
+        });
+
     }
 
     public void postUserKeys(@NonNull SignalKeyPostModel signalKey, boolean isShowProgress) {
@@ -86,7 +100,7 @@ public class ChatApiViewModel extends BaseApiViewModel {
                     @Override
                     public void onStatus(boolean status) {
                         if (status) {
-                            getAuthApiService().sendMessage(chatStatus != PubnubUtil.CHAT_STATUS_ACTIVE,chatMessageRequestModel)
+                            getAuthApiService().sendMessage(chatStatus != PubnubUtil.CHAT_STATUS_ACTIVE, chatMessageRequestModel)
                                     .compose(applySchedulers())
                                     .subscribe(new RAObserver<BaseApiResponseModel>() {
                                         @Override
@@ -101,6 +115,29 @@ public class ChatApiViewModel extends BaseApiViewModel {
                 });
             }
         });
+    }
+
+    public void sendBroadcastMessage(BroadcastMessageRequestModel broadcastMessageRequestModel) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().sendBroadcastMessage(true, broadcastMessageRequestModel)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>() {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+
+                                    for (BroadcastMessageRequestModel.MessagesBean currentMesssage : broadcastMessageRequestModel.getMessages()) {
+                                        PubnubUtil.shared.sendPubnubMessage(currentMesssage.getTo(), currentMesssage.getReceiver_one_message());
+                                    }
+                                }
+                            });
+                }
+            }
+        });
+
+
     }
 
     public void getPrecannedMessages() {

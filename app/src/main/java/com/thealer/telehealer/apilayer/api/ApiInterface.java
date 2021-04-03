@@ -22,6 +22,8 @@ import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionRequest
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.UpdateAssociationRequestModel;
+import com.thealer.telehealer.apilayer.models.chat.BroadCastUserKeyApiResponseModel;
+import com.thealer.telehealer.apilayer.models.chat.BroadcastMessageRequestModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatApiResponseModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatMessageRequestModel;
 import com.thealer.telehealer.apilayer.models.chat.PrecannedMessageApiResponse;
@@ -624,6 +626,10 @@ public interface ApiInterface {
     @GET("api/signal/keys")
     Observable<UserKeysApiResponseModel> getUserKeys(@Query(USER_GUID) String userGuid);
 
+    @GET("api/signal/keys")
+    Observable<BroadCastUserKeyApiResponseModel> getBroadcastUserKeys(@Query(FILTER_USER_GUID_IN) String guidList);
+
+
     @POST("api/signal/keys")
     Observable<UserKeysApiResponseModel> postUserKeys(@Body SignalKeyPostModel signalKey);
 
@@ -632,6 +638,9 @@ public interface ApiInterface {
 
     @POST("api/messages")
     Observable<BaseApiResponseModel> sendMessage(@Query("notification") boolean notification, @Body ChatMessageRequestModel chatMessageRequestModel);
+
+    @POST("api/messages/bulk")
+    Observable<BaseApiResponseModel> sendBroadcastMessage(@Query("notification") boolean notification, @Body BroadcastMessageRequestModel broadcastMessageRequestModel);
 
     @GET("precanned-messages")
     Observable<PrecannedMessageApiResponse> getPrecannedMessages(@Query(TYPE) String type);

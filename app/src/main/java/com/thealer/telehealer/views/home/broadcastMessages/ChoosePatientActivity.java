@@ -1,6 +1,5 @@
 package com.thealer.telehealer.views.home.broadcastMessages;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -36,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.apilayer.api.ApiInterface.FILTER_USER_GUID_IN;
 
 public class ChoosePatientActivity extends BaseActivity implements AttachObserverInterface {
 
@@ -53,13 +53,32 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
     private SearchCellView searchView;
     private CustomRecyclerView doctorPatientListCrv;
     private List<CommonUserApiResponseModel> lstPatient = new ArrayList<>();
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setContentView(R.layout.activity_choose_patient);
         super.onCreate(savedInstanceState);
+        initViewModel();
         initView();
     }
+
+    private void initViewModel() {
+        associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
+        attachObserver(associationApiViewModel);
+        associationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+
+                    if (baseApiResponseModel instanceof AssociationApiResponseModel) {
+                        associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
+                        didReceivedResult();
+                    }
+                }
+            }
+        });
+    }
+
 
     private void initView() {
         appbarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
@@ -69,9 +88,6 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
         doctorPatientListCrv = (CustomRecyclerView) findViewById(R.id.doctor_patient_list_crv);
         searchView = (SearchCellView) findViewById(R.id.search_view);
         toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        searchView.setSearchHint(getString(R.string.lbl_search_patient));
-        associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
-        attachObserver(associationApiViewModel);
         toolbarTitle.setText(getString(R.string.choose_patient));
         if (UserType.isUserDoctor()) {
             doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_PATIENT_WITH_BTN);
@@ -99,22 +115,11 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
             public void onClick(View v) {
                 if (choosePatientAdapter != null) {
                     List<CommonUserApiResponseModel> selectedUserList = choosePatientAdapter.getSelectedUserList();
-                    if (selectedUserList.size() > 0)
-                        startActivity(new Intent(context, BroadcastMessagesActivity.class));
-                    else
+                    if (selectedUserList.size() > 0) {
+                        startActivity(new Intent(ChoosePatientActivity.this, BroadcastMessagesActivity.class)
+                                .putExtra(FILTER_USER_GUID_IN, (ArrayList<CommonUserApiResponseModel>) selectedUserList));
+                    } else
                         Toast.makeText(ChoosePatientActivity.this, "Please Select User", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        associationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
-            @Override
-            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                if (baseApiResponseModel != null) {
-
-                    if (baseApiResponseModel instanceof AssociationApiResponseModel) {
-                        associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
-                        didReceivedResult();
-                    }
                 }
             }
         });

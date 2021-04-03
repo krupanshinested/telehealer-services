@@ -211,9 +211,9 @@
     <string name="success_message_touchid">We saved your Email Id on this device so you can use your Touch ID to login next time</string>
     <string name="success_title_pin">You’ve set up your login PIN</string>
     <string name="success_message_pin">We saved your Email Id on this device so you can use your PIN to login next time</string>
-    <string name="success_broadcast_receiver">SuccessBroadcastReceiver</string>
-    <string name="success_vital_broadcast_receiver">SuccessVitalBroadcastReceiver</string>
-    <string name="vital_broadcast_receiver">VitalBroadcastReceiver</string>
+    <string name="success_broadcast_receiver" translatable="false">SuccessBroadcastReceiver</string>
+    <string name="success_vital_broadcast_receiver" translatable="false">SuccessVitalBroadcastReceiver</string>
+    <string name="vital_broadcast_receiver" translatable="false">VitalBroadcastReceiver</string>
     <string name="doctor_search_name_info">Enter your name</string>
     <string name="doctor_select_profile_info">Select your profile</string>
     <string name="doctor_detail_info">Provider Registration</string>
@@ -561,7 +561,7 @@
     <string name="certificate">Certificate</string>
     <string name="medical_school_certificate">Medical School Diploma / Certificate</string>
     <string name="profile_picture_updated">profile_picture_updated</string>
-    <string name="app_state_changed">APP_STATE_CHANGED</string>
+    <string name="app_state_changed" translatable="false">APP_STATE_CHANGED</string>
     <string name="insurance_sentenceCase">Insurance</string>
     <string name="payment_methods">Payment Methods</string>
     <string name="email">Email Id</string>
@@ -1373,7 +1373,7 @@
     <string name="update_educational_video">Update Educational Video</string>
     <string name="remove">Remove</string>
     <string name="unassociate_educational_video">Are you sure to remove this educational video for this user.</string>
-    <string name="delete_educational_video">Are you sure to Delete your educational video.</string>
+    <string name="delete_educational_video">Are you sure to Delete your educational video?</string>
     <string name="empty_educational_message_1">Educational Video will eventually show up here</string>
     <string name="doctor_unavailable">This provider currently doesn’t accept connection requests. Please reach out directly to your provider’s office to get connected with your provider via the platform.</string>
     <string name="empty_educational_new">There are no Educational video present. You can create one from settings page</string>
@@ -1438,7 +1438,7 @@
     <string name="enter_name_optional">Name (optional)</string>
     <string name="enter">Enter</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="plz_be_patient">Please be patient while we notify someone from your provider office.You could put this app in the background while you wait.</string>
     <string name="doctor_not_availble">Doctor Not Available</string>
     <string name="doc_wait_room">Your doctor\'s waiting room is not open at the moment . Please try again at a later time</string>
@@ -1559,11 +1559,11 @@
     <string name="charge_successfully_added">Your charge has been added successfully</string>
     <string name="confirm_vital_charges">Please confirm to process charges</string>
     <string name="broadcast_messages">Broadcast Messages</string>
-    <string name="title_activity_broadcast_messages">BroadcastMessagesActivity</string>
+    <string name="title_activity_broadcast_messages" translatable="false">BroadcastMessagesActivity</string>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
     -->
-    <string name="hello_world">Hello Square World!</string>
+    <string name="hello_world" translatable="false">Hello Square World!</string>
 
 </resources>
