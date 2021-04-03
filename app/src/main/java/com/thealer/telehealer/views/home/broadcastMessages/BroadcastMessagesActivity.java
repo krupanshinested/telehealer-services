@@ -90,7 +90,7 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
                 else if (i == 2)
                     title = title + ".. more";
 
-                guidList = guidList + " " + currentUser.getUser_guid() + ",";
+                guidList = guidList+","+currentUser.getUser_guid();
             }
 
         }
@@ -215,6 +215,7 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
             BroadcastMessageRequestModel.MessagesBean messagesBean=new BroadcastMessageRequestModel.MessagesBean();
             messagesBean.setReceiver_one_message(receiverEncryptedMessage);
             messagesBean.setSender_message(myEncryptedMessage);
+            messagesBean.setTo(userSignalKey.getUser_guid());
             messagesBeanList.add(messagesBean);
         }
 
