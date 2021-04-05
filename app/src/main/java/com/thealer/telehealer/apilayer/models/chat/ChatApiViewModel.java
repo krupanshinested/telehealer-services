@@ -38,7 +38,7 @@ public class ChatApiViewModel extends BaseApiViewModel {
             }
         });
     }
-
+    // Get signal key for selected user. This signal key is used to send message using pubnub.
     public void getBroadcastUserKeys(@NonNull String guidList, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override

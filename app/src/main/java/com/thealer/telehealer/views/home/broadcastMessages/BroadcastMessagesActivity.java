@@ -80,8 +80,8 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_broadcast_messages);
         if(getIntent()!=null) {
-
             selectedUserList =(List<CommonUserApiResponseModel>) getIntent().getSerializableExtra(FILTER_USER_GUID_IN);
+            //Loop use to fetch list of select userid and name to process broadcast message
             for (int i = 0; i < selectedUserList.size(); i++) {
                 CommonUserApiResponseModel currentUser = selectedUserList.get(i);
                 if (i == 0) {

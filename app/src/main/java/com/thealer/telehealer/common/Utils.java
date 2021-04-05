@@ -1508,6 +1508,7 @@ public class Utils {
             }
         });
 
+        //allow physician to send broadcast message to all his selected patient
         broadCastMessageTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -109,6 +109,7 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
                 finish();
             }
         });
+        // Redirect to Broadcast Message Screen where same message will be send to all selected patient
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +119,7 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
                         startActivity(new Intent(ChoosePatientActivity.this, BroadcastMessagesActivity.class)
                                 .putExtra(FILTER_USER_GUID_IN, (ArrayList<CommonUserApiResponseModel>) selectedUserList));
                     } else
-                        Toast.makeText(ChoosePatientActivity.this, "Please Select User", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChoosePatientActivity.this, getString(R.string.str_select_patient), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -133,6 +134,7 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
             }
         });
 
+        // allow user to refresh patient list
         doctorPatientListCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -193,6 +195,7 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
 
     }
 
+    // fetch list of patient to send broadcast message
     private void getAssociationsList(boolean isShowProgress) {
         if (!isApiRequested) {
             doctorPatientListCrv.setScrollable(true);

@@ -1480,5 +1480,6 @@
     <string name="charge_successfully_added">Su cargo se ha agregado correctamente</string>
     <string name="confirm_vital_charges">Confirme para procesar los cargos</string>
     <string name="broadcast_messages">Mensajes de difusión</string>
+    <string name="str_select_patient">To send message you have to select atleast one patient.</string>
 
 </resources>

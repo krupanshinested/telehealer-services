@@ -105,6 +105,7 @@ public class ChoosePatientAdapter extends RecyclerView.Adapter<ChoosePatientAdap
         Utils.setImageWithGlide(context.getApplicationContext(), imageView, user_avatar, context.getDrawable(R.drawable.profile_placeholder), true, true);
     }
 
+    // update patient list
     public void setData(List<CommonUserApiResponseModel> associationApiResponseModelResult, int page) {
         if (page == 1) {
             adapterListModels.clear();
@@ -117,6 +118,7 @@ public class ChoosePatientAdapter extends RecyclerView.Adapter<ChoosePatientAdap
         }
     }
 
+    // Display Status of patient
     public void setStatus(OnPatientViewHolder holder, String status, String last_active) {
         int color = R.color.status_offline;
         switch (status) {
