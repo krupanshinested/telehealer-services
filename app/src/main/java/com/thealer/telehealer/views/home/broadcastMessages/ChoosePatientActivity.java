@@ -69,7 +69,6 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-
                     if (baseApiResponseModel instanceof AssociationApiResponseModel) {
                         associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
                         didReceivedResult();
@@ -137,12 +136,15 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
         doctorPatientListCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                doctorPatientListCrv.getSwipeLayout().setRefreshing(false);
                 page = 1;
                 getAssociationsList(false);
             }
         });
 
         doctorPatientListCrv.setErrorModel(this, associationApiViewModel.getErrorModelLiveData());
+
+        getAssociationsList(true);
 
     }
 
@@ -188,12 +190,7 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
         isApiRequested = false;
         doctorPatientListCrv.setScrollable(true);
         doctorPatientListCrv.hideProgressBar();
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getAssociationsList(true);
     }
 
     private void getAssociationsList(boolean isShowProgress) {

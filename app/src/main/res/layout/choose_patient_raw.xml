@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:id="@+id/cl_root">
 
     <CheckBox
         android:id="@+id/item_cb"
@@ -26,6 +27,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/item_cb"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/status_civ"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:src="@color/status_offline"
+        app:civ_border_color="@color/colorWhite"
+        app:civ_border_width="1dp"
+        app:layout_constraintEnd_toEndOf="@id/avatar_civ"
+        app:layout_constraintTop_toTopOf="@+id/avatar_civ" />
 
 
     <TextView

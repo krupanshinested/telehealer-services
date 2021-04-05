@@ -54,7 +54,6 @@ import static com.thealer.telehealer.apilayer.api.ApiInterface.NAME;
 
 public class BroadcastMessagesActivity extends BaseActivity implements View.OnClickListener, OnActionCompleteInterface {
 
-    private ChatApiViewModel chatApiViewModel;
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
@@ -64,10 +63,13 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
     private EditText messageEt;
     private ImageView infoIv,sendIv;
     private  BroadCastUserKeyApiResponseModel broadCastUserKeyApiResponseModel;
-    private CustomRecyclerView chatMessageCrv;
     private SignalKey mySignalKey;
     private ArrayList<SignalKey> selectedUserSignalKey=new ArrayList<>();
+
+    private ChatApiViewModel chatApiViewModel;
+    private CustomRecyclerView chatMessageCrv;
     private ChatListAdapter chatListAdapter;
+
     private CommonUserApiResponseModel userModel=new CommonUserApiResponseModel();
     private ArrayList<String> precannedMessages = new ArrayList<>();
     private PrecannedMessageApiResponse precannedMessageApiResponse;
@@ -131,7 +133,7 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
         chatApiViewModel = new ViewModelProvider(this).get(ChatApiViewModel.class);
         attachObserver(chatApiViewModel);
 
-        chatApiViewModel.getBroadcastUserKeys(guidList,true);
+        chatApiViewModel.getBroadcastUserKeys(guidList,false);
         getPrecannedMessages();
 
         chatApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -209,18 +211,22 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
     private void sendBroadcastMessage() {
         List<BroadcastMessageRequestModel.MessagesBean> messagesBeanList = new ArrayList<>();
         BroadcastMessageRequestModel broadcastMessageRequestModel = new BroadcastMessageRequestModel();
+        String myEncryptedMessage="";
         for(SignalKey userSignalKey:selectedUserSignalKey){
-            String myEncryptedMessage = SignalManager.encryptMessage(messageEt.getText().toString(), mySignalKey, mySignalKey);
+             myEncryptedMessage= SignalManager.encryptMessage(messageEt.getText().toString(), mySignalKey, mySignalKey);
             String receiverEncryptedMessage = SignalManager.encryptMessage(messageEt.getText().toString(), mySignalKey, userSignalKey);
             BroadcastMessageRequestModel.MessagesBean messagesBean=new BroadcastMessageRequestModel.MessagesBean();
             messagesBean.setReceiver_one_message(receiverEncryptedMessage);
             messagesBean.setSender_message(myEncryptedMessage);
             messagesBean.setTo(userSignalKey.getUser_guid());
             messagesBeanList.add(messagesBean);
+            chatListAdapter.setSignalKeys(mySignalKey,userSignalKey);
         }
 
         broadcastMessageRequestModel.setMessages(messagesBeanList);
         chatApiViewModel.sendBroadcastMessage(broadcastMessageRequestModel);
+        ChatApiResponseModel.ResultBean messageBean = new ChatApiResponseModel.ResultBean(myEncryptedMessage, new ChatApiResponseModel.ResultBean.UserBean(UserDetailPreferenceManager.getUser_guid()));
+        chatListAdapter.addMessage(messageBean);
 
         messageEt.setText("");
     }
