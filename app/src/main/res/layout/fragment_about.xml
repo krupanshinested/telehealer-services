@@ -395,11 +395,11 @@
             android:id="@+id/phone_cv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="10dp"
             android:elevation="10dp"
             app:cardCornerRadius="6dp"
             app:cardUseCompatPadding="true"
-            app:layout_constraintBottom_toTopOf="@+id/disconnect_tv"
+            app:layout_constraintBottom_toTopOf="@id/permission_cv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_max="@dimen/max_width">
@@ -426,6 +426,41 @@
                     android:gravity="center|left"
                     android:textColor="@color/colorBlack"
                     tools:text="@string/dummy_text" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/permission_cv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:elevation="10dp"
+            app:cardCornerRadius="6dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintBottom_toTopOf="@+id/disconnect_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_max="@dimen/max_width">
+
+            <LinearLayout
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/text_sub_title_bold_app_color"
+                    android:padding="@dimen/padding_default"
+                    android:text="@string/user_permission"
+                    android:textAllCaps="true" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_root_permission"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/permission_raw_item"
+                    android:layout_margin="@dimen/margin_default"
+                    />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

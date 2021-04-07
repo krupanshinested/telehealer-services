@@ -1481,5 +1481,6 @@
     <string name="confirm_vital_charges">Confirme para procesar los cargos</string>
     <string name="broadcast_messages">Mensajes de difusión</string>
     <string name="str_select_patient">To send message you have to select atleast one patient.</string>
+    <string name="user_permission">User permission</string>
 
 </resources>

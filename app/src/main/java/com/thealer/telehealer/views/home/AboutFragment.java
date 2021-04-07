@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,23 +26,32 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.stripe.android.model.Card;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.OnAdapterListener;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiResponseModel;
+import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
+import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewDialogFragment;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewViewModel;
+import com.thealer.telehealer.views.home.userPermission.UserPermissionAdapter;
 import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
@@ -55,7 +65,7 @@ import config.AppConfig;
 /**
  * Created by Aswin on 14,November,2018
  */
-public class AboutFragment extends BaseFragment {
+public class AboutFragment extends BaseFragment implements OnAdapterListener {
     private LinearLayout patientDetailView;
     private CardView medicalHistoryBtn;
     private CardView insuranceCv;
@@ -75,6 +85,9 @@ public class AboutFragment extends BaseFragment {
     private TextView clinicAddressTv;
     private CardView phoneCv;
     private TextView userPhoneTv;
+    private CardView permissionCv;
+    private RecyclerView rvRootPermission;
+    private UserPermissionAdapter userPermissionAdapter;
     private TextView disconnectTv;
     private ImageView[] indicators;
     private TextView insuranceCashTv;
@@ -83,6 +96,7 @@ public class AboutFragment extends BaseFragment {
     private String view_type, doctorGuid = null;
     private CommonUserApiResponseModel userDetail, doctorDetail;
     private DisconnectAssociationApiViewModel disconnectAssociationApiViewModel;
+    private UserPermissionModel userPermissionModel;
     private OnCloseActionInterface onCloseActionInterface;
     private AttachObserverInterface attachObserverInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
@@ -100,6 +114,7 @@ public class AboutFragment extends BaseFragment {
     private TextView mciTv;
     private CardView websiteCv;
     private TextView websiteTv;
+    private ArrayList<UserPermissionApiResponseModel.Datum> permissionList=new ArrayList<>();
 
     @Override
     public void onAttach(Context context) {
@@ -107,6 +122,24 @@ public class AboutFragment extends BaseFragment {
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
+
+        userPermissionModel=new ViewModelProvider(this).get(UserPermissionModel.class);
+        attachObserverInterface.attachObserver(userPermissionModel);
+        userPermissionModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if(baseApiResponseModel.isSuccess()) {
+                    UserPermissionApiResponseModel userPermission = (UserPermissionApiResponseModel) baseApiResponseModel;
+                    if (userPermission.getData()!=null && userPermissionAdapter!=null && userPermission.getData().size()>0) {
+                        permissionList=userPermission.getData();
+                        userPermissionAdapter.setAdapterData(permissionList);
+                        permissionCv.setVisibility(View.VISIBLE);
+                    } else
+                        permissionCv.setVisibility(View.GONE);
+
+                }
+            }
+        });
 
         disconnectAssociationApiViewModel = new ViewModelProvider(this).get(DisconnectAssociationApiViewModel.class);
         attachObserverInterface.attachObserver(disconnectAssociationApiViewModel);
@@ -125,6 +158,12 @@ public class AboutFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    private void setUpPermissionUI() {
+        userPermissionAdapter=new UserPermissionAdapter(getActivity(),this);
+        rvRootPermission.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvRootPermission.setAdapter(userPermissionAdapter);
     }
 
     @Nullable
@@ -155,6 +194,8 @@ public class AboutFragment extends BaseFragment {
         clinicAddressTv = (TextView) view.findViewById(R.id.clinic_address_tv);
         phoneCv = (CardView) view.findViewById(R.id.phone_cv);
         userPhoneTv = (TextView) view.findViewById(R.id.user_phone_tv);
+        permissionCv=(CardView) view.findViewById(R.id.permission_cv);
+        rvRootPermission=(RecyclerView) view.findViewById(R.id.rv_root_permission);
         disconnectTv = (TextView) view.findViewById(R.id.disconnect_tv);
         insuranceCashTv = (TextView) view.findViewById(R.id.insurance_cash_tv);
         insuranceImageLl = (LinearLayout) view.findViewById(R.id.insurance_image_ll);
@@ -195,6 +236,7 @@ public class AboutFragment extends BaseFragment {
                         doctorDetailView.setVisibility(View.VISIBLE);
                         patientDetailView.setVisibility(View.GONE);
                         phoneCv.setVisibility(View.GONE);
+                        permissionCv.setVisibility(View.GONE);
 
                         if (userDetail.getUser_detail() != null &&
                                 userDetail.getUser_detail().getData() != null) {
@@ -279,6 +321,9 @@ public class AboutFragment extends BaseFragment {
                     case Constants.ROLE_ASSISTANT:
                         doctorDetailView.setVisibility(View.GONE);
                         patientDetailView.setVisibility(View.VISIBLE);
+                        permissionCv.setVisibility(View.VISIBLE); // Physician Can Assign permission to Patient as well as assistant
+                        userPermissionModel.getUserPermission();
+                        setUpPermissionUI();
 
                         if (view_type.equals(Constants.VIEW_CONNECTION)) {
                             medicalHistoryBtn.setVisibility(View.GONE);
@@ -435,6 +480,7 @@ public class AboutFragment extends BaseFragment {
         }
     }
 
+
     @Nullable
     private String getPhoneNumber() {
         if (userDetail == null) {
@@ -515,5 +561,25 @@ public class AboutFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(statusReceiver);
+    }
+
+    @Override
+    public void onEventTrigger(Bundle bundle) {
+        int pos=bundle.getInt(ArgumentKeys.ITEM_CLICK_POS);
+
+        Boolean isChecked = permissionList.get(pos).getPermissionState();
+        if(isChecked){
+            permissionList.get(pos).setPermissionState(!isChecked);
+        }else{
+            permissionList.get(pos).setPermissionState(!isChecked);
+        }
+                ((Activity)getContext()).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                userPermissionAdapter.notifyItemChanged(pos);
+            }
+        });
+
+
     }
 }

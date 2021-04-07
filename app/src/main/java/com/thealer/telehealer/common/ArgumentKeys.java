@@ -250,4 +250,7 @@ public class ArgumentKeys {
 
     public static final String IS_HEAD_LESS = "IS_HEAD_LESS";
 
+    public static final String IS_SWITCH_ENABLE = "IS_SWITCH_ENABLE";
+    public static final String ITEM_CLICK_POS = "ITEM_CLICK_POS";
+
 }

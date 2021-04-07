@@ -1566,5 +1566,6 @@
     -->
     <string name="hello_world" translatable="false">Hello Square World!</string>
     <string name="str_select_patient">To send message you have to select atleast one patient.</string>
+    <string name="user_permission">User permission</string>
 
 </resources>

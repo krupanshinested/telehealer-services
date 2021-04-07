@@ -52,7 +52,6 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
     private RecyclerView rvPatientList;
     private SearchCellView searchView;
     private CustomRecyclerView doctorPatientListCrv;
-    private List<CommonUserApiResponseModel> lstPatient = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

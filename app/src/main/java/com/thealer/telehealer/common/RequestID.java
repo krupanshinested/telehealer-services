@@ -68,6 +68,7 @@ public class RequestID {
 
     public static final String REQ_SHOW_DETAIL_VIEW = "REQ_SHOW_DETAIL_VIEW";
     public static final String REQ_ADD_CONNECTION = "REQ_ADD_CONNECTION";
+    public static final String REQ_HANDLE_PERMISSION = "REQ_HANDLE_PERMISSION";
 
 
 }
