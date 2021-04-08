@@ -1567,5 +1567,6 @@
     <string name="hello_world" translatable="false">Hello Square World!</string>
     <string name="str_select_patient">To send message you have to select atleast one patient.</string>
     <string name="user_permission">User permission</string>
+    <string name="hippa_msg">Telehealer assumes that as a Provider you have signed BAA agreement and HIPPA Policy with your support staff, Telehealer platform is not responsible for any violations.</string>
 
 </resources>

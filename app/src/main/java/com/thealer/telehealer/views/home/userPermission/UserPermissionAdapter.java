@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.userPermission;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.OnAdapterListener;
 import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Utils;
 
 import java.util.ArrayList;
 
@@ -23,12 +25,11 @@ import java.util.ArrayList;
  * Created by Nimesh Patel
  * Created Date: 07,April,2021
  **/
-public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAdapter.OnUserPermissionViewHolder> {
+public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAdapter.OnUserPermissionViewHolder> implements OnAdapterListener {
     private FragmentActivity activity;
     private ArrayList<UserPermissionApiResponseModel.Datum> adapterList;
     private OnAdapterListener onAdapterListener;
-    UserPermissionAdapter subUserPermissionAdapter;
-    int rootPosition=-1;
+
 
     public UserPermissionAdapter(FragmentActivity activity, OnAdapterListener onAdapterListener) {
         this.activity = activity;
@@ -45,27 +46,45 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
     @Override
     public void onBindViewHolder(@NonNull OnUserPermissionViewHolder holder, int position) {
         UserPermissionApiResponseModel.Datum currentPermission = adapterList.get(position);
-        rootPosition=position;
         if (currentPermission != null) {
-            holder.statSwitch.setChecked(currentPermission.getPermissionState());
-            holder.tvName.setText(currentPermission.getPermissionName());
+            holder.permissionSwitch.setChecked(currentPermission.getPermissionState());
+            holder.title.setText(currentPermission.getPermissionName());
             if (currentPermission.getSubPermission() != null && currentPermission.getSubPermission().size() > 0 && currentPermission.getPermissionState()) {
-
                 holder.rvSubSwitch.setVisibility(View.VISIBLE);
-
+                UserSubPermissionAdapter userSubPermissionAdapter = new UserSubPermissionAdapter(activity, position, currentPermission.getSubPermission(), this);
+                holder.rvSubSwitch.setAdapter(userSubPermissionAdapter);
             } else {
                 holder.rvSubSwitch.setVisibility(View.GONE);
             }
-            holder.statSwitch.setOnClickListener(new View.OnClickListener() {
+            holder.permissionSwitch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(ArgumentKeys.ITEM_CLICK_POS, position);
-                    onAdapterListener.onEventTrigger(bundle);
+                    if (!currentPermission.getPermissionState()) {
+                        Utils.showAlertDialog(activity, activity.getString(R.string.notes), activity.getString(R.string.hippa_msg), activity.getString(R.string.ok), activity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Bundle bundle = new Bundle();
+                                bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS, position);
+                                bundle.putBoolean(ArgumentKeys.IS_FROM_PARENT, true);
+                                onAdapterListener.onEventTrigger(bundle);
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                currentPermission.setPermissionState(false);
+                                holder.permissionSwitch.setChecked(false);
+                                dialog.dismiss();
+                            }
+                        });
+                    }else{
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS, position);
+                        bundle.putBoolean(ArgumentKeys.IS_FROM_PARENT, true);
+                        onAdapterListener.onEventTrigger(bundle);
+                    }
                 }
             });
-
-
         }
     }
 
@@ -78,16 +97,21 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
         this.adapterList = adapterList;
     }
 
+    @Override
+    public void onEventTrigger(Bundle bundle) {
+        onAdapterListener.onEventTrigger(bundle);
+    }
+
     public class OnUserPermissionViewHolder extends RecyclerView.ViewHolder {
-        private Switch statSwitch;
+        private Switch permissionSwitch;
         private RecyclerView rvSubSwitch;
-        private TextView tvName;
+        private TextView title;
 
         public OnUserPermissionViewHolder(@NonNull View itemView) {
             super(itemView);
-            statSwitch = itemView.findViewById(R.id.stat_switch);
+            permissionSwitch = itemView.findViewById(R.id.permission_switch);
             rvSubSwitch = itemView.findViewById(R.id.rv_sub_switch);
-            tvName = itemView.findViewById(R.id.tv_name);
+            title = itemView.findViewById(R.id.title);
             rvSubSwitch.setLayoutManager(new LinearLayoutManager(activity));
 
         }
