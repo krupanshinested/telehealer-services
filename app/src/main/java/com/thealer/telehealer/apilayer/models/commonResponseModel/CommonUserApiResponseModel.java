@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
+import com.thealer.telehealer.apilayer.models.createuser.SpecialtiesBean;
 import com.thealer.telehealer.apilayer.models.createuser.VisitAddressBean;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
@@ -69,6 +70,10 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             return getUser_detail().getData().getSpecialties().get(0).getName();
         }
         return "";
+    }
+
+    public  List<SpecialtiesBean> getSupportStaffTypeList(){
+        return getUser_detail().getData().getSpecialties();
     }
 
     public String getUserDisplay_name() {

@@ -448,6 +448,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:text="@string/user_permission"
+                android:textAllCaps="true"
                 android:textColor="@color/colorBlack"
                 android:textSize="16dp"
                 android:textStyle="bold"
