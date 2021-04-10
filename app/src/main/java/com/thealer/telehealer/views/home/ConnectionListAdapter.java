@@ -128,16 +128,16 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             public void onClick(View v) {
                 if (user.getRole().equals(Constants.ROLE_DOCTOR) && !user.getConnection_requests()) {
                     selected_position = i;
-                    selectDesignation(v,i,user);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Constants.USER_DETAIL, user);
+                    bundle.putBoolean(ArgumentKeys.SHOW_CONNECTION_REQUEST_ALERT, true);
+                    onListItemSelectInterface.onListItemSelected(i, bundle);
                 } else if (apiResponseModelList.get(i).getConnection_status() == null ||
                         apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_REJECTED)) {
                     Utils.vibrate(fragmentActivity);
                     selected_position = i;
                     onListItemSelectInterface.onListItemSelected(i, null);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.get(i).getUser_id());
-                    bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
-                    onActionCompleteInterface.onCompletionResult(null, true, bundle);
+                    selectDesignation(v,apiResponseModelList.get(i));
                 }
             }
         });
@@ -150,7 +150,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
     }
 
     //Allow physician to view list of support staff. Also physician can request to add them.
-    private void selectDesignation(View v, int rootPos, CommonUserApiResponseModel user) {
+    private void selectDesignation(View v, CommonUserApiResponseModel apiResponseModelList) {
         LayoutInflater layoutInflater=LayoutInflater.from(context);
         View layoutInflateView=layoutInflater.inflate
                 (R.layout.designation_alert,(ViewGroup)v.findViewById(R.id.cl_root));
@@ -166,9 +166,10 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         Button btnCancel=layoutInflateView.findViewById(R.id.btn_cancel);
         View viewDevider=layoutInflateView.findViewById(R.id.view_devider);
 
-        headerTitle.setText(String.format(fragmentActivity.getString(R.string.str_select_designation_for),user.getDisplayName()));
 
-        List<SpecialtiesBean> tempList = user.getSupportStaffTypeList();
+        headerTitle.setText(String.format(fragmentActivity.getString(R.string.str_select_designation_for),apiResponseModelList.getUserDisplay_name()));
+
+        List<SpecialtiesBean> tempList = apiResponseModelList.getSupportStaffTypeList();
         tempList=new ArrayList<>();
         SpecialtiesBean spb1=new SpecialtiesBean();
         SpecialtiesBean spb2=new SpecialtiesBean();
@@ -219,9 +220,9 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
                     SpecialtiesBean specialist = designationListAdapter.getSpecialistInfo();
                     Toast.makeText(fragmentActivity, "You have Selected : "+specialist.getName(), Toast.LENGTH_LONG).show();
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable(Constants.USER_DETAIL, user);
-                    bundle.putBoolean(ArgumentKeys.SHOW_CONNECTION_REQUEST_ALERT, true);
-                    onListItemSelectInterface.onListItemSelected(rootPos, bundle);
+                    bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.getUser_id());
+                    bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList);
+                    onActionCompleteInterface.onCompletionResult(null, true, bundle);
                 }
                 dialog.dismiss();
 

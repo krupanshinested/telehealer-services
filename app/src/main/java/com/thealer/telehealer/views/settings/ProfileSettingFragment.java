@@ -45,7 +45,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private ProfileCellView profile, medical_history, settings, email_id,
             phone_number, change_password, checkCallQuality, logs,
-            feedback, terms_and_condition, privacy_policy, add_card, educational_video, patient_payments;
+            feedback, terms_and_condition, privacy_policy, add_card, educational_video, patient_payments,subscription;
     private View signOut;
 
     private ProfileUpdate profileUpdate;
@@ -108,6 +108,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         privacy_policy = baseView.findViewById(R.id.privacy_policy);
         signOut = baseView.findViewById(R.id.signOut);
         add_card = baseView.findViewById(R.id.add_card);
+        subscription = baseView.findViewById(R.id.subscription);
         patient_payments = baseView.findViewById(R.id.patient_payments);
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
@@ -163,6 +164,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         privacy_policy.setOnClickListener(this);
         signOut.setOnClickListener(this);
         add_card.setOnClickListener(this);
+        subscription.setOnClickListener(this);
         medicalAssistantLl.setOnClickListener(this);
         patient_payments.setOnClickListener(this);
 
@@ -188,7 +190,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
                     add_card.setVisibility(View.VISIBLE);
-                    add_card.hideSplitter(false);
+                    subscription.setVisibility(View.VISIBLE);
+                    patient_payments.hideSplitter(true);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {
                     billLl.setVisibility(View.GONE);
@@ -200,8 +203,9 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 medicalAssistantLl.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
-                    add_card.hideSplitter(false);
                     add_card.setVisibility(View.GONE);
+                    patient_payments.hideSplitter(true);
+                    subscription.setVisibility(View.GONE);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {
                     billLl.setVisibility(View.GONE);

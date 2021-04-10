@@ -97,10 +97,16 @@
                     android:background="@color/colorGrey_light" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/subscription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_baseline_credit_card_24"
+                    app:title="@string/lbl_my_subscriptions" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/add_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:hideSpiltter="true"
                     app:icon="@drawable/ic_baseline_credit_card_24"
                     app:title="@string/lbl_manage_cards" />
 
@@ -109,7 +115,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    app:hideSpiltter="true"
                     app:icon="@drawable/ic_payment"
                     app:title="@string/lbl_patient_payments" />
 

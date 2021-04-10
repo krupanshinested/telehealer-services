@@ -89,6 +89,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         }
     }
 
+
     public String getDoctorAddress() {
 
         if (getUser_detail() != null &&

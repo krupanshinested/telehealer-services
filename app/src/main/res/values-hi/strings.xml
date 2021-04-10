@@ -1473,4 +1473,8 @@
     <string name="hippa_msg">Telehealer assumes that as a Provider you have signed BAA agreement and HIPPA Policy with your support staff, Telehealer platform is not responsible for any violations.</string>
     <string name="str_select_designation">Select Designation</string>
     <string name="str_select_designation_for">Select designation for %s</string>
+    <string name="lbl_my_subscriptions">My Subscriptions</string>
+    <string name="lbl_subscriptions_plan">Subscription Plan</string>
+    <string name="symbol_dollar">$</string>
+    <string name="str_free_data">Get this plan Free when</string>
 </resources>

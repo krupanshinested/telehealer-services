@@ -1499,6 +1499,10 @@ public class Utils {
         broadCastMessageTv.setVisibility(View.VISIBLE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
 
+        if(UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)){
+            broadCastMessageTv.setVisibility(View.GONE);
+        }
+
         pendingInvitesTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
