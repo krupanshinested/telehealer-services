@@ -1,8 +1,7 @@
 package com.thealer.telehealer.views.subscription;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,22 +12,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.OnAdapterListener;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 
-import java.util.ArrayList;
+import static com.thealer.telehealer.common.Constants.activatedPlan;
+import static com.thealer.telehealer.common.Constants.subscriptionPlanList;
 
-public class SubscriptionPlanFragment extends BaseFragment implements View.OnClickListener {
+public class SubscriptionPlanFragment extends BaseFragment implements View.OnClickListener, OnAdapterListener {
 
-    private TextView tvFeatureList;
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
@@ -37,7 +37,8 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     private RecyclerView subscriptionPlanRv;
     private CustomRecyclerView subscriptionPlanListCrv;
     private SubscriptionPlanAdapter subscriptionPlanAdapter;
-    private ArrayList<PlanInfo> subscriptionPlanList=new ArrayList<>();
+
+
     public SubscriptionPlanFragment() {
         // Required empty public constructor
     }
@@ -49,15 +50,9 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_subscription_plan,container,false);
+        View view = inflater.inflate(R.layout.fragment_subscription_plan, container, false);
         initView(view);
         return view;
     }
@@ -75,9 +70,9 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         toolbarTitle.setText(getString(R.string.lbl_subscriptions_plan));
 
-        subscriptionPlanRv=subscriptionPlanListCrv.getRecyclerView();
+        subscriptionPlanRv = subscriptionPlanListCrv.getRecyclerView();
 
-        subscriptionPlanAdapter=new SubscriptionPlanAdapter(getActivity());
+        subscriptionPlanAdapter = new SubscriptionPlanAdapter(getActivity(), this);
         subscriptionPlanRv.setAdapter(subscriptionPlanAdapter);
 
         backIv.setOnClickListener(this);
@@ -86,7 +81,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     }
 
     private void prepareData() {
-        PlanInfo plan1=new PlanInfo();
+        PlanInfo plan1 = new PlanInfo();
         plan1.setPlanName("Limited Practice");
         plan1.setPlanPricing("40");
         plan1.setPlanActivated(false);
@@ -96,7 +91,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         plan1.setRpmDesc("15 RPMs performed Monthly");
         plan1.setBtnTitle("Started With Limited");
 
-        PlanInfo plan2=new PlanInfo();
+        PlanInfo plan2 = new PlanInfo();
         plan2.setPlanName("Basic Practice");
         plan2.setPlanPricing("75");
         plan2.setPlanActivated(false);
@@ -106,7 +101,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         plan2.setRpmDesc("30 RPMs performed Monthly");
         plan2.setBtnTitle("Started With Basic");
 
-        PlanInfo plan3=new PlanInfo();
+        PlanInfo plan3 = new PlanInfo();
         plan3.setPlanName("Better Practice");
         plan3.setPlanPricing("125");
         plan3.setPlanActivated(false);
@@ -116,7 +111,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         plan3.setRpmDesc("45 RPMs performed Monthly");
         plan3.setBtnTitle("Started With Better");
 
-        PlanInfo plan4=new PlanInfo();
+        PlanInfo plan4 = new PlanInfo();
         plan4.setPlanName("Ideal Practice");
         plan4.setPlanPricing("175");
         plan4.setPlanActivated(false);
@@ -130,6 +125,9 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         subscriptionPlanList.add(plan3);
         subscriptionPlanList.add(plan4);
 
+        if (activatedPlan != -1 && activatedPlan <= (subscriptionPlanList.size())) {
+            subscriptionPlanList.get(activatedPlan).setPlanActivated(true);
+        }
         subscriptionPlanAdapter.setAdapterData(subscriptionPlanList);
         subscriptionPlanAdapter.notifyDataSetChanged();
 
@@ -138,10 +136,25 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.back_iv:
                 onCloseActionInterface.onClose(false);
                 break;
+        }
+    }
+
+    @Override
+    public void onEventTrigger(Bundle bundle) {
+        if (bundle != null) {
+            int pos = bundle.getInt(ArgumentKeys.ITEM_CLICK_PARENT_POS);
+            activatedPlan = pos;
+            Utils.showAlertDialog(getActivity(), getString(R.string.success), "Your "+subscriptionPlanList.get(pos).getPlanName()+" is activated now", getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    onCloseActionInterface.onClose(false);
+                }
+            },null);
+
         }
     }
 }

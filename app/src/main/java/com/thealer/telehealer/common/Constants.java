@@ -1,5 +1,7 @@
 package com.thealer.telehealer.common;
 
+import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -185,6 +187,9 @@ public class Constants {
     public static final String did_subscriber_connected = "did_subscriber_connected";
 
     public static final double STRIPE_MIN_AMOUNT = 0.50;
+
+    public static  ArrayList<PlanInfo> subscriptionPlanList = new ArrayList<>();
+    public static int activatedPlan=-1;
 
 
     public interface MasterCodes {
