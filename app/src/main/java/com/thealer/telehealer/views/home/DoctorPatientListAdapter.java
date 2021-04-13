@@ -86,7 +86,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 ItemViewHolder viewHolder = (ItemViewHolder) holder;
                 CommonUserApiResponseModel userModel = adapterListModels.get(i).getCommonUserApiResponseModel();
 
-                viewHolder.titleTv.setText(userModel.getUserDisplay_name());
+                viewHolder.titleTv.setText(userModel.getDisplayName());
                 loadAvatar(viewHolder.avatarCiv, userModel.getUser_avatar());
 
                 if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {

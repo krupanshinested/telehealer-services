@@ -11,13 +11,13 @@ import java.util.List;
  * Created Date: 13,April,2021
  **/
 public class DesignationResponseModel extends BaseApiResponseModel implements Serializable {
-    private List<String> designations = new ArrayList<>();
+    private List<String> result = new ArrayList<>();
 
-    public List<String> getDesignations() {
-        return designations;
+    public List<String> getResult() {
+        return result;
     }
 
-    public void setDesignations(List<String> designations) {
-        this.designations = designations;
+    public void setResult(List<String> result) {
+        this.result = result;
     }
 }

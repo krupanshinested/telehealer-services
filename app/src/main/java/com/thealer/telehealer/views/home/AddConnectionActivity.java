@@ -176,7 +176,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                     }else if(baseApiResponseModel instanceof DesignationResponseModel){
                         designationResponseModel=(DesignationResponseModel) baseApiResponseModel;
                         if(connectionListAdapter!=null) {
-                            connectionListAdapter.setDesignationData(designationResponseModel.getDesignations());
+                            connectionListAdapter.setDesignationData(designationResponseModel.getResult());
                         }
                     }else{
                         resetData();
