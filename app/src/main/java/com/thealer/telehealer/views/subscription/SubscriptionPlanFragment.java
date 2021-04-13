@@ -25,6 +25,7 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 
 import static com.thealer.telehealer.common.Constants.activatedPlan;
+import static com.thealer.telehealer.common.Constants.isFromSubscriptionPlan;
 import static com.thealer.telehealer.common.Constants.subscriptionPlanList;
 
 public class SubscriptionPlanFragment extends BaseFragment implements View.OnClickListener, OnAdapterListener {
@@ -53,6 +54,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_subscription_plan, container, false);
+        isFromSubscriptionPlan=true;
         initView(view);
         return view;
     }

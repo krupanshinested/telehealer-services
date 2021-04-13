@@ -190,6 +190,7 @@ public class Constants {
 
     public static  ArrayList<PlanInfo> subscriptionPlanList = new ArrayList<>();
     public static int activatedPlan=-1;
+    public static boolean isFromSubscriptionPlan=false;
 
 
     public interface MasterCodes {

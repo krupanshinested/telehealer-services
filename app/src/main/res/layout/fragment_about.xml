@@ -20,7 +20,7 @@
             android:visibility="gone"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/phone_cv"
+            app:layout_constraintBottom_toTopOf="@+id/cl_permission"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -148,6 +148,39 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/phone_cv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:elevation="10dp"
+                app:cardCornerRadius="6dp"
+                app:cardUseCompatPadding="true">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/text_sub_title_bold_app_color"
+                        android:padding="@dimen/padding_default"
+                        android:text="@string/phone"
+                        android:textAllCaps="true" />
+
+                    <TextView
+                        android:id="@+id/user_phone_tv"
+                        style="@style/text_sub_title_bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_default"
+                        android:drawableEnd="@drawable/ic_call_24dp"
+                        android:drawableTint="@color/app_gradient_start"
+                        android:gravity="center|left"
+                        android:textColor="@color/colorBlack"
+                        tools:text="@string/dummy_text" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
         </LinearLayout>
 
         <LinearLayout
@@ -158,7 +191,7 @@
             android:visibility="gone"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/phone_cv"
+            app:layout_constraintBottom_toTopOf="@+id/cl_permission"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -396,44 +429,6 @@
 
         </LinearLayout>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/phone_cv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:elevation="10dp"
-            app:cardCornerRadius="6dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintBottom_toTopOf="@id/cl_permission"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintWidth_max="@dimen/max_width">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/text_sub_title_bold_app_color"
-                    android:padding="@dimen/padding_default"
-                    android:text="@string/phone"
-                    android:textAllCaps="true" />
-
-                <TextView
-                    android:id="@+id/user_phone_tv"
-                    style="@style/text_sub_title_bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_default"
-                    android:drawableEnd="@drawable/ic_call_24dp"
-                    android:drawableTint="@color/app_gradient_start"
-                    android:gravity="center|left"
-                    android:textColor="@color/colorBlack"
-                    tools:text="@string/dummy_text" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_permission"
             android:layout_width="match_parent"
@@ -441,12 +436,15 @@
             app:layout_constraintBottom_toTopOf="@+id/disconnect_tv"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent">
             <TextView
                 android:id="@+id/permission_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:text="@string/user_permission"
                 android:textAllCaps="true"
                 android:textColor="@color/colorBlack"

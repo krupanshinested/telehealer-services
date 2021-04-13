@@ -315,10 +315,13 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                     case Constants.ROLE_ASSISTANT:
                         doctorDetailView.setVisibility(View.GONE);
                         patientDetailView.setVisibility(View.VISIBLE);
-                        clPermission.setVisibility(View.VISIBLE); // Physician Can Assign permission to Patient as well as assistant
-                        userPermissionModel.getUserPermission();
-                        setUpPermissionUI();
-
+                        if(userDetail.getRole().equals(Constants.ROLE_ASSISTANT)){
+                            clPermission.setVisibility(View.VISIBLE); // Physician Can Assign permission to Patient as well as assistant
+                            userPermissionModel.getUserPermission();
+                            setUpPermissionUI();
+                        }else{
+                            clPermission.setVisibility(View.GONE);
+                        }
                         if (view_type.equals(Constants.VIEW_CONNECTION)) {
                             medicalHistoryBtn.setVisibility(View.GONE);
                         } else if (view_type.equals(Constants.VIEW_ASSOCIATION_DETAIL)) {

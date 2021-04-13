@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.thealer.telehealer.common.Constants.activatedPlan;
+import static com.thealer.telehealer.common.Constants.isFromSubscriptionPlan;
 import static com.thealer.telehealer.common.Constants.subscriptionPlanList;
 
 
@@ -84,9 +85,12 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     }
 
     private void prePareData() {
-        if (activatedPlan == -1) {
+        if (activatedPlan == -1 && !isFromSubscriptionPlan) {
             btnChange.performClick();
-        }else {
+        }else if (activatedPlan == -1 && isFromSubscriptionPlan) {
+            isFromSubscriptionPlan=false;
+            onCloseActionInterface.onClose(false);
+        } else {
             PlanInfo currentPlanInfo = subscriptionPlanList.get(activatedPlan);
             tvPlanName.setText(currentPlanInfo.getPlanName());
             tvTotalRpm.setText("15");
@@ -157,6 +161,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 Log.e("neem", "onClick: " + spinner.getSelectedItem());
                 dialog.dismiss();
                 activatedPlan=-1;
+                isFromSubscriptionPlan=false;
                 onCloseActionInterface.onClose(false);
             }
         });

@@ -821,7 +821,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 tabs.add(orderTab);
                             }
                             break;
-
                         case Constants.ROLE_DOCTOR:
                             if (UserType.isUserAssistant()) {
                                 tabs.add(schedulesTab);
