@@ -118,6 +118,8 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tvFreeDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvDescColor));
 
         holder.tvRpmDesc.setText(currentPlan.getRpmDesc());
+        holder.tvRpmDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
+
         holder.tvFreeDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
         if (position == 0) {
             holder.tvAdditionalFeature.setCompoundDrawables(null, null, null, null);

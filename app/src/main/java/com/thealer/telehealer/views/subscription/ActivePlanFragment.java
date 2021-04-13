@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -129,6 +130,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         Button btnConfirm = layoutInflateView.findViewById(R.id.btn_confirm);
         Button btnCancel = layoutInflateView.findViewById(R.id.btn_cancel);
         Spinner spinner = (Spinner) layoutInflateView.findViewById(R.id.spinner);
+        EditText commentsEt = (EditText) layoutInflateView.findViewById(R.id.comments_et);
 
         headerTitle.setText("This plan will continue till the end of the month. Thank you for your business.");
         List<String> tempList = new ArrayList<>();
@@ -144,10 +146,26 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         tempList.add("Reason 7");
         tempList.add("Reason 8");
         tempList.add("Other");
-        List<String> finalTempList = tempList;
+        commentsEt.setVisibility(View.GONE);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, tempList);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(arrayAdapter);
+        List<String> finalTempList = tempList;
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position==(finalTempList.size()-1)){
+                    commentsEt.setVisibility(View.VISIBLE);
+                }else{
+                    commentsEt.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
