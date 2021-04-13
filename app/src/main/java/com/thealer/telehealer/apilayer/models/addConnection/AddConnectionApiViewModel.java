@@ -19,7 +19,7 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void connectUser(String toGuid, String doctorGuid, String userId) {
+    public void connectUser(String toGuid, String doctorGuid, String userId,String designation) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -28,7 +28,8 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
                     addConnectionRequestModel.setRequestee_id(userId);
                     addConnectionRequestModel.setType(Constants.ADD_CONNECTION_REQ_TYPE);
                     addConnectionRequestModel.setMessage(Constants.ADD_CONNECTION_REQ_MSG);
-
+                    addConnectionRequestModel.setDesignation(designation);
+                    
                     getAuthApiService().addConnection(addConnectionRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {

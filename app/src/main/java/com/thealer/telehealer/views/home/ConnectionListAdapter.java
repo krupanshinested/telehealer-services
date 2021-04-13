@@ -52,6 +52,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
     private OnActionCompleteInterface onActionCompleteInterface;
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private int selected_position = -1;
+    private List<String> designationList=new ArrayList<>();
 
     public ConnectionListAdapter(Context context) {
         this.context = context;
@@ -169,30 +170,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
 
         headerTitle.setText(String.format(fragmentActivity.getString(R.string.str_select_designation_for),apiResponseModelList.getUserDisplay_name()));
 
-        List<SpecialtiesBean> tempList = apiResponseModelList.getSupportStaffTypeList();
-        tempList=new ArrayList<>();
-        SpecialtiesBean spb1=new SpecialtiesBean();
-        SpecialtiesBean spb2=new SpecialtiesBean();
-        SpecialtiesBean spb3=new SpecialtiesBean();
-        SpecialtiesBean spb4=new SpecialtiesBean();
-        SpecialtiesBean spb5=new SpecialtiesBean();
-        SpecialtiesBean spb6=new SpecialtiesBean();
-        SpecialtiesBean spb7=new SpecialtiesBean();
-        spb1.setName("Office Staff Assistant");
-        spb2.setName("Medical Assistant");
-        spb3.setName("Scribe");
-        spb4.setName("Receptionist");
-        spb5.setName("Biller");
-        spb6.setName("Scheduler");
-        spb7.setName("Service Provider");
-        tempList.add(spb1);
-        tempList.add(spb2);
-        tempList.add(spb3);
-        tempList.add(spb4);
-        tempList.add(spb5);
-        tempList.add(spb6);
-        tempList.add(spb7);
-        if(tempList.size()==0) {
+        if(designationList.size()==0) {
             rvDesignation.setVisibility(View.GONE);
             noRecordFound.setVisibility(View.VISIBLE);
             btnYes.setVisibility(View.GONE);
@@ -203,7 +181,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             btnYes.setVisibility(View.VISIBLE);
             viewDevider.setVisibility(View.VISIBLE);
         }
-        DesignationListAdapter designationListAdapter=new DesignationListAdapter(fragmentActivity,tempList);
+        DesignationListAdapter designationListAdapter=new DesignationListAdapter(fragmentActivity,designationList);
         rvDesignation.setAdapter(designationListAdapter);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -217,11 +195,12 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             @Override
             public void onClick(View v) {
                 if(designationListAdapter!=null) {
-                    SpecialtiesBean specialist = designationListAdapter.getSpecialistInfo();
-                    Toast.makeText(fragmentActivity, "You have Selected : "+specialist.getName(), Toast.LENGTH_LONG).show();
+                    String designation = designationListAdapter.getSpecialistInfo();
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.getUser_id());
                     bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList);
+                    if(designation!=null)
+                        bundle.putString(Constants.DESIGNATION,designation);
                     onActionCompleteInterface.onCompletionResult(null, true, bundle);
                 }
                 dialog.dismiss();
@@ -252,6 +231,10 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             notifyItemChanged(selected_position);
         }
 
+    }
+
+    public void setDesignationData(List<String> designationList) {
+        this.designationList=designationList;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

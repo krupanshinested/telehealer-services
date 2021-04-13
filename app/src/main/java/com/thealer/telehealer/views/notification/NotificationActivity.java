@@ -238,7 +238,7 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
 
             successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
 
-            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId));
+            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId),null);
         } else if (string.equals(RequestID.REQ_SHOW_DETAIL_VIEW)) {
             bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
             DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();

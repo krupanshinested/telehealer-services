@@ -1255,7 +1255,7 @@
     <string name="captured">captured</string>
     <string name="patient_diagnosis">Diagnosis</string>
     <string name="doctor_extender">Provider / Extender</string>
-    <string name="office_assistant">Office Assistant</string>
+    <string name="office_assistant">Support Staff</string>
     <string name="calls">Calls</string>
     <string name="mandatory_questions_info">Questions marked with \' * \' is mandatory</string>
     <string name="form_updated_successfully">Form updated successfully</string>

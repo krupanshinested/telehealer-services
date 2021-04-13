@@ -21,10 +21,10 @@ import java.util.List;
  **/
 public class DesignationListAdapter extends RecyclerView.Adapter<DesignationListAdapter.OnDesignationViewHolder> {
     private FragmentActivity fragmentActivity;
-    List<SpecialtiesBean> adapterList;
+    List<String> adapterList;
     int currentSelected = 0;
 
-    public DesignationListAdapter(FragmentActivity fragmentActivity, List<SpecialtiesBean> adapterList) {
+    public DesignationListAdapter(FragmentActivity fragmentActivity, List<String> adapterList) {
         this.fragmentActivity = fragmentActivity;
         this.adapterList = adapterList;
     }
@@ -38,18 +38,18 @@ public class DesignationListAdapter extends RecyclerView.Adapter<DesignationList
 
     @Override
     public void onBindViewHolder(@NonNull OnDesignationViewHolder holder, int position) {
-        SpecialtiesBean specialtInfo = adapterList.get(position);
+        String designation = adapterList.get(position);
         if (position == currentSelected)
             holder.rbDesignation.setChecked(true);
         else
             holder.rbDesignation.setChecked(false);
-        holder.title.setText(specialtInfo.getName());
+
+        holder.title.setText(designation);
         holder.rbDesignation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (position != currentSelected)
                     currentSelected = position;
-
                 notifyDataSetChanged();
             }
         });
@@ -60,7 +60,7 @@ public class DesignationListAdapter extends RecyclerView.Adapter<DesignationList
         return adapterList.size();
     }
 
-    public SpecialtiesBean getSpecialistInfo() {
+    public String getSpecialistInfo() {
         return adapterList.get(currentSelected);
     }
 

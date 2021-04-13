@@ -648,6 +648,9 @@ public class Utils {
     public static String getDoctorDisplayName(String first_name, String last_name, String title) {
         return first_name + " " + last_name + " " + ((title != null) ? title : "");
     }
+    public static String getSupportStaffDisplayName(String first_name, String last_name, String designation){
+        return first_name + " " + last_name + ((designation != null) ? ", "+designation : "");
+    }
 
     public static String getPatientDisplayName(String first_name, String last_name) {
         first_name = first_name.replace(first_name.charAt(0), String.valueOf(first_name.charAt(0)).toUpperCase().charAt(0));

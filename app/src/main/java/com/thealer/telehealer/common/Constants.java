@@ -173,6 +173,7 @@ public class Constants {
     public static final String CALL_SCREEN_MAXIMIZE = "CALL_SCREEN_MAXIMIZE";
     public static final String CALL_ACTIVITY_RESUMED = "CALL_ACTIVITY_RESUMED";
     public static final String EXTRA_REMOVED_DATE = "EXTRA_REMOVED_DATE";
+    public static String DESIGNATION="DESIGNATION";
 
     //Vital States
     public static final int idle = 1;

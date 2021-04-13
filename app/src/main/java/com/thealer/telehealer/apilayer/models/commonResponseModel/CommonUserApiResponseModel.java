@@ -19,6 +19,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     private int appt_length;
     private String connection_status;
+    private String designation;
     private QuestionnaireBean questionnaire;
     private List<HistoryBean> history;
     private AppDetailBean app_details;
@@ -52,6 +53,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         this.user_detail = user_detail;
     }
 
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
+    }
+
     public String getDoctorDisplayName() {
         String title = null;
         if (getUser_detail() != null && getUser_detail().getData() != null
@@ -59,6 +68,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             title = ", " + getUser_detail().getData().getTitle();
         }
         return Utils.getDoctorDisplayName(getFirst_name(), getLast_name(), title);
+    }
+
+    public String getMedicalDisplayName() {
+        String title=null;
+        if (getUser_detail() != null && getUser_detail().getData() != null && getUser_detail().getData().getTitle() != null)
+            title= getUser_detail().getData().getTitle().toUpperCase();
+
+        return Utils.getSupportStaffDisplayName(getFirst_name(), getLast_name(),title);
     }
 
 
@@ -135,6 +152,8 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         switch (getRole()) {
             case Constants.ROLE_DOCTOR:
                 return getDoctorDisplayName();
+            case Constants.ROLE_ASSISTANT:
+                return getMedicalDisplayName();
             default:
                 return getUserDisplay_name();
         }
@@ -147,10 +166,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             case Constants.ROLE_PATIENT:
                 return getDob();
             case Constants.ROLE_ASSISTANT:
-                if (getUser_detail() != null && getUser_detail().getData() != null && getUser_detail().getData().getTitle() != null)
-                    return getUser_detail().getData().getTitle().toUpperCase();
-                else
-                    return "";
+                if(getDesignation()!=null && !getDesignation().isEmpty()){
+                    return getDesignation();
+                }else{
+                    if (getUser_detail() != null && getUser_detail().getData() != null && getUser_detail().getData().getTitle() != null)
+                        return getUser_detail().getData().getTitle().toUpperCase();
+                    else
+                        return "";
+                }
             default:
                 return "";
         }

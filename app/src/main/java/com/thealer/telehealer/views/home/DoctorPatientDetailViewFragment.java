@@ -711,8 +711,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         }
         if (resultBean != null) {
             userGuid = resultBean.getUser_guid();
-            toolbarTitle.setText(resultBean.getUserDisplay_name());
-            userNameTv.setText(resultBean.getUserDisplay_name());
+            toolbarTitle.setText(resultBean.getDisplayName());
+            userNameTv.setText(resultBean.getDisplayName());
             userDobTv.setText(resultBean.getDisplayInfo());
             Utils.setGenderImage(getActivity(), genderIv, resultBean.getGender());
 

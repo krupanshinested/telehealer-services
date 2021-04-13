@@ -30,6 +30,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListApiViewModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
+import com.thealer.telehealer.apilayer.models.addConnection.DesignationResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -78,6 +79,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     private ConnectionListApiViewModel connectionListApiViewModel;
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private ConnectionListResponseModel connectionListResponseModel;
+    private DesignationResponseModel designationResponseModel;
     private ConnectionListAdapter connectionListAdapter;
     private int page = 1;
     private int selectedPosition = -1, selectedId;
@@ -150,28 +152,38 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    connectionListResponseModel = (ConnectionListResponseModel) baseApiResponseModel;
+                    if(baseApiResponseModel instanceof ConnectionListResponseModel){
+                        connectionListResponseModel = (ConnectionListResponseModel) baseApiResponseModel;
+                        if (connectionListAdapter != null) {
 
-                    if (connectionListAdapter != null) {
+                            if (page == 1) {
+                                commonUserApiResponseModelList = connectionListResponseModel.getResult();
+                                toolbarTitle.setText(Utils.getPaginatedTitle(getString(R.string.Add_connections), connectionListResponseModel.getCount()));
+                            } else {
+                                commonUserApiResponseModelList.addAll(connectionListResponseModel.getResult());
+                            }
+                            connectionListAdapter.setData(commonUserApiResponseModelList, -1);
 
-                        if (page == 1) {
-                            commonUserApiResponseModelList = connectionListResponseModel.getResult();
-                            toolbarTitle.setText(Utils.getPaginatedTitle(getString(R.string.Add_connections), connectionListResponseModel.getCount()));
-                        } else {
-                            commonUserApiResponseModelList.addAll(connectionListResponseModel.getResult());
+                            connectionListCrv.setNextPage(connectionListResponseModel.getNext());
+
+                            if (commonUserApiResponseModelList.size() > 0) {
+                                connectionListCrv.showOrhideEmptyState(false);
+                            } else {
+                                connectionListCrv.showOrhideEmptyState(true);
+                            }
                         }
-                        connectionListAdapter.setData(commonUserApiResponseModelList, -1);
-
-                        connectionListCrv.setNextPage(connectionListResponseModel.getNext());
-
-                        if (commonUserApiResponseModelList.size() > 0) {
-                            connectionListCrv.showOrhideEmptyState(false);
-                        } else {
-                            connectionListCrv.showOrhideEmptyState(true);
+                        resetData();
+                    }else if(baseApiResponseModel instanceof DesignationResponseModel){
+                        designationResponseModel=(DesignationResponseModel) baseApiResponseModel;
+                        if(connectionListAdapter!=null) {
+                            connectionListAdapter.setDesignationData(designationResponseModel.getDesignations());
                         }
+                    }else{
+                        resetData();
                     }
+
                 }
-                resetData();
+
             }
         });
 
@@ -189,6 +201,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     public void onCompletionResult(String requestId, Boolean success, Bundle bundle) {
         if (success) {
             selectedId = bundle.getInt(Constants.ADD_CONNECTION_ID);
+            String designation = bundle.getString(Constants.DESIGNATION);
             CommonUserApiResponseModel userModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
             String userGuid = null;
 
@@ -205,7 +218,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
             successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
 
-            addConnectionApiViewModel.connectUser(userGuid, null, String.valueOf(selectedId));
+            addConnectionApiViewModel.connectUser(userGuid, null, String.valueOf(selectedId),designation);
 
         }
     }
@@ -333,6 +346,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                 speciality = null;
             }
             connectionListApiViewModel.getUnconnectedList(name, speciality, page, showProgress, isMedicalAssistant);
+            connectionListApiViewModel.getDesignationList();
         }
 
         isApiRequested = true;
