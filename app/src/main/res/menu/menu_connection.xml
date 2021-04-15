@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_add_support_staff"
-        android:icon="@drawable/nav_icn_chat_video"
+        app:actionLayout="@layout/view_home_add_staff"
         android:title="@string/add_support_staff"
-        app:showAsAction="always|withText" />
+        app:showAsAction="always" />
 </menu>

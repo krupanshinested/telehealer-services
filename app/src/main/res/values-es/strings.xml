@@ -1496,5 +1496,7 @@
     <string name="confirm">Confirm</string>
     <string name="lbl_type_your_reason_here">Type your reason here</string>
     <string name="add_support_staff">Add Support Staff</string>
+    <string name="lbl_add_staff">Add Staff</string>
+    <string name="broadcast_messages_all">Broadcast Message to All</string>
 
 </resources>

@@ -23,6 +23,7 @@ import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListRespon
 import com.thealer.telehealer.apilayer.models.addConnection.DesignationResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.UpdateAssociationRequestModel;
+import com.thealer.telehealer.apilayer.models.chat.BroadCastUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.chat.BroadCastUserKeyApiResponseModel;
 import com.thealer.telehealer.apilayer.models.chat.BroadcastMessageRequestModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatApiResponseModel;
@@ -642,6 +643,9 @@ public interface ApiInterface {
 
     @GET("api/messages")
     Observable<ChatApiResponseModel> getChatMessages(@Query("to") String userGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+
+    @GET("api/patients")
+    Observable<BroadCastUserApiResponseModel> getAllBroadcastUsers();
 
     @POST("api/messages")
     Observable<BaseApiResponseModel> sendMessage(@Query("notification") boolean notification, @Body ChatMessageRequestModel chatMessageRequestModel);
