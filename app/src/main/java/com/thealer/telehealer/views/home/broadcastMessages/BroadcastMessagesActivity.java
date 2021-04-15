@@ -156,15 +156,15 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
                         appPreference.setStringSet(PreferenceConstants.PRECANNED_MESSAGES, messages);
                     } else if (baseApiResponseModel instanceof BroadCastUserApiResponseModel) {
                         BroadCastUserApiResponseModel broadCastUserApiResponseModel = (BroadCastUserApiResponseModel) baseApiResponseModel;
-                        List<BroadCastUserApiResponseModel.UserBean> userList = broadCastUserApiResponseModel.getPatients();
+                        List<String> userList = broadCastUserApiResponseModel.getPatients();
                         if (userList != null && userList.size() > 0) {
                             for (int i = 0; i < userList.size(); i++) {
-                                BroadCastUserApiResponseModel.UserBean currentUser = userList.get(i);
-                                if (currentUser != null && currentUser.getUser() != null) {
+                                String currentUser = userList.get(i);
+                                if (currentUser != null && !currentUser.isEmpty()) {
                                     if (i == 0) {
-                                        guidList = currentUser.getUser().getUser_guid();
+                                        guidList = currentUser;
                                     } else {
-                                        guidList = guidList + "," + currentUser.getUser().getUser_guid();
+                                        guidList = guidList + "," + currentUser;
                                     }
                                 }
                             }
