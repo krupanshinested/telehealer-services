@@ -176,7 +176,6 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("neem", "onClick: " + spinner.getSelectedItem());
                 dialog.dismiss();
                 activatedPlan=-1;
                 isFromSubscriptionPlan=false;
