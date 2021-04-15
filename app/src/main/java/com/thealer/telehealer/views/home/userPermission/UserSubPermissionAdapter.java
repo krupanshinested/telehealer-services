@@ -13,10 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.OnAdapterListener;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionBean;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionDetails;
 import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Nimesh Patel
@@ -24,10 +27,10 @@ import java.util.ArrayList;
  **/
 public class UserSubPermissionAdapter extends RecyclerView.Adapter<UserSubPermissionAdapter.OnUserSubPermissionViewHolder> {
     private FragmentActivity activity;
-    private ArrayList<UserPermissionApiResponseModel.Datum> adapterList;
+    private List<PermissionBean> adapterList;
     private OnAdapterListener onAdapterListener;
     private int rootPosition;
-    public UserSubPermissionAdapter(FragmentActivity activity,int rootPosition, ArrayList<UserPermissionApiResponseModel.Datum> adapterList, OnAdapterListener onAdapterListener) {
+    public UserSubPermissionAdapter(FragmentActivity activity,int rootPosition, List<PermissionBean> adapterList, OnAdapterListener onAdapterListener) {
         this.activity = activity;
         this.adapterList = adapterList;
         this.onAdapterListener = onAdapterListener;
@@ -43,10 +46,11 @@ public class UserSubPermissionAdapter extends RecyclerView.Adapter<UserSubPermis
 
     @Override
     public void onBindViewHolder(@NonNull OnUserSubPermissionViewHolder holder, int position) {
-        UserPermissionApiResponseModel.Datum currentPermission = adapterList.get(position);
+        PermissionBean currentPermission = adapterList.get(position);
         if (currentPermission != null) {
-            holder.permissionSubSwitch.setChecked(currentPermission.getPermissionState());
-            holder.title.setText(currentPermission.getPermissionName());
+            holder.permissionSubSwitch.setChecked(currentPermission.getValue());
+            PermissionDetails childPermissionInfo = currentPermission.getPermission();
+            holder.title.setText(childPermissionInfo.getName());
             holder.permissionSubSwitch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

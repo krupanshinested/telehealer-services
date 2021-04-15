@@ -153,9 +153,8 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
 
             if(activatedPlan!=-1)
                 subscriptionPlanList.get(activatedPlan).setPlanActivated(false);
-
-            activatedPlan = pos;
-            Utils.showAlertDialog(getActivity(), getString(R.string.success), "Your "+subscriptionPlanList.get(pos).getPlanName()+" is activated now", getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                activatedPlan = pos;
+                Utils.showAlertDialog(getActivity(), getString(R.string.success), "Your "+subscriptionPlanList.get(pos).getPlanName()+" is activated now", getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     onCloseActionInterface.onClose(false);

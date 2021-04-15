@@ -34,6 +34,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private Boolean recording_enabled = false;
     private String appt_start_time;
     private String appt_end_time;
+    private List<PermissionBean> permissions;
 
     public CommonUserApiResponseModel() {
     }
@@ -51,6 +52,15 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         this.history = history;
         this.app_details = appDetail;
         this.user_detail = user_detail;
+    }
+
+
+    public List<PermissionBean> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<PermissionBean> permissions) {
+        this.permissions = permissions;
     }
 
     public String getDesignation() {

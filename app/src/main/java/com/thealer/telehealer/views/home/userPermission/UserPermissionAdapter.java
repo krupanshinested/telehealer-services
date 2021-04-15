@@ -15,11 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.OnAdapterListener;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionBean;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionDetails;
 import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Nimesh Patel
@@ -27,7 +30,7 @@ import java.util.ArrayList;
  **/
 public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAdapter.OnUserPermissionViewHolder> implements OnAdapterListener {
     private FragmentActivity activity;
-    private ArrayList<UserPermissionApiResponseModel.Datum> adapterList;
+    private List<PermissionBean> adapterList;
     private OnAdapterListener onAdapterListener;
 
 
@@ -45,13 +48,14 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
 
     @Override
     public void onBindViewHolder(@NonNull OnUserPermissionViewHolder holder, int position) {
-        UserPermissionApiResponseModel.Datum currentPermission = adapterList.get(position);
+        PermissionBean currentPermission = adapterList.get(position);
         if (currentPermission != null) {
-            holder.permissionSwitch.setChecked(currentPermission.getPermissionState());
-            holder.title.setText(currentPermission.getPermissionName());
-            if (currentPermission.getSubPermission() != null && currentPermission.getSubPermission().size() > 0 && currentPermission.getPermissionState()) {
+            holder.permissionSwitch.setChecked(currentPermission.getValue());
+            PermissionDetails rootPermissionInfo = currentPermission.getPermission();
+            holder.title.setText(rootPermissionInfo.getName());
+            if (currentPermission.getValue() && currentPermission.getChildren() != null && currentPermission.getChildren().size() > 0) {
                 holder.rvSubSwitch.setVisibility(View.VISIBLE);
-                UserSubPermissionAdapter userSubPermissionAdapter = new UserSubPermissionAdapter(activity, position, currentPermission.getSubPermission(), this);
+                UserSubPermissionAdapter userSubPermissionAdapter = new UserSubPermissionAdapter(activity, position, currentPermission.getChildren(), this);
                 holder.rvSubSwitch.setAdapter(userSubPermissionAdapter);
             } else {
                 holder.rvSubSwitch.setVisibility(View.GONE);
@@ -59,7 +63,7 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
             holder.permissionSwitch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!currentPermission.getPermissionState()) {
+                    if (!currentPermission.getValue()) {
                         Utils.showAlertDialog(activity, activity.getString(R.string.notes), activity.getString(R.string.hippa_msg), activity.getString(R.string.ok), activity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -72,7 +76,7 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
                         }, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                currentPermission.setPermissionState(false);
+                                currentPermission.setValue(false);
                                 holder.permissionSwitch.setChecked(false);
                                 dialog.dismiss();
                             }
@@ -93,7 +97,7 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
         return adapterList.size();
     }
 
-    public void setAdapterData(ArrayList<UserPermissionApiResponseModel.Datum> adapterList) {
+    public void setAdapterData(List<PermissionBean> adapterList) {
         this.adapterList = adapterList;
     }
 
