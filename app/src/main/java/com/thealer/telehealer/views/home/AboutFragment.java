@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,8 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionBean;
-import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionRequestModel;
+import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
@@ -93,6 +95,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     private OnCloseActionInterface onCloseActionInterface;
     private AttachObserverInterface attachObserverInterface;
     private ShowSubFragmentInterface showSubFragmentInterface;
+    private UserPermissionApiViewModel userPermissionApiViewModel;
     private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -115,6 +118,20 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
+
+        userPermissionApiViewModel = new ViewModelProvider(this).get(UserPermissionApiViewModel.class);
+        attachObserverInterface.attachObserver(userPermissionApiViewModel);
+        userPermissionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                try {
+                    Log.e("neem", "onChanged: " + baseApiResponseModel);
+                }catch (Exception e){
+                    Log.e("neem", "Success: ");
+                }
+            }
+        });
+
 
         disconnectAssociationApiViewModel = new ViewModelProvider(this).get(DisconnectAssociationApiViewModel.class);
         attachObserverInterface.attachObserver(disconnectAssociationApiViewModel);
@@ -550,12 +567,15 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     public void onEventTrigger(Bundle bundle) {
         boolean isFromParent = bundle.getBoolean(ArgumentKeys.IS_FROM_PARENT);
         int parentPos = bundle.getInt(ArgumentKeys.ITEM_CLICK_PARENT_POS);
+
         if (isFromParent) {
             Boolean isChecked = permissionList.get(parentPos).getValue();
             permissionList.get(parentPos).setValue(!isChecked);
+            callUpdatePermissionAPI(permissionList.get(parentPos).getId(),!isChecked);
             if (!isChecked) {
                 List<PermissionBean> subPermissionList = permissionList.get(parentPos).getChildren();
                 for (int i = 0; i < subPermissionList.size(); i++) {
+                    callUpdatePermissionAPI(permissionList.get(parentPos).getChildren().get(i).getId(),true);
                     permissionList.get(parentPos).getChildren().get(i).setValue(true);
                 }
             }
@@ -563,6 +583,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             int childPos = bundle.getInt(ArgumentKeys.ITEM_CLICK_CHILD_POS);
             Boolean isChecked = permissionList.get(parentPos).getChildren().get(childPos).getValue();
             permissionList.get(parentPos).getChildren().get(childPos).setValue(!isChecked);
+            callUpdatePermissionAPI(permissionList.get(parentPos).getChildren().get(childPos).getId(),!isChecked);
             if (isChecked) {
                 List<PermissionBean> subPermissionList = permissionList.get(parentPos).getChildren();
                 boolean isAnyOneEnable = false;
@@ -574,6 +595,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                 }
                 if (!isAnyOneEnable) {
                     permissionList.get(parentPos).setValue(false);
+                    callUpdatePermissionAPI(permissionList.get(parentPos).getId(),false);
                 }
             }
         }
@@ -584,5 +606,14 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             }
         });
 
+    }
+
+    //TODO - Update User permission Status
+    private void callUpdatePermissionAPI(int permissionId, boolean isEnable) {
+        PermissionRequestModel permissionRequestModel=new PermissionRequestModel();
+        permissionRequestModel.setGuid(userDetail.getUser_guid());
+        permissionRequestModel.setId(permissionId);
+        permissionRequestModel.setValue(isEnable);
+        userPermissionApiViewModel.updateUserPermission(permissionRequestModel);
     }
 }

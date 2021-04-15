@@ -15,15 +15,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -94,6 +93,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     @Nullable
     private TimerRunnable uiToggleTimer;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,7 +152,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    if(baseApiResponseModel instanceof ConnectionListResponseModel){
+                    if (baseApiResponseModel instanceof ConnectionListResponseModel) {
                         connectionListResponseModel = (ConnectionListResponseModel) baseApiResponseModel;
                         if (connectionListAdapter != null) {
 
@@ -173,12 +173,12 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                             }
                         }
                         resetData();
-                    }else if(baseApiResponseModel instanceof DesignationResponseModel){
-                        designationResponseModel=(DesignationResponseModel) baseApiResponseModel;
-                        if(connectionListAdapter!=null) {
+                    } else if (baseApiResponseModel instanceof DesignationResponseModel) {
+                        designationResponseModel = (DesignationResponseModel) baseApiResponseModel;
+                        if (connectionListAdapter != null) {
                             connectionListAdapter.setDesignationData(designationResponseModel.getResult());
                         }
-                    }else{
+                    } else {
                         resetData();
                     }
 
@@ -188,6 +188,17 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
         });
 
         initView();
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_add_support_staff:
+                Utils.showInviteAlert(this, null);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void resetData() {
@@ -218,7 +229,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
             successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
 
-            addConnectionApiViewModel.connectUser(userGuid, null, String.valueOf(selectedId),designation);
+            addConnectionApiViewModel.connectUser(userGuid, null, String.valueOf(selectedId), designation);
 
         }
     }
@@ -357,7 +368,6 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!UserType.isUserDoctor()) {
             getMenuInflater().inflate(R.menu.filter_menu, menu);
-
             MenuItem filterItem = menu.findItem(R.id.menu_filter);
             View view = filterItem.getActionView();
             ImageView filterIv = view.findViewById(R.id.filter_iv);
@@ -388,6 +398,8 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                     });
                 }
             });
+        } else if (UserType.isUserDoctor()) {
+            getMenuInflater().inflate(R.menu.menu_connection, menu);
         }
         return true;
     }
@@ -433,7 +445,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
         }
 
         if (bundle.getBoolean(ArgumentKeys.SHOW_CONNECTION_REQUEST_ALERT)) {
-                Utils.showAlertDialog(AddConnectionActivity.this,"",getString(R.string.doctor_unavailable),getString(R.string.ok),null,null,null);
+            Utils.showAlertDialog(AddConnectionActivity.this, "", getString(R.string.doctor_unavailable), getString(R.string.ok), null, null, null);
         } else {
             showDetailView(bundle);
         }

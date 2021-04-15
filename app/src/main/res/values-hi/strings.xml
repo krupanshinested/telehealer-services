@@ -1483,4 +1483,5 @@
     <string name="lbl_change_plan">Change Plan</string>
     <string name="confirm">Confirm</string>
     <string name="lbl_type_your_reason_here">Type your reason here</string>
+    <string name="add_support_staff">Add Support Staff</string>
 </resources>

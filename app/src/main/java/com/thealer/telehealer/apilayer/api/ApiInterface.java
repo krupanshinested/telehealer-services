@@ -31,6 +31,7 @@ import com.thealer.telehealer.apilayer.models.chat.PrecannedMessageApiResponse;
 import com.thealer.telehealer.apilayer.models.chat.UserKeysApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.DataBean;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
@@ -81,7 +82,6 @@ import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
-import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
 import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
@@ -513,6 +513,9 @@ public interface ApiInterface {
 
     @GET("api/users-v2/{id}")
     Observable<CommonUserApiResponseModel> getUserDetail(@Path(ID) String id);
+
+    @POST("api/users/permissions")
+    Observable<BaseApiResponseModel> updateUserPermission(@Body PermissionRequestModel createRequestModel);
 
     @PUT("api/call/{id}")
     Observable<BaseApiResponseModel> updateCallStatus(@Path(ID) String sessionId, @QueryMap Map<String, String> param);
