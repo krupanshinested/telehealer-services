@@ -605,8 +605,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             String userGuid = bundle.getString(ArgumentKeys.USER_GUID);
             String doctorGuid = bundle.getString(ArgumentKeys.DOCTOR_GUID);
             commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
-
-            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId),null);
+            String designation = bundle.getString(Constants.DESIGNATION);
+            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId),designation);
 
         } else {
             showDetailView(bundle);
