@@ -506,7 +506,7 @@ public interface ApiInterface {
     @PUT("api/requests")
     Observable<BaseApiResponseModel> setNotificationsRead(@Body Map<String, String> body);
 
-    @PATCH("api/requests/{id}")
+    @PATCH("api/requests-v2/{id}")
     Observable<NotificationRequestUpdateResponseModel> updateNotification(@Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Body Map<String, Object> body);
 
     @GET("api/token-v2")

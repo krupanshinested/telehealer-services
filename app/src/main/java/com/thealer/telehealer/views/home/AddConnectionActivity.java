@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,6 +52,8 @@ import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.common.SearchCellView;
+import com.thealer.telehealer.views.common.SearchInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
@@ -69,7 +73,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
     private ImageView backIv;
     private TextView toolbarTitle;
-    private EditText searchEt;
+    private SearchCellView searchView;
     private RecyclerView connectionListRv;
     private CustomRecyclerView connectionListCrv;
     private FrameLayout fragmentHolder;
@@ -92,6 +96,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
     @Nullable
     private TimerRunnable uiToggleTimer;
+    private List<String> designationList=new ArrayList<>();
 
 
     @Override
@@ -176,7 +181,11 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                     } else if (baseApiResponseModel instanceof DesignationResponseModel) {
                         designationResponseModel = (DesignationResponseModel) baseApiResponseModel;
                         if (connectionListAdapter != null) {
+                            if(designationResponseModel.getResult()!=null){
+                                designationList=designationResponseModel.getResult();
+                            }
                             connectionListAdapter.setDesignationData(designationResponseModel.getResult());
+
                         }
                     } else {
                         resetData();
@@ -188,17 +197,6 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
         });
 
         initView();
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_add_support_staff:
-                Utils.showInviteAlert(this, null);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void resetData() {
@@ -246,7 +244,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     private void initView() {
         backIv = (ImageView) findViewById(R.id.back_iv);
         toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        searchEt = (EditText) findViewById(R.id.search_et);
+        searchView = (SearchCellView) findViewById(R.id.search_view);
         fragmentHolder = (FrameLayout) findViewById(R.id.fragment_holder);
         connectionListCrv = (CustomRecyclerView) findViewById(R.id.connection_list_crv);
         searchClearIv = (ImageView) findViewById(R.id.search_clear_iv);
@@ -259,56 +257,12 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
         toolbarTitle.setText(getString(R.string.Add_connections));
         setSupportActionBar(toolbar);
 
+        searchView.setSearchEtHint(getString(R.string.search_ma));
+
         backIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
-            }
-        });
-
-        searchEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().isEmpty()) {
-                    connectionListCrv.setScrollable(false);
-                    searchClearIv.setVisibility(View.VISIBLE);
-                    if (uiToggleTimer != null) {
-                        uiToggleTimer.setStopped(true);
-                        uiToggleTimer = null;
-                    }
-
-                    Handler handler = new Handler();
-                    TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
-                        @Override
-                        public void run() {
-                            showSearchResult(searchEt.getText().toString().toLowerCase());
-                        }
-                    });
-                    uiToggleTimer = runnable;
-                    handler.postDelayed(runnable, ArgumentKeys.SEARCH_INTERVAL);
-                } else {
-                    searchClearIv.setVisibility(View.GONE);
-                    connectionListAdapter.setData(commonUserApiResponseModelList, -1);
-                    connectionListCrv.setScrollable(true);
-                    connectionListCrv.showOrhideEmptyState(false);
-                }
-            }
-        });
-
-        searchClearIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchEt.setText("");
             }
         });
 
@@ -345,19 +299,30 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
         speciality = getString(R.string.all);
 
         getApiData(true);
+        searchView.setSearchInterface(new SearchInterface() {
+            @Override
+            public void doSearch() {
+                String search="";
+                if(searchView.getCurrentSearchResult()!=null){
+                    search=searchView.getCurrentSearchResult();
+                }
+                showSearchResult(search);
+            }
+        });
     }
 
     private void getApiData(boolean showProgress) {
-        String name = null;
-        if (!searchEt.getText().toString().isEmpty()) {
-            name = searchEt.getText().toString();
+        String search="";
+        if(searchView.getCurrentSearchResult()!=null){
+            search=searchView.getCurrentSearchResult();
         }
         if (!isApiRequested) {
             if (speciality != null && speciality.equals(getString(R.string.all))) {
                 speciality = null;
             }
-            connectionListApiViewModel.getUnconnectedList(name, speciality, page, showProgress, isMedicalAssistant);
-            connectionListApiViewModel.getDesignationList();
+            connectionListApiViewModel.getUnconnectedList(search, speciality, page, showProgress, isMedicalAssistant);
+            if(designationList==null || designationList.isEmpty())
+                connectionListApiViewModel.getDesignationList();
         }
 
         isApiRequested = true;
@@ -400,6 +365,15 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             });
         } else if (UserType.isUserDoctor()) {
             getMenuInflater().inflate(R.menu.menu_connection, menu);
+            MenuItem filterItem = menu.findItem(R.id.menu_add_support_staff);
+            View view = filterItem.getActionView();
+            LinearLayout llStaff = view.findViewById(R.id.btnAddPatient);
+            llStaff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.showInviteAlert(AddConnectionActivity.this, null);
+                }
+            });
         }
         return true;
     }
