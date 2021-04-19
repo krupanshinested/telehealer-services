@@ -13,10 +13,11 @@
     <com.thealer.telehealer.common.CustomRecyclerView
         android:id="@+id/subscription_plan_crv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appbar"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:itemCount="2"
         tools:listitem="@layout/subscription_raw_item"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -114,16 +114,13 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tvAdditionalFeature.setTextColor(ContextCompat.getColor(fragmentActivity, tvFeatureColor));
         holder.tvAdditionalFeature.setText(currentPlan.getAdditionalFeatures());
 
-        holder.tvFreeDesc.setText(Html.fromHtml(currentPlan.getFreeDesc()));
-        holder.tvFreeDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvDescColor));
-
-        holder.tvRpmDesc.setText(currentPlan.getRpmDesc());
+        String rpmDesc="Perform <big><font color="+haxcolor+">"+currentPlan.getRpmDesc()+"</font></big> monthly to get this plan <big><font color="+haxcolor+"> Free.</font></big>";
+        holder.tvRpmDesc.setText(Html.fromHtml(rpmDesc));
         holder.tvRpmDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
 
-        holder.tvFreeDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
         if (position == 0) {
             holder.tvAdditionalFeature.setCompoundDrawables(null, null, null, null);
-            setMargins(holder.cvRoot,0,75,0,0);
+            setMargins(holder.cvRoot,0,15,0,0);
         }else if(position==(adapterList.size()-1)){
             setMargins(holder.cvRoot,0,15,0,75);
         }else{
@@ -161,7 +158,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
 
     public class OnSubscriptionViewHolder extends RecyclerView.ViewHolder {
         LinearLayout llPlan, llContainer;
-        TextView tvPlanName, tvPlanPricing, tvExistingFeature, tvAdditionalFeature, tvFreeDesc, tvRpmDesc;
+        TextView tvPlanName, tvPlanPricing, tvExistingFeature, tvAdditionalFeature, tvRpmDesc;
         Button btnActivate;
         CardView cvRoot;
 
@@ -174,7 +171,6 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             tvPlanPricing = itemView.findViewById(R.id.tv_plan_pricing);
             tvExistingFeature = itemView.findViewById(R.id.tv_existing_feature);
             tvAdditionalFeature = itemView.findViewById(R.id.tv_aditional_feature);
-            tvFreeDesc = itemView.findViewById(R.id.tv_free_desc);
             tvRpmDesc = itemView.findViewById(R.id.tv_rpm_desc);
             btnActivate = itemView.findViewById(R.id.btn_activate);
         }

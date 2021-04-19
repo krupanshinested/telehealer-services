@@ -90,8 +90,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
             plan1.setPlanActivated(false);
             plan1.setExistingFeatures("All Standard Features");
             plan1.setAdditionalFeatures("See Feature List");
-            plan1.setFreeDesc("Get this plan Free when");
-            plan1.setRpmDesc("15 RPMs performed Monthly");
+            plan1.setRpmDesc("15 RPM");
             plan1.setBtnTitle("Started With Limited");
 
             PlanInfo plan2 = new PlanInfo();
@@ -100,8 +99,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
             plan2.setPlanActivated(false);
             plan2.setExistingFeatures("All Limited Practice Features");
             plan2.setAdditionalFeatures("Order Capability");
-            plan2.setFreeDesc("Get this plan Free when");
-            plan2.setRpmDesc("30 RPMs performed Monthly");
+            plan2.setRpmDesc("30 RPM");
             plan2.setBtnTitle("Started With Basic");
 
             PlanInfo plan3 = new PlanInfo();
@@ -110,8 +108,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
             plan3.setPlanActivated(false);
             plan3.setExistingFeatures("All Basic Practice Features");
             plan3.setAdditionalFeatures("Record Visit");
-            plan3.setFreeDesc("Get this plan Free when");
-            plan3.setRpmDesc("45 RPMs performed Monthly");
+            plan3.setRpmDesc("45 RPM");
             plan3.setBtnTitle("Started With Better");
 
             PlanInfo plan4 = new PlanInfo();
@@ -120,8 +117,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
             plan4.setPlanActivated(false);
             plan4.setExistingFeatures("All Better Practice Features");
             plan4.setAdditionalFeatures("Auto Transcript");
-            plan4.setFreeDesc(getString(R.string.str_free_data));
-            plan4.setRpmDesc("60 RPMs performed Monthly");
+            plan4.setRpmDesc("60 RPM");
             plan4.setBtnTitle("Started With Ideal");
             subscriptionPlanList.add(plan1);
             subscriptionPlanList.add(plan2);

@@ -136,15 +136,11 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         List<String> tempList = new ArrayList<>();
         tempList = new ArrayList<>();
 
-        tempList.add("Choose a reason for cancelling subscriptions");
+        tempList.add("Select your reason");
         tempList.add("Reason 1");
         tempList.add("Reason 2");
         tempList.add("Reason 3");
         tempList.add("Reason 4");
-        tempList.add("Reason 5");
-        tempList.add("Reason 6");
-        tempList.add("Reason 7");
-        tempList.add("Reason 8");
         tempList.add("Other");
         commentsEt.setVisibility(View.GONE);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, tempList);

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cl_root">
+    android:id="@+id/cl_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
     <androidx.cardview.widget.CardView
         android:id="@+id/diet_item_cv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
         app:cardCornerRadius="16dp"
-
+        app:cardElevation="10dp"
         app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,37 +21,46 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <TextView
                 android:id="@+id/header_title"
                 android:layout_width="wrap_content"
-                android:maxWidth="270dp"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textStyle="bold"
-                android:lineSpacingExtra="1.5dp"
+                android:layout_margin="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:lineSpacingExtra="1.5dp"
+                android:maxWidth="270dp"
                 android:text="This plan will continue till the end of the month. Thank you for your business."
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:textSize="18dp"
+                android:textAlignment="center"
                 android:textColor="@color/colorBlack"
-                android:layout_margin="10dp"/>
-            <Spinner
-                android:id="@+id/spinner"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <RelativeLayout
+                android:id="@+id/rl_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:layout_marginStart="10dp"
+                android:layout_margin="10dp"
                 android:background="@drawable/rounded_corner_border"
-                android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/header_title"/>
+                app:layout_constraintTop_toBottomOf="@id/header_title">
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="10dp"
+                    android:scrollbarStyle="insideInset"
+                    android:spinnerMode="dropdown" />
+            </RelativeLayout>
+
             <EditText
                 android:id="@+id/comments_et"
                 android:layout_width="match_parent"
@@ -65,25 +74,27 @@
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner" />
+                app:layout_constraintTop_toBottomOf="@+id/rl_spinner" />
+
             <View
                 android:id="@+id/view_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:focusable="true"
                 android:layout_marginTop="20dp"
                 android:background="@color/bt_very_light_gray"
-                app:layout_constraintStart_toStartOf="parent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/comments_et"
-                android:focusableInTouchMode="true" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/comments_et" />
+
             <LinearLayout
                 android:id="@+id/ll_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view_bottom">
 
                 <Button
@@ -99,12 +110,13 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/action_btn" />
+
                 <View
                     android:id="@+id/view_devider"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:focusable="true"
                     android:background="@color/bt_very_light_gray"
+                    android:focusable="true"
                     android:focusableInTouchMode="true" />
 
                 <Button
