@@ -133,12 +133,19 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
                     bundle.putSerializable(Constants.USER_DETAIL, user);
                     bundle.putBoolean(ArgumentKeys.SHOW_CONNECTION_REQUEST_ALERT, true);
                     onListItemSelectInterface.onListItemSelected(i, bundle);
-                } else if (apiResponseModelList.get(i).getConnection_status() == null ||
+                }else if (apiResponseModelList.get(i).getConnection_status() == null ||
                         apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_REJECTED)) {
                     Utils.vibrate(fragmentActivity);
                     selected_position = i;
                     onListItemSelectInterface.onListItemSelected(i, null);
-                    selectDesignation(v,apiResponseModelList.get(i));
+                    if(user.getRole().equals(Constants.ROLE_PATIENT) || user.getRole().equals(Constants.ROLE_DOCTOR)){
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.get(i).getUser_id());
+                        bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
+                        onActionCompleteInterface.onCompletionResult(null, true, bundle);
+                    }else {
+                        selectDesignation(v, apiResponseModelList.get(i));
+                    }
                 }
             }
         });

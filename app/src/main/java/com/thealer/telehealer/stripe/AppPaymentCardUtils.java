@@ -144,8 +144,13 @@ public class AppPaymentCardUtils {
     }
 
     public static void setCardStatusImage(ImageView imageView, @Nullable PaymentInfo paymentInfo, boolean canViewCardStatus) {
-        if (UserType.isUserDoctor())
-            canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
+        if (UserType.isUserDoctor()) {
+            try {
+                canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         if (canViewCardStatus) {
             if (paymentInfo != null) {

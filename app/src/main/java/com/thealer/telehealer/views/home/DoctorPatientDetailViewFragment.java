@@ -1087,7 +1087,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             actionBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (actionBtn.getText().equals(getString(R.string.add_connection_connect))) {
+                    if (actionBtn.getText().equals(getString(R.string.add_connection_connect)) && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
                         selectDesignation(v, resultBean);
                     } else {
                         Utils.vibrate(getActivity());
