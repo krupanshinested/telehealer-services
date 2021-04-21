@@ -257,7 +257,13 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
         toolbarTitle.setText(getString(R.string.Add_connections));
         setSupportActionBar(toolbar);
 
-        searchView.setSearchEtHint(getString(R.string.search_ma));
+        if(UserType.isUserDoctor()) {
+            searchView.setSearchEtHint(getString(R.string.search_ma));
+        }else if (UserType.isUserPatient()){
+            searchView.setSearchEtHint(getString(R.string.search_doctors));
+        }else{
+            searchView.setSearchEtHint(getString(R.string.search_hint));
+        }
 
         backIv.setOnClickListener(new View.OnClickListener() {
             @Override

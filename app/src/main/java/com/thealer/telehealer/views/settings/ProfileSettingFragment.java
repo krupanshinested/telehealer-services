@@ -178,7 +178,11 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     patient_payments.setVisibility(View.VISIBLE);
                     patient_payments.updateTitle(getString(R.string.lbl_charges));
                     add_card.setVisibility(View.GONE);
+                    subscription.setVisibility(View.GONE);
+                    patient_payments.hideSplitter(true);
                 } else {
+                    subscription.setVisibility(View.GONE);
+                    add_card.hideSplitter(true);
                     patient_payments.setVisibility(View.GONE);
                 }
                 documents.setVisibility(View.VISIBLE);
@@ -206,6 +210,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     add_card.setVisibility(View.GONE);
                     patient_payments.hideSplitter(true);
                     subscription.setVisibility(View.GONE);
+                    subscription.hideSplitter(true);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {
                     billLl.setVisibility(View.GONE);

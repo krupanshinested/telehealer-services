@@ -161,7 +161,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         if (UserType.isUserPatient()) {
             search_view.setSearchHint(getString(R.string.search_doctors));
-        } else {
+        } else if(UserType.isUserDoctor()) {
+            search_view.setSearchHint(getString(R.string.lbl_search_patient));
+        }else{
             search_view.setSearchHint(getString(R.string.search_associations));
         }
 
