@@ -64,7 +64,7 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
                 @Override
                 public void onClick(View v) {
                     if (!currentPermission.getValue()) {
-                        Utils.showAlertDialog(activity, activity.getString(R.string.notes), activity.getString(R.string.hippa_msg), activity.getString(R.string.ok), activity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        Utils.showAlertDialog(activity, activity.getString(R.string.notes), activity.getString(R.string.hippa_msg), activity.getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Bundle bundle = new Bundle();
@@ -73,14 +73,7 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
                                 onAdapterListener.onEventTrigger(bundle);
                                 dialog.dismiss();
                             }
-                        }, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                currentPermission.setValue(false);
-                                holder.permissionSwitch.setChecked(false);
-                                dialog.dismiss();
-                            }
-                        });
+                        }, null);
                     }else{
                         Bundle bundle = new Bundle();
                         bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS, position);
