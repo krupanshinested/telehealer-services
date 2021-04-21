@@ -572,6 +572,12 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             Boolean isChecked = permissionList.get(parentPos).getValue();
             permissionList.get(parentPos).setValue(!isChecked);
             callUpdatePermissionAPI(permissionList.get(parentPos).getId(),!isChecked);
+            if (!isChecked) {
+                List<PermissionBean> subPermissionList = permissionList.get(parentPos).getChildren();
+                for (int i = 0; i < subPermissionList.size(); i++) {
+                    permissionList.get(parentPos).getChildren().get(i).setValue(true);
+                }
+            }
         } else {
             int childPos = bundle.getInt(ArgumentKeys.ITEM_CLICK_CHILD_POS);
             Boolean isChecked = permissionList.get(parentPos).getChildren().get(childPos).getValue();
