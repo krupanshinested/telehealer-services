@@ -1469,4 +1469,5 @@
     <string name="confirm_vital_charges">कृपया प्रक्रिया शुल्क की पुष्टि करें</string>
     <string name="broadcast_messages">प्रसारण संदेश</string>
     <string name="str_select_patient">To send message you have to select atleast one patient.</string>
+    <string name="broadcast_messages_all">Broadcast Message to All</string>
 </resources>

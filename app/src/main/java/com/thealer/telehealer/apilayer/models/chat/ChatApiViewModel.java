@@ -127,7 +127,6 @@ public class ChatApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>() {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-
                                     for (BroadcastMessageRequestModel.MessagesBean currentMesssage : broadcastMessageRequestModel.getMessages()) {
                                         PubnubUtil.shared.sendPubnubMessage(currentMesssage.getTo(), currentMesssage.getReceiver_one_message());
                                     }
@@ -147,6 +146,23 @@ public class ChatApiViewModel extends BaseApiViewModel {
                 if (status) {
                     String type = !UserType.isUserPatient() ? "medical" : null;
                     getPublicApiService().getPrecannedMessages(type)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>() {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+    public  void getAllBroadcastUsers(){
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if(status){
+                    getAuthApiService().getAllBroadcastUsers()
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>() {
                                 @Override

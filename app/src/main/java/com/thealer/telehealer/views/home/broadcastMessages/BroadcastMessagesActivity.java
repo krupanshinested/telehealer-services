@@ -1,31 +1,26 @@
 package com.thealer.telehealer.views.home.broadcastMessages;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
-import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
+import com.thealer.telehealer.apilayer.models.chat.BroadCastUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.chat.BroadCastUserKeyApiResponseModel;
 import com.thealer.telehealer.apilayer.models.chat.BroadcastMessageRequestModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatApiResponseModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatApiViewModel;
-import com.thealer.telehealer.apilayer.models.chat.ChatMessageRequestModel;
 import com.thealer.telehealer.apilayer.models.chat.PrecannedMessageApiResponse;
 import com.thealer.telehealer.apilayer.models.chat.UserKeysApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -50,7 +45,6 @@ import java.util.Set;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.apilayer.api.ApiInterface.FILTER_USER_GUID_IN;
-import static com.thealer.telehealer.apilayer.api.ApiInterface.NAME;
 
 public class BroadcastMessagesActivity extends BaseActivity implements View.OnClickListener, OnActionCompleteInterface {
 
@@ -58,41 +52,45 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle;
-    private String guidList="";
-    private String title="";
+    private String guidList = "";
+    private String title = "";
     private EditText messageEt;
-    private ImageView infoIv,sendIv;
-    private  BroadCastUserKeyApiResponseModel broadCastUserKeyApiResponseModel;
+    private ImageView infoIv, sendIv;
+    private BroadCastUserKeyApiResponseModel broadCastUserKeyApiResponseModel;
     private SignalKey mySignalKey;
-    private ArrayList<SignalKey> selectedUserSignalKey=new ArrayList<>();
+    private ArrayList<SignalKey> selectedUserSignalKey = new ArrayList<>();
 
     private ChatApiViewModel chatApiViewModel;
     private CustomRecyclerView chatMessageCrv;
     private ChatListAdapter chatListAdapter;
 
-    private CommonUserApiResponseModel userModel=new CommonUserApiResponseModel();
+    private CommonUserApiResponseModel userModel = new CommonUserApiResponseModel();
     private ArrayList<String> precannedMessages = new ArrayList<>();
     private PrecannedMessageApiResponse precannedMessageApiResponse;
-    private List<CommonUserApiResponseModel> selectedUserList=new ArrayList<>();
+    private List<CommonUserApiResponseModel> selectedUserList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_broadcast_messages);
-        if(getIntent()!=null) {
-            selectedUserList =(List<CommonUserApiResponseModel>) getIntent().getSerializableExtra(FILTER_USER_GUID_IN);
-            //Loop use to fetch list of select userid and name to process broadcast message
-            for (int i = 0; i < selectedUserList.size(); i++) {
-                CommonUserApiResponseModel currentUser = selectedUserList.get(i);
-                if (i == 0) {
-                    guidList = currentUser.getUser_guid();
-                    title = currentUser.getFirst_name();
-                } else if (i == 1)
-                    title = title + ", " + currentUser.getFirst_name();
-                else if (i == 2)
-                    title = title + ".. more";
+        if (getIntent() != null) {
+            selectedUserList = (List<CommonUserApiResponseModel>) getIntent().getSerializableExtra(FILTER_USER_GUID_IN);
+            if (selectedUserList != null && selectedUserList.size() > 0) {
+                //Loop use to fetch list of select userid and name to process broadcast message
+                for (int i = 0; i < selectedUserList.size(); i++) {
+                    CommonUserApiResponseModel currentUser = selectedUserList.get(i);
+                    if (i == 0) {
+                        guidList = currentUser.getUser_guid();
+                        title = currentUser.getFirst_name();
+                    } else if (i == 1)
+                        title = title + ", " + currentUser.getFirst_name();
+                    else if (i == 2)
+                        title = title + ".. more";
 
-                guidList = guidList+","+currentUser.getUser_guid();
+                    guidList = guidList + "," + currentUser.getUser_guid();
+                }
+            } else {
+                title = getString(R.string.broadcast_messages_all);
             }
 
         }
@@ -114,6 +112,7 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
         }
 
     }
+
     private void getUserKey(String guid, boolean isOwn, boolean isUpdatePreference, boolean isShowProgress) {
         SignalKeyManager
                 .getInstance(this, new SignalKeyManager.OnUserKeyReceivedListener() {
@@ -129,22 +128,25 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
                 })
                 .getUserKey(guid, isOwn, isUpdatePreference, isShowProgress);
     }
+
     private void initViewModel() {
         chatApiViewModel = new ViewModelProvider(this).get(ChatApiViewModel.class);
         attachObserver(chatApiViewModel);
 
-        chatApiViewModel.getBroadcastUserKeys(guidList,false);
+        chatApiViewModel.getBroadcastUserKeys(guidList, false);
         getPrecannedMessages();
+
+        chatApiViewModel.getAllBroadcastUsers();
 
         chatApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                   if(baseApiResponseModel instanceof BroadCastUserKeyApiResponseModel){
-                       broadCastUserKeyApiResponseModel = (BroadCastUserKeyApiResponseModel) baseApiResponseModel;
-                       selectedUserSignalKey= broadCastUserKeyApiResponseModel.getData();
-                       
-                   } else if (baseApiResponseModel instanceof PrecannedMessageApiResponse) {
+                    if (baseApiResponseModel instanceof BroadCastUserKeyApiResponseModel) {
+                        broadCastUserKeyApiResponseModel = (BroadCastUserKeyApiResponseModel) baseApiResponseModel;
+                        selectedUserSignalKey = broadCastUserKeyApiResponseModel.getData();
+
+                    } else if (baseApiResponseModel instanceof PrecannedMessageApiResponse) {
                         precannedMessageApiResponse = (PrecannedMessageApiResponse) baseApiResponseModel;
 
                         precannedMessages.clear();
@@ -152,6 +154,23 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
 
                         Set<String> messages = new HashSet<>(precannedMessages);
                         appPreference.setStringSet(PreferenceConstants.PRECANNED_MESSAGES, messages);
+                    } else if (baseApiResponseModel instanceof BroadCastUserApiResponseModel) {
+                        BroadCastUserApiResponseModel broadCastUserApiResponseModel = (BroadCastUserApiResponseModel) baseApiResponseModel;
+                        List<String> userList = broadCastUserApiResponseModel.getPatients();
+                        if (userList != null && userList.size() > 0) {
+                            for (int i = 0; i < userList.size(); i++) {
+                                String currentUser = userList.get(i);
+                                if (currentUser != null && !currentUser.isEmpty()) {
+                                    if (i == 0) {
+                                        guidList = currentUser;
+                                    } else {
+                                        guidList = guidList + "," + currentUser;
+                                    }
+                                }
+                            }
+                            chatApiViewModel.getBroadcastUserKeys(guidList, false);
+                        }
+
                     }
                 }
             }
@@ -211,16 +230,16 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
     private void sendBroadcastMessage() {
         List<BroadcastMessageRequestModel.MessagesBean> messagesBeanList = new ArrayList<>();
         BroadcastMessageRequestModel broadcastMessageRequestModel = new BroadcastMessageRequestModel();
-        String myEncryptedMessage="";
-        for(SignalKey userSignalKey:selectedUserSignalKey){
-             myEncryptedMessage= SignalManager.encryptMessage(messageEt.getText().toString(), mySignalKey, mySignalKey);
+        String myEncryptedMessage = "";
+        for (SignalKey userSignalKey : selectedUserSignalKey) {
+            myEncryptedMessage = SignalManager.encryptMessage(messageEt.getText().toString(), mySignalKey, mySignalKey);
             String receiverEncryptedMessage = SignalManager.encryptMessage(messageEt.getText().toString(), mySignalKey, userSignalKey);
-            BroadcastMessageRequestModel.MessagesBean messagesBean=new BroadcastMessageRequestModel.MessagesBean();
+            BroadcastMessageRequestModel.MessagesBean messagesBean = new BroadcastMessageRequestModel.MessagesBean();
             messagesBean.setReceiver_one_message(receiverEncryptedMessage);
             messagesBean.setSender_message(myEncryptedMessage);
             messagesBean.setTo(userSignalKey.getUser_guid());
             messagesBeanList.add(messagesBean);
-            chatListAdapter.setSignalKeys(mySignalKey,userSignalKey);
+            chatListAdapter.setSignalKeys(mySignalKey, userSignalKey);
         }
 
         broadcastMessageRequestModel.setMessages(messagesBeanList);

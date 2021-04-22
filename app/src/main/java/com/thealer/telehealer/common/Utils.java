@@ -76,6 +76,7 @@ import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OptionsSelectionAdapter;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.home.broadcastMessages.BroadcastMessagesActivity;
 import com.thealer.telehealer.views.home.broadcastMessages.ChoosePatientActivity;
 import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
@@ -1437,10 +1438,16 @@ public class Utils {
 
         TextView inviteManuallyTv;
         TextView inviteContactsTv;
+        TextView broadcastAllTv;
+        View broadcastView;
         CardView cancelCv;
 
         inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
+        broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
+        broadcastView = (View) alertView.findViewById(R.id.broadcast_view);
+        broadcastView.setVisibility(View.GONE);
+        broadcastAllTv.setVisibility(View.GONE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
 
         inviteManuallyTv.setOnClickListener(new View.OnClickListener() {
@@ -1490,14 +1497,30 @@ public class Utils {
 
         TextView pendingInvitesTv;
         TextView broadCastMessageTv;
+        TextView broadcastAllTv;
+        View broadcastView;
         CardView cancelCv;
 
         pendingInvitesTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         broadCastMessageTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
+        broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
+        broadcastView = (View) alertView.findViewById(R.id.broadcast_view);
+        broadcastView.setVisibility(View.GONE);
+        broadcastAllTv.setVisibility(View.GONE);
+
         pendingInvitesTv.setText(R.string.pending_invites);
         broadCastMessageTv.setText(R.string.broadcast_messages);
+        broadcastAllTv.setText(R.string.broadcast_messages_all);
         broadCastMessageTv.setVisibility(View.VISIBLE);
+        broadcastView.setVisibility(View.VISIBLE);
+        broadcastAllTv.setVisibility(View.VISIBLE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+
+        if(UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)){
+            broadCastMessageTv.setVisibility(View.GONE);
+            broadcastView.setVisibility(View.GONE);
+            broadcastAllTv.setVisibility(View.GONE);
+        }
 
         pendingInvitesTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1516,6 +1539,16 @@ public class Utils {
                 context.startActivity(new Intent(context, ChoosePatientActivity.class));
             }
         });
+
+        //allow physician to send broadcast message to all his Patient
+        broadcastAllTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                context.startActivity(new Intent(context, BroadcastMessagesActivity.class));
+            }
+        });
+
 
 
         cancelCv.setOnClickListener(new View.OnClickListener() {

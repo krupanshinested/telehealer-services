@@ -22,6 +22,7 @@ import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionRequest
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.UpdateAssociationRequestModel;
+import com.thealer.telehealer.apilayer.models.chat.BroadCastUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.chat.BroadCastUserKeyApiResponseModel;
 import com.thealer.telehealer.apilayer.models.chat.BroadcastMessageRequestModel;
 import com.thealer.telehealer.apilayer.models.chat.ChatApiResponseModel;
@@ -80,7 +81,6 @@ import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
-import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
 import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
@@ -635,6 +635,9 @@ public interface ApiInterface {
 
     @GET("api/messages")
     Observable<ChatApiResponseModel> getChatMessages(@Query("to") String userGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+
+    @GET("api/patients")
+    Observable<BroadCastUserApiResponseModel> getAllBroadcastUsers();
 
     @POST("api/messages")
     Observable<BaseApiResponseModel> sendMessage(@Query("notification") boolean notification, @Body ChatMessageRequestModel chatMessageRequestModel);
