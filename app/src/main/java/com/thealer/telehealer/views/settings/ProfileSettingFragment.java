@@ -194,7 +194,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
                     add_card.setVisibility(View.VISIBLE);
-                    subscription.setVisibility(View.VISIBLE);
+//                    subscription.setVisibility(View.VISIBLE);
+                    subscription.setVisibility(View.GONE);
                     patient_payments.hideSplitter(true);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {

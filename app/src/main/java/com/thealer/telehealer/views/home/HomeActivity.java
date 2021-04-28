@@ -76,11 +76,11 @@ import com.thealer.telehealer.views.home.schedules.ScheduleCalendarFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
+import com.thealer.telehealer.views.inviteUser.SendInvitationFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
-import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import java.util.Calendar;
 import java.util.List;
@@ -373,6 +373,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 case R.id.menu_schedules:
                     showSchedulesFragment(scheduleTypeCalendar);
                     break;
+                case R.id.menu_invite:
+                    showSendInvitation();
+                    break;
             }
         }
 
@@ -606,7 +609,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             String doctorGuid = bundle.getString(ArgumentKeys.DOCTOR_GUID);
             commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
             String designation = bundle.getString(Constants.DESIGNATION);
-            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId),designation);
+            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId), designation);
 
         } else {
             showDetailView(bundle);
@@ -723,9 +726,25 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_monitoring:
                 showMonitoringView(null);
                 break;
+            case R.id.menu_invite:
+                selecteMenuItem = R.id.menu_invite;
+                showSendInvitation();
+                break;
         }
         toggleDrawer();
         return true;
+    }
+
+    private void showSendInvitation() {
+        helpContent = HelpContent.HELP_INVITATION;
+        setToolbarTitle(getString(R.string.send_invitation));
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.IS_FROM_HOME, true);
+
+        SendInvitationFragment sendInvitationFragment = new SendInvitationFragment();
+        sendInvitationFragment.setArguments(bundle);
+        setFragment(sendInvitationFragment);
+
     }
 
     private void performSignOut() {
