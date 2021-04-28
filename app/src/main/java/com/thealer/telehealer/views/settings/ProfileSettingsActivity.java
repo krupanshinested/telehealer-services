@@ -759,6 +759,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     @Override
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
+        if(Constants.isRedirectProfileSetting){
+            GeneralSettingsFragment generalSettingsFragment = new GeneralSettingsFragment();
+            showSubFragment(generalSettingsFragment);
+        }
     }
 
     @Override

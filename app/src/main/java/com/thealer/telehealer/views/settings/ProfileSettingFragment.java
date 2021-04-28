@@ -208,5 +208,9 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 }
                 break;
         }
+        if(Constants.isRedirectProfileSetting){
+            Constants.isRedirectProfileSetting=false;
+            settings.performClick();
+        }
     }
 }

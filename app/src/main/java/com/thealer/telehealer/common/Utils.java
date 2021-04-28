@@ -678,6 +678,66 @@ public class Utils {
         return dialog;
     }
 
+    public static Dialog showAlertDialogWithClose(Context context, String title, String message,
+                                                  @Nullable String leftTitle,
+                                                  @Nullable String rightTitle,
+                                                  Runnable leftListener,
+                                                  Runnable rightListener,
+                                                  Runnable closeListener) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.custom_dailog_with_close, null);
+        builder.setView(view);
+        Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(context.getDrawable(android.R.drawable.screen_background_dark_transparent));
+
+        TextView titleTv, messageTv, leftTv, rightTv;
+        ImageView closeIv;
+
+        titleTv = (TextView) view.findViewById(R.id.title_tv);
+        messageTv = (TextView) view.findViewById(R.id.message_tv);
+        leftTv = (TextView) view.findViewById(R.id.left_tv);
+        rightTv = (TextView) view.findViewById(R.id.right_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
+
+        titleTv.setText(title);
+        messageTv.setText(message);
+        leftTv.setText(leftTitle);
+        rightTv.setText(rightTitle);
+
+        leftTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (leftListener != null)
+                    leftListener.run();
+
+                dialog.dismiss();
+            }
+        });
+
+        rightTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rightListener != null)
+                    rightListener.run();
+
+                dialog.dismiss();
+            }
+        });
+        closeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(closeListener!=null)
+                    closeListener.run();
+
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+        return dialog;
+    }
+
     public static String getAppType() {
         if (TeleHealerApplication.appPreference.getInt(Constants.USER_TYPE) == Constants.TYPE_PATIENT) {
             return Constants.BUILD_PATIENT;
@@ -1516,7 +1576,7 @@ public class Utils {
         broadcastAllTv.setVisibility(View.VISIBLE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
 
-        if(UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)){
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
             broadCastMessageTv.setVisibility(View.GONE);
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
@@ -1548,7 +1608,6 @@ public class Utils {
                 context.startActivity(new Intent(context, BroadcastMessagesActivity.class));
             }
         });
-
 
 
         cancelCv.setOnClickListener(new View.OnClickListener() {

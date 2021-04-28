@@ -185,6 +185,7 @@ public class Constants {
     public static final String did_subscriber_connected = "did_subscriber_connected";
 
     public static final double STRIPE_MIN_AMOUNT = 0.50;
+    public static boolean isRedirectProfileSetting=false;
 
 
     public interface MasterCodes {

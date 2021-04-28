@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.transaction;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -39,6 +41,8 @@ import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
+import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -179,19 +183,34 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 try {
                     JSONObject jsonObject = new JSONObject(json);
 
-                    if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
-                        String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                        Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
-                                dialog.dismiss();
-                            }
-                        }, (dialog, which) -> {
-                            dialog.dismiss();
+                    Runnable closeListener=new Runnable() {
+                        @Override
+                        public void run() {
                             setResult(RESULT_CANCELED);
                             confirmCharges();
-                        }).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
+                        }
+                    };
+
+                    Runnable proceedOfflineListener=new Runnable() {
+                        @Override
+                        public void run() {
+                            transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
+                        }
+                    };
+                    Runnable paymentSettingListener=new Runnable() {
+                        @Override
+                        public void run() {
+                            Constants.isRedirectProfileSetting=true;
+                            Intent intent = new Intent(AddChargeActivity.this, ProfileSettingsActivity.class);
+                            startActivity(intent);
+                        }
+                    };
+
+                    if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                        String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                        Utils.showAlertDialogWithClose(AddChargeActivity.this, getString(R.string.app_name), message,
+                                getString(R.string.lbl_proceed_offline), getString(R.string.payment_settings),
+                                proceedOfflineListener, paymentSettingListener,closeListener).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
                     } else {
                         if (addChargeViewModel.getAddedTransaction() != null) {
                             showPatientCardErrorOptions();

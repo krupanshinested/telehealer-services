@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -54,7 +53,6 @@ import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
-import com.thealer.telehealer.views.home.SelectAssociationFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import org.json.JSONException;
@@ -150,37 +148,58 @@ public class TransactionListFragment extends BaseFragment {
                         }
                     }, null);
                 } else {
-                    String json = errorModel.getResponse();
-                    if (json != null) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(json);
+                        String json = errorModel.getResponse();
+                        if (json != null) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(json);
+                                if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                                    String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                                    if (UserType.isUserAssistant()) {
+                                        Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                                                dialog.dismiss();
+                                            }
+                                        }, (dialog, which) -> {
+                                            selectedTransaction = null;
+                                            dialog.dismiss();
+                                        }).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
+                                    } else {
+                                        Runnable paymentSettingListener = new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Constants.isRedirectProfileSetting = true;
+                                                ((OnCloseActionInterface) getActivity()).onClose(false);
+                                            }
+                                        };
 
-                            if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
-                                String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                                Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
-                                        dialog.dismiss();
+                                        Runnable proceedOfflineListener = new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                                            }
+                                        };
+
+                                        Utils.showAlertDialogWithClose(getActivity(), getString(R.string.app_name), message,
+                                                getString(R.string.lbl_proceed_offline), getString(R.string.payment_settings),
+                                                proceedOfflineListener, paymentSettingListener, null).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
                                     }
-                                }, (dialog, which) -> {
-                                    selectedTransaction = null;
-                                    dialog.dismiss();
-                                }).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
-                            } else {
-                                if (selectedTransaction != null) {
-                                    showPatientCardErrorOptions();
+                                } else {
+                                    if (selectedTransaction != null) {
+                                        showPatientCardErrorOptions();
+                                    }
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        } else {
+                            Utils.showAlertDialog(getContext(), getString(R.string.error), getString(R.string.something_went_wrong_try_again), null, getString(R.string.cancel), null, (dialog, which) -> {
+                                selectedTransaction = null;
+                                dialog.dismiss();
+                            });
                         }
-                    } else {
-                        Utils.showAlertDialog(getContext(), getString(R.string.error), getString(R.string.something_went_wrong_try_again), null, getString(R.string.cancel), null, (dialog, which) -> {
-                            selectedTransaction = null;
-                            dialog.dismiss();
-                        });
-                    }
+
                 }
             }
         });
@@ -331,6 +350,7 @@ public class TransactionListFragment extends BaseFragment {
         });
 
         Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(progressBar);
+
         rvTransactions.getRecyclerView().setAdapter(new TransactionListAdapter(transactionListViewModel.getTransactions(), new TransactionListAdapter.OnOptionSelected() {
             @Override
             public void onReceiptClick(int pos) {
@@ -363,8 +383,6 @@ public class TransactionListFragment extends BaseFragment {
                     }
                 }
                 transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId(), Constants.PaymentMode.STRIPE);
-
-
             }
 
             @Override

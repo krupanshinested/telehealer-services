@@ -6,15 +6,12 @@ import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
-import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
-import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
 import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.RefundItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
 import java.util.Calendar;
