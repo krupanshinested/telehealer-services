@@ -86,6 +86,7 @@ public class TransactionListFragment extends BaseFragment {
     private LinearLayout addCardButton;
     private ImageView filterIndicator;
     private int doctorId=0,patientId=0;
+    private Boolean isFromProfile=false;
     private TransactionItem selectedTransaction = null;
 
     @Override
@@ -101,6 +102,7 @@ public class TransactionListFragment extends BaseFragment {
         if(getArguments()!=null){
             doctorId=getArguments().getInt(ArgumentKeys.DOCTOR_ID,0);
             patientId=getArguments().getInt(ArgumentKeys.PATIENT_ID,0);
+            isFromProfile=getArguments().getBoolean(ArgumentKeys.IS_FROM_PROFILE,false);
         }
 
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
@@ -280,7 +282,7 @@ public class TransactionListFragment extends BaseFragment {
 
     private void loadTransactions(boolean showProgress) {
         selectedTransaction = null;
-        transactionListViewModel.loadTransactions(showProgress,doctorId,patientId);
+        transactionListViewModel.loadTransactions(showProgress,doctorId,patientId,isFromProfile);
 
     }
 

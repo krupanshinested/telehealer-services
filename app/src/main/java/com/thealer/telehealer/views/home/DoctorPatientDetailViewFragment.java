@@ -909,6 +909,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
                             bundle.putInt(ArgumentKeys.DOCTOR_ID,doctorId);
                             bundle.putInt(ArgumentKeys.PATIENT_ID,patientId);
+                            bundle.putBoolean(ArgumentKeys.IS_FROM_PROFILE,true);
                             transactionListFragment.setArguments(bundle);
                             addFragment(getString(R.string.lbl_payment_history),transactionListFragment);
                             break;
