@@ -88,6 +88,7 @@ import com.thealer.telehealer.views.home.schedules.CreateNewScheduleActivity;
 import com.thealer.telehealer.views.home.schedules.ScheduleDetailViewFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
+import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -149,9 +150,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private CircleImageView statusCiv;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private PatientInvite patientInvite;
+    private int doctorId=0,patientId=0;
 
     private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
-            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7;
+            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7,paymentHistoryTab=8;
 
     @Override
     public void onAttach(Context context) {
@@ -168,6 +170,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
                 resultBean = model;
+                patientId=resultBean.getUser_id();
                 if (doctorGuid != null) {
                     Set<String> set = new HashSet<>();
                     set.add(doctorGuid);
@@ -539,8 +542,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     getArguments().getSerializable(Constants.USER_DETAIL) instanceof CommonUserApiResponseModel) {
 
                 userGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL)).getUser_guid();
-                if (getArguments().getSerializable(Constants.DOCTOR_DETAIL) != null)
+                patientId=((CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL)).getUser_id();
+                if (getArguments().getSerializable(Constants.DOCTOR_DETAIL) != null) {
                     doctorGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_guid();
+                    doctorId=((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_id();
+                }
             } else {
                 userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
                 doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
@@ -813,6 +819,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 tabs.add(documentTab);
                                 tabs.add(visitTab);
                                 tabs.add(orderTab);
+                                tabs.add(paymentHistoryTab);
                             } else if (UserType.isUserAssistant()) {
                                 tabs.add(aboutTab);
                                 tabs.add(vitalTab);
@@ -895,6 +902,15 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         case monitorTab:
                             MonitoringFragment monitoringFragment = new MonitoringFragment();
                             addFragment(getString(R.string.monitoring), monitoringFragment);
+                            break;
+                        case paymentHistoryTab:
+                            TransactionListFragment transactionListFragment=new TransactionListFragment();
+                            bundle = new Bundle();
+                            bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
+                            bundle.putInt(ArgumentKeys.DOCTOR_ID,doctorId);
+                            bundle.putInt(ArgumentKeys.PATIENT_ID,patientId);
+                            transactionListFragment.setArguments(bundle);
+                            addFragment(getString(R.string.lbl_payment_history),transactionListFragment);
                             break;
                     }
                 }

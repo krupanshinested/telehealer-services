@@ -58,6 +58,8 @@ public class ArgumentKeys {
     public static final String USER_GUID = "user_guid";
     public static final String SCHEDULE_DETAIL = "schedule_detail";
     public static final String DOCTOR_GUID = "doctor_guid";
+    public static final String DOCTOR_ID = "doctor_id";
+    public static final String USER_ID = "user_id";
     public static final String IS_SHOW_TOOLBAR = "isShowToolbar";
     public static final String IS_SHOW_LOADER = "isShowLoader";
     public static final String SELECTED_TIME_SLOT = "selected_time_slot";

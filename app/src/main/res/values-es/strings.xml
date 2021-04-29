@@ -1483,5 +1483,6 @@
     <string name="str_select_patient">To send message you have to select atleast one patient.</string>
     <string name="broadcast_messages_all">Broadcast Message to All</string>
     <string name="payment_settings">Payment Settings</string>
+    <string name="lbl_payment_history">Payment History</string>
 
 </resources>

@@ -30,14 +30,21 @@ public class TransactionListViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void loadTransactions(boolean isShowProgress) {
+    public void loadTransactions(boolean isShowProgress, int doctorId, int patientId) {
         if (filterReq == null) {
             filterReq = new TransactionListReq();
             filterReq.setFilter(new TransactionListReq.Filter());
-            filterReq.getFilter().setToDate(Utils.getUTCDateFromCalendar(Calendar.getInstance()));
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.MONTH, -1);
-            filterReq.getFilter().setFromDate(Utils.getUTCDateFromCalendar(calendar));
+            if (doctorId != 0 && patientId != 0) {
+                filterReq.getFilter().setToDate("");
+                filterReq.getFilter().setFromDate("");
+            } else {
+                filterReq.getFilter().setToDate(Utils.getUTCDateFromCalendar(Calendar.getInstance()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.MONTH, -1);
+                filterReq.getFilter().setFromDate(Utils.getUTCDateFromCalendar(calendar));
+            }
+            filterReq.getFilter().setDoctorId(doctorId);
+            filterReq.getFilter().setPatientId(patientId);
         }
         if (!isApiRequested) {
             isApiRequested = true;

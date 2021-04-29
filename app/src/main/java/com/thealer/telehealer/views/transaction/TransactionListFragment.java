@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -84,7 +85,7 @@ public class TransactionListFragment extends BaseFragment {
     private ImageView filterIv;
     private LinearLayout addCardButton;
     private ImageView filterIndicator;
-
+    private int doctorId=0,patientId=0;
     private TransactionItem selectedTransaction = null;
 
     @Override
@@ -97,7 +98,10 @@ public class TransactionListFragment extends BaseFragment {
         onViewChangeInterface.attachObserver(transactionListViewModel);
         onViewChangeInterface.attachObserver(refundViewModel);
         onViewChangeInterface.attachObserver(askToAddCardViewModel);
-
+        if(getArguments()!=null){
+            doctorId=getArguments().getInt(ArgumentKeys.DOCTOR_ID,0);
+            patientId=getArguments().getInt(ArgumentKeys.PATIENT_ID,0);
+        }
 
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
@@ -152,6 +156,7 @@ public class TransactionListFragment extends BaseFragment {
                         if (json != null) {
                             try {
                                 JSONObject jsonObject = new JSONObject(json);
+
                                 if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
                                     String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
                                     if (UserType.isUserAssistant()) {
@@ -275,7 +280,7 @@ public class TransactionListFragment extends BaseFragment {
 
     private void loadTransactions(boolean showProgress) {
         selectedTransaction = null;
-        transactionListViewModel.loadTransactions(showProgress);
+        transactionListViewModel.loadTransactions(showProgress,doctorId,patientId);
 
     }
 
@@ -285,6 +290,7 @@ public class TransactionListFragment extends BaseFragment {
             rvTransactions.showEmptyState();
         }
     }
+
 
     @Nullable
     @Override
@@ -323,6 +329,12 @@ public class TransactionListFragment extends BaseFragment {
         rvTransactions.hideEmptyState();
         rvTransactions.getSwipeLayout().setEnabled(false);
 
+
+        if (getArguments() != null) {
+            if (getArguments().getBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, false)) {
+                appbarLayout.setVisibility(View.GONE);
+            }
+        }
 
         backIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -383,6 +395,8 @@ public class TransactionListFragment extends BaseFragment {
                     }
                 }
                 transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId(), Constants.PaymentMode.STRIPE);
+
+
             }
 
             @Override
