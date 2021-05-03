@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.transaction;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -16,6 +17,8 @@ import com.thealer.telehealer.common.Utils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+
+import static com.thealer.telehealer.common.Utils.UtcTimezone;
 
 public class TransactionListViewModel extends BaseApiViewModel {
 
@@ -42,9 +45,6 @@ public class TransactionListViewModel extends BaseApiViewModel {
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.MONTH, -1);
                 filterReq.getFilter().setFromDate(Utils.getUTCDateFromCalendar(calendar));
-            }
-            if(page==1){
-                filterReq.getFilter().setToDate("");
             }
             filterReq.getFilter().setDoctorId(doctorId);
             filterReq.getFilter().setPatientId(patientId);

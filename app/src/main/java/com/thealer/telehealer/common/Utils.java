@@ -1882,7 +1882,10 @@ public class Utils {
     }
 
     public static String getUTCDateFromCalendar(Calendar calendar) {
-        return new SimpleDateFormat(UTCFormat, Locale.getDefault()).format(calendar.getTimeInMillis());
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat(UTCFormat, Locale.getDefault());
+        simpleDateFormat.setTimeZone(UtcTimezone);
+        return simpleDateFormat.format(calendar.getTimeInMillis());
     }
 
 

@@ -826,6 +826,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 tabs.add(documentTab);
                                 tabs.add(visitTab);
                                 tabs.add(orderTab);
+                                tabs.add(paymentHistoryTab);
                             }
                             break;
 
