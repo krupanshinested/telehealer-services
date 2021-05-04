@@ -739,7 +739,7 @@ public interface ApiInterface {
     @POST("/api/charge/process-payment")
     Observable<BaseApiResponseModel> processPayment(@Query("id") int id, @Body HashMap<String, Object> req);
 
-    @POST("/api/charge/process-refund")
+    @POST("/api/charge/process-refund-v2")
     Observable<BaseApiResponseModel> processRefund(@Query("id") int id, @Body() RefundReq req);
 
 

@@ -290,6 +290,9 @@ public class TransactionListFragment extends BaseFragment {
         if (transactionListViewModel.getPage() == 1 && transactionListViewModel.getTransactions().size() == 0) {
             rvTransactions.setEmptyState(EmptyViewConstants.EMPTY_TRANSACTIONS);
             rvTransactions.showEmptyState();
+        }else{
+            rvTransactions.hideEmptyState();
+            rvTransactions.updateView();
         }
     }
 
@@ -397,8 +400,6 @@ public class TransactionListFragment extends BaseFragment {
                     }
                 }
                 transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId(), Constants.PaymentMode.STRIPE);
-
-
             }
 
             @Override
@@ -524,6 +525,7 @@ public class TransactionListFragment extends BaseFragment {
                 filterIndicator.setVisibility(View.VISIBLE);
             } else
                 filterIndicator.setVisibility(View.GONE);
+
             if (data.getBooleanExtra(TransactionFilterActivity.EXTRA_IS_RESET, false)) {
                 filterIndicator.setVisibility(View.GONE);
             }
