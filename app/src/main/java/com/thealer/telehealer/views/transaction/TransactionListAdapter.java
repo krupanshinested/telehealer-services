@@ -1,8 +1,6 @@
 package com.thealer.telehealer.views.transaction;
 
-import android.content.Context;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 
@@ -27,10 +26,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     private List<TransactionItem> list;
     private OnOptionSelected onOptionSelected;
+    private OnItemEndListener onItemEndListener;
 
-    public TransactionListAdapter(List<TransactionItem> list, OnOptionSelected onOptionSelected) {
+    public TransactionListAdapter(List<TransactionItem> list, OnOptionSelected onOptionSelected, OnItemEndListener onItemEndListener) {
         this.list = list;
         this.onOptionSelected = onOptionSelected;
+        this.onItemEndListener = onItemEndListener;
     }
 
 
@@ -43,6 +44,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     @Override
     public void onBindViewHolder(@NonNull TransactionListVH holder, int position) {
+        if (position == list.size() - 1) {
+            onItemEndListener.itemEnd(position);
+        }
         holder.tvCharge.setText(list.get(position).getAmountString());
         holder.tvReason.setText(list.get(position).getCommaSeparatedReason(holder.itemView.getContext()));
         holder.tvDate.setText(Utils.getFormatedDateTime(list.get(position).getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));

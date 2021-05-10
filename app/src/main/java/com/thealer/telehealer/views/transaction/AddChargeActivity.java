@@ -3,14 +3,8 @@ package com.thealer.telehealer.views.transaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -34,22 +28,18 @@ import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewMod
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
-import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
-import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class AddChargeActivity extends BaseActivity implements View.OnClickListener {
@@ -183,7 +173,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 try {
                     JSONObject jsonObject = new JSONObject(json);
 
-                    Runnable closeListener=new Runnable() {
+                    Runnable closeListener = new Runnable() {
                         @Override
                         public void run() {
                             setResult(RESULT_CANCELED);
@@ -191,26 +181,35 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                         }
                     };
 
-                    Runnable proceedOfflineListener=new Runnable() {
+                    Runnable proceedOfflineListener = new Runnable() {
                         @Override
                         public void run() {
                             transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
                         }
                     };
-                    Runnable paymentSettingListener=new Runnable() {
+                    Runnable paymentSettingListener = new Runnable() {
                         @Override
                         public void run() {
-                            Constants.isRedirectProfileSetting=true;
+                            Constants.isRedirectProfileSetting = true;
                             Intent intent = new Intent(AddChargeActivity.this, ProfileSettingsActivity.class);
                             startActivity(intent);
                         }
                     };
 
-                    if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                    if (jsonObject.has("display_button") && !errorModel.isDisplayButton()) {
+                        String errMsg = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                        Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.app_name), errMsg,
+                                getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }, null);
+                    }else if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
                         String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
                         Utils.showAlertDialogWithClose(AddChargeActivity.this, getString(R.string.app_name), message,
                                 getString(R.string.lbl_proceed_offline), getString(R.string.payment_settings),
-                                proceedOfflineListener, paymentSettingListener,closeListener).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
+                                proceedOfflineListener, paymentSettingListener, closeListener).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
                     } else {
                         if (addChargeViewModel.getAddedTransaction() != null) {
                             showPatientCardErrorOptions();
@@ -386,7 +385,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnSubmit: {
                 if (isValid()) {
-                    Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.alert),getString(R.string.confirm_vital_charges) , getString(R.string.yes), getString(R.string.no), (dialog, which) -> {
+                    Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.alert), getString(R.string.confirm_vital_charges), getString(R.string.yes), getString(R.string.no), (dialog, which) -> {
                         dialog.dismiss();
                         addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
                     }, ((dialog, which) -> {
@@ -397,7 +396,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             }
             case R.id.btnSubmitProcess: {
                 if (isValid()) {
-                    Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.alert),getString(R.string.confirm_vital_charges) , getString(R.string.yes), getString(R.string.no), (dialog, which) -> {
+                    Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.alert), getString(R.string.confirm_vital_charges), getString(R.string.yes), getString(R.string.no), (dialog, which) -> {
                         dialog.dismiss();
                         addChargeViewModel.setSaveAndProcess(true);
                         addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);

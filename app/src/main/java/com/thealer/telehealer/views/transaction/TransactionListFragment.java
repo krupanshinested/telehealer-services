@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,8 @@ import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListRe
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
+import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
@@ -158,8 +161,16 @@ public class TransactionListFragment extends BaseFragment {
                         if (json != null) {
                             try {
                                 JSONObject jsonObject = new JSONObject(json);
-
-                                if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                                if (jsonObject.has("display_button") && !errorModel.isDisplayButton()) {
+                                    String errMsg = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                                    Utils.showAlertDialog(getContext(), getString(R.string.app_name), errMsg,
+                                            getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            }, null);
+                                }else if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
                                     String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
                                     if (UserType.isUserAssistant()) {
                                         Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -333,7 +344,14 @@ public class TransactionListFragment extends BaseFragment {
         rvTransactions.setEmptyState(EmptyViewConstants.EMPTY_PAYMENTS);
         rvTransactions.hideEmptyState();
         rvTransactions.getSwipeLayout().setEnabled(false);
-
+        /*rvTransactions.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                rvTransactions.getSwipeLayout().setRefreshing(false);
+                transactionListViewModel.setPage(1);
+                loadTransactions(true);
+            }
+        });*/
 
         if (getArguments() != null) {
             if (getArguments().getBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, false)) {
@@ -423,12 +441,19 @@ public class TransactionListFragment extends BaseFragment {
             public void onItemClick(int position) {
                 startActivity(new Intent(getActivity(), TransactionDetailsActivity.class).putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, new Gson().toJson(transactionListViewModel.getTransactions().get(position))));
             }
+        }, new OnItemEndListener() {
+            @Override
+            public void itemEnd(int position) {
+                transactionListViewModel.setPage(transactionListViewModel.getPage() + 1);
+                loadTransactions(false);
+                progressBar.setVisibility(View.VISIBLE);
+            }
         }));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         rvTransactions.setLayoutManager(linearLayoutManager);
 
-        rvTransactions.getRecyclerView().addOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*rvTransactions.getRecyclerView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -445,7 +470,7 @@ public class TransactionListFragment extends BaseFragment {
                 }
             }
         });
-
+*/
         /*if (UserType.isUserAssistant()) {
             searchEt.setHint(getString(R.string.lbl_search_patient));
             filterIv.setVisibility(View.GONE);

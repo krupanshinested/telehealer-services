@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -219,10 +220,18 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
             filter.setDoctorName(doctorOcv.getTitleText());
         }
         if (dateFilter.getSelectedFromDate() != null) {
-            filter.setFromDate(Utils.getUTCDateFromCalendar(dateFilter.getSelectedFromDate()));
+            Calendar calenderFROM=dateFilter.getSelectedFromDate();
+            calenderFROM.set(Calendar.HOUR_OF_DAY,0);
+            calenderFROM.set(Calendar.MINUTE,0);
+            calenderFROM.set(Calendar.SECOND,0);
+            filter.setFromDate(Utils.getUTCDateFromCalendar(calenderFROM));
         }
         if (dateFilter.getSelectedToDate() != null) {
-            filter.setToDate(Utils.getUTCDateFromCalendar(dateFilter.getSelectedToDate()));
+            Calendar calenderTO=dateFilter.getSelectedToDate();
+            calenderTO.set(Calendar.HOUR_OF_DAY,23);
+            calenderTO.set(Calendar.MINUTE,59);
+            calenderTO.set(Calendar.SECOND,59);
+            filter.setToDate(Utils.getUTCDateFromCalendar(calenderTO));
         }
         ArrayList<Integer> selectedReasons = new ArrayList<>();
         for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions())
