@@ -148,6 +148,9 @@ public class ArgumentKeys {
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
     public static int AUTH_CANCELLED = 3;
+    public static String ROLE_PHYSICIAN="physician";
+    public static String ROLE_STAFF="staff";
+    public static String ROLE_PATIENT="patient";
 
     public static final String MEASUREMENT_TYPE = "MEASUREMENT_TYPE";
     public static final String SELECTED_VITAL_TYPE = "SELECTED_VITAL_TYPE";

@@ -377,7 +377,9 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             llStaff.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.showInviteAlert(AddConnectionActivity.this, null);
+                    Bundle inviteBundle=new Bundle();
+                    inviteBundle.putString(ArgumentKeys.ROLE,ArgumentKeys.ROLE_STAFF);
+                    Utils.showInviteAlert(AddConnectionActivity.this, inviteBundle);
                 }
             });
         }

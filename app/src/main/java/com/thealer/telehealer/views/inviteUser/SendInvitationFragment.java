@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -73,11 +74,19 @@ public class SendInvitationFragment extends BaseFragment implements View.OnClick
 
     @Override
     public void onClick(View v) {
+        Bundle inviteBundle=new Bundle();
         switch (v.getId()) {
             case R.id.patient_cb:
+                inviteBundle.putString(ArgumentKeys.ROLE,ArgumentKeys.ROLE_PATIENT);
+                Utils.showInviteAlert(getActivity(), inviteBundle);
+                break;
             case R.id.sa_cb:
+                inviteBundle.putString(ArgumentKeys.ROLE,ArgumentKeys.ROLE_STAFF);
+                Utils.showInviteAlert(getActivity(), inviteBundle);
+                break;
             case R.id.provider_cb:
-                Utils.showInviteAlert(getActivity(), null);
+                inviteBundle.putString(ArgumentKeys.ROLE,ArgumentKeys.ROLE_PHYSICIAN);
+                Utils.showInviteAlert(getActivity(), inviteBundle);
                 break;
         }
     }

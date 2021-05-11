@@ -428,7 +428,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 if (!UserType.isUserDoctor()) {
                     startActivity(new Intent(getActivity(), AddConnectionActivity.class));
                 } else {
-                    Utils.showInviteAlert(getActivity(), null);
+                    Bundle inviteBundle=new Bundle();
+                    inviteBundle.putString(ArgumentKeys.ROLE,ArgumentKeys.ROLE_PATIENT);
+                    Utils.showInviteAlert(getActivity(), inviteBundle);
                 }
                 break;
             case R.id.lay_patient_count:
