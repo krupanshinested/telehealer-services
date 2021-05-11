@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
 
@@ -30,6 +31,7 @@ public class InviteByEmailFragment extends InviteUserBaseFragment {
     private CommonUserApiResponseModel commonUserApiResponseModel = null;
     private String doctor_guid = null;
     private TextView infoTv;
+    private Bundle bundle =  null;
 
     @Nullable
     @Override
@@ -60,6 +62,12 @@ public class InviteByEmailFragment extends InviteUserBaseFragment {
             public void onClick(View v) {
                 showSuccessFragment();
                 InviteByEmailPhoneRequestModel inviteByEmailPhoneRequestModel = new InviteByEmailPhoneRequestModel();
+                bundle=getArguments();
+                String role="";
+                if(bundle!=null){
+                    role=bundle.getString(ArgumentKeys.ROLE,"");
+                }
+                inviteByEmailPhoneRequestModel.setRole(role);
                 inviteByEmailPhoneRequestModel.getInvitations().add(new InviteByEmailPhoneRequestModel.InvitationsBean(emailEt.getText().toString(), null));
                 inviteUserApiViewModel.inviteUserByEmailPhone(doctor_guid, inviteByEmailPhoneRequestModel, false);
             }

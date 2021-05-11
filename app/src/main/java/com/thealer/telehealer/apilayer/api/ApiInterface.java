@@ -482,11 +482,17 @@ public interface ApiInterface {
     @GET("api/schedule")
     Observable<SchedulesApiResponseModel.ResultBean> getScheduleDetail(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @POST("api/setup/invite")
-    Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);
+    /*@POST("api/setup/invite")
+    Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);*/
 
-    @POST("api/setup/invite")
-    Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid, @Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);
+    @POST("api/setup/invite-v2")
+    Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel);
+
+    /*@POST("api/setup/invite")
+    Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid, @Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);*/
+
+    @POST("api/setup/invite-v2")
+    Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);
 
     @GET("api/call/{id}")
     Observable<VisitsDetailApiResponseModel> getTranscriptionDetails(@Path(ID) String id);

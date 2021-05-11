@@ -94,7 +94,7 @@ public class InviteByDemographicFragment extends InviteUserBaseFragment {
             @Override
             public void onClick(View v) {
                 showSuccessFragment();
-                InviteByDemographicRequestModel demographicRequestMode = new InviteByDemographicRequestModel(firstnameEt.getText().toString(),
+                InviteByDemographicRequestModel demographicRequestMode = new InviteByDemographicRequestModel(bundle.getString(ArgumentKeys.ROLE,""),firstnameEt.getText().toString(),
                         lastnameEt.getText().toString(),
                         dobEt.getText().toString(),
                         genderSp.getSelectedItem().toString().toLowerCase());

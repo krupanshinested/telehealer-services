@@ -18,6 +18,7 @@ import com.hbb20.CountryCodePicker;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 
 import io.michaelrocks.libphonenumber.android.NumberParseException;
@@ -40,6 +41,7 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
     private Phonenumber.PhoneNumber phoneNumber;
     private RelativeLayout numberRl;
     private TextView infoTv;
+    private Bundle bundle = null;
 
     @Nullable
     @Override
@@ -72,6 +74,12 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
                 String number = countyCode.getSelectedCountryCodeWithPlus() + "" + phoneNumber.getNationalNumber();
                 showSuccessFragment();
                 InviteByEmailPhoneRequestModel inviteByEmailPhoneRequestModel = new InviteByEmailPhoneRequestModel();
+                bundle=getArguments();
+                String role="";
+                if(bundle != null){
+                    role=bundle.getString(ArgumentKeys.ROLE,"");
+                }
+                inviteByEmailPhoneRequestModel.setRole(role);
                 inviteByEmailPhoneRequestModel.getInvitations().add(new InviteByEmailPhoneRequestModel.InvitationsBean(null, number));
                 inviteUserApiViewModel.inviteUserByEmailPhone(doctor_guid, inviteByEmailPhoneRequestModel, false);
 

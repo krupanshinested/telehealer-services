@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class InviteByEmailPhoneRequestModel {
 
+    private String role;
     private List<InvitationsBean> invitations = new ArrayList<>();
 
     public List<InvitationsBean> getInvitations() {
@@ -16,6 +17,14 @@ public class InviteByEmailPhoneRequestModel {
 
     public void setInvitations(List<InvitationsBean> invitations) {
         this.invitations = invitations;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public static class InvitationsBean {

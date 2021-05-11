@@ -19,7 +19,7 @@ public class InviteUserApiViewModel extends BaseApiViewModel {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
-                getAuthApiService().inviteUserByEmailPhone(doctor_user_guid, emailPhoneRequestModel)
+                getAuthApiService().inviteUserByEmailPhone(emailPhoneRequestModel)
                         .compose(applySchedulers())
                         .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                             @Override
@@ -35,7 +35,7 @@ public class InviteUserApiViewModel extends BaseApiViewModel {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
-                getAuthApiService().inviteUserByDemographic(demographicRequestModel, doctor_guid)
+                getAuthApiService().inviteUserByDemographic(demographicRequestModel)
                         .compose(applySchedulers())
                         .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                             @Override
