@@ -81,6 +81,7 @@ import com.thealer.telehealer.views.home.broadcastMessages.ChoosePatientActivity
 import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
+import com.thealer.telehealer.views.inviteUser.InvitedListActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 import com.thealer.telehealer.views.signup.SignUpActivity;
 
@@ -1445,11 +1446,8 @@ public class Utils {
         TextView invitedListTv;
         TextView broadcastAllTv;
         View broadcastView;
-        View invitedListView;
         CardView cancelCv;
-
         invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
-        invitedListView = (TextView) alertView.findViewById(R.id.invited_list);
         inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
@@ -1462,7 +1460,7 @@ public class Utils {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
-                Intent intent = new Intent(context, InviteUserActivity.class);
+                Intent intent = new Intent(context, InvitedListActivity.class);
                 if (bundle != null) {
                     intent.putExtras(bundle);
                 }

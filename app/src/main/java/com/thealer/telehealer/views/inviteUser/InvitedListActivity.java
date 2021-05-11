@@ -34,7 +34,7 @@ public class InvitedListActivity extends BaseActivity implements ChangeTitleInte
         toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         fragmentHolder = (ConstraintLayout) findViewById(R.id.fragment_holder);
 
-        onTitleChange(getString(R.string.invite_a_user));
+        onTitleChange(getString(R.string.invited_user_list));
 
         backIv.setOnClickListener(this);
 
