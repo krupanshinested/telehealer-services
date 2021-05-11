@@ -429,7 +429,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                     startActivity(new Intent(getActivity(), AddConnectionActivity.class));
                 } else {
                     Bundle inviteBundle=new Bundle();
-                    inviteBundle.putString(ArgumentKeys.ROLE,ArgumentKeys.ROLE_PATIENT);
+                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
                     Utils.showInviteAlert(getActivity(), inviteBundle);
                 }
                 break;

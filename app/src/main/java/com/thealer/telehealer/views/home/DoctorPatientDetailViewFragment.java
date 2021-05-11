@@ -518,7 +518,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     if(inviteBundle==null)
                         inviteBundle=new Bundle();
 
-                    inviteBundle.putString(ArgumentKeys.ROLE,ArgumentKeys.ROLE_PATIENT);
+                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
                     Utils.showInviteAlert(getActivity(), inviteBundle);
                 }
             });

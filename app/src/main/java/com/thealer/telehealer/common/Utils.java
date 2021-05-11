@@ -649,8 +649,9 @@ public class Utils {
     public static String getDoctorDisplayName(String first_name, String last_name, String title) {
         return first_name + " " + last_name + " " + ((title != null) ? title : "");
     }
-    public static String getSupportStaffDisplayName(String first_name, String last_name, String designation){
-        return first_name + " " + last_name + ((designation != null) ? ", "+designation : "");
+
+    public static String getSupportStaffDisplayName(String first_name, String last_name, String designation) {
+        return first_name + " " + last_name + ((designation != null) ? ", " + designation : "");
     }
 
     public static String getPatientDisplayName(String first_name, String last_name) {
@@ -1441,10 +1442,14 @@ public class Utils {
 
         TextView inviteManuallyTv;
         TextView inviteContactsTv;
+        TextView invitedListTv;
         TextView broadcastAllTv;
         View broadcastView;
+        View invitedListView;
         CardView cancelCv;
 
+        invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
+        invitedListView = (TextView) alertView.findViewById(R.id.invited_list);
         inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
@@ -1452,6 +1457,18 @@ public class Utils {
         broadcastView.setVisibility(View.GONE);
         broadcastAllTv.setVisibility(View.GONE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+
+        invitedListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                Intent intent = new Intent(context, InviteUserActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
+                context.startActivity(intent);
+            }
+        });
 
         inviteManuallyTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1500,10 +1517,14 @@ public class Utils {
 
         TextView pendingInvitesTv;
         TextView broadCastMessageTv;
+        TextView invitedListTv;
         TextView broadcastAllTv;
         View broadcastView;
+        View invitedListView;
         CardView cancelCv;
 
+        invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
+        invitedListView = (TextView) alertView.findViewById(R.id.invited_list);
         pendingInvitesTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         broadCastMessageTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
@@ -1514,12 +1535,16 @@ public class Utils {
         pendingInvitesTv.setText(R.string.pending_invites);
         broadCastMessageTv.setText(R.string.broadcast_messages);
         broadcastAllTv.setText(R.string.broadcast_messages_all);
+
+        invitedListTv.setVisibility(View.GONE);
+        invitedListView.setVisibility(View.GONE);
+
         broadCastMessageTv.setVisibility(View.VISIBLE);
         broadcastView.setVisibility(View.VISIBLE);
         broadcastAllTv.setVisibility(View.VISIBLE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
 
-        if(UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)){
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
             broadCastMessageTv.setVisibility(View.GONE);
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
@@ -1551,7 +1576,6 @@ public class Utils {
                 context.startActivity(new Intent(context, BroadcastMessagesActivity.class));
             }
         });
-
 
 
         cancelCv.setOnClickListener(new View.OnClickListener() {

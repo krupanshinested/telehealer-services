@@ -153,9 +153,15 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
 
                 } else {
                     viewHolder.actionCl.setVisibility(View.GONE);
-                    avatarUrl = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getUser_avatar();
-                    title = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayName();
-                    subTitle = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayInfo();
+                    if(adapterModelList.get(position).getInvitesResponseModel().getRequestee()!=null) {
+                        avatarUrl = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getUser_avatar();
+                        title = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayName();
+                        subTitle = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayInfo();
+                    }else{
+                        avatarUrl="";
+                        title="";
+                        subTitle="";
+                    }
                 }
 
                 Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.avatarCiv, avatarUrl, activity.getDrawable(R.drawable.profile_placeholder), true, true);

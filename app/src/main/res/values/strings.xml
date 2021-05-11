@@ -1588,5 +1588,6 @@
     <string name="help_content_invite_patient">Send manual invitation to provider and its support staff.</string>
     <string name="help_content_invite_assistant">As being support staff you can send manually invitation to provider, patient as well as other support staff.</string>
     <string name="help_content_invite_provider">As being provider you can send manually invitation to support staff as well as patient</string>
+    <string name="view_invited_list">View Invited List</string>
 
 </resources>

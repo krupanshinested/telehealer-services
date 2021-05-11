@@ -378,7 +378,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                 @Override
                 public void onClick(View v) {
                     Bundle inviteBundle=new Bundle();
-                    inviteBundle.putString(ArgumentKeys.ROLE,ArgumentKeys.ROLE_STAFF);
+                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_ASSISTANT);
                     Utils.showInviteAlert(AddConnectionActivity.this, inviteBundle);
                 }
             });
