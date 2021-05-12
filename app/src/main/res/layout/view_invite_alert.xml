@@ -50,6 +50,7 @@
                 android:textColor="@color/app_gradient_start" />
 
             <View
+                android:id="@+id/invite_manually_view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/colorGrey_light" />

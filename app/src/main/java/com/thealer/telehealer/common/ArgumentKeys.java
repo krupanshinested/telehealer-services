@@ -254,5 +254,6 @@ public class ArgumentKeys {
     public static final String ITEM_CLICK_CHILD_POS = "ITEM_CLICK_CHILD_POS";
     public static final String ITEM_CLICK_PARENT_POS = "ITEM_CLICK_PARENT_POS";
     public static final String IS_FROM_PARENT = "IS_FROM_PARENT";
+    public static final String IS_INVITED_VISIBLE = "IS_INVITED_VISIBLE";
 
 }

@@ -79,14 +79,17 @@ public class SendInvitationFragment extends BaseFragment implements View.OnClick
         switch (v.getId()) {
             case R.id.patient_cb:
                 inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
+                inviteBundle.putBoolean(ArgumentKeys.IS_INVITED_VISIBLE,false);
                 Utils.showInviteAlert(getActivity(), inviteBundle);
                 break;
             case R.id.sa_cb:
                 inviteBundle.putString(ArgumentKeys.ROLE, Constants.ROLE_ASSISTANT);
+                inviteBundle.putBoolean(ArgumentKeys.IS_INVITED_VISIBLE,false);
                 Utils.showInviteAlert(getActivity(), inviteBundle);
                 break;
             case R.id.provider_cb:
                 inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_DOCTOR);
+                inviteBundle.putBoolean(ArgumentKeys.IS_INVITED_VISIBLE,false);
                 Utils.showInviteAlert(getActivity(), inviteBundle);
                 break;
         }

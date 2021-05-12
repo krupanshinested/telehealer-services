@@ -1446,8 +1446,10 @@ public class Utils {
         TextView invitedListTv;
         TextView broadcastAllTv;
         View broadcastView;
+        View invitedListView;
         CardView cancelCv;
         invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
+        invitedListView = (View) alertView.findViewById(R.id.invited_list_view);
         inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
@@ -1455,6 +1457,17 @@ public class Utils {
         broadcastView.setVisibility(View.GONE);
         broadcastAllTv.setVisibility(View.GONE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+
+        if(bundle!=null){
+            Boolean isInvitedVisible=bundle.getBoolean(ArgumentKeys.IS_INVITED_VISIBLE,false);
+            if(isInvitedVisible){
+                invitedListTv.setVisibility(View.VISIBLE);
+                invitedListView.setVisibility(View.VISIBLE);
+            }else{
+                invitedListTv.setVisibility(View.GONE);
+                invitedListView.setVisibility(View.GONE);
+            }
+        }
 
         invitedListTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1519,6 +1532,7 @@ public class Utils {
         TextView broadcastAllTv;
         View broadcastView;
         View invitedListView;
+        View pendingInvitesView;
         CardView cancelCv;
 
         invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
@@ -1527,6 +1541,7 @@ public class Utils {
         broadCastMessageTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
         broadcastView = (View) alertView.findViewById(R.id.broadcast_view);
+        pendingInvitesView = (View) alertView.findViewById(R.id.invite_manually_view);
         broadcastView.setVisibility(View.GONE);
         broadcastAllTv.setVisibility(View.GONE);
 
@@ -1542,12 +1557,34 @@ public class Utils {
         broadcastAllTv.setVisibility(View.VISIBLE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
 
-        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) || UserDetailPreferenceManager.getRole().equals(Constants.ROLE_ASSISTANT)) {
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
             invitedListTv.setVisibility(View.VISIBLE);
             invitedListView.setVisibility(View.VISIBLE);
             broadCastMessageTv.setVisibility(View.GONE);
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
+        }else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_ASSISTANT)){
+            invitedListTv.setVisibility(View.VISIBLE);
+            invitedListView.setVisibility(View.VISIBLE);
+            pendingInvitesTv.setVisibility(View.GONE);
+            pendingInvitesView.setVisibility(View.GONE);
+            broadCastMessageTv.setVisibility(View.GONE);
+            broadcastView.setVisibility(View.GONE);
+            broadcastAllTv.setVisibility(View.GONE);
+        }else if(UserDetailPreferenceManager.getRole().equals(Constants.ROLE_DOCTOR)){
+            if(bundle!=null){
+                String role=bundle.getString(ArgumentKeys.ROLE,"");
+                if(role.equals(Constants.ROLE_ASSISTANT)){
+                    invitedListTv.setVisibility(View.VISIBLE);
+                    invitedListView.setVisibility(View.VISIBLE);
+                    pendingInvitesTv.setVisibility(View.GONE);
+                    pendingInvitesView.setVisibility(View.GONE);
+                    broadCastMessageTv.setVisibility(View.GONE);
+                    broadcastView.setVisibility(View.GONE);
+                    broadcastAllTv.setVisibility(View.GONE);
+                }
+            }
+
         }
 
         invitedListTv.setOnClickListener(new View.OnClickListener() {

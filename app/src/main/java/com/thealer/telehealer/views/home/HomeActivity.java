@@ -523,12 +523,13 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void showDoctorsOverflowMenu() {
         Bundle bundle=new Bundle();
-        if(UserType.isUserAssistant())
-            bundle.putString(ArgumentKeys.ROLE,Constants.ROLE_ASSISTANT);
-        else if(UserType.isUserPatient())
-            bundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
-        else
-            bundle.putString(ArgumentKeys.ROLE,Constants.ROLE_DOCTOR);
+        if(UserType.isUserAssistant()) {
+            bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_ASSISTANT);
+        }else if(UserType.isUserPatient()) {
+            bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
+        }else {
+            bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_DOCTOR);
+        }
 
         Utils.showDoctorOverflowMenu(this,bundle);
     }
@@ -812,9 +813,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 } else if (UserType.isUserDoctor()) {
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
+                }else if(UserType.isUserAssistant()){
+                    optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
                 }
             } else {
-                optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+                optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
                 optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
             }
         }
