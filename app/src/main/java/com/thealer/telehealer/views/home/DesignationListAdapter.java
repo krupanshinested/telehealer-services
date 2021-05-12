@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.SpecialtiesBean;
+import com.thealer.telehealer.common.OnItemEndListener;
 
 import java.util.List;
 
@@ -23,10 +24,11 @@ public class DesignationListAdapter extends RecyclerView.Adapter<DesignationList
     private FragmentActivity fragmentActivity;
     List<String> adapterList;
     int currentSelected = 0;
-
-    public DesignationListAdapter(FragmentActivity fragmentActivity, List<String> adapterList) {
+    private OnItemEndListener itemEndListener;
+    public DesignationListAdapter(FragmentActivity fragmentActivity, List<String> adapterList,OnItemEndListener itemEndListener) {
         this.fragmentActivity = fragmentActivity;
         this.adapterList = adapterList;
+        this.itemEndListener=itemEndListener;
     }
 
     @NonNull
@@ -38,6 +40,9 @@ public class DesignationListAdapter extends RecyclerView.Adapter<DesignationList
 
     @Override
     public void onBindViewHolder(@NonNull OnDesignationViewHolder holder, int position) {
+        if(position==adapterList.size()-1){
+            itemEndListener.itemEnd(position);
+        }
         String designation = adapterList.get(position);
         if (position == currentSelected)
             holder.rbDesignation.setChecked(true);
@@ -53,6 +58,14 @@ public class DesignationListAdapter extends RecyclerView.Adapter<DesignationList
                 notifyDataSetChanged();
             }
         });
+    }
+
+    public void setCurrentSelected(int currentSelected) {
+        this.currentSelected = currentSelected;
+    }
+
+    public int getCurrentSelected() {
+        return currentSelected;
     }
 
     @Override

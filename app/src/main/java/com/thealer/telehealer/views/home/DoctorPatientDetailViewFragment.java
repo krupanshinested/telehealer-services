@@ -56,6 +56,7 @@ import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.GetUserDetails;
+import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.OnUpdateListener;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
@@ -1199,7 +1200,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             btnYes.setVisibility(View.VISIBLE);
             viewDevider.setVisibility(View.VISIBLE);
         }
-        DesignationListAdapter designationListAdapter = new DesignationListAdapter(getActivity(), designationList);
+        DesignationListAdapter designationListAdapter = new DesignationListAdapter(getActivity(), designationList, new OnItemEndListener() {
+            @Override
+            public void itemEnd(int position) {
+
+            }
+        });
         rvDesignation.setAdapter(designationListAdapter);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {

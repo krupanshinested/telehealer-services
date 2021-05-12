@@ -32,6 +32,7 @@ import com.thealer.telehealer.apilayer.models.createuser.SpecialtiesBean;
 import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -188,7 +189,11 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             btnYes.setVisibility(View.VISIBLE);
             viewDevider.setVisibility(View.VISIBLE);
         }
-        DesignationListAdapter designationListAdapter=new DesignationListAdapter(fragmentActivity,designationList);
+        DesignationListAdapter designationListAdapter=new DesignationListAdapter(fragmentActivity, designationList, new OnItemEndListener() {
+            @Override
+            public void itemEnd(int position) {
+            }
+        });
         rvDesignation.setAdapter(designationListAdapter);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {

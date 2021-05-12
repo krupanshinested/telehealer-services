@@ -78,6 +78,9 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
                 String role="";
                 if(bundle != null){
                     role=bundle.getString(ArgumentKeys.ROLE,"");
+                    if(doctor_guid==null || doctor_guid.equals("")){
+                        doctor_guid=bundle.getString(ArgumentKeys.USER_GUID,null);
+                    }
                 }
                 inviteByEmailPhoneRequestModel.setRole(role);
                 inviteByEmailPhoneRequestModel.getInvitations().add(new InviteByEmailPhoneRequestModel.InvitationsBean(null, number));

@@ -1505,5 +1505,6 @@
     <string name="help_content_invite_provider">As being provider you can send manually invitation to support staff as well as patient</string>
     <string name="view_invited_list">View Invitation List</string>
     <string name="invited_user_list">Invited User List</string>
+    <string name="str_select_your_physician">Select your physician</string>
 
 </resources>

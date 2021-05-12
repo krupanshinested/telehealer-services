@@ -63,7 +63,9 @@ public class InviteByDemographicFragment extends InviteUserBaseFragment {
         bundle=this.getArguments();
         if(bundle!=null){
             String role=bundle.getString(ArgumentKeys.ROLE,"");
-            Log.e(TAG, "initView: "+role );
+            if(doctor_guid==null || doctor_guid.equals("")){
+                doctor_guid=bundle.getString(ArgumentKeys.USER_GUID,null);
+            }
         }
 
         firstnameTil = (TextInputLayout) view.findViewById(R.id.firstname_til);

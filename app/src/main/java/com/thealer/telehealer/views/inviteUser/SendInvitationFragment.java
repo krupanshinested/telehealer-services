@@ -30,27 +30,19 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
-import com.thealer.telehealer.common.CustomRecyclerView;
-import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
-import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
-import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.home.DesignationListAdapter;
-import com.thealer.telehealer.views.home.DoctorPatientListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import me.toptas.fancyshowcase.listener.DismissListener;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 public class SendInvitationFragment extends BaseFragment implements View.OnClickListener {
 
@@ -68,9 +60,12 @@ public class SendInvitationFragment extends BaseFragment implements View.OnClick
     private int page = 1;
     private OnActionCompleteInterface onActionCompleteInterface;
     private boolean isApiRequested = false;
-    int selectedposition=0;
-    List<String> physicianList=new ArrayList<>();
-    private View clickView=null;
+    int selectedposition = 0;
+    List<String> physicianList = new ArrayList<>();
+    private View clickView = null;
+    private List<CommonUserApiResponseModel> physicianMasterList = new ArrayList<>();
+    private DesignationListAdapter physicianListAdapter;
+    private int lastSelectedPosition=0;
 
     public SendInvitationFragment() {
         // Required empty public constructor
@@ -127,32 +122,36 @@ public class SendInvitationFragment extends BaseFragment implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        Bundle inviteBundle=new Bundle();
+        Bundle inviteBundle = new Bundle();
         switch (v.getId()) {
             case R.id.patient_cb:
-                clickView=v;
+                clickView = v;
                 managePatient();
                 break;
             case R.id.sa_cb:
                 inviteBundle.putString(ArgumentKeys.ROLE, Constants.ROLE_ASSISTANT);
-                inviteBundle.putBoolean(ArgumentKeys.IS_INVITED_VISIBLE,false);
+                inviteBundle.putBoolean(ArgumentKeys.IS_INVITED_VISIBLE, false);
                 Utils.showInviteAlert(getActivity(), inviteBundle);
                 break;
             case R.id.provider_cb:
-                inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_DOCTOR);
-                inviteBundle.putBoolean(ArgumentKeys.IS_INVITED_VISIBLE,false);
+                inviteBundle.putString(ArgumentKeys.ROLE, Constants.ROLE_DOCTOR);
+                inviteBundle.putBoolean(ArgumentKeys.IS_INVITED_VISIBLE, false);
                 Utils.showInviteAlert(getActivity(), inviteBundle);
                 break;
         }
     }
 
     private void managePatient() {
-        if(UserType.isUserAssistant()){
-            displayProviderListDailog(true);
-        }else{
-            Bundle inviteBundle=new Bundle();
-            inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
-            inviteBundle.putBoolean(ArgumentKeys.IS_INVITED_VISIBLE,false);
+        if (UserType.isUserAssistant()) {
+            if (physicianList.size() > 0) {
+                selectPhysician();
+            } else {
+                displayProviderListDailog(true);
+            }
+        } else {
+            Bundle inviteBundle = new Bundle();
+            inviteBundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
+            inviteBundle.putBoolean(ArgumentKeys.IS_INVITED_VISIBLE, false);
             Utils.showInviteAlert(getActivity(), inviteBundle);
         }
     }
@@ -167,13 +166,17 @@ public class SendInvitationFragment extends BaseFragment implements View.OnClick
             isItemsPresent = associationApiResponseModel.getResult().size() != 0;
         }
 
-        if(isItemsPresent && page==1){
-            List<CommonUserApiResponseModel> doctorList = associationApiResponseModel.getResult();
-
-            for(int i=0;i<doctorList.size();i++){
-                physicianList.add(doctorList.get(i).getDisplayName());
+        if (isItemsPresent) {
+            physicianMasterList.addAll(associationApiResponseModel.getResult());
+            for (int i = 0; i < associationApiResponseModel.getResult().size(); i++) {
+                physicianList.add(associationApiResponseModel.getResult().get(i).getDisplayName());
             }
-            selectPhysician();
+            if(page==1){
+                selectPhysician();
+            }else{
+                physicianListAdapter.notifyDataSetChanged();
+            }
+
         }
 
     }
@@ -181,34 +184,44 @@ public class SendInvitationFragment extends BaseFragment implements View.OnClick
 
     //Allow physician to view list of support staff. Also physician can request to add them.
     private void selectPhysician() {
-        LayoutInflater layoutInflater=LayoutInflater.from(getActivity());
-        View layoutInflateView=layoutInflater.inflate
-                (R.layout.designation_alert,(ViewGroup)clickView.findViewById(R.id.cl_root));
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View layoutInflateView = layoutInflater.inflate
+                (R.layout.designation_alert, (ViewGroup) clickView.findViewById(R.id.cl_root));
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
         alertDialog.setView(layoutInflateView);
         alertDialog.setCancelable(false);
         AlertDialog dialog = alertDialog.create();
-        TextView headerTitle=layoutInflateView.findViewById(R.id.header_title);
-        RecyclerView rvDesignation=layoutInflateView.findViewById(R.id.rv_designation);
+        TextView headerTitle = layoutInflateView.findViewById(R.id.header_title);
+        RecyclerView rvDesignation = layoutInflateView.findViewById(R.id.rv_designation);
         rvDesignation.setLayoutManager(new LinearLayoutManager(getActivity()));
-        Button btnYes=layoutInflateView.findViewById(R.id.btn_yes);
-        TextView noRecordFound=layoutInflateView.findViewById(R.id.no_record_found);
-        Button btnCancel=layoutInflateView.findViewById(R.id.btn_cancel);
-        View viewDevider=layoutInflateView.findViewById(R.id.view_devider);
+        Button btnYes = layoutInflateView.findViewById(R.id.btn_yes);
+        TextView noRecordFound = layoutInflateView.findViewById(R.id.no_record_found);
+        Button btnCancel = layoutInflateView.findViewById(R.id.btn_cancel);
+        View viewDevider = layoutInflateView.findViewById(R.id.view_devider);
+        headerTitle.setText(getString(R.string.str_select_your_physician));
 
-        if(physicianList.size()==0) {
+        if (physicianList.size() == 0) {
             rvDesignation.setVisibility(View.GONE);
             noRecordFound.setVisibility(View.VISIBLE);
             btnYes.setVisibility(View.GONE);
             viewDevider.setVisibility(View.GONE);
-        } else{
+        } else {
             rvDesignation.setVisibility(View.VISIBLE);
             noRecordFound.setVisibility(View.GONE);
             btnYes.setVisibility(View.VISIBLE);
             viewDevider.setVisibility(View.VISIBLE);
         }
-        DesignationListAdapter designationListAdapter=new DesignationListAdapter(getActivity(),physicianList);
-        rvDesignation.setAdapter(designationListAdapter);
+            physicianListAdapter = new DesignationListAdapter(getActivity(), physicianList, new OnItemEndListener() {
+                @Override
+                public void itemEnd(int position) {
+                    page++;
+                    displayProviderListDailog(false);
+                }
+            });
+            rvDesignation.setAdapter(physicianListAdapter);
+
+            physicianListAdapter.setCurrentSelected(lastSelectedPosition);
+            physicianListAdapter.notifyDataSetChanged();
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,10 +233,15 @@ public class SendInvitationFragment extends BaseFragment implements View.OnClick
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(designationListAdapter!=null) {
-                    String designation = designationListAdapter.getSpecialistInfo();
-                    Log.e(TAG, "onClick: "+designation );
+                if (physicianListAdapter != null) {
+                    String designation = physicianListAdapter.getSpecialistInfo();
+                    lastSelectedPosition=physicianListAdapter.getCurrentSelected();
                 }
+                Bundle inviteBundle = new Bundle();
+                inviteBundle.putString(ArgumentKeys.USER_GUID,physicianMasterList.get(lastSelectedPosition).getUser_guid());
+                inviteBundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
+                inviteBundle.putBoolean(ArgumentKeys.IS_INVITED_VISIBLE, false);
+                Utils.showInviteAlert(getActivity(), inviteBundle);
                 dialog.dismiss();
 
             }
