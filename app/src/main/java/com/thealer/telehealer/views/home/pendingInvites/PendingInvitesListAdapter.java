@@ -226,18 +226,19 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
         notifyDataSetChanged();
     }
 
-    public void setData(List<PendingInvitesNonRegisterdApiResponseModel.ResultBean> result, int page) {
+    public void setData(List<PendingInvitesNonRegisterdApiResponseModel.ResultBean> result, int page,boolean isDisplayHeader) {
         PendingInvitesAdapterModel adapterModel;
 
         if (page == 1) {
 
             nonRegisteredUsers.clear();
+            if(isDisplayHeader) {
+                adapterModel = new PendingInvitesAdapterModel();
+                adapterModel.setType(TYPE_HEADER);
+                adapterModel.setHeaderString(activity.getString(R.string.non_registered_users));
 
-            adapterModel = new PendingInvitesAdapterModel();
-            adapterModel.setType(TYPE_HEADER);
-            adapterModel.setHeaderString(activity.getString(R.string.non_registered_users));
-
-            nonRegisteredUsers.add(adapterModel);
+                nonRegisteredUsers.add(adapterModel);
+            }
         }
 
         for (int i = 0; i < result.size(); i++) {

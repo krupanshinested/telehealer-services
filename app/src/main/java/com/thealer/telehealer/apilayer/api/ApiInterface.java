@@ -170,6 +170,8 @@ public interface ApiInterface {
     String MEDICAL_ASSISTANT = "medical_assistant";
     String STATUS = "status";
     String ACCEPTED = "accepted";
+    String ROLE = "role";
+    String SPECIALITY = "specialty";
     String ORDER_ID = "order_id";
     String FILTER_ID_IN = "filter_id_in";
     String START_DATE = "start_date";
@@ -293,7 +295,7 @@ public interface ApiInterface {
     Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(SEARCH_FILTER) String search, @Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/unconnected-users-v2")
-    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
+    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query(ROLE) String role, @Query(SPECIALITY) String speciality);
 
     @GET("api/designations")
     Observable<DesignationResponseModel> getDesignationList();
@@ -639,6 +641,9 @@ public interface ApiInterface {
 
     @GET("api/invites")
     Observable<PendingInvitesNonRegisterdApiResponseModel> getNonRegisteredUserInvites(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(ACCEPTED) boolean accepted);
+
+    @GET("api/invites-v2")
+    Observable<PendingInvitesNonRegisterdApiResponseModel> getNonRegisteredUserInvitesByROLE(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(ROLE) String role);
 
     @GET("api/signal/keys")
     Observable<UserKeysApiResponseModel> getUserKeys(@Query(USER_GUID) String userGuid);
