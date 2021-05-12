@@ -519,7 +519,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         inviteBundle=new Bundle();
 
                     inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
-                    Utils.showInviteAlert(getActivity(), inviteBundle);
+                    Utils.showInviteAlert(getActivity(), getArguments());
                 }
             });
         }

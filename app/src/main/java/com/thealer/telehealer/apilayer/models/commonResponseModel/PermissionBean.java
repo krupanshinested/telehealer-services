@@ -1,12 +1,13 @@
 package com.thealer.telehealer.apilayer.models.commonResponseModel;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Nimesh Patel
  * Created Date: 13,April,2021
  **/
-public class PermissionBean {
+public class PermissionBean implements Serializable {
 
     int id;
     int user_id;

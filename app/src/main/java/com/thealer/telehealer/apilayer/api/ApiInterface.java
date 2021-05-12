@@ -488,13 +488,13 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);*/
 
     @POST("api/setup/invite-v2")
-    Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel);
+    Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);
 
     /*@POST("api/setup/invite")
     Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid, @Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);*/
 
     @POST("api/setup/invite-v2")
-    Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);
+    Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid,@Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);
 
     @GET("api/call/{id}")
     Observable<VisitsDetailApiResponseModel> getTranscriptionDetails(@Path(ID) String id);
