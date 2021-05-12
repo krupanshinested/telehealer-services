@@ -1506,7 +1506,7 @@ public class Utils {
         alertDialog.show();
     }
 
-    public static void showDoctorOverflowMenu(FragmentActivity context) {
+    public static void showDoctorOverflowMenu(FragmentActivity context, Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View alertView = LayoutInflater.from(context).inflate(R.layout.view_invite_alert, null);
         builder.setView(alertView);
@@ -1542,11 +1542,25 @@ public class Utils {
         broadcastAllTv.setVisibility(View.VISIBLE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
 
-        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) || UserDetailPreferenceManager.getRole().equals(Constants.ROLE_ASSISTANT)) {
+            invitedListTv.setVisibility(View.VISIBLE);
+            invitedListView.setVisibility(View.VISIBLE);
             broadCastMessageTv.setVisibility(View.GONE);
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
         }
+
+        invitedListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                Intent intent = new Intent(context, InvitedListActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
+                context.startActivity(intent);
+            }
+        });
 
         pendingInvitesTv.setOnClickListener(new View.OnClickListener() {
             @Override

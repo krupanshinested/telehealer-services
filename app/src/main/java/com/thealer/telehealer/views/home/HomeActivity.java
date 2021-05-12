@@ -522,7 +522,15 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
 
     private void showDoctorsOverflowMenu() {
-        Utils.showDoctorOverflowMenu(this);
+        Bundle bundle=new Bundle();
+        if(UserType.isUserAssistant())
+            bundle.putString(ArgumentKeys.ROLE,Constants.ROLE_ASSISTANT);
+        else if(UserType.isUserPatient())
+            bundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
+        else
+            bundle.putString(ArgumentKeys.ROLE,Constants.ROLE_DOCTOR);
+
+        Utils.showDoctorOverflowMenu(this,bundle);
     }
 
     private void showNotificationFragment() {
@@ -806,7 +814,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
                 }
             } else {
-                optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
+                optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                 optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
             }
         }

@@ -97,7 +97,6 @@ public class InvitedListFragment extends BaseFragment {
                                     }
                                     pendingInvitesListAdapter.setData(nonRegisterdApiResponseModel.getResult(), nonRegisteredPage,false);
                                 } else {
-                                    if (invitesResponseModel.getCount() == 0)
                                         invitedListCrv.showOrhideEmptyState(true);
                                 }
 
