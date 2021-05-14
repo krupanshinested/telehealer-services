@@ -91,6 +91,7 @@ public class TransactionListFragment extends BaseFragment {
     private int doctorId=0,patientId=0;
     private Boolean isFromProfile=false;
     private TransactionItem selectedTransaction = null;
+    private boolean isAllItemLoaded = false;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -131,6 +132,9 @@ public class TransactionListFragment extends BaseFragment {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
                 if (baseApiResponseModels instanceof TransactionListResp) {
+                    if(((TransactionListResp) baseApiResponseModels).getResult().size()==0){
+                        isAllItemLoaded=true;
+                    }
                     transactionListViewModel.setApiRequested(false);
                     rvTransactions.getRecyclerView().getAdapter().notifyDataSetChanged();
                     progressBar.setVisibility(View.GONE);
@@ -343,15 +347,16 @@ public class TransactionListFragment extends BaseFragment {
         rvTransactions.setScrollable(false);
         rvTransactions.setEmptyState(EmptyViewConstants.EMPTY_PAYMENTS);
         rvTransactions.hideEmptyState();
-        rvTransactions.getSwipeLayout().setEnabled(false);
-        /*rvTransactions.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
+        rvTransactions.getSwipeLayout().setEnabled(true);
+        rvTransactions.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                isAllItemLoaded=false;
                 rvTransactions.getSwipeLayout().setRefreshing(false);
                 transactionListViewModel.setPage(1);
                 loadTransactions(true);
             }
-        });*/
+        });
 
         if (getArguments() != null) {
             if (getArguments().getBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, false)) {
@@ -444,9 +449,11 @@ public class TransactionListFragment extends BaseFragment {
         }, new OnItemEndListener() {
             @Override
             public void itemEnd(int position) {
-                transactionListViewModel.setPage(transactionListViewModel.getPage() + 1);
-                loadTransactions(false);
-                progressBar.setVisibility(View.VISIBLE);
+                if(!isAllItemLoaded) {
+                    transactionListViewModel.setPage(transactionListViewModel.getPage() + 1);
+                    loadTransactions(false);
+                    progressBar.setVisibility(View.VISIBLE);
+                }
             }
         }));
 
