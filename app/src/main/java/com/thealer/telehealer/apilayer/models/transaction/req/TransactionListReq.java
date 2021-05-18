@@ -19,6 +19,9 @@ public class TransactionListReq {
 
     public static class Filter {
 
+        @SerializedName("user_guid")
+        private String userGuid;
+
         @SerializedName("patient_id")
         private int patientId;
 
@@ -52,6 +55,14 @@ public class TransactionListReq {
 
         public void setTypeOfCharge(List<Integer> typeOfCharge) {
             this.typeOfCharge = typeOfCharge;
+        }
+
+        public String getUserGuid() {
+            return userGuid;
+        }
+
+        public void setUserGuid(String userGuid) {
+            this.userGuid = userGuid;
         }
 
         public List<Integer> getTypeOfCharge() {

@@ -218,6 +218,7 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
         if (doctorModel != null) {
             filter.setDoctorId(doctorModel.getUser_id());
             filter.setDoctorName(doctorOcv.getTitleText());
+            filter.setUserGuid(doctorModel.getUser_guid());
         }
         if (dateFilter.getSelectedFromDate() != null) {
             Calendar calenderFROM=dateFilter.getSelectedFromDate();
@@ -257,6 +258,7 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                 if (filter.getDoctorId() != 0) {
                     doctorModel = new CommonUserApiResponseModel();
                     doctorModel.setUser_id(filter.getDoctorId());
+                    doctorModel.setUser_guid(filter.getUserGuid());
                     setDoctorOcv(filter.getDoctorName());
                 }
 
