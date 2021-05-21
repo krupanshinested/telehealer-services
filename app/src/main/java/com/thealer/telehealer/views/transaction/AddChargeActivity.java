@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.transaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
@@ -98,6 +99,22 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), true, pos -> {
             addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
             adapterReason.notifyItemChanged(pos);
+            if(pos>=2) {
+                if (pos + 2 < addChargeViewModel.getReasonOptions().size() - 1)
+                    rvReason.scrollToPosition(pos + 2);
+                else if(pos==(addChargeViewModel.getReasonOptions().size()-1))
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            rvReason.scrollToPosition(addChargeViewModel.getReasonOptions().size() - 1);
+                        }
+                    }, 200);
+                else
+                    rvReason.scrollToPosition(addChargeViewModel.getReasonOptions().size() - 1);
+            }else{
+                rvReason.scrollToPosition(0);
+            }
+
         });
         adapterReason.setTypeMasters(addChargeViewModel.getListChargeTypes());
         rvReason.setAdapter(adapterReason);
@@ -325,7 +342,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     setReasonDataFromTransactionItem(item, addChargeViewModel.getReasonByValue(item.getReason()));
                 }
             }
-            findViewById(R.id.btnSubmitProcess).setVisibility(View.GONE);
         }
     }
 
@@ -385,24 +401,14 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnSubmit: {
                 if (isValid()) {
-                    Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.alert), getString(R.string.confirm_vital_charges), getString(R.string.yes), getString(R.string.no), (dialog, which) -> {
-                        dialog.dismiss();
-                        addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
-                    }, ((dialog, which) -> {
-                        dialog.dismiss();
-                    }));
+                    addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
                 }
                 break;
             }
             case R.id.btnSubmitProcess: {
                 if (isValid()) {
-                    Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.alert), getString(R.string.confirm_vital_charges), getString(R.string.yes), getString(R.string.no), (dialog, which) -> {
-                        dialog.dismiss();
-                        addChargeViewModel.setSaveAndProcess(true);
-                        addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
-                    }, ((dialog, which) -> {
-                        dialog.dismiss();
-                    }));
+                    addChargeViewModel.setSaveAndProcess(true);
+                    addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
                 }
             }
         }
