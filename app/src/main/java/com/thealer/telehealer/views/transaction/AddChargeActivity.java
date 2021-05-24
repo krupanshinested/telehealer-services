@@ -384,8 +384,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
 
     private void checkForVisitAndSetUI() {
-        int selectedCount = addChargeViewModel.getSelectedReasonCount();
-        if (addChargeViewModel.isReasonSelected(Constants.ChargeReason.VISIT)) {
+//        int selectedCount = addChargeViewModel.getSelectedReasonCount();
+        /*if (addChargeViewModel.isReasonSelected(Constants.ChargeReason.VISIT)) {
             if (selectedCount == 1) {
                 addChargeViewModel.setOnlyVisit(true);
 
@@ -393,7 +393,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     addChargeViewModel.getReasonOptions().remove(i);
                 }
             }
-        }
+        }*/
     }
 
     @Override

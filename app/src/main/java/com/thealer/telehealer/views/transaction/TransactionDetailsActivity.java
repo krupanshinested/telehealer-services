@@ -34,7 +34,7 @@ public class TransactionDetailsActivity extends BaseActivity {
     private TextView tvStatus, tvDate, tvPatient, tvCharge, tvDoctor, tvRefund, tvFailureReason;
     private View doctorRow, patientRow, failureReasonRow;
     private RecyclerView rvReasonCharges, rvRefunds;
-    private ImageView imgReceipt;
+    private ImageView imgReceipt,ivPrintMenu;
 
     private TransactionItem transactionItem;
 
@@ -59,6 +59,7 @@ public class TransactionDetailsActivity extends BaseActivity {
         doctorRow = findViewById(R.id.doctorRow);
         patientRow = findViewById(R.id.patientRow);
         failureReasonRow = findViewById(R.id.rowFailureReason);
+        ivPrintMenu = findViewById(R.id.print_menu);
 
         findViewById(R.id.back_iv).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,8 +80,8 @@ public class TransactionDetailsActivity extends BaseActivity {
             prepareReasonList();
             prepareRefundList();
             if (transactionItem.getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESSED) {
-                imgReceipt.setVisibility(transactionItem.getTransactionReceipt() != null && transactionItem.getTransactionReceipt().length() > 0 ? View.VISIBLE : View.GONE);
-                imgReceipt.setOnClickListener(new View.OnClickListener() {
+                ivPrintMenu.setVisibility(transactionItem.getTransactionReceipt() != null && transactionItem.getTransactionReceipt().length() > 0 ? View.VISIBLE : View.GONE);
+                ivPrintMenu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Bundle bundle = new Bundle();
