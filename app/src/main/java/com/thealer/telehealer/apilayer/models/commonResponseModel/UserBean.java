@@ -138,7 +138,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     public String getAge() {
         String age = null;
         if (dob != null) {
-            DateFormat inputFormat = new SimpleDateFormat("dd MMM, yyyy");
+            DateFormat inputFormat = new SimpleDateFormat(Utils.defaultDateFormat);
             DateFormat outputFormat = new SimpleDateFormat("yyyy");
             try {
                 int year = Integer.parseInt(outputFormat.format(inputFormat.parse(dob)));
