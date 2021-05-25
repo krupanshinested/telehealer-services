@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
@@ -18,8 +17,6 @@ import com.thealer.telehealer.views.base.BaseViewInterface;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import io.reactivex.Observable;
 
 public class AddChargeViewModel extends BaseApiViewModel {
 
@@ -144,9 +141,9 @@ public class AddChargeViewModel extends BaseApiViewModel {
                 if (status) {
                     if (isUpdate) {
                         getAuthApiService().updateCharge(chargeId, req).compose(applySchedulers())
-                                .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                .subscribe(new RAObserver<AddChargeResp>(Constants.SHOW_PROGRESS) {
                                     @Override
-                                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    public void onSuccess(AddChargeResp baseApiResponseModel) {
                                         baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                     }
                                 });

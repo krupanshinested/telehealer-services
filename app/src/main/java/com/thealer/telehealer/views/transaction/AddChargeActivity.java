@@ -176,11 +176,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         transactionListViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
-                Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.success), baseApiResponseModels.getMessage(), getString(R.string.ok), null, (dialog, which) -> {
-                    dialog.dismiss();
-                    setResult(RESULT_OK);
-                    finish();
-                }, null);
+                setResult(RESULT_OK);
+                finish();
             }
         });
         transactionListViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
@@ -290,13 +287,13 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private void showPatientCardErrorOptions() {
         ArrayList<String> options = new ArrayList<>();
         if (addChargeViewModel.getAddedTransaction().getDoctorId() != null)
-            if (addChargeViewModel.getAddedTransaction().getDoctorId().isCan_view_card_status())
-                options.add(getString(R.string.lbl_ask_to_add_credit_card));
+            options.add(getString(R.string.lbl_ask_to_add_credit_card));
+
         options.add(getString(R.string.lbl_proceed_offline));
         String message = getString(R.string.msg_invalid_credit_card_in_transaction_process, addChargeViewModel.getAddedTransaction().getPatientId().getDisplayName());
 
         if (options.size() == 1) {
-            Utils.showAlertDialog(this, getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            Utils.showAlertDialog(this, getString(R.string.app_name), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);

@@ -730,8 +730,8 @@ public interface ApiInterface {
     @POST("/api/charge/add-charge")
     Observable<AddChargeResp> addCharge(@Body() AddChargeReq req);
 
-    @PUT("/api/charge/update-charge")
-    Observable<BaseApiResponseModel> updateCharge(@Query("id") int id, @Body() AddChargeReq req);
+    @PUT("/api/charge/update-charge-v2")
+    Observable<AddChargeResp> updateCharge(@Query("id") int id, @Body() AddChargeReq req);
 
     @POST("/api/charge/paginate")
     Observable<TransactionListResp> transactionPaginate(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Body() TransactionListReq req);

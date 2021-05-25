@@ -62,6 +62,50 @@ public class TransactionItem extends BaseApiResponseModel {
     private List<TransactionRecord> transactionRecord;
 
 
+    public void setDoctorId(CommonUserApiResponseModel doctorId) {
+        this.doctorId = doctorId;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setChargeStatus(int chargeStatus) {
+        this.chargeStatus = chargeStatus;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setChargeData(List<AddChargeReq.ChargeDataItem> chargeData) {
+        this.chargeData = chargeData;
+    }
+
+    public void setPatientId(CommonUserApiResponseModel patientId) {
+        this.patientId = patientId;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
     public CommonUserApiResponseModel getDoctorId() {
         return doctorId;
     }
