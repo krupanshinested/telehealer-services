@@ -227,4 +227,5 @@ public class AddChargeViewModel extends BaseApiViewModel {
     public void setDoctorId(int doctorId) {
         this.doctorId = doctorId;
     }
+
 }

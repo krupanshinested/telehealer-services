@@ -62,6 +62,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     public static String EXTRA_TRANSACTION_ITEM = "transactionItem";
     public static String EXTRA_ORDER_ID = "orderId";
     public static String EXTRA_DOCTOR_ID = "doctorId";
+    public static String EXTRA_IS_FROM_FEEDBACK = "isFromFeedback";
+    boolean isFromFeedback=false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         addChargeViewModel.setPatientId(getIntent().getIntExtra(EXTRA_PATIENT_ID, -1));
         addChargeViewModel.setDoctorId(getIntent().getIntExtra(EXTRA_DOCTOR_ID, -1));
         addChargeViewModel.setOrderId(getIntent().getStringExtra(EXTRA_ORDER_ID));
+        addChargeViewModel.setOnlyVisit(getIntent().getBooleanExtra(EXTRA_ORDER_ID,false));
         masterApiViewModel.fetchMasters();
 
         TextView textView = findViewById(R.id.toolbar_title);
