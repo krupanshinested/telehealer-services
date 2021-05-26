@@ -191,8 +191,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     Runnable closeListener = new Runnable() {
                         @Override
                         public void run() {
-                            setResult(RESULT_CANCELED);
-                            confirmCharges();
+                            setResult(RESULT_OK);
+                            finish();
                         }
                     };
 
@@ -270,12 +270,6 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         });
 
 
-    }
-
-    private void confirmCharges() {
-        showToast(getString(R.string.charge_successfully_added));
-        setResult(RESULT_CANCELED);
-        finish();
     }
 
     private void showPatientCardErrorOptions() {

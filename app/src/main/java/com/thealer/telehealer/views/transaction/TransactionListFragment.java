@@ -232,12 +232,7 @@ public class TransactionListFragment extends BaseFragment {
                 transactionListViewModel.setPage(1);
                 loadTransactions(true);
                 if (baseApiResponseModels.getMessage() != null)
-                    Utils.showAlertDialog(getContext(), getString(R.string.success), baseApiResponseModels.getMessage(), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }, null);
+                   showToast(baseApiResponseModels.getMessage());
             }
         });
         refundViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
