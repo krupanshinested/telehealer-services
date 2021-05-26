@@ -414,6 +414,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     case 403:
                         errorModelLiveData.setValue(errorModel);
                         if (isRefreshToken) {
+                            baseViewInterfaceList.clear();
                             goToSigninActivity();
                         }
                         break;
