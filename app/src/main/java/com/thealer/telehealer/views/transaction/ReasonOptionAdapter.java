@@ -172,7 +172,7 @@ public class ReasonOptionAdapter extends RecyclerView.Adapter<ReasonOptionAdapte
         TextFieldAdapter textFieldAdapter;
 
         DateRangeView dateRangeView;
-        DateView singleDate;
+        SingleDateView singleDate;
 
         AppCompatSpinner chargeType;
         View chargeTypeLayout;

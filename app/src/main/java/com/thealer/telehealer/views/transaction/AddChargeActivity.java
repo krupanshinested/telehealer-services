@@ -159,12 +159,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                         transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.STRIPE);
                     }
                 } else {
-                    Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.success), baseApiResponseModel.getMessage(), getString(R.string.ok), null, (dialog, which) -> {
-                        dialog.dismiss();
-                        setResult(RESULT_OK);
-                        finish();
-                    }, null);
-
+                    showToast(baseApiResponseModel.getMessage());
+                    setResult(RESULT_OK);
+                    finish();
                 }
             }
         });
@@ -275,16 +272,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void confirmCharges() {
-        Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.success),
-                getString(R.string.charge_successfully_added),
-                null, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        setResult(RESULT_CANCELED);
-                        finish();
-                    }
-                });
+        showToast(getString(R.string.charge_successfully_added));
+        setResult(RESULT_CANCELED);
+        finish();
     }
 
     private void showPatientCardErrorOptions() {
