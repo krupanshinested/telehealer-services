@@ -240,7 +240,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         askToAddCardViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel responseModel) {
-                setResult(RESULT_CANCELED);
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -288,7 +288,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     dialog.dismiss();
                 }
             }, (dialog, which) -> {
-                setResult(RESULT_CANCELED);
+                setResult(RESULT_OK);
                 finish();
             }).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
             return;
@@ -307,7 +307,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             public void didCancelled() {
-                setResult(RESULT_CANCELED);
+                setResult(RESULT_OK);
                 finish();
             }
         });
