@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -75,7 +76,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         addChargeViewModel.setPatientId(getIntent().getIntExtra(EXTRA_PATIENT_ID, -1));
         addChargeViewModel.setDoctorId(getIntent().getIntExtra(EXTRA_DOCTOR_ID, -1));
         addChargeViewModel.setOrderId(getIntent().getStringExtra(EXTRA_ORDER_ID));
-        addChargeViewModel.setOnlyVisit(getIntent().getBooleanExtra(EXTRA_ORDER_ID,false));
+        isFromFeedback=getIntent().getBooleanExtra(EXTRA_IS_FROM_FEEDBACK,false);
         masterApiViewModel.fetchMasters();
 
         TextView textView = findViewById(R.id.toolbar_title);
@@ -374,8 +375,8 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
 
     private void checkForVisitAndSetUI() {
-//        int selectedCount = addChargeViewModel.getSelectedReasonCount();
-        /*if (addChargeViewModel.isReasonSelected(Constants.ChargeReason.VISIT)) {
+        int selectedCount = addChargeViewModel.getSelectedReasonCount();
+        if (isFromFeedback) {
             if (selectedCount == 1) {
                 addChargeViewModel.setOnlyVisit(true);
 
@@ -383,7 +384,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     addChargeViewModel.getReasonOptions().remove(i);
                 }
             }
-        }*/
+        }
     }
 
     @Override

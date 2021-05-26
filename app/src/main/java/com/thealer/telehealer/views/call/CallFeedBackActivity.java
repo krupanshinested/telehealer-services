@@ -90,6 +90,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                         startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class)
                                 .putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.VISIT)
                                 .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, getIntent().getIntExtra(ArgumentKeys.PATIENT_ID, -1))
+                                .putExtra(AddChargeActivity.EXTRA_ORDER_ID, sessionId)
                                 .putExtra(AddChargeActivity.EXTRA_IS_FROM_FEEDBACK,true)
                         );
                 }
