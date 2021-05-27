@@ -136,7 +136,8 @@ public class BroadcastMessagesActivity extends BaseActivity implements View.OnCl
         chatApiViewModel.getBroadcastUserKeys(guidList, false);
         getPrecannedMessages();
 
-        chatApiViewModel.getAllBroadcastUsers();
+        if(selectedUserList == null || selectedUserList.size()==0)
+            chatApiViewModel.getAllBroadcastUsers();
 
         chatApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
