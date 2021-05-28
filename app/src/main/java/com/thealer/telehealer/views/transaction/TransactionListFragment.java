@@ -57,6 +57,8 @@ import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
+import com.thealer.telehealer.views.home.DoctorPatientListingFragment;
+import com.thealer.telehealer.views.settings.GeneralSettingsFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import org.json.JSONException;

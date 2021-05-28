@@ -1,13 +1,6 @@
 package com.thealer.telehealer.views.home;
 
 import android.annotation.SuppressLint;
-
-import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,6 +25,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
@@ -85,7 +80,6 @@ import com.thealer.telehealer.views.home.orders.OrdersListFragment;
 import com.thealer.telehealer.views.home.orders.document.DocumentListFragment;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
 import com.thealer.telehealer.views.home.schedules.CreateNewScheduleActivity;
-import com.thealer.telehealer.views.home.schedules.ScheduleDetailViewFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.transaction.TransactionListFragment;
@@ -98,6 +92,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -150,10 +145,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private CircleImageView statusCiv;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private PatientInvite patientInvite;
-    private int doctorId=0,patientId=0;
+    private int doctorId = 0, patientId = 0;
 
     private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
-            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7,paymentHistoryTab=8;
+            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7, paymentHistoryTab = 8;
 
     @Override
     public void onAttach(Context context) {
@@ -170,7 +165,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
                 resultBean = model;
-                patientId=resultBean.getUser_id();
+                patientId = resultBean.getUser_id();
                 if (doctorGuid != null) {
                     Set<String> set = new HashSet<>();
                     set.add(doctorGuid);
@@ -542,10 +537,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     getArguments().getSerializable(Constants.USER_DETAIL) instanceof CommonUserApiResponseModel) {
 
                 userGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL)).getUser_guid();
-                patientId=((CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL)).getUser_id();
+                patientId = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL)).getUser_id();
                 if (getArguments().getSerializable(Constants.DOCTOR_DETAIL) != null) {
                     doctorGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_guid();
-                    doctorId=((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_id();
+                    doctorId = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_id();
                 }
             } else {
                 userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
@@ -905,14 +900,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             addFragment(getString(R.string.monitoring), monitoringFragment);
                             break;
                         case paymentHistoryTab:
-                            TransactionListFragment transactionListFragment=new TransactionListFragment();
+                            TransactionListFragment transactionListFragment = new TransactionListFragment();
                             bundle = new Bundle();
                             bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
-                            bundle.putInt(ArgumentKeys.DOCTOR_ID,doctorId);
-                            bundle.putInt(ArgumentKeys.PATIENT_ID,patientId);
-                            bundle.putBoolean(ArgumentKeys.IS_FROM_PROFILE,true);
+                            bundle.putInt(ArgumentKeys.DOCTOR_ID, doctorId);
+                            bundle.putInt(ArgumentKeys.PATIENT_ID, patientId);
+                            bundle.putBoolean(ArgumentKeys.IS_FROM_PROFILE, true);
                             transactionListFragment.setArguments(bundle);
-                            addFragment(getString(R.string.lbl_payment_history),transactionListFragment);
+                            addFragment(getString(R.string.lbl_payment_history), transactionListFragment);
                             break;
                     }
                 }

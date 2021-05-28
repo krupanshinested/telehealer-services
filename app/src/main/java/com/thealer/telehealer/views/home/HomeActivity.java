@@ -77,6 +77,7 @@ import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
+import com.thealer.telehealer.views.settings.GeneralSettingsFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -876,6 +877,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
+        if(Constants.isRedirectProfileSetting){
+            Intent intent = new Intent(HomeActivity.this, ProfileSettingsActivity.class);
+            this.startActivity(intent);
+        }
         if (isRefreshRequired) {
             attachView();
         }
