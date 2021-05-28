@@ -177,6 +177,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         transactionListViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
+                if(baseApiResponseModels!=null && baseApiResponseModels.getMessage() != null )
+                    showToast(baseApiResponseModels.getMessage());
+
                 setResult(RESULT_OK);
                 finish();
             }
