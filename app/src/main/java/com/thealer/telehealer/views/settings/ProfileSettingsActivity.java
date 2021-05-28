@@ -414,7 +414,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
     @Override
     public void onBackPressed() {
+        processBackPress();
+    }
 
+    private void processBackPress() {
         if (!isBackDisabled) {
             if (getIntent() != null && getIntent().getExtras() != null &&
                     getIntent().getExtras().getInt(ArgumentKeys.VIEW_TYPE) == Constants.SCHEDULE_CREATION_MODE) {
@@ -675,7 +678,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.back_iv:
-                onBackPressed();
+                processBackPress();
                 break;
             case R.id.next_tv:
                 if (getCurrentFragment() instanceof DoCurrentTransactionInterface) {

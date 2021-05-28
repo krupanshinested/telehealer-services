@@ -1000,6 +1000,18 @@ public class Utils {
         return calendar;
     }
 
+    public static Calendar getCalendarWithoutUTC(String timeStamp) {
+        Calendar calendar = Calendar.getInstance();
+        DateFormat inputFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
+        try {
+            calendar.setTime(inputFormat.parse(timeStamp));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return calendar;
+    }
+
     public static String serialize(Object object) throws IOException {
         Gson gson = new Gson();
         String json = gson.toJson(object);
@@ -1885,6 +1897,12 @@ public class Utils {
         SimpleDateFormat simpleDateFormat =
                 new SimpleDateFormat(UTCFormat, Locale.getDefault());
         simpleDateFormat.setTimeZone(UtcTimezone);
+        return simpleDateFormat.format(calendar.getTimeInMillis());
+    }
+
+    public static String getDateFromCalendar(Calendar calendar) {
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat(UTCFormat, Locale.getDefault());
         return simpleDateFormat.format(calendar.getTimeInMillis());
     }
 

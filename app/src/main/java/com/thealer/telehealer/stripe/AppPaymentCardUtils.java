@@ -148,14 +148,16 @@ public class AppPaymentCardUtils {
         if (UserType.isUserDoctor())
             canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
 
-        if (canViewCardStatus) {
+        /*if (canViewCardStatus) {*/
             if (paymentInfo != null) {
                 if (hasValidPaymentCard(paymentInfo)) {
                     imageView.setImageResource(R.drawable.ic_card_enabled);
                 } else {
                     imageView.setImageResource(R.drawable.ic_card_disabled);
                 }
+            }else{
+                imageView.setImageResource(R.drawable.ic_card_disabled);
             }
-        }
+//        }
     }
 }

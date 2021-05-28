@@ -128,6 +128,15 @@ public class TransactionListFragment extends BaseFragment {
             }
         });
 
+        askToAddCardViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if(baseApiResponseModel.getMessage() != null  && baseApiResponseModel.getMessage() !=null ){
+                    showToast(baseApiResponseModel.getMessage());
+                }
+            }
+        });
+
         transactionListViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
@@ -143,6 +152,9 @@ public class TransactionListFragment extends BaseFragment {
                     selectedTransaction = null;
                     transactionListViewModel.setPage(1);
                     loadTransactions(true);
+                }
+                if(baseApiResponseModels != null && baseApiResponseModels.getMessage() != null){
+                    showToast(baseApiResponseModels.getMessage());
                 }
             }
         });
@@ -231,6 +243,7 @@ public class TransactionListFragment extends BaseFragment {
             public void onChanged(BaseApiResponseModel baseApiResponseModels) {
                 transactionListViewModel.setPage(1);
                 loadTransactions(true);
+
                 if (baseApiResponseModels.getMessage() != null)
                    showToast(baseApiResponseModels.getMessage());
             }

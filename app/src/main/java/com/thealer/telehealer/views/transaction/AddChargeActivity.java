@@ -65,6 +65,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     public static String EXTRA_DOCTOR_ID = "doctorId";
     public static String EXTRA_IS_FROM_FEEDBACK = "isFromFeedback";
     boolean isFromFeedback=false;
+    private String chargeAddedMsg="";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -154,6 +155,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         addChargeViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                chargeAddedMsg=baseApiResponseModel.getMessage();
                 if (addChargeViewModel.isSaveAndProcess()) {
                     if (baseApiResponseModel instanceof AddChargeResp) {
                         addChargeViewModel.setAddedTransaction(((AddChargeResp) baseApiResponseModel).getData());
@@ -194,6 +196,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     Runnable closeListener = new Runnable() {
                         @Override
                         public void run() {
+                            if(chargeAddedMsg!=null && !chargeAddedMsg.isEmpty())
+                                showToast(chargeAddedMsg);
+
                             setResult(RESULT_OK);
                             finish();
                         }
@@ -208,9 +213,11 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     Runnable paymentSettingListener = new Runnable() {
                         @Override
                         public void run() {
+                            showToast(chargeAddedMsg);
                             Constants.isRedirectProfileSetting = true;
                             Intent intent = new Intent(AddChargeActivity.this, ProfileSettingsActivity.class);
                             startActivity(intent);
+                            finish();
                         }
                     };
 
@@ -243,6 +250,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         askToAddCardViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel responseModel) {
+                if(responseModel != null && responseModel.getMessage() != null)
+                    showToast(chargeAddedMsg);
+
                 setResult(RESULT_OK);
                 finish();
             }
@@ -291,6 +301,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     dialog.dismiss();
                 }
             }, (dialog, which) -> {
+                if(chargeAddedMsg!=null && !chargeAddedMsg.isEmpty())
+                    showToast(chargeAddedMsg);
+
                 setResult(RESULT_OK);
                 finish();
             }).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
@@ -310,6 +323,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             public void didCancelled() {
+                if(chargeAddedMsg!=null && !chargeAddedMsg.isEmpty())
+                    showToast(chargeAddedMsg);
+
                 setResult(RESULT_OK);
                 finish();
             }
@@ -496,12 +512,12 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     private AddChargeReq.Description getDescriptionByReason(ReasonOption reasonOption) {
         AddChargeReq.Description description = new AddChargeReq.Description();
         if (reasonOption instanceof SingleDateReasonOption) {
-            description.setDateOfService(Utils.getUTCDateFromCalendar(((SingleDateReasonOption) reasonOption).getDate()));
+            description.setDateOfService(Utils.getDateFromCalendar(((SingleDateReasonOption) reasonOption).getDate()));
         }
         if (reasonOption instanceof DateRangeReasonOption) {
             DateRangeReasonOption dateRangeReasonOption = ((DateRangeReasonOption) reasonOption);
-            description.setStartDate(Utils.getUTCDateFromCalendar(dateRangeReasonOption.getStartDate()));
-            description.setEndDate(Utils.getUTCDateFromCalendar(dateRangeReasonOption.getEndDate()));
+            description.setStartDate(Utils.getDateFromCalendar(dateRangeReasonOption.getStartDate()));
+            description.setEndDate(Utils.getDateFromCalendar(dateRangeReasonOption.getEndDate()));
         }
         if (reasonOption instanceof TextFieldReasonOption) {
             if (reasonOption.getValue() == Constants.ChargeReason.SUPPLIES) {
