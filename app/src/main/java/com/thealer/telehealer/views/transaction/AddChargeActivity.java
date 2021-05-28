@@ -31,6 +31,7 @@ import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -232,9 +233,27 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                                 }, null);
                     }else if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
                         String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                        Utils.showAlertDialogWithClose(AddChargeActivity.this, getString(R.string.app_name), message,
-                                getString(R.string.lbl_proceed_offline), getString(R.string.payment_settings),
-                                proceedOfflineListener, paymentSettingListener, closeListener).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
+                        if (UserType.isUserAssistant()) {
+                            Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
+                                    dialog.dismiss();
+                                }
+                            }, (dialog, which) -> {
+                                if(chargeAddedMsg!=null && !chargeAddedMsg.isEmpty())
+                                    showToast(chargeAddedMsg);
+
+                                setResult(RESULT_OK);
+                                finish();
+
+                                dialog.dismiss();
+                            }).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
+                        }else {
+                            Utils.showAlertDialogWithClose(AddChargeActivity.this, getString(R.string.app_name), message,
+                                    getString(R.string.lbl_proceed_offline), getString(R.string.payment_settings),
+                                    proceedOfflineListener, paymentSettingListener, closeListener).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
+                        }
                     } else {
                         if (addChargeViewModel.getAddedTransaction() != null) {
                             showPatientCardErrorOptions();
