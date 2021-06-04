@@ -255,7 +255,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
                     if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
-                        Utils.showAlertDialog(getContext(), getString(R.string.error),
+                        Utils.showAlertDialog(getContext(), getString(R.string.app_name),
                                 errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                                 null, getString(R.string.ok), new DialogInterface.OnClickListener() {
                                     @Override

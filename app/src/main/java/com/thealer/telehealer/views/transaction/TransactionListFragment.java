@@ -114,7 +114,7 @@ public class TransactionListFragment extends BaseFragment {
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
-                Utils.showAlertDialog(getContext(), getString(R.string.error),
+                Utils.showAlertDialog(getContext(), getString(R.string.app_name),
                         errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                         null, getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
@@ -168,7 +168,7 @@ public class TransactionListFragment extends BaseFragment {
                     transactionListViewModel.setApiRequested(false);
                     progressBar.setVisibility(View.GONE);
                     String errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                    Utils.showAlertDialog(getContext(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    Utils.showAlertDialog(getContext(), getString(R.string.app_name), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -191,7 +191,7 @@ public class TransactionListFragment extends BaseFragment {
                                 }else if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
                                     String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
                                     if (UserType.isUserAssistant()) {
-                                        Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                        Utils.showAlertDialog(getContext(), getString(R.string.app_name), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
@@ -230,7 +230,7 @@ public class TransactionListFragment extends BaseFragment {
                                 e.printStackTrace();
                             }
                         } else {
-                            Utils.showAlertDialog(getContext(), getString(R.string.error), getString(R.string.something_went_wrong_try_again), null, getString(R.string.cancel), null, (dialog, which) -> {
+                            Utils.showAlertDialog(getContext(), getString(R.string.app_name), getString(R.string.something_went_wrong_try_again), null, getString(R.string.cancel), null, (dialog, which) -> {
                                 selectedTransaction = null;
                                 dialog.dismiss();
                             });
@@ -254,7 +254,7 @@ public class TransactionListFragment extends BaseFragment {
             @Override
             public void onChanged(ErrorModel errorModel) {
                 String errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                Utils.showAlertDialog(getContext(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                Utils.showAlertDialog(getContext(), getString(R.string.app_name), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -274,7 +274,7 @@ public class TransactionListFragment extends BaseFragment {
         String message = getString(R.string.msg_invalid_credit_card_in_transaction_process, selectedTransaction.getPatientId().getDisplayName());
 
         if (options.size() == 1) {
-            Utils.showAlertDialog(getContext(), getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            Utils.showAlertDialog(getContext(), getString(R.string.app_name), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
@@ -406,7 +406,7 @@ public class TransactionListFragment extends BaseFragment {
             public void onReceiptClick(int pos) {
                 String url = transactionListViewModel.getTransactions().get(pos).getTransactionReceipt();
                 if (url == null || url.isEmpty()) {
-                    Utils.showAlertDialog(getContext(), getString(R.string.error), getString(R.string.msg_receipt_not_generated_yet_please_try_again_later), getString(R.string.ok), null, (dialog, which) -> {
+                    Utils.showAlertDialog(getContext(), getString(R.string.app_name), getString(R.string.msg_receipt_not_generated_yet_please_try_again_later), getString(R.string.ok), null, (dialog, which) -> {
                         dialog.dismiss();
                     }, null);
                     return;
@@ -534,7 +534,7 @@ public class TransactionListFragment extends BaseFragment {
                             }
                         } else {
                             Utils.showAlertDialog(getContext(),
-                                    getString(R.string.error),
+                                    getString(R.string.app_name),
                                     getString(R.string.msg_please_enter_valid_refund_amount),
                                     getString(R.string.ok),
                                     null,

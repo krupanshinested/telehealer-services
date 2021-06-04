@@ -171,7 +171,7 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
             case R.id.btnSubmit: {
                 if (dateFilter.getSelectedToDate() != null) {
                     if (dateFilter.getSelectedFromDate().getTimeInMillis() > dateFilter.getSelectedToDate().getTimeInMillis()) {
-                        Utils.showAlertDialog(this, getString(R.string.error), getString(R.string.msg_please_select_valid_date_range_for_any, getString(R.string.filter)), getString(R.string.ok), null, null, null);
+                        Utils.showAlertDialog(this, getString(R.string.app_name), getString(R.string.msg_please_select_valid_date_range_for_any, getString(R.string.filter)), getString(R.string.ok), null, null, null);
                         return;
                     }
                 }

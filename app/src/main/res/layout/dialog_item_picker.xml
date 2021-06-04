@@ -5,20 +5,36 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/title_tv"
+        android:id="@+id/heading_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
         android:layout_marginRight="5dp"
         android:padding="5dp"
         android:textAlignment="center"
         android:textColor="@color/colorBlack"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        android:text="@string/app_name"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/title_tv"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:padding="5dp"
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/heading_tv" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

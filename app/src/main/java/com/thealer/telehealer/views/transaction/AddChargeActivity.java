@@ -106,7 +106,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         adapterReason = new ReasonOptionAdapter(addChargeViewModel.getReasonOptions(), true, pos -> {
             addChargeViewModel.getReasonOptions().get(pos).setSelected(!addChargeViewModel.getReasonOptions().get(pos).isSelected());
             adapterReason.notifyItemChanged(pos);
-            if(pos>=2) {
+            if(pos>=1) {
                 if (pos + 2 < addChargeViewModel.getReasonOptions().size() - 1)
                     rvReason.scrollToPosition(pos + 2);
                 else if(pos==(addChargeViewModel.getReasonOptions().size()-1))
@@ -121,6 +121,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             }else{
                 rvReason.scrollToPosition(0);
             }
+            hideSoftInputWindow(AddChargeActivity.this,false);
 
         });
         adapterReason.setTypeMasters(addChargeViewModel.getListChargeTypes());
@@ -176,7 +177,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onChanged(ErrorModel errorModel) {
                 String errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
-                Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.error), errorMessage, getString(R.string.ok), null, (dialog, which) -> dialog.dismiss(), null);
+                Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.app_name), errorMessage, getString(R.string.ok), null, (dialog, which) -> dialog.dismiss(), null);
             }
         });
 
@@ -237,7 +238,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     }else if (!jsonObject.has("is_cc_captured") || AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
                         String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
                         if (UserType.isUserAssistant()) {
-                            Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.error), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.app_name), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
@@ -284,7 +285,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
-                Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.error),
+                Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.app_name),
                         errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                         null, getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
@@ -511,7 +512,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void showError(String message) {
-        Utils.showAlertDialog(this, getString(R.string.error), message, getString(R.string.ok), null, null, null);
+        Utils.showAlertDialog(this, getString(R.string.app_name), message, getString(R.string.ok), null, null, null);
     }
 
     private AddChargeReq getReq() {

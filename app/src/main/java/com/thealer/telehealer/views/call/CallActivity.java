@@ -1773,7 +1773,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 if (errorModel != null && TextUtils.isEmpty(errorModel.getMessage())) {
                     String message = errorModel.getMessage();
 
-                    currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.error), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.app_name), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             activeCall.endCall(OpenTokConstants.other);

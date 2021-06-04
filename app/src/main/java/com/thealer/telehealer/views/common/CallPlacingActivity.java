@@ -188,7 +188,7 @@ public class CallPlacingActivity extends BaseActivity {
             }
 
             if (errorMessage != null) {
-                Utils.showAlertDialog(CallPlacingActivity.this, getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                Utils.showAlertDialog(CallPlacingActivity.this, getString(R.string.app_name), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

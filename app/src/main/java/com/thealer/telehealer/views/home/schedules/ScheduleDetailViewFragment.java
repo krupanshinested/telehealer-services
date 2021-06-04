@@ -199,7 +199,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
-                Utils.showAlertDialog(getContext(), getString(R.string.error),
+                Utils.showAlertDialog(getContext(), getString(R.string.app_name),
                         errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                         null, getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override

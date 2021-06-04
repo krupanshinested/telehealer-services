@@ -466,14 +466,16 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         }
     }
     private void goToSigninActivity() {
-        UserDetailPreferenceManager.invalidateUser();
+        if(baseViewInterfaceList.size()!=0) {
+            baseViewInterfaceList.clear();
+            UserDetailPreferenceManager.invalidateUser();
+            PubnubUtil.shared.unsubscribe();
 
-        PubnubUtil.shared.unsubscribe();
+            EventRecorder.updateUserId(null);
 
-        EventRecorder.updateUserId(null);
-
-        getApplication().startActivity(new Intent(getApplication(), SigninActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            getApplication().startActivity(new Intent(getApplication(), SigninActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        }
     }
 
     public MultipartBody.Part getMultipartFile(String name, String image_path) {

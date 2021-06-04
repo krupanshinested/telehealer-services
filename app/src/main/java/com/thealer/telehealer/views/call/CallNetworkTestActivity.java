@@ -236,7 +236,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
     @Override
     public void onError(Session session, OpentokError opentokError) {
         Log.i(LOGTAG, "Session error: " + opentokError.getMessage());
-        showResult(getString(R.string.error), getString(R.string.session_error) + opentokError.getMessage(), false);
+        showResult(getString(R.string.app_name), getString(R.string.session_error) + opentokError.getMessage(), false);
     }
 
     @Override
@@ -268,7 +268,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
     @Override
     public void onError(PublisherKit publisherKit, OpentokError opentokError) {
         Log.i(LOGTAG, "Publisher error: " + opentokError.getMessage());
-        showResult(getString(R.string.error), getString(R.string.publisher_error) + opentokError.getMessage(), false);
+        showResult(getString(R.string.app_name), getString(R.string.publisher_error) + opentokError.getMessage(), false);
     }
 
     @Override
@@ -285,7 +285,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
     @Override
     public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
         Log.i(LOGTAG, "Subscriber error: " + opentokError.getMessage());
-        showResult(getString(R.string.error), getString(R.string.subscriber_error) + opentokError.getMessage(), false);
+        showResult(getString(R.string.app_name), getString(R.string.subscriber_error) + opentokError.getMessage(), false);
     }
 
     private void subscribeToStream(Stream stream) {

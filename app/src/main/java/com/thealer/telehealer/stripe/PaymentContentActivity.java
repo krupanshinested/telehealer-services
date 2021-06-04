@@ -133,7 +133,7 @@ public class PaymentContentActivity extends ContentActivity {
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
                     if (isForOAuth) {
-                        Utils.showAlertDialog(PaymentContentActivity.this, getString(R.string.error), errorModel.getMessage(), getString(R.string.ok), null, null, null);
+                        Utils.showAlertDialog(PaymentContentActivity.this, getString(R.string.app_name), errorModel.getMessage(), getString(R.string.ok), null, null, null);
                     } else {
                         openPayment();
                     }
