@@ -66,6 +66,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     public static String EXTRA_DOCTOR_ID = "doctorId";
     public static String EXTRA_IS_FROM_FEEDBACK = "isFromFeedback";
     boolean isFromFeedback=false;
+    private Boolean isRedirectedPayment = false;
     private String chargeAddedMsg="";
 
     @Override
@@ -127,6 +128,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
 
     }
 
+
     private void initViewModels() {
         masterApiViewModel = new ViewModelProvider(this).get(MasterApiViewModel.class);
         addChargeViewModel = new ViewModelProvider(this).get(AddChargeViewModel.class);
@@ -159,6 +161,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 chargeAddedMsg=baseApiResponseModel.getMessage();
                 if (addChargeViewModel.isSaveAndProcess()) {
                     if (baseApiResponseModel instanceof AddChargeResp) {
+                        addChargeViewModel.setChargeId(((AddChargeResp) baseApiResponseModel).getData().getId());
                         addChargeViewModel.setAddedTransaction(((AddChargeResp) baseApiResponseModel).getData());
                         transactionListViewModel.processPayment(addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.STRIPE);
                     }
@@ -216,9 +219,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                         public void run() {
                             showToast(chargeAddedMsg);
                             Constants.isRedirectProfileSetting = true;
+                            isRedirectedPayment = true;
                             Intent intent = new Intent(AddChargeActivity.this, ProfileSettingsActivity.class);
                             startActivity(intent);
-                            finish();
                         }
                     };
 
@@ -424,14 +427,24 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnSubmit: {
                 if (isValid()) {
-                    addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                    if(isRedirectedPayment){
+                        isRedirectedPayment=false;
+                        addChargeViewModel.addCharge(getReq(), true);
+                    }else {
+                        addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                    }
                 }
                 break;
             }
             case R.id.btnSubmitProcess: {
                 if (isValid()) {
                     addChargeViewModel.setSaveAndProcess(true);
-                    addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                    if(isRedirectedPayment){
+                        isRedirectedPayment=false;
+                        addChargeViewModel.addCharge(getReq(), true);
+                    }else {
+                        addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                    }
                 }
             }
         }

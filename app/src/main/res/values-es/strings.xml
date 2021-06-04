@@ -683,7 +683,7 @@
     <string name="ccm_capture_title">Para fines de auditoría, puede indicar si su llamada se realizó específicamente para alguno de los siguientes elementos.</string>
     <string name="busy_another_call">está ocupado en otra llamada.</string>
     <string name="not_available">no está disponible.</string>
-    <string name="payments_billings">Pagos / Facturación</string>
+    <string name="payments_billings">Facturación del tele curandero</string>
     <string name="expiration_date">Fecha de caducidad</string>
     <string name="card_information">Información de la tarjeta</string>
     <string name="call_charges">Cargos de llamadas</string>
@@ -1484,5 +1484,6 @@
     <string name="broadcast_messages_all">Broadcast Message to All</string>
     <string name="payment_settings">Payment Settings</string>
     <string name="lbl_payment_history">Payment History</string>
+    <string name="lbl_patient_charges_payments">Patient charges/payment</string>
 
 </resources>

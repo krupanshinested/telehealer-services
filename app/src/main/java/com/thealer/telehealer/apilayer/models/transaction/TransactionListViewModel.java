@@ -41,10 +41,20 @@ public class TransactionListViewModel extends BaseApiViewModel {
                 filterReq.getFilter().setToDate("");
                 filterReq.getFilter().setFromDate("");
             } else {
-                filterReq.getFilter().setToDate(Utils.getUTCDateFromCalendar(Calendar.getInstance()));
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.MONTH, -1);
-                filterReq.getFilter().setFromDate(Utils.getUTCDateFromCalendar(calendar));
+
+                Calendar calenderTO=Calendar.getInstance();
+                calenderTO.set(Calendar.HOUR_OF_DAY,0);
+                calenderTO.set(Calendar.MINUTE,0);
+                calenderTO.set(Calendar.SECOND,0);
+                calenderTO.add(Calendar.DAY_OF_MONTH,1);
+                filterReq.getFilter().setToDate(Utils.getUTCDateFromCalendar(calenderTO));
+
+                Calendar calenderFROM = Calendar.getInstance();
+                calenderFROM.add(Calendar.MONTH, -1);
+                calenderFROM.set(Calendar.HOUR_OF_DAY,23);
+                calenderFROM.set(Calendar.MINUTE,59);
+                calenderFROM.set(Calendar.SECOND,59);
+                filterReq.getFilter().setFromDate(Utils.getUTCDateFromCalendar(calenderFROM));
             }
             filterReq.getFilter().setDoctorId(doctorId);
             filterReq.getFilter().setPatientId(patientId);

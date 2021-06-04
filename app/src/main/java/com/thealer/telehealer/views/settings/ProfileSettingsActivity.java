@@ -355,6 +355,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                     signoutApiViewModel.signOut();
                 }
                 break;
+            case R.id.telehealer_billings:
+                PaymentsListingFragment paymentsListingFragment = new PaymentsListingFragment();
+                showSubFragment(paymentsListingFragment);
+                break;
             case R.id.add_card:
                 startActivity(new Intent(this, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
                 break;

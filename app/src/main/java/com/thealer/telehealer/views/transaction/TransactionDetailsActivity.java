@@ -152,11 +152,11 @@ public class TransactionDetailsActivity extends BaseActivity {
             if (description != null) {
                 List<String> medicines = description.getMedicines();
                 if (medicines != null && medicines.size() > 0)
-                    amountModel.setDetails(TextUtils.join(",", medicines));
+                    amountModel.setDetails(TextUtils.join(", ", medicines));
 
                 List<String> supplies = description.getSuppliers();
                 if (supplies != null && supplies.size() > 0)
-                    amountModel.setDetails(TextUtils.join(",", supplies));
+                    amountModel.setDetails(TextUtils.join(", ", supplies));
 
                 if (description.getStartDate() != null && description.getEndDate() != null) {
                     String subTitle = Utils.getFormattedDateWithoutTimeZone(description.getStartDate(), Utils.defaultDateFormat) + " - " + Utils.getFormattedDateWithoutTimeZone(description.getEndDate(), Utils.defaultDateFormat);

@@ -45,7 +45,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private ProfileCellView profile, medical_history, settings, email_id,
             phone_number, change_password, checkCallQuality, logs,
-            feedback, terms_and_condition, privacy_policy, add_card, educational_video, patient_payments;
+            feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments;
     private View signOut;
 
     private ProfileUpdate profileUpdate;
@@ -108,6 +108,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         privacy_policy = baseView.findViewById(R.id.privacy_policy);
         signOut = baseView.findViewById(R.id.signOut);
         add_card = baseView.findViewById(R.id.add_card);
+        telehealer_billings = baseView.findViewById(R.id.telehealer_billings);
         patient_payments = baseView.findViewById(R.id.patient_payments);
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
@@ -163,6 +164,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         privacy_policy.setOnClickListener(this);
         signOut.setOnClickListener(this);
         add_card.setOnClickListener(this);
+        telehealer_billings.setOnClickListener(this);
         medicalAssistantLl.setOnClickListener(this);
         patient_payments.setOnClickListener(this);
 
@@ -173,6 +175,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             case Constants.TYPE_PATIENT:
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
+                    telehealer_billings.setVisibility(View.GONE);
                     patient_payments.setVisibility(View.VISIBLE);
                     patient_payments.updateTitle(getString(R.string.lbl_charges));
                     add_card.setVisibility(View.GONE);
@@ -187,6 +190,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 medical_history.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
+                    telehealer_billings.setVisibility(View.VISIBLE);
+                    telehealer_billings.hideSplitter(false);
                     add_card.setVisibility(View.VISIBLE);
                     add_card.hideSplitter(false);
                     patient_payments.setVisibility(View.VISIBLE);
@@ -200,6 +205,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 medicalAssistantLl.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
+                    telehealer_billings.setVisibility(View.GONE);
                     add_card.hideSplitter(false);
                     add_card.setVisibility(View.GONE);
                     patient_payments.setVisibility(View.VISIBLE);

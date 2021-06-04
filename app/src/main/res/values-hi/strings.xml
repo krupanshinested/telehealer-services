@@ -681,7 +681,7 @@
     <string name="ccm_capture_title">ऑडिट उद्देश्यों के लिए, आप यह संकेत दे सकते हैं कि आपका कॉल विशेष रूप से नीचे दी गई किसी एक वस्तु के लिए किया गया था।</string>
     <string name="busy_another_call">एक और कॉल में व्यस्त है।</string>
     <string name="not_available">उपलब्ध नहीं है।</string>
-    <string name="payments_billings">भुगतान / बिलिंग्स</string>
+    <string name="payments_billings">टेलीहीलर बिलिंग</string>
     <string name="expiration_date">समाप्ति तिथि</string>
     <string name="card_information">कार्ड की जानकारी</string>
     <string name="call_charges">कॉल चार्ज</string>
@@ -1472,4 +1472,5 @@
     <string name="broadcast_messages_all">Broadcast Message to All</string>
     <string name="payment_settings">Payment Settings</string>
     <string name="lbl_payment_history">Payment History</string>
+    <string name="lbl_patient_charges_payments">Patient charges/payment</string>
 </resources>
