@@ -33,9 +33,8 @@ public class PubNubNotificationPayload {
         APNSPayload apnsPayload = new APNSPayload();
 
         HashMap<String, Object> aps = new HashMap<>();
-        //aps.put(CONTENT_AVAILABLE, 1);
+        aps.put(CONTENT_AVAILABLE, 1);
         aps.put("alert", "Call from " + displayName);
-
         apnsPayload.setAps(aps);
         apnsPayload.setFrom(from);
         apnsPayload.setTo(to);
@@ -45,6 +44,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setIs_conference(false);
         apnsPayload.setType(type);
         apnsPayload.setSessionId(sessionId);
+        apnsPayload.setPn_push(APNSPayload.getPnPushObject());
         apnsPayload.setFrom_name(displayName);
         apnsPayload.setDoctor_guid(doctor_guid);
         pushPayLoad.setPn_apns(apnsPayload);

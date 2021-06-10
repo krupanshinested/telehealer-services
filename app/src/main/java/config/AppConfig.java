@@ -90,9 +90,9 @@ public class AppConfig {
             }
         } else {
             if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-                bundleIds.add("com.thealer.pro");
+                bundleIds.add("com.thealer.pro.voip");
             } else {
-                bundleIds.add("com.thealer");
+                bundleIds.add("com.thealer.voip");
             }
         }
         return bundleIds;
