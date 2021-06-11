@@ -329,7 +329,7 @@ public interface ApiInterface {
     @PATCH("api/referrals/{type}/{id}")
     Observable<BaseApiResponseModel> cancelOrder(@Path("type") String type, @Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Query(CANCEL) boolean cancel);
 
-    @POST("api/referrals/" + OrderConstant.ORDER_TYPE_PRESCRIPTIONS)
+    @POST("api/referrals-v2/" + OrderConstant.ORDER_TYPE_PRESCRIPTIONS)
     Observable<OrdersBaseApiResponseModel> createPrescription(@Query(SYNC_CREATE) boolean sync_create, @Body CreatePrescriptionRequestModel createPrescriptionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/users-v2")
@@ -386,7 +386,7 @@ public interface ApiInterface {
     @PUT("api/" + OrderConstant.ORDER_TYPE_FORM + "/{id}")
     Observable<BaseApiResponseModel> updateForm(@Path(ID) int id, @Part("data") RequestBody data);
 
-    @POST("api/referrals/" + OrderConstant.ORDER_TYPE_SPECIALIST)
+    @POST("api/referrals-v2/" + OrderConstant.ORDER_TYPE_SPECIALIST)
     Observable<OrdersBaseApiResponseModel> assignSpecialist(@Query(SYNC_CREATE) boolean sync_create, @Body AssignSpecialistRequestModel assignSpecialistRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
@@ -411,7 +411,7 @@ public interface ApiInterface {
     @POST("api/faxes")
     Observable<BaseApiResponseModel> sendFax(@Body SendFaxRequestModel sendFaxRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @POST("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
+    @POST("api/referrals-v2/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersBaseApiResponseModel> createLabOrder(@Query(SYNC_CREATE) boolean sync_create, @Body CreateTestApiRequestModel createTestApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/download")
@@ -423,7 +423,7 @@ public interface ApiInterface {
     @POST("refresh")
     Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check, @Query("version") String version);
 
-    @POST("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
+    @POST("api/referrals-v2/" + OrderConstant.ORDER_TYPE_X_RAY)
     Observable<OrdersBaseApiResponseModel> createRadiology(@Query(SYNC_CREATE) boolean sync_create, @Body CreateRadiologyRequestModel createRadiologyRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_X_RAY)
@@ -444,7 +444,7 @@ public interface ApiInterface {
     @GET("api/" + OrderConstant.ORDER_TYPE_EDUCATIONAL_VIDEO)
     Observable<EducationalVideoApiResponseModel> getUserEducationalVideoList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(ASSIGNOR) boolean assignor);
 
-    @POST("api/referrals/" + OrderConstant.ORDER_TYPE_MISC)
+    @POST("api/referrals-v2/" + OrderConstant.ORDER_TYPE_MISC)
     Observable<BaseApiResponseModel> createMiscellaneous(@Body CreateMiscellaneousRequestModel createMiscellaneousRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals")
