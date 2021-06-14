@@ -37,24 +37,33 @@ public class TransactionListViewModel extends BaseApiViewModel {
         if (filterReq == null) {
             filterReq = new TransactionListReq();
             filterReq.setFilter(new TransactionListReq.Filter());
+            Calendar calenderTO=Calendar.getInstance();
+            Calendar calenderFROM = Calendar.getInstance();
             if (isFromProfile) {
-                filterReq.getFilter().setToDate("");
-                filterReq.getFilter().setFromDate("");
+                calenderTO.set(Calendar.HOUR_OF_DAY,23);
+                calenderTO.set(Calendar.MINUTE,59);
+                calenderTO.set(Calendar.SECOND,59);
+                filterReq.getFilter().setToDate(Utils.getDateFromCalendar(calenderTO));
+
+
+                calenderFROM.add(Calendar.MONTH, -6);
+                calenderFROM.set(Calendar.HOUR_OF_DAY,0);
+                calenderFROM.set(Calendar.MINUTE,0);
+                calenderFROM.set(Calendar.SECOND,0);
+                filterReq.getFilter().setFromDate(Utils.getDateFromCalendar(calenderFROM));
             } else {
 
-                Calendar calenderTO=Calendar.getInstance();
-                calenderTO.set(Calendar.HOUR_OF_DAY,0);
-                calenderTO.set(Calendar.MINUTE,0);
-                calenderTO.set(Calendar.SECOND,0);
-                calenderTO.add(Calendar.DAY_OF_MONTH,1);
-                filterReq.getFilter().setToDate(Utils.getUTCDateFromCalendar(calenderTO));
+                calenderTO.set(Calendar.HOUR_OF_DAY,23);
+                calenderTO.set(Calendar.MINUTE,59);
+                calenderTO.set(Calendar.SECOND,59);
+                filterReq.getFilter().setToDate(Utils.getDateFromCalendar(calenderTO));
 
-                Calendar calenderFROM = Calendar.getInstance();
+
                 calenderFROM.add(Calendar.MONTH, -1);
-                calenderFROM.set(Calendar.HOUR_OF_DAY,23);
-                calenderFROM.set(Calendar.MINUTE,59);
-                calenderFROM.set(Calendar.SECOND,59);
-                filterReq.getFilter().setFromDate(Utils.getUTCDateFromCalendar(calenderFROM));
+                calenderFROM.set(Calendar.HOUR_OF_DAY,0);
+                calenderFROM.set(Calendar.MINUTE,0);
+                calenderFROM.set(Calendar.SECOND,0);
+                filterReq.getFilter().setFromDate(Utils.getDateFromCalendar(calenderFROM));
             }
             filterReq.getFilter().setDoctorId(doctorId);
             filterReq.getFilter().setPatientId(patientId);

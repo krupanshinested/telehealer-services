@@ -380,11 +380,11 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             reasonOption.setChargeTypeName(item.getTypeOfChargeName());
             if (item.getDescription() != null) {
                 if (reasonOption instanceof SingleDateReasonOption) {
-                    ((SingleDateReasonOption) reasonOption).setDate(Utils.getCalendar(item.getDescription().getDateOfService()));
+                    ((SingleDateReasonOption) reasonOption).setDate(Utils.getCalendarWithoutUTC(item.getDescription().getDateOfService()));
                 }
                 if (reasonOption instanceof DateRangeReasonOption) {
-                    ((DateRangeReasonOption) reasonOption).setStartDate(Utils.getCalendar(item.getDescription().getStartDate()));
-                    ((DateRangeReasonOption) reasonOption).setEndDate(Utils.getCalendar(item.getDescription().getEndDate()));
+                    ((DateRangeReasonOption) reasonOption).setStartDate(Utils.getCalendarWithoutUTC(item.getDescription().getStartDate()));
+                    ((DateRangeReasonOption) reasonOption).setEndDate(Utils.getCalendarWithoutUTC(item.getDescription().getEndDate()));
                 }
                 if (reasonOption instanceof TextFieldReasonOption) {
                     ((TextFieldReasonOption) reasonOption).setTextFieldValues(new ArrayList<>());

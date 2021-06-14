@@ -192,15 +192,24 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                 }
                 */
 
-                dateFilter.setSelectedToDate(Calendar.getInstance());
-                Calendar fromDate = Calendar.getInstance();
-                fromDate.add(Calendar.MONTH, -1);
-                dateFilter.setSelectedFromDate(fromDate);
+                Calendar calenderTO = Calendar.getInstance();
+                calenderTO.set(Calendar.HOUR_OF_DAY, 23);
+                calenderTO.set(Calendar.MINUTE, 59);
+                calenderTO.set(Calendar.SECOND, 59);
+                dateFilter.setSelectedToDate(calenderTO);
+
+                Calendar calenderFROM = Calendar.getInstance();
+                calenderFROM.set(Calendar.HOUR_OF_DAY, 0);
+                calenderFROM.set(Calendar.MINUTE, 0);
+                calenderFROM.set(Calendar.SECOND, 0);
+                calenderFROM.add(Calendar.MONTH, -1);
+                dateFilter.setSelectedFromDate(calenderFROM);
+
 
                 TransactionListReq req = new TransactionListReq();
                 req.setFilter(new TransactionListReq.Filter());
-                req.getFilter().setFromDate(Utils.getUTCDateFromCalendar(dateFilter.getSelectedFromDate()));
-                req.getFilter().setToDate(Utils.getUTCDateFromCalendar(dateFilter.getSelectedToDate()));
+                req.getFilter().setFromDate(Utils.getDateFromCalendar(dateFilter.getSelectedFromDate()));
+                req.getFilter().setToDate(Utils.getDateFromCalendar(dateFilter.getSelectedToDate()));
 
                 setResult(RESULT_OK, new Intent().putExtra(EXTRA_IS_RESET, true).putExtra(EXTRA_FILTER, new Gson().toJson(req)));
                 finish();
@@ -225,14 +234,14 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
             calenderFROM.set(Calendar.HOUR_OF_DAY,0);
             calenderFROM.set(Calendar.MINUTE,0);
             calenderFROM.set(Calendar.SECOND,0);
-            filter.setFromDate(Utils.getUTCDateFromCalendar(calenderFROM));
+            filter.setFromDate(Utils.getDateFromCalendar(calenderFROM));
         }
         if (dateFilter.getSelectedToDate() != null) {
             Calendar calenderTO=dateFilter.getSelectedToDate();
             calenderTO.set(Calendar.HOUR_OF_DAY,23);
             calenderTO.set(Calendar.MINUTE,59);
             calenderTO.set(Calendar.SECOND,59);
-            filter.setToDate(Utils.getUTCDateFromCalendar(calenderTO));
+            filter.setToDate(Utils.getDateFromCalendar(calenderTO));
         }
         ArrayList<Integer> selectedReasons = new ArrayList<>();
         for (ReasonOption reasonOption : addChargeViewModel.getReasonOptions())
@@ -263,10 +272,10 @@ public class TransactionFilterActivity extends BaseActivity implements View.OnCl
                 }
 
                 if (filter.getFromDate() != null)
-                    dateFilter.setSelectedFromDate(Utils.getCalendar(filter.getFromDate()));
+                    dateFilter.setSelectedFromDate(Utils.getCalendarWithoutUTC(filter.getFromDate()));
 
                 if (filter.getToDate() != null)
-                    dateFilter.setSelectedToDate(Utils.getCalendar(filter.getToDate()));
+                    dateFilter.setSelectedToDate(Utils.getCalendarWithoutUTC(filter.getToDate()));
 
 
                 if (filter.getReasons() != null) {
