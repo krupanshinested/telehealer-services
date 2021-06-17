@@ -1,6 +1,7 @@
 package com.thealer.telehealer.stripe;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
@@ -143,6 +144,7 @@ public class AppPaymentCardUtils {
         return intent;
     }
 
+
     public static void setCardStatusImage(ImageView imageView, @Nullable PaymentInfo paymentInfo, boolean canViewCardStatus) {
         imageView.setVisibility(View.VISIBLE);
         if (UserType.isUserDoctor())
@@ -160,4 +162,5 @@ public class AppPaymentCardUtils {
             }
 //        }
     }
+
 }

@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.thealer.telehealer.R;
@@ -33,7 +32,6 @@ import com.thealer.telehealer.apilayer.models.recents.RecentsApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -48,10 +46,6 @@ import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import config.AppConfig;
-
-import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 
 /**
  * Created by Aswin on 04,December,2018
@@ -174,6 +168,7 @@ public class OrdersBaseFragment extends BaseFragment {
                     }
                     sendSuccessViewBroadCast(getActivity(), status, title, description);
                 }
+
             }
         });
 
@@ -303,46 +298,46 @@ public class OrdersBaseFragment extends BaseFragment {
         showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
     }
 
-    public void assignSpecialist(Boolean status,AssignSpecialistRequestModel requestModel, String userName, String doctorGuid, boolean sendFax) {
+    public void assignSpecialist(Boolean status, AssignSpecialistRequestModel requestModel, String userName, String doctorGuid, boolean sendFax) {
         currentOrder = OrderConstant.ORDER_REFERRALS;
         patientName = userName;
         isSendFax = sendFax;
 
-        showSuccessView();
+//        showSuccessView();
 
-        ordersCreateApiViewModel.assignSpecialist(status,requestModel, doctorGuid, false);
+        ordersCreateApiViewModel.assignSpecialist(status, requestModel, doctorGuid, false);
     }
 
-    public void createPrescription(Boolean status,CreatePrescriptionRequestModel prescriptionModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
+    public void createPrescription(Boolean status, CreatePrescriptionRequestModel prescriptionModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
 
         currentOrder = OrderConstant.ORDER_PRESCRIPTIONS;
         patientName = userDisplay_name;
         isSendFax = sendFax;
 
-        showSuccessView();
+//        showSuccessView();
 
         ordersCreateApiViewModel.createPrescription(status, prescriptionModel, doctorGuid);
     }
 
-    public void createNewRadiologyOrder(Boolean status,CreateRadiologyRequestModel requestModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
+    public void createNewRadiologyOrder(Boolean status, CreateRadiologyRequestModel requestModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
         currentOrder = OrderConstant.ORDER_RADIOLOGY;
         patientName = userDisplay_name;
         isSendFax = sendFax;
 
-        showSuccessView();
+//        showSuccessView();
 
-        ordersCreateApiViewModel.createRadiologyOrder(status,requestModel, doctorGuid);
+        ordersCreateApiViewModel.createRadiologyOrder(status, requestModel, doctorGuid);
     }
 
-    public void createNewLabOrder(Boolean status,CreateTestApiRequestModel createTestApiRequestModel, String username, String doctorGuid, boolean sendFax) {
+    public void createNewLabOrder(Boolean status, CreateTestApiRequestModel createTestApiRequestModel, String username, String doctorGuid, boolean sendFax) {
 
         currentOrder = OrderConstant.ORDER_LABS;
         patientName = username;
         isSendFax = sendFax;
 
-        showSuccessView();
+//        showSuccessView();
 
-        ordersCreateApiViewModel.createLabOrder(status,createTestApiRequestModel, doctorGuid);
+        ordersCreateApiViewModel.createLabOrder(status, createTestApiRequestModel, doctorGuid);
     }
 
     public void createNewMiscellaneousOrder(CreateMiscellaneousRequestModel miscellaneousOrderRequest, String userDisplay_name, String doctorGuid, boolean sendFax) {
@@ -350,7 +345,7 @@ public class OrdersBaseFragment extends BaseFragment {
         patientName = userDisplay_name;
         isSendFax = sendFax;
 
-        showSuccessView();
+//        showSuccessView();
 
         ordersCreateApiViewModel.createMiscellaneousOrder(miscellaneousOrderRequest, doctorGuid);
     }
@@ -430,11 +425,10 @@ public class OrdersBaseFragment extends BaseFragment {
         switch (requestCode) {
             case RequestID.REQ_SHOW_SUCCESS_VIEW:
                 if (resultCode == Activity.RESULT_OK) {
-                    if (getActivity() instanceof HomeActivity){
+                    if (getActivity() instanceof HomeActivity) {
                         getActivity().onBackPressed();
                         getActivity().onBackPressed();
-                    }
-                    else {
+                    } else {
                         getActivity().finish();
                     }
                     if (getTargetFragment() != null) {
@@ -467,7 +461,7 @@ public class OrdersBaseFragment extends BaseFragment {
     }
 
     public void getOrdersDetail(@NonNull String userGuid, @Nullable String doctorGuid, @NonNull List<Integer> idList, @NonNull boolean isShowProgress) {
-        if (UserType.isUserPatient()){
+        if (UserType.isUserPatient()) {
             doctorGuid = null;
             userGuid = null;
         }

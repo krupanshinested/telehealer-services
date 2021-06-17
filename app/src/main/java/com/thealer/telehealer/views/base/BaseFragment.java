@@ -73,7 +73,7 @@ public class BaseFragment extends Fragment {
         super.onStop();
     }
 
-    private void closeDailogs() {
+    public void closeDailogs() {
         if (dialog != null && dialog.isShowing())
             dialog.dismiss();
     }
@@ -119,6 +119,8 @@ public class BaseFragment extends Fragment {
         }
         successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
     }
+
+
 
     public void sendSuccessViewBroadCast(Context context, boolean status, String title, String description) {
 

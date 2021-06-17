@@ -1,14 +1,18 @@
 package com.thealer.telehealer.apilayer.baseapimodel;
 
+import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
@@ -28,9 +32,12 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
+import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.common.AppUpdateActivity;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
@@ -147,7 +154,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     }
 
     private void handleUnAuth() {
-        isRefreshToken=false;
+        isRefreshToken = false;
         if (!isQuickLoginReceiverEnabled) {
             Log.e(TAG, "run: show quick login " + appPreference.getInt(Constants.QUICK_LOGIN_TYPE));
             isQuickLoginReceiverEnabled = true;
@@ -171,7 +178,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             goToSigninActivity();
         }
     }
-
 
 
     private void makeRefreshTokenApiCall() {
@@ -392,15 +398,20 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
                 errorModel.setStatusCode(httpException.code());
                 errorModel.setResponse(response);
-                boolean isE401=false;
+                boolean isE401 = false;
                 switch (httpException.code()) {
-                    case 400:
-                        errorModelLiveData.setValue(errorModel);
-                        break;
+                    case 400: {
+                        if (!errorModel.isDefaultCardValid() || !!errorModel.isCCCaptured()) {
+                            manageCardRedirection(errorModel);
+                        } else {
+                            errorModelLiveData.setValue(errorModel);
+                        }
+                    }
+                    break;
                     case 401:
                         //If server returns 401 then it means, the auth token whatever used for the api call is invalid,
                         // so we need to loggout the user and put to login screen
-                        isE401=true;
+                        isE401 = true;
                         if (!isRefreshToken) {
                             isQuickLoginReceiverEnabled = true;
                             makeRefreshTokenApiCall();
@@ -434,7 +445,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         errorModelLiveData.setValue(errorModel);
                         break;
                 }
-                if(!isE401)
+                if (!isE401)
                     isLoadingLiveData.setValue(false);
 
             } catch (Exception e1) {
@@ -455,6 +466,62 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 //        isQuickLoginReceiverEnabled = false;
 
     }
+
+    private void manageCardRedirection(ErrorModel errorModel) {
+        if (!errorModel.isCCCaptured()) {
+            application.startActivity(getCardNotAddedIntent());
+        } else if (!errorModel.isDefaultCardValid()) {
+            getCardExpiredIntent(errorModel);
+        }
+    }
+
+    private static Intent getCardExpiredIntent(ErrorModel errorModel) {
+        boolean doesUserHasMultipleCards = errorModel.getSavedCardsCount() > 1;
+        Intent intent = new Intent(application, PaymentContentActivity.class);
+        String description;
+        if (UserType.isUserDoctor() || UserType.isUserPatient()) {
+            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, application.getString(doesUserHasMultipleCards ? R.string.lbl_manage_cards : R.string.lbl_add_card));
+            description = application.getString(doesUserHasMultipleCards ? R.string.msg_default_card_expired_multiple : R.string.msg_default_card_expired);
+        } else {
+            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, application.getString(R.string.ok));
+            String name = application.getString(R.string.doctor);
+            description = application.getString(R.string.trial_period_expired_ma_sec_1, application.getString(R.string.organization_name), name);
+        }
+
+        intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
+        intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
+        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+        intent.putExtra(ArgumentKeys.DESCRIPTION, description);
+        return intent;
+    }
+    private static Intent getCardNotAddedIntent() {
+        Intent intent = new Intent(application, PaymentContentActivity.class);
+        String description;
+        if (UserType.isUserDoctor()) {
+            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, application.getString(R.string.proceed));
+            intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
+            intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+            intent.putExtra(ArgumentKeys.SKIP_TITLE, application.getString(R.string.lbl_not_now));
+            description = application.getString(R.string.msg_payment_gateway_changed);
+        } else if (UserType.isUserAssistant()) {
+            intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, application.getString(R.string.ok));
+            String name =application.getString(R.string.doctor);
+            description = application.getString(R.string.trial_period_expired_ma_sec_1, application.getString(R.string.organization_name), name);
+        } else {
+            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, application.getString(R.string.proceed));
+            intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
+            intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
+            intent.putExtra(ArgumentKeys.SKIP_TITLE, application.getString(R.string.lbl_not_now));
+            description = application.getString(R.string.msg_patient_card_not_added);
+        }
+
+        intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
+        intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
+        intent.putExtra(ArgumentKeys.DESCRIPTION, description);
+        return intent;
+    }
+
     public static Boolean isAuthExpired() {
         try {
             JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
@@ -465,8 +532,9 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             return true;
         }
     }
+
     private void goToSigninActivity() {
-        if(baseViewInterfaceList.size()!=0) {
+        if (baseViewInterfaceList.size() != 0) {
             baseViewInterfaceList.clear();
             UserDetailPreferenceManager.invalidateUser();
             PubnubUtil.shared.unsubscribe();
