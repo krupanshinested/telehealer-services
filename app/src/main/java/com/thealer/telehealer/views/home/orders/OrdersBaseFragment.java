@@ -146,8 +146,8 @@ public class OrdersBaseFragment extends BaseFragment {
                     boolean status = false;
                     String title = getString(R.string.failure);
                     String description = getString(R.string.order_posting_failed);
-
                     if(!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
+                        sendSuccessViewBroadCast(getActivity(), false, title, description);
                         PaymentInfo paymentInfo = new PaymentInfo();
                         paymentInfo.setCCCaptured(errorModel.isCCCaptured());
                         paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
@@ -313,7 +313,7 @@ public class OrdersBaseFragment extends BaseFragment {
         patientName = userName;
         isSendFax = sendFax;
 
-//        showSuccessView();
+        showSuccessView();
 
         ordersCreateApiViewModel.assignSpecialist(status, requestModel, doctorGuid, false);
     }
@@ -324,7 +324,7 @@ public class OrdersBaseFragment extends BaseFragment {
         patientName = userDisplay_name;
         isSendFax = sendFax;
 
-//       showSuccessView();
+       showSuccessView();
 
         ordersCreateApiViewModel.createPrescription(status, prescriptionModel, doctorGuid);
     }
@@ -334,7 +334,7 @@ public class OrdersBaseFragment extends BaseFragment {
         patientName = userDisplay_name;
         isSendFax = sendFax;
 
-//        showSuccessView();
+        showSuccessView();
 
         ordersCreateApiViewModel.createRadiologyOrder(status, requestModel, doctorGuid);
     }
@@ -345,7 +345,7 @@ public class OrdersBaseFragment extends BaseFragment {
         patientName = username;
         isSendFax = sendFax;
 
-//        showSuccessView();
+        showSuccessView();
 
         ordersCreateApiViewModel.createLabOrder(status, createTestApiRequestModel, doctorGuid);
     }
@@ -355,7 +355,7 @@ public class OrdersBaseFragment extends BaseFragment {
         patientName = userDisplay_name;
         isSendFax = sendFax;
 
-//        showSuccessView();
+        showSuccessView();
 
         ordersCreateApiViewModel.createMiscellaneousOrder(miscellaneousOrderRequest, doctorGuid);
     }
