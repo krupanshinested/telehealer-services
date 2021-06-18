@@ -56,7 +56,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
                 if (status) {
                     getAuthApiService().assignSpecialist(sync_create,assignSpecialistRequestModel, doctorGuid)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisibile)) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
@@ -101,7 +101,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
                 if (status) {
                     getAuthApiService().createPrescription(sync_create,createPrescriptionRequestModel, doctorGuid)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
@@ -137,7 +137,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
                 if (status) {
                     getAuthApiService().createLabOrder(sync_create,createTestApiRequestModel, doctorGuid)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
@@ -155,7 +155,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
                 if (status) {
                     getAuthApiService().createRadiology(sync_create,createRadiologyRequestModel, doctorGuid)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
@@ -173,7 +173,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
                 if (status) {
                     getAuthApiService().createMiscellaneous(createMiscellaneousRequestModel, doctorGuid)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);

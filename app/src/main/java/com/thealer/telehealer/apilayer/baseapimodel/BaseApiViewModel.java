@@ -401,11 +401,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 boolean isE401 = false;
                 switch (httpException.code()) {
                     case 400: {
-                        if (!errorModel.isDefaultCardValid() || !!errorModel.isCCCaptured()) {
-                            manageCardRedirection(errorModel);
-                        } else {
                             errorModelLiveData.setValue(errorModel);
-                        }
                     }
                     break;
                     case 401:
@@ -465,61 +461,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         }
 //        isQuickLoginReceiverEnabled = false;
 
-    }
-
-    private void manageCardRedirection(ErrorModel errorModel) {
-        if (!errorModel.isCCCaptured()) {
-            application.startActivity(getCardNotAddedIntent());
-        } else if (!errorModel.isDefaultCardValid()) {
-            getCardExpiredIntent(errorModel);
-        }
-    }
-
-    private static Intent getCardExpiredIntent(ErrorModel errorModel) {
-        boolean doesUserHasMultipleCards = errorModel.getSavedCardsCount() > 1;
-        Intent intent = new Intent(application, PaymentContentActivity.class);
-        String description;
-        if (UserType.isUserDoctor() || UserType.isUserPatient()) {
-            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, application.getString(doesUserHasMultipleCards ? R.string.lbl_manage_cards : R.string.lbl_add_card));
-            description = application.getString(doesUserHasMultipleCards ? R.string.msg_default_card_expired_multiple : R.string.msg_default_card_expired);
-        } else {
-            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, application.getString(R.string.ok));
-            String name = application.getString(R.string.doctor);
-            description = application.getString(R.string.trial_period_expired_ma_sec_1, application.getString(R.string.organization_name), name);
-        }
-
-        intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
-        intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
-        intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
-        intent.putExtra(ArgumentKeys.DESCRIPTION, description);
-        return intent;
-    }
-    private static Intent getCardNotAddedIntent() {
-        Intent intent = new Intent(application, PaymentContentActivity.class);
-        String description;
-        if (UserType.isUserDoctor()) {
-            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, application.getString(R.string.proceed));
-            intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
-            intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
-            intent.putExtra(ArgumentKeys.SKIP_TITLE, application.getString(R.string.lbl_not_now));
-            description = application.getString(R.string.msg_payment_gateway_changed);
-        } else if (UserType.isUserAssistant()) {
-            intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
-            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, application.getString(R.string.ok));
-            String name =application.getString(R.string.doctor);
-            description = application.getString(R.string.trial_period_expired_ma_sec_1, application.getString(R.string.organization_name), name);
-        } else {
-            intent.putExtra(ArgumentKeys.OK_BUTTON_TITLE, application.getString(R.string.proceed));
-            intent.putExtra(ArgumentKeys.IS_SKIP_NEEDED, true);
-            intent.putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true);
-            intent.putExtra(ArgumentKeys.SKIP_TITLE, application.getString(R.string.lbl_not_now));
-            description = application.getString(R.string.msg_patient_card_not_added);
-        }
-
-        intent.putExtra(ArgumentKeys.RESOURCE_ICON, R.drawable.emptystate_credit_card);
-        intent.putExtra(ArgumentKeys.IS_ATTRIBUTED_DESCRIPTION, true);
-        intent.putExtra(ArgumentKeys.DESCRIPTION, description);
-        return intent;
     }
 
     public static Boolean isAuthExpired() {
