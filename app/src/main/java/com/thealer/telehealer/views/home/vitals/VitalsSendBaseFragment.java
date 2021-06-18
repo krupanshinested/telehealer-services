@@ -221,7 +221,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
     }
 
     public void sendVitals(String measurementType_1, @Nullable String value_1, String measurementType_2, @Nullable String value_2, @Nullable String postDate) {
-//        showSuccessState();
+        showSuccessState();
         String measurementType, value;
         this.postDate = postDate;
 
@@ -281,7 +281,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
 
     public void sendVitals(CreateVitalApiRequestModel vitalApiRequestModel_1,
                            CreateVitalApiRequestModel vitalApiRequestModel_2, String doctor_guid) {
-//        showSuccessState();
+        showSuccessState();
         this.doctor_guid = doctor_guid;
 
         if ((BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_DOCTOR)) && getArguments().getSerializable(Constants.USER_DETAIL) != null) {
