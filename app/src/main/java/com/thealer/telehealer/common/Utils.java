@@ -127,7 +127,7 @@ public class Utils {
     public static final String yyyy_mm_dd = "yyyy-MM-dd";
     public static final String mmm_dd = "MMM dd";
     public static final String mmm_yyyy = "MMM yyyy";
-    public static final String dd_mmm_yyyy_hh_mm_a = "dd MMM yyyy | hh:mm a";
+    public static final String dd_mmm_yyyy_hh_mm_a = "dd MMM, yyyy | hh:mm a";
     public static String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     private static FancyShowCaseView fancyShowCaseView;
@@ -683,6 +683,66 @@ public class Utils {
         return dialog;
     }
 
+    public static Dialog showAlertDialogWithClose(Context context, String title, String message,
+                                                  @Nullable String leftTitle,
+                                                  @Nullable String rightTitle,
+                                                  Runnable leftListener,
+                                                  Runnable rightListener,
+                                                  Runnable closeListener) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.custom_dailog_with_close, null);
+        builder.setView(view);
+        Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(context.getDrawable(android.R.drawable.screen_background_dark_transparent));
+
+        TextView titleTv, messageTv, leftTv, rightTv;
+        ImageView closeIv;
+
+        titleTv = (TextView) view.findViewById(R.id.title_tv);
+        messageTv = (TextView) view.findViewById(R.id.message_tv);
+        leftTv = (TextView) view.findViewById(R.id.left_tv);
+        rightTv = (TextView) view.findViewById(R.id.right_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
+
+        titleTv.setText(title);
+        messageTv.setText(message);
+        leftTv.setText(leftTitle);
+        rightTv.setText(rightTitle);
+
+        leftTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (leftListener != null)
+                    leftListener.run();
+
+                dialog.dismiss();
+            }
+        });
+
+        rightTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rightListener != null)
+                    rightListener.run();
+
+                dialog.dismiss();
+            }
+        });
+        closeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(closeListener!=null)
+                    closeListener.run();
+
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+        return dialog;
+    }
+
     public static String getAppType() {
         if (TeleHealerApplication.appPreference.getInt(Constants.USER_TYPE) == Constants.TYPE_PATIENT) {
             return Constants.BUILD_PATIENT;
@@ -761,7 +821,7 @@ public class Utils {
     public static String getFormatedDateTime(String created_at) {
         DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         dateFormat.setTimeZone(UtcTimezone);
-        DateFormat returnFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm aa", Locale.ENGLISH);
+        DateFormat returnFormat = new SimpleDateFormat("dd MMM, yyyy hh:mm aa", Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
             return returnFormat.format(dateFormat.parse(created_at));
@@ -936,6 +996,18 @@ public class Utils {
         Calendar calendar = Calendar.getInstance();
         DateFormat inputFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         inputFormat.setTimeZone(UtcTimezone);
+        try {
+            calendar.setTime(inputFormat.parse(timeStamp));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return calendar;
+    }
+
+    public static Calendar getCalendarWithoutUTC(String timeStamp) {
+        Calendar calendar = Calendar.getInstance();
+        DateFormat inputFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         try {
             calendar.setTime(inputFormat.parse(timeStamp));
         } catch (ParseException e) {
@@ -1446,8 +1518,6 @@ public class Utils {
         TextView broadcastAllTv;
         View broadcastView;
         TextView invitedListTv;
-        TextView broadcastAllTv;
-        View broadcastView;
         View invitedListView;
         CardView cancelCv;
         invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
@@ -1460,12 +1530,12 @@ public class Utils {
         broadcastAllTv.setVisibility(View.GONE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
 
-        if(bundle!=null){
-            Boolean isInvitedVisible=bundle.getBoolean(ArgumentKeys.IS_INVITED_VISIBLE,false);
-            if(isInvitedVisible){
+        if (bundle != null) {
+            Boolean isInvitedVisible = bundle.getBoolean(ArgumentKeys.IS_INVITED_VISIBLE, false);
+            if (isInvitedVisible) {
                 invitedListTv.setVisibility(View.VISIBLE);
                 invitedListView.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 invitedListTv.setVisibility(View.GONE);
                 invitedListView.setVisibility(View.GONE);
             }
@@ -1577,7 +1647,7 @@ public class Utils {
             broadCastMessageTv.setVisibility(View.GONE);
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
-        }else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_ASSISTANT)){
+        } else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_ASSISTANT)) {
             invitedListTv.setVisibility(View.VISIBLE);
             invitedListView.setVisibility(View.VISIBLE);
             pendingInvitesTv.setVisibility(View.GONE);
@@ -1585,10 +1655,10 @@ public class Utils {
             broadCastMessageTv.setVisibility(View.GONE);
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
-        }else if(UserDetailPreferenceManager.getRole().equals(Constants.ROLE_DOCTOR)){
-            if(bundle!=null){
-                String role=bundle.getString(ArgumentKeys.ROLE,"");
-                if(role.equals(Constants.ROLE_ASSISTANT)){
+        } else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_DOCTOR)) {
+            if (bundle != null) {
+                String role = bundle.getString(ArgumentKeys.ROLE, "");
+                if (role.equals(Constants.ROLE_ASSISTANT)) {
                     invitedListTv.setVisibility(View.VISIBLE);
                     invitedListView.setVisibility(View.VISIBLE);
                     pendingInvitesTv.setVisibility(View.GONE);

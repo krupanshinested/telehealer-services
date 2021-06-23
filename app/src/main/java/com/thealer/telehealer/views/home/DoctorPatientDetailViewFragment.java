@@ -30,6 +30,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -85,9 +87,9 @@ import com.thealer.telehealer.views.home.orders.OrdersListFragment;
 import com.thealer.telehealer.views.home.orders.document.DocumentListFragment;
 import com.thealer.telehealer.views.home.recents.RecentFragment;
 import com.thealer.telehealer.views.home.schedules.CreateNewScheduleActivity;
-import com.thealer.telehealer.views.home.schedules.ScheduleDetailViewFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
+import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,6 +99,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -154,7 +157,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private int doctorId = 0, patientId = 0;
 
     private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
-            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7;
+            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7,paymentHistoryTab=8;
+    private List<String> designationList = new ArrayList<>();
 
     @Override
     public void onAttach(Context context) {

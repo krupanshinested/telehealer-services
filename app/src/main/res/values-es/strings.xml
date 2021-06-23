@@ -1502,7 +1502,6 @@
     <string name="lbl_type_your_reason_here">Type your reason here</string>
     <string name="add_support_staff">Add Support Staff</string>
     <string name="lbl_add_staff">Add Staff</string>
-    <string name="broadcast_messages_all">Broadcast Message to All</string>
     <string name="send_invitation">Send Invitation</string>
     <string name="select_whome_you_want_to_send_invitation">Select to Whom you want to send invitation</string>
     <string name="help_content_invite_patient">Send manual invitation to provider and its support staff.</string>

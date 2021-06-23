@@ -200,7 +200,9 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     telehealer_billings.setVisibility(View.VISIBLE);
                     telehealer_billings.hideSplitter(false);
                     add_card.setVisibility(View.VISIBLE);
-                    subscription.setVisibility(View.GONE);
+                    add_card.hideSplitter(false);
+                    subscription.hideSplitter(false);
+                    subscription.setVisibility(View.VISIBLE);
                     patient_payments.hideSplitter(true);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {

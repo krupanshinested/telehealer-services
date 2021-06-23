@@ -111,6 +111,7 @@
                     android:id="@+id/subscription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:hideSpiltter="true"
                     app:icon="@drawable/ic_baseline_credit_card_24"
                     app:title="@string/lbl_my_subscriptions"
                     android:visibility="gone"/>
