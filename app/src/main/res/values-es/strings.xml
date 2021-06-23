@@ -1486,5 +1486,30 @@
     <string name="lbl_payment_history">Payment History</string>
     <string name="lbl_patient_charges_payments">Patient charges/payment</string>
     <string name="disclaimer_for_secure_messaging">DISCLAIMER: ENABLING THIS SETTING WILL REMOVE EXISTING RESTRICTIONS ON TEMPLATED RESPONSES FROM THE PATIENT AND INSTEAD ALLOW THEM TO SEND FREE-FORM CONTENT GOING FORWARD.\n\nAlthough the patient will be notified not to use secure messaging for urgent or emergency medical attention, %s assumes no responsibility or liability arising from the use of any and all secure message communications send by and to the patient.</string>
+    <string name="user_permission">User permission</string>
+    <string name="hippa_msg">Telehealer assumes that as a Provider you have signed BAA agreement and HIPPA Policy with your support staff, Telehealer platform is not responsible for any violations.</string>
+    <string name="str_select_designation">Select Designation</string>
+    <string name="str_select_designation_for">Select designation for %s</string>
+    <string name="lbl_my_subscriptions">My Subscriptions</string>
+    <string name="lbl_subscriptions_plan">Subscription Plan</string>
+    <string name="symbol_dollar">$</string>
+    <string name="str_free_data">Get this plan Free when</string>
+    <string name="lbl_plan_name">Plan Name</string>
+    <string name="lbl_monitored_patients_for_month">Monitored Patients for Month \n (RPMBHICCM)</string>
+    <string name="lbl_plan_note"><![CDATA[All subscription plans are renewed every month until </br> you cancel and changes are not Proratable]]></string>
+    <string name="lbl_change_plan">Change Plan</string>
+    <string name="confirm">Confirm</string>
+    <string name="lbl_type_your_reason_here">Type your reason here</string>
+    <string name="add_support_staff">Add Support Staff</string>
+    <string name="lbl_add_staff">Add Staff</string>
+    <string name="broadcast_messages_all">Broadcast Message to All</string>
+    <string name="send_invitation">Send Invitation</string>
+    <string name="select_whome_you_want_to_send_invitation">Select to Whom you want to send invitation</string>
+    <string name="help_content_invite_patient">Send manual invitation to provider and its support staff.</string>
+    <string name="help_content_invite_assistant">As being support staff you can send manually invitation to provider, patient as well as other support staff.</string>
+    <string name="help_content_invite_provider">As being provider you can send manually invitation to support staff as well as patient</string>
+    <string name="view_invited_list">View Invitation List</string>
+    <string name="invited_user_list">Invited User List</string>
+    <string name="str_select_your_physician">Select your physician</string>
 
 </resources>

@@ -17,6 +17,7 @@ class HelpContent {
     public static final int HELP_SCHEDULES = 4;
     public static final int HELP_VITAL_REPORT = 5;
     public static final int HELP_MONITORING = 6;
+    public static final int HELP_INVITATION = 7;
 
     private Context context;
 
@@ -39,6 +40,8 @@ class HelpContent {
                 return context.getString(R.string.schedules);
             case HELP_MONITORING:
                 return context.getString(R.string.monitoring);
+            case HELP_INVITATION:
+                return context.getString(R.string.send_invitation);
         }
         return "";
     }
@@ -70,6 +73,15 @@ class HelpContent {
                 } else {
                     return context.getString(R.string.help_content_monitoring_doctor);
                 }
+            case HELP_INVITATION:
+                if(UserType.isUserPatient()){
+                    return context.getString(R.string.help_content_invite_patient);
+                }else if(UserType.isUserAssistant()){
+                    return context.getString(R.string.help_content_invite_assistant);
+                }else{
+                    return context.getString(R.string.help_content_invite_provider);
+                }
+
         }
         return "";
     }

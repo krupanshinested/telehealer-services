@@ -8,6 +8,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.Spinner;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByDemographicRequestModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.DatePickerDialogFragment;
 import com.thealer.telehealer.views.common.DateBroadcastReceiver;
@@ -35,6 +37,7 @@ public class InviteByDemographicFragment extends InviteUserBaseFragment {
     private EditText dobEt;
     private Spinner genderSp;
     private Button inviteBtn;
+    private Bundle bundle = null;
 
     private CommonUserApiResponseModel commonUserApiResponseModel = null;
     private String doctor_guid = null;
@@ -57,6 +60,14 @@ public class InviteByDemographicFragment extends InviteUserBaseFragment {
     }
 
     private void initView(View view) {
+        bundle=this.getArguments();
+        if(bundle!=null){
+            String role=bundle.getString(ArgumentKeys.ROLE,"");
+            if(doctor_guid==null || doctor_guid.equals("")){
+                doctor_guid=bundle.getString(ArgumentKeys.USER_GUID,null);
+            }
+        }
+
         firstnameTil = (TextInputLayout) view.findViewById(R.id.firstname_til);
         firstnameEt = (EditText) view.findViewById(R.id.firstname_et);
         lastnameTil = (TextInputLayout) view.findViewById(R.id.lastname_til);
@@ -85,7 +96,7 @@ public class InviteByDemographicFragment extends InviteUserBaseFragment {
             @Override
             public void onClick(View v) {
                 showSuccessFragment();
-                InviteByDemographicRequestModel demographicRequestMode = new InviteByDemographicRequestModel(firstnameEt.getText().toString(),
+                InviteByDemographicRequestModel demographicRequestMode = new InviteByDemographicRequestModel(bundle.getString(ArgumentKeys.ROLE,""),firstnameEt.getText().toString(),
                         lastnameEt.getText().toString(),
                         dobEt.getText().toString(),
                         genderSp.getSelectedItem().toString().toLowerCase());

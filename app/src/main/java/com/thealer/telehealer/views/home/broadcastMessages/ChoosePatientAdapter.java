@@ -1,4 +1,4 @@
-package com.thealer.telehealer.views.home.broadcastMessages.adapter;
+package com.thealer.telehealer.views.home.broadcastMessages;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -53,25 +52,58 @@ public class ChoosePatientAdapter extends RecyclerView.Adapter<ChoosePatientAdap
     @Override
     public void onBindViewHolder(@NonNull OnPatientViewHolder holder, int position) {
         CommonUserApiResponseModel userModel = adapterListModels.get(position);
+        if (position == 0)
+            holder.selectAllCb.setVisibility(View.VISIBLE);
+        else
+            holder.selectAllCb.setVisibility(View.GONE);
+
+        if (selectedUserList.contains(userModel)) {
+            holder.itemCb.setChecked(true);
+            holder.clRoot.setBackgroundColor(context.getColor(R.color.bt_very_light_gray));
+        } else {
+            holder.itemCb.setChecked(false);
+            holder.clRoot.setBackgroundColor(Color.TRANSPARENT);
+        }
+        if(selectedUserList.size()==adapterListModels.size()){
+            holder.selectAllCb.setChecked(true);
+        }else {
+            holder.selectAllCb.setChecked(false);
+        }
         if (userModel != null) {
             holder.tvName.setText(userModel.getUserDisplay_name());
             loadAvatar(holder.avatarCiv, userModel.getUser_avatar());
             holder.tvDob.setText(userModel.getDob());
-            setStatus(holder,userModel.getStatus(),userModel.getLast_active());
+            setStatus(holder, userModel.getStatus(), userModel.getLast_active());
 
         }
-        holder.itemCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.itemCb.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+            public void onClick(View v) {
+                if (holder.itemCb.isChecked()) {
                     selectedUserList.add(userModel);
                     holder.clRoot.setBackgroundColor(context.getColor(R.color.bt_very_light_gray));
                 } else {
                     selectedUserList.remove(userModel);
+                    holder.selectAllCb.setChecked(false);
                     holder.clRoot.setBackgroundColor(Color.TRANSPARENT);
                 }
+                notifyDataSetChanged();
             }
         });
+
+        holder.selectAllCb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedUserList.clear();
+                if (holder.selectAllCb.isChecked()) {
+                    selectedUserList.addAll(adapterListModels);
+                } else {
+                    holder.clRoot.setBackgroundColor(Color.TRANSPARENT);
+                }
+                notifyDataSetChanged();
+            }
+        });
+
     }
 
     @Override
@@ -89,6 +121,7 @@ public class ChoosePatientAdapter extends RecyclerView.Adapter<ChoosePatientAdap
         CheckBox itemCb;
         ConstraintLayout clRoot;
         CircleImageView statusCiv;
+        CheckBox selectAllCb;
 
         public OnPatientViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -98,6 +131,7 @@ public class ChoosePatientAdapter extends RecyclerView.Adapter<ChoosePatientAdap
             itemCb = itemView.findViewById(R.id.item_cb);
             clRoot = itemView.findViewById(R.id.cl_root);
             statusCiv = itemView.findViewById(R.id.status_civ);
+            selectAllCb = itemView.findViewById(R.id.select_all_cb);
         }
     }
 
@@ -139,7 +173,7 @@ public class ChoosePatientAdapter extends RecyclerView.Adapter<ChoosePatientAdap
                 break;
         }
 
-        holder.statusCiv.setImageDrawable(new ColorDrawable(ContextCompat.getColor(context,color)));
+        holder.statusCiv.setImageDrawable(new ColorDrawable(ContextCompat.getColor(context, color)));
 
         if (!status.equals(AVAILABLE)) {
             Utils.greyoutProfile(holder.avatarCiv);

@@ -76,12 +76,12 @@ import com.thealer.telehealer.views.home.schedules.ScheduleCalendarFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
+import com.thealer.telehealer.views.inviteUser.SendInvitationFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.settings.GeneralSettingsFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
-import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import java.util.Calendar;
 import java.util.List;
@@ -374,6 +374,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 case R.id.menu_schedules:
                     showSchedulesFragment(scheduleTypeCalendar);
                     break;
+                case R.id.menu_invite:
+                    showSendInvitation();
+                    break;
             }
         }
 
@@ -520,7 +523,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
 
     private void showDoctorsOverflowMenu() {
-        Utils.showDoctorOverflowMenu(this);
+        Bundle bundle=new Bundle();
+        if(UserType.isUserAssistant()) {
+            bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_ASSISTANT);
+        }else if(UserType.isUserPatient()) {
+            bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
+        }else {
+            bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_DOCTOR);
+        }
+
+        Utils.showDoctorOverflowMenu(this,bundle);
     }
 
     private void showNotificationFragment() {
@@ -606,8 +618,8 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             String userGuid = bundle.getString(ArgumentKeys.USER_GUID);
             String doctorGuid = bundle.getString(ArgumentKeys.DOCTOR_GUID);
             commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
-
-            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId));
+            String designation = bundle.getString(Constants.DESIGNATION);
+            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId), designation);
 
         } else {
             showDetailView(bundle);
@@ -724,9 +736,25 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_monitoring:
                 showMonitoringView(null);
                 break;
+            case R.id.menu_invite:
+                selecteMenuItem = R.id.menu_invite;
+                showSendInvitation();
+                break;
         }
         toggleDrawer();
         return true;
+    }
+
+    private void showSendInvitation() {
+        helpContent = HelpContent.HELP_INVITATION;
+        setToolbarTitle(getString(R.string.send_invitation));
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.IS_FROM_HOME, true);
+
+        SendInvitationFragment sendInvitationFragment = new SendInvitationFragment();
+        sendInvitationFragment.setArguments(bundle);
+        setFragment(sendInvitationFragment);
+
     }
 
     private void performSignOut() {
@@ -784,6 +812,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
                 } else if (UserType.isUserDoctor()) {
+                    optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
+                }else if(UserType.isUserAssistant()){
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
                 }

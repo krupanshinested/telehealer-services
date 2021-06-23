@@ -1,26 +1,11 @@
 package com.thealer.telehealer.views.settings;
 
 import android.app.DatePickerDialog;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -38,7 +23,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.stripe.android.CustomerSession;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -57,7 +41,6 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.stripe.AppEphemeralKeyProvider;
 import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.EducationalVideo.EducationalListVideoFragment;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -89,11 +72,15 @@ import com.thealer.telehealer.views.signup.medicalAssistant.MedicalAssistantDeta
 import com.thealer.telehealer.views.signup.patient.PatientChoosePaymentFragment;
 import com.thealer.telehealer.views.signup.patient.PatientRegistrationDetailFragment;
 import com.thealer.telehealer.views.signup.patient.PatientUploadInsuranceFragment;
+import com.thealer.telehealer.views.subscription.ActivePlanFragment;
+import com.thealer.telehealer.views.subscription.SubscriptionPlanFragment;
 import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.common.Constants.activatedPlan;
+import static com.thealer.telehealer.common.Constants.subscriptionPlanList;
 
 /**
  * Created by rsekar on 11/15/18.
@@ -361,6 +348,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 break;
             case R.id.add_card:
                 startActivity(new Intent(this, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
+                break;
+            case R.id.subscription:
+                    ActivePlanFragment activePlanFragment = new ActivePlanFragment();
+                    showSubFragment(activePlanFragment);
                 break;
             case R.id.medical_assistant_ll:
                 showMedicalAssistantList();

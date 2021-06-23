@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
+import com.thealer.telehealer.apilayer.models.createuser.SpecialtiesBean;
 import com.thealer.telehealer.apilayer.models.createuser.VisitAddressBean;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Utils;
@@ -18,6 +19,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     private int appt_length;
     private String connection_status;
+    private String designation;
     private QuestionnaireBean questionnaire;
     private List<HistoryBean> history;
     private AppDetailBean app_details;
@@ -32,6 +34,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private Boolean recording_enabled = false;
     private String appt_start_time;
     private String appt_end_time;
+    private List<PermissionBean> permissions;
 
     public CommonUserApiResponseModel() {
     }
@@ -51,6 +54,23 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         this.user_detail = user_detail;
     }
 
+
+    public List<PermissionBean> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<PermissionBean> permissions) {
+        this.permissions = permissions;
+    }
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
+    }
+
     public String getDoctorDisplayName() {
         String title = null;
         if (getUser_detail() != null && getUser_detail().getData() != null
@@ -58,6 +78,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             title = ", " + getUser_detail().getData().getTitle();
         }
         return Utils.getDoctorDisplayName(getFirst_name(), getLast_name(), title);
+    }
+
+    public String getMedicalDisplayName() {
+        String title=null;
+        if (getUser_detail() != null && getUser_detail().getData() != null && getUser_detail().getData().getTitle() != null)
+            title= getUser_detail().getData().getTitle().toUpperCase();
+
+        return Utils.getSupportStaffDisplayName(getFirst_name(), getLast_name(),title);
     }
 
 
@@ -69,6 +97,10 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             return getUser_detail().getData().getSpecialties().get(0).getName();
         }
         return "";
+    }
+
+    public  List<SpecialtiesBean> getSupportStaffTypeList(){
+        return getUser_detail().getData().getSpecialties();
     }
 
     public String getUserDisplay_name() {
@@ -83,6 +115,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             return getDefaultDisplayName();
         }
     }
+
 
     public String getDoctorAddress() {
 
@@ -129,6 +162,8 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         switch (getRole()) {
             case Constants.ROLE_DOCTOR:
                 return getDoctorDisplayName();
+            case Constants.ROLE_ASSISTANT:
+                return getMedicalDisplayName();
             default:
                 return getUserDisplay_name();
         }
@@ -141,10 +176,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             case Constants.ROLE_PATIENT:
                 return getDob();
             case Constants.ROLE_ASSISTANT:
-                if (getUser_detail() != null && getUser_detail().getData() != null && getUser_detail().getData().getTitle() != null)
-                    return getUser_detail().getData().getTitle().toUpperCase();
-                else
-                    return "";
+                if(getDesignation()!=null && !getDesignation().isEmpty()){
+                    return getDesignation();
+                }else{
+                    if (getUser_detail() != null && getUser_detail().getData() != null && getUser_detail().getData().getTitle() != null)
+                        return getUser_detail().getData().getTitle().toUpperCase();
+                    else
+                        return "";
+                }
             default:
                 return "";
         }

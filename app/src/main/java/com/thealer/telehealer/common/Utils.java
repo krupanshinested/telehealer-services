@@ -81,6 +81,7 @@ import com.thealer.telehealer.views.home.broadcastMessages.ChoosePatientActivity
 import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
+import com.thealer.telehealer.views.inviteUser.InvitedListActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 import com.thealer.telehealer.views.signup.SignUpActivity;
 
@@ -126,7 +127,7 @@ public class Utils {
     public static final String yyyy_mm_dd = "yyyy-MM-dd";
     public static final String mmm_dd = "MMM dd";
     public static final String mmm_yyyy = "MMM yyyy";
-    public static final String dd_mmm_yyyy_hh_mm_a = "dd MMM, yyyy | hh:mm a";
+    public static final String dd_mmm_yyyy_hh_mm_a = "dd MMM yyyy | hh:mm a";
     public static String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     private static FancyShowCaseView fancyShowCaseView;
@@ -650,6 +651,10 @@ public class Utils {
         return first_name + " " + last_name + " " + ((title != null) ? title : "");
     }
 
+    public static String getSupportStaffDisplayName(String first_name, String last_name, String designation) {
+        return first_name + " " + last_name + ((designation != null) ? ", " + designation : "");
+    }
+
     public static String getPatientDisplayName(String first_name, String last_name) {
         first_name = first_name.replace(first_name.charAt(0), String.valueOf(first_name.charAt(0)).toUpperCase().charAt(0));
         last_name = last_name.replace(last_name.charAt(0), String.valueOf(last_name.charAt(0)).toUpperCase().charAt(0));
@@ -674,66 +679,6 @@ public class Utils {
             alertDialog.setNegativeButton(negativeTitle, negativeListener);
         }
         AlertDialog dialog = alertDialog.create();
-        dialog.show();
-        return dialog;
-    }
-
-    public static Dialog showAlertDialogWithClose(Context context, String title, String message,
-                                                  @Nullable String leftTitle,
-                                                  @Nullable String rightTitle,
-                                                  Runnable leftListener,
-                                                  Runnable rightListener,
-                                                  Runnable closeListener) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        View view = LayoutInflater.from(context).inflate(R.layout.custom_dailog_with_close, null);
-        builder.setView(view);
-        Dialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawable(context.getDrawable(android.R.drawable.screen_background_dark_transparent));
-
-        TextView titleTv, messageTv, leftTv, rightTv;
-        ImageView closeIv;
-
-        titleTv = (TextView) view.findViewById(R.id.title_tv);
-        messageTv = (TextView) view.findViewById(R.id.message_tv);
-        leftTv = (TextView) view.findViewById(R.id.left_tv);
-        rightTv = (TextView) view.findViewById(R.id.right_tv);
-        closeIv = (ImageView) view.findViewById(R.id.close_iv);
-
-        titleTv.setText(title);
-        messageTv.setText(message);
-        leftTv.setText(leftTitle);
-        rightTv.setText(rightTitle);
-
-        leftTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (leftListener != null)
-                    leftListener.run();
-
-                dialog.dismiss();
-            }
-        });
-
-        rightTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (rightListener != null)
-                    rightListener.run();
-
-                dialog.dismiss();
-            }
-        });
-        closeIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(closeListener!=null)
-                    closeListener.run();
-
-                dialog.dismiss();
-            }
-        });
-
         dialog.show();
         return dialog;
     }
@@ -816,7 +761,7 @@ public class Utils {
     public static String getFormatedDateTime(String created_at) {
         DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         dateFormat.setTimeZone(UtcTimezone);
-        DateFormat returnFormat = new SimpleDateFormat("dd MMM, yyyy hh:mm aa", Locale.ENGLISH);
+        DateFormat returnFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm aa", Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
             return returnFormat.format(dateFormat.parse(created_at));
@@ -991,18 +936,6 @@ public class Utils {
         Calendar calendar = Calendar.getInstance();
         DateFormat inputFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         inputFormat.setTimeZone(UtcTimezone);
-        try {
-            calendar.setTime(inputFormat.parse(timeStamp));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return calendar;
-    }
-
-    public static Calendar getCalendarWithoutUTC(String timeStamp) {
-        Calendar calendar = Calendar.getInstance();
-        DateFormat inputFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         try {
             calendar.setTime(inputFormat.parse(timeStamp));
         } catch (ParseException e) {
@@ -1512,8 +1445,13 @@ public class Utils {
         TextView inviteContactsTv;
         TextView broadcastAllTv;
         View broadcastView;
+        TextView invitedListTv;
+        TextView broadcastAllTv;
+        View broadcastView;
+        View invitedListView;
         CardView cancelCv;
-
+        invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
+        invitedListView = (View) alertView.findViewById(R.id.invited_list_view);
         inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
@@ -1521,6 +1459,29 @@ public class Utils {
         broadcastView.setVisibility(View.GONE);
         broadcastAllTv.setVisibility(View.GONE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+
+        if(bundle!=null){
+            Boolean isInvitedVisible=bundle.getBoolean(ArgumentKeys.IS_INVITED_VISIBLE,false);
+            if(isInvitedVisible){
+                invitedListTv.setVisibility(View.VISIBLE);
+                invitedListView.setVisibility(View.VISIBLE);
+            }else{
+                invitedListTv.setVisibility(View.GONE);
+                invitedListView.setVisibility(View.GONE);
+            }
+        }
+
+        invitedListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                Intent intent = new Intent(context, InvitedListActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
+                context.startActivity(intent);
+            }
+        });
 
         inviteManuallyTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1560,7 +1521,7 @@ public class Utils {
         alertDialog.show();
     }
 
-    public static void showDoctorOverflowMenu(FragmentActivity context) {
+    public static void showDoctorOverflowMenu(FragmentActivity context, Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View alertView = LayoutInflater.from(context).inflate(R.layout.view_invite_alert, null);
         builder.setView(alertView);
@@ -1571,8 +1532,13 @@ public class Utils {
         TextView broadCastMessageTv;
         TextView broadcastAllTv;
         View broadcastView;
+        TextView invitedListTv;
+        View invitedListView;
+        View pendingInvitesView;
         CardView cancelCv;
 
+        invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
+        invitedListView = (TextView) alertView.findViewById(R.id.invited_list);
         pendingInvitesTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         broadCastMessageTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
@@ -1580,9 +1546,20 @@ public class Utils {
         broadcastView.setVisibility(View.GONE);
         broadcastAllTv.setVisibility(View.GONE);
 
+        broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
+        broadcastView = (View) alertView.findViewById(R.id.broadcast_view);
+        pendingInvitesView = (View) alertView.findViewById(R.id.invite_manually_view);
+        broadcastView.setVisibility(View.GONE);
+        broadcastAllTv.setVisibility(View.GONE);
+
         pendingInvitesTv.setText(R.string.pending_invites);
         broadCastMessageTv.setText(R.string.broadcast_messages);
         broadcastAllTv.setText(R.string.broadcast_messages_all);
+        broadcastAllTv.setText(R.string.broadcast_messages_all);
+
+        invitedListTv.setVisibility(View.GONE);
+        invitedListView.setVisibility(View.GONE);
+
         broadCastMessageTv.setVisibility(View.VISIBLE);
         broadcastView.setVisibility(View.VISIBLE);
         broadcastAllTv.setVisibility(View.VISIBLE);
@@ -1593,6 +1570,48 @@ public class Utils {
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
         }
+
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
+            invitedListTv.setVisibility(View.VISIBLE);
+            invitedListView.setVisibility(View.VISIBLE);
+            broadCastMessageTv.setVisibility(View.GONE);
+            broadcastView.setVisibility(View.GONE);
+            broadcastAllTv.setVisibility(View.GONE);
+        }else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_ASSISTANT)){
+            invitedListTv.setVisibility(View.VISIBLE);
+            invitedListView.setVisibility(View.VISIBLE);
+            pendingInvitesTv.setVisibility(View.GONE);
+            pendingInvitesView.setVisibility(View.GONE);
+            broadCastMessageTv.setVisibility(View.GONE);
+            broadcastView.setVisibility(View.GONE);
+            broadcastAllTv.setVisibility(View.GONE);
+        }else if(UserDetailPreferenceManager.getRole().equals(Constants.ROLE_DOCTOR)){
+            if(bundle!=null){
+                String role=bundle.getString(ArgumentKeys.ROLE,"");
+                if(role.equals(Constants.ROLE_ASSISTANT)){
+                    invitedListTv.setVisibility(View.VISIBLE);
+                    invitedListView.setVisibility(View.VISIBLE);
+                    pendingInvitesTv.setVisibility(View.GONE);
+                    pendingInvitesView.setVisibility(View.GONE);
+                    broadCastMessageTv.setVisibility(View.GONE);
+                    broadcastView.setVisibility(View.GONE);
+                    broadcastAllTv.setVisibility(View.GONE);
+                }
+            }
+
+        }
+
+        invitedListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                Intent intent = new Intent(context, InvitedListActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
+                context.startActivity(intent);
+            }
+        });
 
         pendingInvitesTv.setOnClickListener(new View.OnClickListener() {
             @Override

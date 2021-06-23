@@ -52,6 +52,7 @@ public class SearchCellView extends ConstraintLayout implements TextWatcher {
 
         searchEt.addTextChangedListener(this);
 
+
         searchEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -85,6 +86,10 @@ public class SearchCellView extends ConstraintLayout implements TextWatcher {
         }
     }
 
+    public  void  setSearchEtHint(String hint){
+        searchEt.setHint(hint);
+
+    }
     public void setSearchHint(String searchHint) {
         searchEt.setHint(searchHint);
     }
@@ -98,6 +103,8 @@ public class SearchCellView extends ConstraintLayout implements TextWatcher {
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
     }
+
+
 
     @Override
     public void afterTextChanged(Editable editable) {
