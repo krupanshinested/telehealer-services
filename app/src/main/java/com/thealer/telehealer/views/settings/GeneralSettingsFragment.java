@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -449,8 +450,12 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 startActivity(intent);
                 break;
             case R.id.secure_message:
+                String msg=String.format(getString(R.string.disclaimer_for_secure_messaging), getString(R.string.organization_name));
                 secure_message.toggleSwitch();
                 profileUpdate.updateSecureMessage(secure_message.getSwitchStatus(), true);
+                if(secure_message.getSwitchStatus())
+                    customToast(msg);
+                break;
             case R.id.enable_patient_card:
                 enable_patient_card.toggleSwitch();
                 if (enable_patient_card.getSwitchStatus()) {
