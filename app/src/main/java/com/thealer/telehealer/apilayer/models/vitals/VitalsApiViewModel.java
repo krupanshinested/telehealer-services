@@ -1,7 +1,6 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -14,10 +13,6 @@ import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,8 +77,6 @@ public class VitalsApiViewModel extends BaseApiViewModel {
                                 public void onSuccess(PDFUrlResponse baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
-
-
                             });
                 }
             }
@@ -172,6 +165,24 @@ public class VitalsApiViewModel extends BaseApiViewModel {
                                     ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(data);
 
                                     baseApiArrayListMutableLiveData.setValue(apiResponseModels);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getVitalThreshold(boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getVitalsThreshold()
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
                 }

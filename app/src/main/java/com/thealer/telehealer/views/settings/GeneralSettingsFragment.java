@@ -72,7 +72,7 @@ import static com.thealer.telehealer.views.home.orders.forms.EditableFormFragmen
 public class GeneralSettingsFragment extends BaseFragment implements View.OnClickListener {
 
     private SettingsCellView presence, quickLogin, secure_message, connection_request, appointment_request, order_request, integration_request, record_encounter, transcribe_encounter, enable_patient_card;
-    private ProfileCellView signature, appointment_slots, available_time;
+    private ProfileCellView signature, appointment_slots, available_time,rpmView;
     private LinearLayout deleteView, rpmLl, appointmentView, encounterView;
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
@@ -207,6 +207,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         signature = view.findViewById(R.id.signature);
         deleteView = view.findViewById(R.id.delete_view);
         rpmLl = view.findViewById(R.id.rpm_ll);
+        rpmView = view.findViewById(R.id.rpm_view);
         appointmentView = view.findViewById(R.id.appointment_view);
         encounterView = view.findViewById(R.id.encounter_view);
         notification = (SettingsCellView) view.findViewById(R.id.notification);
@@ -271,6 +272,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         appointment_slots.setOnClickListener(this);
         available_time.setOnClickListener(this);
         enable_patient_card.setOnClickListener(this);
+        rpmView.setOnClickListener(this);
 
         order_request.setFocusableTitle();
         integration_request.setFocusableTitle();
@@ -290,7 +292,8 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 enable_patient_card.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
-                // rpmLl.setVisibility(View.VISIBLE);
+                rpmLl.setVisibility(View.VISIBLE);
+                rpmTv.setVisibility(View.VISIBLE);
                 appointmentView.setVisibility(View.VISIBLE);
                 encounterView.setVisibility(View.VISIBLE);
                 appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length() + "");
@@ -464,6 +467,10 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 } else {
                     profileUpdate.updatePatientCreditCard(enable_patient_card.getSwitchStatus(), true);
                 }
+                break;
+            case R.id.rpm_view:
+                showRemotePatientMonitoring();
+            break;
         }
     }
 
@@ -512,6 +519,10 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         profileUpdate.updateAvailableTime(startTime, endTime);
     }
 
+    private void showRemotePatientMonitoring() {
+        RemotePatientMonitoringFragment remotePatientMonitoringFragment = new RemotePatientMonitoringFragment();
+        showSubFragmentInterface.onShowFragment(remotePatientMonitoringFragment);
+    }
     private void showSignatureView() {
         SignatureViewFragment signatureViewFragment = new SignatureViewFragment();
         showSubFragmentInterface.onShowFragment(signatureViewFragment);
