@@ -53,6 +53,14 @@ public class SettingsCellView extends ConstraintLayout {
         settingSwitch.setClickable(false);
     }
 
+    public void updateTextviewPadding(int top,int bottom,int left,int right){
+        if(titleTextView!=null){
+            LayoutParams params = (LayoutParams) titleTextView.getLayoutParams();
+            params.leftMargin=0;
+            titleTextView.setLayoutParams(params);
+            titleTextView.setPadding(left,top,right,bottom);
+        }
+    }
     private void update(String title, Boolean isSwitchNeeded) {
         titleTextView.setText(title);
 

@@ -316,7 +316,7 @@ public interface ApiInterface {
     Observable<OrdersLabApiResponseModel> getLabOrders(@Query(SEARCH_FILTER_LAB) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/vitals/thresholds")
-    Observable<BaseApiResponseModel> getVitalsThreshold();
+    Observable<VitalThresholdModel> getVitalsThreshold();
 
     @GET("icd-codes")
     Observable<IcdCodeApiResponseModel> getFilteredIcdCodes(@Query(FILTER_CODE_IN) String data);

@@ -1,5 +1,6 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 
 import java.util.List;
@@ -9,16 +10,7 @@ import java.util.List;
  * Created Date: 25,June,2021
  **/
 public class VitalThresholdModel extends BaseApiResponseModel {
-    public Boolean success;
     public Result result;
-
-    public Boolean getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(Boolean success) {
-        this.success = success;
-    }
 
     public Result getResult() {
         return result;
@@ -95,8 +87,16 @@ public class VitalThresholdModel extends BaseApiResponseModel {
     public class VitalsThreshold {
 
         public String vital_type;
-
         public List<Range> ranges = null;
+        public  boolean rangeVisible = false;
+
+        public boolean isRangeVisible() {
+            return rangeVisible;
+        }
+
+        public void setRangeVisible(boolean rangeVisible) {
+            this.rangeVisible = rangeVisible;
+        }
 
         public String getVital_type() {
             return vital_type;
@@ -113,6 +113,7 @@ public class VitalThresholdModel extends BaseApiResponseModel {
         public void setRanges(List<Range> ranges) {
             this.ranges = ranges;
         }
+
     }
 
     public class Range {

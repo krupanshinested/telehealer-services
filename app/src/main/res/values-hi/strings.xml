@@ -1477,4 +1477,12 @@
     <string name="lbl_remote_patient_monitoring">Remote Patient Monitoring</string>
     <string name="rpm_desc">Receive alerts and provide tailored feedback to your patients for pre-defined physological parameters.</string>
     <string name="notifications_alert">Notification Alerts</string>
+    <string name="mgdl">mg/dL</string>
+    <string name="msg_to_patient">Message to Patient</string>
+    <string name="bpm">bpm</string>
+    <string name="percentage">%</string>
+    <string name="mmhg">mm Hg</string>
+    <string name="fahrenheit">℉</string>
+    <string name="lbs">lbs</string>
+    <string name="relative">relative</string>
 </resources>

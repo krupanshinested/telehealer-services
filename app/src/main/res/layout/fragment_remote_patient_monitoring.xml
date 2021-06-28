@@ -40,7 +40,7 @@
                 android:orientation="vertical">
 
                 <com.thealer.telehealer.views.settings.cellView.SettingsCellView
-                    android:id="@+id/remote_patient_monitoring"
+                    android:id="@+id/remote_patient_monitoring_cell_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:isSwitchNeed="true"
@@ -56,7 +56,7 @@
 
 
                 <com.thealer.telehealer.views.settings.cellView.SettingsCellView
-                    android:id="@+id/notification"
+                    android:id="@+id/notification_cell_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:isSwitchNeed="true"
@@ -65,10 +65,11 @@
 
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_vital_types"
+                    android:id="@+id/vitals_threshold_rv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="20dp"/>
+                    android:layout_marginTop="20dp"
+                    android:visibility="visible"/>
         </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -2,21 +2,7 @@ package com.thealer.telehealer.views.settings;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,33 +10,33 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
+import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdAdapter;
 import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdModel;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
-import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
-import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
-import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
+import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
-import com.thealer.telehealer.views.common.OverlayViewConstants;
-import com.thealer.telehealer.views.common.PdfViewerFragment;
-import com.thealer.telehealer.views.home.vitals.VitalsDetailListFragment;
+import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
 
 import java.util.ArrayList;
-
-import me.toptas.fancyshowcase.listener.DismissListener;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import java.util.List;
 
 public class RemotePatientMonitoringFragment extends BaseFragment {
 
@@ -63,6 +49,12 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
     private TextView editTv;
     private Button saveBtn;
     private VitalsApiViewModel vitalsApiViewModel;
+    private VitalThresholdModel.Result result;
+    private VitalThresholdAdapter vitalThresholdAdapter;
+    private RecyclerView vitalsThresholdRv;
+    private SettingsCellView notificationCellView,rpmCellView;
+    private List<VitalThresholdModel.VitalsThreshold> vitalThresholdList = new ArrayList<>();
+    private  boolean isEditable = false;
 
 
     @Override
@@ -78,8 +70,12 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    if(baseApiResponseModel instanceof VitalThresholdModel) {
-                        Log.e(TAG, "onChanged: True");
+                    if (baseApiResponseModel instanceof VitalThresholdModel) {
+                        VitalThresholdModel vitalThresholdModel = (VitalThresholdModel) baseApiResponseModel;
+                        result = vitalThresholdModel.getResult();
+                        if (result != null) {
+                            setUpData();
+                        }
                     }
 
 
@@ -115,6 +111,14 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
 
     }
 
+    private void setUpData() {
+        initAdapter();
+        vitalThresholdList = result.vitals_thresholds;
+        vitalThresholdAdapter.UpdateItem(vitalThresholdList,isEditable);
+        notificationCellView.updateSwitch(result.is_notify_on_capture!=null?result.is_notify_on_capture:false);
+        rpmCellView.updateSwitch(result.is_rpm_enabled!=null?result.is_rpm_enabled:false);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,31 +132,56 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         initView(view);
         return view;
     }
+
     private void initView(View view) {
         appbarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         editTv = (TextView) view.findViewById(R.id.next_tv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        vitalsThresholdRv =  view.findViewById(R.id.vitals_threshold_rv);
+        rpmCellView = view.findViewById(R.id.remote_patient_monitoring_cell_view);
+        notificationCellView =view.findViewById(R.id.notification_cell_view);
         saveBtn = (Button) view.findViewById(R.id.save_btn);
         saveBtn.setVisibility(View.GONE);
         editTv.setText(getString(R.string.edit));
         editTv.setVisibility(View.VISIBLE);
         toolbarTitle.setText(R.string.rpm_title);
         vitalsApiViewModel.getVitalThreshold(true);
+        rpmCellView.updateTextviewPadding(20,20,25,20);
+        notificationCellView.updateTextviewPadding(20,20,20,20);
+        rpmCellView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isEditable)
+                    rpmCellView.toggleSwitch();
+            }
+        });
+        notificationCellView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isEditable)
+                    notificationCellView.toggleSwitch();
+            }
+        });
+
 
         editTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("Clicked");
+                isEditable = true;
+                setUpData();
                 saveBtn.setVisibility(View.VISIBLE);
+                editTv.setVisibility(View.GONE);
             }
         });
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("Clicked");
+                isEditable = false;
+                setUpData();
                 saveBtn.setVisibility(View.GONE);
+                editTv.setVisibility(View.VISIBLE);
             }
         });
 
@@ -164,5 +193,26 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
             }
         });
 
+        initAdapter();
+
     }
+
+    private void initAdapter() {
+        if (vitalThresholdAdapter == null) {
+            vitalThresholdAdapter = new VitalThresholdAdapter(getActivity(), vitalThresholdList, new OnListItemSelectInterface() {
+                @Override
+                public void onListItemSelected(int position, Bundle bundle) {
+                    boolean isRangeVisible=vitalThresholdList.get(position).isRangeVisible();
+                    vitalThresholdList.get(position).setRangeVisible(!isRangeVisible);
+                    vitalThresholdAdapter.notifyDataSetChanged();
+                }
+            });
+
+            vitalsThresholdRv.setAdapter(vitalThresholdAdapter);
+            vitalsThresholdRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        }
+    }
+
+
+
 }
