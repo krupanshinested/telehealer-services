@@ -1485,4 +1485,8 @@
     <string name="fahrenheit">℉</string>
     <string name="lbs">lbs</string>
     <string name="relative">relative</string>
+    <string name="dash">-</string>
+    <string name="mark_as_abnormal">Mark as abnormal/elevated</string>
+    <string name="add_value">Add Value</string>
+    <string name="slash">/</string>
 </resources>

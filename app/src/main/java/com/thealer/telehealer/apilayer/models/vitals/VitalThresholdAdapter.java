@@ -54,7 +54,39 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if(thresholdLimitList == null){
             thresholdLimitList=new ArrayList<>();
         }
-        ThresholdLimitAdapter thresholdLimitAdapter = new ThresholdLimitAdapter(activity, thresholdLimitList,false,vitalThresholdList.get(position).getVital_type());
+        ThresholdLimitAdapter thresholdLimitAdapter = new ThresholdLimitAdapter(activity, thresholdLimitList, position,isEditable, vitalThresholdList.get(position).getVital_type(), new OnListItemSelectInterface() {
+            @Override
+            public void onListItemSelected(int position, Bundle bundle) {
+                if(bundle!=null && !rangetype.equals("bp")){
+                    int upperValue = Integer.parseInt(bundle.getString("thresholdValue"));
+
+                    vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).setHigh_value(upperValue+"");
+                    if((position+1)<vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().size())
+                      vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position+1).setLow_value((upperValue+1)+"");
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyDataSetChanged();
+                        }
+                    });
+                }else if(bundle!=null && rangetype.equals("bp")){
+                    String[] upperValue=bundle.getString("thresholdValue").split("/");
+
+                    vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).setHigh_value(upperValue+"");
+                    if((position+1)<vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().size()) {
+                        vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position + 1).setLow_value((upperValue[0] + 1) + "/"+(upperValue[1]+1));
+                    }
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        });
             headerHolder.rvThreshold.setAdapter(thresholdLimitAdapter);
 
         if(vitalThresholdList.get(position).isRangeVisible()){
@@ -86,7 +118,7 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 vital_name=activity.getString(R.string.pulseOximeter);
                 break;
             case "bp":
-                vital_name=activity.getString(R.string.blood_pressure_heart_rate);;
+                vital_name=activity.getString(R.string.blood_pressure);;
                 break;
             case "temperature":
                 vital_name=activity.getString(R.string.bodyTemperature);;
@@ -110,7 +142,7 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public void UpdateItem(List<VitalThresholdModel.VitalsThreshold> vitalThresholdList, boolean isEditable) {
         this.vitalThresholdList=vitalThresholdList;
-        isEditable = false;
+        this.isEditable = isEditable;
         notifyDataSetChanged();
     }
 
