@@ -71,6 +71,7 @@ public class SettingsCellView extends ConstraintLayout {
         }
     }
 
+
     public  void setFocusableTitle () { settingSwitch.setAlpha(0.5f);}
 
     public void updateSwitch(Boolean isSelected) {
@@ -83,6 +84,11 @@ public class SettingsCellView extends ConstraintLayout {
 
     public Boolean getSwitchStatus() {
         return settingSwitch.isChecked();
+    }
+
+    public void setRightDrawableIcon(int resId){
+        titleTextView.setCompoundDrawablesWithIntrinsicBounds(0,0,resId,0);
+        titleTextView.setCompoundDrawablePadding(8);
     }
 
 }

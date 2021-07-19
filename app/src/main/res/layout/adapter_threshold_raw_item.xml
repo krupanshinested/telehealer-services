@@ -101,7 +101,7 @@
                 android:id="@+id/cl_single_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
                 <EditText
@@ -136,8 +136,9 @@
                     app:layout_constraintTop_toTopOf="parent" />
                 <EditText
                     android:id="@+id/et_upper"
-                    android:layout_width="60dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="42dp"
+                    android:minWidth="60dp"
                     android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginEnd="@dimen/margin_default"
                     android:layout_marginBottom="@dimen/margin_default"
@@ -155,7 +156,7 @@
                 android:id="@+id/cl_double_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
                 <EditText
@@ -218,7 +219,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
                 <EditText
                     android:id="@+id/et_upper_left"
-                    android:layout_width="60dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="42dp"
                     android:layout_marginBottom="@dimen/margin_default"
                     android:layout_marginStart="@dimen/margin_default"
@@ -226,6 +227,7 @@
                     android:background="@drawable/edt_shape_corner_grey"
                     android:gravity="center"
                     android:text="1000"
+                    android:minWidth="60dp"
                     android:inputType="numberDecimal"
                     android:textColor="@color/colorBlack"
                     android:textSize="16dp"
@@ -247,13 +249,14 @@
                     app:layout_constraintTop_toTopOf="parent" />
                 <EditText
                     android:id="@+id/et_upper_right"
-                    android:layout_width="60dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="42dp"
                     android:layout_marginBottom="@dimen/margin_default"
                     android:layout_marginStart="@dimen/margin_default"
                     android:background="@drawable/edt_shape_corner_grey"
                     android:gravity="center"
                     android:text="1000"
+                    android:minWidth="60dp"
                     android:inputType="numberDecimal"
                     android:textColor="@color/colorBlack"
                     android:textSize="16dp"
@@ -282,15 +285,15 @@
             />
         <EditText
             android:id="@+id/et_message"
-            android:layout_width="wrap_content"
+            android:layout_width="320dp"
             android:layout_height="wrap_content"
-            android:maxWidth="320dp"
-            android:maxHeight="90dp"
+            android:minHeight="50dp"
             android:background="@drawable/edt_shape_corner_grey"
             android:text="@string/telehealth_description"
             android:scrollbarStyle="insideInset"
             android:textColor="@color/colorBlack"
             android:textSize="16dp"
+            android:maxHeight="90dp"
             android:padding="5dp"
             android:layout_margin="15dp"
             app:layout_constraintStart_toEndOf="@id/tv_remove"

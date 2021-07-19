@@ -110,6 +110,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 whoAmIApiViewModel.assignWhoAmI();
+                manageSwitches();
             }
         });
 
@@ -147,7 +148,11 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         notification.updateSwitch(isNotificationEnabled());
 
         updateQuickLoginSwitch();
+        manageSwitches();
 
+    }
+
+    private void manageSwitches() {
         if (whoAmIApiResponseModel != null && whoAmIApiResponseModel.getStatus().equals(Constants.AVAILABLE))
             presence.updateSwitch(true);
         else
@@ -199,6 +204,11 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             appointment_request.updateSwitch(false);
         }
 
+        if (whoAmIApiResponseModel != null) {
+            enable_patient_card.updateSwitch(whoAmIApiResponseModel.isPatient_credit_card_required());
+        } else {
+            enable_patient_card.updateSwitch(false);
+        }
     }
 
     private void initView(View view) {
@@ -321,11 +331,6 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         }
 
         whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
-        if (whoAmIApiResponseModel != null) {
-            enable_patient_card.updateSwitch(whoAmIApiResponseModel.isPatient_credit_card_required());
-        } else {
-            enable_patient_card.updateSwitch(false);
-        }
     }
 
     private void addListenerOnButton() {

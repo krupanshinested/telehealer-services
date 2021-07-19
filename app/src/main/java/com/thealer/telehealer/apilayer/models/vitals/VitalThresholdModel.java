@@ -116,15 +116,15 @@ public class VitalThresholdModel extends BaseApiResponseModel {
 
     }
 
-    public class Range {
+    public static class Range {
 
         public String range_type;
 
         public String high_value;
 
-        public String message;
+        public String message="";
 
-        public Boolean abnormal;
+        public Boolean abnormal=false;
 
         public String low_value;
 

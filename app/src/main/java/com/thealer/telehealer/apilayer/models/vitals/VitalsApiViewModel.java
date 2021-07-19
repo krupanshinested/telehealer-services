@@ -189,4 +189,22 @@ public class VitalsApiViewModel extends BaseApiViewModel {
             }
         });
     }
+    public  void updateVitalThreshold(VitalThresholdModel.Result vitalThresholdModel){
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if(status){
+                    getAuthApiService().updateVitalsThreshold(vitalThresholdModel)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS){
+
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
 }

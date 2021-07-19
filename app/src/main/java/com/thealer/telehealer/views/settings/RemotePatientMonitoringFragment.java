@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.settings;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,10 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdAdapter;
 import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
@@ -34,6 +38,10 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
+import com.thealer.telehealer.views.transaction.AddChargeActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,18 +84,40 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
                         if (result != null) {
                             setUpData();
                         }
+                    }else{
+                        saveBtn.setVisibility(View.GONE);
+                        editTv.setVisibility(View.VISIBLE);
                     }
-
-
                 }
             }
         });
-
         vitalsApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-                if (errorModel != null) {
-                    if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                String json = errorModel.getResponse();
+                try {
+                    JSONObject jsonObject = new JSONObject(json);
+
+                    if (jsonObject.has("display_button") && !errorModel.isDisplayButton()) {
+                        String errMsg = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                        Utils.showAlertDialog(getActivity(), getString(R.string.app_name), errMsg,
+                                getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }, null);
+                    }else if (!jsonObject.has("is_cc_captured") && !jsonObject.has("is_default_card_valid")) {
+                        String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                        Utils.showAlertDialog(getActivity(), getString(R.string.app_name), message,
+                                getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }, null);
+                        editTv.setVisibility(View.GONE);
+                    }else{
                         Utils.showAlertDialog(getContext(), getString(R.string.app_name),
                                 errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                                 null, getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -101,10 +131,9 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
                                         dialog.dismiss();
                                     }
                                 });
-
-                    } else {
-                        AppPaymentCardUtils.handleCardCasesFromErrorModel(getActivity(), errorModel, "");
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -113,10 +142,12 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
 
     private void setUpData() {
         initAdapter();
-        vitalThresholdList = result.vitals_thresholds;
-        vitalThresholdAdapter.UpdateItem(vitalThresholdList,isEditable);
-        notificationCellView.updateSwitch(result.is_notify_on_capture!=null?result.is_notify_on_capture:false);
-        rpmCellView.updateSwitch(result.is_rpm_enabled!=null?result.is_rpm_enabled:false);
+        if(result!=null && result.vitals_thresholds!=null) {
+            vitalThresholdList = result.vitals_thresholds;
+            vitalThresholdAdapter.UpdateItem(vitalThresholdList,isEditable);
+            notificationCellView.updateSwitch(result.is_notify_on_capture!=null?result.is_notify_on_capture:false);
+            rpmCellView.updateSwitch(result.is_rpm_enabled!=null?result.is_rpm_enabled:false);
+        }
     }
 
     @Override
@@ -150,6 +181,7 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         vitalsApiViewModel.getVitalThreshold(true);
         rpmCellView.updateTextviewPadding(20,20,25,20);
         notificationCellView.updateTextviewPadding(20,20,20,20);
+        notificationCellView.setRightDrawableIcon(R.drawable.ic_baseline_info_24);
         rpmCellView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,6 +194,15 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
             public void onClick(View v) {
                 if(isEditable)
                     notificationCellView.toggleSwitch();
+                else{
+                    Utils.showAlertDialog(getActivity(), getString(R.string.notifications_alert), getString(R.string.str_notification_threshold_msg),
+                            getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }, null);
+                }
             }
         });
 
@@ -180,8 +221,8 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
             public void onClick(View v) {
                 isEditable = false;
                 setUpData();
-                saveBtn.setVisibility(View.GONE);
-                editTv.setVisibility(View.VISIBLE);
+                result.vitals_thresholds=vitalThresholdList;
+                vitalsApiViewModel.updateVitalThreshold(result);
             }
         });
 

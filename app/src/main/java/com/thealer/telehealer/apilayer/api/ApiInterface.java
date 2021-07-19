@@ -318,6 +318,9 @@ public interface ApiInterface {
     @GET("api/vitals/thresholds")
     Observable<VitalThresholdModel> getVitalsThreshold();
 
+    @POST("api/vitals/thresholds")
+    Observable<BaseApiResponseModel> updateVitalsThreshold(@Body VitalThresholdModel.Result vitalThresholdModel);
+
     @GET("icd-codes")
     Observable<IcdCodeApiResponseModel> getFilteredIcdCodes(@Query(FILTER_CODE_IN) String data);
 
