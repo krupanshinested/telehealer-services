@@ -185,16 +185,19 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         rpmCellView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isEditable)
+                if(isEditable) {
                     rpmCellView.toggleSwitch();
+                    result.is_rpm_enabled=rpmCellView.getSwitchStatus();
+                }
             }
         });
         notificationCellView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isEditable)
+                if(isEditable) {
                     notificationCellView.toggleSwitch();
-                else{
+                    result.is_notify_on_capture = notificationCellView.getSwitchStatus();
+                } else{
                     Utils.showAlertDialog(getActivity(), getString(R.string.notifications_alert), getString(R.string.str_notification_threshold_msg),
                             getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                                 @Override

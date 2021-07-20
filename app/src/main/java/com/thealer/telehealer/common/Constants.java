@@ -186,6 +186,7 @@ public class Constants {
 
     public static final double STRIPE_MIN_AMOUNT = 0.50;
     public static boolean isRedirectProfileSetting=false;
+    public static String ChildHood_Asthma="Childhood Asthma Control Test";
 
 
     public interface MasterCodes {
