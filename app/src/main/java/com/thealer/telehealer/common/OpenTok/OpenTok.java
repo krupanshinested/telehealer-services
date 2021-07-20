@@ -1070,7 +1070,7 @@ public class OpenTok implements Session.SessionListener,
         });
 
         screenCapturerTimer = runnable;
-        handler.postDelayed(runnable, 30000);
+        handler.postDelayed(runnable, 40000);
     }
 
     private void captureScreenshot() {
