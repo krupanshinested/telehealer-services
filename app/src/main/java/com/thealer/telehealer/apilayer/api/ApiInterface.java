@@ -294,7 +294,7 @@ public interface ApiInterface {
     @GET("api/unconnected-users")
     Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
 
-    @POST("api/requests")
+    @POST("api/post-requests-v2")
     Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @DELETE("api/associations")
@@ -369,7 +369,7 @@ public interface ApiInterface {
     @PATCH("api/users/questionnaire/{id}")
     Observable<BaseApiResponseModel> updateUserQuestionnaire(@Path(ID) String userGuid, @Body UpdateQuestionaryBodyModel updateQuestionaryBodyModel);
 
-    @POST("api/vitals-v2")
+    @POST("api/post-vitals-v2")
     Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart

@@ -2,7 +2,10 @@ package com.thealer.telehealer.apilayer.models.vitals;
 
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.common.OnItemClickListener;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -65,6 +69,11 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             itemHolder.etMessage.setText(rangeInfo.message);
             itemHolder.switchAbnormal.setChecked(rangeInfo.abnormal);
+            if(vitalType.equals(SupportedMeasurementType.temperature)){
+                itemHolder.etUpper.setKeyListener(DigitsKeyListener.getInstance(false,true));
+            }else{
+                itemHolder.etUpper.setKeyListener(DigitsKeyListener.getInstance(false,false));
+            }
             if (position == (thresholdLimitList.size() - 1)) {
                 itemHolder.tvRemove.setVisibility(View.VISIBLE);
                 itemHolder.tvAdd.setVisibility(View.VISIBLE);
@@ -153,12 +162,15 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 Bundle bundle = new Bundle();
                 bundle.putString("thresholdValue", thresholdStr);
                 bundle.putInt("parentPos", parentPos);
-                if (!s.toString().trim().isEmpty() && Integer.parseInt(itemHolder.etUpperLeft.getText().toString().trim()) >= Integer.parseInt(itemHolder.etLowerLeft.getText().toString().trim())){
-                    onListItemSelectInterface.onListItemSelected(position, bundle);
-                    if(itemHolder.etMessage.getText().toString().trim().isEmpty())
-                        displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
-                } else {
-                    displayToast(activity.getString(R.string.str_please_enter_value_higher_than_lower_limit));
+                bundle.putString("vitalType", vitalType);
+                if (!s.toString().substring(s.length() - 1, s.length()).equals(".")) {
+                    if (!s.toString().trim().isEmpty() && Utils.get2Decimal(itemHolder.etUpperLeft.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerLeft.getText().toString().trim())) {
+                        onListItemSelectInterface.onListItemSelected(position, bundle);
+                        if (itemHolder.etMessage.getText().toString().trim().isEmpty())
+                            displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
+                    } else {
+                        displayToast(activity.getString(R.string.str_please_enter_value_higher_than_lower_limit));
+                    }
                 }
             }
         });
@@ -184,12 +196,15 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 Bundle bundle = new Bundle();
                 bundle.putString("thresholdValue", thresholdStr);
                 bundle.putInt("parentPos", parentPos);
-                if (!s.toString().trim().isEmpty() && Integer.parseInt(itemHolder.etUpperRight.getText().toString().trim()) >= Integer.parseInt(itemHolder.etLowerRight.getText().toString().trim())) {
-                    onListItemSelectInterface.onListItemSelected(position, bundle);
-                    if (itemHolder.etMessage.getText().toString().trim().isEmpty())
-                        displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
-                } else {
-                    displayToast(activity.getString(R.string.str_please_enter_value_higher_than_lower_limit));
+                bundle.putString("vitalType", vitalType);
+                if (!s.toString().substring(s.length() - 1, s.length()).equals(".")) {
+                    if (!s.toString().trim().isEmpty() && Utils.get2Decimal(itemHolder.etUpperRight.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerRight.getText().toString().trim())) {
+                        onListItemSelectInterface.onListItemSelected(position, bundle);
+                        if (itemHolder.etMessage.getText().toString().trim().isEmpty())
+                            displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
+                    } else {
+                        displayToast(activity.getString(R.string.str_please_enter_value_higher_than_lower_limit));
+                    }
                 }
             }
         });
@@ -209,7 +224,7 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 Bundle bundle = new Bundle();
                 bundle.putString("thresholdValue", null);
                 bundle.putInt("parentPos", parentPos);
-                bundle.putString("thresholdMsg",s.toString());
+                bundle.putString("thresholdMsg", s.toString());
                 onListItemSelectInterface.onListItemSelected(position, bundle);
             }
         });
@@ -232,12 +247,15 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 Bundle bundle = new Bundle();
                 bundle.putString("thresholdValue", s.toString());
                 bundle.putInt("parentPos", parentPos);
-                if (!s.toString().trim().isEmpty() && Integer.parseInt(itemHolder.etUpper.getText().toString().trim()) >= Integer.parseInt(itemHolder.etLower.getText().toString().trim())) {
-                    onListItemSelectInterface.onListItemSelected(position, bundle);
-                    if (itemHolder.etMessage.getText().toString().trim().isEmpty())
-                        displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
-                } else {
-                    displayToast(activity.getString(R.string.str_please_enter_value_higher_than_lower_limit));
+                bundle.putString("vitalType", vitalType);
+                if (!s.toString().substring(s.length() - 1, s.length()).equals(".")) {
+                    if (!s.toString().trim().isEmpty() && Utils.get2Decimal(itemHolder.etUpper.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLower.getText().toString().trim())) {
+                        onListItemSelectInterface.onListItemSelected(position, bundle);
+                        if (itemHolder.etMessage.getText().toString().trim().isEmpty())
+                            displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
+                    } else {
+                        displayToast(activity.getString(R.string.str_please_enter_value_higher_than_lower_limit));
+                    }
                 }
             }
         });
@@ -314,6 +332,10 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             clSingleValue = (ConstraintLayout) itemView.findViewById(R.id.cl_single_value);
             clDoubleValue = (ConstraintLayout) itemView.findViewById(R.id.cl_double_value);
+
+            etUpper.setFilters(new InputFilter[]{new Utils.DecimalDigitsInputFilter(5, 2)});
+            etUpperRight.setFilters(new InputFilter[]{new Utils.DecimalDigitsInputFilter(5, 2)});
+            etUpperLeft.setFilters(new InputFilter[]{new Utils.DecimalDigitsInputFilter(5, 2)});
         }
     }
 

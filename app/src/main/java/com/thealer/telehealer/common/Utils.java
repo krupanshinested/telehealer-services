@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.text.Editable;
 import android.text.Html;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -88,6 +89,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -100,6 +102,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import config.AppConfig;
@@ -727,7 +730,7 @@ public class Utils {
         closeIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(closeListener!=null)
+                if (closeListener != null)
                     closeListener.run();
 
                 dialog.dismiss();
@@ -1906,5 +1909,57 @@ public class Utils {
         return simpleDateFormat.format(calendar.getTimeInMillis());
     }
 
+
+    public static class DecimalDigitsInputFilter implements InputFilter {
+
+        private final int digitsBeforeZero;
+        private final int digitsAfterZero;
+        private Pattern mPattern;
+
+        public DecimalDigitsInputFilter(int digitsBeforeZero, int digitsAfterZero) {
+            this.digitsBeforeZero = digitsBeforeZero;
+            this.digitsAfterZero = digitsAfterZero;
+            applyPattern(digitsBeforeZero, digitsAfterZero);
+        }
+
+        private void applyPattern(int digitsBeforeZero, int digitsAfterZero) {
+            mPattern = Pattern.compile("[0-9]{0," + (digitsBeforeZero - 1) + "}+((\\.[0-9]{0," + (digitsAfterZero - 1) + "})?)|(\\.)?");
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (dest.toString().contains(".") || source.toString().contains("."))
+                applyPattern(digitsBeforeZero + 2, digitsAfterZero);
+            else
+                applyPattern(digitsBeforeZero, digitsAfterZero);
+
+            Matcher matcher = mPattern.matcher(dest);
+            if (!matcher.matches())
+                return "";
+            return null;
+        }
+
+    }
+
+    public static double get2Decimal(String decimalString) {
+            if(isNumeric(decimalString)){
+                return Double.parseDouble(new DecimalFormat("##.##").format(Double.parseDouble(decimalString)));
+            }else{
+                return 00.00;
+            }
+
+    }
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
 
 }

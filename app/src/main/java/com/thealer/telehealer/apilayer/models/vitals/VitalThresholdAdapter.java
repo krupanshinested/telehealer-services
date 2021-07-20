@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.common.OnItemClickListener;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -43,6 +44,16 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return new HeaderHolder(view);
     }
 
+    public String getUpdatedValue(double submitedValue, String vitalType) {
+        String finalValue;
+        if (vitalType.equals(SupportedMeasurementType.temperature)) {
+            finalValue = submitedValue + "";
+        } else {
+            finalValue = (int) submitedValue + "";
+        }
+        return finalValue;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         HeaderHolder headerHolder = (HeaderHolder) holder;
@@ -60,40 +71,42 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 if (bundle != null && bundle.getString("thresholdValue") == null) {
                     vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).setMessage(bundle.getString("thresholdMsg"));
                 } else if (bundle != null && !vitalThresholdList.get(bundle.getInt("parentPos")).vital_type.equals(SupportedMeasurementType.bp)) {
-                    int upperValue = Integer.parseInt(bundle.getString("thresholdValue"));
-                    int prevUpperValue = Integer.parseInt(vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).getHigh_value());
-                    int rangeDiff = upperValue - prevUpperValue;
-                    vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).setHigh_value(upperValue + "");
+                    double upperValue = Utils.get2Decimal(bundle.getString("thresholdValue"));
+                    double prevUpperValue = Utils.get2Decimal(vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).getHigh_value());
+                    double rangeDiff = upperValue - prevUpperValue;
+                    vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).setHigh_value(getUpdatedValue(upperValue, bundle.getString("vitalType")));
                     for (int i = position + 1; i < vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().size(); i++) {
-                        int prevLow = Integer.parseInt(vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).getLow_value());
-                        int prevHigh = Integer.parseInt(vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).getHigh_value());
-                        vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).setLow_value((prevLow + rangeDiff) + "");
-                        vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).setHigh_value((prevHigh + rangeDiff) + "");
+                        double prevLow = Utils.get2Decimal(vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).getLow_value());
+                        double prevHigh = Utils.get2Decimal(vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).getHigh_value());
+                        vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).setLow_value(getUpdatedValue((prevLow + rangeDiff), bundle.getString("vitalType")));
+                        vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).setHigh_value(getUpdatedValue((prevHigh + rangeDiff), bundle.getString("vitalType")));
                     }
                 } else if (bundle != null && vitalThresholdList.get(bundle.getInt("parentPos")).vital_type.equals(SupportedMeasurementType.bp)) {
                     String upperValue = bundle.getString("thresholdValue");
                     String[] upperValueList = upperValue.split("/");
-                    int[] upperValueInt = new int[2];
-                    upperValueInt[0] = Integer.parseInt(upperValueList[0]);
-                    upperValueInt[1] = Integer.parseInt(upperValueList[1]);
+                    double[] upperValueInt = new double[2];
+                    upperValueInt[0] = Utils.get2Decimal(upperValueList[0]);
+                    upperValueInt[1] = Utils.get2Decimal(upperValueList[1]);
                     String prevUpperValue = vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).getHigh_value();
                     String[] prevUpperValueList = prevUpperValue.split("/");
-                    int[] prevUpperValueInt = new int[2];
+                    double[] prevUpperValueInt = new double[2];
                     prevUpperValueInt[0] = Integer.parseInt(prevUpperValueList[0]);
                     prevUpperValueInt[1] = Integer.parseInt(prevUpperValueList[1]);
-                    int rangeLHS = upperValueInt[0] - prevUpperValueInt[0];
-                    int rangeRHS = upperValueInt[1] - prevUpperValueInt[1];
+                    double rangeLHS = upperValueInt[0] - prevUpperValueInt[0];
+                    double rangeRHS = upperValueInt[1] - prevUpperValueInt[1];
                     vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).setHigh_value(upperValue + "");
                     for (int i = position + 1; i < vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().size(); i++) {
                         String[] prevLowStr = vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).getLow_value().split("/");
                         String[] prevHighStr = vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).getHigh_value().split("/");
+
+
                         vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).setLow_value(
-                                ((Integer.parseInt(prevLowStr[0]) + rangeLHS) + "/" +
-                                        (Integer.parseInt(prevLowStr[1]) + rangeRHS)));
+                                ((getUpdatedValue((Utils.get2Decimal(prevLowStr[0]) + rangeLHS), bundle.getString("vitalType"))) + "/" +
+                                        (getUpdatedValue((Utils.get2Decimal(prevLowStr[1]) + rangeRHS), bundle.getString("vitalType")))));
 
                         vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(i).setHigh_value(
-                                ((Integer.parseInt(prevHighStr[0]) + rangeLHS) + "/" +
-                                        (Integer.parseInt(prevHighStr[1]) + rangeRHS)));
+                                ((getUpdatedValue((Utils.get2Decimal(prevHighStr[0]) + rangeLHS), bundle.getString("vitalType"))) + "/" +
+                                        (getUpdatedValue((Utils.get2Decimal(prevHighStr[1]) + rangeRHS), bundle.getString("vitalType")))));
                     }
                 }
                 activity.runOnUiThread(new Runnable() {
