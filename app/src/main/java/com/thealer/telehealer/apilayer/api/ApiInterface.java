@@ -86,6 +86,7 @@ import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResp
 import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
@@ -293,7 +294,7 @@ public interface ApiInterface {
     @GET("api/unconnected-users")
     Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
 
-    @POST("api/requests")
+    @POST("api/post-requests-v2")
     Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @DELETE("api/associations")
@@ -313,6 +314,12 @@ public interface ApiInterface {
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersLabApiResponseModel> getLabOrders(@Query(SEARCH_FILTER_LAB) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+
+    @GET("api/vitals/thresholds")
+    Observable<VitalThresholdModel> getVitalsThreshold();
+
+    @POST("api/vitals/thresholds")
+    Observable<BaseApiResponseModel> updateVitalsThreshold(@Body VitalThresholdModel.Result vitalThresholdModel);
 
     @GET("icd-codes")
     Observable<IcdCodeApiResponseModel> getFilteredIcdCodes(@Query(FILTER_CODE_IN) String data);
@@ -362,7 +369,7 @@ public interface ApiInterface {
     @PATCH("api/users/questionnaire/{id}")
     Observable<BaseApiResponseModel> updateUserQuestionnaire(@Path(ID) String userGuid, @Body UpdateQuestionaryBodyModel updateQuestionaryBodyModel);
 
-    @POST("api/vitals-v2")
+    @POST("api/post-vitals-v2")
     Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart

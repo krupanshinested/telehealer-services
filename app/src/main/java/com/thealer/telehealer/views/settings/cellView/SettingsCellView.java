@@ -53,6 +53,14 @@ public class SettingsCellView extends ConstraintLayout {
         settingSwitch.setClickable(false);
     }
 
+    public void updateTextviewPadding(int top,int bottom,int left,int right){
+        if(titleTextView!=null){
+            LayoutParams params = (LayoutParams) titleTextView.getLayoutParams();
+            params.leftMargin=0;
+            titleTextView.setLayoutParams(params);
+            titleTextView.setPadding(left,top,right,bottom);
+        }
+    }
     private void update(String title, Boolean isSwitchNeeded) {
         titleTextView.setText(title);
 
@@ -62,6 +70,7 @@ public class SettingsCellView extends ConstraintLayout {
             settingSwitch.setVisibility(GONE);
         }
     }
+
 
     public  void setFocusableTitle () { settingSwitch.setAlpha(0.5f);}
 
@@ -75,6 +84,11 @@ public class SettingsCellView extends ConstraintLayout {
 
     public Boolean getSwitchStatus() {
         return settingSwitch.isChecked();
+    }
+
+    public void setRightDrawableIcon(int resId){
+        titleTextView.setCompoundDrawablesWithIntrinsicBounds(0,0,resId,0);
+        titleTextView.setCompoundDrawablePadding(8);
     }
 
 }
