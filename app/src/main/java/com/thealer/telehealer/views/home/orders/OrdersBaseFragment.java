@@ -129,7 +129,7 @@ public class OrdersBaseFragment extends BaseFragment {
                                 description = getString(R.string.fax_sent_successfully);
                                 sendSuccessViewBroadCast(getActivity(), status, title, description);
                             }
-//                            onBackPressed();
+                            onBackPressed();
                         }
                     } else {
                         isSendFax = false;

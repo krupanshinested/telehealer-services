@@ -375,7 +375,8 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
                 showSubFragmentInterface.onShowFragment(selectAssociationFragment);
                 break;
             case R.id.save_btn:
-                showQuickLogin();
+//                showQuickLogin();
+                createPrescription(false, getPrescriptionModel(), commonUserApiResponseModel.getUserDisplay_name(), doctorGuid, false);
                 break;
             case R.id.save_fax_btn:
                 if (appConfig.isIndianUser(getActivity()))
@@ -411,7 +412,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
 
     @Override
     public void onAuthenticated() {
-        createPrescription(false, getPrescriptionModel(), commonUserApiResponseModel.getUserDisplay_name(), doctorGuid, false);
+//        createPrescription(false, getPrescriptionModel(), commonUserApiResponseModel.getUserDisplay_name(), doctorGuid, false);
     }
 
     private CreatePrescriptionRequestModel getPrescriptionModel() {
