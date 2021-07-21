@@ -12,7 +12,6 @@ public class WhoAmIApiResponseModel extends CommonUserApiResponseModel {
     private String install_type;
     private boolean orders_enabled;
     private boolean integration_requests;
-    private PaymentInfo payment_account_info;
 
 
     public String getVersion() {
@@ -53,13 +52,5 @@ public class WhoAmIApiResponseModel extends CommonUserApiResponseModel {
 
     public void setIntegration_requests(Boolean integration_requests) {
         this.integration_requests = integration_requests;
-    }
-
-    public PaymentInfo getPayment_account_info() {
-        return payment_account_info;
-    }
-
-    public void setPayment_account_info(PaymentInfo payment_account_info) {
-        this.payment_account_info = payment_account_info;
     }
 }

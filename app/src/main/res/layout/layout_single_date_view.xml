@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/singleDate"
+    android:orientation="vertical"
+    android:layout_marginTop="15dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/lbl_service_date"
+        android:textColor="@color/colorBlack"
+        android:textSize="12sp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_black"
+        android:gravity="center"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="10dp"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/tvFromDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/lbl_start_date"
+            android:textColorHint="@color/colorBlack_50"
+            android:textSize="12sp" />
+
+        <ImageView
+
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:src="@drawable/ic_baseline_date_range_24"
+            app:tint="@color/colorGrey" />
+    </LinearLayout>
+</LinearLayout>

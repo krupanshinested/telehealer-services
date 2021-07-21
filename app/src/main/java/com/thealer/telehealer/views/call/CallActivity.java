@@ -141,25 +141,25 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         return intent;
     }
 
-    public static Intent getCallIntent(Application application,Boolean isWaitingRoom,@Nullable Boolean accept,CallRequest callRequest) {
-        Intent fullScreenIntent =  CallActivity.getIntent(application,callRequest);
-        fullScreenIntent.putExtra(ArgumentKeys.TRIGGER_ANSWER,isWaitingRoom);
+    public static Intent getCallIntent(Application application, Boolean isWaitingRoom, @Nullable Boolean accept, CallRequest callRequest) {
+        Intent fullScreenIntent = CallActivity.getIntent(application, callRequest);
+        fullScreenIntent.putExtra(ArgumentKeys.TRIGGER_ANSWER, isWaitingRoom);
         if (accept != null) {
             if (accept) {
-                fullScreenIntent.putExtra(ArgumentKeys.TRIGGER_ANSWER,true);
+                fullScreenIntent.putExtra(ArgumentKeys.TRIGGER_ANSWER, true);
             } else {
-                fullScreenIntent.putExtra(ArgumentKeys.TRIGGER_END,true);
+                fullScreenIntent.putExtra(ArgumentKeys.TRIGGER_END, true);
             }
         }
 
         return fullScreenIntent;
     }
 
-    public static void createNotificationBarCall(Application application,Boolean isWaitingRoom, String doctorName, CallRequest callRequest) {
-        Log.d("CallActivity","createNotificationBarCall");
+    public static void createNotificationBarCall(Application application, Boolean isWaitingRoom, String doctorName, CallRequest callRequest) {
+        Log.d("CallActivity", "createNotificationBarCall");
         final Class<? extends Service> notificationService = CallNotificationService.class;
         final Intent notificationIntent = new Intent(application, notificationService);
-        ContextCompat.startForegroundService(application,notificationIntent);
+        ContextCompat.startForegroundService(application, notificationIntent);
     }
 
     private LinearLayout bigView;
@@ -210,7 +210,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     private CompleteListener lastTaskToDo;
 
     private OpenTok activeCall;
-    private  CallRequest callRequest;
+    private CallRequest callRequest;
     private boolean isScreenBroadcastRegistered = false;
 
     @Override
@@ -225,7 +225,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             setShowWhenLocked(true);
             setTurnScreenOn(true);
             KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-            if(keyguardManager!=null)
+            if (keyguardManager != null)
                 keyguardManager.requestDismissKeyguard(this, null);
         } else {
             this.getWindow().setFlags(
@@ -238,9 +238,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
         setContentView(R.layout.activity_call);
@@ -322,12 +322,12 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        boolean triggerAnswer = intent.getBooleanExtra(ArgumentKeys.TRIGGER_ANSWER,false);
-        boolean triggerReject = intent.getBooleanExtra(ArgumentKeys.TRIGGER_END,false);
-        getIntent().putExtra(ArgumentKeys.TRIGGER_ANSWER,triggerAnswer);
-        getIntent().putExtra(ArgumentKeys.TRIGGER_END,triggerReject);
+        boolean triggerAnswer = intent.getBooleanExtra(ArgumentKeys.TRIGGER_ANSWER, false);
+        boolean triggerReject = intent.getBooleanExtra(ArgumentKeys.TRIGGER_END, false);
+        getIntent().putExtra(ArgumentKeys.TRIGGER_ANSWER, triggerAnswer);
+        getIntent().putExtra(ArgumentKeys.TRIGGER_END, triggerReject);
         this.triggerAnswer = triggerAnswer;
-        Log.d("CallActivity","onNewIntent "+triggerAnswer+" "+triggerReject);
+        Log.d("CallActivity", "onNewIntent " + triggerAnswer + " " + triggerReject);
     }
 
     //Create a receiver for screen-on/screen-off
@@ -350,7 +350,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                                 public void run() {
                                     CallActivity.createNotificationBarCall(getApplication(), false, callRequest.getDoctorName(), callRequest);
                                 }
-                            },1500);
+                            }, 1500);
                         }
                         System.out.println("Screen off " + "UNLOCKED");
                     }
@@ -370,7 +370,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             public void run() {
                 stopNotificationService();
             }
-        },1000);
+        }, 1000);
         activeCall.setUIListener(this);
         smallView.setOnTouchListener(new MoveViewTouchListener(smallView));
         didChangedAudioInput(activeCall.getCurrentAudioState());
@@ -382,7 +382,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             getIntent().putExtra(ArgumentKeys.TRIGGER_ANSWER, false);
             triggerAnswer = false;
             answerTheCall();
-        } else if (getIntent().getBooleanExtra(ArgumentKeys.TRIGGER_END,false)) {
+        } else if (getIntent().getBooleanExtra(ArgumentKeys.TRIGGER_END, false)) {
             activeCall.endCall(OpenTokConstants.endCallPressed);
             Log.d("CallActivity", "TRIGGER_END true");
         }
@@ -1425,14 +1425,14 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void openHomeAndFinish(String callRejectionReason) {
-        Intent intent = new Intent(CallActivity.this, HomeActivity.class);
+        /*Intent intent = new Intent(CallActivity.this, HomeActivity.class);
         startActivity(intent);
-
+*/
         openFeedBackIfNeeded(callRejectionReason);
     }
 
     private void openFeedBackIfNeeded(String callRejectionReason) {
-        openFeedBackIfNeeded(callRequest,activeCall.getConnectedDate(),callRejectionReason, CallActivity.this);
+        openFeedBackIfNeeded(callRequest, activeCall.getConnectedDate(), callRejectionReason, CallActivity.this);
         deinit();
         finish();
     }
@@ -1453,7 +1453,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         Date startedTime = connectedDate;
 
         if (callRequest.isForGuestUser() && UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
-            Intent feedBackIntent =new Intent(context, GuestUserSignupActivity.class);
+            Intent feedBackIntent = new Intent(context, GuestUserSignupActivity.class);
             feedBackIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(feedBackIntent);
         } else {
@@ -1470,6 +1470,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                         feedBackIntent.putExtra(ArgumentKeys.DOCTOR_GUID, callRequest.getDoctorGuid());
                         feedBackIntent.putExtra(ArgumentKeys.STARTED_DATE, startedTime);
                         feedBackIntent.putExtra(ArgumentKeys.ENDED_DATE, endedTime);
+                        if (!UserType.isUserPatient())
+                            feedBackIntent.putExtra(ArgumentKeys.PATIENT_ID, callRequest.getOtherPersonDetail().getUser_id());
                         feedBackIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(feedBackIntent);
                     }
@@ -1771,7 +1773,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 if (errorModel != null && TextUtils.isEmpty(errorModel.getMessage())) {
                     String message = errorModel.getMessage();
 
-                    currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.error), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.app_name), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             activeCall.endCall(OpenTokConstants.other);

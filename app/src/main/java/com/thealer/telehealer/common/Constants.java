@@ -2,6 +2,7 @@ package com.thealer.telehealer.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -183,4 +184,45 @@ public class Constants {
 
     public static final String did_subscriber_connected = "did_subscriber_connected";
 
+    public static final double STRIPE_MIN_AMOUNT = 0.50;
+    public static boolean isRedirectProfileSetting=false;
+
+
+    public interface MasterCodes {
+        String TYPE_OF_CHARGE = "TYPE_OF_CHARGE";
+        String REASON = "REASON";
+    }
+
+    public interface ChargeReason {
+        int VISIT = 1;
+        int MEDICINE = 2;
+        int SUPPLIES = 3;
+        int CCM = 4;
+        int RPM = 5;
+        int BHI = 6;
+        int CONCIERGE = 7;
+    }
+
+    public interface ChargeStatus {
+        int CHARGE_PENDING = 1;
+        int CHARGE_ADDED = 2;
+        int CHARGE_PROCESS_INITIATED = 3;
+        int CHARGE_PROCESS_IN_STRIPE = 4;
+        int CHARGE_PROCESSED = 5;
+        int CHARGE_PROCESS_FAILED = 6;
+    }
+
+    public static final int MAX_TRANSACTION_RETRY = 3;
+
+    public interface OAuthStatus {
+        String NOT_CONNECTED = "not_connected";
+        String CONNECTED = "connected";
+        String PAYOUT_DISABLED = "payouts_disabled";
+
+    }
+
+    public interface PaymentMode {
+        int STRIPE = 1;
+        int CASH = 2;
+    }
 }

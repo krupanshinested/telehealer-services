@@ -10,26 +10,17 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.exoplayer2.audio.AudioCapabilitiesReceiver;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
@@ -38,18 +29,15 @@ import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
-import com.thealer.telehealer.common.PermissionChecker;
-import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.Util.TimerInterface;
-import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.common.pubNub.models.Patientinfo;
@@ -57,7 +45,6 @@ import com.thealer.telehealer.common.pubNub.waitingroom.DoctorInviteHandler;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
-import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.CustomPatientCountLayout;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
@@ -152,7 +139,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     }
 
     private void initView(View view) {
-        customPatientCountLayout =  view.findViewById(R.id.lay_patient_count);
+        customPatientCountLayout = view.findViewById(R.id.lay_patient_count);
         doctorPatientListCrv = (CustomRecyclerView) view.findViewById(R.id.doctor_patient_list_crv);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
         addFab.setVisibility(View.GONE);
@@ -172,10 +159,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         addFab.setOnClickListener(this);
 
-        if (UserType.isUserPatient()){
+        if (UserType.isUserPatient()) {
             search_view.setSearchHint(getString(R.string.search_doctors));
-        }
-        else {
+        } else {
             search_view.setSearchHint(getString(R.string.search_associations));
         }
 
@@ -200,14 +186,14 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             }
             isDietView = getArguments().getBoolean(ArgumentKeys.IS_DIET_VIEW);
 
-             commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
             if (commonUserApiResponseModel != null) {
                 doctorGuid = commonUserApiResponseModel.getUser_guid();
             }
             if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)) {
                 search_view.setVisibility(View.GONE);
             }
-            if (!getArguments().getBoolean(ArgumentKeys.SHOW_FAB_ADD, true)){
+            if (!getArguments().getBoolean(ArgumentKeys.SHOW_FAB_ADD, true)) {
                 addFab.setVisibility(View.GONE);
             }
             if (isDietView || getArguments().getBoolean(ArgumentKeys.HIDE_ADD)) {
@@ -223,7 +209,17 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         doctorPatientListRv = doctorPatientListCrv.getRecyclerView();
 
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, getArguments());
+        CommonUserApiResponseModel doctorModel = null;
+        //if user is assistant and this is provider details then showCardStatus from provider data
+        if (UserType.isUserAssistant()) {
+            if (commonUserApiResponseModel != null && Constants.ROLE_DOCTOR.equals(commonUserApiResponseModel.getRole())) {
+                doctorModel = commonUserApiResponseModel;
+            }
+        } else if (UserType.isUserDoctor())
+            doctorModel = UserDetailPreferenceManager.getWhoAmIResponse();
+
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, getArguments(),doctorModel);
+
 
         doctorPatientListRv.setAdapter(doctorPatientListAdapter);
 
@@ -231,7 +227,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             @Override
             public void onPaginate() {
                 page = page + 1;
-                getAssociationsList( false);
+                getAssociationsList(false);
                 isApiRequested = true;
                 doctorPatientListCrv.setScrollable(false);
             }
@@ -241,14 +237,14 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             @Override
             public void onRefresh() {
                 page = 1;
-                getAssociationsList( false);
+                getAssociationsList(false);
             }
         });
 
         doctorPatientListCrv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getAssociationsList( true);
+                getAssociationsList(true);
             }
         });
 
@@ -262,7 +258,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         isApiRequested = false;
 
         if (isVisibleToUser && isResumed) {
-            getAssociationsList( true);
+            getAssociationsList(true);
         }
     }
 
@@ -397,9 +393,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         //for initalize Doctor waitingroom
         if (UserType.isUserDoctor()) {
             if (getArguments().getBoolean(ArgumentKeys.IS_FROM_HOME)) {
-            Log.d("IS_FROM_HOME","DoctorPatientList");
-            doctorInviteHandler=new DoctorInviteHandler(getActivity(),UserDetailPreferenceManager.getUser_guid(),null);
-            doctorInviteHandler.startToSubscribe();
+                Log.d("IS_FROM_HOME", "DoctorPatientList");
+                doctorInviteHandler = new DoctorInviteHandler(getActivity(), UserDetailPreferenceManager.getUser_guid(), null);
+                doctorInviteHandler.startToSubscribe();
             }
         }
     }
@@ -434,10 +430,10 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 }
                 break;
             case R.id.lay_patient_count:
-                Intent i=new Intent(getActivity(), PatientWaitingRoom.class);
+                Intent i = new Intent(getActivity(), PatientWaitingRoom.class);
                 Bundle bundle = new Bundle();
-                bundle.putString(ArgumentKeys.DOCTOR_GUID,""+UserDetailPreferenceManager.getUser_guid());
-                bundle.putString(ArgumentKeys.DOCTOR_NAME,""+UserDetailPreferenceManager.getFirst_name()+""+UserDetailPreferenceManager.getLast_name());
+                bundle.putString(ArgumentKeys.DOCTOR_GUID, "" + UserDetailPreferenceManager.getUser_guid());
+                bundle.putString(ArgumentKeys.DOCTOR_NAME, "" + UserDetailPreferenceManager.getFirst_name() + "" + UserDetailPreferenceManager.getLast_name());
                 bundle.putSerializable(ArgumentKeys.GUEST_INFO, (ArrayList<Patientinfo>) doctorInviteHandler.currentlySubscribedPatients);
                 i.putExtras(bundle);
                 startActivity(i);
@@ -447,7 +443,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
     @Override
     public void doCurrentTransaction() {
-        getAssociationsList( false);
+        getAssociationsList(false);
     }
 
     @Override

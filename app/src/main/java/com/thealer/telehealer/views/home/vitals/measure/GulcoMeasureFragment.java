@@ -298,7 +298,7 @@ public class GulcoMeasureFragment extends VitalMeasureBaseFragment implements Vi
 
         setCurrentState(MeasureState.failed);
         lastError = error;
-        Utils.showAlertDialog(getActivity(), getString(R.string.error), error, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+        Utils.showAlertDialog(getActivity(), getString(R.string.app_name), error, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();

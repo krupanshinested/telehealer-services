@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.associationlist;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +30,6 @@ public class AssociationApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-
                     getAuthApiService().getAssociations(search, true, page, Constants.PAGINATION_SIZE,  isMedicalAssistant, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {

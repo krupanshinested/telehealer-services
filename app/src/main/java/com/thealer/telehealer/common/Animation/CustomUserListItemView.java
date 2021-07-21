@@ -1,11 +1,14 @@
 package com.thealer.telehealer.common.Animation;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.cardview.widget.CardView;
+
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,7 +20,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
+import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
+import com.thealer.telehealer.views.transaction.AddChargeActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,7 +50,7 @@ public class CustomUserListItemView extends ConstraintLayout {
     private TextView listTitleTv;
     private TextView listSubTitleTv;
     private LinearLayout actionLl;
-    private ImageView actionIv;
+    private ImageView actionIv, hasCardIV;
     private CheckBox checkbox;
 
     private Drawable avatarDrawable, actionDrawable;
@@ -48,6 +58,7 @@ public class CustomUserListItemView extends ConstraintLayout {
     private boolean showAction, showCheckbox, showStatus, showBottomView;
     private View bottomView;
     private ConstraintLayout abnormalIndicatorCl;
+    private CustomButton addChargeBtn;
 
     public CustomUserListItemView(Context context) {
         super(context);
@@ -73,6 +84,8 @@ public class CustomUserListItemView extends ConstraintLayout {
         checkbox = (CheckBox) view.findViewById(R.id.checkbox);
         bottomView = (View) view.findViewById(R.id.bottom_view);
         abnormalIndicatorCl = (ConstraintLayout) view.findViewById(R.id.abnormal_indicator_cl);
+        hasCardIV = (ImageView) view.findViewById(R.id.card_iv);
+        addChargeBtn = (CustomButton) view.findViewById(R.id.accept_btn);
 
 
         if (attrs != null) {
@@ -242,5 +255,14 @@ public class CustomUserListItemView extends ConstraintLayout {
         } else {
             Utils.removeGreyoutProfile(avatarCiv);
         }
+    }
+
+    public void showCardStatus(PaymentInfo paymentInfo, boolean canViewCardStatus) {
+        AppPaymentCardUtils.setCardStatusImage(hasCardIV, paymentInfo, canViewCardStatus);
+        addChargeBtn.setVisibility(VISIBLE);
+    }
+
+    public CustomButton getAddChargeBtn() {
+        return addChargeBtn;
     }
 }

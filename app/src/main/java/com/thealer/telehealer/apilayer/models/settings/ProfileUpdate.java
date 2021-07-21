@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.settings;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -78,8 +79,31 @@ public class ProfileUpdate extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    HashMap<String,Boolean> secureMap = new HashMap<>();
-                    secureMap.put("secure_message",isSecureMessaging);
+                    HashMap<String, Boolean> secureMap = new HashMap<>();
+                    secureMap.put("secure_message", isSecureMessaging);
+
+                    RequestBody body = FormBody.create(MediaType.parse("application/form-data"), new Gson().toJson(secureMap));
+
+                    getAuthApiService().updateUserDetail(body)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void updatePatientCreditCard(boolean isPatientCreditCard, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    HashMap<String, Boolean> secureMap = new HashMap<>();
+                    secureMap.put("patient_credit_card_required", isPatientCreditCard);
 
                     RequestBody body = FormBody.create(MediaType.parse("application/form-data"), new Gson().toJson(secureMap));
 
@@ -117,6 +141,7 @@ public class ProfileUpdate extends BaseApiViewModel {
             }
         });
     }
+
 
     public void updateUserHistory(List<HistoryBean> historyBeanList, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
@@ -196,7 +221,7 @@ public class ProfileUpdate extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                   HashMap<String, String> available_time = new HashMap<>();
+                    HashMap<String, String> available_time = new HashMap<>();
                     available_time.put("appt_start_time", appt_start_time);
                     available_time.put("appt_end_time", appt_end_time);
                     RequestBody body = FormBody.create(MediaType.parse("application/form-data"), new Gson().toJson(available_time));

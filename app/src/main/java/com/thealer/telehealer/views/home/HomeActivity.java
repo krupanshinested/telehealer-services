@@ -38,12 +38,14 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiR
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
+import com.thealer.telehealer.apilayer.models.signout.SignoutApiViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OnUpdateListener;
+import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -75,8 +77,11 @@ import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
+import com.thealer.telehealer.views.settings.GeneralSettingsFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
+import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import java.util.Calendar;
 import java.util.List;
@@ -115,10 +120,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private int notificationCount = 0;
     private boolean isCheckLicense = true;
     private boolean isPropserShown = false;
+    private boolean isSigningOutInProcess = false;
 
     private NotificationApiViewModel notificationApiViewModel;
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
+    private SignoutApiViewModel signoutApiViewModel;
 
     private BroadcastReceiver NotificationCountReceiver = new BroadcastReceiver() {
         @Override
@@ -155,9 +162,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private void initViewModels() {
         addConnectionApiViewModel = new ViewModelProvider(this).get(AddConnectionApiViewModel.class);
         whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
+        signoutApiViewModel = new ViewModelProvider(this).get(SignoutApiViewModel.class);
 
         attachObserver(addConnectionApiViewModel);
         attachObserver(whoAmIApiViewModel);
+        attachObserver(signoutApiViewModel);
 
         addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -196,11 +205,36 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
-                        AppPaymentCardUtils.handleCardCasesFromWhoAmI(HomeActivity.this, whoAmIApiResponseModel);
+                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
                 }
             }
         });
-        whoAmIApiViewModel.checkWhoAmI();
+        whoAmIApiViewModel.assignWhoAmI();
+
+
+        signoutApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                isSigningOutInProcess = false;
+                if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
+                    appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
+                    startActivity(new Intent(HomeActivity.this, SigninActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                    finish();
+                }
+            }
+        });
+        signoutApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null) {
+                    showToast(errorModel.getMessage());
+                }
+                isSigningOutInProcess = false;
+            }
+        });
+
+
     }
 
     private void checkNotification() {
@@ -402,10 +436,15 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         getMenuInflater().inflate(R.menu.appbar_home_menu, menu);
 
         if (UserType.isUserAssistant()) {
+            optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
             optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
             optionsMenu.findItem(R.id.menu_schedules).setVisible(true);
+        } else if (UserType.isUserPatient()) {
+            optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+            optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
         } else {
-            optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
+            optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+            optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
         }
 
         MenuItem menuItem = menu.findItem(R.id.menu_notification);
@@ -430,8 +469,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             }
         });
 
-        if (UserType.isUserPatient() || UserType.isUserAssistant()) {
+        if (UserType.isUserPatient()) {
             setToolbarTitle(getString(R.string.Doctors));
+        } else if (UserType.isUserAssistant()) {
+            setToolbarTitle(getString(R.string.schedules));
         } else {
             setToolbarTitle(getString(R.string.Patients));
         }
@@ -460,8 +501,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_help:
                 showHelpContent();
                 break;
+            case R.id.menu_overflow:
+                showDoctorsOverflowMenu();
+                break;
             case R.id.menu_pending_invites:
-                showPendingInvites();
+                startActivity(new Intent(this, PendingInvitesActivity.class));
                 break;
             case R.id.menu_notification:
                 showNotificationFragment();
@@ -469,12 +513,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 notificationCount = 0;
                 removeAllNotification();
                 break;
+
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void showPendingInvites() {
-        startActivity(new Intent(this, PendingInvitesActivity.class));
+
+    private void showDoctorsOverflowMenu() {
+        Utils.showDoctorOverflowMenu(this);
     }
 
     private void showNotificationFragment() {
@@ -508,6 +554,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         setDoctorPatientTitle();
         DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
         setFragment(doctorPatientListingFragment);
+
+        /*TransactionListFragment transactionListFragment = new TransactionListFragment();
+        setFragment(transactionListFragment);*/
     }
 
     private void setDoctorPatientTitle() {
@@ -636,6 +685,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Log.e(TAG, "onNavigationItemSelected: ");
+        if (menuItem.getItemId() == R.id.menu_sign_out) {
+            performSignOut();
+            toggleDrawer();
+            return true;
+        }
         if (menuItem.getItemId() != R.id.menu_profile_settings) {
             showPendingInvitesOption(false);
         }
@@ -674,6 +728,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         toggleDrawer();
         return true;
     }
+
+    private void performSignOut() {
+        if (!isSigningOutInProcess && !CallManager.shared.isActiveCallPresent()) {
+            isSigningOutInProcess = true;
+            signoutApiViewModel.signOut();
+        }
+    }
+
 
     private void showMonitoringView(@Nullable String openAutomatically) {
         helpContent = HelpContent.HELP_MONITORING;
@@ -718,8 +780,15 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private void showPendingInvitesOption(boolean visible) {
         if (optionsMenu != null) {
             if (visible) {
-                optionsMenu.findItem(R.id.menu_pending_invites).setVisible(true);
+                if (UserType.isUserPatient()) {
+                    optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
+                } else if (UserType.isUserDoctor()) {
+                    optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
+                }
             } else {
+                optionsMenu.findItem(R.id.menu_overflow).setVisible(false);
                 optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
             }
         }
@@ -808,6 +877,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
+        if(Constants.isRedirectProfileSetting){
+            Intent intent = new Intent(HomeActivity.this, ProfileSettingsActivity.class);
+            this.startActivity(intent);
+        }
         if (isRefreshRequired) {
             attachView();
         }
@@ -935,18 +1008,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         if (requestCode == PermissionConstants.PERMISSION_CAM_MIC) {
             attachView();
-        }
-        if (requestCode == RequestID.REQ_CARD_INFO) {
-            if (resultCode == Activity.RESULT_OK) {
-                startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, true));
-            } else {
-                finishAffinity();
-            }
-        }
-        if (requestCode == RequestID.REQ_CARD_EXPIRE) {
-            if (resultCode == Activity.RESULT_OK) {
-                startActivity(new Intent(this, ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
-            }
         }
 
     }

@@ -26,6 +26,7 @@ import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsDetailBean;
+import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -33,6 +34,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -175,20 +177,30 @@ public class VitalsSendBaseFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 Log.v("VitalsSendBaseFragment", "vitalsApiViewModel error");
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-
-                if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
-                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                String title = getString(R.string.failure);
+                if (!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
+                    sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
+                    PaymentInfo paymentInfo = new PaymentInfo();
+                    paymentInfo.setCCCaptured(errorModel.isCCCaptured());
+                    paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
+                    paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
+                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
                 } else {
-                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
-                }
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
 
-                LocalBroadcastManager
-                        .getInstance(getActivity())
-                        .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                .putExtras(bundle));
+                    if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                    } else {
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
+                    }
+
+                    LocalBroadcastManager
+                            .getInstance(getActivity())
+                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                    .putExtras(bundle));
+                }
             }
         });
     }

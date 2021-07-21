@@ -67,7 +67,7 @@ public class BPTrack extends BaseAdapterObjectModel implements Serializable {
 
     @Override
     public String getAdapterTitle() {
-        return Utils.getStringFromDate(date,"dd MMM yyyy");
+        return Utils.getStringFromDate(date,Utils.defaultDateFormat);
     }
 
     @Override

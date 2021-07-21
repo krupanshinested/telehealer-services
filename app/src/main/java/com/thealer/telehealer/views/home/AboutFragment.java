@@ -318,9 +318,11 @@ public class AboutFragment extends BaseFragment {
                         }
 
                         if (insuranceImageList.isEmpty()) {
+                            insuranceDetailTv.setText(getString(R.string.lbl_payment_method));
                             insuranceImageLl.setVisibility(View.GONE);
                             insuranceCashTv.setVisibility(View.VISIBLE);
                         } else {
+                            insuranceDetailTv.setText(getString(R.string.insurance_details));
                             ImagePreviewViewModel imagePreviewViewModel = new ViewModelProvider(getActivity()).get(ImagePreviewViewModel.class);
                             imagePreviewViewModel.setImageList(insuranceImageList);
 
@@ -417,14 +419,14 @@ public class AboutFragment extends BaseFragment {
                 phoneCv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (UserType.isUserPatient()){
+                        if (UserType.isUserPatient()) {
                             Uri uri = Uri.parse("tel:" + getPhoneNumber());
                             startActivity(new Intent(Intent.ACTION_DIAL, uri));
                         } else {
-                        String phone_number = getPhoneNumber().replaceAll("\\+1","*67");
-                        Uri uri = Uri.parse("tel:" + phone_number);
-                        startActivity(new Intent(Intent.ACTION_DIAL, uri));
-                    }
+                            String phone_number = getPhoneNumber().replaceAll("\\+1", "*67");
+                            Uri uri = Uri.parse("tel:" + phone_number);
+                            startActivity(new Intent(Intent.ACTION_DIAL, uri));
+                        }
                     }
                 });
             } else {

@@ -58,13 +58,13 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestFullScreenMode();
-        Utils.hideKeyboard(this);
-        setContentView(R.layout.activity_content);
         initView();
+        Utils.hideKeyboard(this);
 
     }
 
-    private void initView() {
+    public void initView() {
+        setContentView(R.layout.activity_content);
         icon = findViewById(R.id.icon);
         close_iv = findViewById(R.id.close_iv);
         title_tv = findViewById(R.id.title_tv);
@@ -199,27 +199,46 @@ public class ContentActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent();
         switch (v.getId()) {
             case R.id.close_iv:
-                intent.putExtra(ArgumentKeys.IS_SKIPPED, false);
-                setResult(Activity.RESULT_CANCELED, intent);
-                finish();
+                performCloseClick();
                 break;
             case R.id.action_btn:
-                intent.putExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED, check_box.isChecked());
-                setResult(Activity.RESULT_OK, intent);
-                finish();
+                performActionClick();
                 break;
             case R.id.skip_btn:
-                intent.putExtra(ArgumentKeys.IS_SKIPPED, true);
-                setResult(Activity.RESULT_CANCELED, intent);
-                finish();
+                performSkipClick();
                 break;
             case R.id.help_tv:
-                showStillNeedHelp();
+                performHelpClick();
                 break;
         }
+    }
+
+    public void performCloseClick() {
+        Intent intent = new Intent();
+        intent.putExtra(ArgumentKeys.IS_SKIPPED, false);
+        setResult(Activity.RESULT_CANCELED, intent);
+        finish();
+    }
+
+    public void performActionClick() {
+        Intent intent = new Intent();
+        intent.putExtra(ArgumentKeys.IS_CHECK_BOX_CLICKED, check_box.isChecked());
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+
+    }
+
+    public void performSkipClick() {
+        Intent intent = new Intent();
+        intent.putExtra(ArgumentKeys.IS_SKIPPED, true);
+        setResult(Activity.RESULT_CANCELED, intent);
+        finish();
+    }
+
+    public void performHelpClick() {
+        showStillNeedHelp();
     }
 
     private void showStillNeedHelp() {

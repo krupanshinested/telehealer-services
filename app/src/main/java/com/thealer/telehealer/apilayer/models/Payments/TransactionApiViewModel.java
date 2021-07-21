@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.Payments;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -26,7 +27,7 @@ public class TransactionApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getTransactions()
+                    getAuthApiService().getTransactions(true, 1, Constants.PAGINATION_SIZE)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<TransactionResponse>(Constants.SHOW_PROGRESS) {
                                 @Override

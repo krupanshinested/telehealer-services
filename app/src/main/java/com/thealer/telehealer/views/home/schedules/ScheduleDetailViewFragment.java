@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.schedules;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,6 +37,7 @@ import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiRespon
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.CallManager;
@@ -48,6 +50,7 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.models.PatientInvite;
 import com.thealer.telehealer.common.pubNub.models.Patientinfo;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
@@ -69,7 +72,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * Created by Aswin on 18,December,2018
  */
-public class ScheduleDetailViewFragment extends BaseFragment implements View.OnClickListener{
+public class ScheduleDetailViewFragment extends BaseFragment implements View.OnClickListener {
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
@@ -97,10 +100,11 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private String userGuid = null, doctorGuid = null, doctorName = null;
     private Button waitingRoomBtn;
     private TextView historyLabel;
-    boolean cancelIsClicked=false;
+    boolean cancelIsClicked = false;
     private GuestloginViewModel guestloginViewModel;
     private GuestLoginApiResponseModel guestLoginApiResponseModel;
     private PatientInvite patientInvite;
+    private AskToAddCardViewModel askToAddCardViewModel;
 
     @Override
     public void onAttach(Context context) {
@@ -143,20 +147,36 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
                         guestLoginApiResponseModel = (GuestLoginApiResponseModel) baseApiResponseModel;
                         if (guestLoginApiResponseModel.isSuccess()) {
+                            boolean canViewCardStatus = false;
+                            if (UserType.isUserDoctor())
+                                canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
+                            else
+                                canViewCardStatus = resultBean.getDoctor() != null && resultBean.getDoctor().isCan_view_card_status();
+
+                            if (canViewCardStatus) {
+                                if (!AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info())) {
+                                    Bundle bundle = new Bundle();
+                                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+                                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
+                                    bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+                                    LocalBroadcastManager
+                                            .getInstance(getActivity())
+                                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                                    .putExtras(bundle));
+                                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(ScheduleDetailViewFragment.this, guestLoginApiResponseModel.getPayment_account_info(), null);
+                                    return;
+                                }
+                            }
                             callSuccessDialogBroadcast();
-                            Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(),"", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
-                            patientInvite = new PatientInvite();
-                            patientInvite.setPatientinfo(patientDetails);
-                            patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
-                            patientInvite.setApiKey(guestLoginApiResponseModel.getApiKey());
-                            patientInvite.setToken(guestLoginApiResponseModel.getToken());
+                            createPatientInvite();
 
                         } else {
                             showToast(guestLoginApiResponseModel.getMessage());
                         }
 
                     }
-                }else {
+                } else {
                     Toast.makeText(getActivity(), getString(R.string.failure), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -166,7 +186,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 new Observer<ErrorModel>() {
                     @Override
                     public void onChanged(@Nullable ErrorModel errorModel) {
-                        Log.d("ErrorModel","whoAmIApiViewModel");
+                        Log.d("ErrorModel", "whoAmIApiViewModel");
                         Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
                         intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
@@ -174,7 +194,36 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                     }
                 });
+        askToAddCardViewModel = new ViewModelProvider(this).get(AskToAddCardViewModel.class);
+        attachObserverInterface.attachObserver(askToAddCardViewModel);
+        askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                Utils.showAlertDialog(getContext(), getString(R.string.app_name),
+                        errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                        null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+            }
+        });
+    }
 
+    private void createPatientInvite() {
+        Patientinfo patientDetails = new Patientinfo(UserDetailPreferenceManager.getPhone(), UserDetailPreferenceManager.getEmail(), "", UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_guid(), guestLoginApiResponseModel.getApiKey(), guestLoginApiResponseModel.getSessionId(), guestLoginApiResponseModel.getToken(), false);
+        patientDetails.setHasValidCard(AppPaymentCardUtils.hasValidPaymentCard(guestLoginApiResponseModel.getPayment_account_info()));
+        patientInvite = new PatientInvite();
+        patientInvite.setPatientinfo(patientDetails);
+        patientInvite.setDoctorDetails(guestLoginApiResponseModel.getDoctor_details());
+        patientInvite.setApiKey(guestLoginApiResponseModel.getApiKey());
+        patientInvite.setToken(guestLoginApiResponseModel.getToken());
     }
 
     @Nullable
@@ -254,7 +303,6 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         waitingRoomBtn.setVisibility(View.GONE);
 
 
-
         if (getArguments() != null) {
             resultBean = (SchedulesApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SCHEDULE_DETAIL);
 
@@ -289,7 +337,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
-                cancelIsClicked=false;
+                cancelIsClicked = false;
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.cancel_tv:
@@ -297,7 +345,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                cancelIsClicked=true;
+                                cancelIsClicked = true;
                                 dialog.dismiss();
                                 schedulesApiViewModel.deleteSchedule(resultBean.getSchedule_id(), resultBean.getStart(), resultBean.getScheduled_by_user().getUser_guid(), doctorGuid, true);
                             }
@@ -316,32 +364,44 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
             case R.id.patient_call_iv:
 
                 ArrayList<String> callTypes = new ArrayList<>();
-                if (resultBean.getDoctor().getApp_details() != null){
-                    if (!resultBean.getDoctor().getApp_details().isWebUser()){
+                if (resultBean.getDoctor().getApp_details() != null) {
+                    if (!resultBean.getDoctor().getApp_details().isWebUser()) {
                         callTypes.add(getString(R.string.audio_call));
                         callTypes.add(getString(R.string.video_call));
                     }
-            }
+                }
                 callTypes.add(getString(R.string.one_way_call));
+                if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPatient().getPayment_account_info())) {
+                    if (UserType.isUserDoctor()) {
+                        if (UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status()) {
+                            callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+                        }
+                    } else if (UserType.isUserAssistant()) {
+                        if (resultBean.getDoctor().isCan_view_card_status()) {
+                            callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+                        }
+                    }
+                }
+
                 ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
                     @Override
                     public void didSelectedItem(int position) {
 
                         String callType;
-                        switch (position) {
-                            case 0:
-                                callType = OpenTokConstants.audio;
-                                break;
-                            case 1:
-                                callType = OpenTokConstants.video;
-                                break;
-                            default:
-                                callType = OpenTokConstants.oneWay;
-                                break;
+                        if (getString(R.string.audio_call).equals(callTypes.get(position))) {
+                            callType = OpenTokConstants.audio;
+                        } else if (getString(R.string.video_call).equals(callTypes.get(position))) {
+                            callType = OpenTokConstants.video;
+                        } else if (getString(R.string.lbl_ask_to_add_credit_card).equals(callTypes.get(position))) {
+                            askToAddCardViewModel.askToAddCard(resultBean.getPatient().getUser_guid(), doctorGuid);
+                            return;
+                        } else {
+                            callType = OpenTokConstants.oneWay;
                         }
 
+
                         CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
-                                resultBean.getPatient().getUser_guid(), resultBean.getPatient(), doctorGuid, doctorName, String.valueOf(resultBean.getSchedule_id()), callType,true,String.valueOf(resultBean.getSchedule_id()));
+                                resultBean.getPatient().getUser_guid(), resultBean.getPatient(), doctorGuid, doctorName, String.valueOf(resultBean.getSchedule_id()), callType, true, String.valueOf(resultBean.getSchedule_id()));
 
                         Intent intent = new Intent(getActivity(), CallPlacingActivity.class);
                         intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
@@ -364,9 +424,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                showDialog();
-                                Log.d("doctorGuid",""+resultBean.getDoctor().getUser_guid());
-                                guestloginViewModel.registerUserEnterWatingRoom(resultBean.getDoctor().getUser_guid());
+                                proceedForWaitingRoom();
                             }
                         }, new DialogInterface.OnClickListener() {
                             @Override
@@ -378,17 +436,22 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         }
     }
 
+    private void proceedForWaitingRoom() {
+        showDialog();
+        guestloginViewModel.registerUserEnterWatingRoom(resultBean.getDoctor().getUser_guid());
+    }
+
     public void scheduleDetails(BaseApiResponseModel baseApiResponseModel) {
-        SchedulesApiResponseModel.ResultBean resultBean=(SchedulesApiResponseModel.ResultBean) baseApiResponseModel;
-         Log.d("Received_schedule",""+resultBean.getSchedule_id());
+        SchedulesApiResponseModel.ResultBean resultBean = (SchedulesApiResponseModel.ResultBean) baseApiResponseModel;
+        Log.d("Received_schedule", "" + resultBean.getSchedule_id());
         if (resultBean != null) {
             userGuid = resultBean.getPatient().getUser_guid();
 
             if (UserType.isUserPatient() && resultBean.isStartAndEndBetweenCurrentTime()) {
-                Log.d("waitingRoomEnable","True");
+                Log.d("waitingRoomEnable", "True");
                 waitingRoomBtn.setVisibility(View.VISIBLE);
-            }else
-                Log.d("waitingRoomEnable","False");
+            } else
+                Log.d("waitingRoomEnable", "False");
 
             String statusInfo = getString(R.string.patient_has_been_updated);
             String detail = "";
@@ -507,18 +570,22 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("requestCode",""+requestCode);
+        Log.d("requestCode", "" + requestCode);
         switch (requestCode) {
             case PermissionConstants.PERMISSION_CAM_MIC:
+            case RequestID.REQ_SHOW_SUCCESS_VIEW:
                 if (resultCode == RESULT_OK) {
                     goToWaitingScreen();
                 }
                 break;
-            case  RequestID.REQ_SHOW_SUCCESS_VIEW:
-                if (resultCode == RESULT_OK) {
+            case RequestID.REQ_CARD_INFO:
+            case RequestID.REQ_CARD_EXPIRE:
+                if (UserType.isUserPatient()) {
+                    createPatientInvite();
                     goToWaitingScreen();
                 }
                 break;
+
         }
     }
 }

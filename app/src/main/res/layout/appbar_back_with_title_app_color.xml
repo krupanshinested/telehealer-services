@@ -5,6 +5,7 @@
     android:id="@+id/appbar_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    app:elevation="0dp"
     android:background="@drawable/app_background_gradient">
 
     <androidx.appcompat.widget.Toolbar

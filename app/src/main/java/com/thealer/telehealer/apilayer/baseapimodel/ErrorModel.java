@@ -25,6 +25,9 @@ public class ErrorModel {
     @SerializedName("is_cc_captured")
     private boolean isCCCaptured;
 
+    @SerializedName("display_button")
+    private boolean isDisplayButton;
+
     @SerializedName("is_default_card_valid")
     private boolean isDefaultCardValid;
 
@@ -35,6 +38,14 @@ public class ErrorModel {
         this.code = code;
         this.message = message;
         this.data = data;
+    }
+
+    public boolean isDisplayButton() {
+        return isDisplayButton;
+    }
+
+    public void setDisplayButton(boolean displayButton) {
+        isDisplayButton = displayButton;
     }
 
     public int getCode() {

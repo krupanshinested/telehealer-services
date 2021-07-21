@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.text.Editable;
 import android.text.Html;
+import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -75,6 +76,9 @@ import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.OptionsSelectionAdapter;
 import com.thealer.telehealer.views.home.HomeActivity;
+import com.thealer.telehealer.views.home.broadcastMessages.BroadcastMessagesActivity;
+import com.thealer.telehealer.views.home.broadcastMessages.ChoosePatientActivity;
+import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
@@ -122,6 +126,7 @@ public class Utils {
     public static final String yyyy_mm_dd = "yyyy-MM-dd";
     public static final String mmm_dd = "MMM dd";
     public static final String mmm_yyyy = "MMM yyyy";
+    public static final String dd_mmm_yyyy_hh_mm_a = "dd MMM, yyyy | hh:mm a";
     public static String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     private static FancyShowCaseView fancyShowCaseView;
@@ -160,7 +165,7 @@ public class Utils {
         vibrator.vibrate(50);
     }
 
-    public static Dialog showDatePickerDialog(FragmentActivity activity, Calendar minCalendar, int type, DatePickerDialog.OnDateSetListener dateSetListener) {
+    public static Dialog showDatePickerDialog(Context activity, Calendar minCalendar, int type, DatePickerDialog.OnDateSetListener dateSetListener) {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
@@ -673,6 +678,66 @@ public class Utils {
         return dialog;
     }
 
+    public static Dialog showAlertDialogWithClose(Context context, String title, String message,
+                                                  @Nullable String leftTitle,
+                                                  @Nullable String rightTitle,
+                                                  Runnable leftListener,
+                                                  Runnable rightListener,
+                                                  Runnable closeListener) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.custom_dailog_with_close, null);
+        builder.setView(view);
+        Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(context.getDrawable(android.R.drawable.screen_background_dark_transparent));
+
+        TextView titleTv, messageTv, leftTv, rightTv;
+        ImageView closeIv;
+
+        titleTv = (TextView) view.findViewById(R.id.title_tv);
+        messageTv = (TextView) view.findViewById(R.id.message_tv);
+        leftTv = (TextView) view.findViewById(R.id.left_tv);
+        rightTv = (TextView) view.findViewById(R.id.right_tv);
+        closeIv = (ImageView) view.findViewById(R.id.close_iv);
+
+        titleTv.setText(title);
+        messageTv.setText(message);
+        leftTv.setText(leftTitle);
+        rightTv.setText(rightTitle);
+
+        leftTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (leftListener != null)
+                    leftListener.run();
+
+                dialog.dismiss();
+            }
+        });
+
+        rightTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rightListener != null)
+                    rightListener.run();
+
+                dialog.dismiss();
+            }
+        });
+        closeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(closeListener!=null)
+                    closeListener.run();
+
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+        return dialog;
+    }
+
     public static String getAppType() {
         if (TeleHealerApplication.appPreference.getInt(Constants.USER_TYPE) == Constants.TYPE_PATIENT) {
             return Constants.BUILD_PATIENT;
@@ -751,7 +816,7 @@ public class Utils {
     public static String getFormatedDateTime(String created_at) {
         DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         dateFormat.setTimeZone(UtcTimezone);
-        DateFormat returnFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm aa", Locale.ENGLISH);
+        DateFormat returnFormat = new SimpleDateFormat("dd MMM, yyyy hh:mm aa", Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
             return returnFormat.format(dateFormat.parse(created_at));
@@ -773,6 +838,18 @@ public class Utils {
         }
         return "";
     }
+
+    public static String getFormattedDateWithoutTimeZone(String created_at, String format) {
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
+        DateFormat returnFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+        try {
+            return returnFormat.format(dateFormat.parse(created_at));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
     public static void hideKeyboard(Activity activity) {
         try {
@@ -923,6 +1000,18 @@ public class Utils {
         return calendar;
     }
 
+    public static Calendar getCalendarWithoutUTC(String timeStamp) {
+        Calendar calendar = Calendar.getInstance();
+        DateFormat inputFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
+        try {
+            calendar.setTime(inputFormat.parse(timeStamp));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return calendar;
+    }
+
     public static String serialize(Object object) throws IOException {
         Gson gson = new Gson();
         String json = gson.toJson(object);
@@ -935,6 +1024,12 @@ public class Utils {
     }
 
     public static void showUserInputDialog(@NonNull Context context, @Nullable String title, @Nullable String message, @Nullable String editTextHint, @Nullable String positiveText, @Nullable String negativeText,
+                                           @Nullable CustomDialogClickListener positiveClickListener, @Nullable CustomDialogClickListener negativeClickListener) {
+
+        showUserInputDialog(context, title, message, editTextHint, positiveText, negativeText, InputType.TYPE_CLASS_TEXT, positiveClickListener, negativeClickListener);
+    }
+
+    public static void showUserInputDialog(@NonNull Context context, @Nullable String title, @Nullable String message, @Nullable String editTextHint, @Nullable String positiveText, @Nullable String negativeText, int inputType,
                                            @Nullable CustomDialogClickListener positiveClickListener, @Nullable CustomDialogClickListener negativeClickListener) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -953,6 +1048,7 @@ public class Utils {
         cancelTv = (TextView) view.findViewById(R.id.cancel_tv);
         doneTv = (TextView) view.findViewById(R.id.done_tv);
         inputLl = (LinearLayout) view.findViewById(R.id.input_ll);
+        inputEt.setInputType(inputType);
 
         inputEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -1414,10 +1510,16 @@ public class Utils {
 
         TextView inviteManuallyTv;
         TextView inviteContactsTv;
+        TextView broadcastAllTv;
+        View broadcastView;
         CardView cancelCv;
 
         inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
+        broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
+        broadcastView = (View) alertView.findViewById(R.id.broadcast_view);
+        broadcastView.setVisibility(View.GONE);
+        broadcastAllTv.setVisibility(View.GONE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
 
         inviteManuallyTv.setOnClickListener(new View.OnClickListener() {
@@ -1443,6 +1545,82 @@ public class Utils {
                 context.startActivity(intent);
             }
         });
+
+        cancelCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            alertDialog.getWindow().setGravity(Gravity.BOTTOM);
+        }
+        alertDialog.show();
+    }
+
+    public static void showDoctorOverflowMenu(FragmentActivity context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View alertView = LayoutInflater.from(context).inflate(R.layout.view_invite_alert, null);
+        builder.setView(alertView);
+
+        AlertDialog alertDialog = builder.create();
+
+        TextView pendingInvitesTv;
+        TextView broadCastMessageTv;
+        TextView broadcastAllTv;
+        View broadcastView;
+        CardView cancelCv;
+
+        pendingInvitesTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
+        broadCastMessageTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
+        broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
+        broadcastView = (View) alertView.findViewById(R.id.broadcast_view);
+        broadcastView.setVisibility(View.GONE);
+        broadcastAllTv.setVisibility(View.GONE);
+
+        pendingInvitesTv.setText(R.string.pending_invites);
+        broadCastMessageTv.setText(R.string.broadcast_messages);
+        broadcastAllTv.setText(R.string.broadcast_messages_all);
+        broadCastMessageTv.setVisibility(View.VISIBLE);
+        broadcastView.setVisibility(View.VISIBLE);
+        broadcastAllTv.setVisibility(View.VISIBLE);
+        cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
+            broadCastMessageTv.setVisibility(View.GONE);
+            broadcastView.setVisibility(View.GONE);
+            broadcastAllTv.setVisibility(View.GONE);
+        }
+
+        pendingInvitesTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                context.startActivity(new Intent(context, PendingInvitesActivity.class));
+
+            }
+        });
+
+        //allow physician to send broadcast message to all his selected patient
+        broadCastMessageTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                context.startActivity(new Intent(context, ChoosePatientActivity.class));
+            }
+        });
+
+        //allow physician to send broadcast message to all his Patient
+        broadcastAllTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                context.startActivity(new Intent(context, BroadcastMessagesActivity.class));
+            }
+        });
+
 
         cancelCv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1632,6 +1810,10 @@ public class Utils {
         builder.show();
     }
 
+    public static String getFormattedCurrency(double amount) {
+        return String.format("$%.2f", amount);
+    }
+
     public interface OnMultipleChoiceInterface {
         void onSelected(boolean[] selectedList);
     }
@@ -1710,4 +1892,19 @@ public class Utils {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
+
+    public static String getUTCDateFromCalendar(Calendar calendar) {
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat(UTCFormat, Locale.getDefault());
+        simpleDateFormat.setTimeZone(UtcTimezone);
+        return simpleDateFormat.format(calendar.getTimeInMillis());
+    }
+
+    public static String getDateFromCalendar(Calendar calendar) {
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat(UTCFormat, Locale.getDefault());
+        return simpleDateFormat.format(calendar.getTimeInMillis());
+    }
+
+
 }

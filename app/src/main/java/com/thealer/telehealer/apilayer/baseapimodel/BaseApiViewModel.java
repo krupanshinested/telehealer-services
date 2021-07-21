@@ -1,18 +1,23 @@
 package com.thealer.telehealer.apilayer.baseapimodel;
 
+import android.app.Activity;
 import android.app.Application;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.auth0.android.jwt.JWT;
 import com.google.gson.Gson;
@@ -24,13 +29,15 @@ import com.thealer.telehealer.apilayer.manager.helper.NoConnectivityException;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
+import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.common.AppUpdateActivity;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
@@ -39,7 +46,6 @@ import com.thealer.telehealer.views.signin.SigninActivity;
 
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -117,8 +123,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     Log.e(TAG, "run: auth empty");
                     baseViewInterface.onStatus(true);
                 } else {
-                    Log.e(TAG, "run: auth not empty");
-                    JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+
 
                     /**
                      * if auth token expired
@@ -136,40 +141,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                      *          proceed api call
                      */
 
-                    if (isAuthExpired()) {
-                        Log.e(TAG, "run: auth expired");
-                        baseViewInterfaceList.add(baseViewInterface);
-                        if (!isQuickLoginReceiverEnabled) {
-                            Log.e(TAG, "run: show quick login " + appPreference.getInt(Constants.QUICK_LOGIN_TYPE));
-                            isQuickLoginReceiverEnabled = true;
-                            if (appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == Constants.QUICK_LOGIN_TYPE_NONE ||
-                                    appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == Constants.QUICK_LOGIN_TYPE_PASSWORD) {
-                                isQuickLoginReceiverEnabled = false;
-                                goToSigninActivity();
-                            } else {
-                                if (!Utils.isInternetEnabled(application)){
-                                    updateListnerStatus();
-                                    isLoadingLiveData.setValue(false);
-                                    errorModelLiveData.setValue(new ErrorModel(NETWORK_ERROR_CODE, "No Internet connection", "No Internet connection"));
-                                }else {
-                                    getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(),
-                                            QuickLoginActivity.class)
-                                            .putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true)
-                                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                                }
-                            }
-                        }
-                    } else {
-                        if (jwt.isExpired(30 * 60)) {
-                            Log.e(TAG, "run: 30 min");
-                            baseViewInterfaceList.add(baseViewInterface);
-                            isQuickLoginReceiverEnabled = true;
-                            makeRefreshTokenApiCall();
-                        } else {
-                            Log.e(TAG, "run: not 30 min");
-                            baseViewInterface.onStatus(true);
-                        }
-                    }
+                    baseViewInterfaceList.add(baseViewInterface);
+                    baseViewInterface.onStatus(true);
                     Log.e(TAG, "run: list size " + baseViewInterfaceList.size());
 
                 }
@@ -180,22 +153,38 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     }
 
-    public static Boolean isAuthExpired() {
-        try {
-            JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
-            Date date = new Date();
-            return date.compareTo(jwt.getExpiresAt()) >= 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return true;
+    private void handleUnAuth() {
+        isRefreshToken = false;
+        if (!isQuickLoginReceiverEnabled) {
+            Log.e(TAG, "run: show quick login " + appPreference.getInt(Constants.QUICK_LOGIN_TYPE));
+            isQuickLoginReceiverEnabled = true;
+            if (appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == Constants.QUICK_LOGIN_TYPE_NONE ||
+                    appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == Constants.QUICK_LOGIN_TYPE_PASSWORD) {
+                isQuickLoginReceiverEnabled = false;
+                goToSigninActivity();
+            } else {
+                if (!Utils.isInternetEnabled(application)) {
+                    updateListnerStatus();
+                    isLoadingLiveData.setValue(false);
+                    errorModelLiveData.setValue(new ErrorModel(NETWORK_ERROR_CODE, "No Internet connection", "No Internet connection"));
+                } else {
+                    getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(),
+                            QuickLoginActivity.class)
+                            .putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true)
+                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                }
+            }
+        } else {
+            goToSigninActivity();
         }
     }
+
 
     private void makeRefreshTokenApiCall() {
         Log.e(TAG, "makeRefreshTokenApiCall: api called");
         isRefreshToken = true;
         getAuthApiService()
-                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN),false, BuildConfig.VERSION_NAME)
+                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), false, BuildConfig.VERSION_NAME,true)
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                     @Override
@@ -409,20 +398,30 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
                 errorModel.setStatusCode(httpException.code());
                 errorModel.setResponse(response);
-
+                boolean isE401 = false;
                 switch (httpException.code()) {
-                    case 400:
-                        errorModelLiveData.setValue(errorModel);
-                        break;
+                    case 400: {
+                            errorModelLiveData.setValue(errorModel);
+                    }
+                    break;
                     case 401:
                         //If server returns 401 then it means, the auth token whatever used for the api call is invalid,
                         // so we need to loggout the user and put to login screen
-                        errorModelLiveData.setValue(errorModel);
-                        goToSigninActivity();
+                        isE401 = true;
+                        if (!isRefreshToken) {
+                            isQuickLoginReceiverEnabled = true;
+                            makeRefreshTokenApiCall();
+                        } else {
+                            handleUnAuth();
+                            errorModelLiveData.setValue(errorModel);
+                        }
+
+
                         break;
                     case 403:
                         errorModelLiveData.setValue(errorModel);
                         if (isRefreshToken) {
+                            baseViewInterfaceList.clear();
                             goToSigninActivity();
                         }
                         break;
@@ -436,19 +435,22 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         //if client is using the old version that time server will return this error code,need to present the App update
                         // controller screen.
                         getApplication().startActivity(new Intent(getApplication(), AppUpdateActivity.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra(AppUpdateActivity.EXTRA_IS_HARD_UPDATE, true));
                         break;
                     default:
                         errorModelLiveData.setValue(errorModel);
                         break;
                 }
-
-                isLoadingLiveData.setValue(false);
+                if (!isE401)
+                    isLoadingLiveData.setValue(false);
 
             } catch (Exception e1) {
                 e1.printStackTrace();
                 isLoadingLiveData.setValue(false);
-                errorModelLiveData.setValue(new ErrorModel(-1, e1.getMessage(), e1.getMessage()));
+                if (e1 instanceof HttpException)
+                    errorModelLiveData.setValue(new ErrorModel(-1, e1.getMessage(), e1.getMessage()));
+                else
+                    errorModelLiveData.setValue(new ErrorModel(-1, getApplication().getString(R.string.something_went_wrong_try_again), getApplication().getString(R.string.something_went_wrong_try_again)));
             }
         } else if (e instanceof UnknownHostException) {
             isLoadingLiveData.setValue(false);
@@ -457,32 +459,43 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             isLoadingLiveData.setValue(false);
             errorModelLiveData.setValue(new ErrorModel(-1, e.getMessage(), e.getMessage()));
         }
-
-        isRefreshToken = false;
-        isQuickLoginReceiverEnabled = false;
+//        isQuickLoginReceiverEnabled = false;
 
     }
 
+    public static Boolean isAuthExpired() {
+        try {
+            JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+            Date date = new Date();
+            return date.compareTo(jwt.getExpiresAt()) >= 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
     private void goToSigninActivity() {
-        UserDetailPreferenceManager.invalidateUser();
+        if (baseViewInterfaceList.size() != 0) {
+            baseViewInterfaceList.clear();
+            UserDetailPreferenceManager.invalidateUser();
+            PubnubUtil.shared.unsubscribe();
 
-        PubnubUtil.shared.unsubscribe();
+            EventRecorder.updateUserId(null);
 
-        EventRecorder.updateUserId(null);
-
-        getApplication().startActivity(new Intent(getApplication(), SigninActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            getApplication().startActivity(new Intent(getApplication(), SigninActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        }
     }
 
     public MultipartBody.Part getMultipartFile(String name, String image_path) {
         if (image_path != null) {
             try {
                 File file = new File(image_path);
-                Log.e(TAG, "getMultipartFile: "+file.length() + " " + getReadableFileSize(file.length()) );
+                Log.e(TAG, "getMultipartFile: " + file.length() + " " + getReadableFileSize(file.length()));
 
                 file = getCompressedFile(file);
 
-                Log.e(TAG, "endFile: "+file.length()+" "+ getReadableFileSize(file.length()) );
+                Log.e(TAG, "endFile: " + file.length() + " " + getReadableFileSize(file.length()));
 
                 return MultipartBody.Part.createFormData(name, file.getName(),
                         RequestBody.create(MediaType.parse("image/*"), file));
@@ -506,7 +519,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     public File getCompressedFile(File actualFile) {
         long fileMaxSize = 2000000; // 2MB
 
-        if (actualFile.length() <= fileMaxSize){
+        if (actualFile.length() <= fileMaxSize) {
             return actualFile;
         }
 
@@ -514,25 +527,25 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         int actualWidth = bitmap.getWidth();
         int actualHeight = bitmap.getHeight();
         double startPoint = 1;
-        Log.e(TAG, "getCompressedFile: "+ bitmap.getWidth() +" "+ bitmap.getHeight());
+        Log.e(TAG, "getCompressedFile: " + bitmap.getWidth() + " " + bitmap.getHeight());
 
         try {
             File file = null;
 
-            while (startPoint > 0.1){
+            while (startPoint > 0.1) {
                 startPoint = startPoint - 0.1;
                 int compressWidth = (int) (actualWidth * startPoint);
                 int compressHeight = (int) (actualHeight * startPoint);
 
-                Log.e(TAG, "getCompressedFile: "+ startPoint + " "+ compressWidth + " "+ compressHeight );
+                Log.e(TAG, "getCompressedFile: " + startPoint + " " + compressWidth + " " + compressHeight);
 
                 file = new Compressor(getApplication())
                         .setMaxWidth(compressWidth)
                         .setMaxHeight(compressHeight)
                         .compressToFile(actualFile);
 
-                Log.e(TAG, "compressed file: "+file.length()+ " "+ getReadableFileSize(file.length()));
-                if (file.length() <= fileMaxSize){
+                Log.e(TAG, "compressed file: " + file.length() + " " + getReadableFileSize(file.length()));
+                if (file.length() <= fileMaxSize) {
                     return file;
                 }
 

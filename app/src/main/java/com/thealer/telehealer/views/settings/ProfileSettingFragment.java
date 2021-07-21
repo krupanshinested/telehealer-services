@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +27,6 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
-import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import config.AppConfig;
@@ -47,8 +44,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     private OnViewChangeInterface onViewChangeInterface;
 
     private ProfileCellView profile, medical_history, settings, email_id,
-            phone_number, change_password,checkCallQuality, logs,
-            feedback, terms_and_condition, privacy_policy, payments_billings,educational_video;
+            phone_number, change_password, checkCallQuality, logs,
+            feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments;
     private View signOut;
 
     private ProfileUpdate profileUpdate;
@@ -93,7 +90,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
             Toast.makeText(getActivity(), getString(R.string.live_call_going_error), Toast.LENGTH_LONG).show();
             return;
         }
-            settingClickListener.didSelecteItem(view.getId());
+        settingClickListener.didSelecteItem(view.getId());
     }
 
     private void initView(View baseView) {
@@ -110,7 +107,9 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         terms_and_condition = baseView.findViewById(R.id.terms_and_condition);
         privacy_policy = baseView.findViewById(R.id.privacy_policy);
         signOut = baseView.findViewById(R.id.signOut);
-        payments_billings = baseView.findViewById(R.id.payments_billings);
+        add_card = baseView.findViewById(R.id.add_card);
+        telehealer_billings = baseView.findViewById(R.id.telehealer_billings);
+        patient_payments = baseView.findViewById(R.id.patient_payments);
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
@@ -164,38 +163,60 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         terms_and_condition.setOnClickListener(this);
         privacy_policy.setOnClickListener(this);
         signOut.setOnClickListener(this);
-        payments_billings.setOnClickListener(this);
+        add_card.setOnClickListener(this);
+        telehealer_billings.setOnClickListener(this);
         medicalAssistantLl.setOnClickListener(this);
+        patient_payments.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
         phone_number.updateValue(UserDetailPreferenceManager.getPhone());
 
         switch (appPreference.getInt(Constants.USER_TYPE)) {
             case Constants.TYPE_PATIENT:
-                payments_billings.setVisibility(View.GONE);
+                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
+                    billLl.setVisibility(View.VISIBLE);
+                    telehealer_billings.setVisibility(View.GONE);
+                    patient_payments.setVisibility(View.VISIBLE);
+                    patient_payments.updateTitle(getString(R.string.lbl_charges));
+                    add_card.setVisibility(View.GONE);
+                } else {
+                    patient_payments.setVisibility(View.GONE);
+                }
                 documents.setVisibility(View.VISIBLE);
                 medicalAssistant.setVisibility(View.GONE);
                 educational_video.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
                 medical_history.setVisibility(View.GONE);
-                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
-                    payments_billings.setVisibility(View.VISIBLE);
-                else {
-                    payments_billings.setVisibility(View.GONE);
+                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
+                    billLl.setVisibility(View.VISIBLE);
+                    telehealer_billings.setVisibility(View.VISIBLE);
+                    telehealer_billings.hideSplitter(false);
+                    add_card.setVisibility(View.VISIBLE);
+                    add_card.hideSplitter(false);
+                    patient_payments.setVisibility(View.VISIBLE);
+                } else {
+                    billLl.setVisibility(View.GONE);
                 }
                 medicalAssistantLl.setVisibility(View.VISIBLE);
-                billLl.setVisibility(View.VISIBLE);
                 educational_video.setVisibility(View.VISIBLE);
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
                 medicalAssistantLl.setVisibility(View.GONE);
-                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT))
-                    payments_billings.setVisibility(View.VISIBLE);
-                else {
-                    payments_billings.setVisibility(View.GONE);
+                if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
+                    billLl.setVisibility(View.VISIBLE);
+                    telehealer_billings.setVisibility(View.GONE);
+                    add_card.hideSplitter(false);
+                    add_card.setVisibility(View.GONE);
+                    patient_payments.setVisibility(View.VISIBLE);
+                } else {
+                    billLl.setVisibility(View.GONE);
                 }
                 break;
+        }
+        if(Constants.isRedirectProfileSetting){
+            Constants.isRedirectProfileSetting=false;
+            settings.performClick();
         }
     }
 }

@@ -136,6 +136,8 @@ public class EmptyStateUtil {
                 return context.getString(R.string.no_educational_video);
             case EmptyViewConstants.EMPTY_WAITING_ROOM:
                 return context.getString(R.string.EMPTY_PATIENT_TITLE);
+            case EmptyViewConstants.EMPTY_TRANSACTIONS:
+                return context.getString(R.string.EMPTY_TRANSACTIONS);
             default:
                 return null;
         }
@@ -365,6 +367,7 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_STETHOSCOPE_WITH_BTN:
                 return R.drawable.emptystate_no_vitals;
             case EmptyViewConstants.EMPTY_PAYMENTS:
+            case EmptyViewConstants.EMPTY_TRANSACTIONS:
                 return R.drawable.emptystate_credit_card;
             case EmptyViewConstants.EMPTY_CARDS:
                 return R.drawable.emptystate_credit_card;

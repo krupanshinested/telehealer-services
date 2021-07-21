@@ -215,7 +215,7 @@ public class QuickLoginPinFragment extends BaseFragment {
 
     private void showErrorDialog(String pin) {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-        alertDialog.setTitle(getString(R.string.error));
+        alertDialog.setTitle(getString(R.string.app_name));
         alertDialog.setMessage(pin);
         alertDialog.setButton(Dialog.BUTTON_POSITIVE,
                 "OK",

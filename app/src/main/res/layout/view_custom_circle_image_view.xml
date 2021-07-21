@@ -36,7 +36,7 @@
                     android:src="@drawable/profile_placeholder"
                     app:civ_border_color="@android:color/darker_gray"
                     app:civ_border_width="1dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/accept_btn"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,11 +65,35 @@
                 <TextView
                     android:id="@+id/list_sub_title_tv"
                     style="@style/card_sub_title_text"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/accept_btn"
                     app:layout_constraintEnd_toEndOf="@id/list_title_tv"
                     app:layout_constraintStart_toStartOf="@id/list_title_tv"
                     app:layout_constraintTop_toBottomOf="@id/list_title_tv"
                     tools:text="@string/dummy_text" />
+
+
+                <com.thealer.telehealer.common.CustomButton
+                    android:id="@+id/accept_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:paddingStart="30dp"
+                    android:paddingTop="0dp"
+                    android:paddingEnd="30dp"
+                    android:paddingBottom="0dp"
+                    android:text="@string/lbl_add_fees"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:app_gradient="true"
+                    app:corner_radius="25dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="@id/list_title_tv"
+                    app:layout_constraintTop_toBottomOf="@id/avatar_civ"
+                    app:text_color="@color/colorWhite"
+                    tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -90,11 +114,23 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
+
+                    <ImageView
+                        android:id="@+id/card_iv"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_card_enabled"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
                     <ImageView
                         android:id="@+id/action_iv"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:visibility="gone" />
+                        android:src="@drawable/gender_male"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <CheckBox
                         android:id="@+id/checkbox"
@@ -120,6 +156,7 @@
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
 
     <View
         android:id="@+id/bottom_view"

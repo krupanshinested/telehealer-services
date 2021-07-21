@@ -109,7 +109,6 @@ public class CustomRecyclerView extends ConstraintLayout {
                 new Observer<ErrorModel>() {
                     @Override
                     public void onChanged(@Nullable ErrorModel errorModel) {
-                        Log.e("aswin crv", "onChanged: ");
                         swipeLayout.setRefreshing(false);
                         if (errorModel != null) {
                             showNetworkEmptyState(errorModel.getCode());
