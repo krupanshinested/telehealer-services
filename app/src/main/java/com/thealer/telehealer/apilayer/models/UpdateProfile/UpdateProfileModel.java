@@ -78,7 +78,7 @@ public class UpdateProfileModel extends BaseApiViewModel {
 
                     List<LicensesBean> licensesBeans = createUserRequestModel.getUser_detail().getData().getLicenses();
                     for (LicensesBean licensesBean : licensesBeans) {
-                        Date endDate = Utils.getDateFromString(licensesBean.getEnd_date(), "dd MMM, yyyy");
+                        Date endDate = Utils.getDateFromString(licensesBean.getEnd_date(), Utils.defaultDateFormat);
                         if (endDate != null) {
                             licensesBean.setEnd_date(Utils.getStringFromDate(endDate, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
                         }

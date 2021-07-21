@@ -201,6 +201,8 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 break;
             case APNSPayload.newUserEnteredWaitingRoom:
             case APNSPayload.creditCardExpired:
+            case APNSPayload.creditCardRequested:
+            case APNSPayload.charge:
                 Utils.createNotificationTop(data, new Intent(this, HomeActivity.class));
                 break;
             case APNSPayload.kickOutwaitingRoom:

@@ -25,12 +25,15 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
     <application
         android:name=".TeleHealerApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
@@ -38,7 +41,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup">
+        <activity android:name=".views.home.broadcastMessages.ChoosePatientActivity"/>
+        <activity
+            android:name=".views.home.broadcastMessages.BroadcastMessagesActivity"
+            android:label="@string/title_activity_broadcast_messages" />
         <activity android:name=".views.guestlogin.screens.PatientWaitingRoom" />
         <activity android:name=".views.guestlogin.screens.GuestUserSignupActivity" />
         <activity
@@ -113,7 +121,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.common.ContentActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".views.call.CallMessageActivity"
             android:screenOrientation="portrait" />
@@ -200,6 +209,24 @@
         <activity
             android:name=".views.settings.accessLogs.AccessLogActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.transaction.AddChargeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".stripe.PaymentContentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Transparent"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".views.transaction.TransactionFilterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".common.fragmentcontainer.FragmentContainerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.transaction.TransactionDetailsActivity"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
@@ -229,11 +256,9 @@
         <service
             android:name=".common.OpenTok.CallMinimizeService"
             android:exported="false" />
-
         <service
             android:name=".common.OpenTok.CallNotificationService"
             android:exported="false" />
-
         <service
             android:name=".views.guestlogin.WaitingRoomHearBeatService"
             android:enabled="true"

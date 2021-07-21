@@ -24,7 +24,7 @@ public class VitalsCreateApiModel extends BaseApiViewModel {
                 if (status){
                     getAuthApiService().createVital(createVitalApiRequestModel, doctorGuid)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                                     Log.v("VitalsCreateApiModel","onSuccess");

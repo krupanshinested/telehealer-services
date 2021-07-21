@@ -259,7 +259,50 @@
         <item name="colorPrimary">@color/app_gradient_start</item>
         <item name="colorPrimaryDark">@color/app_status_bar_color1</item>
         <item name="colorAccent">@color/app_status_bar_color1</item>
-        <item name="colorControlNormal">@color/app_status_bar_color1</item>
+            <item name="colorControlNormal">@color/app_status_bar_color1</item>
         <item name="titleTextColor">@color/colorWhite</item>
+    </style>
+
+    <style name="AddChargeEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:background">@drawable/border_black</item>
+        <item name="android:inputType">number</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:textColorHint">@color/colorBlack_50</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TransactionRowLbl">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="TransactionRowValue">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="singleLine">true</item>
+        <item name="maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">end</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+
+    <style name="TransactionRowValue.Details">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">end</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+
+    <style name="TransactionListRow">
+        <item name="android:padding">5dp</item>
+        <item name="android:layout_marginStart">15dp</item>
+        <item name="android:layout_marginEnd">15dp</item>
     </style>
 </resources>

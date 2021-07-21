@@ -271,7 +271,7 @@ public class VitalConnectingFragment extends BaseFragment implements VitalPairIn
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    Utils.showAlertDialog(getActivity(), getString(R.string.error),
+                    Utils.showAlertDialog(getActivity(), getString(R.string.app_name),
                             errorMessage,
                             getString(R.string.retry),
                             getString(R.string.Cancel), new DialogInterface.OnClickListener() {

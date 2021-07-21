@@ -23,11 +23,13 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallInitiateViewModel;
+import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.common.OpenTok.CustomAudioDevice;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.AudioInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseActivity;
 
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
@@ -128,7 +130,15 @@ public class CallNetworkTestActivity extends BaseActivity implements
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    showResult(getString(R.string.networkTestFailed), errorModel.getMessage(), false);
+                    if(!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
+                        PaymentInfo paymentInfo = new PaymentInfo();
+                        paymentInfo.setCCCaptured(errorModel.isCCCaptured());
+                        paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
+                        paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
+                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(CallNetworkTestActivity.this, paymentInfo,"");
+                    }else {
+                        showResult(getString(R.string.networkTestFailed), errorModel.getMessage(), false);
+                    }
                 } else {
                     showResult(getString(R.string.networkTestFailed), getString(R.string.error_on_contacting_server), false);
                 }
@@ -236,7 +246,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
     @Override
     public void onError(Session session, OpentokError opentokError) {
         Log.i(LOGTAG, "Session error: " + opentokError.getMessage());
-        showResult(getString(R.string.error), getString(R.string.session_error) + opentokError.getMessage(), false);
+        showResult(getString(R.string.app_name), getString(R.string.session_error) + opentokError.getMessage(), false);
     }
 
     @Override
@@ -268,7 +278,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
     @Override
     public void onError(PublisherKit publisherKit, OpentokError opentokError) {
         Log.i(LOGTAG, "Publisher error: " + opentokError.getMessage());
-        showResult(getString(R.string.error), getString(R.string.publisher_error) + opentokError.getMessage(), false);
+        showResult(getString(R.string.app_name), getString(R.string.publisher_error) + opentokError.getMessage(), false);
     }
 
     @Override
@@ -285,7 +295,7 @@ public class CallNetworkTestActivity extends BaseActivity implements
     @Override
     public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
         Log.i(LOGTAG, "Subscriber error: " + opentokError.getMessage());
-        showResult(getString(R.string.error), getString(R.string.subscriber_error) + opentokError.getMessage(), false);
+        showResult(getString(R.string.app_name), getString(R.string.subscriber_error) + opentokError.getMessage(), false);
     }
 
     private void subscribeToStream(Stream stream) {

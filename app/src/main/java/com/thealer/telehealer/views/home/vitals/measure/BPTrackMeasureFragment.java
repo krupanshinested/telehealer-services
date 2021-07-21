@@ -393,7 +393,7 @@ public class BPTrackMeasureFragment extends VitalMeasureBaseFragment implements
     public void didDisConnected(String type, String serailNumber) {
         /*if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
             if (!isPresentedInsideCallActivity()) {
-                Utils.showAlertDialog(getActivity(), getString(R.string.error), getResources().getString(R.string.device_disconnected_message), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                Utils.showAlertDialog(getActivity(), getString(R.string.app_name), getResources().getString(R.string.device_disconnected_message), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

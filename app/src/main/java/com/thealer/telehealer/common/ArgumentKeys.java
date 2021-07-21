@@ -58,6 +58,8 @@ public class ArgumentKeys {
     public static final String USER_GUID = "user_guid";
     public static final String SCHEDULE_DETAIL = "schedule_detail";
     public static final String DOCTOR_GUID = "doctor_guid";
+    public static final String DOCTOR_ID = "doctor_id";
+    public static final String USER_ID = "user_id";
     public static final String IS_SHOW_TOOLBAR = "isShowToolbar";
     public static final String IS_SHOW_LOADER = "isShowLoader";
     public static final String SELECTED_TIME_SLOT = "selected_time_slot";
@@ -183,6 +185,7 @@ public class ArgumentKeys {
     public static final String OK_BUTTON_TITLE = "OK_BUTTON_TITLE";
     public static final String IS_BUTTON_NEEDED = "is_button_needed";
     public static final String IS_HAVE_CUSTOM_CLICK = "IS_HAVE_CUSTOM_CLICK";
+    public static final String IS_FOR_OAUTH = "IS_FOR_OAUTH";
 
     public static final String IS_SKIPPED = "IS_SKIPPED";
     public static final String CALL_INITIATE_MODEL = "CALL_INITIATE_MODEL";
@@ -195,6 +198,8 @@ public class ArgumentKeys {
     public static final String FEEDBACK_STRING = "FEEDBACK_STRING";
     public static final String STARTED_DATE = "STARTED_DATE";
     public static final String ENDED_DATE = "ENDED_DATE";
+    public static final String PATIENT_ID = "patient_id";
+    public static final String IS_FROM_PROFILE = "IS_FROM_PROFILE";
 
     public static final String TO_USER_GUID = "TO_USER_GUID";
 
@@ -245,5 +250,7 @@ public class ArgumentKeys {
     public static final String NOT_NOW_GUEST_LOGIN = "NOT_NOW_GUEST_LOGIN";
 
     public static final String IS_USER_ADMITTED = "IS_USER_ADMITTED";
+
+    public static final String IS_HEAD_LESS = "IS_HEAD_LESS";
 
 }

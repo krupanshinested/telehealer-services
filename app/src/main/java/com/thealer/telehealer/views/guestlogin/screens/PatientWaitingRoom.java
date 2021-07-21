@@ -24,10 +24,12 @@ import android.widget.TextView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileApiResponseModel;
 import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -58,11 +60,12 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
     private PaitentWaitingListRecyclerAdaper adaper;
     private CustomRecyclerView paitentWaitingRecyclerview;
     private List<Patientinfo> itemList = new ArrayList<>();
-    private String doctorGuuid,doctorName;
+    private String doctorGuuid, doctorName;
     private ImageView back_iv;
     private TextView toolbar_title;
     private PatientWaitingRoomModel patientWaitingRoomModel;
-    private Patientinfo selectedPaitentinfo=null;
+    private AskToAddCardViewModel askToAddCardViewModel;
+    private Patientinfo selectedPaitentinfo = null;
 
 
     @Override
@@ -73,18 +76,18 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
 
         Bundle bundle = this.getIntent().getExtras();
         itemList = (List<Patientinfo>) bundle.getSerializable(ArgumentKeys.GUEST_INFO_LIST);
-        doctorGuuid=bundle.getString(ArgumentKeys.DOCTOR_GUID);
-        doctorName=bundle.getString(ArgumentKeys.DOCTOR_NAME);
+        doctorGuuid = bundle.getString(ArgumentKeys.DOCTOR_GUID);
+        doctorName = bundle.getString(ArgumentKeys.DOCTOR_NAME);
 
         addItemsInAdapter(itemList);
 
         patientWaitingRoomModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                Log.d("PatientWaitingRoom","onChanged");
-                if (baseApiResponseModel != null){
-                    Log.d("PatientWaitingRoom","callKickOut");
-                    if (selectedPaitentinfo!=null) {
+                Log.d("PatientWaitingRoom", "onChanged");
+                if (baseApiResponseModel != null) {
+                    Log.d("PatientWaitingRoom", "callKickOut");
+                    if (selectedPaitentinfo != null) {
                         PushPayLoad pushPayLoad = PubNubNotificationPayload.getKickOutPayload(selectedPaitentinfo);
                         PubnubUtil.shared.publishPushMessage(pushPayLoad, null);
                     }
@@ -94,20 +97,20 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
     }
 
     private void addItemsInAdapter(List<Patientinfo> itemList) {
-        if (itemList!=null)
-        adaper.updateItems(itemList);
+        if (itemList != null)
+            adaper.updateItems(itemList);
     }
 
     private void initview() {
         LocalBroadcastManager.getInstance(this).registerReceiver(patient_count_update, new IntentFilter(getString(R.string.patient_count_update)));
-        paitentWaitingRecyclerview = (CustomRecyclerView)findViewById(R.id.paitent_Waiting_Recyclerview);
+        paitentWaitingRecyclerview = (CustomRecyclerView) findViewById(R.id.paitent_Waiting_Recyclerview);
         paitentWaitingRecyclerview.getSwipeLayout().setEnabled(false);
         back_iv = findViewById(R.id.back_iv);
         toolbar_title = findViewById(R.id.toolbar_title);
         adaper = new PaitentWaitingListRecyclerAdaper(PatientWaitingRoom.this, new PaitentWaitingListRecyclerAdaper.OnItemClickListener() {
             @Override
             public void onItemClick(Patientinfo data) {
-                messagePopup(data,PatientWaitingRoom.this);
+                messagePopup(data, PatientWaitingRoom.this);
             }
 
             @Override
@@ -119,10 +122,10 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
                 patient.setEmail(data.getEmail());
                 patient.setPhone(data.getPhone());
 
-                CallRequest callRequest = new CallRequest(data.getId(), data.getUserGuid(),patient , null, doctorName, null, OpenTokConstants.video,true,null);
+                CallRequest callRequest = new CallRequest(data.getId(), data.getUserGuid(), patient, null, doctorName, null, OpenTokConstants.video, true, null);
                 callRequest.setCallForDirectWaitingRoom(true);
-                CallSettings callSettings=new CallSettings();
-                callSettings.sessionId=data.getSessionId();
+                CallSettings callSettings = new CallSettings();
+                callSettings.sessionId = data.getSessionId();
                 callRequest.update(callSettings);
 
                 Intent intent = new Intent(PatientWaitingRoom.this, CallPlacingActivity.class);
@@ -132,12 +135,12 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
 
             @Override
             public void onKikcoutClick(Patientinfo data) {
-                Log.d("PatientWaitingRoom","onKikcoutClick"+data.getSessionId());
+                Log.d("PatientWaitingRoom", "onKikcoutClick" + data.getSessionId());
                 Utils.showAlertDialog(PatientWaitingRoom.this, getString(R.string.confirmation), getString(R.string.are_you_sure_to_kickout), getString(R.string.yes), getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        selectedPaitentinfo=data;
+                        selectedPaitentinfo = data;
                         patientWaitingRoomModel.kickOutPatient(data);
                     }
                 }, new DialogInterface.OnClickListener() {
@@ -148,11 +151,47 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
                 });
 
             }
+
+            @Override
+            public void onAskToAddCardClick(Patientinfo data) {
+                selectedPaitentinfo = data;
+                askToAddCardViewModel.askToAddCard(data.getUserGuid(), doctorGuuid);
+            }
         });
 
         paitentWaitingRecyclerview.getRecyclerView().setAdapter(adaper);
 
         patientWaitingRoomModel = new ViewModelProvider(this).get(PatientWaitingRoomModel.class);
+
+        askToAddCardViewModel = new ViewModelProvider(this).get(AskToAddCardViewModel.class);
+        askToAddCardViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (selectedPaitentinfo != null) {
+                    PushPayLoad pushPayLoad = PubNubNotificationPayload.getKickOutPayload(selectedPaitentinfo);
+                    PubnubUtil.shared.publishPushMessage(pushPayLoad, null);
+                }
+            }
+        });
+        attachObserver(askToAddCardViewModel);
+        askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                Utils.showAlertDialog(PatientWaitingRoom.this, getString(R.string.app_name),
+                        errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                        null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+            }
+        });
 
 
         back_iv.setOnClickListener(this::onClick);
@@ -163,14 +202,14 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.hasExtra(ArgumentKeys.GUEST_INFO_LIST)) {
-                Log.d("PatientWaitingRoomAct","didSubscribersChanged-");
+                Log.d("PatientWaitingRoomAct", "didSubscribersChanged-");
                 Bundle bundle = intent.getExtras();
                 List<Patientinfo> guestinfoList = (List<Patientinfo>) bundle.getSerializable(ArgumentKeys.GUEST_INFO_LIST);
-                Log.d("PatientWaitingRoomAct","-"+guestinfoList.size());
-                if (guestinfoList!=null && guestinfoList.size()>0) {
+                Log.d("PatientWaitingRoomAct", "-" + guestinfoList.size());
+                if (guestinfoList != null && guestinfoList.size() > 0) {
                     adaper.updateItems(guestinfoList);
                     paitentWaitingRecyclerview.showOrhideEmptyState(false);
-                }else {
+                } else {
                     paitentWaitingRecyclerview.showOrhideEmptyState(true);
                     paitentWaitingRecyclerview.setEmptyState(EmptyViewConstants.EMPTY_WAITING_ROOM);
                 }
@@ -180,16 +219,15 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
     };
 
 
-
-    public void messagePopup(Patientinfo guestinfo, Context context){
+    public void messagePopup(Patientinfo guestinfo, Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View alertView = LayoutInflater.from(context).inflate(R.layout.message_send_popup, null);
         builder.setView(alertView);
 
         AlertDialog alertDialog = builder.create();
 
-        EditText et_msg= alertView.findViewById(R.id.et_msg);
-        TextView tv_cancel= (TextView) alertView.findViewById(R.id.tv_cancel);
+        EditText et_msg = alertView.findViewById(R.id.et_msg);
+        TextView tv_cancel = (TextView) alertView.findViewById(R.id.tv_cancel);
         TextView tv_done = (TextView) alertView.findViewById(R.id.tv_done);
 
         tv_cancel.setOnClickListener(new View.OnClickListener() {
@@ -202,9 +240,9 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
         tv_done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PushPayLoad pushPayLoad = PubNubNotificationPayload.getWaitingRoomChatPayload(et_msg.getText().toString(),guestinfo.getUserGuid());
-                Log.d("PushPayLoad",""+pushPayLoad.getPn_apns().getAps().get("alert"));
-                PubnubUtil.shared.publishPushMessage(pushPayLoad,null);
+                PushPayLoad pushPayLoad = PubNubNotificationPayload.getWaitingRoomChatPayload(et_msg.getText().toString(), guestinfo.getUserGuid());
+                Log.d("PushPayLoad", "" + pushPayLoad.getPn_apns().getAps().get("alert"));
+                PubnubUtil.shared.publishPushMessage(pushPayLoad, null);
                 alertDialog.dismiss();
             }
         });
@@ -224,7 +262,7 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.back_iv:
                 onBackPressed();
                 break;

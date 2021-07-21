@@ -141,7 +141,7 @@ public class GuestLoginActivity extends BaseActivity implements View.OnClickList
 
                     } else {
                         Dialog dialog = new AlertDialog.Builder(GuestLoginActivity.this)
-                                .setTitle(getString(R.string.error))
+                                .setTitle(getString(R.string.app_name))
                                 .setMessage(String.format(getString(R.string.user_not_allowed_error), getString(R.string.app_name), getString(R.string.opposite_app)))
                                 .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                                     @Override

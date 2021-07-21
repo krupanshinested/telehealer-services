@@ -46,6 +46,24 @@
                 android:padding="8dp"
                 android:text="@string/invite_from_contacts"
                 android:textColor="@color/app_gradient_start" />
+
+            <View
+                android:id="@+id/broadcast_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:visibility="gone"
+                android:background="@color/colorGrey_light" />
+
+            <TextView
+                android:id="@+id/broadcast_all_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:padding="8dp"
+                android:visibility="gone"
+                android:text="@string/invite_from_contacts"
+                android:textColor="@color/app_gradient_start" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

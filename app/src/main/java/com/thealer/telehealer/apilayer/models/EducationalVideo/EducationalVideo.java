@@ -19,7 +19,7 @@ public class EducationalVideo extends BaseAdapterObjectModel implements Serializ
 
     @Override
     public String getAdapterTitle() {
-        return Utils.getStringFromDate(created_at,"dd MMM yyyy");
+        return Utils.getStringFromDate(created_at,Utils.defaultDateFormat);
     }
 
     @Override

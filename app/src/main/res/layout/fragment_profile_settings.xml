@@ -4,6 +4,7 @@
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:background="@color/colorWhite">
 
     <androidx.core.widget.NestedScrollView
@@ -87,7 +88,8 @@
                 android:layout_marginTop="30dp"
                 android:background="@android:color/transparent"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tool:visibility="visible">
 
                 <View
                     android:layout_width="fill_parent"
@@ -95,12 +97,32 @@
                     android:background="@color/colorGrey_light" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/payments_billings"
+                    android:id="@+id/telehealer_billings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_payment"
+                    app:hideSpiltter="true"
+                    android:visibility="gone"
+                    tool:visibility="visible"
+                    app:title="@string/payments_billings" />
+
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/add_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:hideSpiltter="true"
+                    app:icon="@drawable/ic_baseline_credit_card_24"
+                    app:title="@string/lbl_manage_cards" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/patient_payments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:hideSpiltter="true"
                     app:icon="@drawable/ic_payment"
-                    app:title="@string/payments_billings" />
+                    app:title="@string/lbl_patient_charges_payments" />
 
                 <View
                     android:layout_width="fill_parent"

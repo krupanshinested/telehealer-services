@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
+
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -128,6 +130,10 @@ public class ProfileCellView extends ConstraintLayout {
         } else {
             valueTextView.setVisibility(GONE);
         }
+    }
+
+    public void updateTitle(String title) {
+        titleTextView.setText(title);
     }
 
     public void updateAdapter(ArrayAdapter arrayAdapter, AdapterView.OnItemSelectedListener listener) {

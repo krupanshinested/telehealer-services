@@ -38,6 +38,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VisitConstants;
 import com.thealer.telehealer.common.emptyState.EmptyStateUtil;
@@ -84,7 +85,7 @@ public class VitalUserReportListFragment extends BaseFragment {
     private List<Integer> actualList = new ArrayList<>();
     private List<Integer> unSelectedList = new ArrayList<>();
     private String userGuid;
-    private String doctorGuid, orderId;
+    private String doctorGuid, orderId, doctorName;
     private String filter = VitalReportApiViewModel.LAST_WEEK, startDate = null, endDate = null;
     private int mode = Constants.VIEW_MODE, page = 1;
     private boolean isDisableCancel = false, isApiRequested;
@@ -176,7 +177,7 @@ public class VitalUserReportListFragment extends BaseFragment {
                                 .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
                                         .putExtras(bundle));
 
-                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalUserReportListFragment.this, errorModel);
+                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalUserReportListFragment.this, errorModel, doctorName);
                     }
                 }
             }
@@ -353,6 +354,7 @@ public class VitalUserReportListFragment extends BaseFragment {
 
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
             orderId = getArguments().getString(ArgumentKeys.ORDER_ID);
+            doctorName = getArguments().getString(ArgumentKeys.DOCTOR_NAME);
 
             if (orderId != null) {
                 mode = Constants.EDIT_MODE;
@@ -518,12 +520,6 @@ public class VitalUserReportListFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case RequestID.REQ_CARD_INFO:
-            case RequestID.REQ_CARD_EXPIRE:
-                if (resultCode == Activity.RESULT_OK) {
-                    startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
-                }
-                break;
             case RequestID.REQ_VISIT_RECENT:
                 if (resultCode == Activity.RESULT_OK) {
                     RecentsApiResponseModel.ResultBean resultBean = (RecentsApiResponseModel.ResultBean) data.getSerializableExtra(ArgumentKeys.SELECTED_RECENT_DETAIL);

@@ -90,9 +90,9 @@ public class AppConfig {
             }
         } else {
             if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-                bundleIds.add("com.thealer.pro");
+                bundleIds.add("com.thealer.pro.voip");
             } else {
-                bundleIds.add("com.thealer");
+                bundleIds.add("com.thealer.voip");
             }
         }
         return bundleIds;
@@ -158,7 +158,7 @@ public class AppConfig {
     }
 
     public List<Integer> getRemovedFeatures() {
-        List<Integer> removedList;
+        List<Integer> removedList=new ArrayList<>();
         if (isOtherThanTelehealer(context)) {
             removedList = new ArrayList<>();
         } else if (UserDetailPreferenceManager.getInstallType().equals(context.getString(R.string.install_type_india))) {

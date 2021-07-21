@@ -211,9 +211,9 @@
     <string name="success_message_touchid">We saved your Email Id on this device so you can use your Touch ID to login next time</string>
     <string name="success_title_pin">You’ve set up your login PIN</string>
     <string name="success_message_pin">We saved your Email Id on this device so you can use your PIN to login next time</string>
-    <string name="success_broadcast_receiver">SuccessBroadcastReceiver</string>
-    <string name="success_vital_broadcast_receiver">SuccessVitalBroadcastReceiver</string>
-    <string name="vital_broadcast_receiver">VitalBroadcastReceiver</string>
+    <string name="success_broadcast_receiver" translatable="false">SuccessBroadcastReceiver</string>
+    <string name="success_vital_broadcast_receiver" translatable="false">SuccessVitalBroadcastReceiver</string>
+    <string name="vital_broadcast_receiver" translatable="false">VitalBroadcastReceiver</string>
     <string name="doctor_search_name_info">Enter your name</string>
     <string name="doctor_select_profile_info">Select your profile</string>
     <string name="doctor_detail_info">Provider Registration</string>
@@ -561,7 +561,7 @@
     <string name="certificate">Certificate</string>
     <string name="medical_school_certificate">Medical School Diploma / Certificate</string>
     <string name="profile_picture_updated">profile_picture_updated</string>
-    <string name="app_state_changed">APP_STATE_CHANGED</string>
+    <string name="app_state_changed" translatable="false">APP_STATE_CHANGED</string>
     <string name="insurance_sentenceCase">Insurance</string>
     <string name="payment_methods">Payment Methods</string>
     <string name="email">Email Id</string>
@@ -723,7 +723,7 @@
     <string name="ccm_capture_title">For audit purposes, you can indicate if your call was made specifically for any one of the items below.</string>
     <string name="busy_another_call">is busy in another call.</string>
     <string name="not_available">is not available.</string>
-    <string name="payments_billings">Payments/Billings</string>
+    <string name="payments_billings">Telehealer Billing</string>
     <string name="expiration_date">Expiration Date</string>
     <string name="card_information">Card Information</string>
     <string name="call_charges">Call Charges</string>
@@ -1373,7 +1373,7 @@
     <string name="update_educational_video">Update Educational Video</string>
     <string name="remove">Remove</string>
     <string name="unassociate_educational_video">Are you sure to remove this educational video for this user.</string>
-    <string name="delete_educational_video">Are you sure to Delete your educational video.</string>
+    <string name="delete_educational_video">Are you sure to Delete your educational video?</string>
     <string name="empty_educational_message_1">Educational Video will eventually show up here</string>
     <string name="doctor_unavailable">This provider currently doesn’t accept connection requests. Please reach out directly to your provider’s office to get connected with your provider via the platform.</string>
     <string name="empty_educational_new">There are no Educational video present. You can create one from settings page</string>
@@ -1438,7 +1438,7 @@
     <string name="enter_name_optional">Name (optional)</string>
     <string name="enter">Enter</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="plz_be_patient">Please be patient while we notify someone from your provider office.You could put this app in the background while you wait.</string>
     <string name="doctor_not_availble">Doctor Not Available</string>
     <string name="doc_wait_room">Your doctor\'s waiting room is not open at the moment . Please try again at a later time</string>
@@ -1489,5 +1489,87 @@
     <string name="lbl_add_patients">Add Patients</string>
     <string name="lbl_add_providers">Add Providers</string>
     <string name="lbl_payment">Payment</string>
+    <string name="lbl_receive_patient_payments">Receive Patient Payments</string>
+    <string name="lbl_not_now">Not Now</string>
+    <string name="lbl_payment_method">Payment Method</string>
+    <string name="msg_patient_card_not_added">Please enter credit card detail here to proceed the payment online.</string>
+    <string name="lbl_charge_type">Charge Type</string>
+    <string name="lbl_add_fees">Add Fees($)</string>
+    <string name="lbl_reason">Reason</string>
+    <string name="lbl_transaction">Transaction</string>
+    <string name="lbl_continue_anyway">Continue Anyway</string>
+    <string name="lbl_ask_to_add_credit_card">Ask to add credit card</string>
+    <string name="msg_card_not_added_by_patient">Patient has not added the credit card.</string>
+    <string name="lbl_supplier_name">Supplier Name</string>
+    <string name="lbl_from_date">From Date</string>
+    <string name="lbl_to_date">To Date</string>
+    <string name="lbl_service_date">Date of service</string>
+    <string name="lbl_transaction_date_time"><![CDATA[Date & Time]]></string>
+    <string name="lbl_patient">Patient</string>
+    <string name="lbl_charge">Charge</string>
+    <string name="lbl_status">Status</string>
+    <string name="lbl_refund">Refund</string>
+    <string name="lbl_receipt">Receipt</string>
+    <string name="lbl_process_payment">Process Payment</string>
+    <string name="lbl_start_date">Start Date</string>
+    <string name="lbl_end_date">End Date</string>
+    <string name="lbl_concierge">Concierge</string>
+    <string name="lbl_medicine_name">Medicine Name</string>
+    <string name="msg_please_enter_fees">Please enter fees</string>
+    <string name="msg_please_select_date_of_service">Please select date of service.</string>
+    <string name="msg_please_select_charge_type">Please select charge type</string>
+    <string name="msg_please_enter_fees_for_any">Please enter fees for %s</string>
+    <string name="msg_any_fees_should_be_greater_than_minimum">Fees for %s should be greater than $%.2f.</string>
+    <string name="msg_please_select_start_date_for_any">Please select start date for %s</string>
+    <string name="msg_please_select_end_date_for_any">Please select end date for %s</string>
+    <string name="msg_please_select_valid_date_range_for_any">Please select valid date range for %s</string>
+    <string name="msg_please_select_a_reason">Please select a reason</string>
+    <string name="msg_please_enter_medicine_name">Please enter medicine name</string>
+    <string name="msg_please_enter_supplier_name">Please enter supplier name</string>
+    <string name="lbl_patient_payments">Patient Charges</string>
+
+    <string name="EMPTY_TRANSACTIONS">No Transactions recorded.</string>
+    <string name="lbl_add_charge">Add Charge</string>
+    <string name="lbl_medicine">Medicine</string>
+    <string name="lbl_supplies">Supplies</string>
+    <string name="msg_please_enter_valid_refund_amount">Please enter refund amount.</string>
+    <string name="msg_refund_amount_should_not_exceed_charge_amount">Refund amount should not exceed charge amount.</string>
+    <string name="msg_refund_amount_should_be_greater_than_minimum">Refund amount should be greater than $%.2f.</string>
+    <string name="msg_refund_info">Entered amount will be credited in patient account.</string>
+    <string name="lbl_proceed_offline">Proceed Offline</string>
+    <string name="msg_invalid_credit_card_in_transaction_process">%s has no valid credit card, please collect charge in cash</string>
+    <string name="msg_transaction_failed">We are unable to process this transaction, please contact %s and collect charge in cash.</string>
+    <string name="lbl_provider">Provider</string>
+    <string name="lbl_search_patient">Search Patient</string>
+    <string name="lbl_charges">Charges</string>
+    <string name="lbl_add_refund">Add Refund</string>
+    <string name="lbl_apply">Apply</string>
+    <string name="msg_provide_stripe_information">You need to provide information for stripe acccount.</string>
+    <string name="lbl_total">Total</string>
+    <string name="lbl_refunds">Refunds</string>
+    <string name="msg_missing_info_in_stripe">Following Information is missing or invalid in your Stripe account.\n\n%s</string>
+    <string name="lbl_failure_reason">Failure Reason</string>
+    <string name="lbl_reset">Reset</string>
+    <string name="lbl_total_refund">Total Refund</string>
+    <string name="lbl_save_and_process_payment">Save &amp; Process Payment</string>
+    <string name="msg_total_amount_should_be_greater_than_one">Total amount should be greater than $1.</string>
+    <string name="lbl_online">Online</string>
+    <string name="lbl_offline">Offline</string>
+    <string name="msg_receipt_not_generated_yet_please_try_again_later">Receipt not generated yet,please try again later.</string>
+    <string name="charge_successfully_added">Your charge has been added successfully</string>
+    <string name="confirm_vital_charges">Please confirm to process charges</string>
+    <string name="broadcast_messages">Broadcast Messages</string>
+    <string name="title_activity_broadcast_messages" translatable="false">BroadcastMessagesActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world" translatable="false">Hello Square World!</string>
+    <string name="str_select_patient">To send message you have to select atleast one patient.</string>
+    <string name="broadcast_messages_all">Broadcast Message to All</string>
+    <string name="payment_settings">Payment Settings</string>
+    <string name="lbl_payment_history">Payment History</string>
+    <string name="lbl_patient_charges_payments">Patient charges/payment</string>
+    <string name="disclaimer_for_secure_messaging">DISCLAIMER: ENABLING THIS SETTING WILL REMOVE EXISTING RESTRICTIONS ON TEMPLATED RESPONSES FROM THE PATIENT AND INSTEAD ALLOW THEM TO SEND FREE-FORM CONTENT GOING FORWARD.\n\nAlthough the patient will be notified not to use secure messaging for urgent or emergency medical attention, %s assumes no responsibility or liability arising from the use of any and all secure message communications send by and to the patient.</string>
 
 </resources>

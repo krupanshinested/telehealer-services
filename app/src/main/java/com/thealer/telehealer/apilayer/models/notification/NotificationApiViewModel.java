@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.notification;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -50,7 +51,9 @@ public class NotificationApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getNotifications(search,true, page, Constants.PAGINATION_SIZE, associationGuids, selectedFilterTypes)
+                    getAuthApiService().getNotifications(search, true, page, Constants.PAGINATION_SIZE, associationGuids, selectedFilterTypes,
+                            UserType.isUserDoctor()
+                                    || UserType.isUserAssistant())
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
@@ -64,7 +67,7 @@ public class NotificationApiViewModel extends BaseApiViewModel {
     }
 
     public void updateNotification(String type, boolean isAccept, String toGuid, @NonNull int id, @NonNull String requestStatus, @Nullable String startDate, @Nullable String endDate,
-                                   @Nullable String doctorGuid, boolean isShowProgress,boolean isRequestorMA) {
+                                   @Nullable String doctorGuid, boolean isShowProgress, boolean isRequestorMA) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -72,10 +75,10 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                     Map<String, Object> body = new HashMap<>();
                     body.put("status", requestStatus);
 
-                    if (startDate != null){
+                    if (startDate != null) {
                         body.put("start", startDate);
                     }
-                    if (endDate != null){
+                    if (endDate != null) {
                         body.put("end", endDate);
                     }
 
@@ -84,16 +87,16 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-                                    switch (type){
+                                    switch (type) {
                                         case NewNotificationListAdapter.REQUEST_TYPE_APPOINTMENT:
-                                            if (isAccept){
+                                            if (isAccept) {
                                                 EventRecorder.recordNotification("APPOINTMENT_ACCEPTED");
-                                            }else {
+                                            } else {
                                                 EventRecorder.recordNotification("APPOINTMENT_REJECTED");
                                             }
                                             break;
                                         case NewNotificationListAdapter.REQUEST_TYPE_CONNECTION:
-                                            if (isAccept){
+                                            if (isAccept) {
                                                 EventRecorder.recordNotification("CONNECTION_ACCEPTED");
                                                 EventRecorder.recordConnection("CONNECTION_ACCEPTED");
 
@@ -101,7 +104,7 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                                                     EventRecorder.recordConnection("MA_CONNECTION_ACCEPTED");
                                                 }
 
-                                            }else {
+                                            } else {
                                                 EventRecorder.recordNotification("CONNECTION_REJECTED");
                                                 EventRecorder.recordConnection("CONNECTION_REJECTED");
                                             }

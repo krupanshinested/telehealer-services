@@ -15,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +74,7 @@ public class BaseFragment extends Fragment {
         super.onStop();
     }
 
-    private void closeDailogs() {
+    public void closeDailogs() {
         if (dialog != null && dialog.isShowing())
             dialog.dismiss();
     }
@@ -92,6 +93,18 @@ public class BaseFragment extends Fragment {
 
     public void showToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
+    public  void customToast(String msg){
+        Toast toast = new Toast(getActivity());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.FILL_HORIZONTAL,0,0);
+
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.custom_toast_layout, null);
+        TextView tvmsg=view.findViewById(R.id.tv_msg);
+        tvmsg.setText(msg);
+        toast.setView(view);
+        toast.show();
     }
 
     public Bitmap getBitmpaFromPath(String profileImgPath) {
@@ -119,6 +132,8 @@ public class BaseFragment extends Fragment {
         }
         successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
     }
+
+
 
     public void sendSuccessViewBroadCast(Context context, boolean status, String title, String description) {
 

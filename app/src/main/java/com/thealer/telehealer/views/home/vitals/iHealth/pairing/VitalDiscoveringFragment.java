@@ -269,7 +269,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
 
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                Utils.showAlertDialog(getActivity(), getString(R.string.error),
+                Utils.showAlertDialog(getActivity(), getString(R.string.app_name),
                         error,
                         getString(R.string.retry),
                         getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -358,7 +358,7 @@ public class VitalDiscoveringFragment extends BaseFragment implements VitalPairI
     public void didFailConnectDevice(String type, String serailNumber, String errorMessage) {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                Utils.showAlertDialog(getActivity(), getString(R.string.error),
+                Utils.showAlertDialog(getActivity(), getString(R.string.app_name),
                         errorMessage,
                         getString(R.string.retry),
                         getString(R.string.cancel), new DialogInterface.OnClickListener() {

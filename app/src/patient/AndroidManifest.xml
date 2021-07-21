@@ -8,14 +8,14 @@
     <application
         android:requestLegacyExternalStorage="true"
         android:name="flavor.Utils.PatientApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:name"
+        tools:replace="android:name,android:allowBackup"
         android:usesCleartextTraffic="true">
         <activity android:name=".views.home.orders.CreateOrderActivity"
             android:screenOrientation="portrait">

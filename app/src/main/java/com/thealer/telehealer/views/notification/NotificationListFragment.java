@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.notification;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,6 +26,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
+import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.CustomRecyclerView;
@@ -60,6 +62,7 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
     private NotificationApiViewModel notificationApiViewModel;
     private NotificationApiResponseModel notificationApiResponseModel;
     private ChangeTitleInterface changeTitleInterface;
+    private AskToAddCardViewModel askToAddCardViewModel;
 
     private int page = 1;
     private NewNotificationListAdapter notificationListAdapter;
@@ -120,6 +123,27 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 notificationListAdapter.notifyDataSetChanged();
+            }
+        });
+
+        askToAddCardViewModel = new ViewModelProvider(this).get(AskToAddCardViewModel.class);
+        attachObserverInterface.attachObserver(askToAddCardViewModel);
+        askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                Utils.showAlertDialog(getContext(), getString(R.string.app_name),
+                        errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                        null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
             }
         });
     }
@@ -204,13 +228,13 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
             }
         });
 
-        notificationListAdapter = new NewNotificationListAdapter(getActivity());
+        notificationListAdapter = new NewNotificationListAdapter(getActivity(), askToAddCardViewModel);
         notificationCrv.getRecyclerView().setAdapter(notificationListAdapter);
 
         notificationCrv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNotification( true);
+                getNotification(true);
             }
         });
 

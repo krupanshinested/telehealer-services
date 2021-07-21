@@ -55,8 +55,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        addConnectionApiViewModel = new ViewModelProvider(fragmentActivity).get(AddConnectionApiViewModel.class);
-        onListItemSelectInterface = (OnListItemSelectInterface) fragmentActivity;
+        addConnectionApiViewModel = new ViewModelProvider(fragmentActivity).get(AddConnectionApiViewModel.class);onListItemSelectInterface = (OnListItemSelectInterface) fragmentActivity;
         onActionCompleteInterface = (OnActionCompleteInterface) fragmentActivity;
 
         addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(fragmentActivity, new Observer<BaseApiResponseModel>() {

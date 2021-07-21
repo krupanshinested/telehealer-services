@@ -36,6 +36,8 @@ public class APNSPayload implements Serializable {
     public static final String kickOutwaitingRoom = "kickOutwaitingRoom";
     public static final String newUserEnteredWaitingRoom = "newUserEnteredWaitingRoom";
     public static final String creditCardExpired = "creditcard";
+    public static final String creditCardRequested = "creditCardRequested";
+    public static final String charge = "charge";
 
 
     private HashMap<String, Object> aps;
@@ -251,7 +253,8 @@ public class APNSPayload implements Serializable {
     public static HashMap<String, Object> getPnPushObject() {
         HashMap<String, Object> item = new HashMap<>();
         item.put("version", "v2");
-
+        item.put("push_type","voip");
+        item.put("auth_method","token");
         ArrayList<HashMap<String, String>> targets = new ArrayList<>();
         for (String bundleId : TeleHealerApplication.appConfig.getOtherParentBundleIds()) {
             HashMap<String, String> target = new HashMap<>();

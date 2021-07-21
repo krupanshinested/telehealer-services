@@ -26,13 +26,14 @@ public class Patientinfo implements Serializable {
     private String userGuid;
     private String sessionId;
     private String id;
-    private boolean isAvailable=true;
+    private boolean isAvailable = true;
     private boolean isGuestUser;
+    private boolean hasValidCard;
 
     public Patientinfo() {
     }
 
-    public Patientinfo(String phone, String email, String inviteCode, String displayName, String userGuid, String apiKey, String sessionId, String token,boolean isGuestUser) {
+    public Patientinfo(String phone, String email, String inviteCode, String displayName, String userGuid, String apiKey, String sessionId, String token, boolean isGuestUser) {
         this.id = UUID.randomUUID().toString();
         this.phone = phone;
         this.email = email;
@@ -44,7 +45,7 @@ public class Patientinfo implements Serializable {
         this.isGuestUser = isGuestUser;
     }
 
-    private long findSecondsSince1970(){
+    private long findSecondsSince1970() {
         return Calendar.getInstance(TimeZone.getTimeZone("UTC"))
                 .getTimeInMillis() / 1000;
     }
@@ -134,10 +135,19 @@ public class Patientinfo implements Serializable {
                 ", sessionId='" + sessionId + '\'' +
                 ", id='" + id + '\'' +
                 ", isAvailable=" + isAvailable +
+                ", hasValidCard=" + hasValidCard +
                 '}';
     }
 
     public boolean isGuestUser() {
         return isGuestUser;
+    }
+
+    public boolean isHasValidCard() {
+        return hasValidCard;
+    }
+
+    public void setHasValidCard(boolean hasValidCard) {
+        this.hasValidCard = hasValidCard;
     }
 }

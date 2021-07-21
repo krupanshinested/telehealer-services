@@ -257,7 +257,7 @@ public class VitalMeasureBaseFragment extends VitalsSendBaseFragment implements 
         if (type.equals(vitalDevice.getType()) && serailNumber.equals(vitalDevice.getDeviceId())) {
             if (!isPresentedInsideCallActivity()) {
                 if (currentState == MeasureState.failed) {
-                    Utils.showAlertDialog(getActivity(), getString(R.string.error),getResources().getString(R.string.device_disconnected_message), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                    Utils.showAlertDialog(getActivity(), getString(R.string.app_name),getResources().getString(R.string.device_disconnected_message), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (getActivity() != null) {
@@ -288,7 +288,7 @@ public class VitalMeasureBaseFragment extends VitalsSendBaseFragment implements 
     public void didFailConnectDevice(String type, String serailNumber, String errorMessage) {
         EventRecorder.recordVitals("FAIL_MEASURE", vitalDevice.getType());
 
-        Utils.showAlertDialog(getActivity(), getString(R.string.error), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+        Utils.showAlertDialog(getActivity(), getString(R.string.app_name), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();

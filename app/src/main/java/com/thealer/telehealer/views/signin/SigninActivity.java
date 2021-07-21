@@ -167,7 +167,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
 
                     } else {
                         Dialog dialog = new AlertDialog.Builder(SigninActivity.this)
-                                .setTitle(getString(R.string.error))
+                                .setTitle(getString(R.string.app_name))
                                 .setMessage(String.format(getString(R.string.user_not_allowed_error), getString(R.string.app_name), getString(R.string.opposite_app)))
                                 .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                                     @Override
@@ -230,7 +230,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                         }
 
 
-                        Utils.showAlertDialog(SigninActivity.this, getString(R.string.error),
+                        Utils.showAlertDialog(SigninActivity.this, getString(R.string.app_name),
                                 getString(R.string.account_locked_info, time, lbl),
                                 getString(R.string.reset_password), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                     @Override
@@ -244,7 +244,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                                     }
                                 });
                     } else {
-                        Utils.showAlertDialog(SigninActivity.this, getString(R.string.error), getString(R.string.login_error_message),
+                        Utils.showAlertDialog(SigninActivity.this, getString(R.string.app_name), getString(R.string.login_error_message),
                                 getString(R.string.ok), null,
                                 new DialogInterface.OnClickListener() {
                                     @Override

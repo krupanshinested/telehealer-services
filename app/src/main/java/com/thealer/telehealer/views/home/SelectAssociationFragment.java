@@ -1,11 +1,14 @@
 package com.thealer.telehealer.views.home;
 
 import android.app.Activity;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -74,7 +77,7 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
     private GetDoctorsApiResponseModel getDoctorsApiResponseModel;
     private List<GetDoctorsApiResponseModel.DataBean> doctorsDataList = new ArrayList<>();
     private int page = 1;
-    private boolean isFromHome,isShowToolbar,isCloseNeeded;
+    private boolean isFromHome, isShowToolbar, isCloseNeeded;
     private String selectionType, userName;
     private SearchCellView searchView;
 
@@ -207,13 +210,13 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             Bundle bundle = getArguments();
 
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
-            isShowToolbar = getArguments().getBoolean(ArgumentKeys.IS_SHOW_TOOLBAR,false);
-            isCloseNeeded = getArguments().getBoolean(ArgumentKeys.IS_CLOSE_NEEDED,true);
+            isShowToolbar = getArguments().getBoolean(ArgumentKeys.IS_SHOW_TOOLBAR, false);
+            isCloseNeeded = getArguments().getBoolean(ArgumentKeys.IS_CLOSE_NEEDED, true);
             userName = getArguments().getString(ArgumentKeys.USER_NAME);
 
-            if (isShowToolbar){
+            if (isShowToolbar) {
                 appBarLayout.setVisibility(View.VISIBLE);
-                titleTv.setText(Utils.getPaginatedTitle(userName,associationApiResponseModel.getCount()));
+                titleTv.setText(Utils.getPaginatedTitle(userName, associationApiResponseModel.getCount()));
             }
             if (!isFromHome) {
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
@@ -288,14 +291,19 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
         if (getArguments() != null && getArguments().getString(ArgumentKeys.DOCTOR_GUID) != null) {
             doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
         }
-        associationApiViewModel.getAssociationList(searchView.getCurrentSearchResult(),page, doctorGuid, isShowProgress,false);
+        associationApiViewModel.getAssociationList(searchView.getCurrentSearchResult(), page, doctorGuid, isShowProgress, false);
     }
 
     @Override
     public void onListItemSelected(int position, Bundle bundle) {
-        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent().putExtras(bundle));
-        if (isCloseNeeded) {
-            onCloseActionInterface.onClose(false);
-        } 
+        if (getTargetFragment() == null) {
+            getActivity().setResult(Activity.RESULT_OK, new Intent().putExtras(bundle));
+            getActivity().finish();
+        } else {
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent().putExtras(bundle));
+            if (isCloseNeeded) {
+                onCloseActionInterface.onClose(false);
+            }
+        }
     }
 }

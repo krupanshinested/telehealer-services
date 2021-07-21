@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.vitals;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -21,7 +22,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -82,9 +82,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.VitalCreationActivity;
-import com.thealer.telehealer.views.home.vitals.vitalReport.VitalUserReportListFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -133,16 +131,6 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     private boolean isGetType;
     private String filter, startDate, endDate;
     private boolean isOpenVitalMessage = false;
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RequestID.REQ_CARD_EXPIRE || requestCode == RequestID.REQ_CARD_INFO) {
-            if (resultCode == Activity.RESULT_OK) {
-                startActivity(new Intent(this.getActivity(), ProfileSettingsActivity.class).putExtra(ArgumentKeys.VIEW_TYPE, ArgumentKeys.PAYMENT_INFO).putExtra(ArgumentKeys.DISABLE_BACk, false));
-            }
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -267,18 +255,22 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
                     if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
-                        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.failed_to_connect)));
+                        Utils.showAlertDialog(getContext(), getString(R.string.app_name),
+                                errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                                null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+
                     } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
-                        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
-                        LocalBroadcastManager
-                                .getInstance(getActivity())
-                                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                        .putExtras(bundle));
-                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalsDetailListFragment.this, errorModel);
+                        AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalsDetailListFragment.this, errorModel, doctorModel != null ? doctorModel.getDoctorDisplayName() : null);
                     }
                 }
             }
@@ -291,14 +283,13 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())) {
-                        if (!whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
-                            AppPaymentCardUtils.handleCardCasesFromWhoAmI(getActivity(), whoAmIApiResponseModel);
-                        } else if (!whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()) {
-                            AppPaymentCardUtils.handleCardCasesFromWhoAmI(getActivity(), whoAmIApiResponseModel);
-                        } else {
+                    if (UserType.isUserDoctor() || UserType.isUserAssistant()) {
+                        if (AppPaymentCardUtils.hasValidPaymentCard(whoAmIApiResponseModel.getPayment_account_info())) {
                             proceedAdd(selectedItem);
+                        } else {
+                            AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), whoAmIApiResponseModel.getPayment_account_info(), doctorModel != null ? doctorModel.getDoctorDisplayName() : null);
                         }
+
                     }
                 }
             }
@@ -852,8 +843,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
     }
 
     private void checkWhoAmI() {
-
-        whoAmIApiViewModel.checkWhoAmI();
+        if (UserType.isUserPatient()) {
+            proceedAdd(selectedItem);
+        } else {
+            whoAmIApiViewModel.checkWhoAmI(doctorGuid);
+        }
     }
 
     private void proceedAdd(String selectedItem) {

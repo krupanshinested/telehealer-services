@@ -16,19 +16,22 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
+import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.pubNub.models.APNSPayload;
+import com.thealer.telehealer.stripe.AppPaymentCardUtils;
+import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.EducationalVideo.EducationalVideoDetailFragment;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -83,13 +86,16 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     private List<NotificationApiResponseModel.ResultBean.RequestsBean> notificationList;
     private int selectedSlot = 0;
     private NotificationApiViewModel notificationApiViewModel;
+    private AskToAddCardViewModel askToAddCardViewModel;
+
     private ShowSubFragmentInterface showSubFragmentInterface;
 
-    public NewNotificationListAdapter(FragmentActivity activity) {
+    public NewNotificationListAdapter(FragmentActivity activity, AskToAddCardViewModel askToAddCardViewModel) {
         this.activity = activity;
         modelList = new ArrayList<>();
         showSubFragmentInterface = (ShowSubFragmentInterface) activity;
         notificationApiViewModel = new ViewModelProvider(activity).get(NotificationApiViewModel.class);
+        this.askToAddCardViewModel = askToAddCardViewModel;
     }
 
     @NonNull
@@ -164,6 +170,18 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                             case REQUEST_STATUS_OPEN:
                                 viewHolder.slotCl.setVisibility(View.VISIBLE);
                                 viewHolder.actionCl.setVisibility(View.VISIBLE);
+                                if (!UserType.isUserPatient()) {
+                                    viewHolder.hasCardIV.setVisibility(View.VISIBLE);
+                                    boolean canViewCardStatus = false;
+                                    if (doctorModel != null && doctorModel.isCan_view_card_status())
+                                        canViewCardStatus = doctorModel.isCan_view_card_status();
+                                    AppPaymentCardUtils.setCardStatusImage(viewHolder.hasCardIV, patientModel.getPayment_account_info(), canViewCardStatus);
+                                    if (canViewCardStatus && !AppPaymentCardUtils.hasValidPaymentCard(patientModel.getPayment_account_info())) {
+                                        viewHolder.askForCardBtn.setVisibility(View.VISIBLE);
+                                    } else
+                                        viewHolder.askForCardBtn.setVisibility(View.GONE);
+
+                                }
                                 break;
                             case REQUEST_STATUS_ACCEPTED:
                                 break;
@@ -290,6 +308,22 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                         viewHolder.bottomView.setVisibility(View.VISIBLE);
                         viewHolder.titleTv.setTextColor(activity.getColor(R.color.app_gradient_start));
                         break;
+                    case APNSPayload.creditCardRequested: {
+                        if (UserType.isUserPatient()) {
+                            title = activity.getString(R.string.lbl_add_card).toUpperCase();
+                            description = resultModel.getMessage();
+                            viewHolder.descriptionTv.setVisibility(View.VISIBLE);
+                            viewHolder.bottomView.setVisibility(View.VISIBLE);
+                            viewHolder.titleTv.setTextColor(activity.getColor(R.color.app_gradient_start));
+                            viewHolder.askForCardBtn.setText(R.string.lbl_add_card);
+                            viewHolder.acceptBtn.setVisibility(View.GONE);
+                            viewHolder.rejectBtn.setVisibility(View.GONE);
+                            viewHolder.askForCardBtn.setVisibility(View.VISIBLE);
+                            viewHolder.actionCl.setVisibility(View.VISIBLE);
+                        }
+                        break;
+                    }
+
                 }
 
                 if (isAddRequestStatus) {
@@ -546,19 +580,19 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                     }
                                 }
                                 break;
-                           case NotificationConstants.EDUCATIONAL_VIDEO:
-                               if (resultModel.getEntity_id() != null) {
-                                   EducationalVideoDetailFragment fragment = new EducationalVideoDetailFragment();
-                                   Bundle detail = new Bundle();
-                                   if (UserType.isUserAssistant()) {
-                                       detail.putString(ArgumentKeys.DOCTOR_GUID, resultModel.getDoctorModel().getUser_guid());
-                                   }
-                                   detail.putString(ArgumentKeys.USER_GUID,resultModel.getPatientModel().getUser_guid());
-                                   detail.putString(ArgumentKeys.EDUCATIONAL_VIDEO_ID,resultModel.getEntity_id()+"");
-                                   fragment.setArguments(detail);
-                                   showSubFragmentInterface.onShowFragment(fragment);
-                               }
-                               break;
+                            case NotificationConstants.EDUCATIONAL_VIDEO:
+                                if (resultModel.getEntity_id() != null) {
+                                    EducationalVideoDetailFragment fragment = new EducationalVideoDetailFragment();
+                                    Bundle detail = new Bundle();
+                                    if (UserType.isUserAssistant()) {
+                                        detail.putString(ArgumentKeys.DOCTOR_GUID, resultModel.getDoctorModel().getUser_guid());
+                                    }
+                                    detail.putString(ArgumentKeys.USER_GUID, resultModel.getPatientModel().getUser_guid());
+                                    detail.putString(ArgumentKeys.EDUCATIONAL_VIDEO_ID, resultModel.getEntity_id() + "");
+                                    fragment.setArguments(detail);
+                                    showSubFragmentInterface.onShowFragment(fragment);
+                                }
+                                break;
                             default:
                                 showUserDetailView(resultModel, finalDoctorModel, finalPatientModel);
                         }
@@ -647,6 +681,19 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                     @Override
                     public void onClick(View v) {
                         showUserDetailView(resultModel, finalDoctorModel, finalPatientModel);
+                    }
+                });
+
+                viewHolder.askForCardBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (UserType.isUserAssistant())
+                            askToAddCardViewModel.askToAddCard(finalPatientModel.getUser_guid(), finalDoctorModel.getUser_guid());
+                        else if (UserType.isUserDoctor()) {
+                            askToAddCardViewModel.askToAddCard(finalPatientModel.getUser_guid(), null);
+                        } else if (UserType.isUserPatient()) {
+                            activity.startActivity(new Intent(activity, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
+                        }
                     }
                 });
 
@@ -779,7 +826,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         private CircleImageView avatarCiv;
         private TextView listTitleTv;
         private TextView listSubTitleTv;
-        private ImageView infoIv;
+        private ImageView infoIv, hasCardIV;
         private View bottomView;
         private TextView descriptionTv;
         private ConstraintLayout slotCl;
@@ -796,6 +843,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         private ConstraintLayout actionCl;
         private CustomButton acceptBtn;
         private Button rejectBtn;
+        private Button askForCardBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -810,6 +858,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
             listTitleTv = (TextView) itemView.findViewById(R.id.list_title_tv);
             listSubTitleTv = (TextView) itemView.findViewById(R.id.list_sub_title_tv);
             infoIv = (ImageView) itemView.findViewById(R.id.info_iv);
+            hasCardIV = (ImageView) itemView.findViewById(R.id.card_iv);
             bottomView = (View) itemView.findViewById(R.id.bottom_view);
             descriptionTv = (TextView) itemView.findViewById(R.id.description_tv);
             slotCl = (ConstraintLayout) itemView.findViewById(R.id.slot_cl);
@@ -826,6 +875,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
             actionCl = (ConstraintLayout) itemView.findViewById(R.id.action_cl);
             acceptBtn = (CustomButton) itemView.findViewById(R.id.accept_btn);
             rejectBtn = (Button) itemView.findViewById(R.id.reject_btn);
+            askForCardBtn = (Button) itemView.findViewById(R.id.ask_for_card_btn);
 
         }
     }
