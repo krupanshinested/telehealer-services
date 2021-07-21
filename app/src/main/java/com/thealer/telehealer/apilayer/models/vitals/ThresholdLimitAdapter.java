@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.common.OnItemClickListener;
@@ -123,10 +124,10 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putInt("parentPos", parentPos);
-                bundle.putBoolean("isRemove", true);
-                bundle.putBoolean("isAdd", false);
-                bundle.putString("vitalType", vitalType);
+                bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
+                bundle.putBoolean(ArgumentKeys.IS_REMOVE, true);
+                bundle.putBoolean(ArgumentKeys.IS_ADD, false);
+                bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
                 onItemClickListener.onItemClick(position, bundle);
             }
         });
@@ -134,12 +135,12 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putInt("parentPos", parentPos);
-                bundle.putBoolean("isAdd", true);
-                bundle.putBoolean("isRemove", false);
-                bundle.putString("lowValue", rangeInfo.low_value);
-                bundle.putString("highValue", rangeInfo.high_value);
-                bundle.putString("vitalType", vitalType);
+                bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
+                bundle.putBoolean(ArgumentKeys.IS_ADD, true);
+                bundle.putBoolean(ArgumentKeys.IS_REMOVE, false);
+                bundle.putString(ArgumentKeys.LOW_VALUE, rangeInfo.low_value);
+                bundle.putString(ArgumentKeys.HIGH_VALUE, rangeInfo.high_value);
+                bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
                 onItemClickListener.onItemClick(position, bundle);
             }
         });
@@ -162,11 +163,11 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 upperLeft[0] = s.toString();
                 String thresholdStr = (Utils.get2Decimal(upperLeft[0])) + "/" + (Utils.get2Decimal(upperRight[0]));
                 Bundle bundle = new Bundle();
-                bundle.putString("thresholdValue", thresholdStr);
-                bundle.putInt("parentPos", parentPos);
-                bundle.putString("vitalType", vitalType);
-                if (s.toString().length()>2 && !s.toString().substring(s.length() - 1, s.length()).equals(".")) {
-                    if (!s.toString().trim().isEmpty() && Utils.get2Decimal(itemHolder.etUpperLeft.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerLeft.getText().toString().trim())) {
+                bundle.putString(ArgumentKeys.THRESHOLD_VALUE, thresholdStr);
+                bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
+                bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
+                if (!s.toString().trim().isEmpty()  && !s.toString().substring(s.length() - 1, s.length()).equals(".")) {
+                    if (Utils.get2Decimal(itemHolder.etUpperLeft.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerLeft.getText().toString().trim())) {
                         onListItemSelectInterface.onListItemSelected(position, bundle);
                         if (itemHolder.etMessage.getText().toString().trim().isEmpty())
                             displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
@@ -196,11 +197,11 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 upperRight[0] = s.toString();
                 String thresholdStr = (Utils.get2Decimal(upperLeft[0])) + "/" + (Utils.get2Decimal(upperRight[0]));
                 Bundle bundle = new Bundle();
-                bundle.putString("thresholdValue", thresholdStr);
-                bundle.putInt("parentPos", parentPos);
-                bundle.putString("vitalType", vitalType);
-                if (s.toString().length()>2 && !s.toString().substring(s.length() - 1, s.length()).equals(".")) {
-                    if (!s.toString().trim().isEmpty() && Utils.get2Decimal(itemHolder.etUpperRight.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerRight.getText().toString().trim())) {
+                bundle.putString(ArgumentKeys.THRESHOLD_VALUE, thresholdStr);
+                bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
+                bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
+                if (!s.toString().trim().isEmpty() && !s.toString().substring(s.length() - 1, s.length()).equals(".")) {
+                    if (Utils.get2Decimal(itemHolder.etUpperRight.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerRight.getText().toString().trim())) {
                         onListItemSelectInterface.onListItemSelected(position, bundle);
                         if (itemHolder.etMessage.getText().toString().trim().isEmpty())
                             displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
@@ -224,9 +225,9 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             @Override
             public void afterTextChanged(Editable s) {
                 Bundle bundle = new Bundle();
-                bundle.putString("thresholdValue", null);
-                bundle.putInt("parentPos", parentPos);
-                bundle.putString("thresholdMsg", s.toString());
+                bundle.putString(ArgumentKeys.THRESHOLD_VALUE, null);
+                bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
+                bundle.putString(ArgumentKeys.THRESHOLD_MSG, s.toString());
                 onListItemSelectInterface.onListItemSelected(position, bundle);
             }
         });
@@ -247,11 +248,11 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             public void afterTextChanged(Editable s) {
                 itemHolder.etUpper.setSelection(startChanged + countChanged);
                 Bundle bundle = new Bundle();
-                bundle.putString("thresholdValue", s.toString());
-                bundle.putInt("parentPos", parentPos);
-                bundle.putString("vitalType", vitalType);
-                if (s.toString().length()>2 &&!s.toString().substring(s.length() - 1, s.length()).equals(".")) {
-                    if (!s.toString().trim().isEmpty() && Utils.get2Decimal(itemHolder.etUpper.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLower.getText().toString().trim())) {
+                bundle.putString(ArgumentKeys.THRESHOLD_VALUE, s.toString());
+                bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
+                bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
+                if (!s.toString().trim().isEmpty()  &&!s.toString().substring(s.length() - 1, s.length()).equals(".")) {
+                    if (Utils.get2Decimal(itemHolder.etUpper.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLower.getText().toString().trim())) {
                         onListItemSelectInterface.onListItemSelected(position, bundle);
                         if (itemHolder.etMessage.getText().toString().trim().isEmpty())
                             displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
