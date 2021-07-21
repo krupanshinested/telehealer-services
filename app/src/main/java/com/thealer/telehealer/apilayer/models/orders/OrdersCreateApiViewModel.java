@@ -13,8 +13,12 @@ import com.thealer.telehealer.apilayer.models.orders.pharmacy.SendFaxRequestMode
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -94,12 +98,15 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createPrescription(boolean sync_create,CreatePrescriptionRequestModel createPrescriptionRequestModel, String doctorGuid) {
+    public void createPrescription(String user_guid,boolean sync_create,CreatePrescriptionRequestModel createPrescriptionRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createPrescription(sync_create,createPrescriptionRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put(ArgumentKeys.USER_GUID,user_guid);
+                    headers.put(ArgumentKeys.MODULE_CODE,ArgumentKeys.PRESCRIPTION_CODE);
+                    getAuthApiService().createPrescription(headers,sync_create,createPrescriptionRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override

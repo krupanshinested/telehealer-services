@@ -56,6 +56,7 @@ public class ArgumentKeys {
     public static final String ORDER_ID = "order_id";
     public static final String TRANSCRIPTION_DETAIL = "transcription_detail";
     public static final String USER_GUID = "user_guid";
+    public static final String MODULE_CODE = "module_code";
     public static final String SCHEDULE_DETAIL = "schedule_detail";
     public static final String DOCTOR_GUID = "doctor_guid";
     public static final String DOCTOR_ID = "doctor_id";
@@ -147,6 +148,8 @@ public class ArgumentKeys {
     public static final String SIZE = "0";
     public static final String DOCTOR_NAME = "DOCTOR_NAME";
     public static final String SESSION_ID = "SESSION_ID";
+    public static final String PRESCRIPTION_CODE ="PRESCRIPTIONS";
+    public static final String LABS_CODE ="LABS";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
