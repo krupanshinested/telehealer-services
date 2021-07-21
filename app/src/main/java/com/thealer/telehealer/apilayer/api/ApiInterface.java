@@ -300,7 +300,7 @@ public interface ApiInterface {
     @GET("api/designations")
     Observable<DesignationResponseModel> getDesignationList();
 
-    @POST("api/requests-v2")
+    @POST("api/post-requests-v2")
     Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @POST("api/requests")
@@ -323,6 +323,12 @@ public interface ApiInterface {
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersLabApiResponseModel> getLabOrders(@Query(SEARCH_FILTER_LAB) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+
+    @GET("api/vitals/thresholds")
+    Observable<VitalThresholdModel> getVitalsThreshold();
+
+    @POST("api/vitals/thresholds")
+    Observable<BaseApiResponseModel> updateVitalsThreshold(@Body VitalThresholdModel.Result vitalThresholdModel);
 
     @GET("icd-codes")
     Observable<IcdCodeApiResponseModel> getFilteredIcdCodes(@Query(FILTER_CODE_IN) String data);
@@ -372,7 +378,7 @@ public interface ApiInterface {
     @PATCH("api/users/questionnaire/{id}")
     Observable<BaseApiResponseModel> updateUserQuestionnaire(@Path(ID) String userGuid, @Body UpdateQuestionaryBodyModel updateQuestionaryBodyModel);
 
-    @POST("api/vitals-v2")
+    @POST("api/post-vitals-v2")
     Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
@@ -484,14 +490,8 @@ public interface ApiInterface {
     @GET("api/schedule")
     Observable<SchedulesApiResponseModel.ResultBean> getScheduleDetail(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);
 
-    /*@POST("api/setup/invite")
-    Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);*/
-
     @POST("api/setup/invite-v2")
     Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);
-
-    /*@POST("api/setup/invite")
-    Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid, @Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);*/
 
     @POST("api/setup/invite-v2")
     Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid,@Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);

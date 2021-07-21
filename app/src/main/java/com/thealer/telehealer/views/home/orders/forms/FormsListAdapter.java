@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
@@ -62,7 +65,11 @@ public class FormsListAdapter extends RecyclerView.Adapter<FormsListAdapter.View
             }
         });
 
-        viewHolder.listCb.setText(formsApiResponseModelArrayList.get(i).getName());
+        String itemName=formsApiResponseModelArrayList.get(i).getName();
+        if(!itemName.trim().equals(Constants.ChildHood_Asthma)){
+            itemName=itemName+" "+context.getString(R.string.bhi_italic);
+        }
+        viewHolder.listCb.setText(Html.fromHtml(itemName));
 
         viewHolder.listCb.setOnClickListener(new View.OnClickListener() {
             @Override

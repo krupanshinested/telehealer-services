@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -194,6 +195,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             }
             if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)) {
                 search_view.setVisibility(View.GONE);
+            }
+            if(getArguments().getBoolean(ArgumentKeys.CLEAR_BG_SEARCH,false)){
+                search_view.setBackgroundColor(Color.TRANSPARENT);
             }
             if (!getArguments().getBoolean(ArgumentKeys.SHOW_FAB_ADD, true)) {
                 addFab.setVisibility(View.GONE);
