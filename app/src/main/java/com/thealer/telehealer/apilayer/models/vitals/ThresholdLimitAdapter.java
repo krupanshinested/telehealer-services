@@ -126,6 +126,7 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 bundle.putInt("parentPos", parentPos);
                 bundle.putBoolean("isRemove", true);
                 bundle.putBoolean("isAdd", false);
+                bundle.putString("vitalType", vitalType);
                 onItemClickListener.onItemClick(position, bundle);
             }
         });
@@ -138,6 +139,7 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 bundle.putBoolean("isRemove", false);
                 bundle.putString("lowValue", rangeInfo.low_value);
                 bundle.putString("highValue", rangeInfo.high_value);
+                bundle.putString("vitalType", vitalType);
                 onItemClickListener.onItemClick(position, bundle);
             }
         });
@@ -158,12 +160,12 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             public void afterTextChanged(Editable s) {
                 itemHolder.etUpperLeft.setSelection(startChanged + countChanged);
                 upperLeft[0] = s.toString();
-                String thresholdStr = (Integer.parseInt(upperLeft[0])) + "/" + (Integer.parseInt(upperRight[0]));
+                String thresholdStr = (Utils.get2Decimal(upperLeft[0])) + "/" + (Utils.get2Decimal(upperRight[0]));
                 Bundle bundle = new Bundle();
                 bundle.putString("thresholdValue", thresholdStr);
                 bundle.putInt("parentPos", parentPos);
                 bundle.putString("vitalType", vitalType);
-                if (!s.toString().substring(s.length() - 1, s.length()).equals(".")) {
+                if (s.toString().length()>2 && !s.toString().substring(s.length() - 1, s.length()).equals(".")) {
                     if (!s.toString().trim().isEmpty() && Utils.get2Decimal(itemHolder.etUpperLeft.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerLeft.getText().toString().trim())) {
                         onListItemSelectInterface.onListItemSelected(position, bundle);
                         if (itemHolder.etMessage.getText().toString().trim().isEmpty())
@@ -192,12 +194,12 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             public void afterTextChanged(Editable s) {
                 itemHolder.etUpperRight.setSelection(startChanged + countChanged);
                 upperRight[0] = s.toString();
-                String thresholdStr = (Integer.parseInt(upperLeft[0])) + "/" + (Integer.parseInt(upperRight[0]));
+                String thresholdStr = (Utils.get2Decimal(upperLeft[0])) + "/" + (Utils.get2Decimal(upperRight[0]));
                 Bundle bundle = new Bundle();
                 bundle.putString("thresholdValue", thresholdStr);
                 bundle.putInt("parentPos", parentPos);
                 bundle.putString("vitalType", vitalType);
-                if (!s.toString().substring(s.length() - 1, s.length()).equals(".")) {
+                if (s.toString().length()>2 && !s.toString().substring(s.length() - 1, s.length()).equals(".")) {
                     if (!s.toString().trim().isEmpty() && Utils.get2Decimal(itemHolder.etUpperRight.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerRight.getText().toString().trim())) {
                         onListItemSelectInterface.onListItemSelected(position, bundle);
                         if (itemHolder.etMessage.getText().toString().trim().isEmpty())
@@ -248,7 +250,7 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 bundle.putString("thresholdValue", s.toString());
                 bundle.putInt("parentPos", parentPos);
                 bundle.putString("vitalType", vitalType);
-                if (!s.toString().substring(s.length() - 1, s.length()).equals(".")) {
+                if (s.toString().length()>2 &&!s.toString().substring(s.length() - 1, s.length()).equals(".")) {
                     if (!s.toString().trim().isEmpty() && Utils.get2Decimal(itemHolder.etUpper.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLower.getText().toString().trim())) {
                         onListItemSelectInterface.onListItemSelected(position, bundle);
                         if (itemHolder.etMessage.getText().toString().trim().isEmpty())

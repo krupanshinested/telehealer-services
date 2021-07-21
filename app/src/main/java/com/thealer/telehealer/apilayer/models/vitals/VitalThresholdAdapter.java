@@ -90,8 +90,8 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     String prevUpperValue = vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).getHigh_value();
                     String[] prevUpperValueList = prevUpperValue.split("/");
                     double[] prevUpperValueInt = new double[2];
-                    prevUpperValueInt[0] = Integer.parseInt(prevUpperValueList[0]);
-                    prevUpperValueInt[1] = Integer.parseInt(prevUpperValueList[1]);
+                    prevUpperValueInt[0] = Utils.get2Decimal(prevUpperValueList[0]);
+                    prevUpperValueInt[1] = Utils.get2Decimal(prevUpperValueList[1]);
                     double rangeLHS = upperValueInt[0] - prevUpperValueInt[0];
                     double rangeRHS = upperValueInt[1] - prevUpperValueInt[1];
                     vitalThresholdList.get(bundle.getInt("parentPos")).getRanges().get(position).setHigh_value(upperValue + "");
@@ -130,15 +130,15 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     if (vitalThresholdList.get(bundle.getInt("parentPos")).getVital_type().equals(SupportedMeasurementType.bp)) {
                         String[] lowerArray = bundle.getString("lowValue").split("/");
                         String[] upperArray = bundle.getString("highValue").split("/");
-                        lowerArray[0] = (Integer.parseInt(upperArray[0]) + 1) + "";
-                        lowerArray[1] = (Integer.parseInt(upperArray[1]) + 1) + "";
+                        lowerArray[0] = getUpdatedValue((Utils.get2Decimal(upperArray[0]) + 1), bundle.getString("vitalType"));
+                        lowerArray[1] = getUpdatedValue((Utils.get2Decimal(upperArray[1]) + 1), bundle.getString("vitalType"));
                         upperArray[0] = lowerArray[0];
                         upperArray[1] = lowerArray[1];
                         currentRangeInfo.low_value = lowerArray[0] + "/" + lowerArray[1];
                         currentRangeInfo.high_value = upperArray[0] + "/" + upperArray[1];
                     } else {
-                        int lowerValue = Integer.parseInt(bundle.getString("highValue")) + 1;
-                        currentRangeInfo.low_value = lowerValue + "";
+                        double lowerValue = Utils.get2Decimal(bundle.getString("highValue")) + 1;
+                        currentRangeInfo.low_value = getUpdatedValue((lowerValue), bundle.getString("vitalType"));
                         currentRangeInfo.high_value = currentRangeInfo.low_value;
                     }
                     ranges.add(currentRangeInfo);
