@@ -160,7 +160,7 @@ public class ArgumentKeys {
     public static final String BILLING_AND_CHARGES_CODE ="BILLING_AND_CHARGES";
     public static final String MANAGE_REFUND_CODE ="MANAGE_REFUND";
     public static final String PAYMENT_PROCESSING_CODE ="PAYMENT_PROCESSING";
-    public static final String SCHEDULING ="SCHEDULING";
+    public static final String SCHEDULING_CODE ="SCHEDULING";
     public static final String INVITE_OTHERS_CODE ="INVITE_OTHERS";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;

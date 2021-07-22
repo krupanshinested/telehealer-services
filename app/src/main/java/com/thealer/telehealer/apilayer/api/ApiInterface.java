@@ -488,7 +488,7 @@ public interface ApiInterface {
     Observable<ArrayList<SchedulesApiResponseModel.ResultBean>> getUserUpcomingSchedules(@Query(USER_GUID) String user_guid, @Query("upcoming") boolean upcoming, @Query(DOCTOR_GUID) String doctorGuid, @Query("day") String day, @Query("month") String month, @Query("year") String year);
 
     @DELETE("api/schedule")
-    Observable<BaseApiResponseModel> deleteSchedule(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<BaseApiResponseModel> deleteSchedule(@HeaderMap Map<String,String> headers,@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/schedule")
     Observable<SchedulesApiResponseModel.ResultBean> getScheduleDetail(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);

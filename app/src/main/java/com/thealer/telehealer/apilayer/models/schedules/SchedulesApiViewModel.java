@@ -11,8 +11,6 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.ResultFetcher;
-import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
-import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
@@ -93,7 +91,7 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
                     Map<String, String> headers = new HashMap<>();
                     if(userGuid != null && !userGuid.isEmpty()) {
                         headers.put(ArgumentKeys.USER_GUID, userGuid);
-                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.SCHEDULING);
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.SCHEDULING_CODE);
                     }
                     getAuthApiService().createSchedules(headers,doctorGuid, createRequestModel)
                             .compose(applySchedulers())
@@ -111,12 +109,17 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void deleteSchedule(int scheduleId, String time, String user_guid, String doctorGuid, boolean isShowProgress) {
+    public void deleteSchedule(int scheduleId, String time, String userGuid, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().deleteSchedule(scheduleId, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(userGuid == null && !userGuid.isEmpty()){
+                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.SCHEDULING_CODE);
+                    }
+                    getAuthApiService().deleteSchedule(headers,scheduleId, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
