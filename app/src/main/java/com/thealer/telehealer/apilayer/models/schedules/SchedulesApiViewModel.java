@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.ResultFetcher;
@@ -15,6 +16,8 @@ import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Aswin on 18,December,2018
@@ -81,12 +84,18 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createSchedule(String doctorGuid, String toGuid, SchedulesCreateRequestModel createRequestModel, boolean isShowBoolean) {
+    public void createSchedule(String userGuid,String doctorGuid, String toGuid, SchedulesCreateRequestModel createRequestModel, boolean isShowBoolean) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createSchedules(doctorGuid, createRequestModel)
+
+                    Map<String, String> headers = new HashMap<>();
+                    if(userGuid != null && !userGuid.isEmpty()) {
+                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.SCHEDULING);
+                    }
+                    getAuthApiService().createSchedules(headers,doctorGuid, createRequestModel)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowBoolean)) {
                                 @Override

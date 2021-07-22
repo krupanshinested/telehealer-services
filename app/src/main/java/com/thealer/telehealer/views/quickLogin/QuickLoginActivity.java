@@ -186,9 +186,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
         if (success) {
-
             showSuccessViewDialog(bundle);
-
         } else {
             sendQuickLoginBroadCast(bundle);
         }

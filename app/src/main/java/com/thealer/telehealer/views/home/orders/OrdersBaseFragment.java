@@ -146,14 +146,14 @@ public class OrdersBaseFragment extends BaseFragment {
                     boolean status = false;
                     String title = getString(R.string.failure);
                     String description = getString(R.string.order_posting_failed);
-                    if(!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
+                    if (!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
                         sendSuccessViewBroadCast(getActivity(), false, title, description);
                         PaymentInfo paymentInfo = new PaymentInfo();
                         paymentInfo.setCCCaptured(errorModel.isCCCaptured());
                         paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
                         paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
                         AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, patientName);
-                    }else {
+                    } else {
                         switch (currentOrder) {
                             case OrderConstant.ORDER_PRESCRIPTIONS:
                                 description = String.format(getString(R.string.create_prescription_failure), patientName);
@@ -314,8 +314,10 @@ public class OrdersBaseFragment extends BaseFragment {
         isSendFax = sendFax;
 
         showSuccessView();
+        if(!UserType.isUserAssistant())
+            userGuid="";
 
-        ordersCreateApiViewModel.assignSpecialist(status, requestModel, doctorGuid, false);
+        ordersCreateApiViewModel.assignSpecialist(userGuid,status, requestModel, doctorGuid, false);
     }
 
     public void createPrescription(Boolean status, CreatePrescriptionRequestModel prescriptionModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
@@ -323,8 +325,12 @@ public class OrdersBaseFragment extends BaseFragment {
         currentOrder = OrderConstant.ORDER_PRESCRIPTIONS;
         patientName = userDisplay_name;
         isSendFax = sendFax;
-        ordersCreateApiViewModel.createPrescription(userGuid,status, prescriptionModel, doctorGuid);
-       showSuccessView();
+
+        showSuccessView();
+        if(!UserType.isUserAssistant()){
+            userGuid="";
+        }
+        ordersCreateApiViewModel.createPrescription(userGuid, status, prescriptionModel, doctorGuid);
 
     }
 
@@ -335,7 +341,10 @@ public class OrdersBaseFragment extends BaseFragment {
 
         showSuccessView();
 
-        ordersCreateApiViewModel.createRadiologyOrder(status, requestModel, doctorGuid);
+        if(!UserType.isUserAssistant())
+            userGuid="";
+
+        ordersCreateApiViewModel.createRadiologyOrder(userGuid,status, requestModel, doctorGuid);
     }
 
     public void createNewLabOrder(Boolean status, CreateTestApiRequestModel createTestApiRequestModel, String username, String doctorGuid, boolean sendFax) {
@@ -345,8 +354,10 @@ public class OrdersBaseFragment extends BaseFragment {
         isSendFax = sendFax;
 
         showSuccessView();
+        if(!UserType.isUserAssistant())
+            userGuid="";
 
-        ordersCreateApiViewModel.createLabOrder(status, createTestApiRequestModel, doctorGuid);
+        ordersCreateApiViewModel.createLabOrder(userGuid,status, createTestApiRequestModel, doctorGuid);
     }
 
     public void createNewMiscellaneousOrder(CreateMiscellaneousRequestModel miscellaneousOrderRequest, String userDisplay_name, String doctorGuid, boolean sendFax) {
@@ -356,7 +367,10 @@ public class OrdersBaseFragment extends BaseFragment {
 
         showSuccessView();
 
-        ordersCreateApiViewModel.createMiscellaneousOrder(miscellaneousOrderRequest, doctorGuid);
+        if(!UserType.isUserAssistant())
+            userGuid="";
+
+        ordersCreateApiViewModel.createMiscellaneousOrder(userGuid,miscellaneousOrderRequest, doctorGuid);
     }
 
     public void getPatientsRecentsList(String userGuid, String doctorGuid) {

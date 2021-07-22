@@ -34,6 +34,7 @@ import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -202,10 +203,14 @@ public class EducationalCreateFragment extends BaseFragment {
         record_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String currentUserGuid=UserDetailPreferenceManager.getUser_guid()!=null?UserDetailPreferenceManager.getUser_guid():"";
+                if(!UserType.isUserAssistant()){
+                    currentUserGuid="";
+                }
                 if (educationalVideo != null) {
-                    educationalVideoViewModel.updateEducationalVideo(title_et.getText().toString(),description_et.getText().toString(),educationalVideo.getVideo_id());
+                    educationalVideoViewModel.updateEducationalVideo(currentUserGuid,title_et.getText().toString(),description_et.getText().toString(),educationalVideo.getVideo_id());
                 } else {
-                   educationalVideoViewModel.postEducationalVideo(new EducationalVideoRequest(title_et.getText().toString(),description_et.getText().toString()));
+                   educationalVideoViewModel.postEducationalVideo(currentUserGuid,new EducationalVideoRequest(title_et.getText().toString(),description_et.getText().toString()));
                 }
             }
         });

@@ -378,7 +378,6 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
             case R.id.save_btn:
                 Utils.hideKeyboard(getActivity());
                 showQuickLogin();
-//                createPrescription(false, getPrescriptionModel(), commonUserApiResponseModel.getUserDisplay_name(), doctorGuid, false);
                 break;
             case R.id.save_fax_btn:
                 if (appConfig.isIndianUser(getActivity()))

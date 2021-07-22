@@ -207,7 +207,11 @@ public class CallPlacingActivity extends BaseActivity {
         if (callRequest.isCallForDirectWaitingRoom()) {
             openTokViewModel.getTokenForSession(callRequest.getSessionId(), null);
         } else {
-            openTokViewModel.postaVoipCall(callRequest.getDoctorGuid(), callRequest.getOtherUserGuid(), callRequest.getScheduleId(), callType);
+            String currentUserGuid="";
+            if(UserType.isUserAssistant()){
+                currentUserGuid=callRequest.getOtherUserGuid()!=null?callRequest.getOtherUserGuid():"";
+            }
+            openTokViewModel.postaVoipCall(currentUserGuid,callRequest.getDoctorGuid(), callRequest.getOtherUserGuid(), callRequest.getScheduleId(), callType);
         }
     }
 

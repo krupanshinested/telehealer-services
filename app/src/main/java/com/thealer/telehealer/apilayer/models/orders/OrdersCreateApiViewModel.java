@@ -33,13 +33,17 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void createForm(CreateFormRequestModel createFormRequestModel, String doctorGuid, boolean isProgressVisibile) {
+    public void createForm(String userGuid,CreateFormRequestModel createFormRequestModel, String doctorGuid, boolean isProgressVisibile) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-
-                    getAuthApiService().createForms(createFormRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(userGuid !=null && !userGuid.isEmpty()) {
+                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.FORMS_CODE);
+                    }
+                    getAuthApiService().createForms(headers,createFormRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisibile)) {
                                 @Override
@@ -53,12 +57,17 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void assignSpecialist(boolean sync_create,AssignSpecialistRequestModel assignSpecialistRequestModel, String doctorGuid, boolean isProgressVisibile) {
+    public void assignSpecialist(String userGuid,boolean sync_create,AssignSpecialistRequestModel assignSpecialistRequestModel, String doctorGuid, boolean isProgressVisibile) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().assignSpecialist(sync_create,assignSpecialistRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(userGuid !=null && !userGuid.isEmpty()) {
+                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.REFERRALS_CODE);
+                    }
+                    getAuthApiService().assignSpecialist(headers,sync_create,assignSpecialistRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisibile)) {
                                 @Override
@@ -104,8 +113,10 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, String> headers = new HashMap<>();
-                    headers.put(ArgumentKeys.USER_GUID,user_guid);
-                    headers.put(ArgumentKeys.MODULE_CODE,ArgumentKeys.PRESCRIPTION_CODE);
+                    if(!user_guid.isEmpty()) {
+                        headers.put(ArgumentKeys.USER_GUID, user_guid);
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.PRESCRIPTION_CODE);
+                    }
                     getAuthApiService().createPrescription(headers,sync_create,createPrescriptionRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
@@ -137,12 +148,17 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createLabOrder(boolean sync_create,CreateTestApiRequestModel createTestApiRequestModel, String doctorGuid) {
+    public void createLabOrder(String userGuid,boolean sync_create,CreateTestApiRequestModel createTestApiRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createLabOrder(sync_create,createTestApiRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(userGuid !=null && !userGuid.isEmpty()) {
+                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.LABS_CODE);
+                    }
+                    getAuthApiService().createLabOrder(headers,sync_create,createTestApiRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
@@ -155,12 +171,18 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createRadiologyOrder(boolean sync_create, CreateRadiologyRequestModel createRadiologyRequestModel, String doctorGuid) {
+    public void createRadiologyOrder(String userGuid,boolean sync_create, CreateRadiologyRequestModel createRadiologyRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createRadiology(sync_create,createRadiologyRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(userGuid !=null && !userGuid.isEmpty()) {
+                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.RADIOLOGY_CODE);
+                    }
+
+                    getAuthApiService().createRadiology(headers,sync_create,createRadiologyRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
@@ -173,12 +195,18 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createMiscellaneousOrder(CreateMiscellaneousRequestModel createMiscellaneousRequestModel, String doctorGuid) {
+    public void createMiscellaneousOrder(String userGuid,CreateMiscellaneousRequestModel createMiscellaneousRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createMiscellaneous(createMiscellaneousRequestModel, doctorGuid)
+
+                    Map<String, String> headers = new HashMap<>();
+                    if(userGuid !=null && !userGuid.isEmpty()) {
+                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.MEDICAL_DOCUMENTS_CODE);
+                    }
+                    getAuthApiService().createMiscellaneous(headers,createMiscellaneousRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
