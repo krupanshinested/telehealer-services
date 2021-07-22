@@ -323,10 +323,9 @@ public class OrdersBaseFragment extends BaseFragment {
         currentOrder = OrderConstant.ORDER_PRESCRIPTIONS;
         patientName = userDisplay_name;
         isSendFax = sendFax;
-
+        ordersCreateApiViewModel.createPrescription(userGuid,status, prescriptionModel, doctorGuid);
        showSuccessView();
 
-        ordersCreateApiViewModel.createPrescription(userGuid,status, prescriptionModel, doctorGuid);
     }
 
     public void createNewRadiologyOrder(Boolean status, CreateRadiologyRequestModel requestModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
