@@ -126,7 +126,7 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         }
                     });
                 }catch (Exception e){
-                    Log.e("VitalThresholdAdapter", "Error During NotifyDataSetChange  For ThresholdLimitAdapter"+e.toString());
+                    e.printStackTrace();
                 }
             }
         }, new OnItemClickListener() {
