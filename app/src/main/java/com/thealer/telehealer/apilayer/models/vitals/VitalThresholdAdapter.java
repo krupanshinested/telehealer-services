@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Nimesh Patel
@@ -52,6 +54,7 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         } else {
             finalValue = (int) submitedValue + "";
         }
+
         return finalValue;
     }
 
@@ -95,7 +98,12 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     prevUpperValueInt[1] = Utils.get2Decimal(prevUpperValueList[1]);
                     double rangeLHS = upperValueInt[0] - prevUpperValueInt[0];
                     double rangeRHS = upperValueInt[1] - prevUpperValueInt[1];
-                    vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(position).setHigh_value(upperValue + "");
+
+                    String finalUpperValue=getUpdatedValue(Utils.get2Decimal(upperValueList[0]),bundle.getString(ArgumentKeys.VITAL_TYPE))+"/"+getUpdatedValue(Utils.get2Decimal(upperValueList[1]),bundle.getString(ArgumentKeys.VITAL_TYPE));
+
+                    vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(position)
+                            .setHigh_value(finalUpperValue);
+
                     for (int i = position + 1; i < vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().size(); i++) {
                         String[] prevLowStr = vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).getLow_value().split("/");
                         String[] prevHighStr = vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).getHigh_value().split("/");
@@ -110,12 +118,16 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                                         (getUpdatedValue((Utils.get2Decimal(prevHighStr[1]) + rangeRHS), bundle.getString(ArgumentKeys.VITAL_TYPE)))));
                     }
                 }
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyItemChanged(position);
-                    }
-                });
+                try {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyItemChanged(position);
+                        }
+                    });
+                }catch (Exception e){
+                    Log.e("VitalThresholdAdapter", "Error During NotifyDataSetChange  For ThresholdLimitAdapter"+e.toString());
+                }
             }
         }, new OnItemClickListener() {
             @Override
@@ -215,6 +227,7 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.isEditable = isEditable;
         notifyDataSetChanged();
     }
+
 
     private class HeaderHolder extends RecyclerView.ViewHolder {
         private TextView title;

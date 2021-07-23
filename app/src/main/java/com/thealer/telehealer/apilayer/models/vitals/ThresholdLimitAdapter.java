@@ -1,10 +1,7 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
-import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +24,8 @@ import com.thealer.telehealer.views.common.OnItemClickListener;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 
 import java.util.List;
+
+import static com.thealer.telehealer.views.settings.RemotePatientMonitoringFragment.errorPos;
 
 /**
  * Created by Nimesh Patel
@@ -70,10 +69,10 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             itemHolder.etMessage.setText(rangeInfo.message);
             itemHolder.switchAbnormal.setChecked(rangeInfo.abnormal);
-            if(vitalType.equals(SupportedMeasurementType.temperature)){
-                itemHolder.etUpper.setKeyListener(DigitsKeyListener.getInstance(false,true));
-            }else{
-                itemHolder.etUpper.setKeyListener(DigitsKeyListener.getInstance(false,false));
+            if (vitalType.equals(SupportedMeasurementType.temperature)) {
+                itemHolder.etUpper.setKeyListener(DigitsKeyListener.getInstance(false, true));
+            } else {
+                itemHolder.etUpper.setKeyListener(DigitsKeyListener.getInstance(false, false));
             }
             if (position == (thresholdLimitList.size() - 1)) {
                 itemHolder.tvRemove.setVisibility(View.VISIBLE);
@@ -113,6 +112,24 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
             itemHolder.msg.setText(rangeInfo.message);
         }
+        if (itemHolder.etMessage.getText().toString().trim().isEmpty()) {
+            VitalErrorThreshold vitalErrorThreshold = new VitalErrorThreshold();
+            vitalErrorThreshold.parentPos = parentPos;
+            vitalErrorThreshold.itemPos = position;
+            vitalErrorThreshold.errorEtMessage = true;
+            for (int e = 0; e < errorPos.size(); e++) {
+                VitalErrorThreshold currentErrorThreshold = errorPos.get(e);
+                if (currentErrorThreshold.parentPos == parentPos && currentErrorThreshold.itemPos == position) {
+                    vitalErrorThreshold.errorEtUpperLeft = currentErrorThreshold.errorEtUpperLeft;
+                    vitalErrorThreshold.errorEtUpperRight = currentErrorThreshold.errorEtUpperRight;
+                    vitalErrorThreshold.errorEtUpper = currentErrorThreshold.errorEtUpper;
+                    e = errorPos.size();
+                }
+            }
+
+            itemHolder.etMessage.setError(activity.getString(R.string.str_please_enter_threshold_msg));
+            handlePosition(vitalErrorThreshold);
+        }
         itemHolder.switchAbnormal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,6 +140,11 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         itemHolder.tvRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                VitalErrorThreshold vitalErrorThreshold = new VitalErrorThreshold();
+                vitalErrorThreshold.parentPos = parentPos;
+                vitalErrorThreshold.itemPos = position;
+                handlePosition(vitalErrorThreshold);
+
                 Bundle bundle = new Bundle();
                 bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
                 bundle.putBoolean(ArgumentKeys.IS_REMOVE, true);
@@ -134,6 +156,12 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         itemHolder.tvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                VitalErrorThreshold vitalErrorThreshold = new VitalErrorThreshold();
+                vitalErrorThreshold.parentPos = parentPos;
+                vitalErrorThreshold.itemPos = position + 1;
+                vitalErrorThreshold.errorEtMessage = true;
+                handlePosition(vitalErrorThreshold);
+
                 Bundle bundle = new Bundle();
                 bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
                 bundle.putBoolean(ArgumentKeys.IS_ADD, true);
@@ -144,124 +172,180 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 onItemClickListener.onItemClick(position, bundle);
             }
         });
-        itemHolder.etUpperLeft.addTextChangedListener(new TextWatcher() {
-            int startChanged, countChanged;
-
+        itemHolder.etUpperRight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void onFocusChange(View v, boolean hasFocus) {
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                startChanged = start;
-                countChanged = count;
-            }
+                if (!hasFocus) {
+                    VitalErrorThreshold vitalErrorThreshold = new VitalErrorThreshold();
+                    vitalErrorThreshold.parentPos = parentPos;
+                    vitalErrorThreshold.itemPos = position;
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                itemHolder.etUpperLeft.setSelection(startChanged + countChanged);
-                upperLeft[0] = s.toString();
-                String thresholdStr = (Utils.get2Decimal(upperLeft[0])) + "/" + (Utils.get2Decimal(upperRight[0]));
-                Bundle bundle = new Bundle();
-                bundle.putString(ArgumentKeys.THRESHOLD_VALUE, thresholdStr);
-                bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
-                bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
-                if (!s.toString().trim().isEmpty()  && !s.toString().substring(s.length() - 1, s.length()).equals(".")) {
-                    if (Utils.get2Decimal(itemHolder.etUpperLeft.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerLeft.getText().toString().trim())) {
-                        onListItemSelectInterface.onListItemSelected(position, bundle);
-                        if (itemHolder.etMessage.getText().toString().trim().isEmpty())
-                            displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
+                    String etValue = itemHolder.etUpperRight.getText().toString().trim();
+                    upperRight[0] = etValue;
+                    String thresholdStr = (Utils.get2Decimal(upperLeft[0])) + "/" + (Utils.get2Decimal(upperRight[0]));
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ArgumentKeys.THRESHOLD_VALUE, thresholdStr);
+                    bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
+                    bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
+                    if (!etValue.isEmpty() && !etValue.endsWith(".")) {
+                        if (Utils.get2Decimal(itemHolder.etUpperRight.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerRight.getText().toString().trim())) {
+                            onListItemSelectInterface.onListItemSelected(position, bundle);
+                            if (itemHolder.etMessage.getText().toString().trim().isEmpty()) {
+                                itemHolder.etMessage.setError(activity.getString(R.string.str_please_enter_threshold_msg));
+                                vitalErrorThreshold.errorEtMessage = true;
+                            } else {
+                                vitalErrorThreshold.errorEtMessage = false;
+                                vitalErrorThreshold.errorEtUpperRight = false;
+                            }
+                        } else {
+                            itemHolder.etUpperRight.setError(activity.getString(R.string.str_enter_valid_range));
+                            vitalErrorThreshold.errorEtUpperRight = true;
+                        }
                     } else {
-                        displayToast(activity.getString(R.string.str_please_enter_value_higher_than_lower_limit));
+                        itemHolder.etUpperRight.setError(activity.getString(R.string.str_enter_valid_range));
+                        vitalErrorThreshold.errorEtUpperRight = true;
+                        if (itemHolder.etMessage.getText().toString().trim().isEmpty()) {
+                            itemHolder.etMessage.setError(activity.getString(R.string.str_please_enter_threshold_msg));
+                            vitalErrorThreshold.errorEtMessage = true;
+                        }
                     }
+                    handlePosition(vitalErrorThreshold);
                 }
             }
         });
-        itemHolder.etUpperRight.addTextChangedListener(new TextWatcher() {
-            int startChanged, countChanged;
-
+        itemHolder.etUpperLeft.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void onFocusChange(View v, boolean hasFocus) {
 
-            }
+                if (!hasFocus) {
+                    VitalErrorThreshold vitalErrorThreshold = new VitalErrorThreshold();
+                    vitalErrorThreshold.parentPos = parentPos;
+                    vitalErrorThreshold.itemPos = position;
+                    String etValue = itemHolder.etUpperLeft.getText().toString().trim();
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                startChanged = start;
-                countChanged = count;
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                itemHolder.etUpperRight.setSelection(startChanged + countChanged);
-                upperRight[0] = s.toString();
-                String thresholdStr = (Utils.get2Decimal(upperLeft[0])) + "/" + (Utils.get2Decimal(upperRight[0]));
-                Bundle bundle = new Bundle();
-                bundle.putString(ArgumentKeys.THRESHOLD_VALUE, thresholdStr);
-                bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
-                bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
-                if (!s.toString().trim().isEmpty() && !s.toString().substring(s.length() - 1, s.length()).equals(".")) {
-                    if (Utils.get2Decimal(itemHolder.etUpperRight.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerRight.getText().toString().trim())) {
-                        onListItemSelectInterface.onListItemSelected(position, bundle);
-                        if (itemHolder.etMessage.getText().toString().trim().isEmpty())
-                            displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
+                    upperLeft[0] = etValue;
+                    String thresholdStr = (Utils.get2Decimal(upperLeft[0])) + "/" + (Utils.get2Decimal(upperRight[0]));
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ArgumentKeys.THRESHOLD_VALUE, thresholdStr);
+                    bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
+                    bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
+                    if (!etValue.isEmpty() && !etValue.endsWith(".")) {
+                        if (Utils.get2Decimal(itemHolder.etUpperLeft.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLowerLeft.getText().toString().trim())) {
+                            onListItemSelectInterface.onListItemSelected(position, bundle);
+                            if (itemHolder.etMessage.getText().toString().trim().isEmpty()) {
+                                itemHolder.etMessage.setError(activity.getString(R.string.str_please_enter_threshold_msg));
+                                vitalErrorThreshold.errorEtMessage = true;
+                            } else {
+                                vitalErrorThreshold.errorEtMessage = false;
+                                vitalErrorThreshold.errorEtUpperLeft = false;
+                            }
+                        } else {
+                            itemHolder.etUpperLeft.setError(activity.getString(R.string.str_enter_valid_range));
+                            vitalErrorThreshold.errorEtUpperLeft = true;
+                        }
                     } else {
-                        displayToast(activity.getString(R.string.str_please_enter_value_higher_than_lower_limit));
+                        itemHolder.etUpperLeft.setError(activity.getString(R.string.str_enter_valid_range));
+                        vitalErrorThreshold.errorEtUpperLeft = true;
+                        if (itemHolder.etMessage.getText().toString().trim().isEmpty()) {
+                            itemHolder.etMessage.setError(activity.getString(R.string.str_please_enter_threshold_msg));
+                            vitalErrorThreshold.errorEtMessage = true;
+                        }
                     }
+                    handlePosition(vitalErrorThreshold);
                 }
             }
         });
-        itemHolder.etMessage.addTextChangedListener(new TextWatcher() {
+        itemHolder.etMessage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    String etValue = itemHolder.etMessage.getText().toString();
+                    VitalErrorThreshold vitalErrorThreshold = new VitalErrorThreshold();
+                    vitalErrorThreshold.parentPos = parentPos;
+                    vitalErrorThreshold.itemPos = position;
+                    if (etValue.isEmpty()) {
+                        vitalErrorThreshold.errorEtMessage = true;
+                        for (int e = 0; e < errorPos.size(); e++) {
+                            VitalErrorThreshold currentErrorThreshold = errorPos.get(e);
+                            if (currentErrorThreshold.parentPos == parentPos && currentErrorThreshold.itemPos == position) {
+                                vitalErrorThreshold.errorEtUpperLeft = currentErrorThreshold.errorEtUpperLeft;
+                                vitalErrorThreshold.errorEtUpperRight = currentErrorThreshold.errorEtUpperRight;
+                                vitalErrorThreshold.errorEtUpper = currentErrorThreshold.errorEtUpper;
+                                e = errorPos.size();
+                            }
+                        }
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Bundle bundle = new Bundle();
-                bundle.putString(ArgumentKeys.THRESHOLD_VALUE, null);
-                bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
-                bundle.putString(ArgumentKeys.THRESHOLD_MSG, s.toString());
-                onListItemSelectInterface.onListItemSelected(position, bundle);
-            }
-        });
-        itemHolder.etUpper.addTextChangedListener(new TextWatcher() {
-            int startChanged, countChanged;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                startChanged = start;
-                countChanged = count;
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                itemHolder.etUpper.setSelection(startChanged + countChanged);
-                Bundle bundle = new Bundle();
-                bundle.putString(ArgumentKeys.THRESHOLD_VALUE, s.toString());
-                bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
-                bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
-                if (!s.toString().trim().isEmpty()  &&!s.toString().substring(s.length() - 1, s.length()).equals(".")) {
-                    if (Utils.get2Decimal(itemHolder.etUpper.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLower.getText().toString().trim())) {
-                        onListItemSelectInterface.onListItemSelected(position, bundle);
-                        if (itemHolder.etMessage.getText().toString().trim().isEmpty())
-                            displayToast(activity.getString(R.string.str_please_enter_threshold_msg));
-                    } else {
-                        displayToast(activity.getString(R.string.str_please_enter_value_higher_than_lower_limit));
+                        itemHolder.etMessage.setError(activity.getString(R.string.str_please_enter_threshold_msg));
                     }
+                    handlePosition(vitalErrorThreshold);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ArgumentKeys.THRESHOLD_VALUE, null);
+                    bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
+                    bundle.putString(ArgumentKeys.THRESHOLD_MSG, etValue);
+                    onListItemSelectInterface.onListItemSelected(position, bundle);
                 }
             }
         });
+        itemHolder.etUpper.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    VitalErrorThreshold vitalErrorThreshold = new VitalErrorThreshold();
+                    vitalErrorThreshold.parentPos = parentPos;
+                    vitalErrorThreshold.itemPos = position;
+                    String etValue = itemHolder.etUpper.getText().toString();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ArgumentKeys.THRESHOLD_VALUE, etValue);
+                    bundle.putInt(ArgumentKeys.PARENT_POS, parentPos);
+                    bundle.putString(ArgumentKeys.VITAL_TYPE, vitalType);
+                    if (!etValue.trim().isEmpty() && !etValue.endsWith(".")) {
+                        if (Utils.get2Decimal(itemHolder.etUpper.getText().toString().trim()) >= Utils.get2Decimal(itemHolder.etLower.getText().toString().trim())) {
+                            onListItemSelectInterface.onListItemSelected(position, bundle);
+                            if (itemHolder.etMessage.getText().toString().trim().isEmpty()) {
+                                itemHolder.etMessage.setError(activity.getString(R.string.str_please_enter_threshold_msg));
+                                vitalErrorThreshold.errorEtMessage = true;
+                            } else {
+                                vitalErrorThreshold.errorEtMessage = false;
+                                vitalErrorThreshold.errorEtUpper = false;
+                            }
+                        } else {
+                            itemHolder.etUpper.setError(activity.getString(R.string.str_enter_valid_range));
+                            vitalErrorThreshold.errorEtUpper = true;
+                        }
+                    } else {
+                        itemHolder.etUpper.setError(activity.getString(R.string.str_enter_valid_range));
+                        vitalErrorThreshold.errorEtUpper = true;
+                        if (itemHolder.etMessage.getText().toString().trim().isEmpty()) {
+                            itemHolder.etMessage.setError(activity.getString(R.string.str_please_enter_threshold_msg));
+                            vitalErrorThreshold.errorEtMessage = true;
+                        }
+                    }
+                    handlePosition(vitalErrorThreshold);
+                }
+            }
+        });
+    }
+
+    private void handlePosition(VitalErrorThreshold vitalErrorThreshold) {
+        if (errorPos.size() == 0 && (vitalErrorThreshold.errorEtUpper || vitalErrorThreshold.errorEtUpperRight && vitalErrorThreshold.errorEtUpperLeft && vitalErrorThreshold.errorEtUpper) ) {
+            errorPos.add(vitalErrorThreshold);
+        } else {
+            for (int e = 0; e < errorPos.size(); e++) {
+                VitalErrorThreshold currentVitalThreshold = errorPos.get(e);
+                if (currentVitalThreshold.itemPos == vitalErrorThreshold.itemPos && currentVitalThreshold.parentPos == currentVitalThreshold.parentPos) {
+                    if (vitalErrorThreshold.errorEtUpper || vitalErrorThreshold.errorEtUpperLeft
+                            || vitalErrorThreshold.errorEtUpperRight || vitalErrorThreshold.errorEtMessage) {
+                        errorPos.set(e, vitalErrorThreshold);
+                    } else {
+                        errorPos.remove(e);
+                    }
+                    e = errorPos.size();
+                } else {
+                    errorPos.add(vitalErrorThreshold);
+                }
+            }
+        }
     }
 
     private void displayToast(String msg) {

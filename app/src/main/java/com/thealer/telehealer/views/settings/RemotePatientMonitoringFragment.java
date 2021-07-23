@@ -23,6 +23,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalErrorThreshold;
 import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdAdapter;
 import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
@@ -45,6 +46,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RemotePatientMonitoringFragment extends BaseFragment {
 
@@ -61,8 +63,9 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
     private VitalThresholdAdapter vitalThresholdAdapter;
     private RecyclerView vitalsThresholdRv;
     private SettingsCellView notificationCellView,rpmCellView;
-    private List<VitalThresholdModel.VitalsThreshold> vitalThresholdList = new ArrayList<>();
+    List<VitalThresholdModel.VitalsThreshold> vitalThresholdList = new ArrayList<>();
     private  boolean isEditable = false;
+    public  static  List<VitalErrorThreshold> errorPos=new ArrayList<>();
 
 
     @Override
@@ -177,7 +180,7 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         saveBtn.setVisibility(View.GONE);
         editTv.setText(getString(R.string.edit));
         editTv.setVisibility(View.VISIBLE);
-        toolbarTitle.setText(R.string.rpm_title);
+        toolbarTitle.setText(R.string.vital_chart);
         vitalsApiViewModel.getVitalThreshold(true);
         rpmCellView.updateTextviewPadding(20,20,25,20);
         notificationCellView.updateTextviewPadding(20,20,20,20);
@@ -222,10 +225,14 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isEditable = false;
-                setUpData();
-                result.vitals_thresholds=vitalThresholdList;
-                vitalsApiViewModel.updateVitalThreshold(result);
+                if(errorPos.size() ==0) {
+                    isEditable = false;
+                    setUpData();
+                    result.vitals_thresholds = vitalThresholdList;
+                    vitalsApiViewModel.updateVitalThreshold(result);
+                }else{
+                    showToast(getString(R.string.please_fill_up_details));
+                }
             }
         });
 
