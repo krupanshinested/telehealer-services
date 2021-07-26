@@ -476,7 +476,7 @@ public interface ApiInterface {
     Observable<ArrayList<OrdersUserFormsApiResponseModel>> getFormDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
 
     @GET("api/schedule")
-    Observable<SchedulesApiResponseModel> getSchedules(@HeaderMap@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuidList);
+    Observable<SchedulesApiResponseModel> getSchedules(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuidList);
 
     @POST("api/requests")
     Observable<BaseApiResponseModel> createSchedules(@HeaderMap Map<String,String> headers,@Query(DOCTOR_GUID) String doctorGuidList, @Body SchedulesCreateRequestModel createRequestModel);
