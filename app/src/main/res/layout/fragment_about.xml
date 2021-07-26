@@ -20,7 +20,7 @@
             android:visibility="gone"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/cl_permission"
+            app:layout_constraintBottom_toTopOf="@+id/cl_vital_history"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -191,7 +191,7 @@
             android:visibility="gone"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/cl_permission"
+            app:layout_constraintBottom_toTopOf="@+id/cl_vital_history"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -428,7 +428,103 @@
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_vital_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/cl_history"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+            <TextView
+                android:id="@+id/tv_vital"
+                style="@style/text_title_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_default"
+                android:gravity="center|left"
+                android:textColor="@color/colorBlack"
+                android:text="@string/str_vital"
+                android:textAllCaps="true"
+                android:textSize="@dimen/big_title_size"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+            <TextView
+                android:id="@+id/tv_rpm_status"
+                style="@style/text_title_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_default"
+                android:gravity="center|left"
+                android:textColor="@color/colorBlack"
+                android:text="@string/str_rpm"
+                android:textAllCaps="true"
+                android:textSize="@dimen/title_size"
+                app:layout_constraintTop_toBottomOf="@+id/tv_vital"
+                app:layout_constraintStart_toStartOf="parent"/>
 
+            <TextView
+                android:id="@+id/tv_vital_edit"
+                style="@style/text_title_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_default"
+                android:gravity="center|left"
+                android:textColor="@color/app_gradient_start"
+                android:text="@string/edit"
+                android:textSize="@dimen/title_size"
+                app:layout_constraintTop_toBottomOf="@+id/tv_vital"
+                app:layout_constraintEnd_toEndOf="parent"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_vital_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:itemCount="2"
+                android:layout_marginTop="10dp"
+                tools:listitem="@layout/vital_raw_item"
+                app:layout_constraintTop_toBottomOf="@+id/tv_vital_edit"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/cl_permission"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+            <TextView
+                android:id="@+id/tv_history"
+                style="@style/text_title_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_default"
+                android:gravity="center|left"
+                android:textColor="@color/colorBlack"
+                android:text="@string/history"
+                android:textAllCaps="true"
+                android:textSize="@dimen/big_title_size"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:itemCount="2"
+                android:layout_marginTop="10dp"
+                tools:listitem="@layout/history_item"
+                app:layout_constraintTop_toBottomOf="@+id/tv_history"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_permission"
             android:layout_width="match_parent"

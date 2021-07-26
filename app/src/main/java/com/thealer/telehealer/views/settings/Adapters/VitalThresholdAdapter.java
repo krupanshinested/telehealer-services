@@ -1,4 +1,4 @@
-package com.thealer.telehealer.apilayer.models.vitals;
+package com.thealer.telehealer.views.settings.Adapters;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.vitals.ThresholdLimitAdapter;
+import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;

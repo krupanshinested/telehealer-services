@@ -1520,4 +1520,10 @@
     <string name="vital_chart">Vitals Chart</string>
     <string name="str_enter_valid_range">Enter Valid Range</string>
     <string name="please_fill_up_details">Please enter all values</string>
+    <string name="str_vital">Vitals</string>
+    <string name="str_rpm">RPM</string>
+    <string name="str_rpm_status">RPM (%s)</string>
+    <string name="str_enable">Enable</string>
+    <string name="str_disable">Disable</string>
+    <string name="recorded_on">Recorded on %s</string>
 </resources>

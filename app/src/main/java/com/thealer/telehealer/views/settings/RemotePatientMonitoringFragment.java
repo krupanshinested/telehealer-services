@@ -2,7 +2,6 @@ package com.thealer.telehealer.views.settings;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,29 +23,21 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalErrorThreshold;
-import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdAdapter;
+import com.thealer.telehealer.views.settings.Adapters.VitalThresholdAdapter;
 import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
-import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.CustomRecyclerView;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
-import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
-import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
-import com.thealer.telehealer.views.transaction.AddChargeActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class RemotePatientMonitoringFragment extends BaseFragment {
 
