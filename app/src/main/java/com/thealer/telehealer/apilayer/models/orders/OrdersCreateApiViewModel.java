@@ -15,6 +15,7 @@ import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRe
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.HashMap;
@@ -39,8 +40,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, String> headers = new HashMap<>();
-                    if(userGuid !=null && !userGuid.isEmpty()) {
-                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                    if(UserType.isUserAssistant()) {
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.FORMS_CODE);
                     }
                     getAuthApiService().createForms(headers,createFormRequestModel, doctorGuid)
@@ -63,8 +63,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, String> headers = new HashMap<>();
-                    if(userGuid !=null && !userGuid.isEmpty()) {
-                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                    if(UserType.isUserAssistant()) {
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.REFERRALS_CODE);
                     }
                     getAuthApiService().assignSpecialist(headers,sync_create,assignSpecialistRequestModel, doctorGuid)
@@ -113,8 +112,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, String> headers = new HashMap<>();
-                    if(!user_guid.isEmpty()) {
-                        headers.put(ArgumentKeys.USER_GUID, user_guid);
+                    if(UserType.isUserAssistant()) {
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.PRESCRIPTION_CODE);
                     }
                     getAuthApiService().createPrescription(headers,sync_create,createPrescriptionRequestModel, doctorGuid)
@@ -154,8 +152,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, String> headers = new HashMap<>();
-                    if(userGuid !=null && !userGuid.isEmpty()) {
-                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                    if(UserType.isUserAssistant()) {
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.LABS_CODE);
                     }
                     getAuthApiService().createLabOrder(headers,sync_create,createTestApiRequestModel, doctorGuid)
@@ -177,8 +174,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, String> headers = new HashMap<>();
-                    if(userGuid !=null && !userGuid.isEmpty()) {
-                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                    if(UserType.isUserAssistant()) {
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.RADIOLOGY_CODE);
                     }
 
@@ -202,8 +198,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
                 if (status) {
 
                     Map<String, String> headers = new HashMap<>();
-                    if(userGuid !=null && !userGuid.isEmpty()) {
-                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                    if(UserType.isUserAssistant()) {
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.MEDICAL_DOCUMENTS_CODE);
                     }
                     getAuthApiService().createMiscellaneous(headers,createMiscellaneousRequestModel, doctorGuid)

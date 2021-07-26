@@ -51,6 +51,7 @@ public class EducationalCreateFragment extends BaseFragment {
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle,next_tv;
+    private String doctorGuid;
 
     @Nullable
     private EducationalVideo educationalVideo;
@@ -83,6 +84,7 @@ public class EducationalCreateFragment extends BaseFragment {
                     educationalVideo = ((EducationalVideoOrder) educationalVideoObject).getVideo();
                 }
             }
+            doctorGuid= getArguments().getString(ArgumentKeys.DOCTOR_GUID);
         }
 
         initView(view);
@@ -203,14 +205,10 @@ public class EducationalCreateFragment extends BaseFragment {
         record_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String currentUserGuid=UserDetailPreferenceManager.getUser_guid()!=null?UserDetailPreferenceManager.getUser_guid():"";
-                if(!UserType.isUserAssistant()){
-                    currentUserGuid="";
-                }
                 if (educationalVideo != null) {
-                    educationalVideoViewModel.updateEducationalVideo(currentUserGuid,title_et.getText().toString(),description_et.getText().toString(),educationalVideo.getVideo_id());
+                    educationalVideoViewModel.updateEducationalVideo(doctorGuid,title_et.getText().toString(),description_et.getText().toString(),educationalVideo.getVideo_id());
                 } else {
-                   educationalVideoViewModel.postEducationalVideo(currentUserGuid,new EducationalVideoRequest(title_et.getText().toString(),description_et.getText().toString()));
+                   educationalVideoViewModel.postEducationalVideo(doctorGuid,new EducationalVideoRequest(title_et.getText().toString(),description_et.getText().toString()));
                 }
             }
         });

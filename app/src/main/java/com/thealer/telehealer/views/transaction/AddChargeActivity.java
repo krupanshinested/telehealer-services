@@ -164,11 +164,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     if (baseApiResponseModel instanceof AddChargeResp) {
                         addChargeViewModel.setChargeId(((AddChargeResp) baseApiResponseModel).getData().getId());
                         addChargeViewModel.setAddedTransaction(((AddChargeResp) baseApiResponseModel).getData());
-                        String currentUserGuid=addChargeViewModel.getAddedTransaction().getPatientId().getUser_guid();
-                        if(!UserType.isUserAssistant())
-                            currentUserGuid="";
+                        String currentDoctorGuid=addChargeViewModel.getAddedTransaction().getDoctorId().getUser_guid();
 
-                        transactionListViewModel.processPayment(currentUserGuid,addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.STRIPE);
+                        transactionListViewModel.processPayment(currentDoctorGuid,addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.STRIPE);
                     }
                 } else {
                     showToast(baseApiResponseModel.getMessage());
@@ -216,11 +214,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     Runnable proceedOfflineListener = new Runnable() {
                         @Override
                         public void run() {
-                            String currentUserGuid=addChargeViewModel.getAddedTransaction().getPatientId().getUser_guid();
-                            if(!UserType.isUserAssistant())
-                                currentUserGuid="";
+                            String currentDoctorGuid=addChargeViewModel.getAddedTransaction().getDoctorId().getUser_guid();
 
-                            transactionListViewModel.processPayment(currentUserGuid,addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
+                            transactionListViewModel.processPayment(currentDoctorGuid,addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
                         }
                     };
                     Runnable paymentSettingListener = new Runnable() {
@@ -249,12 +245,10 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                             Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.app_name), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    String currentUserGuid=addChargeViewModel.getAddedTransaction().getPatientId().getUser_guid();
-                                    if(!UserType.isUserAssistant())
-                                        currentUserGuid="";
+                                    String currentDoctorGuid=addChargeViewModel.getAddedTransaction().getDoctorId().getUser_guid();
 
 
-                                    transactionListViewModel.processPayment(currentUserGuid,addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
+                                    transactionListViewModel.processPayment(currentDoctorGuid,addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
                                     dialog.dismiss();
                                 }
                             }, (dialog, which) -> {
@@ -333,12 +327,10 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
             Utils.showAlertDialog(this, getString(R.string.app_name), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String currentUserGuid=addChargeViewModel.getAddedTransaction().getPatientId().getUser_guid();
-                    if(!UserType.isUserAssistant())
-                        currentUserGuid="";
+                    String currentDoctorGuid=addChargeViewModel.getAddedTransaction().getDoctorId().getUser_guid();
 
 
-                    transactionListViewModel.processPayment(currentUserGuid,addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
+                    transactionListViewModel.processPayment(currentDoctorGuid,addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
                     dialog.dismiss();
                 }
             }, (dialog, which) -> {
@@ -353,15 +345,13 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(this, message, options, new PickerListener() {
             @Override
             public void didSelectedItem(int position) {
-                String currentUserGuid=addChargeViewModel.getAddedTransaction().getPatientId().getUser_guid();
-                if(!UserType.isUserAssistant())
-                    currentUserGuid="";
+                String currentDoctorGuid=addChargeViewModel.getAddedTransaction().getDoctorId().getUser_guid();
 
 
                 if (getString(R.string.lbl_ask_to_add_credit_card).equals(options.get(position))) {
-                    askToAddCardViewModel.askToAddCard(currentUserGuid, addChargeViewModel.getAddedTransaction().getDoctorId().getUser_guid());
+                    askToAddCardViewModel.askToAddCard(addChargeViewModel.getAddedTransaction().getPatientId().getUser_guid(), addChargeViewModel.getAddedTransaction().getDoctorId().getUser_guid());
                 } else if (getString(R.string.lbl_proceed_offline).equals(options.get(position))) {
-                    transactionListViewModel.processPayment(currentUserGuid,addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
+                    transactionListViewModel.processPayment(currentDoctorGuid,addChargeViewModel.getAddedTransaction().getId(), Constants.PaymentMode.CASH);
                 }
 
             }

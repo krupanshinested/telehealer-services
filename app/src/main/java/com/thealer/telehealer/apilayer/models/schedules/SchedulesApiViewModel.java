@@ -11,6 +11,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.ResultFetcher;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
@@ -89,8 +90,7 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
                 if (status) {
 
                     Map<String, String> headers = new HashMap<>();
-                    if(userGuid != null && !userGuid.isEmpty()) {
-                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                    if(UserType.isUserAssistant()) {
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.SCHEDULING_CODE);
                     }
                     getAuthApiService().createSchedules(headers,doctorGuid, createRequestModel)
@@ -115,8 +115,7 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, String> headers = new HashMap<>();
-                    if(userGuid == null && !userGuid.isEmpty()){
-                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                    if(UserType.isUserAssistant()){
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.SCHEDULING_CODE);
                     }
                     getAuthApiService().deleteSchedule(headers,scheduleId, doctorGuid)

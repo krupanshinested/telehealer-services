@@ -9,6 +9,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.HashMap;
@@ -27,8 +28,9 @@ public class VitalsCreateApiModel extends BaseApiViewModel {
                 Log.v("VitalsCreateApiModel","status "+status);
                 if (status){
                     Map<String, String> headers = new HashMap<>();
-                    headers.put(ArgumentKeys.USER_GUID,userGuid);
-                    headers.put(ArgumentKeys.MODULE_CODE,ArgumentKeys.ADD_VITALS_CODE);
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.ADD_VITALS_CODE);
+                    }
                     getAuthApiService().createVital(headers,createVitalApiRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {

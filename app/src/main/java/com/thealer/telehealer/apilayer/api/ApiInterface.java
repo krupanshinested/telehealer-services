@@ -699,14 +699,14 @@ public interface ApiInterface {
 
 
     @POST("api/educational-video")
-    Observable<EducationalFetchModel> postEducationalVideo(@HeaderMap Map<String,String> headers,@Body EducationalVideoRequest request);
+    Observable<EducationalFetchModel> postEducationalVideo(@HeaderMap Map<String,String> headers,@Body EducationalVideoRequest request,@Query(DOCTOR_GUID) String doctorGuid);
 
     @PATCH("api/educational-video/referral/{id}")
     Observable<EducationalFetchModel> patchEducationalVideo(@Path(ID) String videoId, @Body HashMap<String, Object> item);
 
     @Multipart
     @PATCH("api/educational-video/{id}")
-    Observable<BaseApiResponseModel> updateEducationalVideo(@HeaderMap Map<String,String> headers,@Path(ID) String sessionId, @Part("details") HashMap<String, Object> item);
+    Observable<BaseApiResponseModel> updateEducationalVideo(@HeaderMap Map<String,String> headers,@Path(ID) String sessionId, @Part("details") HashMap<String, Object> item,@Query(DOCTOR_GUID) String doctorGuid);
 
     @DELETE("api/educational-video/{id}")
     Observable<DeleteEducationalVideoResponse> deleteEducationalVideo(@HeaderMap Map<String,String> headers,@Path(ID) String sessionId);
@@ -762,10 +762,10 @@ public interface ApiInterface {
     Observable<TransactionListResp> transactionPaginate(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Body() TransactionListReq req);
 
     @POST("/api/charge/process-payment")
-    Observable<BaseApiResponseModel> processPayment(@HeaderMap Map<String,String> headers,@Query("id") int id, @Body HashMap<String, Object> req);
+    Observable<BaseApiResponseModel> processPayment(@HeaderMap Map<String,String> headers,@Query("id") int id, @Body HashMap<String, Object> req,@Query(DOCTOR_GUID) String doctorGuid);
 
     @POST("/api/charge/process-refund-v2")
-    Observable<BaseApiResponseModel> processRefund(@HeaderMap Map<String,String> headers,@Query("id") int id, @Body() RefundReq req);
+    Observable<BaseApiResponseModel> processRefund(@HeaderMap Map<String,String> headers,@Query("id") int id, @Body() RefundReq req,@Query(DOCTOR_GUID) String doctorGuid);
 
 
 }

@@ -13,6 +13,7 @@ import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 
 import java.util.ArrayList;
@@ -104,7 +105,7 @@ public class TransactionListViewModel extends BaseApiViewModel {
         }
     }
 
-    public void processPayment(String userGuid,int id, int paymentMode) {
+    public void processPayment(String doctorGuid,int id, int paymentMode) {
         setApiRequested(false);
         HashMap<String, Object> req = new HashMap<>();
         req.put("payment_mode", paymentMode);
@@ -113,11 +114,10 @@ public class TransactionListViewModel extends BaseApiViewModel {
             if (status) {
 
                 Map<String, String> headers = new HashMap<>();
-                if(userGuid == null && !userGuid.isEmpty()) {
-                    headers.put(ArgumentKeys.USER_GUID, userGuid);
+                if(UserType.isUserAssistant()) {
                     headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.PAYMENT_PROCESSING_CODE);
                 }
-                getAuthApiService().processPayment(headers,id, req)
+                getAuthApiService().processPayment(headers,id, req,doctorGuid)
                         .compose(applySchedulers())
                         .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                             @Override

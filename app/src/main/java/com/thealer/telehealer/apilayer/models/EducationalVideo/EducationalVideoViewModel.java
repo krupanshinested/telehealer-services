@@ -80,17 +80,16 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
     }
 
 
-    public void postEducationalVideo(String userGuid, EducationalVideoRequest request) {
+    public void postEducationalVideo(String doctorGuid, EducationalVideoRequest request) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, String> headers = new HashMap<>();
-                    if (userGuid != null && !userGuid.isEmpty()) {
-                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                    if (UserType.isUserAssistant()) {
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.EDUCATIONAL_VIDEOS_CODE);
                     }
-                    getAuthApiService().postEducationalVideo(headers, request)
+                    getAuthApiService().postEducationalVideo(headers, request,doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -144,7 +143,7 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
         });
     }
 
-    public void updateEducationalVideo(String userGuid, String title, String description, int videoId) {
+    public void updateEducationalVideo(String doctorGuid, String title, String description, int videoId) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -153,11 +152,10 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
                     details.put("title", title);
                     details.put("description", description);
                     Map<String, String> headers = new HashMap<>();
-                    if (userGuid != null && !userGuid.isEmpty()) {
-                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                    if (UserType.isUserAssistant()) {
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.EDUCATIONAL_VIDEOS_CODE);
                     }
-                    getAuthApiService().updateEducationalVideo(headers, videoId + "", details)
+                    getAuthApiService().updateEducationalVideo(headers, videoId + "", details,doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override

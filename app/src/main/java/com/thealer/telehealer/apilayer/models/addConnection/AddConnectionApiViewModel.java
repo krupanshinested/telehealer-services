@@ -7,6 +7,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
@@ -29,8 +30,7 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, String> headers = new HashMap<>();
-                    if(userGuid != null && !userGuid.isEmpty()) {
-                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                    if(UserType.isUserAssistant()) {
                         headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.INVITE_OTHERS_CODE);
                     }
 

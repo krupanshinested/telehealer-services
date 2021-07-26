@@ -52,6 +52,8 @@ public class EducationalVideoDetailFragment extends BaseFragment {
     private TextView toolbarTitle, edit_tv;
     private PlayerView playerView;
     private TextView description_tv;
+    String doctorGuid;
+
 
     private EducationalVideo educationalVideo;
     @Nullable
@@ -84,7 +86,7 @@ public class EducationalVideoDetailFragment extends BaseFragment {
             Object videoObject = getArguments().getSerializable(ArgumentKeys.EDUCATIONAL_VIDEO);
 
             if (videoObject == null) {
-                String doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+                 doctorGuid= getArguments().getString(ArgumentKeys.DOCTOR_GUID);
                 String id = getArguments().getString(ArgumentKeys.EDUCATIONAL_VIDEO_ID);
                 String userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
                 educationalVideoViewModel.getEducationalVideos(doctorGuid, id, userGuid);
@@ -174,7 +176,9 @@ public class EducationalVideoDetailFragment extends BaseFragment {
             public void onClick(View view) {
                 if (getActivity() instanceof ShowSubFragmentInterface) {
                     EducationalCreateFragment fragment = new EducationalCreateFragment();
-                    fragment.setArguments(getArguments());
+                    Bundle bundle =new Bundle();
+                    bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                    fragment.setArguments(bundle);
                     ((ShowSubFragmentInterface) getActivity()).onShowFragment(fragment);
                 }
             }

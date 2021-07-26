@@ -21,6 +21,7 @@ import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
@@ -206,8 +207,9 @@ public class OpenTokViewModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 if (status) {
                     Map<String, String> headers = new HashMap<>();
-                    headers.put(ArgumentKeys.USER_GUID,userGuid);
-                    headers.put(ArgumentKeys.MODULE_CODE,ArgumentKeys.MAKE_CALLS_CODE);
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.MAKE_CALLS_CODE);
+                    }
                     getAuthApiService().postaVOIPCall(headers,doctorGuid, result)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<CallSettings>(Constants.SHOW_PROGRESS) {

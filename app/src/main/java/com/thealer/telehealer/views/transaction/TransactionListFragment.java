@@ -577,11 +577,10 @@ public class TransactionListFragment extends BaseFragment {
                                 textView.setVisibility(View.GONE);
                                 RefundReq req = new RefundReq();
                                 req.setRefundAmount(Double.parseDouble(inputText));
-                                String currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
-                                if(!UserType.isUserAssistant())
-                                    currentUserGuid="";
+                                String currentDoctorGuid=selectedTransaction.getDoctorId().getUser_guid();
 
-                                refundViewModel.processRefund(currentUserGuid,transactionListViewModel.getTransactions().get(pos).getId(), req);
+
+                                refundViewModel.processRefund(currentDoctorGuid,transactionListViewModel.getTransactions().get(pos).getId(), req);
                                 dialog.dismiss();
                             }
                         } else {
