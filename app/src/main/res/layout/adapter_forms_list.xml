@@ -10,7 +10,7 @@
     <CheckBox
         android:id="@+id/list_cb"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="28dp"
         android:padding="4dp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_view"
         app:layout_constraintEnd_toStartOf="@id/info_iv"

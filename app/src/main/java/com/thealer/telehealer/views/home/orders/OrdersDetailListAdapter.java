@@ -281,7 +281,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
             itemCiv.setVisibility(View.GONE);
         }
 
-        itemTitleTv.setText(Html.fromHtml(context.getString(R.string.str_with_htmltag,childList.get(headerList.get(groupPosition)).get(childPosition).getSubTitle().trim())));
+        itemTitleTv.setText(Html.fromHtml(context.getString(R.string.str_with_htmltag,childList.get(headerList.get(groupPosition)).get(childPosition).getSubTitle().trim()).trim()));
 
         if (ordersDetailListAdapterModel.getOtherImageUrl() != null) {
             Utils.setImageWithGlideWithoutDefaultPlaceholder(context, itemCiv, ordersDetailListAdapterModel.getOtherImageUrl(), null, true, true);

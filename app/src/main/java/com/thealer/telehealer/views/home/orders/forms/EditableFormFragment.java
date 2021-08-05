@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.os.Handler;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -168,7 +169,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             toolbar.setVisibility(View.GONE);
             ((ChangeTitleInterface) getActivity()).onTitleChange(formsApiResponseModel.getName());
         } else {
-            toolbarTitle.setText(formsApiResponseModel.getName());
+            toolbarTitle.setText(Html.fromHtml(getString(R.string.str_with_htmltag,formsApiResponseModel.getName().trim())));
         }
 
         if (formsApiResponseModel.isCompleted())

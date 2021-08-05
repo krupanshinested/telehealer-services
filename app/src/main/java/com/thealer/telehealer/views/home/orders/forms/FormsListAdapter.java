@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +64,8 @@ public class FormsListAdapter extends RecyclerView.Adapter<FormsListAdapter.View
             }
         });
 
-        viewHolder.listCb.setText(formsApiResponseModelArrayList.get(i).getName());
+        String itemName=formsApiResponseModelArrayList.get(i).getName();
+        viewHolder.listCb.setText(Html.fromHtml(context.getString(R.string.str_with_htmltag,itemName.trim()).trim()));
 
         viewHolder.listCb.setOnClickListener(new View.OnClickListener() {
             @Override
