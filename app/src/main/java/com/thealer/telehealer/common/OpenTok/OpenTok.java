@@ -1146,7 +1146,6 @@ public class OpenTok implements Session.SessionListener,
                 UserDetailPreferenceManager.getUserDisplayName()
                 , UserDetailPreferenceManager.getUser_guid(), toGuid,
                 callRequest.getCallUUID(), callRequest.getCallType(), sessionId, callRequest.getDoctorGuid());
-        Log.e("neem", "sendNotification: "+pushPayLoad.toString() );
         PubnubUtil.shared.publishVoipMessage(pushPayLoad, new PubNubResult() {
             @Override
             public void didSend(Boolean isSuccess) {
