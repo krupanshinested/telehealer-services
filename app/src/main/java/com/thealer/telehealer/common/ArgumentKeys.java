@@ -95,6 +95,7 @@ public class ArgumentKeys {
     public static final String IS_PRIMARY_DELETED = "isPrimaryDeletd";
     public static final String IS_SECONDARY_DELETED = "isSecondaryDeletd";
     public static final String HIDE_SEARCH = "hideSearch";
+    public static final String CLEAR_BG_SEARCH = "clearBGSearch";
     public static final String VITAL_DETAIL = "vitalDetail";
     public static final String SEGMENT_DETAIL = "segmentDetail";
     public static final String SEGMENT = "segment";

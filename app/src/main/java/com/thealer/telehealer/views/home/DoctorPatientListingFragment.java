@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -161,7 +162,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         if (UserType.isUserPatient()) {
             search_view.setSearchHint(getString(R.string.search_doctors));
-        } else {
+        } else if(UserType.isUserDoctor()) {
+            search_view.setSearchHint(getString(R.string.lbl_search_patient));
+        }else{
             search_view.setSearchHint(getString(R.string.search_associations));
         }
 
@@ -192,6 +195,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             }
             if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)) {
                 search_view.setVisibility(View.GONE);
+            }
+            if(getArguments().getBoolean(ArgumentKeys.CLEAR_BG_SEARCH,false)){
+                search_view.setBackgroundColor(Color.TRANSPARENT);
             }
             if (!getArguments().getBoolean(ArgumentKeys.SHOW_FAB_ADD, true)) {
                 addFab.setVisibility(View.GONE);
