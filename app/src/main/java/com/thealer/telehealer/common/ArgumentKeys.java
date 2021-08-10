@@ -56,6 +56,7 @@ public class ArgumentKeys {
     public static final String ORDER_ID = "order_id";
     public static final String TRANSCRIPTION_DETAIL = "transcription_detail";
     public static final String USER_GUID = "user_guid";
+    public static final String isUserPatient = "isUserPatient";
     public static final String SCHEDULE_DETAIL = "schedule_detail";
     public static final String DOCTOR_GUID = "doctor_guid";
     public static final String DOCTOR_ID = "doctor_id";
