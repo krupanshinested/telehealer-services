@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -256,10 +257,23 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                                     }
                                 });
                             }
-                            if (itemsBean.getValue() != null) {
-                                formCsv.getSpinner().setSelection(itemsBean.getProperties().getOptions().indexOf(itemsBean.getValue()), true);
+                            try {
+                                if (itemsBean.getScore() != null) {
+                                    int pos = (int) (itemsBean.getProperties().getOptions().size() - itemsBean.getScore());
+                                    formCsv.getSpinner().setSelection(pos, true);
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
 
+                            try {
+                                if (itemsBean.getScore() != null) {
+                                    int pos = (int) (itemsBean.getProperties().getOptions().size() - itemsBean.getScore());
+                                    formCsv.getSpinner().setSelection(pos, true);
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
                             formCsv.getSpinner().setEnabled(isEditable);
                             editableFormRootLl.addView(spinnerView);
 
