@@ -77,6 +77,7 @@ import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
+import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.settings.GeneralSettingsFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
@@ -917,6 +918,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 Log.d("HelpScreen", "Permission");
                 isPropserShown = true;
             }
+                if(!Constants.DisplayQuickLogin) {
+                    startActivity(new Intent(this, QuickLoginActivity.class));
+                    Constants.DisplayQuickLogin = true;
+                }
+
         } else if (!appPreference.getBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN) && (!application.isFromRegistration) && UserType.isUserPatient() && UserDetailPreferenceManager.getWhoAmIResponse() != null && (UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire() == null || !UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire().isQuestionariesEmpty())) {
 
             appPreference.setBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN, true);

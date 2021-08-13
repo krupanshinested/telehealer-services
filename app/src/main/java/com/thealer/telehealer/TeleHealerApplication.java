@@ -23,6 +23,7 @@ import com.opentok.android.AudioDeviceManager;
 import com.stripe.android.PaymentConfiguration;
 import com.thealer.telehealer.common.AppPreference;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
@@ -106,6 +107,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public void onMoveToForeground() {
         // app moved to foreground
         isInForeGround = true;
+        Constants.DisplayQuickLogin = false;
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
@@ -134,6 +136,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         Log.e("aswin", "onMoveToBackground: ");
         isInForeGround = false;
         isFromRegistration = false;
+        Constants.DisplayQuickLogin = true;
         if (isVitalDeviceConnectionShown) {
             isVitalDeviceConnectionShown = false;
         }
@@ -157,6 +160,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         // app moved to background
         Log.e("TeleHealerApplication", "appDestroyed");
         isInForeGround = false;
+        Constants.DisplayQuickLogin = false;
 
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, false);

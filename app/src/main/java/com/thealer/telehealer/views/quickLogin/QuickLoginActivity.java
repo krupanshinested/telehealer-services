@@ -43,13 +43,13 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
         @Override
         public void onQuickLogin(int status) {
             Utils.hideKeyboard(QuickLoginActivity.this);
-//            if (status == ArgumentKeys.QUICK_LOGIN_CREATED) {
+            if (status == ArgumentKeys.QUICK_LOGIN_CREATED) {
 
                 int quickLoginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
 
                 if (quickLoginType == Constants.QUICK_LOGIN_TYPE_NONE) {
                     goToMainActivity();
-                } else {
+                }else {
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
 
@@ -63,9 +63,9 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
                     showSuccessViewDialog(bundle);
                 }
-          /*  } else {
+            } else {
                 finish();
-            }*/
+            }
         }
     };
 
@@ -162,6 +162,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 //on user click cancel
                 //send the user back to previous page
                 authStatus = ArgumentKeys.AUTH_CANCELLED;
+                invalidateUser();
                 finish();
                 break;
             case Constants.BIOMETRIC_ERROR:
