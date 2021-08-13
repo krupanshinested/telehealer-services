@@ -412,7 +412,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
 
 
                 if (description != null && !description.isEmpty()) {
-                    viewHolder.descriptionTv.setText(Utils.fromHtml(activity.getString(R.string.str_with_htmltag,description.trim()).trim()).toString().trim());
+                    viewHolder.descriptionTv.setText(Utils.fromHtml(activity.getString(R.string.str_with_htmltag,description)));
                 } else {
                     viewHolder.descriptionTv.setVisibility(View.GONE);
                 }

@@ -107,6 +107,7 @@ import me.toptas.fancyshowcase.FancyShowCaseView;
 import me.toptas.fancyshowcase.FocusShape;
 import me.toptas.fancyshowcase.listener.DismissListener;
 
+import static android.text.Html.FROM_HTML_MODE_COMPACT;
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
@@ -805,11 +806,32 @@ public class Utils {
     }
 
     @SuppressWarnings("deprecation")
-    public static Spanned fromHtml(String source) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+    public static Spanned fromHtml(String htmlString) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+            return Html.fromHtml(htmlString, Html.FROM_HTML_MODE_LEGACY);
         } else {
-            return Html.fromHtml(source);
+            return Html.fromHtml(htmlString);
+        }*/
+        // remove leading <br/>
+        while (htmlString.startsWith("<br/>")){
+
+            htmlString = htmlString.replaceFirst("<br/>", "");
+        }
+
+        // remove trailing <br/>
+        while (htmlString.endsWith("<br/>")){
+
+            htmlString =  htmlString.replaceAll("<br/>$", "");
+        }
+
+        // reduce multiple \n in the processed HTML string
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+            return Html.fromHtml(htmlString,  FROM_HTML_MODE_COMPACT);
+        }else{
+
+            return Html.fromHtml(htmlString);
         }
     }
 
@@ -1905,6 +1927,5 @@ public class Utils {
                 new SimpleDateFormat(UTCFormat, Locale.getDefault());
         return simpleDateFormat.format(calendar.getTimeInMillis());
     }
-
 
 }

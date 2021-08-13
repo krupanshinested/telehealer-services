@@ -63,6 +63,7 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.SplashActivity;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
@@ -77,6 +78,8 @@ import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
+import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.quickLogin.QuickLoginUtil;
 import com.thealer.telehealer.views.settings.GeneralSettingsFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
@@ -121,6 +124,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private boolean isCheckLicense = true;
     private boolean isPropserShown = false;
     private boolean isSigningOutInProcess = false;
+    private static boolean onAuthenticated = false;
 
     private NotificationApiViewModel notificationApiViewModel;
 
