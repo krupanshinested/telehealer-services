@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
@@ -50,6 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -324,6 +326,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         @Override
         public void onNext(O response) {
             onSuccess(response);
+            checkIdealTime();
             isLoadingLiveData.setValue(false);
 
         }
@@ -340,6 +343,20 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
         public abstract void onSuccess(O o);
 
+    }
+
+    private void checkIdealTime() {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        long currentTimeInMillis = Constants.LastActiveTime+Constants.IdealTime;
+        if(Constants.LastActiveTime ==  0){
+            Constants.LastActiveTime= timestamp.getTime();
+        }else if(timestamp.getTime()>currentTimeInMillis) {
+            Constants.LastActiveTime=timestamp.getTime();
+                Log.e(TAG, "checkIdealTime: launch");
+                getApplication().startActivity(new Intent(getApplication(), QuickLoginActivity.class));
+        }else{
+            Constants.LastActiveTime = timestamp.getTime();
+        }
     }
 
 

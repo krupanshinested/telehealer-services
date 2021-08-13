@@ -187,6 +187,8 @@ public class Constants {
     public static final double STRIPE_MIN_AMOUNT = 0.50;
     public static boolean isRedirectProfileSetting=false;
     public  static  boolean DisplayQuickLogin = false;
+    public static long LastActiveTime=0;
+    public static final long IdealTime=1800000;
 
 
     public interface MasterCodes {

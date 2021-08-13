@@ -67,8 +67,13 @@ public class VitalsManager extends BaseApiViewModel implements WeightMeasureInte
         if (VitalsManager.instance != null) {
             return VitalsManager.instance;
         } else {
-            VitalsManager.instance = new iHealthVitalManager(TeleHealerApplication.application);
-            return VitalsManager.instance;
+            try {
+                VitalsManager.instance = new iHealthVitalManager(TeleHealerApplication.application);
+                return VitalsManager.instance;
+            }catch (Exception e){
+                e.printStackTrace();
+                return  null;
+            }
         }
     }
 

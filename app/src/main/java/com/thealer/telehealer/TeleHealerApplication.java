@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.auth0.android.jwt.JWT;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.opentok.android.AudioDeviceManager;
 import com.stripe.android.PaymentConfiguration;
@@ -31,10 +32,12 @@ import com.thealer.telehealer.common.OpenTok.CallNotificationService;
 import com.thealer.telehealer.common.OpenTok.CustomAudioDevice;
 import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.guestlogin.WaitingRoomHearBeatService;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -128,6 +131,19 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         });
 
         popUpSchedulesId.clear();
+    }
+
+    private boolean isRefreshTokenExpired() {
+        try {
+
+            JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+            Log.e("neem", "isRefreshTokenExpired: "+jwt.getExpiresAt() );
+            Date date = new Date();
+            return date.compareTo(jwt.getExpiresAt()) >= 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
