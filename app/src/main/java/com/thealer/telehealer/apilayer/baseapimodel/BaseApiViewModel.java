@@ -94,7 +94,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                     isRefreshToken = false;
                     isQuickLoginReceiverEnabled = false;
-
                     EventRecorder.recordUserSession("Quick_Login_Failed");
                     Log.e(TAG, "onQuickLogin: failed");
                 } else {
@@ -117,10 +116,10 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
      */
 
     public void fetchToken(BaseViewInterface baseViewInterface) {
-
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                Utils.checkIdealTime(getApplication());
                 if (appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
                     Log.e(TAG, "run: auth empty");
                     baseViewInterface.onStatus(true);
@@ -150,7 +149,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 }
             }
         };
-
         new Handler().post(runnable);
 
     }
@@ -326,7 +324,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         @Override
         public void onNext(O response) {
             onSuccess(response);
-            checkIdealTime();
             isLoadingLiveData.setValue(false);
 
         }
@@ -345,19 +342,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     }
 
-    private void checkIdealTime() {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        long currentTimeInMillis = Constants.LastActiveTime+Constants.IdealTime;
-        if(Constants.LastActiveTime ==  0){
-            Constants.LastActiveTime= timestamp.getTime();
-        }else if(timestamp.getTime()>currentTimeInMillis) {
-            Constants.LastActiveTime=timestamp.getTime();
-                Log.e(TAG, "checkIdealTime: launch");
-                getApplication().startActivity(new Intent(getApplication(), QuickLoginActivity.class));
-        }else{
-            Constants.LastActiveTime = timestamp.getTime();
-        }
-    }
 
 
     public abstract class RAListObserver<O extends BaseApiResponseModel> implements Observer<ArrayList<O>> {

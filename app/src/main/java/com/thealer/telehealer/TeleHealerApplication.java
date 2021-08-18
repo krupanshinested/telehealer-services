@@ -33,10 +33,12 @@ import com.thealer.telehealer.common.OpenTok.CustomAudioDevice;
 import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.guestlogin.WaitingRoomHearBeatService;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -110,7 +112,8 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public void onMoveToForeground() {
         // app moved to foreground
         isInForeGround = true;
-        Constants.DisplayQuickLogin = false;
+
+        Utils.checkIdealTime(getApplicationContext());
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
@@ -137,7 +140,6 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         try {
 
             JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
-            Log.e("neem", "isRefreshTokenExpired: "+jwt.getExpiresAt() );
             Date date = new Date();
             return date.compareTo(jwt.getExpiresAt()) >= 0;
         } catch (Exception e) {
@@ -152,7 +154,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         Log.e("aswin", "onMoveToBackground: ");
         isInForeGround = false;
         isFromRegistration = false;
-        Constants.DisplayQuickLogin = true;
+        Utils.storeLastActiveTime();
         if (isVitalDeviceConnectionShown) {
             isVitalDeviceConnectionShown = false;
         }
@@ -163,7 +165,11 @@ public class TeleHealerApplication extends Application implements LifecycleObser
                 CallActivity.createNotificationBarCall(application, false, tokBox.getCallRequest().getDoctorName(), tokBox.getCallRequest());
             }
         } else {
-            VitalsManager.getInstance().disconnectAll();
+            try {
+                VitalsManager.getInstance().disconnectAll();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
@@ -176,7 +182,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         // app moved to background
         Log.e("TeleHealerApplication", "appDestroyed");
         isInForeGround = false;
-        Constants.DisplayQuickLogin = false;
+        Utils.storeLastActiveTime();
 
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, false);

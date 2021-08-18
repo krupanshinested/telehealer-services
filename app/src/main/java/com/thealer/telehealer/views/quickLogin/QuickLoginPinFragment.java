@@ -170,12 +170,14 @@ public class QuickLoginPinFragment extends BaseFragment {
 
         if (isNewUser) {
             forgetPasswordTv.setVisibility(View.GONE);
+            closeIv.setVisibility(View.VISIBLE);
             if (!isCreatePin) {
                 showReEnterPin();
             } else {
                 showCreatePin();
             }
         } else {
+            closeIv.setVisibility(View.GONE);
             showValidatePin();
         }
 

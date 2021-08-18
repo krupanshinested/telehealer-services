@@ -6,6 +6,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.thealer.telehealer.R;
@@ -102,15 +104,14 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
             isCreateQuickLogin = getIntent().getBooleanExtra(ArgumentKeys.IS_CREATE_PIN, false);
         }
 
+        Log.e("neem", "Quick Login Type: "+loginType );
         switch (loginType) {
-
             case Constants.QUICK_LOGIN_TYPE_TOUCH:
                 if (!isViewShown) {
                     BioMetricAuth.showBioMetricAuth(this, this);
                 }
                 break;
             case Constants.QUICK_LOGIN_TYPE_PIN:
-
                 boolean isRefreshToken = false;
                 if (getIntent() != null)
                     isRefreshToken = getIntent().getBooleanExtra(ArgumentKeys.IS_REFRESH_TOKEN, false);
@@ -177,6 +178,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 showToast(status);
                 break;
             case Constants.BIOMETRIC_SUCCESS:
+                Constants.DisplayQuickLogin=false;
                 authStatus = ArgumentKeys.AUTH_SUCCESS;
                 break;
         }

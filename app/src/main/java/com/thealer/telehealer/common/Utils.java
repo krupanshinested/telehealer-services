@@ -81,6 +81,7 @@ import com.thealer.telehealer.views.home.broadcastMessages.ChoosePatientActivity
 import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
+import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 import com.thealer.telehealer.views.signup.SignUpActivity;
 
@@ -1774,11 +1775,37 @@ public class Utils {
     }
 
     public static void updateLastLogin() {
-        String utcDate = Utils.getUTCfromGMT(new Timestamp(System.currentTimeMillis()).toString());
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String utcDate = Utils.getUTCfromGMT(timestamp.toString());
         String lastLogin = Utils.getDayMonthYearTime(utcDate);
         Log.e("aswin", "updateLastLogin: " + lastLogin);
 
         appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
+        appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime()+"");
+    }
+
+    public static  void storeLastActiveTime(){
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime()+"");
+    }
+    public static void checkIdealTime(Context context) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        long lastActiveTime= Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME,"0"));
+        long currentTimeInMillis = lastActiveTime+Constants.IdealTime;
+        if(lastActiveTime ==  0){
+            lastActiveTime= timestamp.getTime();
+            appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime+"");
+        }else if(timestamp.getTime()>currentTimeInMillis) {
+            lastActiveTime=timestamp.getTime();
+            appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+            if(!Constants.DisplayQuickLogin) {
+                Constants.DisplayQuickLogin = true;
+                context.startActivity(new Intent(context, QuickLoginActivity.class));
+            }
+        }else{
+            lastActiveTime = timestamp.getTime();
+            appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime+"");
+        }
     }
 
     public static void showMultichoiseItemSelectAlertDialog(@NonNull Context context, @NonNull String title, @NonNull String[] itemsList, @NonNull boolean[] selectedList, @NonNull String positiveTitle, @NonNull String negativeTitle,

@@ -48,7 +48,7 @@ public class BioMetricCustomAuth extends BaseBottomSheetDialogFragment {
         biometricIv = (ImageView) view.findViewById(R.id.biometric_iv);
         biometricStatusTv = (TextView) view.findViewById(R.id.biometric_status_tv);
         cancelTv = (Button) view.findViewById(R.id.cancel_tv);
-
+        cancelTv.setVisibility(View.GONE);
         cancelTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

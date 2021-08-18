@@ -918,11 +918,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 Log.d("HelpScreen", "Permission");
                 isPropserShown = true;
             }
-                if(!Constants.DisplayQuickLogin) {
-                    startActivity(new Intent(this, QuickLoginActivity.class));
-                    Constants.DisplayQuickLogin = true;
-                }
-
         } else if (!appPreference.getBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN) && (!application.isFromRegistration) && UserType.isUserPatient() && UserDetailPreferenceManager.getWhoAmIResponse() != null && (UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire() == null || !UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire().isQuestionariesEmpty())) {
 
             appPreference.setBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN, true);
