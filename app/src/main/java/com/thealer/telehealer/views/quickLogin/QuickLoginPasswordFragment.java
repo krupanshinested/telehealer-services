@@ -25,6 +25,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -112,6 +113,13 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
 
         closeIv.setOnClickListener(this);
         validateBtn.setOnClickListener(this);
+
+        boolean isNewUser = appPreference.getString(Constants.QUICK_LOGIN_PIN).isEmpty();
+        if(isNewUser){
+            closeIv.setVisibility(View.VISIBLE);
+        }else{
+            closeIv.setVisibility(View.GONE);
+        }
 
         userNameTv.setText(UserDetailPreferenceManager.getUserDisplayName());
         Utils.setImageWithGlide(getActivity().getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);

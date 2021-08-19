@@ -38,6 +38,7 @@ import com.thealer.telehealer.common.Logs;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
@@ -194,6 +195,12 @@ public class BaseActivity extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
         alertDialog.getWindow().setLayout(250, 250);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Utils.checkIdealTime(this);
     }
 
     public void dismissScreen() {

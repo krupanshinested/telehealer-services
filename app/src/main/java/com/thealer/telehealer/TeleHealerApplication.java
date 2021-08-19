@@ -14,6 +14,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -36,6 +37,7 @@ import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.views.call.CallActivity;
+import com.thealer.telehealer.views.common.LockScreenReceiver;
 import com.thealer.telehealer.views.guestlogin.WaitingRoomHearBeatService;
 
 import java.sql.Timestamp;
@@ -59,7 +61,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false, isFromRegistration, isDestroyed = false;
     public static AppConfig appConfig;
     public static boolean stateChange = false;
-
+    LockScreenReceiver lockScreenReceiver = new LockScreenReceiver();
     @Override
     public void onCreate() {
         super.onCreate();
@@ -76,6 +78,11 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
         createNotificationChannel();
         PaymentConfiguration.init(this, BuildConfig.STRIPE_KEY);
+        IntentFilter lockFilter = new IntentFilter();
+        lockFilter.addAction(Intent.ACTION_SCREEN_ON);
+        lockFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        lockFilter.addAction(Intent.ACTION_USER_PRESENT);
+        registerReceiver(lockScreenReceiver, lockFilter);
     }
 
     private void createNotificationChannel() {
@@ -187,6 +194,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, false);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+        unregisterReceiver(lockScreenReceiver);
 
     }
 

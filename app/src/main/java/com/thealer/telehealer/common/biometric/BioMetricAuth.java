@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.hardware.biometrics.BiometricPrompt;
 import android.os.CancellationSignal;
+import android.util.Log;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
@@ -25,11 +26,9 @@ public class BioMetricAuth {
 
             if (BioMetricUtils.isHardwareSupported(context) && BioMetricUtils.isFingerprintAvailable(context)) {
 
-
                 //If the current sdk is > P user Biometric prompt else show custom biometric prompt
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-
                     BiometricPrompt.CryptoObject biometricCryptoObject = new BiometricPrompt.CryptoObject(BioMetricUtils.getCipher());
 
 
