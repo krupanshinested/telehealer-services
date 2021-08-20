@@ -130,11 +130,7 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
         validateBtn.setOnClickListener(this);
 
         boolean isNewUser = appPreference.getString(Constants.QUICK_LOGIN_PIN).isEmpty();
-        if(isNewUser){
-            closeIv.setVisibility(View.VISIBLE);
-        }else{
-            closeIv.setVisibility(View.GONE);
-        }
+        closeIv.setVisibility(View.GONE);
 
         userNameTv.setText(UserDetailPreferenceManager.getUserDisplayName());
         Utils.setImageWithGlide(getActivity().getApplicationContext(), userAvatarCiv, UserDetailPreferenceManager.getUser_avatar(), getActivity().getDrawable(R.drawable.profile_placeholder), true, true);

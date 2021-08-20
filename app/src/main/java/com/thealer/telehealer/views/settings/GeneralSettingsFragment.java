@@ -391,7 +391,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 break;
             case R.id.quick_login:
                 if (quickLogin.getSwitchStatus()) {
-                    appPreference.setInt(Constants.QUICK_LOGIN_TYPE, 0);
+                    appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_NONE);
                     appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
                     quickLogin.toggleSwitch();
                 } else {
