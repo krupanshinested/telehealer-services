@@ -281,6 +281,7 @@ public class UserDetailPreferenceManager {
         appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
         appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
         appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
+        appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, "0");
     }
 
     public static String getInstallType() {

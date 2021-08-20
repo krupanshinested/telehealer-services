@@ -728,7 +728,7 @@ public class Utils {
         closeIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(closeListener!=null)
+                if (closeListener != null)
                     closeListener.run();
 
                 dialog.dismiss();
@@ -1781,30 +1781,35 @@ public class Utils {
         Log.e("aswin", "updateLastLogin: " + lastLogin);
 
         appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
-        appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime()+"");
+        appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime() + "");
     }
 
-    public static  void storeLastActiveTime(){
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime()+"");
+    public static void storeLastActiveTime() {
+        if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime() + "");
+        }
     }
+
     public static void checkIdealTime(Context context) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        long lastActiveTime= Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME,"0"));
-        long currentTimeInMillis = lastActiveTime+Constants.IdealTime;
-        if(lastActiveTime ==  0){
-            lastActiveTime= timestamp.getTime();
-            appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime+"");
-        }else if(timestamp.getTime()>currentTimeInMillis) {
-            lastActiveTime=timestamp.getTime();
-            appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-            if(!Constants.DisplayQuickLogin) {
-                Constants.DisplayQuickLogin = true;
-                context.startActivity(new Intent(context, QuickLoginActivity.class));
+        if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
+            long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
+            if (lastActiveTime == 0) {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+            } else if (timestamp.getTime() > currentTimeInMillis) {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+                if (!Constants.DisplayQuickLogin) {
+                    Constants.DisplayQuickLogin = true;
+                    context.startActivity(new Intent(context, QuickLoginActivity.class));
+                }
+            } else {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
             }
-        }else{
-            lastActiveTime = timestamp.getTime();
-            appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime+"");
         }
     }
 
