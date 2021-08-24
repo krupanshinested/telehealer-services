@@ -1,7 +1,6 @@
 package com.thealer.telehealer.views.settings.Adapters;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Nimesh Patel
@@ -78,56 +76,73 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(position).setMessage(bundle.getString(ArgumentKeys.THRESHOLD_MSG));
                 } else if (bundle != null && !vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).vital_type.equals(SupportedMeasurementType.bp)) {
                     double upperValue = Utils.get2Decimal(bundle.getString(ArgumentKeys.THRESHOLD_VALUE));
-                    double prevUpperValue = Utils.get2Decimal(vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(position).getHigh_value());
-                    double rangeDiff = upperValue - prevUpperValue;
                     vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(position).setHigh_value(getUpdatedValue(upperValue, bundle.getString(ArgumentKeys.VITAL_TYPE)));
                     for (int i = position + 1; i < vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().size(); i++) {
-                        double prevLow = Utils.get2Decimal(vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).getLow_value());
-                        double prevHigh = Utils.get2Decimal(vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).getHigh_value());
-                        vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).setLow_value(getUpdatedValue((prevLow + rangeDiff), bundle.getString(ArgumentKeys.VITAL_TYPE)));
-                        vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).setHigh_value(getUpdatedValue((prevHigh + rangeDiff), bundle.getString(ArgumentKeys.VITAL_TYPE)));
+                        double currentHigh = Utils.get2Decimal(vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).getHigh_value());
+                        double prevHigh = Utils.get2Decimal(vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i - 1).getHigh_value());
+
+                        double currentLow = prevHigh + 1;
+                        if (currentHigh <= upperValue) {
+                            currentHigh = currentLow + 1;
+                        }
+                        vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).setLow_value(getUpdatedValue((currentLow), bundle.getString(ArgumentKeys.VITAL_TYPE)));
+                        vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).setHigh_value(getUpdatedValue((currentHigh), bundle.getString(ArgumentKeys.VITAL_TYPE)));
                     }
                 } else if (bundle != null && vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).vital_type.equals(SupportedMeasurementType.bp)) {
                     String upperValue = bundle.getString(ArgumentKeys.THRESHOLD_VALUE);
                     String[] upperValueList = upperValue.split("/");
-                    double[] upperValueInt = new double[2];
-                    upperValueInt[0] = Utils.get2Decimal(upperValueList[0]);
-                    upperValueInt[1] = Utils.get2Decimal(upperValueList[1]);
-                    String prevUpperValue = vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(position).getHigh_value();
-                    String[] prevUpperValueList = prevUpperValue.split("/");
-                    double[] prevUpperValueInt = new double[2];
-                    prevUpperValueInt[0] = Utils.get2Decimal(prevUpperValueList[0]);
-                    prevUpperValueInt[1] = Utils.get2Decimal(prevUpperValueList[1]);
-                    double rangeLHS = upperValueInt[0] - prevUpperValueInt[0];
-                    double rangeRHS = upperValueInt[1] - prevUpperValueInt[1];
+                    double[] upperValueDouble = new double[2];
+                    upperValueDouble[0] = Utils.get2Decimal(upperValueList[0]);
+                    upperValueDouble[1] = Utils.get2Decimal(upperValueList[1]);
 
-                    String finalUpperValue=getUpdatedValue(Utils.get2Decimal(upperValueList[0]),bundle.getString(ArgumentKeys.VITAL_TYPE))+"/"+getUpdatedValue(Utils.get2Decimal(upperValueList[1]),bundle.getString(ArgumentKeys.VITAL_TYPE));
+                    String finalUpperValue = getUpdatedValue(Utils.get2Decimal(upperValueList[0]), bundle.getString(ArgumentKeys.VITAL_TYPE)) + "/" + getUpdatedValue(Utils.get2Decimal(upperValueList[1]), bundle.getString(ArgumentKeys.VITAL_TYPE));
 
                     vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(position)
                             .setHigh_value(finalUpperValue);
 
                     for (int i = position + 1; i < vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().size(); i++) {
-                        String[] prevLowStr = vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).getLow_value().split("/");
-                        String[] prevHighStr = vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).getHigh_value().split("/");
+
+                        String[] currentHighStr = vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).getHigh_value().split("/");
+
+                        String[] prevHighStr = vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i - 1).getHigh_value().split("/");
+
+                        double[] currentHighDouble = new double[2];
+                        currentHighDouble[0] = Utils.get2Decimal(currentHighStr[0]);
+                        currentHighDouble[1] = Utils.get2Decimal(currentHighStr[1]);
+
+                        double[] prevHigheDouble = new double[2];
+                        prevHigheDouble[0] = Utils.get2Decimal(prevHighStr[0]);
+                        prevHigheDouble[1] = Utils.get2Decimal(prevHighStr[1]);
+
+                        double[] currentlow = new double[2];
+                        currentlow[0] = prevHigheDouble[0] + 1;
+                        currentlow[1] = prevHigheDouble[1] + 1;
+
+                        if (currentHighDouble[0] <= upperValueDouble[0]) {
+                            currentHighDouble[0] = currentlow[0] + 1;
+                        }
+                        if (currentHighDouble[1] <= upperValueDouble[1]) {
+                            currentHighDouble[1] = currentlow[1] + 1;
+                        }
 
 
                         vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).setLow_value(
-                                ((getUpdatedValue((Utils.get2Decimal(prevLowStr[0]) + rangeLHS), bundle.getString(ArgumentKeys.VITAL_TYPE))) + "/" +
-                                        (getUpdatedValue((Utils.get2Decimal(prevLowStr[1]) + rangeRHS), bundle.getString(ArgumentKeys.VITAL_TYPE)))));
+                                ((getUpdatedValue(currentlow[0], bundle.getString(ArgumentKeys.VITAL_TYPE))) + "/" +
+                                        (getUpdatedValue(currentlow[1], bundle.getString(ArgumentKeys.VITAL_TYPE)))));
 
                         vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).setHigh_value(
-                                ((getUpdatedValue((Utils.get2Decimal(prevHighStr[0]) + rangeLHS), bundle.getString(ArgumentKeys.VITAL_TYPE))) + "/" +
-                                        (getUpdatedValue((Utils.get2Decimal(prevHighStr[1]) + rangeRHS), bundle.getString(ArgumentKeys.VITAL_TYPE)))));
+                                ((getUpdatedValue(currentHighDouble[0], bundle.getString(ArgumentKeys.VITAL_TYPE))) + "/" +
+                                        (getUpdatedValue(currentHighDouble[1], bundle.getString(ArgumentKeys.VITAL_TYPE)))));
                     }
                 }
                 try {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            notifyItemChanged(position);
+                            notifyDataSetChanged();
                         }
                     });
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
