@@ -1,19 +1,14 @@
 package com.thealer.telehealer.apilayer.baseapimodel;
 
-import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
@@ -33,12 +28,9 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
-import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
-import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.common.AppUpdateActivity;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
@@ -51,7 +43,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,23 +78,24 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
         public void onQuickLogin(int status) {
-            Log.e(TAG, "onQuickLogin: " + status);
-            if (isQuickLoginReceiverEnabled) {
-                Log.e(TAG, "onQuickLogin: enabled");
-                if (status == ArgumentKeys.AUTH_FAILED || status == ArgumentKeys.AUTH_CANCELLED) {
-                    getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-                    isRefreshToken = false;
-                    isQuickLoginReceiverEnabled = false;
-                    EventRecorder.recordUserSession("Quick_Login_Failed");
-                    Log.e(TAG, "onQuickLogin: failed");
+            if (!appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)) {
+                if (isQuickLoginReceiverEnabled) {
+                    Log.e(TAG, "onQuickLogin: enabled");
+                    if (status == ArgumentKeys.AUTH_FAILED || status == ArgumentKeys.AUTH_CANCELLED) {
+                        getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                        isRefreshToken = false;
+                        isQuickLoginReceiverEnabled = false;
+                        EventRecorder.recordUserSession("Quick_Login_Failed");
+                        Log.e(TAG, "onQuickLogin: failed");
+                    } else {
+                        EventRecorder.recordUserSession("Quick_Login_Success");
+                        Log.e(TAG, "onQuickLogin: success");
+                        if (!isRefreshToken)
+                            makeRefreshTokenApiCall();
+                    }
                 } else {
-                    EventRecorder.recordUserSession("Quick_Login_Success");
-                    Log.e(TAG, "onQuickLogin: success");
-                    if (!isRefreshToken)
-                        makeRefreshTokenApiCall();
+                    Log.e(TAG, "onQuickLogin: not enabled");
                 }
-            } else {
-                Log.e(TAG, "onQuickLogin: not enabled");
             }
         }
     };
@@ -119,7 +111,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Utils.checkIdealTime(getApplication());
                 if (appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
                     Log.e(TAG, "run: auth empty");
                     baseViewInterface.onStatus(true);
@@ -141,11 +132,10 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                      *      else
                      *          proceed api call
                      */
-
+                    Utils.checkIdealTime(getApplication());
                     baseViewInterfaceList.add(baseViewInterface);
                     baseViewInterface.onStatus(true);
                     Log.e(TAG, "run: list size " + baseViewInterfaceList.size());
-
                 }
             }
         };
@@ -184,7 +174,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         Log.e(TAG, "makeRefreshTokenApiCall: api called");
         isRefreshToken = true;
         getAuthApiService()
-                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), false, BuildConfig.VERSION_NAME,true)
+                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), false, BuildConfig.VERSION_NAME, true)
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                     @Override
@@ -209,6 +199,11 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             baseViewInterfaceList.get(i).onStatus(true);
         }
         baseViewInterfaceList.clear();
+
+        if(appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)){
+            Constants.DisplayQuickLogin = true;
+            application.startActivity(new Intent(application, QuickLoginActivity.class));
+        }
         Log.e(TAG, "updateListnerStatus: cleared");
         isRefreshToken = false;
         isQuickLoginReceiverEnabled = false;
@@ -343,7 +338,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     }
 
 
-
     public abstract class RAListObserver<O extends BaseApiResponseModel> implements Observer<ArrayList<O>> {
         public int requestWithLoader;
 
@@ -402,7 +396,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 boolean isE401 = false;
                 switch (httpException.code()) {
                     case 400: {
-                            errorModelLiveData.setValue(errorModel);
+                        errorModelLiveData.setValue(errorModel);
                     }
                     break;
                     case 401:

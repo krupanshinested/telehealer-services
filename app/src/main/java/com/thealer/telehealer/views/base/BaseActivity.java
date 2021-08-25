@@ -233,7 +233,7 @@ public class BaseActivity extends AppCompatActivity {
         if (view == null) {
             view = new View(activity);
         }
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public boolean isDeviceXLarge() {

@@ -84,4 +84,5 @@ public class PreferenceConstants {
     public static final String PATIENT_JOINED_WAITING_ROOM_NOTFICATION = "PATIENT_JOINED_WAITING_ROOM_NOTFICATION";
 
     public static final String LAST_ACTIVE_TIME = "LAST_ACTIVE_TIME";
+    public static final String IS_AUTH_PENDING = "IS_AUTH_PENDING";
 }

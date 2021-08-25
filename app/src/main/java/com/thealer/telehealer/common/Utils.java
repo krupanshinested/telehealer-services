@@ -59,6 +59,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.auth0.android.jwt.JWT;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.Headers;
 import com.bumptech.glide.request.FutureTarget;
@@ -1786,22 +1787,25 @@ public class Utils {
 
     public static void storeLastActiveTime() {
         if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+            Constants.DisplayQuickLogin = false;
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime() + "");
+
         }
     }
 
     public static void checkIdealTime(Context context) {
         if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
             long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
+            if (currentTimeInMillis == lastActiveTime)
+                lastActiveTime = timestamp.getTime();
+
             if (lastActiveTime == 0) {
                 lastActiveTime = timestamp.getTime();
                 appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
             } else if (timestamp.getTime() > currentTimeInMillis) {
-                lastActiveTime = timestamp.getTime();
-                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                 if (!Constants.DisplayQuickLogin) {
                     Constants.DisplayQuickLogin = true;
                     context.startActivity(new Intent(context, QuickLoginActivity.class));
@@ -1810,10 +1814,13 @@ public class Utils {
                 lastActiveTime = timestamp.getTime();
                 appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
             }
+
         }
     }
 
-    public static void showMultichoiseItemSelectAlertDialog(@NonNull Context context, @NonNull String title, @NonNull String[] itemsList, @NonNull boolean[] selectedList, @NonNull String positiveTitle, @NonNull String negativeTitle,
+    public static void showMultichoiseItemSelectAlertDialog(@NonNull Context
+                                                                    context, @NonNull String title, @NonNull String[] itemsList, @NonNull boolean[] selectedList,
+                                                            @NonNull String positiveTitle, @NonNull String negativeTitle,
                                                             @NonNull OnMultipleChoiceInterface multipleChoiceInterface) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -1896,7 +1903,16 @@ public class Utils {
         comboImage.drawBitmap(sc, fr.getWidth(), 0f, null);
         return comboBitmap;
     }
-
+    public static Boolean isAuthExpired() {
+        try {
+            JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+            Date date = new Date();
+            return date.compareTo(jwt.getExpiresAt()) >= 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
     public static void validUserToLogin(Context context) {
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
 

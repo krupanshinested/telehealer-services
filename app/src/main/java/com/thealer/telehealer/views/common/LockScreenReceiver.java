@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
@@ -20,7 +21,10 @@ public class LockScreenReceiver extends BroadcastReceiver {
             if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
                 if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
                     Utils.storeLastActiveTime();
-                    context.startActivity(new Intent(context, QuickLoginActivity.class));
+                    if(!Constants.DisplayQuickLogin) {
+                        Constants.DisplayQuickLogin = true;
+                        context.startActivity(new Intent(context, QuickLoginActivity.class));
+                    }
                 }
                 Log.e(TAG, "onReceive: Unlock");
 
