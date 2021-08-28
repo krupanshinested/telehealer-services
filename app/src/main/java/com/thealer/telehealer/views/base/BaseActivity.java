@@ -39,6 +39,7 @@ import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.common.LockScreenReceiver;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
@@ -51,12 +52,10 @@ public class BaseActivity extends AppCompatActivity {
     private int showScreenType;
     private RelativeLayout relativeLayout;
     private int count = 0;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
     public void attachObserver(BaseApiViewModel mViewModel) {
 
         mViewModel.getErrorModelLiveData().observe(this, errorModel -> {

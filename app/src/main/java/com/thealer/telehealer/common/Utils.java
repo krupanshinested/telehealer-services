@@ -872,7 +872,7 @@ public class Utils {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
 
         if (imm != null && imm.isActive(view)) {
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
     }
 
@@ -1806,9 +1806,14 @@ public class Utils {
                 lastActiveTime = timestamp.getTime();
                 appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
             } else if (timestamp.getTime() > currentTimeInMillis) {
+                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,true);
                 if (!Constants.DisplayQuickLogin) {
                     Constants.DisplayQuickLogin = true;
-                    context.startActivity(new Intent(context, QuickLoginActivity.class));
+                    try {
+                        context.startActivity(new Intent(context, QuickLoginActivity.class));
+                    }catch (Exception e){
+                        context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
                 }
             } else {
                 lastActiveTime = timestamp.getTime();
@@ -1851,6 +1856,13 @@ public class Utils {
 
     public static String getFormattedCurrency(double amount) {
         return String.format("$%.2f", amount);
+    }
+
+    public static boolean isRefreshTokenExpire() {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
+        long expireTime = lastActiveTime + Constants.ExpireTime;
+        return timestamp.getTime() > expireTime;
     }
 
     public interface OnMultipleChoiceInterface {

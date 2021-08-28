@@ -14,16 +14,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.DrawableImageViewTarget;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
-import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -33,13 +29,9 @@ import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.appupdate.AppUpdateResponse;
 import com.thealer.telehealer.views.appupdate.AppUpdateViewModel;
 import com.thealer.telehealer.views.base.BaseActivity;
-import com.thealer.telehealer.views.call.CallFeedBackActivity;
-import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
-import com.thealer.telehealer.views.transaction.AddChargeActivity;
-import com.thealer.telehealer.views.transaction.TransactionFilterActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -120,11 +112,15 @@ public class SplashActivity extends BaseActivity {
                     } else {
 
                         TeleLogger.shared.initialLog();
-                        if(Utils.isAuthExpired()){
+                        if (Utils.isRefreshTokenExpire()) {
                             UserDetailPreferenceManager.invalidateUser();
                             startActivity(new Intent(SplashActivity.this, SigninActivity.class));
                         }else if(appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)|| (appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == -1)){
-                            startActivity(new Intent(SplashActivity.this, QuickLoginActivity.class));
+                            try {
+                                startActivity(new Intent(SplashActivity.this, QuickLoginActivity.class));
+                            }catch (Exception e){
+                                startActivity(new Intent(SplashActivity.this, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                            }
                         }else {
                             Utils.validUserToLogin(SplashActivity.this);
                         }
@@ -134,9 +130,9 @@ public class SplashActivity extends BaseActivity {
                             .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
                                 @Override
                                 public void onSuccess(InstanceIdResult instanceIdResult) {
-                                    String token = instanceIdResult.getToken();
-                                    Log.d("TeleHealerApplication", "received token " + token);
-                                    TelehealerFirebaseMessagingService.assignToken(token);
+                                        String token = instanceIdResult.getToken();
+                                        Log.d("TeleHealerApplication", "received token " + token);
+                                        TelehealerFirebaseMessagingService.assignToken(token);
                                 }
                             });
 

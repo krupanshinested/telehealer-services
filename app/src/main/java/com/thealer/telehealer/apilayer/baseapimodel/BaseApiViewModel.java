@@ -172,13 +172,14 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     private void makeRefreshTokenApiCall() {
         Log.e(TAG, "makeRefreshTokenApiCall: api called");
-        isRefreshToken = true;
+//        isRefreshToken = true;
         getAuthApiService()
                 .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), false, BuildConfig.VERSION_NAME, true)
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                     @Override
                     public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                        isRefreshToken = true;
                         Log.e(TAG, "onSuccess: refreshed token");
                         Utils.updateLastLogin();
                         SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
@@ -202,7 +203,11 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
         if(appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)){
             Constants.DisplayQuickLogin = true;
-            application.startActivity(new Intent(application, QuickLoginActivity.class));
+            try {
+                application.startActivity(new Intent(application, QuickLoginActivity.class));
+            }catch (Exception e){
+                application.startActivity(new Intent(application, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
         }
         Log.e(TAG, "updateListnerStatus: cleared");
         isRefreshToken = false;

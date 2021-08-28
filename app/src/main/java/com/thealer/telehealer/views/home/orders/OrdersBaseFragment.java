@@ -43,6 +43,7 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.common.RecentsSelectionActivity;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.SplashActivity;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 
@@ -259,7 +260,11 @@ public class OrdersBaseFragment extends BaseFragment {
     };
 
     public void showQuickLogin() {
-        startActivity(new Intent(getActivity(), QuickLoginActivity.class));
+        try{
+            startActivity(new Intent(getActivity(), QuickLoginActivity.class));
+        }catch (Exception e){
+            startActivity(new Intent(getActivity(), QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+        }
     }
 
     @Override
