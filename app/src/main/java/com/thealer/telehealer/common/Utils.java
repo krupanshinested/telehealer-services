@@ -1808,7 +1808,6 @@ public class Utils {
                     lastActiveTime = timestamp.getTime();
                     appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                 } else if (timestamp.getTime() > currentTimeInMillis) {
-                    appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, true);
                     if (!Constants.DisplayQuickLogin) {
                         Constants.DisplayQuickLogin = true;
                         try {

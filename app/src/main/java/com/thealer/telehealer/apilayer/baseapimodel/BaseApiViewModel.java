@@ -221,16 +221,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         }
         baseViewInterfaceList.clear();
 
-        if(appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)){
-            try {
-                if (!Constants.DisplayQuickLogin) {
-                    Constants.DisplayQuickLogin = true;
-                    application.startActivity(new Intent(application, QuickLoginActivity.class));
-                }
-            } catch (Exception e) {
-                application.startActivity(new Intent(application, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-            }
-        }
         Log.e(TAG, "updateListnerStatus: cleared");
         isRefreshToken = false;
         isQuickLoginReceiverEnabled = false;

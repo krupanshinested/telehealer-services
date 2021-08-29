@@ -44,7 +44,6 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
         @Override
         public void onQuickLogin(int status) {
             Constants.DisplayQuickLogin = false;
-            appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,true);
             Utils.hideKeyboard(QuickLoginActivity.this);
             if (status == ArgumentKeys.QUICK_LOGIN_CREATED) {
                 int quickLoginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
@@ -88,6 +87,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
         if (!isViewShown) {
             initView();
         }
+        appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,true);
     }
 
     @Override
@@ -190,8 +190,8 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 break;
             case Constants.BIOMETRIC_SUCCESS:
                 Utils.storeLastActiveTime();
-                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,false);
                 authStatus = ArgumentKeys.AUTH_SUCCESS;
+                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,false);
                 break;
         }
         bundle.putInt(ArgumentKeys.QUICK_LOGIN_STATUS, authStatus);
@@ -201,6 +201,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
         if (success) {
+            appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,false);
             showSuccessViewDialog(bundle);
         } else {
             sendQuickLoginBroadCast(bundle);
@@ -221,8 +222,8 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     public void onSuccessViewCompletion(boolean success) {
         if (success) {
             if (isCreateQuickLogin) {
-                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,false);
                 Utils.storeLastActiveTime();
+                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,false);
                 setResult(Activity.RESULT_OK);
                 finish();
             } else

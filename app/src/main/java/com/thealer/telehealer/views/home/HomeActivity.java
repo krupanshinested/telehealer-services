@@ -159,6 +159,17 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         LocalBroadcastManager.getInstance(this).registerReceiver(isPropserShownListner, new IntentFilter(getString(R.string.APP_LIFECYCLE_STATUS)));
         LocalBroadcastManager.getInstance(this).registerReceiver(profileListener, new IntentFilter(getString(R.string.profile_picture_updated)));
         LocalBroadcastManager.getInstance(this).registerReceiver(NotificationCountReceiver, new IntentFilter(Constants.NOTIFICATION_COUNT_RECEIVER));
+
+        if (appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)) {
+            if (!Constants.DisplayQuickLogin) {
+                try {
+                    Constants.DisplayQuickLogin = true;
+                    application.startActivity(new Intent(application, QuickLoginActivity.class));
+                } catch (Exception e) {
+                    application.startActivity(new Intent(application, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                }
+            }
+        }
     }
 
     private void initViewModels() {
