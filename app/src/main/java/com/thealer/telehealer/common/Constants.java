@@ -188,6 +188,8 @@ public class Constants {
     public static boolean isRedirectProfileSetting=false;
     public  static  boolean DisplayQuickLogin = false;
     public static final long IdealTime=60000;
+    public static long ExpireTime=300000;
+    public static boolean isFromBackground=true;
 
 
     public interface MasterCodes {

@@ -118,13 +118,10 @@ public class SplashActivity extends BaseActivity {
                             startActivity(new Intent(SplashActivity.this, SigninActivity.class));
                         }
                     } else {
-
                         TeleLogger.shared.initialLog();
-                        if(Utils.isAuthExpired()){
+                        if(Utils.isRefreshTokenExpire()){
                             UserDetailPreferenceManager.invalidateUser();
                             startActivity(new Intent(SplashActivity.this, SigninActivity.class));
-                        }else if(appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)|| (appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == -1)){
-                            startActivity(new Intent(SplashActivity.this, QuickLoginActivity.class));
                         }else {
                             Utils.validUserToLogin(SplashActivity.this);
                         }

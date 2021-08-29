@@ -80,8 +80,6 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         lockFilter.addAction(Intent.ACTION_SCREEN_OFF);
         lockFilter.addAction(Intent.ACTION_USER_PRESENT);
         registerReceiver(lockScreenReceiver, lockFilter);
-
-
     }
 
     private void createNotificationChannel() {
@@ -118,8 +116,11 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public void onMoveToForeground() {
         // app moved to foreground
         isInForeGround = true;
-        Utils.checkIdealTime(getApplicationContext());
-
+        try {
+            Utils.checkIdealTime(getApplicationContext());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
@@ -148,6 +149,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         Log.e("aswin", "onMoveToBackground: ");
         isInForeGround = false;
         isFromRegistration = false;
+        Constants.isFromBackground=true;
         if (isVitalDeviceConnectionShown) {
             isVitalDeviceConnectionShown = false;
         }

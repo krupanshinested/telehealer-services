@@ -42,6 +42,8 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
         public void onQuickLogin(int status) {
+            Constants.DisplayQuickLogin = false;
+            appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,true);
             Utils.hideKeyboard(QuickLoginActivity.this);
             if (status == ArgumentKeys.QUICK_LOGIN_CREATED) {
                 int quickLoginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
@@ -94,8 +96,6 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     }
 
     private void initView() {
-        Constants.DisplayQuickLogin = false;
-        appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,true);
         fragmentHolder = (LinearLayout) findViewById(R.id.fragment_holder);
 
         int loginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);

@@ -19,23 +19,29 @@ public class LockScreenReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent != null && intent.getAction() != null) {
             if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
-                    Utils.storeLastActiveTime();
-                    if(!Constants.DisplayQuickLogin) {
-                        Constants.DisplayQuickLogin = true;
-                        context.startActivity(new Intent(context, QuickLoginActivity.class));
-                    }
-                }
-                Log.e(TAG, "onReceive: Unlock");
+
+                Log.e(TAG, "onReceive: Screen ON");
 
                 // Screen is on but not unlocked (if any locking mechanism present)
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
                 if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
                     Utils.storeLastActiveTime();
                 }
-                Log.e(TAG, "onReceive: Lock");
+                Log.e(TAG, "onReceive: Screen Lock");
             } else if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-                Log.e(TAG, "onReceive: Present");
+                if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+                    Utils.storeLastActiveTime();
+                    try {
+                        if (!Constants.DisplayQuickLogin) {
+                            Constants.DisplayQuickLogin = true;
+                            context.startActivity(new Intent(context, QuickLoginActivity.class));
+                        }
+                    } catch (Exception e) {
+                        context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
+                }
+                Log.e(TAG, "onReceive: Screen Unlock - Present");
+
             }
         }
     }

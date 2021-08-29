@@ -158,14 +158,35 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     isLoadingLiveData.setValue(false);
                     errorModelLiveData.setValue(new ErrorModel(NETWORK_ERROR_CODE, "No Internet connection", "No Internet connection"));
                 } else {
-                    getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(),
-                            QuickLoginActivity.class)
-                            .putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true)
-                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    try {
+                        if (!Constants.DisplayQuickLogin) {
+                            Constants.DisplayQuickLogin = true;
+                            getApplication().getApplicationContext().startActivity(new Intent( getApplication().getApplicationContext(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true));
+                        }
+                    } catch (Exception e) {
+                        getApplication().getApplicationContext().startActivity(new Intent( getApplication().getApplicationContext(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
                 }
             }
-        } else {
-            goToSigninActivity();
+        }else{
+            if(Utils.isRefreshTokenExpire()){
+                goToSigninActivity();
+            }else{
+                Log.e(TAG, "handleUnAuth: "+appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING));
+                if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+                    Utils.storeLastActiveTime();
+                    try {
+                        if (!Constants.DisplayQuickLogin) {
+                            Constants.DisplayQuickLogin = true;
+                            getApplication().getApplicationContext().startActivity(new Intent( getApplication().getApplicationContext(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true));
+                        }
+                    } catch (Exception e) {
+                        getApplication().getApplicationContext().startActivity(new Intent( getApplication().getApplicationContext(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
+                }else{
+                    goToSigninActivity();
+                }
+            }
         }
     }
 
@@ -201,8 +222,14 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         baseViewInterfaceList.clear();
 
         if(appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)){
-            Constants.DisplayQuickLogin = true;
-            application.startActivity(new Intent(application, QuickLoginActivity.class));
+            try {
+                if (!Constants.DisplayQuickLogin) {
+                    Constants.DisplayQuickLogin = true;
+                    application.startActivity(new Intent(application, QuickLoginActivity.class));
+                }
+            } catch (Exception e) {
+                application.startActivity(new Intent(application, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
         }
         Log.e(TAG, "updateListnerStatus: cleared");
         isRefreshToken = false;
