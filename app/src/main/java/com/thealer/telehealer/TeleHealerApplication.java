@@ -170,6 +170,8 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, false);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+
+//        unregisterReceiver(lockScreenReceiver);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
