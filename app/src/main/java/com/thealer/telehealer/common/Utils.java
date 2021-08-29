@@ -68,8 +68,10 @@ import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Util.TeleCacheUrl;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
 import com.thealer.telehealer.views.common.CustomDialogs.OptionSelectionDialog;
@@ -84,6 +86,7 @@ import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
+import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.SignUpActivity;
 
 import java.io.IOException;
@@ -1796,31 +1799,32 @@ public class Utils {
     public static void checkIdealTime(Context context) {
         if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
-            long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
-            if (currentTimeInMillis == lastActiveTime)
-                lastActiveTime = timestamp.getTime();
+                long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
+                long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
+                if (currentTimeInMillis == lastActiveTime)
+                    lastActiveTime = timestamp.getTime();
 
-            if (lastActiveTime == 0) {
-                lastActiveTime = timestamp.getTime();
-                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-            } else if (timestamp.getTime() > currentTimeInMillis) {
-                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,true);
-                if (!Constants.DisplayQuickLogin) {
-                    Constants.DisplayQuickLogin = true;
-                    try {
-                        context.startActivity(new Intent(context, QuickLoginActivity.class));
-                    }catch (Exception e){
-                        context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                if (lastActiveTime == 0) {
+                    lastActiveTime = timestamp.getTime();
+                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+                } else if (timestamp.getTime() > currentTimeInMillis) {
+                    appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, true);
+                    if (!Constants.DisplayQuickLogin) {
+                        Constants.DisplayQuickLogin = true;
+                        try {
+                            context.startActivity(new Intent(context, QuickLoginActivity.class));
+                        } catch (Exception e) {
+                            context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                        }
                     }
+                } else {
+                    lastActiveTime = timestamp.getTime();
+                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                 }
-            } else {
-                lastActiveTime = timestamp.getTime();
-                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-            }
-
         }
     }
+
+
 
     public static void showMultichoiseItemSelectAlertDialog(@NonNull Context
                                                                     context, @NonNull String title, @NonNull String[] itemsList, @NonNull boolean[] selectedList,
@@ -1858,10 +1862,19 @@ public class Utils {
     }
 
     public static boolean isRefreshTokenExpire() {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
-        long expireTime = lastActiveTime + Constants.ExpireTime;
-        return timestamp.getTime() > expireTime;
+        if(!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
+            if (lastActiveTime == 0) {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+            }
+
+            long expireTime = lastActiveTime + Constants.ExpireTime;
+            return timestamp.getTime() > expireTime;
+        }else{
+            return false;
+        }
     }
 
     public interface OnMultipleChoiceInterface {

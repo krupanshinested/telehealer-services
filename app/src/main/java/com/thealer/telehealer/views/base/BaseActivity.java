@@ -199,7 +199,11 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Utils.checkIdealTime(this);
+        if(Utils.isRefreshTokenExpire()){
+          invalidateUser();
+        }else {
+            Utils.checkIdealTime(this);
+        }
     }
 
     public void dismissScreen() {

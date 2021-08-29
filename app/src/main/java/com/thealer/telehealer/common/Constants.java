@@ -187,7 +187,7 @@ public class Constants {
     public static final double STRIPE_MIN_AMOUNT = 0.50;
     public static boolean isRedirectProfileSetting=false;
     public  static  boolean DisplayQuickLogin = false;
-    public static final long IdealTime=60000;
+    public static final long IdealTime=120000;
     public static long ExpireTime=300000;
     public static boolean isFromBackground=true;
 

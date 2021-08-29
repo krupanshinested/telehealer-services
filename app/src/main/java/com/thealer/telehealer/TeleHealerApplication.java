@@ -16,7 +16,6 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.auth0.android.jwt.JWT;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.opentok.android.AudioDeviceManager;
 import com.stripe.android.PaymentConfiguration;
@@ -29,15 +28,11 @@ import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
 import com.thealer.telehealer.common.OpenTok.CustomAudioDevice;
 import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
-import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.LockScreenReceiver;
-import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -118,9 +113,10 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         isInForeGround = true;
         try {
             Utils.checkIdealTime(getApplicationContext());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
@@ -149,7 +145,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         Log.e("aswin", "onMoveToBackground: ");
         isInForeGround = false;
         isFromRegistration = false;
-        Constants.isFromBackground=true;
+        Constants.isFromBackground = true;
         if (isVitalDeviceConnectionShown) {
             isVitalDeviceConnectionShown = false;
         }
