@@ -1475,4 +1475,6 @@
     <string name="lbl_patient_charges_payments">Patient charges/payment</string>
     <string name="disclaimer_for_secure_messaging">DISCLAIMER: ENABLING THIS SETTING WILL REMOVE EXISTING RESTRICTIONS ON TEMPLATED RESPONSES FROM THE PATIENT AND INSTEAD ALLOW THEM TO SEND FREE-FORM CONTENT GOING FORWARD.\n\nAlthough the patient will be notified not to use secure messaging for urgent or emergency medical attention, %s assumes no responsibility or liability arising from the use of any and all secure message communications send by and to the patient.</string>
     <string name="str_with_htmltag"><![CDATA[%s]]></string>
+    <string name="pin_not_match">Pin does not match. You have %s attempt left.  Please try again</string>
+    <string name="wrong_password">Wrong password.  %s attempt left.</string>
 </resources>

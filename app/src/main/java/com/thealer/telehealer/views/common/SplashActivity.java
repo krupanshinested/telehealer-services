@@ -26,6 +26,7 @@ import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiView
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
@@ -117,12 +118,11 @@ public class SplashActivity extends BaseActivity {
                             startActivity(new Intent(SplashActivity.this, SigninActivity.class));
                         }
                     } else {
-
                         TeleLogger.shared.initialLog();
-
-                        if (appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == -1) {
-                            startActivity(new Intent(SplashActivity.this, QuickLoginActivity.class));
-                        } else {
+                        if(Utils.isRefreshTokenExpire()){
+                            UserDetailPreferenceManager.invalidateUser();
+                            startActivity(new Intent(SplashActivity.this, SigninActivity.class));
+                        }else {
                             Utils.validUserToLogin(SplashActivity.this);
                         }
                     }

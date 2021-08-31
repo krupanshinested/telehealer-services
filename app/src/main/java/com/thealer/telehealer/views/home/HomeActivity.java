@@ -63,7 +63,6 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.common.SplashActivity;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
 import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
@@ -78,13 +77,9 @@ import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
-import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
-import com.thealer.telehealer.views.quickLogin.QuickLoginUtil;
-import com.thealer.telehealer.views.settings.GeneralSettingsFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
-import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import java.util.Calendar;
 import java.util.List;
@@ -161,6 +156,17 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         LocalBroadcastManager.getInstance(this).registerReceiver(isPropserShownListner, new IntentFilter(getString(R.string.APP_LIFECYCLE_STATUS)));
         LocalBroadcastManager.getInstance(this).registerReceiver(profileListener, new IntentFilter(getString(R.string.profile_picture_updated)));
         LocalBroadcastManager.getInstance(this).registerReceiver(NotificationCountReceiver, new IntentFilter(Constants.NOTIFICATION_COUNT_RECEIVER));
+
+        if (appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)) {
+            if (!Constants.DisplayQuickLogin) {
+                try {
+                    Constants.DisplayQuickLogin = true;
+                    application.startActivity(new Intent(application, QuickLoginActivity.class));
+                } catch (Exception e) {
+                    application.startActivity(new Intent(application, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                }
+            }
+        }
     }
 
     private void initViewModels() {
@@ -881,7 +887,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
-        if(Constants.isRedirectProfileSetting){
+        if (Constants.isRedirectProfileSetting) {
             Intent intent = new Intent(HomeActivity.this, ProfileSettingsActivity.class);
             this.startActivity(intent);
         }
