@@ -255,8 +255,14 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                             }
                             try {
                                 if (itemsBean.getScore() != null) {
+                                    for(int j=0;j<itemsBean.getProperties().getOptions().size();j++){
+                                        if(itemsBean.getProperties().getOptions().get(j).getScore() == itemsBean.getScore()){
+                                            formCsv.getSpinner().setSelection(j, true);
+                                            j=itemsBean.getProperties().getOptions().size()+1;
+                                        }
+                                    }
                                         int pos = (int) ((itemsBean.getProperties().getOptions().size()-1)- itemsBean.getScore());
-                                        formCsv.getSpinner().setSelection(pos, true);
+
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
