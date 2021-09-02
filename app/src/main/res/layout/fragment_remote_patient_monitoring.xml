@@ -77,6 +77,9 @@
         android:id="@+id/save_btn"
         style="@style/button_app_background_white_text"
         android:text="@string/save"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

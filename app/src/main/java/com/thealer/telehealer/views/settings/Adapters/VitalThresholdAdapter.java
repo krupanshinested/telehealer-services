@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView; 
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.vitals.ThresholdLimitAdapter;
