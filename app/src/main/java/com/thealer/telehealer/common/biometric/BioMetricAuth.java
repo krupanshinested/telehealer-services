@@ -16,6 +16,7 @@ import com.thealer.telehealer.views.base.BaseActivity;
  */
 public class BioMetricAuth {
 
+
     public static void showBioMetricAuth(Context context, BiometricInterface biometricInterface) {
 
         Runnable runnable = new Runnable() {
@@ -53,7 +54,6 @@ public class BioMetricAuth {
                                 public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
                                     super.onAuthenticationSucceeded(result);
                                     biometricInterface.onBioMetricActionComplete(context.getString(R.string.BIOMETRIC_SUCCESS), Constants.BIOMETRIC_SUCCESS);
-                                    Constants.Fail_Count = 0;
                                 }
 
                                 @Override
@@ -68,7 +68,6 @@ public class BioMetricAuth {
                                     }
 
                                 }
-
                             };
 
                             BiometricPrompt biometricPrompt = new BiometricPrompt.Builder(context)
