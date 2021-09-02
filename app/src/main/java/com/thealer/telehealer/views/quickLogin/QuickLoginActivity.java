@@ -200,8 +200,8 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
+        appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, false);
         if (success) {
-            appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING,false);
             showSuccessViewDialog(bundle);
         } else {
             sendQuickLoginBroadCast(bundle);
