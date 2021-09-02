@@ -1590,5 +1590,7 @@
     <string name="str_please_enter_threshold_msg">Please enter threshold messages.</string>
     <string name="str_notification_threshold_msg">"When enabled, notifications will always be sent to the provider/staff when the patient captures vitals data that fall in a range indicated by you to be elevated or abnormal. \n \n Notes:\n 1. Notifications will not be sent when vitals data is captured or entered directly by the provider/staff on behalf of the patient\n 2. Notifications will not be sent if historical data is synced in “bulk” directly from a supported health device (e.g. iHealth Track) or from Apple Health/Google Fit, except for any vitals data reported the same day. "</string>
     <string name="bhi_italic"><![CDATA[<i>(BHI)</i>]]></string>
+    <string name="please_fill_up_details">Please enter all values</string>
+    <string name="vital_chart">Vitals Chart</string>
 
 </resources>
