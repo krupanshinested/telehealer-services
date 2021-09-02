@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -200,6 +201,7 @@ public class QuickLoginPinFragment extends BaseFragment {
             if (pin.equals(pinEt.getText().toString())) {
                 appPreference.setString(Constants.QUICK_LOGIN_PIN, pin);
                 appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_PIN);
+                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, false);
                 sendQuickLoginBroadCast(ArgumentKeys.AUTH_SUCCESS);
                 pinCount=0;
             } else {
