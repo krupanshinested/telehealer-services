@@ -1830,6 +1830,8 @@ public class Utils {
                     lastActiveTime = timestamp.getTime();
                     appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                 } else if (timestamp.getTime() > currentTimeInMillis) {
+                    lastActiveTime=timestamp.getTime();
+                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                     if (!Constants.DisplayQuickLogin) {
                         Constants.DisplayQuickLogin = true;
                         try {
