@@ -63,7 +63,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
                     showSuccessViewDialog(bundle);
                 }
-            } else if (status == ArgumentKeys.AUTH_FAILED) {
+            } else if (status == ArgumentKeys.AUTH_FAILED || status == ArgumentKeys.AUTH_CANCELLED) {
                 invalidateUser();
             }else if(appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)){
                 Utils.storeLastActiveTime();
