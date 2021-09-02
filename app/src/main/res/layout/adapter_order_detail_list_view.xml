@@ -30,6 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="24dp"
             android:layout_marginTop="@dimen/margin_default"
+            android:layout_marginStart="@dimen/margin_default"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
             app:layout_constraintEnd_toStartOf="@id/options_cl"
