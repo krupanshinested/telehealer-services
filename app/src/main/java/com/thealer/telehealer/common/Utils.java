@@ -1805,7 +1805,7 @@ public class Utils {
         String utcDate = Utils.getUTCfromGMT(timestamp.toString());
         String lastLogin = Utils.getDayMonthYearTime(utcDate);
         Log.e("aswin", "updateLastLogin: " + lastLogin);
-
+        storeLastActiveTime();
         appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
         appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime() + "");
     }
