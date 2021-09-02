@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 import android.hardware.biometrics.BiometricPrompt;
 import android.os.CancellationSignal;
 import android.os.Handler;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.Constants;
@@ -15,7 +15,6 @@ import com.thealer.telehealer.views.base.BaseActivity;
  * Created by Aswin on 31,October,2018
  */
 public class BioMetricAuth {
-
 
     public static void showBioMetricAuth(Context context, BiometricInterface biometricInterface) {
 
@@ -54,13 +53,22 @@ public class BioMetricAuth {
                                 public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
                                     super.onAuthenticationSucceeded(result);
                                     biometricInterface.onBioMetricActionComplete(context.getString(R.string.BIOMETRIC_SUCCESS), Constants.BIOMETRIC_SUCCESS);
+                                    Constants.Fail_Count = 0;
                                 }
 
                                 @Override
                                 public void onAuthenticationFailed() {
                                     super.onAuthenticationFailed();
-                                    biometricInterface.onBioMetricActionComplete(context.getString(R.string.BIOMETRIC_FAILED), Constants.BIOMETRIC_FAILED);
+                                    Constants.Fail_Count++;
+                                    if (Constants.Fail_Count > 2) {
+                                        biometricInterface.onBioMetricActionComplete(context.getString(R.string.BIOMETRIC_FAILED), Constants.BIOMETRIC_FAILED);
+                                    } else {
+                                        String attemptsRemaining = (Constants.TotalCount - Constants.Fail_Count) + "";
+                                        Toast.makeText(context, context.getString(R.string.wrong_fingure, attemptsRemaining), Toast.LENGTH_SHORT).show();
+                                    }
+
                                 }
+
                             };
 
                             BiometricPrompt biometricPrompt = new BiometricPrompt.Builder(context)
@@ -91,7 +99,7 @@ public class BioMetricAuth {
                 }
             }
         };
-        new Handler().postDelayed(runnable,1000);
+        new Handler().postDelayed(runnable, 1000);
     }
 
     private static void showCustomBiometricAuth(Context context) {
@@ -100,7 +108,7 @@ public class BioMetricAuth {
             bioMetricCustomAuth.setCancelable(false);
 
             bioMetricCustomAuth.show(((BaseActivity) context).getSupportFragmentManager(), BioMetricCustomAuth.class.getSimpleName());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -205,7 +205,7 @@ public class QuickLoginPinFragment extends BaseFragment {
             } else {
                 if(pinCount<2) {
                     pinCount++;
-                    String attemptsRemaining=(3-pinCount)+"";
+                    String attemptsRemaining=(Constants.TotalCount-pinCount)+"";
                     showErrorDialog(getString(R.string.pin_not_match,attemptsRemaining));
                 }else {
                     pinCount=0;

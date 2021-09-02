@@ -1574,5 +1574,7 @@
     <string name="str_with_htmltag"><![CDATA[%s]]></string>
     <string name="pin_not_match">>Pin does not match. You have %s attempt left.  Please try again</string>
     <string name="wrong_password">Password does not match. You have %s attempt left.  Please try again</string>
+    <string name="BIOMETRIC_CANCEL">Cancel</string>
+    <string name="wrong_fingure">Fingure Print does not match. You have %s attempt left.  Please try again</string>
 
 </resources>
