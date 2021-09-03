@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,8 +24,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.thealer.telehealer.R;
@@ -42,7 +44,8 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewDialogFragment;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewViewModel;
-import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
+import com.thealer.telehealer.views.settings.Adapters.AboutHistoryAdapter;
+import com.thealer.telehealer.views.settings.RemotePatientMonitoringFragment;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
 import com.thealer.telehealer.views.signup.patient.InsuranceViewPagerAdapter;
@@ -79,6 +82,9 @@ public class AboutFragment extends BaseFragment {
     private ImageView[] indicators;
     private TextView insuranceCashTv;
     private LinearLayout insuranceImageLl;
+    private ConstraintLayout clVitalHistory,clHistory;
+    private RecyclerView rvVitalHistory,rvHistory;
+    private TextView tvRpmStatus,tvVitalEdit;
     private int userType;
     private String view_type, doctorGuid = null;
     private CommonUserApiResponseModel userDetail, doctorDetail;
@@ -158,6 +164,12 @@ public class AboutFragment extends BaseFragment {
         disconnectTv = (TextView) view.findViewById(R.id.disconnect_tv);
         insuranceCashTv = (TextView) view.findViewById(R.id.insurance_cash_tv);
         insuranceImageLl = (LinearLayout) view.findViewById(R.id.insurance_image_ll);
+        clVitalHistory = (ConstraintLayout) view.findViewById(R.id.cl_vital_history);
+        rvVitalHistory = (RecyclerView) view.findViewById(R.id.rv_vital_history);
+        tvRpmStatus = (TextView) view.findViewById(R.id.tv_rpm_status);
+        tvVitalEdit = (TextView) view.findViewById(R.id.tv_vital_edit);
+        clHistory = (ConstraintLayout) view.findViewById(R.id.cl_history);
+        rvHistory = (RecyclerView) view.findViewById(R.id.rv_history);
 
         doctorDetailCl = (ConstraintLayout) view.findViewById(R.id.doctor_detail_cl);
         indianDocDetailCl = (ConstraintLayout) view.findViewById(R.id.indian_doc_detail_cl);
@@ -170,7 +182,6 @@ public class AboutFragment extends BaseFragment {
         if (getArguments() != null) {
             userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
-
 
             if (doctorDetail != null) {
                 doctorGuid = doctorDetail.getUser_guid();
@@ -195,6 +206,9 @@ public class AboutFragment extends BaseFragment {
                         doctorDetailView.setVisibility(View.VISIBLE);
                         patientDetailView.setVisibility(View.GONE);
                         phoneCv.setVisibility(View.GONE);
+                        clVitalHistory.setVisibility(View.GONE);
+                        clHistory.setVisibility(View.GONE);
+
 
                         if (userDetail.getUser_detail() != null &&
                                 userDetail.getUser_detail().getData() != null) {
@@ -277,6 +291,7 @@ public class AboutFragment extends BaseFragment {
                         break;
                     case Constants.ROLE_PATIENT:
                     case Constants.ROLE_ASSISTANT:
+                        manageVitalHistory();
                         doctorDetailView.setVisibility(View.GONE);
                         patientDetailView.setVisibility(View.VISIBLE);
 
@@ -392,6 +407,12 @@ public class AboutFragment extends BaseFragment {
                     showSubFragmentInterface.onShowFragment(fragment);
                 }
             });
+            tvVitalEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showRemotePatientMonitoring();
+                }
+            });
 
             disconnectTv.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -434,6 +455,42 @@ public class AboutFragment extends BaseFragment {
             }
         }
     }
+    private void showRemotePatientMonitoring() {
+        RemotePatientMonitoringFragment remotePatientMonitoringFragment = new RemotePatientMonitoringFragment();
+        showSubFragmentInterface.onShowFragment(remotePatientMonitoringFragment);
+    }
+    private void manageVitalHistory() {
+        if(userDetail.getRole().equals(Constants.ROLE_PATIENT)) {
+            if(userDetail.getIs_rpm_enabled()){
+                tvRpmStatus.setText(getString(R.string.str_rpm_status,getString(R.string.str_enable)));
+                tvVitalEdit.setVisibility(View.VISIBLE);
+            }else{
+                tvRpmStatus.setText(getString(R.string.str_rpm_status,getString(R.string.str_disable)));
+                tvVitalEdit.setVisibility(View.GONE);
+            }
+            if (userDetail.getVitals() != null && userDetail.getVitals().size() > 0) {
+                rvVitalHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
+                AboutHistoryAdapter vitalHistoryAdapter = new AboutHistoryAdapter(getActivity(), userDetail.getVitals());
+                rvVitalHistory.setAdapter(vitalHistoryAdapter);
+                clVitalHistory.setVisibility(View.VISIBLE);
+            } else {
+                clHistory.setVisibility(View.GONE);
+            }
+
+            if(userDetail.getHistory() !=null && userDetail.getHistory().size()>0){
+                rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
+                AboutHistoryAdapter historyAdapter = new AboutHistoryAdapter(getActivity(), userDetail.getHistory());
+                rvHistory.setAdapter(historyAdapter);
+                clHistory.setVisibility(View.VISIBLE);
+            } else {
+                clHistory.setVisibility(View.GONE);
+            }
+        }else {
+            clVitalHistory.setVisibility(View.GONE);
+            clHistory.setVisibility(View.GONE);
+        }
+    }
+
 
     @Nullable
     private String getPhoneNumber() {
