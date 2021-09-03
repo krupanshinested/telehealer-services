@@ -173,6 +173,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
             public void onChanged(@Nullable ErrorModel errorModel) {
                 Log.v("VitalsSendBaseFragment", "vitalsApiViewModel error");
                 String title = getString(R.string.failure);
+                callFailureView(errorModel);
                 if (!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
                     sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
                     PaymentInfo paymentInfo = new PaymentInfo();
@@ -181,24 +182,29 @@ public class VitalsSendBaseFragment extends BaseFragment {
                     paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
                     AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
                 }
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-
-                if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
-                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                } else {
-                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
-                }
-
-                LocalBroadcastManager
-                        .getInstance(getActivity())
-                        .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                .putExtras(bundle));
 
             }
         });
     }
+
+    private void callFailureView(ErrorModel errorModel) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+
+        if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
+            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+        } else {
+            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
+        }
+        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+
+        LocalBroadcastManager
+                .getInstance(getActivity())
+                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                        .putExtras(bundle));
+    }
+
 
     @Override
     public void onAttach(Context context) {
