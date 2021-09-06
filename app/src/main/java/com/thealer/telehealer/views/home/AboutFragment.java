@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
@@ -106,6 +108,8 @@ public class AboutFragment extends BaseFragment {
     private TextView mciTv;
     private CardView websiteCv;
     private TextView websiteTv;
+    private AboutHistoryAdapter historyAdapter;
+    private AboutHistoryAdapter vitalHistoryAdapter;
 
     @Override
     public void onAttach(Context context) {
@@ -199,6 +203,13 @@ public class AboutFragment extends BaseFragment {
                 disconnectTv.setVisibility(View.VISIBLE);
             }
 
+                rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
+                historyAdapter = new AboutHistoryAdapter(getActivity());
+                rvHistory.setAdapter(historyAdapter);
+
+                rvVitalHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
+                vitalHistoryAdapter = new AboutHistoryAdapter(getActivity());
+                rvVitalHistory.setAdapter(vitalHistoryAdapter);
 
             if (userDetail != null) {
                 switch (userDetail.getRole()) {
@@ -468,23 +479,21 @@ public class AboutFragment extends BaseFragment {
                 tvRpmStatus.setText(getString(R.string.str_rpm_status,getString(R.string.str_disable)));
                 tvVitalEdit.setVisibility(View.GONE);
             }
+
             if (userDetail.getVitals() != null && userDetail.getVitals().size() > 0) {
-                rvVitalHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
-                AboutHistoryAdapter vitalHistoryAdapter = new AboutHistoryAdapter(getActivity(), userDetail.getVitals());
-                rvVitalHistory.setAdapter(vitalHistoryAdapter);
+                vitalHistoryAdapter.setDataAdapter(userDetail.getVitals());
                 clVitalHistory.setVisibility(View.VISIBLE);
             } else {
-                clHistory.setVisibility(View.GONE);
+                clVitalHistory.setVisibility(View.GONE);
             }
 
             if(userDetail.getHistory() !=null && userDetail.getHistory().size()>0){
-                rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
-                AboutHistoryAdapter historyAdapter = new AboutHistoryAdapter(getActivity(), userDetail.getHistory());
-                rvHistory.setAdapter(historyAdapter);
+                historyAdapter.setDataAdapter(userDetail.getHistory());
                 clHistory.setVisibility(View.VISIBLE);
             } else {
                 clHistory.setVisibility(View.GONE);
             }
+
         }else {
             clVitalHistory.setVisibility(View.GONE);
             clHistory.setVisibility(View.GONE);
