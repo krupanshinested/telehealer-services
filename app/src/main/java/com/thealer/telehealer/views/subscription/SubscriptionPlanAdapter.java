@@ -23,9 +23,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.OnAdapterListener;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
+import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.common.ArgumentKeys;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Nimesh Patel
@@ -33,7 +35,7 @@ import java.util.ArrayList;
  **/
 public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPlanAdapter.OnSubscriptionViewHolder> {
     private FragmentActivity fragmentActivity;
-    private ArrayList<PlanInfo> adapterList;
+    private List<PlanInfoBean.Result> adapterList = new ArrayList<>();
     private OnAdapterListener adapterListener;
 
     public SubscriptionPlanAdapter(FragmentActivity fragmentActivity,OnAdapterListener adapterListener) {
@@ -50,7 +52,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
 
     @Override
     public void onBindViewHolder(@NonNull OnSubscriptionViewHolder holder, int position) {
-        PlanInfo currentPlan = adapterList.get(position);
+        PlanInfoBean.Result currentPlan = adapterList.get(position);
         int llContainerBGColor, tvTxtColor, tvHighlightColor, tvFeatureColor, tvDescColor, btnTextColor, btnBGColor;
         switch ((position) % 4) {
             case 0:
@@ -92,29 +94,31 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                 break;
         }
 
-        if (currentPlan.getPlanActivated()) {
+        /*if (currentPlan.getPlanActivated()) {
             holder.llContainer.setForeground(new ColorDrawable(ContextCompat.getColor(fragmentActivity, R.color.colorWhite_25)));
         } else {
             holder.llContainer.setForeground(new ColorDrawable(Color.TRANSPARENT));
-        }
+        }*/
+
+        holder.llContainer.setForeground(new ColorDrawable(Color.TRANSPARENT));
 
         holder.llContainer.setBackgroundTintList(ContextCompat.getColorStateList(fragmentActivity,llContainerBGColor));
 
         holder.tvPlanName.setTextColor(ContextCompat.getColor(fragmentActivity,tvTxtColor));
-        holder.tvPlanName.setText(currentPlan.getPlanName());
+        holder.tvPlanName.setText(currentPlan.getName());
 
         String haxcolor = "#" + Integer.toHexString(ContextCompat.getColor(fragmentActivity,tvHighlightColor)).substring(2);
-        String planPrice = fragmentActivity.getString(R.string.symbol_dollar) + " " + " <font color="+haxcolor+">" + currentPlan.getPlanPricing() + "</font>"+" Monthly";
+        String planPrice = fragmentActivity.getString(R.string.symbol_dollar) + " " + " <font color="+haxcolor+">" + currentPlan.getPrice() + "</font> "+currentPlan.getBilling_cycle();
         holder.tvPlanPricing.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
         holder.tvPlanPricing.setText(Html.fromHtml(planPrice));
 
         holder.tvExistingFeature.setTextColor(ContextCompat.getColor(fragmentActivity, tvDescColor));
-        holder.tvExistingFeature.setText(currentPlan.getExistingFeatures());
+        holder.tvExistingFeature.setText(currentPlan.getDescription());
 
         holder.tvAdditionalFeature.setTextColor(ContextCompat.getColor(fragmentActivity, tvFeatureColor));
-        holder.tvAdditionalFeature.setText(currentPlan.getAdditionalFeatures());
+        holder.tvAdditionalFeature.setText("See Feature List");
 
-        String rpmDesc="Perform <big><font color="+haxcolor+">"+currentPlan.getRpmDesc()+"</font></big> monthly to get this plan <big><font color="+haxcolor+"> Free.</font></big>";
+        String rpmDesc="Perform <big><font color="+haxcolor+">"+currentPlan.getRpm_count()+"</font></big> monthly to get this plan <big><font color="+haxcolor+"> Free.</font></big>";
         holder.tvRpmDesc.setText(Html.fromHtml(rpmDesc));
         holder.tvRpmDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
 
@@ -152,7 +156,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         return adapterList.size();
     }
 
-    public void setAdapterData(ArrayList<PlanInfo> adapterList) {
+    public void setAdapterData(List<PlanInfoBean.Result> adapterList) {
         this.adapterList = adapterList;
     }
 

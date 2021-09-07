@@ -29,24 +29,24 @@ public class PlanInfoBean extends BaseApiResponseModel {
 
     public class Result {
 
-        private Integer planId;
+        private String planId;
         private String name;
         private String description;
-        private Integer price;
+        private String price;
         private String currency;
-        private String billingCycle;
-        private Integer billingInterval;
-        private Integer sequence;
-        private Boolean isActive;
-        private Integer rpmCount;
-        private String createdAt;
-        private String updatedAt;
+        private String billing_cycle;
+        private String billing_interval;
+        private String sequence;
+        private Boolean is_active;
+        private String rpm_count;
+        private String created_at;
+        private String updated_at;
 
-        public Integer getPlanId() {
+        public String getPlanId() {
             return planId;
         }
 
-        public void setPlanId(Integer planId) {
+        public void setPlanId(String planId) {
             this.planId = planId;
         }
 
@@ -66,11 +66,11 @@ public class PlanInfoBean extends BaseApiResponseModel {
             this.description = description;
         }
 
-        public Integer getPrice() {
+        public String getPrice() {
             return price;
         }
 
-        public void setPrice(Integer price) {
+        public void setPrice(String price) {
             this.price = price;
         }
 
@@ -82,61 +82,60 @@ public class PlanInfoBean extends BaseApiResponseModel {
             this.currency = currency;
         }
 
-        public String getBillingCycle() {
-            return billingCycle;
+        public String getBilling_cycle() {
+            return billing_cycle;
         }
 
-        public void setBillingCycle(String billingCycle) {
-            this.billingCycle = billingCycle;
+        public void setBilling_cycle(String billing_cycle) {
+            this.billing_cycle = billing_cycle;
         }
 
-        public Integer getBillingInterval() {
-            return billingInterval;
+        public String getBilling_interval() {
+            return billing_interval;
         }
 
-        public void setBillingInterval(Integer billingInterval) {
-            this.billingInterval = billingInterval;
+        public void setBilling_interval(String billing_interval) {
+            this.billing_interval = billing_interval;
         }
 
-        public Integer getSequence() {
+        public String getSequence() {
             return sequence;
         }
 
-        public void setSequence(Integer sequence) {
+        public void setSequence(String sequence) {
             this.sequence = sequence;
         }
 
-        public Boolean getIsActive() {
-            return isActive;
+        public Boolean getIs_active() {
+            return is_active;
         }
 
-        public void setIsActive(Boolean isActive) {
-            this.isActive = isActive;
+        public void setIs_active(Boolean is_active) {
+            this.is_active = is_active;
         }
 
-        public Integer getRpmCount() {
-            return rpmCount;
+        public String getRpm_count() {
+            return rpm_count;
         }
 
-        public void setRpmCount(Integer rpmCount) {
-            this.rpmCount = rpmCount;
+        public void setRpm_count(String rpm_count) {
+            this.rpm_count = rpm_count;
         }
 
-        public String getCreatedAt() {
-            return createdAt;
+        public String getCreated_at() {
+            return created_at;
         }
 
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
+        public void setCreated_at(String created_at) {
+            this.created_at = created_at;
         }
 
-        public String getUpdatedAt() {
-            return updatedAt;
+        public String getUpdated_at() {
+            return updated_at;
         }
 
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
+        public void setUpdated_at(String updated_at) {
+            this.updated_at = updated_at;
         }
-
     }
 }

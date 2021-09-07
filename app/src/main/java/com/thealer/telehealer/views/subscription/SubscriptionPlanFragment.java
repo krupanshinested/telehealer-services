@@ -75,6 +75,11 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
                 if(baseApiResponseModel != null){
                     if(baseApiResponseModel instanceof PlanInfoBean){
                         Log.e("neem", "onChanged: "+baseApiResponseModel.toString() );
+                        PlanInfoBean planInfoBean= (PlanInfoBean) baseApiResponseModel;
+                        if(planInfoBean !=null && planInfoBean.getResults().size()>0) {
+                            subscriptionPlanAdapter.setAdapterData(planInfoBean.getResults());
+                            subscriptionPlanAdapter.notifyDataSetChanged();
+                        }
                     }
                 }
             }
@@ -111,10 +116,10 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         subscriptionViewModel.fetchSubscriptionPlanList();
         backIv.setOnClickListener(this);
 
-        prepareData();
+        /*prepareData();*/
     }
 
-    private void prepareData() {
+    /*private void prepareData() {
         if(subscriptionPlanList.size()==0){
             PlanInfo plan1 = new PlanInfo();
             plan1.setPlanName("Limited Practice");
@@ -162,7 +167,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         subscriptionPlanAdapter.setAdapterData(subscriptionPlanList);
         subscriptionPlanAdapter.notifyDataSetChanged();
 
-    }
+    }*/
 
 
     @Override
