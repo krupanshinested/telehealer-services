@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.subscription;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.OnAdapterListener;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
+import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
+import com.thealer.telehealer.apilayer.models.subscription.SubscriptionViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 
 import static com.thealer.telehealer.common.Constants.activatedPlan;
@@ -38,6 +47,8 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     private RecyclerView subscriptionPlanRv;
     private CustomRecyclerView subscriptionPlanListCrv;
     private SubscriptionPlanAdapter subscriptionPlanAdapter;
+    private SubscriptionViewModel subscriptionViewModel;
+    private AttachObserverInterface attachObserverInterface;
 
 
     public SubscriptionPlanFragment() {
@@ -48,6 +59,28 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
+        attachObserverInterface = (AttachObserverInterface) getActivity();
+
+        subscriptionViewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
+        attachObserverInterface.attachObserver(subscriptionViewModel);
+        subscriptionViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+
+            }
+        });
+        subscriptionViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if(baseApiResponseModel != null){
+                    if(baseApiResponseModel instanceof PlanInfoBean){
+                        Log.e("neem", "onChanged: "+baseApiResponseModel.toString() );
+                    }
+                }
+            }
+        });
+
+
     }
 
     @Override
@@ -71,12 +104,11 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         subscriptionPlanListCrv = (CustomRecyclerView) view.findViewById(R.id.subscription_plan_crv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         toolbarTitle.setText(getString(R.string.lbl_subscriptions_plan));
-
         subscriptionPlanRv = subscriptionPlanListCrv.getRecyclerView();
 
         subscriptionPlanAdapter = new SubscriptionPlanAdapter(getActivity(), this);
         subscriptionPlanRv.setAdapter(subscriptionPlanAdapter);
-
+        subscriptionViewModel.fetchSubscriptionPlanList();
         backIv.setOnClickListener(this);
 
         prepareData();

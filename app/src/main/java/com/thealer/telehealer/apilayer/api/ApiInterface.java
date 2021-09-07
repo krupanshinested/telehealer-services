@@ -79,6 +79,7 @@ import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestMo
 import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
+import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
@@ -763,6 +764,9 @@ public interface ApiInterface {
 
     @POST("/api/charge/process-refund-v2")
     Observable<BaseApiResponseModel> processRefund(@Query("id") int id, @Body() RefundReq req);
+
+    @GET("api/subscription-plans")
+    Observable<PlanInfoBean> fetchSubscriptionList();
 
 
 }
