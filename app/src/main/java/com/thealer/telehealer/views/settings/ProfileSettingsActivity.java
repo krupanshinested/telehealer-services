@@ -73,14 +73,11 @@ import com.thealer.telehealer.views.signup.patient.PatientChoosePaymentFragment;
 import com.thealer.telehealer.views.signup.patient.PatientRegistrationDetailFragment;
 import com.thealer.telehealer.views.signup.patient.PatientUploadInsuranceFragment;
 import com.thealer.telehealer.views.subscription.ActivePlanFragment;
-import com.thealer.telehealer.views.subscription.SubscriptionPlanFragment;
 import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-import static com.thealer.telehealer.common.Constants.activatedPlan;
-import static com.thealer.telehealer.common.Constants.subscriptionPlanList;
 
 /**
  * Created by rsekar on 11/15/18.
@@ -350,8 +347,8 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 startActivity(new Intent(this, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
                 break;
             case R.id.subscription:
-                    ActivePlanFragment activePlanFragment = new ActivePlanFragment();
-                    showSubFragment(activePlanFragment);
+                ActivePlanFragment activePlanFragment = new ActivePlanFragment();
+                showSubFragment(activePlanFragment);
                 break;
             case R.id.medical_assistant_ll:
                 showMedicalAssistantList();
@@ -757,7 +754,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     @Override
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
-        if(Constants.isRedirectProfileSetting){
+        if (Constants.isRedirectProfileSetting) {
             GeneralSettingsFragment generalSettingsFragment = new GeneralSettingsFragment();
             showSubFragment(generalSettingsFragment);
         }

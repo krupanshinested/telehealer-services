@@ -29,7 +29,7 @@ public class PlanInfoBean extends BaseApiResponseModel {
 
     public class Result {
 
-        private String planId;
+        private String plan_id;
         private String name;
         private String description;
         private String price;
@@ -41,13 +41,40 @@ public class PlanInfoBean extends BaseApiResponseModel {
         private String rpm_count;
         private String created_at;
         private String updated_at;
+        private boolean isSelected=false;
+        private boolean isResubscribe=false;
+        private boolean isUnsubscribe=false;
 
-        public String getPlanId() {
-            return planId;
+        public boolean isUnsubscribe() {
+            return isUnsubscribe;
         }
 
-        public void setPlanId(String planId) {
-            this.planId = planId;
+        public void setUnsubscribe(boolean unsubscribe) {
+            isUnsubscribe = unsubscribe;
+        }
+
+        public boolean isResubscribe() {
+            return isResubscribe;
+        }
+
+        public void setResubscribe(boolean resubscribe) {
+            isResubscribe = resubscribe;
+        }
+
+        public boolean isSelected() {
+            return isSelected;
+        }
+
+        public void setSelected(boolean selected) {
+            isSelected = selected;
+        }
+
+        public String getPlan_id() {
+            return plan_id;
+        }
+
+        public void setPlan_id(String plan_id) {
+            this.plan_id = plan_id;
         }
 
         public String getName() {

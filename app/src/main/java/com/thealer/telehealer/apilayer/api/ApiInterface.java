@@ -768,5 +768,14 @@ public interface ApiInterface {
     @GET("api/subscription-plans")
     Observable<PlanInfoBean> fetchSubscriptionList();
 
+    @POST("/api/users/purchase-plan")
+    Observable<BaseApiResponseModel> purchasePlan(@Body() HashMap<String, String> req);
+
+    @POST("/api/users/change-plan")
+    Observable<BaseApiResponseModel> changePlan(@Body() HashMap<String, String> req);
+
+    @GET("/api/users/cancel-plan")
+    Observable<PlanInfoBean> unSubscribePlan();
+
 
 }

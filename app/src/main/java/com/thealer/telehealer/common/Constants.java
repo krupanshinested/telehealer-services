@@ -1,6 +1,7 @@
 package com.thealer.telehealer.common;
 
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
+import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -190,7 +191,7 @@ public class Constants {
     public static final double STRIPE_MIN_AMOUNT = 0.50;
     public static boolean isRedirectProfileSetting=false;
 
-    public static  ArrayList<PlanInfo> subscriptionPlanList = new ArrayList<>();
+    public static  List<PlanInfoBean.Result> planList = new ArrayList<>();
     public static int activatedPlan=-1;
     public static boolean isFromSubscriptionPlan=false;
 

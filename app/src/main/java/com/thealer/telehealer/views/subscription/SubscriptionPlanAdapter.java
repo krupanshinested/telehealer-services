@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -22,9 +23,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.OnAdapterListener;
-import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,85 +55,97 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     @Override
     public void onBindViewHolder(@NonNull OnSubscriptionViewHolder holder, int position) {
         PlanInfoBean.Result currentPlan = adapterList.get(position);
-        int llContainerBGColor, tvTxtColor, tvHighlightColor, tvFeatureColor, tvDescColor, btnTextColor, btnBGColor;
-        switch ((position) % 4) {
-            case 0:
-                llContainerBGColor = R.color.bt_white;
-                tvTxtColor = R.color.colorBlack;
-                tvHighlightColor = R.color.bt_theme_orange;
-                tvFeatureColor = R.color.color_blue;
-                tvDescColor = R.color.colorBlack_85;
-                btnTextColor = R.color.colorWhite;
-                btnBGColor = R.color.bt_theme_blue;
-                break;
-            case 1:
-                llContainerBGColor = R.color.bt_theme_orange;
-                tvTxtColor = R.color.colorWhite;
-                tvHighlightColor = R.color.colorWhite;
-                tvFeatureColor = R.color.colorWhite_85;
-                tvDescColor = R.color.colorWhite_85;
-                btnTextColor = R.color.bt_theme_orange;
-                btnBGColor = R.color.colorWhite;
-                break;
-            case 2:
-                llContainerBGColor = R.color.bt_theme_blue;
-                tvTxtColor = R.color.colorWhite;
-                tvHighlightColor = R.color.colorWhite;
-                tvFeatureColor = R.color.colorWhite_85;
-                tvDescColor = R.color.colorWhite_85;
-                btnTextColor = R.color.bt_theme_blue;
-                btnBGColor = R.color.colorWhite;
-                break;
-            case 3:
-            default:
-                llContainerBGColor = R.color.bt_theme_parot;
-                tvTxtColor = R.color.colorWhite;
-                tvHighlightColor = R.color.colorWhite;
-                tvFeatureColor = R.color.colorWhite_85;
-                tvDescColor = R.color.colorWhite_85;
-                btnTextColor = R.color.bt_theme_green;
-                btnBGColor = R.color.colorWhite;
-                break;
-        }
+        if(currentPlan.getIs_active()) {
 
-        /*if (currentPlan.getPlanActivated()) {
-            holder.llContainer.setForeground(new ColorDrawable(ContextCompat.getColor(fragmentActivity, R.color.colorWhite_25)));
+            if(currentPlan.isSelected())
+                Constants.activatedPlan=position;
+
+            int llContainerBGColor, tvTxtColor, tvHighlightColor, tvFeatureColor, tvDescColor, btnTextColor, btnBGColor;
+            String btnStr=fragmentActivity.getString(R.string.str_start_with_ideal);
+            switch ((position) % 4) {
+                case 0:
+                    llContainerBGColor = R.color.bt_white;
+                    tvTxtColor = R.color.colorBlack;
+                    tvHighlightColor = R.color.bt_theme_orange;
+                    tvFeatureColor = R.color.color_blue;
+                    tvDescColor = R.color.colorBlack_85;
+                    btnTextColor = R.color.colorWhite;
+                    btnBGColor = R.color.bt_theme_blue;
+                    btnStr=fragmentActivity.getString(R.string.str_start_with_limited);
+                    break;
+                case 1:
+                    llContainerBGColor = R.color.bt_theme_orange;
+                    tvTxtColor = R.color.colorWhite;
+                    tvHighlightColor = R.color.colorWhite;
+                    tvFeatureColor = R.color.colorWhite_85;
+                    tvDescColor = R.color.colorWhite_85;
+                    btnTextColor = R.color.bt_theme_orange;
+                    btnBGColor = R.color.colorWhite;
+                    btnStr=fragmentActivity.getString(R.string.str_start_with_basic);
+                    break;
+                case 2:
+                    llContainerBGColor = R.color.bt_theme_blue;
+                    tvTxtColor = R.color.colorWhite;
+                    tvHighlightColor = R.color.colorWhite;
+                    tvFeatureColor = R.color.colorWhite_85;
+                    tvDescColor = R.color.colorWhite_85;
+                    btnTextColor = R.color.bt_theme_blue;
+                    btnBGColor = R.color.colorWhite;
+                    btnStr=fragmentActivity.getString(R.string.str_start_with_better);
+                    break;
+                case 3:
+                default:
+                    llContainerBGColor = R.color.bt_theme_parot;
+                    tvTxtColor = R.color.colorWhite;
+                    tvHighlightColor = R.color.colorWhite;
+                    tvFeatureColor = R.color.colorWhite_85;
+                    tvDescColor = R.color.colorWhite_85;
+                    btnTextColor = R.color.bt_theme_green;
+                    btnBGColor = R.color.colorWhite;
+                    btnStr=fragmentActivity.getString(R.string.str_start_with_ideal);
+                    break;
+            }
+        if (currentPlan.isSelected()) {
+            holder.llContainer.setForeground(new ColorDrawable(ContextCompat.getColor(fragmentActivity, R.color.colorWhite_50)));
         } else {
             holder.llContainer.setForeground(new ColorDrawable(Color.TRANSPARENT));
-        }*/
-
-        holder.llContainer.setForeground(new ColorDrawable(Color.TRANSPARENT));
-
-        holder.llContainer.setBackgroundTintList(ContextCompat.getColorStateList(fragmentActivity,llContainerBGColor));
-
-        holder.tvPlanName.setTextColor(ContextCompat.getColor(fragmentActivity,tvTxtColor));
-        holder.tvPlanName.setText(currentPlan.getName());
-
-        String haxcolor = "#" + Integer.toHexString(ContextCompat.getColor(fragmentActivity,tvHighlightColor)).substring(2);
-        String planPrice = fragmentActivity.getString(R.string.symbol_dollar) + " " + " <font color="+haxcolor+">" + currentPlan.getPrice() + "</font> "+currentPlan.getBilling_cycle();
-        holder.tvPlanPricing.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
-        holder.tvPlanPricing.setText(Html.fromHtml(planPrice));
-
-        holder.tvExistingFeature.setTextColor(ContextCompat.getColor(fragmentActivity, tvDescColor));
-        holder.tvExistingFeature.setText(currentPlan.getDescription());
-
-        holder.tvAdditionalFeature.setTextColor(ContextCompat.getColor(fragmentActivity, tvFeatureColor));
-        holder.tvAdditionalFeature.setText("See Feature List");
-
-        String rpmDesc="Perform <big><font color="+haxcolor+">"+currentPlan.getRpm_count()+"</font></big> monthly to get this plan <big><font color="+haxcolor+"> Free.</font></big>";
-        holder.tvRpmDesc.setText(Html.fromHtml(rpmDesc));
-        holder.tvRpmDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
-
-        if (position == 0) {
-            holder.tvAdditionalFeature.setCompoundDrawables(null, null, null, null);
-            setMargins(holder.cvRoot,0,15,0,0);
-        }else if(position==(adapterList.size()-1)){
-            setMargins(holder.cvRoot,0,15,0,75);
-        }else{
-            setMargins(holder.cvRoot,0,15,0,0);
         }
-        holder.btnActivate.setBackgroundColor(ContextCompat.getColor(fragmentActivity,btnBGColor));
-        holder.btnActivate.setTextColor(ContextCompat.getColor(fragmentActivity,btnTextColor));
+        holder.btnStartWith.setText(btnStr);
+
+            holder.llContainer.setBackgroundTintList(ContextCompat.getColorStateList(fragmentActivity, llContainerBGColor));
+
+            holder.tvPlanName.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
+            holder.tvPlanName.setText(currentPlan.getName());
+
+            String haxcolor = "#" + Integer.toHexString(ContextCompat.getColor(fragmentActivity, tvHighlightColor)).substring(2);
+            String planPrice = fragmentActivity.getString(R.string.symbol_dollar) + " " + " <font color=" + haxcolor + ">" + currentPlan.getPrice() + "</font> " + currentPlan.getBilling_cycle();
+            holder.tvPlanPricing.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
+            holder.tvPlanPricing.setText(Html.fromHtml(planPrice));
+
+            holder.tvExistingFeature.setTextColor(ContextCompat.getColor(fragmentActivity, tvDescColor));
+            holder.tvExistingFeature.setText(currentPlan.getDescription());
+
+            holder.tvAdditionalFeature.setTextColor(ContextCompat.getColor(fragmentActivity, tvFeatureColor));
+            holder.tvAdditionalFeature.setText("See Feature List");
+
+            String rpmDesc = "Perform <big><font color=" + haxcolor + ">" + currentPlan.getRpm_count() + "</font></big> monthly to get this plan <big><font color=" + haxcolor + "> Free.</font></big>";
+            holder.tvRpmDesc.setText(Html.fromHtml(rpmDesc));
+            holder.tvRpmDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
+
+            if (position == 0) {
+                holder.tvAdditionalFeature.setCompoundDrawables(null, null, null, null);
+                setMargins(holder.cvRoot, 0, 15, 0, 0);
+            } else if (position == (adapterList.size() - 1)) {
+                setMargins(holder.cvRoot, 0, 15, 0, 75);
+            } else {
+                setMargins(holder.cvRoot, 0, 15, 0, 0);
+            }
+            holder.btnStartWith.setBackgroundColor(ContextCompat.getColor(fragmentActivity, btnBGColor));
+            holder.btnStartWith.setTextColor(ContextCompat.getColor(fragmentActivity, btnTextColor));
+            holder.clRoot.setVisibility(View.VISIBLE);
+        }else{
+            holder.clRoot.setVisibility(View.GONE);
+        }
         holder.tvAdditionalFeature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,12 +155,17 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                 }
             }
         });
-        holder.btnActivate.setOnClickListener(new View.OnClickListener() {
+        holder.btnStartWith.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS,position);
-                adapterListener.onEventTrigger(bundle);
+                if(Constants.activatedPlan != position) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ArgumentKeys.PlanID, currentPlan.getPlan_id());
+                    bundle.putString(ArgumentKeys.BillingCycle, currentPlan.getBilling_cycle());
+                    adapterListener.onEventTrigger(bundle);
+                }else{
+                    Toast.makeText(fragmentActivity, fragmentActivity.getString(R.string.str_plan_already_activate), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -163,20 +182,22 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     public class OnSubscriptionViewHolder extends RecyclerView.ViewHolder {
         LinearLayout llPlan, llContainer;
         TextView tvPlanName, tvPlanPricing, tvExistingFeature, tvAdditionalFeature, tvRpmDesc;
-        Button btnActivate;
+        Button btnStartWith;
         CardView cvRoot;
+        ConstraintLayout clRoot;
 
         public OnSubscriptionViewHolder(@NonNull View itemView) {
             super(itemView);
             cvRoot = itemView.findViewById(R.id.cv_root);
+            clRoot = itemView.findViewById(R.id.cl_root);
             llPlan = itemView.findViewById(R.id.ll_plan);
+            btnStartWith = itemView.findViewById(R.id.btn_start_with);
             llContainer = itemView.findViewById(R.id.ll_container);
             tvPlanName = itemView.findViewById(R.id.tv_plan_name);
             tvPlanPricing = itemView.findViewById(R.id.tv_plan_pricing);
             tvExistingFeature = itemView.findViewById(R.id.tv_existing_feature);
             tvAdditionalFeature = itemView.findViewById(R.id.tv_aditional_feature);
             tvRpmDesc = itemView.findViewById(R.id.tv_rpm_desc);
-            btnActivate = itemView.findViewById(R.id.btn_activate);
         }
     }
 

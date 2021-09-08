@@ -1498,4 +1498,16 @@
     <string name="view_invited_list">View Invitation List</string>
     <string name="invited_user_list">Invited User List</string>
     <string name="str_select_your_physician">Select your physician</string>
+    <string name="str_select_plan">Select Plan</string>
+    <string name="str_plan_is_subscribe_now">You have successfully subscribe plan.</string>
+    <string name="str_current_plan">Current Plan</string>
+    <string name="str_start_with_basic">Start with Basic</string>
+    <string name="str_start_with_limited">Start with Limited</string>
+    <string name="str_start_with_better">Start with Better</string>
+    <string name="str_start_with_ideal">Start with Ideal</string>
+    <string name="str_plan_is_continue_till">This plan will continue till the end of the month. Thank you for your business.</string>
+    <string name="str_unsubscribe">UnSubscribe</string>
+    <string name="str_subscribe">Subscribe</string>
+    <string name="str_resubscribe">Resubscribe</string>
+    <string name="str_plan_already_activate">Plan already activated</string>
 </resources>
