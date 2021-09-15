@@ -155,6 +155,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         topView.setVisibility(View.GONE);
         bottomView.setVisibility(View.GONE);
         customPatientCountLayout.setOnClickListener(this::onClick);
+        doctorPatientListCrv.showOrhideEmptyState(true);
 
 
         addFab.setOnClickListener(this);

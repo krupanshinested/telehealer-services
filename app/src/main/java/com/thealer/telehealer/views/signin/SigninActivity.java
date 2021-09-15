@@ -342,7 +342,12 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         } else {
             Log.d("SignInActivity", "proceedLoginSuccess");
             if (quickLoginType == -1) {
-                startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class));
+                try{
+                    startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class));
+                }catch (Exception e){
+                    startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                }
+
             } else
                 Utils.validUserToLogin(getApplicationContext());
 
@@ -564,7 +569,12 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                 startActivity(new Intent(SigninActivity.this, ForgotPassword.class));
                 break;
             case R.id.quick_login_ll:
-                startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class));
+                try{
+                    startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class));
+                }catch (Exception e){
+                    startActivity(new Intent(SigninActivity.this, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                }
+
                 break;
         }
     }

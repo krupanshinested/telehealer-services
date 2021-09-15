@@ -11,6 +11,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -54,6 +56,7 @@ public class QuickLoginPinFragment extends BaseFragment {
     private final String IS_CREATE_PIN = "isCreatePin";
     private final String PIN = "pin";
     boolean isRefreshToken = false;
+    private int pinCount=0;
 
     @Nullable
     @Override
@@ -170,12 +173,14 @@ public class QuickLoginPinFragment extends BaseFragment {
 
         if (isNewUser) {
             forgetPasswordTv.setVisibility(View.GONE);
+            closeIv.setVisibility(View.VISIBLE);
             if (!isCreatePin) {
                 showReEnterPin();
             } else {
                 showCreatePin();
             }
         } else {
+            closeIv.setVisibility(View.GONE);
             showValidatePin();
         }
 
@@ -196,9 +201,18 @@ public class QuickLoginPinFragment extends BaseFragment {
             if (pin.equals(pinEt.getText().toString())) {
                 appPreference.setString(Constants.QUICK_LOGIN_PIN, pin);
                 appPreference.setInt(Constants.QUICK_LOGIN_TYPE, Constants.QUICK_LOGIN_TYPE_PIN);
+                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, false);
                 sendQuickLoginBroadCast(ArgumentKeys.AUTH_SUCCESS);
+                pinCount=0;
             } else {
-                sendQuickLoginBroadCast(ArgumentKeys.AUTH_FAILED);
+                if(pinCount<2) {
+                    pinCount++;
+                    String attemptsRemaining=(Constants.TotalCount-pinCount)+"";
+                    showErrorDialog(getString(R.string.pin_not_match,attemptsRemaining));
+                }else {
+                    pinCount=0;
+                    sendQuickLoginBroadCast(ArgumentKeys.AUTH_FAILED);
+                }
             }
         }
     }

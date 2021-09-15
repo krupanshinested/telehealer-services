@@ -77,6 +77,7 @@ public class Constants {
 
     public static final String MESSAGE = "message";
     public static final String STATUS = "status";
+    public static  int Fail_Count = 0;
 
     //Success view constants
     public static final String SUCCESS_VIEW_STATUS = "success_view_status";
@@ -186,6 +187,11 @@ public class Constants {
 
     public static final double STRIPE_MIN_AMOUNT = 0.50;
     public static boolean isRedirectProfileSetting=false;
+    public  static  boolean DisplayQuickLogin = false;
+    public static final long IdealTime=120000;
+    public static long ExpireTime=300000;
+    public static boolean isFromBackground=true;
+    public static final int TotalCount=3;
 
 
     public interface MasterCodes {
