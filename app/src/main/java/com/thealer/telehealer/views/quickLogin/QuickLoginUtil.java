@@ -1,6 +1,8 @@
 package com.thealer.telehealer.views.quickLogin;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.provider.Settings;
 
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.common.Constants;
@@ -16,13 +18,15 @@ public class QuickLoginUtil {
         if (BioMetricUtils.isHardwareSupported(context) &&
                 BioMetricUtils.isFingerprintAvailable(context)) {
             return Constants.QUICK_LOGIN_TYPE_TOUCH;
-        } else {
+        }else {
             return Constants.QUICK_LOGIN_TYPE_PIN;
         }
     }
+
 
     public static Boolean isQuickLoginEnable(Context context) {
         int type = TeleHealerApplication.appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
         return type == Constants.QUICK_LOGIN_TYPE_PIN || type == Constants.QUICK_LOGIN_TYPE_TOUCH;
     }
+
 }

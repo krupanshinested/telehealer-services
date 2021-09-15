@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -871,8 +872,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             break;
                         case patientTab:
                             bundle = new Bundle();
-                            bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
+                            bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, false);
                             bundle.putBoolean(ArgumentKeys.SHOW_FAB_ADD, false);
+                            bundle.putBoolean(ArgumentKeys.CLEAR_BG_SEARCH, true);
+                            bundle.putBoolean(ArgumentKeys.isUserPatient, true);
                             DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
                             doctorPatientListingFragment.setArguments(bundle);
                             addFragment(getString(R.string.patients), doctorPatientListingFragment);

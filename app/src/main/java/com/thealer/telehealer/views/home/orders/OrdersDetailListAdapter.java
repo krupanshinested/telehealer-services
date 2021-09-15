@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
 
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -280,7 +281,7 @@ public class OrdersDetailListAdapter extends BaseExpandableListAdapter {
             itemCiv.setVisibility(View.GONE);
         }
 
-        itemTitleTv.setText(childList.get(headerList.get(groupPosition)).get(childPosition).getSubTitle());
+        itemTitleTv.setText(Utils.fromHtml(context.getString(R.string.str_with_htmltag,childList.get(headerList.get(groupPosition)).get(childPosition).getSubTitle())));
 
         if (ordersDetailListAdapterModel.getOtherImageUrl() != null) {
             Utils.setImageWithGlideWithoutDefaultPlaceholder(context, itemCiv, ordersDetailListAdapterModel.getOtherImageUrl(), null, true, true);

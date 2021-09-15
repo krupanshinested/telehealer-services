@@ -25,7 +25,6 @@
                 android:ellipsize="end"
                 android:ems="3"
                 android:gravity="center"
-                android:maxLines="1"
                 android:padding="@dimen/padding_default"
                 app:layout_constraintEnd_toStartOf="@+id/close_iv"
                 app:layout_constraintStart_toStartOf="parent"

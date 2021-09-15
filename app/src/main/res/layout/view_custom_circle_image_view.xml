@@ -16,145 +16,144 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/list_data_cl"
-                android:layout_width="0dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_default"
-                android:layout_weight="1">
+                android:orientation="horizontal">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/avatar_civ"
-                    android:layout_width="@dimen/card_image_view_size"
-                    android:layout_height="@dimen/card_image_view_size"
-                    android:src="@drawable/profile_placeholder"
-                    app:civ_border_color="@android:color/darker_gray"
-                    app:civ_border_width="1dp"
-                    app:layout_constraintBottom_toTopOf="@id/accept_btn"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/list_data_cl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_default"
+                    android:layout_weight="1">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/status_civ"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginEnd="2dp"
-                    android:src="@color/status_offline"
-                    app:civ_border_color="@color/colorWhite"
-                    app:civ_border_width="1dp"
-                    app:layout_constraintEnd_toEndOf="@id/avatar_civ"
-                    app:layout_constraintTop_toTopOf="@+id/avatar_civ" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatar_civ"
+                        android:layout_width="@dimen/card_image_view_size"
+                        android:layout_height="@dimen/card_image_view_size"
+                        android:src="@drawable/profile_placeholder"
+                        app:civ_border_color="@android:color/darker_gray"
+                        app:civ_border_width="1dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/list_title_tv"
-                    style="@style/card_title_text"
-                    android:layout_marginEnd="@dimen/margin_default"
-                    app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/avatar_civ"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="@string/dummy_text" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/status_civ"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:src="@color/status_offline"
+                        app:civ_border_color="@color/colorWhite"
+                        app:civ_border_width="1dp"
+                        app:layout_constraintEnd_toEndOf="@id/avatar_civ"
+                        app:layout_constraintTop_toTopOf="@+id/avatar_civ" />
 
-                <TextView
-                    android:id="@+id/list_sub_title_tv"
-                    style="@style/card_sub_title_text"
-                    app:layout_constraintBottom_toTopOf="@id/accept_btn"
-                    app:layout_constraintEnd_toEndOf="@id/list_title_tv"
-                    app:layout_constraintStart_toStartOf="@id/list_title_tv"
-                    app:layout_constraintTop_toBottomOf="@id/list_title_tv"
-                    tools:text="@string/dummy_text" />
+                    <TextView
+                        android:id="@+id/list_title_tv"
+                        style="@style/card_title_text"
+                        android:layout_marginEnd="@dimen/margin_default"
+                        app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/avatar_civ"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="@string/dummy_text" />
 
+                    <TextView
+                        android:id="@+id/list_sub_title_tv"
+                        style="@style/card_sub_title_text"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/list_title_tv"
+                        app:layout_constraintStart_toStartOf="@id/list_title_tv"
+                        app:layout_constraintTop_toBottomOf="@id/list_title_tv"
+                        tools:text="@string/dummy_text" />
 
-                <com.thealer.telehealer.common.CustomButton
-                    android:id="@+id/accept_btn"
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/list_info_cl"
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:paddingStart="30dp"
-                    android:paddingTop="0dp"
-                    android:paddingEnd="30dp"
-                    android:paddingBottom="0dp"
-                    android:text="@string/lbl_add_fees"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    app:app_gradient="true"
-                    app:corner_radius="25dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toStartOf="@id/list_title_tv"
-                    app:layout_constraintTop_toBottomOf="@id/avatar_civ"
-                    app:text_color="@color/colorWhite"
-                    tools:visibility="visible" />
+                    android:layout_height="wrap_content">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/list_info_cl"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:id="@+id/action_ll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="@dimen/padding_default"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-
-                    <ImageView
-                        android:id="@+id/card_iv"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginBottom="10dp"
-                        android:src="@drawable/ic_card_enabled"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
-
-                    <ImageView
-                        android:id="@+id/action_iv"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:src="@drawable/gender_male"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
-
-                    <CheckBox
-                        android:id="@+id/checkbox"
+                    <LinearLayout
+                        android:id="@+id/action_ll"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:visibility="gone" />
-                </LinearLayout>
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="@dimen/padding_default"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                <LinearLayout
-                    android:id="@+id/abnormal_ll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent">
 
-                    <include
-                        layout="@layout/view_abnormal_vital"
-                        android:visibility="gone" />
+                        <ImageView
+                            android:id="@+id/card_iv"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginBottom="10dp"
+                            android:src="@drawable/ic_card_enabled"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        <ImageView
+                            android:id="@+id/action_iv"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:src="@drawable/gender_male"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
+                        <CheckBox
+                            android:id="@+id/checkbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/abnormal_ll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <include
+                            layout="@layout/view_abnormal_vital"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+            <com.thealer.telehealer.common.CustomButton
+                android:id="@+id/accept_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:paddingStart="30dp"
+                android:paddingTop="0dp"
+                android:paddingEnd="30dp"
+                android:paddingBottom="0dp"
+                android:text="@string/lbl_add_fees"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:app_gradient="true"
+                app:corner_radius="25dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="@dimen/margin_default"
+                app:text_color="@color/colorWhite"
+                tools:visibility="visible" />
         </LinearLayout>
+
     </androidx.cardview.widget.CardView>
 
 

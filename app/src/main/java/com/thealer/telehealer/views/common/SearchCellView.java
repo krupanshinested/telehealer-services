@@ -85,6 +85,10 @@ public class SearchCellView extends ConstraintLayout implements TextWatcher {
         }
     }
 
+    public  void  setSearchEtHint(String hint){
+        searchEt.setHint(hint);
+
+    }
     public void setSearchHint(String searchHint) {
         searchEt.setHint(searchHint);
     }

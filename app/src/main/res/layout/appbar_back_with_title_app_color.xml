@@ -35,17 +35,18 @@
                 android:id="@+id/toolbar_title"
                 style="@style/text_sub_title_lignt_bold"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="28dp"
                 android:ellipsize="end"
                 android:ems="3"
-                android:gravity="center"
+                android:singleLine="true"
                 android:maxLines="1"
+                android:gravity="center"
                 android:textSize="@dimen/toolbar_title"
-                app:layout_constraintBottom_toTopOf="@+id/back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/back_iv"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/dummy_text" />
+                tools:text="@string/dummy_text"
+                app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 

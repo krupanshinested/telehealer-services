@@ -57,7 +57,11 @@ public class iHealthVitalManager extends VitalsManager {
     public iHealthVitalManager(@NonNull Application application) {
         super(application);
 
-        init();
+        try {
+            init();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         bpControl = new BPControl(getApplication(),this,this);
         weightControl = new WeightControl(getApplication(),this,this);
@@ -87,9 +91,12 @@ public class iHealthVitalManager extends VitalsManager {
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            boolean isPass = iHealthDevicesManager.getInstance().sdkAuthWithLicense(buffer);
-            Log.i("info", "isPass:    " + isPass);
-
+            boolean isPass = false;
+            try {
+                isPass = iHealthDevicesManager.getInstance().sdkAuthWithLicense(buffer);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             if (isPass) {
                 HashMap<String,String> detail = new HashMap<>();
                 detail.put("status","success");

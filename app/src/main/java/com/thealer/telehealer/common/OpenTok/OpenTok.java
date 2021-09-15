@@ -1070,7 +1070,7 @@ public class OpenTok implements Session.SessionListener,
         });
 
         screenCapturerTimer = runnable;
-        handler.postDelayed(runnable, 30000);
+        handler.postDelayed(runnable, 40000);
     }
 
     private void captureScreenshot() {
@@ -1146,7 +1146,6 @@ public class OpenTok implements Session.SessionListener,
                 UserDetailPreferenceManager.getUserDisplayName()
                 , UserDetailPreferenceManager.getUser_guid(), toGuid,
                 callRequest.getCallUUID(), callRequest.getCallType(), sessionId, callRequest.getDoctorGuid());
-        Log.e("neem", "sendNotification: "+pushPayLoad.toString() );
         PubnubUtil.shared.publishVoipMessage(pushPayLoad, new PubNubResult() {
             @Override
             public void didSend(Boolean isSuccess) {
@@ -1449,7 +1448,7 @@ public class OpenTok implements Session.SessionListener,
     }
 
     private void addTimerForIncomingOrOutgoing() {
-        final int interval = 30000; // 30 Second
+        final int interval = 40000; // 30 Second
         Handler handler = new Handler();
         TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
             @Override

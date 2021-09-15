@@ -16,6 +16,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.orders.forms.DynamicFormDataBean;
 import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseBottomSheetDialogFragment;
 
 /**
@@ -61,14 +62,14 @@ public class AboutScoreBottomSheet extends BaseBottomSheetDialogFragment {
             formsApiResponseModel = (OrdersUserFormsApiResponseModel) getArguments().getSerializable(ArgumentKeys.FORM_DETAIL);
 
             if (formsApiResponseModel != null) {
-                titleTv.setText(formsApiResponseModel.getName());
+                titleTv.setText(Utils.fromHtml(formsApiResponseModel.getName()));
 
                 DynamicFormDataBean.ScoreDetailsBean scoreDetailsBean = formsApiResponseModel.getData().getScore_details();
                 column1Tv.setText(scoreDetailsBean.getCol2());
                 column2Tv.setText(scoreDetailsBean.getCol1());
 
                 if (scoreDetailsBean.getTitle() != null && !scoreDetailsBean.getTitle().isEmpty()) {
-                    scoreTitleTv.setText(scoreDetailsBean.getTitle());
+                    scoreTitleTv.setText(Utils.fromHtml(scoreDetailsBean.getTitle()));
                     scoreTitleTv.setVisibility(View.VISIBLE);
                 }
 
