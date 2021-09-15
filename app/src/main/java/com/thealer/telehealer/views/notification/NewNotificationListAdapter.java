@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.notification;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -411,7 +412,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
 
 
                 if (description != null && !description.isEmpty()) {
-                    viewHolder.descriptionTv.setText(description);
+                    viewHolder.descriptionTv.setText(Utils.fromHtml(activity.getString(R.string.str_with_htmltag,description)));
                 } else {
                     viewHolder.descriptionTv.setVisibility(View.GONE);
                 }

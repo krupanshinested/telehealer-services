@@ -43,6 +43,11 @@ public class AppPreference {
         return sharedPreferences.getString(key, "");
     }
 
+
+    public String getStringWithDefault(String key, String defaultVal){
+        return sharedPreferences.getString(key, defaultVal);
+    }
+
     public void setStringSet(String key, Set<String> value) {
         editor.putStringSet(key, value);
         editor.commit();

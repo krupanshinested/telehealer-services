@@ -7,7 +7,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/margin_default">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/item_civ"
@@ -23,10 +24,15 @@
 
         <TextView
             android:id="@+id/list_title_tv"
-            style="@style/card_title_text"
-            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_title_size"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="@font/open_sans_semibold"
+            android:layout_width="0dp"
+            android:maxLines="1"
+            android:layout_height="24dp"
+            android:singleLine="true"
             android:layout_marginTop="@dimen/margin_default"
-            android:paddingTop="@dimen/padding_default"
+            android:layout_marginStart="@dimen/margin_default"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
             app:layout_constraintEnd_toStartOf="@id/options_cl"

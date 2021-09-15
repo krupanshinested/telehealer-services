@@ -275,12 +275,15 @@ public class UserDetailPreferenceManager {
     }
 
     public static void invalidateUser() {
-        appPreference.setString(PreferenceConstants.WHO_AM_I_RESPONSE, null);
-        appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, null);
-        appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, null);
-        appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
-        appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
-        appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
+        if(Utils.isRefreshTokenExpire()) {
+            appPreference.setString(PreferenceConstants.WHO_AM_I_RESPONSE, null);
+            appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, null);
+            appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, null);
+            appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
+            appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
+            appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
+            appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, "0");
+        }
     }
 
     public static String getInstallType() {

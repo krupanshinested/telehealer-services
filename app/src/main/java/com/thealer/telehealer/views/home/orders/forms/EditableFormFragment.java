@@ -2,20 +2,11 @@ package com.thealer.telehealer.views.home.orders.forms;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.appcompat.widget.Toolbar;
-
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +19,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.gms.clearcut.ClearcutLogger;
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -38,8 +38,6 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomSpinnerView;
 import com.thealer.telehealer.common.UserType;
-import com.thealer.telehealer.common.Util.TimerInterface;
-import com.thealer.telehealer.common.Util.TimerRunnable;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -166,9 +164,9 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
     private void setData(OrdersUserFormsApiResponseModel formsApiResponseModel) {
         if (hideToolbar) {
             toolbar.setVisibility(View.GONE);
-            ((ChangeTitleInterface) getActivity()).onTitleChange(formsApiResponseModel.getName());
+            ((ChangeTitleInterface) getActivity()).onTitleChange(Utils.fromHtml(getString(R.string.str_with_htmltag, formsApiResponseModel.getName())).toString());
         } else {
-            toolbarTitle.setText(formsApiResponseModel.getName());
+            toolbarTitle.setText(Utils.fromHtml(getString(R.string.str_with_htmltag, formsApiResponseModel.getName())));
         }
 
         if (formsApiResponseModel.isCompleted())
@@ -255,8 +253,19 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                                     }
                                 });
                             }
-                            if (itemsBean.getValue() != null) {
-                                formCsv.getSpinner().setSelection(itemsBean.getProperties().getOptions().indexOf(itemsBean.getValue()), true);
+                            try {
+                                if (itemsBean.getScore() != null) {
+                                    for(int j=0;j<itemsBean.getProperties().getOptions().size();j++){
+                                        if(itemsBean.getProperties().getOptions().get(j).getScore() == itemsBean.getScore()){
+                                            formCsv.getSpinner().setSelection(j, true);
+                                            j=itemsBean.getProperties().getOptions().size()+1;
+                                        }
+                                    }
+                                        int pos = (int) ((itemsBean.getProperties().getOptions().size()-1)- itemsBean.getScore());
+
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
 
                             formCsv.getSpinner().setEnabled(isEditable);
@@ -284,7 +293,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
 
                                 @Override
                                 public void afterTextChanged(Editable s) {
-                                   dynamicFormDataBean.getData().get(finalK1).getItems().get(finalI1).setValue(s.toString());
+                                    dynamicFormDataBean.getData().get(finalK1).getItems().get(finalI1).setValue(s.toString());
                                 }
                             });
 
@@ -316,7 +325,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
 
                                 @Override
                                 public void afterTextChanged(Editable s) {
-                                   dynamicFormDataBean.getData().get(finalK2).getItems().get(finalI2).setValue(s.toString());
+                                    dynamicFormDataBean.getData().get(finalK2).getItems().get(finalI2).setValue(s.toString());
                                 }
                             });
                             if (itemsBean.getValue() != null) {
@@ -364,7 +373,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                                 timeEt.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Utils.showTimePickerDialog(null,getActivity(), null, new TimePickerDialog.OnTimeSetListener() {
+                                        Utils.showTimePickerDialog(null, getActivity(), null, new TimePickerDialog.OnTimeSetListener() {
                                             @Override
                                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                                 timeEt.setText(getDisplayTime(hourOfDay, minute));
@@ -416,7 +425,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                                 formTimeEt.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Utils.showTimePickerDialog(null,getActivity(), null, new TimePickerDialog.OnTimeSetListener() {
+                                        Utils.showTimePickerDialog(null, getActivity(), null, new TimePickerDialog.OnTimeSetListener() {
                                             @Override
                                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                                 formTimeEt.setText(getDisplayTime(hourOfDay, minute));

@@ -3,36 +3,35 @@ package com.thealer.telehealer;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.opentok.android.AudioDeviceManager;
 import com.stripe.android.PaymentConfiguration;
 import com.thealer.telehealer.common.AppPreference;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
-import com.thealer.telehealer.common.OpenTok.CallNotificationService;
 import com.thealer.telehealer.common.OpenTok.CustomAudioDevice;
 import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.views.call.CallActivity;
-import com.thealer.telehealer.views.guestlogin.WaitingRoomHearBeatService;
+import com.thealer.telehealer.views.common.LockScreenReceiver;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -53,6 +52,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false, isFromRegistration, isDestroyed = false;
     public static AppConfig appConfig;
     public static boolean stateChange = false;
+    LockScreenReceiver lockScreenReceiver = new LockScreenReceiver();
 
     @Override
     public void onCreate() {
@@ -70,6 +70,11 @@ public class TeleHealerApplication extends Application implements LifecycleObser
 
         createNotificationChannel();
         PaymentConfiguration.init(this, BuildConfig.STRIPE_KEY);
+        IntentFilter lockFilter = new IntentFilter();
+        lockFilter.addAction(Intent.ACTION_SCREEN_ON);
+        lockFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        lockFilter.addAction(Intent.ACTION_USER_PRESENT);
+        registerReceiver(lockScreenReceiver, lockFilter);
     }
 
     private void createNotificationChannel() {
@@ -106,6 +111,12 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public void onMoveToForeground() {
         // app moved to foreground
         isInForeGround = true;
+        try {
+            Utils.checkIdealTime(getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
@@ -134,6 +145,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         Log.e("aswin", "onMoveToBackground: ");
         isInForeGround = false;
         isFromRegistration = false;
+        Constants.isFromBackground = true;
         if (isVitalDeviceConnectionShown) {
             isVitalDeviceConnectionShown = false;
         }
@@ -144,12 +156,18 @@ public class TeleHealerApplication extends Application implements LifecycleObser
                 CallActivity.createNotificationBarCall(application, false, tokBox.getCallRequest().getDoctorName(), tokBox.getCallRequest());
             }
         } else {
-            VitalsManager.getInstance().disconnectAll();
+            try {
+                VitalsManager.getInstance().disconnectAll();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, false);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+
+//        unregisterReceiver(lockScreenReceiver);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -161,6 +179,7 @@ public class TeleHealerApplication extends Application implements LifecycleObser
         Intent i = new Intent(getString(R.string.APP_LIFECYCLE_STATUS));
         i.putExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, false);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+        unregisterReceiver(lockScreenReceiver);
 
     }
 
