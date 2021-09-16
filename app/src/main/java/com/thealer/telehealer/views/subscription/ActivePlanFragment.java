@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -31,13 +29,11 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.apilayer.models.subscription.SubscriptionViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.CustomSpinnerView;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -63,6 +59,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private SubscriptionViewModel subscriptionViewModel;
     private Button btnUnsubscribe, btnChange;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
+
     public ActivePlanFragment() {
         // Required empty public constructor
     }
@@ -158,40 +155,44 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         btnUnsubscribe.setOnClickListener(this);
         btnChange.setOnClickListener(this);
 
-        if(activatedPlan ==-1 && isFromSubscriptionPlan){
-            isFromSubscriptionPlan=false;
+        if (activatedPlan == -1 && isFromSubscriptionPlan) {
+            isFromSubscriptionPlan = false;
             onCloseActionInterface.onClose(false);
-        }else{
+        } else {
             subscriptionViewModel.fetchSubscriptionPlanList();
         }
     }
 
     private void prePareData() {
-        if (planList != null && planList.size()>0) {
+        if (planList != null && planList.size() > 0) {
 
-            for(int i=0;i<planList.size();i++){
-                PlanInfoBean.Result currentPlan =planList.get(i);
-                if(currentPlan.isPurchased()){
-                    activatedPlan=i;
-                    i=planList.size()+1;
+            for (int i = 0; i < planList.size(); i++) {
+                PlanInfoBean.Result currentPlan = planList.get(i);
+                if (currentPlan.isPurchased()) {
+                    activatedPlan = i;
+                    i = planList.size() + 1;
                 }
             }
 
-            if(activatedPlan>=0){
+            if (activatedPlan >= 0) {
                 PlanInfoBean.Result currentPlanInfo = planList.get(activatedPlan);
-                if(currentPlanInfo.isCanReshedule()){
+                if (currentPlanInfo.isCanReshedule()) {
                     btnUnsubscribe.setText(getString(R.string.str_subscribe));
-                }else{
+                }else {
                     btnUnsubscribe.setText(getString(R.string.str_unsubscribe));
+                }
+                if (currentPlanInfo.isCancelled() && currentPlanInfo.isPurchased()) {
+                    btnUnsubscribe.setVisibility(View.GONE);
+                }else{
+                    btnUnsubscribe.setVisibility(View.VISIBLE);
                 }
                 tvPlanName.setText(currentPlanInfo.getName());
                 tvTotalRpm.setText(currentPlanInfo.getRpm_count());
-            }else{
+            } else {
                 visitSubscriptionPlan();
             }
-
-        }else{
-           visitSubscriptionPlan();
+        } else {
+            visitSubscriptionPlan();
         }
 
     }
@@ -213,7 +214,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             case R.id.btn_change:
                 SubscriptionPlanFragment subscriptionPlanFragment = new SubscriptionPlanFragment();
                 Bundle bundle = new Bundle();
-                bundle.putBoolean(ArgumentKeys.IS_CHANGE_PLAN,true);
+                bundle.putBoolean(ArgumentKeys.IS_CHANGE_PLAN, true);
                 subscriptionPlanFragment.setArguments(bundle);
                 showSubFragmentInterface.onShowFragment(subscriptionPlanFragment);
                 break;
@@ -221,11 +222,15 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     }
 
     private void manageSubscription(View v) {
-        if(activatedPlan>=0 && planList.size()>0) {
+        if (activatedPlan >= 0 && planList.size() > 0) {
             PlanInfoBean.Result currentPlan = planList.get(activatedPlan);
-            if (!currentPlan.isCanReshedule()) {
-                selectReason(v);
+            if (currentPlan.isCanReshedule())
+                subscriptionViewModel.purchaseSubscriptionPlan(currentPlan.getPlan_id(), currentPlan.getBilling_cycle());
+            else if(currentPlan.isCancelled() && currentPlan.isPurchased()){
+                showToast(getString(R.string.str_plan_is_continue_till));
             }
+            else
+                selectReason(v);
         }
     }
 
@@ -257,16 +262,16 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         tempList.add("Reason 4");
         tempList.add("Other");
         commentsEt.setVisibility(View.GONE);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, tempList);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, tempList);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(arrayAdapter);
         List<String> finalTempList = tempList;
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position==(finalTempList.size()-1)){
+                if (position == (finalTempList.size() - 1)) {
                     commentsEt.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     commentsEt.setVisibility(View.GONE);
                 }
             }
@@ -288,7 +293,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             public void onClick(View v) {
                 subscriptionViewModel.unSubscriptionPlan();
                 dialog.dismiss();
-                isFromSubscriptionPlan=false;
+                isFromSubscriptionPlan = false;
                 onCloseActionInterface.onClose(false);
             }
         });

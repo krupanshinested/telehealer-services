@@ -43,9 +43,15 @@ public class PlanInfoBean extends BaseApiResponseModel {
         private String updated_at;
         private boolean isPurchased=false;
         private boolean canReshedule=false;
-        private boolean isSelected=false;
-        private boolean isResubscribe=false;
-        private boolean isUnsubscribe=false;
+        private boolean isCancelled=false;
+
+        public boolean isCancelled() {
+            return isCancelled;
+        }
+
+        public void setCancelled(boolean cancelled) {
+            isCancelled = cancelled;
+        }
 
         public boolean isPurchased() {
             return isPurchased;
@@ -63,29 +69,6 @@ public class PlanInfoBean extends BaseApiResponseModel {
             this.canReshedule = canReshedule;
         }
 
-        public boolean isUnsubscribe() {
-            return isUnsubscribe;
-        }
-
-        public void setUnsubscribe(boolean unsubscribe) {
-            isUnsubscribe = unsubscribe;
-        }
-
-        public boolean isResubscribe() {
-            return isResubscribe;
-        }
-
-        public void setResubscribe(boolean resubscribe) {
-            isResubscribe = resubscribe;
-        }
-
-        public boolean isSelected() {
-            return isSelected;
-        }
-
-        public void setSelected(boolean selected) {
-            isSelected = selected;
-        }
 
         public String getPlan_id() {
             return plan_id;

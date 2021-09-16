@@ -177,7 +177,6 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         if (bundle != null) {
             int pos = bundle.getInt(ArgumentKeys.ITEM_CLICK_PARENT_POS);
             activatedPlan = pos;
-            planList.get(pos).setSelected(true);
             if(isChangePlan) {
                 subscriptionViewModel.changeSubscriptionPlan(bundle.getString(ArgumentKeys.PlanID));
             }else {

@@ -57,7 +57,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         PlanInfoBean.Result currentPlan = adapterList.get(position);
         if(currentPlan.getIs_active()) {
 
-            if(currentPlan.isSelected())
+            if(currentPlan.isPurchased())
                 Constants.activatedPlan=position;
 
             int llContainerBGColor, tvTxtColor, tvHighlightColor, tvFeatureColor, tvDescColor, btnTextColor, btnBGColor;
@@ -105,7 +105,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                     btnStr=fragmentActivity.getString(R.string.str_start_with_ideal);
                     break;
             }
-        if (currentPlan.isSelected()) {
+        if (currentPlan.isPurchased() || currentPlan.isCanReshedule()) {
             holder.llContainer.setForeground(new ColorDrawable(ContextCompat.getColor(fragmentActivity, R.color.colorWhite_50)));
         } else {
             holder.llContainer.setForeground(new ColorDrawable(Color.TRANSPARENT));
