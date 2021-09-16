@@ -54,6 +54,7 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
+import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -82,6 +83,8 @@ import com.thealer.telehealer.views.settings.GeneralSettingsFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+import com.thealer.telehealer.views.subscription.SubscriptionActivity;
+import com.thealer.telehealer.views.subscription.SubscriptionPlanFragment;
 
 import java.util.Calendar;
 import java.util.List;
@@ -276,7 +279,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 startActivity(new Intent(this, DoctorOnBoardingActivity.class));
                 finish();
                 return false;
+            } else if(!appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
+                startActivity(new Intent(this, SubscriptionActivity.class));
+                finish();
+                return false;
             }
+
         }
         return true;
     }

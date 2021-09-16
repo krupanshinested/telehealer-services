@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.subscription;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -37,6 +38,7 @@ import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomSpinnerView;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -48,7 +50,6 @@ import java.util.List;
 
 import static com.thealer.telehealer.common.Constants.activatedPlan;
 import static com.thealer.telehealer.common.Constants.isFromSubscriptionPlan;
-import static com.thealer.telehealer.common.Constants.planList;
 
 
 public class ActivePlanFragment extends BaseFragment implements View.OnClickListener {
@@ -61,7 +62,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private ImageView backIv;
     private SubscriptionViewModel subscriptionViewModel;
     private Button btnUnsubscribe, btnChange;
-
+    private List<PlanInfoBean.Result> planList = new ArrayList<>();
     public ActivePlanFragment() {
         // Required empty public constructor
     }
@@ -111,8 +112,23 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    if(baseApiResponseModel.isSuccess())
-                        showToast("Plan unsubscribe successfully");
+                    if (baseApiResponseModel instanceof PlanInfoBean) {
+                        PlanInfoBean planInfoBean = (PlanInfoBean) baseApiResponseModel;
+                        if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
+                            if (planList == null || planList.isEmpty())
+                                planList = planInfoBean.getResults();
+
+                            prePareData();
+
+                        }
+                    } else {
+                        Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.str_plan_is_subscribe_now), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                onCloseActionInterface.onClose(false);
+                            }
+                        }, null);
+                    }
                 }
             }
         });
@@ -142,29 +158,47 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         btnUnsubscribe.setOnClickListener(this);
         btnChange.setOnClickListener(this);
 
-        prePareData();
+        if(activatedPlan ==-1 && isFromSubscriptionPlan){
+            isFromSubscriptionPlan=false;
+            onCloseActionInterface.onClose(false);
+        }else{
+            subscriptionViewModel.fetchSubscriptionPlanList();
+        }
     }
 
     private void prePareData() {
-        if (activatedPlan == -1 && !isFromSubscriptionPlan) {
-            SubscriptionPlanFragment subscriptionPlanFragment = new SubscriptionPlanFragment();
-            showSubFragmentInterface.onShowFragment(subscriptionPlanFragment);
-        }else if (activatedPlan == -1 && isFromSubscriptionPlan) {
-            isFromSubscriptionPlan=false;
-            onCloseActionInterface.onClose(false);
-        } else {
-            PlanInfoBean.Result currentPlanInfo = planList.get(activatedPlan);
-            if(currentPlanInfo.isResubscribe()){
-                btnUnsubscribe.setText(getString(R.string.str_resubscribe));
-            }else if(currentPlanInfo.isUnsubscribe()){
-                btnUnsubscribe.setText(getString(R.string.str_subscribe));
-            }else{
-                btnUnsubscribe.setText(getString(R.string.str_unsubscribe));
+        if (planList != null && planList.size()>0) {
+
+            for(int i=0;i<planList.size();i++){
+                PlanInfoBean.Result currentPlan =planList.get(i);
+                if(currentPlan.isPurchased()){
+                    activatedPlan=i;
+                    i=planList.size()+1;
+                }
             }
-            tvPlanName.setText(currentPlanInfo.getName());
-            tvTotalRpm.setText(currentPlanInfo.getRpm_count());
+
+            if(activatedPlan>=0){
+                PlanInfoBean.Result currentPlanInfo = planList.get(activatedPlan);
+                if(currentPlanInfo.isCanReshedule()){
+                    btnUnsubscribe.setText(getString(R.string.str_subscribe));
+                }else{
+                    btnUnsubscribe.setText(getString(R.string.str_unsubscribe));
+                }
+                tvPlanName.setText(currentPlanInfo.getName());
+                tvTotalRpm.setText(currentPlanInfo.getRpm_count());
+            }else{
+                visitSubscriptionPlan();
+            }
+
+        }else{
+           visitSubscriptionPlan();
         }
 
+    }
+
+    private void visitSubscriptionPlan() {
+        SubscriptionPlanFragment subscriptionPlanFragment = new SubscriptionPlanFragment();
+        showSubFragmentInterface.onShowFragment(subscriptionPlanFragment);
     }
 
     @Override
@@ -187,15 +221,11 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     }
 
     private void manageSubscription(View v) {
-        PlanInfoBean.Result currentPlan = planList.get(activatedPlan);
-
-        if(currentPlan.isResubscribe()) {
-            planList.get(activatedPlan).setUnsubscribe(false);
-            planList.get(activatedPlan).setResubscribe(false);
-        }else if(!currentPlan.isUnsubscribe()){
-            selectReason(v);
-        }else if(currentPlan.isUnsubscribe()){
-            planList.get(activatedPlan).setResubscribe(true);
+        if(activatedPlan>=0 && planList.size()>0) {
+            PlanInfoBean.Result currentPlan = planList.get(activatedPlan);
+            if (!currentPlan.isCanReshedule()) {
+                selectReason(v);
+            }
         }
     }
 
@@ -256,7 +286,6 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                planList.get(activatedPlan).setUnsubscribe(true);
                 subscriptionViewModel.unSubscriptionPlan();
                 dialog.dismiss();
                 isFromSubscriptionPlan=false;

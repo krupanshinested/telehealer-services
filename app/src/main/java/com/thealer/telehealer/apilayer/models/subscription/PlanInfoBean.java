@@ -41,9 +41,27 @@ public class PlanInfoBean extends BaseApiResponseModel {
         private String rpm_count;
         private String created_at;
         private String updated_at;
+        private boolean isPurchased=false;
+        private boolean canReshedule=false;
         private boolean isSelected=false;
         private boolean isResubscribe=false;
         private boolean isUnsubscribe=false;
+
+        public boolean isPurchased() {
+            return isPurchased;
+        }
+
+        public void setPurchased(boolean purchased) {
+            isPurchased = purchased;
+        }
+
+        public boolean isCanReshedule() {
+            return canReshedule;
+        }
+
+        public void setCanReshedule(boolean canReshedule) {
+            this.canReshedule = canReshedule;
+        }
 
         public boolean isUnsubscribe() {
             return isUnsubscribe;

@@ -265,7 +265,7 @@ public interface ApiInterface {
     @POST("api/logout")
     Observable<BaseApiResponseModel> signOut();
 
-    @GET("api/whoami")
+    @GET("api/whoami-v2")
     Observable<WhoAmIApiResponseModel> whoAmI(@Query(DOC_GUID) String docGuId);
 
     @GET("api/associations-v2")

@@ -191,7 +191,6 @@ public class Constants {
     public static final double STRIPE_MIN_AMOUNT = 0.50;
     public static boolean isRedirectProfileSetting=false;
 
-    public static  List<PlanInfoBean.Result> planList = new ArrayList<>();
     public static int activatedPlan=-1;
     public static boolean isFromSubscriptionPlan=false;
 

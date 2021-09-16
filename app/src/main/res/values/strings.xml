@@ -1607,5 +1607,6 @@
     <string name="str_subscribe">Subscribe</string>
     <string name="str_resubscribe">Resubscribe</string>
     <string name="str_plan_already_activate">Plan already activated</string>
+    <string name="retrive_pricing_plan">Retrieving pricing plan for you</string>
 
 </resources>

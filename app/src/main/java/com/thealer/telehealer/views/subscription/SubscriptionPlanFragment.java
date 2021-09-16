@@ -36,9 +36,11 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.thealer.telehealer.common.Constants.activatedPlan;
 import static com.thealer.telehealer.common.Constants.isFromSubscriptionPlan;
-import static com.thealer.telehealer.common.Constants.planList;
 
 public class SubscriptionPlanFragment extends BaseFragment implements View.OnClickListener, OnAdapterListener {
 
@@ -53,8 +55,8 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     private SubscriptionViewModel subscriptionViewModel;
     private AttachObserverInterface attachObserverInterface;
     private  boolean isChangePlan=false;
-
-
+    private  boolean isHideBack=false;
+    private List<PlanInfoBean.Result> planList = new ArrayList<>();
     public SubscriptionPlanFragment() {
         // Required empty public constructor
     }
@@ -62,8 +64,10 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if(getArguments() != null)
-            isChangePlan = getArguments().getBoolean(ArgumentKeys.IS_CHANGE_PLAN,false);
+        if(getArguments() != null) {
+            isChangePlan = getArguments().getBoolean(ArgumentKeys.IS_CHANGE_PLAN, false);
+            isHideBack = getArguments().getBoolean(ArgumentKeys.IS_HIDE_BACK, false);
+        }
 
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
@@ -147,6 +151,9 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         toolbarTitle.setText(getString(R.string.lbl_subscriptions_plan));
         subscriptionPlanRv = subscriptionPlanListCrv.getRecyclerView();
+
+        if(isHideBack)
+            backIv.setVisibility(View.GONE);
 
         subscriptionPlanAdapter = new SubscriptionPlanAdapter(getActivity(), this);
         subscriptionPlanRv.setAdapter(subscriptionPlanAdapter);

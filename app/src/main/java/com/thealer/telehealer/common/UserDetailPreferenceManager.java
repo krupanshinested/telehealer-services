@@ -260,6 +260,7 @@ public class UserDetailPreferenceManager {
         setUser_avatar(whoAmIApiResponseModel.getUser_avatar());
         setUser_guid(whoAmIApiResponseModel.getUser_guid());
         setVersion(whoAmIApiResponseModel.getVersion());
+        setFirstTimePurchase(whoAmIApiResponseModel.isFirst_time_subscription_purchased());
 
         if (whoAmIApiResponseModel.getUser_detail() != null) {
 
@@ -272,6 +273,10 @@ public class UserDetailPreferenceManager {
         }
 
         deleteUserImageCaches(application);
+    }
+
+    private static void setFirstTimePurchase(boolean isPurchase) {
+        appPreference.setBoolean(PreferenceConstants.IS_USER_PURCHASED, isPurchase);
     }
 
     public static void invalidateUser() {

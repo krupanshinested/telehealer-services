@@ -262,4 +262,5 @@ public class ArgumentKeys {
     public static final String PlanID="plan_id";
     public static final String BillingCycle="billing_cycle";
     public static String IS_CHANGE_PLAN="IS_CHANGE_PLAN";
+    public static String IS_HIDE_BACK="IS_HIDE_BACK";
 }
