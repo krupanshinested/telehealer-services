@@ -69,7 +69,7 @@ public class SubscriptionActivity extends BaseActivity implements
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())){
-                        if(appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)){
+                        if(whoAmIApiResponseModel.isFirst_time_subscription_purchased()){
                             startActivity(new Intent(SubscriptionActivity.this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                             finish();
                         }else {
@@ -109,5 +109,6 @@ public class SubscriptionActivity extends BaseActivity implements
     @Override
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
+        whoAmIApiViewModel.assignWhoAmI();
     }
 }
