@@ -13,6 +13,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
@@ -20,10 +21,12 @@ import com.thealer.telehealer.common.OpenTok.CallSettings;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.OpenTokTokenFetcher;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 
@@ -188,7 +191,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
         });
     }
 
-    public void postaVoipCall(@Nullable String doctorGuid, String toGuid,
+    public void postaVoipCall(String userGuid,@Nullable String doctorGuid, String toGuid,
                               @Nullable String scheduleId, String callType) {
 
         HashMap<String, String> result = new HashMap<>();
@@ -203,7 +206,11 @@ public class OpenTokViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().postaVOIPCall(doctorGuid, result)
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.MAKE_CALLS_CODE);
+                    }
+                    getAuthApiService().postaVOIPCall(headers,doctorGuid, result)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<CallSettings>(Constants.SHOW_PROGRESS) {
                                 @Override

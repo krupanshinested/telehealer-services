@@ -935,6 +935,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             bundle.putInt(ArgumentKeys.DOCTOR_ID, doctorId);
                             bundle.putInt(ArgumentKeys.PATIENT_ID, patientId);
                             bundle.putBoolean(ArgumentKeys.IS_FROM_PROFILE, true);
+                            bundle.putString(ArgumentKeys.USER_GUID, userGuid);
                             transactionListFragment.setArguments(bundle);
                             addFragment(getString(R.string.lbl_payment_history), transactionListFragment);
                             break;

@@ -57,6 +57,7 @@ public class ArgumentKeys {
     public static final String TRANSCRIPTION_DETAIL = "transcription_detail";
     public static final String USER_GUID = "user_guid";
     public static final String isUserPatient = "isUserPatient";
+    public static final String MODULE_CODE = "module_code";
     public static final String SCHEDULE_DETAIL = "schedule_detail";
     public static final String DOCTOR_GUID = "doctor_guid";
     public static final String DOCTOR_ID = "doctor_id";
@@ -148,6 +149,20 @@ public class ArgumentKeys {
     public static final String SIZE = "0";
     public static final String DOCTOR_NAME = "DOCTOR_NAME";
     public static final String SESSION_ID = "SESSION_ID";
+    public static final String PRESCRIPTION_CODE ="PRESCRIPTIONS";
+    public static final String ADD_VITALS_CODE ="ADD_VITALS";
+    public static final String MAKE_CALLS_CODE ="MAKE_CALLS";
+    public static final String REFERRALS_CODE ="REFERRALS";
+    public static final String LABS_CODE ="LABS";
+    public static final String RADIOLOGY_CODE ="RADIOLOGY";
+    public static final String MEDICAL_DOCUMENTS_CODE ="MEDICAL_DOCUMENTS";
+    public static final String FORMS_CODE ="FORMS";
+    public static final String EDUCATIONAL_VIDEOS_CODE ="EDUCATIONAL_VIDEOS";
+    public static final String BILLING_AND_CHARGES_CODE ="BILLING_AND_CHARGES";
+    public static final String MANAGE_REFUND_CODE ="MANAGE_REFUND";
+    public static final String PAYMENT_PROCESSING_CODE ="PAYMENT_PROCESSING";
+    public static final String SCHEDULING_CODE ="SCHEDULING";
+    public static final String INVITE_OTHERS_CODE ="INVITE_OTHERS";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
@@ -163,6 +178,14 @@ public class ArgumentKeys {
     public static final String NEED_TO_TRIGGER_VITAL_AUTOMATICALLY = "NEED_TO_TRIGGER_VITAL_AUTOMATICALLY";
 
     public static final String RESULT = "RESULT";
+    public static final String PARENT_POS = "parentPos";
+    public static final String IS_REMOVE = "isRemove";
+    public static final String IS_ADD = "isAdd";
+    public static final String VITAL_TYPE = "vitalType";
+    public static final String LOW_VALUE = "lowValue";
+    public static final String HIGH_VALUE = "highValue";
+    public static final String THRESHOLD_VALUE = "thresholdValue";
+    public static final String THRESHOLD_MSG = "thresholdMsg";
 
     public static final String USE_OWN_TOOLBAR = "USE_OWN_TOOLBAR";
 

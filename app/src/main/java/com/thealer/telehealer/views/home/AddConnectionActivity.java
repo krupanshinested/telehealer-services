@@ -229,7 +229,11 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
             successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
 
-            addConnectionApiViewModel.connectUser(userGuid, null, String.valueOf(selectedId), designation);
+            String currentUserGuid=userGuid;
+            if(!UserType.isUserAssistant())
+                currentUserGuid="";
+
+            addConnectionApiViewModel.connectUser(currentUserGuid,userGuid, null, String.valueOf(selectedId), designation);
 
         }
     }

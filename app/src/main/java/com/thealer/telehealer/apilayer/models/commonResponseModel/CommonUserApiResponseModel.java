@@ -35,6 +35,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private String appt_start_time;
     private String appt_end_time;
     private List<PermissionBean> permissions;
+    private List<VitalBean> vitals;
 
     public CommonUserApiResponseModel() {
     }
@@ -54,6 +55,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         this.user_detail = user_detail;
     }
 
+
+    public List<VitalBean> getVitals() {
+        return vitals;
+    }
+
+    public void setVitals(List<VitalBean> vitals) {
+        this.vitals = vitals;
+    }
 
     public List<PermissionBean> getPermissions() {
         return permissions;

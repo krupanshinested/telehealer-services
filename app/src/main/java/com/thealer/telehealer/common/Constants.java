@@ -196,6 +196,7 @@ public class Constants {
     public static long ExpireTime=23*60*60*1000;
     public static boolean isFromBackground=true;
     public static final int TotalCount=3;
+    public static String ChildHood_Asthma="Childhood Asthma Control Test";
 
     public static int activatedPlan=-1;
     public static boolean isFromSubscriptionPlan=false;
