@@ -19,7 +19,33 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void connectUser(String toGuid, String doctorGuid, String userId) {
+    public void connectUser(String toGuid, String doctorGuid, String userId,String designation) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    AddConnectionRequestModel addConnectionRequestModel = new AddConnectionRequestModel();
+                    addConnectionRequestModel.setRequestee_id(userId);
+                    addConnectionRequestModel.setType(Constants.ADD_CONNECTION_REQ_TYPE);
+                    addConnectionRequestModel.setMessage(Constants.ADD_CONNECTION_REQ_MSG);
+                    addConnectionRequestModel.setDesignation(designation);
+                    
+                    getAuthApiService().addConnection(addConnectionRequestModel, doctorGuid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+
+                                    EventRecorder.recordNotification("CONNECTION_REQUEST");
+                                    EventRecorder.recordConnection("CONNECTION_REQUESTED");
+                                }
+                            });
+                }
+            }
+        });
+    }
+    public void addPatientDocConnection(String toGuid, String doctorGuid, String userId) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -29,7 +55,7 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
                     addConnectionRequestModel.setType(Constants.ADD_CONNECTION_REQ_TYPE);
                     addConnectionRequestModel.setMessage(Constants.ADD_CONNECTION_REQ_MSG);
 
-                    getAuthApiService().addConnection(addConnectionRequestModel, doctorGuid)
+                    getAuthApiService().addPatientDocConnection(addConnectionRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override

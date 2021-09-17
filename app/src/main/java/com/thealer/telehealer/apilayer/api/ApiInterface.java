@@ -20,6 +20,7 @@ import com.thealer.telehealer.apilayer.models.UpdateProfile.UpdateProfileApiResp
 import com.thealer.telehealer.apilayer.models.accessLog.AccessLogApiResponseModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionRequestModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListResponseModel;
+import com.thealer.telehealer.apilayer.models.addConnection.DesignationResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.UpdateAssociationRequestModel;
 import com.thealer.telehealer.apilayer.models.chat.BroadCastUserApiResponseModel;
@@ -31,6 +32,7 @@ import com.thealer.telehealer.apilayer.models.chat.PrecannedMessageApiResponse;
 import com.thealer.telehealer.apilayer.models.chat.UserKeysApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.DataBean;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionRequestModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.CreateUserRequestModel;
 import com.thealer.telehealer.apilayer.models.diet.DietApiResponseModel;
@@ -77,6 +79,7 @@ import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestMo
 import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
+import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
@@ -168,6 +171,8 @@ public interface ApiInterface {
     String MEDICAL_ASSISTANT = "medical_assistant";
     String STATUS = "status";
     String ACCEPTED = "accepted";
+    String ROLE = "role";
+    String SPECIALITY = "specialty";
     String ORDER_ID = "order_id";
     String FILTER_ID_IN = "filter_id_in";
     String START_DATE = "start_date";
@@ -260,7 +265,7 @@ public interface ApiInterface {
     @POST("api/logout")
     Observable<BaseApiResponseModel> signOut();
 
-    @GET("api/whoami")
+    @GET("api/whoami-v2")
     Observable<WhoAmIApiResponseModel> whoAmI(@Query(DOC_GUID) String docGuId);
 
     @GET("api/associations-v2")
@@ -290,11 +295,17 @@ public interface ApiInterface {
     @GET("api/correspondence-history")
     Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(SEARCH_FILTER) String search, @Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/unconnected-users")
-    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
+    @GET("api/unconnected-users-v2")
+    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query(ROLE) String role, @Query(SPECIALITY) String speciality);
+
+    @GET("api/designations")
+    Observable<DesignationResponseModel> getDesignationList();
+
+    @POST("api/requests-v2")
+    Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @POST("api/requests")
-    Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<BaseApiResponseModel> addPatientDocConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @DELETE("api/associations")
     Observable<BaseApiResponseModel> disconnectUser(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
@@ -474,11 +485,17 @@ public interface ApiInterface {
     @GET("api/schedule")
     Observable<SchedulesApiResponseModel.ResultBean> getScheduleDetail(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @POST("api/setup/invite")
+    /*@POST("api/setup/invite")
+    Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);*/
+
+    @POST("api/setup/invite-v2")
     Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);
 
-    @POST("api/setup/invite")
-    Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid, @Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);
+    /*@POST("api/setup/invite")
+    Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid, @Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);*/
+
+    @POST("api/setup/invite-v2")
+    Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid,@Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);
 
     @GET("api/call/{id}")
     Observable<VisitsDetailApiResponseModel> getTranscriptionDetails(@Path(ID) String id);
@@ -501,7 +518,7 @@ public interface ApiInterface {
     @PUT("api/requests")
     Observable<BaseApiResponseModel> setNotificationsRead(@Body Map<String, String> body);
 
-    @PATCH("api/requests/{id}")
+    @PATCH("api/requests-v2/{id}")
     Observable<NotificationRequestUpdateResponseModel> updateNotification(@Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Body Map<String, Object> body);
 
     @GET("api/token-v2")
@@ -509,6 +526,9 @@ public interface ApiInterface {
 
     @GET("api/users-v2/{id}")
     Observable<CommonUserApiResponseModel> getUserDetail(@Path(ID) String id);
+
+    @POST("api/users/permissions")
+    Observable<BaseApiResponseModel> updateUserPermission(@Body PermissionRequestModel createRequestModel);
 
     @PUT("api/call/{id}")
     Observable<BaseApiResponseModel> updateCallStatus(@Path(ID) String sessionId, @QueryMap Map<String, String> param);
@@ -622,6 +642,9 @@ public interface ApiInterface {
 
     @GET("api/invites")
     Observable<PendingInvitesNonRegisterdApiResponseModel> getNonRegisteredUserInvites(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(ACCEPTED) boolean accepted);
+
+    @GET("api/invites-v2")
+    Observable<PendingInvitesNonRegisterdApiResponseModel> getNonRegisteredUserInvitesByROLE(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(ROLE) String role);
 
     @GET("api/signal/keys")
     Observable<UserKeysApiResponseModel> getUserKeys(@Query(USER_GUID) String userGuid);
@@ -741,6 +764,18 @@ public interface ApiInterface {
 
     @POST("/api/charge/process-refund-v2")
     Observable<BaseApiResponseModel> processRefund(@Query("id") int id, @Body() RefundReq req);
+
+    @GET("api/subscription-plans")
+    Observable<PlanInfoBean> fetchSubscriptionList();
+
+    @POST("/api/users/purchase-plan")
+    Observable<BaseApiResponseModel> purchasePlan(@Body() HashMap<String, String> req);
+
+    @POST("/api/users/change-plan")
+    Observable<BaseApiResponseModel> changePlan(@Body() HashMap<String, String> req);
+
+    @GET("/api/users/cancel-plan")
+    Observable<PlanInfoBean> unSubscribePlan();
 
 
 }

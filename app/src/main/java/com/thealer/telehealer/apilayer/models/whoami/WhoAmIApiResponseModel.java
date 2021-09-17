@@ -12,7 +12,15 @@ public class WhoAmIApiResponseModel extends CommonUserApiResponseModel {
     private String install_type;
     private boolean orders_enabled;
     private boolean integration_requests;
+    private boolean first_time_subscription_purchased=false;
 
+    public boolean isFirst_time_subscription_purchased() {
+        return first_time_subscription_purchased;
+    }
+
+    public void setFirst_time_subscription_purchased(boolean first_time_subscription_purchased) {
+        this.first_time_subscription_purchased = first_time_subscription_purchased;
+    }
 
     public String getVersion() {
         return version;

@@ -38,6 +38,8 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.chat.UserKeysApiResponseModel;
+import com.thealer.telehealer.apilayer.models.diet.DietApiViewModel;
+import com.thealer.telehealer.apilayer.models.diet.DietUserListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
@@ -129,6 +131,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserver(signinApiViewModel);
         attachObserver(whoAmIApiViewModel);
+
 
         whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override

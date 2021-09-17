@@ -1,7 +1,6 @@
 package com.thealer.telehealer.stripe;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
@@ -152,6 +151,7 @@ public class AppPaymentCardUtils {
 
         /*if (canViewCardStatus) {*/
             if (paymentInfo != null) {
+                imageView.setVisibility(View.VISIBLE);
                 if (hasValidPaymentCard(paymentInfo)) {
                     imageView.setImageResource(R.drawable.ic_card_enabled);
                 } else {

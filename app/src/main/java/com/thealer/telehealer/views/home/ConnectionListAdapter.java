@@ -1,31 +1,38 @@
 package com.thealer.telehealer.views.home;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.createuser.SpecialtiesBean;
 import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -46,6 +53,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
     private OnActionCompleteInterface onActionCompleteInterface;
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private int selected_position = -1;
+    private List<String> designationList=new ArrayList<>();
 
     public ConnectionListAdapter(Context context) {
         this.context = context;
@@ -95,7 +103,6 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.app_gradient_start)));
         } else if (user.getConnection_status().equals(Constants.CONNECTION_STATUS_OPEN) ||
                 user.getConnection_status().equals(Constants.CONNECTION_STATUS_PENDING)) {
-            Log.e("aswin", "onBindViewHolder: " + i);
             viewHolder.actionIv.setImageDrawable(context.getDrawable(R.drawable.ic_status_pending));
             viewHolder.actionIv.setImageTintList(ColorStateList.valueOf(context.getColor(R.color.color_green_light)));
         } else {
@@ -124,18 +131,21 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
                     selected_position = i;
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(Constants.USER_DETAIL, user);
-                    bundle.putBoolean(ArgumentKeys.SHOW_CONNECTION_REQUEST_ALERT,true);
+                    bundle.putBoolean(ArgumentKeys.SHOW_CONNECTION_REQUEST_ALERT, true);
                     onListItemSelectInterface.onListItemSelected(i, bundle);
-                } else if (apiResponseModelList.get(i).getConnection_status() == null ||
+                }else if (apiResponseModelList.get(i).getConnection_status() == null ||
                         apiResponseModelList.get(i).getConnection_status().equals(Constants.CONNECTION_STATUS_REJECTED)) {
                     Utils.vibrate(fragmentActivity);
                     selected_position = i;
                     onListItemSelectInterface.onListItemSelected(i, null);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.get(i).getUser_id());
-                    bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
-
-                    onActionCompleteInterface.onCompletionResult(null, true, bundle);
+                    if(user.getRole().equals(Constants.ROLE_PATIENT) || user.getRole().equals(Constants.ROLE_DOCTOR)){
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.get(i).getUser_id());
+                        bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList.get(i));
+                        onActionCompleteInterface.onCompletionResult(null, true, bundle);
+                    }else {
+                        selectDesignation(v, apiResponseModelList.get(i));
+                    }
                 }
             }
         });
@@ -145,6 +155,73 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
         viewHolder.titleTv.setText(apiResponseModelList.get(i).getDisplayName());
         viewHolder.subTitleTv.setText(apiResponseModelList.get(i).getDisplayInfo());
 
+    }
+
+    //Allow physician to view list of support staff. Also physician can request to add them.
+    private void selectDesignation(View v, CommonUserApiResponseModel apiResponseModelList) {
+        LayoutInflater layoutInflater=LayoutInflater.from(context);
+        View layoutInflateView=layoutInflater.inflate
+                (R.layout.designation_alert,(ViewGroup)v.findViewById(R.id.cl_root));
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        alertDialog.setView(layoutInflateView);
+        alertDialog.setCancelable(false);
+        AlertDialog dialog = alertDialog.create();
+        TextView headerTitle=layoutInflateView.findViewById(R.id.header_title);
+        RecyclerView rvDesignation=layoutInflateView.findViewById(R.id.rv_designation);
+        rvDesignation.setLayoutManager(new LinearLayoutManager(fragmentActivity));
+        Button btnYes=layoutInflateView.findViewById(R.id.btn_yes);
+        TextView noRecordFound=layoutInflateView.findViewById(R.id.no_record_found);
+        Button btnCancel=layoutInflateView.findViewById(R.id.btn_cancel);
+        View viewDevider=layoutInflateView.findViewById(R.id.view_devider);
+
+
+        headerTitle.setText(String.format(fragmentActivity.getString(R.string.str_select_designation_for),apiResponseModelList.getUserDisplay_name()));
+
+        if(designationList.size()==0) {
+            rvDesignation.setVisibility(View.GONE);
+            noRecordFound.setVisibility(View.VISIBLE);
+            btnYes.setVisibility(View.GONE);
+            viewDevider.setVisibility(View.GONE);
+        } else{
+            rvDesignation.setVisibility(View.VISIBLE);
+            noRecordFound.setVisibility(View.GONE);
+            btnYes.setVisibility(View.VISIBLE);
+            viewDevider.setVisibility(View.VISIBLE);
+        }
+        DesignationListAdapter designationListAdapter=new DesignationListAdapter(fragmentActivity, designationList, new OnItemEndListener() {
+            @Override
+            public void itemEnd(int position) {
+            }
+        });
+        rvDesignation.setAdapter(designationListAdapter);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(designationListAdapter!=null) {
+                    String designation = designationListAdapter.getSpecialistInfo();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.getUser_id());
+                    bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList);
+                    if(designation!=null)
+                        bundle.putString(Constants.DESIGNATION,designation);
+                    onActionCompleteInterface.onCompletionResult(null, true, bundle);
+                }
+                dialog.dismiss();
+
+            }
+        });
+
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
     }
 
     @Override
@@ -165,6 +242,10 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
             notifyItemChanged(selected_position);
         }
 
+    }
+
+    public void setDesignationData(List<String> designationList) {
+        this.designationList=designationList;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
