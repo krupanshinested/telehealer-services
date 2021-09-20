@@ -21,6 +21,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
+import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -54,9 +55,6 @@ public class SubscriptionActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         whoAmIApiViewModel.assignWhoAmI();
-        if(appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
-            txtTitle.setText(getString(R.string.loading));
-        }
     }
 
     private void initObserver() {
@@ -70,8 +68,12 @@ public class SubscriptionActivity extends BaseActivity implements
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())){
                         if(whoAmIApiResponseModel.isFirst_time_subscription_purchased()){
-                            startActivity(new Intent(SubscriptionActivity.this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-                            finish();
+                            if(whoAmIApiResponseModel.getPayment_account_info() != null && whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()){
+                                startActivity(new Intent(SubscriptionActivity.this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                                finish();
+                            }else {
+                                startActivity(new Intent(SubscriptionActivity.this, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true).putExtra(ArgumentKeys.IS_CLOSE_NEEDED, false));
+                            }
                         }else {
                             loadSubscriptionPlan();
                         }

@@ -23,17 +23,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Hi User" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_avatar_civ"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:src="@drawable/profile_placeholder"
-            app:layout_constraintBottom_toBottomOf="@+id/circular_progress"
-            app:layout_constraintEnd_toEndOf="@id/circular_progress"
-            app:layout_constraintStart_toStartOf="@id/circular_progress"
-            app:layout_constraintTop_toTopOf="@+id/circular_progress" />
-
         <fr.castorflex.android.circularprogressbar.CircularProgressBar
             android:id="@+id/circular_progress"
             android:layout_width="100dp"
@@ -54,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_default"
             android:padding="@dimen/padding_default"
-            android:text="@string/retrive_pricing_plan"
+            android:text="@string/loading"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
