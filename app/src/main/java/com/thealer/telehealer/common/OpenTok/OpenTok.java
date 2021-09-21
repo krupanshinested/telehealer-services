@@ -89,6 +89,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.media.AudioManager.GET_DEVICES_OUTPUTS;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -178,6 +180,9 @@ public class OpenTok implements Session.SessionListener,
     private boolean isSessionConnect = false;
     @Nullable
     private Float otherPersonBatteryLevel = null;
+
+    final Handler handler = new Handler();
+    Timer timer = new Timer();
 
     @Nullable
     private AudioFocusRequest audioFocusRequest;
@@ -1542,6 +1547,8 @@ public class OpenTok implements Session.SessionListener,
     public void onDisconnected(Session session) {
         Log.d("TokBox", "onDisconnected");
 
+        timer.cancel();
+        timer=new Timer();
         HashMap<String, String> detail = new HashMap<>();
         detail.put("status", "success");
         detail.put("event", "disconnect");
@@ -1712,8 +1719,29 @@ public class OpenTok implements Session.SessionListener,
         this.connectingDate = new Date();
         if (tokBoxUIInterface != null)
             this.tokBoxUIInterface.updateCallInfo(application.getString(R.string.connecting));
-
+        callRefreshToken();
         stopRingtone();
+    }
+
+    private void callRefreshToken() {
+
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @SuppressWarnings("unchecked")
+                    public void run() {
+                        try {
+                            openTokViewModel.refreshToken();
+                        }
+                        catch (Exception e) {
+                            // TODO Auto-generated catch block
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, Constants.IdealTime);
     }
 
     @Override

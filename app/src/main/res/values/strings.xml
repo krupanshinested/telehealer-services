@@ -1576,5 +1576,6 @@
     <string name="wrong_password">Password does not match. You have %s attempt left.  Please try again</string>
     <string name="BIOMETRIC_CANCEL">Cancel</string>
     <string name="wrong_fingure">Fingure Print does not match. You have %s attempt left.  Please try again</string>
+    <string name="str_refresh_token_expired">Refresh token expired.</string>
 
 </resources>

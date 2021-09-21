@@ -143,7 +143,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     }
 
-    private void handleUnAuth() {
+    private void handleUnAuth(ErrorModel errorModel) {
         isRefreshToken = false;
         if (!isQuickLoginReceiverEnabled) {
             Log.e(TAG, "run: show quick login " + appPreference.getInt(Constants.QUICK_LOGIN_TYPE));
@@ -169,7 +169,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 }
             }
         }else{
-            goToSigninActivity();
+            if(errorModel.getMessage().equals(getApplication().getString(R.string.str_refresh_token_expired)))
+                goToSigninActivity();
         }
     }
 
@@ -185,6 +186,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                         Log.e(TAG, "onSuccess: refreshed token");
                         Utils.updateLastLogin();
+                        Utils.storeLastActiveTime();
                         SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
                         if (signinApiResponseModel.isSuccess()) {
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
@@ -407,7 +409,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                             isQuickLoginReceiverEnabled = true;
                             makeRefreshTokenApiCall();
                         } else {
-                            handleUnAuth();
+                            handleUnAuth(errorModel);
                             errorModelLiveData.setValue(errorModel);
                         }
 

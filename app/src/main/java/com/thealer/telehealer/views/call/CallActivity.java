@@ -111,6 +111,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
@@ -312,7 +314,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     break;
             }
         }
-
         registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_ON));
         registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_USER_PRESENT));
