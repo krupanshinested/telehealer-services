@@ -257,7 +257,6 @@ public class OpenTokViewModel extends BaseApiViewModel {
                         if (signinApiResponseModel.isSuccess()) {
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
                         }
-                        EventRecorder.updateVersion();
                     }
                 });
     }

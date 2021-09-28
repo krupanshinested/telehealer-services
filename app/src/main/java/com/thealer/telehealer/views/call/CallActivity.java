@@ -248,9 +248,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         setContentView(R.layout.activity_call);
 
         activeCall = CallManager.shared.getActiveCallToShow();
-
-        otherPersonDetail = activeCall.getOtherPersonDetail();
-
+        try {
+            otherPersonDetail = activeCall.getOtherPersonDetail();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         stopNotificationService();
 
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);

@@ -181,8 +181,8 @@ public class OpenTok implements Session.SessionListener,
     @Nullable
     private Float otherPersonBatteryLevel = null;
 
-    final Handler handler = new Handler();
-    Timer timer = new Timer();
+    Handler handler = new Handler();
+    Runnable runnable;
 
     @Nullable
     private AudioFocusRequest audioFocusRequest;
@@ -221,6 +221,7 @@ public class OpenTok implements Session.SessionListener,
                 getUsersApiViewModel.getUserDetail(apnsPayload.getFrom(), new UserDetailFetcher() {
                     @Override
                     public void didFetchedDetails(CommonUserApiResponseModel commonUserApiResponseModel) {
+
                         if (commonUserApiResponseModel == null) {
                             return;
                         }
@@ -809,7 +810,8 @@ public class OpenTok implements Session.SessionListener,
     }
 
     public void endCall(String callRejectionReason) {
-        Log.d("openTok", "endCall");
+        Log.d("openTok", "endCall"+callRejectionReason );
+        handler.removeCallbacks(runnable);
         if (!isActive()) {
             CallManager.shared.removeCall(this);
             Log.d("openTok", "*********Call end called already, returing back");
@@ -842,7 +844,9 @@ public class OpenTok implements Session.SessionListener,
         }
 
         if (mSession != null) {
+            handler.removeCallbacks(runnable);
             mSession.disconnect();
+
         }
 
         VitalsManager.getInstance().disconnectAll();
@@ -1075,7 +1079,7 @@ public class OpenTok implements Session.SessionListener,
         });
 
         screenCapturerTimer = runnable;
-        handler.postDelayed(runnable, 40000);
+        handler.postDelayed(runnable, 30000);
     }
 
     private void captureScreenshot() {
@@ -1453,7 +1457,7 @@ public class OpenTok implements Session.SessionListener,
     }
 
     private void addTimerForIncomingOrOutgoing() {
-        final int interval = 40000; // 30 Second
+        final int interval = 30000; // 30 Second
         Handler handler = new Handler();
         TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
             @Override
@@ -1546,9 +1550,7 @@ public class OpenTok implements Session.SessionListener,
     @Override
     public void onDisconnected(Session session) {
         Log.d("TokBox", "onDisconnected");
-
-        timer.cancel();
-        timer=new Timer();
+        handler.removeCallbacks(runnable);
         HashMap<String, String> detail = new HashMap<>();
         detail.put("status", "success");
         detail.put("event", "disconnect");
@@ -1724,24 +1726,12 @@ public class OpenTok implements Session.SessionListener,
     }
 
     private void callRefreshToken() {
-
-        TimerTask doAsynchronousTask = new TimerTask() {
-            @Override
+        handler.postDelayed(runnable = new Runnable() {
             public void run() {
-                handler.post(new Runnable() {
-                    @SuppressWarnings("unchecked")
-                    public void run() {
-                        try {
-                            openTokViewModel.refreshToken();
-                        }
-                        catch (Exception e) {
-                            // TODO Auto-generated catch block
-                        }
-                    }
-                });
+                handler.postDelayed(runnable, Constants.IdealTime);
+                openTokViewModel.refreshToken();
             }
-        };
-        timer.schedule(doAsynchronousTask, 0, Constants.IdealTime);
+        }, Constants.IdealTime);
     }
 
     @Override

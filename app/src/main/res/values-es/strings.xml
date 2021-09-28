@@ -1492,5 +1492,6 @@
     <string name="BIOMETRIC_CANCEL">Cancel</string>
     <string name="wrong_fingure">Fingure Print does not match. You have %s attempt left.  Please try again</string>
     <string name="str_refresh_token_expired">Refresh token expired.</string>
+    <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
 
 </resources>

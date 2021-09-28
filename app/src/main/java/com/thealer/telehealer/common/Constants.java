@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Constants {
 
-    public static final long callCapTime = 1800000; //30 minutes
+    public static final long callCapTime = 3600000; //1 hour
 
     public final static int MAX_VOICE_RESULTS = 5;
     public final static int MAX_PAUSE_TIME = 500;
