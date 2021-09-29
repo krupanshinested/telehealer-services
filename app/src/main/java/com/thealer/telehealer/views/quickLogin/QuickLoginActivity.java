@@ -7,9 +7,13 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
+import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -36,6 +40,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     private boolean isViewShown = false;
     private static final java.lang.String IS_VIEW_SHOWN = "isViewShown";
     boolean isCreateQuickLogin = false;
+    private OpenTokViewModel openTokViewModel;
 
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
@@ -77,6 +82,11 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
         requestFullScreenMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quicklogin);
+        openTokViewModel = new ViewModelProvider(this).get(OpenTokViewModel.class);
+        attachObserver(openTokViewModel);
+
+
+
 
         if (savedInstanceState != null) {
             isViewShown = savedInstanceState.getBoolean(IS_VIEW_SHOWN);
@@ -95,7 +105,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
     private void initView() {
         fragmentHolder = (LinearLayout) findViewById(R.id.fragment_holder);
-
+        openTokViewModel.refreshToken();
         int loginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
         boolean isFromSignup = false;
         if (getIntent() != null) {
