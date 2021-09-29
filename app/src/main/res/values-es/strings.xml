@@ -1551,12 +1551,12 @@
     <string name="str_resubscribe">Resubscribe</string>
     <string name="str_plan_already_activate">Plan already activated</string>
     <string name="retrive_pricing_plan">Retrieving pricing plan for you</string>
-    <string name="str_refresh_token_expired">Refresh token expired.</string>
-    <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
     <string name="str_with_htmltag"><![CDATA[%s]]></string>
     <string name="pin_not_match">Pin does not match. You have %s attempt left.  Please try again</string>
     <string name="wrong_password">Wrong password.  %s attempt left.</string>
     <string name="BIOMETRIC_CANCEL">Cancel</string>
     <string name="wrong_fingure">Fingure Print does not match. You have %s attempt left.  Please try again</string>
+    <string name="str_refresh_token_expired">Refresh token expired.</string>
+    <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
 
 </resources>
