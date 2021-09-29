@@ -38,6 +38,8 @@ import com.thealer.telehealer.common.Logs;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
+import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.common.LockScreenReceiver;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
@@ -50,12 +52,10 @@ public class BaseActivity extends AppCompatActivity {
     private int showScreenType;
     private RelativeLayout relativeLayout;
     private int count = 0;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
     public void attachObserver(BaseApiViewModel mViewModel) {
 
         mViewModel.getErrorModelLiveData().observe(this, errorModel -> {
@@ -196,6 +196,16 @@ public class BaseActivity extends AppCompatActivity {
         alertDialog.getWindow().setLayout(250, 250);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Utils.isRefreshTokenExpire()){
+          invalidateUser();
+        }else {
+            Utils.checkIdealTime(this);
+        }
+    }
+
     public void dismissScreen() {
         //dismiss the showing screen here
         Logs.D(TAG, "inside dismiss screen");
@@ -226,7 +236,7 @@ public class BaseActivity extends AppCompatActivity {
         if (view == null) {
             view = new View(activity);
         }
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public boolean isDeviceXLarge() {

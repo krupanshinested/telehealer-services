@@ -89,6 +89,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.media.AudioManager.GET_DEVICES_OUTPUTS;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -179,6 +181,9 @@ public class OpenTok implements Session.SessionListener,
     @Nullable
     private Float otherPersonBatteryLevel = null;
 
+    Handler handlerRefreshToken = new Handler();
+    Runnable runnable;
+
     @Nullable
     private AudioFocusRequest audioFocusRequest;
 
@@ -216,6 +221,7 @@ public class OpenTok implements Session.SessionListener,
                 getUsersApiViewModel.getUserDetail(apnsPayload.getFrom(), new UserDetailFetcher() {
                     @Override
                     public void didFetchedDetails(CommonUserApiResponseModel commonUserApiResponseModel) {
+
                         if (commonUserApiResponseModel == null) {
                             return;
                         }
@@ -804,7 +810,8 @@ public class OpenTok implements Session.SessionListener,
     }
 
     public void endCall(String callRejectionReason) {
-        Log.d("openTok", "endCall");
+        Log.d("openTok", "endCall"+callRejectionReason );
+        handlerRefreshToken.removeCallbacks(runnable);
         if (!isActive()) {
             CallManager.shared.removeCall(this);
             Log.d("openTok", "*********Call end called already, returing back");
@@ -837,7 +844,9 @@ public class OpenTok implements Session.SessionListener,
         }
 
         if (mSession != null) {
+            handlerRefreshToken.removeCallbacks(runnable);
             mSession.disconnect();
+
         }
 
         VitalsManager.getInstance().disconnectAll();
@@ -1146,7 +1155,6 @@ public class OpenTok implements Session.SessionListener,
                 UserDetailPreferenceManager.getUserDisplayName()
                 , UserDetailPreferenceManager.getUser_guid(), toGuid,
                 callRequest.getCallUUID(), callRequest.getCallType(), sessionId, callRequest.getDoctorGuid());
-        Log.e("neem", "sendNotification: "+pushPayLoad.toString() );
         PubnubUtil.shared.publishVoipMessage(pushPayLoad, new PubNubResult() {
             @Override
             public void didSend(Boolean isSuccess) {
@@ -1542,7 +1550,7 @@ public class OpenTok implements Session.SessionListener,
     @Override
     public void onDisconnected(Session session) {
         Log.d("TokBox", "onDisconnected");
-
+        handlerRefreshToken.removeCallbacks(runnable);
         HashMap<String, String> detail = new HashMap<>();
         detail.put("status", "success");
         detail.put("event", "disconnect");
@@ -1713,8 +1721,17 @@ public class OpenTok implements Session.SessionListener,
         this.connectingDate = new Date();
         if (tokBoxUIInterface != null)
             this.tokBoxUIInterface.updateCallInfo(application.getString(R.string.connecting));
-
+        callRefreshToken();
         stopRingtone();
+    }
+
+    private void callRefreshToken() {
+        handlerRefreshToken.postDelayed(runnable = new Runnable() {
+            public void run() {
+                handlerRefreshToken.postDelayed(runnable, Constants.IdealTime);
+                openTokViewModel.refreshToken();
+            }
+        }, Constants.IdealTime);
     }
 
     @Override

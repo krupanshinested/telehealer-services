@@ -79,7 +79,7 @@ import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.inviteUser.SendInvitationFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
-import com.thealer.telehealer.views.settings.GeneralSettingsFragment;
+import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -124,6 +124,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private boolean isCheckLicense = true;
     private boolean isPropserShown = false;
     private boolean isSigningOutInProcess = false;
+    private static boolean onAuthenticated = false;
 
     private NotificationApiViewModel notificationApiViewModel;
 
@@ -160,6 +161,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         LocalBroadcastManager.getInstance(this).registerReceiver(isPropserShownListner, new IntentFilter(getString(R.string.APP_LIFECYCLE_STATUS)));
         LocalBroadcastManager.getInstance(this).registerReceiver(profileListener, new IntentFilter(getString(R.string.profile_picture_updated)));
         LocalBroadcastManager.getInstance(this).registerReceiver(NotificationCountReceiver, new IntentFilter(Constants.NOTIFICATION_COUNT_RECEIVER));
+
     }
 
     private void initViewModels() {
@@ -916,7 +918,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
-        if(Constants.isRedirectProfileSetting){
+        if (Constants.isRedirectProfileSetting) {
             Intent intent = new Intent(HomeActivity.this, ProfileSettingsActivity.class);
             this.startActivity(intent);
         }

@@ -4,18 +4,22 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.widget.LinearLayout;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
+import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
-import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.biometric.BioMetricAuth;
+import com.thealer.telehealer.common.biometric.BioMetricUtils;
 import com.thealer.telehealer.common.biometric.BiometricInterface;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -23,8 +27,6 @@ import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.QuickLoginBroadcastReceiver;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
-import com.thealer.telehealer.views.home.HomeActivity;
-import com.thealer.telehealer.views.signup.SignUpActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
@@ -38,15 +40,15 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     private boolean isViewShown = false;
     private static final java.lang.String IS_VIEW_SHOWN = "isViewShown";
     boolean isCreateQuickLogin = false;
+    private OpenTokViewModel openTokViewModel;
 
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
         public void onQuickLogin(int status) {
+            Constants.DisplayQuickLogin = false;
             Utils.hideKeyboard(QuickLoginActivity.this);
-//            if (status == ArgumentKeys.QUICK_LOGIN_CREATED) {
-
+            if (status == ArgumentKeys.QUICK_LOGIN_CREATED) {
                 int quickLoginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
-
                 if (quickLoginType == Constants.QUICK_LOGIN_TYPE_NONE) {
                     goToMainActivity();
                 } else {
@@ -63,9 +65,15 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
                     showSuccessViewDialog(bundle);
                 }
-          /*  } else {
+            } else if (status == ArgumentKeys.AUTH_FAILED || status == ArgumentKeys.AUTH_CANCELLED) {
+                invalidateUser();
+            } else if (appPreference.getBoolean(PreferenceConstants.IS_AUTH_PENDING)) {
+                Utils.storeLastActiveTime();
+                Utils.validUserToLogin(QuickLoginActivity.this);
+                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, false);
+            } else {
                 finish();
-            }*/
+            }
         }
     };
 
@@ -74,6 +82,11 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
         requestFullScreenMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quicklogin);
+        openTokViewModel = new ViewModelProvider(this).get(OpenTokViewModel.class);
+        attachObserver(openTokViewModel);
+
+
+
 
         if (savedInstanceState != null) {
             isViewShown = savedInstanceState.getBoolean(IS_VIEW_SHOWN);
@@ -81,6 +94,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
         if (!isViewShown) {
             initView();
         }
+        appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, true);
     }
 
     @Override
@@ -91,9 +105,8 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
     private void initView() {
         fragmentHolder = (LinearLayout) findViewById(R.id.fragment_holder);
-
+        openTokViewModel.refreshToken();
         int loginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
-
         boolean isFromSignup = false;
         if (getIntent() != null) {
             if (getIntent().getExtras() != null)
@@ -103,14 +116,18 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
         }
 
         switch (loginType) {
-
             case Constants.QUICK_LOGIN_TYPE_TOUCH:
-                if (!isViewShown) {
-                    BioMetricAuth.showBioMetricAuth(this, this);
+                if (BioMetricUtils.isSdkVersionSupported()
+                        && BioMetricUtils.isHardwareSupported(this)
+                        && BioMetricUtils.isFingerprintAvailable(this)) {
+                    if (!isViewShown) {
+                        BioMetricAuth.showBioMetricAuth(this, this);
+                    }
+                } else {
+                    getSupportFragmentManager().beginTransaction().replace(fragmentHolder.getId(), new QuickLoginPasswordFragment()).commit();
                 }
                 break;
             case Constants.QUICK_LOGIN_TYPE_PIN:
-
                 boolean isRefreshToken = false;
                 if (getIntent() != null)
                     isRefreshToken = getIntent().getBooleanExtra(ArgumentKeys.IS_REFRESH_TOKEN, false);
@@ -137,10 +154,12 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 int availableQuickLogin = QuickLoginUtil.getAvailableQuickLoginType(this);
                 if (availableQuickLogin == Constants.QUICK_LOGIN_TYPE_TOUCH) {
                     getSupportFragmentManager().beginTransaction().replace(fragmentHolder.getId(), new QuickLoginTouchFragment()).commit();
-                } else {
+                } else if (availableQuickLogin == Constants.QUICK_LOGIN_TYPE_PIN) {
                     getSupportFragmentManager().beginTransaction().replace(fragmentHolder.getId(), new QuickLoginPinFragment())
                             .addToBackStack(QuickLoginPinFragment.class.getSimpleName())
                             .commit();
+                } else {
+                    getSupportFragmentManager().beginTransaction().replace(fragmentHolder.getId(), new QuickLoginPasswordFragment()).commit();
                 }
         }
         isViewShown = true;
@@ -162,6 +181,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 //on user click cancel
                 //send the user back to previous page
                 authStatus = ArgumentKeys.AUTH_CANCELLED;
+                invalidateUser();
                 finish();
                 break;
             case Constants.BIOMETRIC_ERROR:
@@ -176,7 +196,9 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 showToast(status);
                 break;
             case Constants.BIOMETRIC_SUCCESS:
+                Utils.storeLastActiveTime();
                 authStatus = ArgumentKeys.AUTH_SUCCESS;
+                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, false);
                 break;
         }
         bundle.putInt(ArgumentKeys.QUICK_LOGIN_STATUS, authStatus);
@@ -185,10 +207,9 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
     @Override
     public void onCompletionResult(String string, Boolean success, Bundle bundle) {
+        appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, false);
         if (success) {
-
             showSuccessViewDialog(bundle);
-
         } else {
             sendQuickLoginBroadCast(bundle);
         }
@@ -208,6 +229,8 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     public void onSuccessViewCompletion(boolean success) {
         if (success) {
             if (isCreateQuickLogin) {
+                Utils.storeLastActiveTime();
+                appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, false);
                 setResult(Activity.RESULT_OK);
                 finish();
             } else

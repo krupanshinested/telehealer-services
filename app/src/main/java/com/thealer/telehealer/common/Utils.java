@@ -59,6 +59,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.auth0.android.jwt.JWT;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.Headers;
 import com.bumptech.glide.request.FutureTarget;
@@ -67,8 +68,10 @@ import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Util.TeleCacheUrl;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.views.common.CustomDialogClickListener;
 import com.thealer.telehealer.views.common.CustomDialogs.OptionSelectionDialog;
@@ -81,8 +84,10 @@ import com.thealer.telehealer.views.home.broadcastMessages.ChoosePatientActivity
 import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
+import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.inviteUser.InvitedListActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
+import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.SignUpActivity;
 
 import java.io.IOException;
@@ -108,6 +113,7 @@ import me.toptas.fancyshowcase.FancyShowCaseView;
 import me.toptas.fancyshowcase.FocusShape;
 import me.toptas.fancyshowcase.listener.DismissListener;
 
+import static android.text.Html.FROM_HTML_MODE_COMPACT;
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
@@ -732,7 +738,7 @@ public class Utils {
         closeIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(closeListener!=null)
+                if (closeListener != null)
                     closeListener.run();
 
                 dialog.dismiss();
@@ -810,11 +816,32 @@ public class Utils {
     }
 
     @SuppressWarnings("deprecation")
-    public static Spanned fromHtml(String source) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+    public static Spanned fromHtml(String htmlString) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+            return Html.fromHtml(htmlString, Html.FROM_HTML_MODE_LEGACY);
         } else {
-            return Html.fromHtml(source);
+            return Html.fromHtml(htmlString);
+        }*/
+        // remove leading <br/>
+        while (htmlString.startsWith("<br/>")){
+
+            htmlString = htmlString.replaceFirst("<br/>", "");
+        }
+
+        // remove trailing <br/>
+        while (htmlString.endsWith("<br/>")){
+
+            htmlString =  htmlString.replaceAll("<br/>$", "");
+        }
+
+        // reduce multiple \n in the processed HTML string
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+            return Html.fromHtml(htmlString,  FROM_HTML_MODE_COMPACT);
+        }else{
+
+            return Html.fromHtml(htmlString);
         }
     }
 
@@ -875,7 +902,7 @@ public class Utils {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
 
         if (imm != null && imm.isActive(view)) {
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
     }
 
@@ -1863,14 +1890,57 @@ public class Utils {
     }
 
     public static void updateLastLogin() {
-        String utcDate = Utils.getUTCfromGMT(new Timestamp(System.currentTimeMillis()).toString());
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String utcDate = Utils.getUTCfromGMT(timestamp.toString());
         String lastLogin = Utils.getDayMonthYearTime(utcDate);
         Log.e("aswin", "updateLastLogin: " + lastLogin);
-
+        storeLastActiveTime();
         appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
+        appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime() + "");
     }
 
-    public static void showMultichoiseItemSelectAlertDialog(@NonNull Context context, @NonNull String title, @NonNull String[] itemsList, @NonNull boolean[] selectedList, @NonNull String positiveTitle, @NonNull String negativeTitle,
+    public static void storeLastActiveTime() {
+        if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime() + "");
+
+        }
+    }
+
+    public static void checkIdealTime(Context context) {
+        if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
+                long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
+                if (currentTimeInMillis == lastActiveTime)
+                    lastActiveTime = timestamp.getTime();
+
+                if (lastActiveTime == 0) {
+                    lastActiveTime = timestamp.getTime();
+                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+                } else if (timestamp.getTime() > currentTimeInMillis) {
+                    lastActiveTime=timestamp.getTime();
+                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+                    if (!Constants.DisplayQuickLogin) {
+                        Constants.DisplayQuickLogin = true;
+                        try {
+                            context.startActivity(new Intent(context, QuickLoginActivity.class));
+                        } catch (Exception e) {
+                            context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                        }
+                    }
+                } else {
+                    lastActiveTime = timestamp.getTime();
+                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+                }
+        }
+    }
+
+
+
+    public static void showMultichoiseItemSelectAlertDialog(@NonNull Context
+                                                                    context, @NonNull String title, @NonNull String[] itemsList, @NonNull boolean[] selectedList,
+                                                            @NonNull String positiveTitle, @NonNull String negativeTitle,
                                                             @NonNull OnMultipleChoiceInterface multipleChoiceInterface) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -1901,6 +1971,22 @@ public class Utils {
 
     public static String getFormattedCurrency(double amount) {
         return String.format("$%.2f", amount);
+    }
+
+    public static boolean isRefreshTokenExpire() {
+        if(!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
+            if (lastActiveTime == 0) {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+            }
+
+            long expireTime = lastActiveTime + Constants.ExpireTime;
+            return timestamp.getTime() > expireTime;
+        }else{
+            return false;
+        }
     }
 
     public interface OnMultipleChoiceInterface {
@@ -1953,7 +2039,16 @@ public class Utils {
         comboImage.drawBitmap(sc, fr.getWidth(), 0f, null);
         return comboBitmap;
     }
-
+    public static Boolean isAuthExpired() {
+        try {
+            JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
+            Date date = new Date();
+            return date.compareTo(jwt.getExpiresAt()) >= 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
     public static void validUserToLogin(Context context) {
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
@@ -1994,6 +2089,5 @@ public class Utils {
                 new SimpleDateFormat(UTCFormat, Locale.getDefault());
         return simpleDateFormat.format(calendar.getTimeInMillis());
     }
-
 
 }

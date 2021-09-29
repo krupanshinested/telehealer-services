@@ -14,6 +14,8 @@ import com.thealer.telehealer.common.Utils;
 
 import java.util.HashMap;
 
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
 /**
  * Created by Aswin on 01,November,2018
  */
@@ -35,7 +37,6 @@ public class SigninApiViewModel extends BaseApiViewModel {
                     @Override
                     public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                         EventRecorder.recordUserSession("login_username");
-
                         baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                         EventRecorder.updateVersion();
                     }
@@ -50,6 +51,7 @@ public class SigninApiViewModel extends BaseApiViewModel {
                     @Override
                     public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                         Utils.updateLastLogin();
+                        Utils.storeLastActiveTime();
                         baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                         EventRecorder.updateVersion();
                     }
