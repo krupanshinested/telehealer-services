@@ -111,6 +111,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
@@ -246,9 +248,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         setContentView(R.layout.activity_call);
 
         activeCall = CallManager.shared.getActiveCallToShow();
-
-        otherPersonDetail = activeCall.getOtherPersonDetail();
-
+        try {
+            otherPersonDetail = activeCall.getOtherPersonDetail();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         stopNotificationService();
 
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -312,7 +316,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     break;
             }
         }
-
         registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_ON));
         registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_USER_PRESENT));
