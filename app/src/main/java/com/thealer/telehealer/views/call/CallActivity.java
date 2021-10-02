@@ -681,7 +681,12 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     private void updateState(int currentState) {
         Log.d("CallActivity", "updateState " + currentState);
         activeCall.setCallState(currentState);
-        updateUI();
+        try {
+            updateUI();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     private void updateUI() {
@@ -1772,10 +1777,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         errorModelObserver = new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-
-                if (errorModel != null && TextUtils.isEmpty(errorModel.getMessage())) {
+                if (errorModel != null && (errorModel.getMessage() != null || !errorModel.getMessage().isEmpty())  ) {
                     String message = errorModel.getMessage();
-
+                    Log.e("neem", "onChanged: "+message );
                     currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.app_name), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
