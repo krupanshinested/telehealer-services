@@ -1162,9 +1162,10 @@ public class OpenTok implements Session.SessionListener,
                 if (tokBoxUIInterface != null) {
                     Log.d("TokBox", "ringing");
                     tokBoxUIInterface.updateCallInfo(application.getString(R.string.ringing));
+                    startRingTone();
                 }
 
-                startRingTone();
+
             }
         });
 

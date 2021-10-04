@@ -70,7 +70,6 @@ public class TeleLogger {
         payload.put("type", externalApi);
         payload.put("detail", detail);
 
-        Log.e("neem", "log: "+payload.toString() );
         loggingViewModel.postExternalApi(payload);
     }
 

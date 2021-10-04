@@ -51,7 +51,6 @@ public class LoggingViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel tokenFetchModel) {
-                                    Log.e("neem", "onSuccess: "+tokenFetchModel.getMessage());
 
                                 }
                             });
