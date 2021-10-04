@@ -1562,7 +1562,7 @@ public class OpenTok implements Session.SessionListener,
     @Override
     public void onStreamReceived(Session session, Stream stream) {
         Log.d("TokBox", "onStreamReceived");
-
+        stopRingtone();
         if (mSubscriber == null) {
             doSubscribe(stream);
         } else {

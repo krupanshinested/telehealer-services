@@ -1,6 +1,7 @@
 package com.thealer.telehealer.common.Util.InternalLogging;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.apilayer.models.Logging.LoggingViewModel;
@@ -69,6 +70,7 @@ public class TeleLogger {
         payload.put("type", externalApi);
         payload.put("detail", detail);
 
+        Log.e("neem", "log: "+payload.toString() );
         loggingViewModel.postExternalApi(payload);
     }
 

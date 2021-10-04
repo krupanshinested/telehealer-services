@@ -1,6 +1,8 @@
 package com.thealer.telehealer.apilayer.models.Logging;
 
 import android.app.Application;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -49,7 +51,7 @@ public class LoggingViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel tokenFetchModel) {
-
+                                    Log.e("neem", "onSuccess: "+tokenFetchModel.getMessage());
 
                                 }
                             });
