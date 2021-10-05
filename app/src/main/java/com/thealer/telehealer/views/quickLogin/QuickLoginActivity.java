@@ -40,7 +40,6 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     private boolean isViewShown = false;
     private static final java.lang.String IS_VIEW_SHOWN = "isViewShown";
     boolean isCreateQuickLogin = false;
-    private OpenTokViewModel openTokViewModel;
 
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
@@ -82,9 +81,6 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
         requestFullScreenMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quicklogin);
-        openTokViewModel = new ViewModelProvider(this).get(OpenTokViewModel.class);
-        attachObserver(openTokViewModel);
-
 
 
 
@@ -105,7 +101,6 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
     private void initView() {
         fragmentHolder = (LinearLayout) findViewById(R.id.fragment_holder);
-        openTokViewModel.refreshToken();
         int loginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
         boolean isFromSignup = false;
         if (getIntent() != null) {

@@ -182,7 +182,7 @@ public class OpenTok implements Session.SessionListener,
     private Float otherPersonBatteryLevel = null;
 
     Handler handlerRefreshToken = new Handler();
-    Runnable runnable;
+    Runnable runnableRefreshToken;
 
     @Nullable
     private AudioFocusRequest audioFocusRequest;
@@ -339,7 +339,7 @@ public class OpenTok implements Session.SessionListener,
             });
 
         } else {
-            if (!callRequest.isCallForDirectWaitingRoom()) {
+            if (!callRequest.isCallForDirectWaitingRoom() && !callRequest.isUserAdmitted()) {
                 addTimerForIncomingOrOutgoing();
             }
             if (callRequest.isCallForDirectWaitingRoom()) {
@@ -811,7 +811,7 @@ public class OpenTok implements Session.SessionListener,
 
     public void endCall(String callRejectionReason) {
         Log.d("openTok", "endCall"+callRejectionReason );
-        handlerRefreshToken.removeCallbacks(runnable);
+        handlerRefreshToken.removeCallbacks(runnableRefreshToken);
         if (!isActive()) {
             CallManager.shared.removeCall(this);
             Log.d("openTok", "*********Call end called already, returing back");
@@ -844,7 +844,7 @@ public class OpenTok implements Session.SessionListener,
         }
 
         if (mSession != null) {
-            handlerRefreshToken.removeCallbacks(runnable);
+            handlerRefreshToken.removeCallbacks(runnableRefreshToken);
             mSession.disconnect();
 
         }
@@ -1162,9 +1162,10 @@ public class OpenTok implements Session.SessionListener,
                 if (tokBoxUIInterface != null) {
                     Log.d("TokBox", "ringing");
                     tokBoxUIInterface.updateCallInfo(application.getString(R.string.ringing));
+                    startRingTone();
                 }
 
-                startRingTone();
+
             }
         });
 
@@ -1550,7 +1551,7 @@ public class OpenTok implements Session.SessionListener,
     @Override
     public void onDisconnected(Session session) {
         Log.d("TokBox", "onDisconnected");
-        handlerRefreshToken.removeCallbacks(runnable);
+        handlerRefreshToken.removeCallbacks(runnableRefreshToken);
         HashMap<String, String> detail = new HashMap<>();
         detail.put("status", "success");
         detail.put("event", "disconnect");
@@ -1562,7 +1563,7 @@ public class OpenTok implements Session.SessionListener,
     @Override
     public void onStreamReceived(Session session, Stream stream) {
         Log.d("TokBox", "onStreamReceived");
-
+        stopRingtone();
         if (mSubscriber == null) {
             doSubscribe(stream);
         } else {
@@ -1669,7 +1670,7 @@ public class OpenTok implements Session.SessionListener,
         });
         new Handler().postDelayed(speechRunnable, 60000);
 
-        LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.did_subscriber_connected));
+//        LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.did_subscriber_connected));
     }
 
     @Override
@@ -1726,9 +1727,9 @@ public class OpenTok implements Session.SessionListener,
     }
 
     private void callRefreshToken() {
-        handlerRefreshToken.postDelayed(runnable = new Runnable() {
+        handlerRefreshToken.postDelayed(runnableRefreshToken = new Runnable() {
             public void run() {
-                handlerRefreshToken.postDelayed(runnable, Constants.IdealTime);
+                handlerRefreshToken.postDelayed(runnableRefreshToken, Constants.IdealTime);
                 openTokViewModel.refreshToken();
             }
         }, Constants.IdealTime);
