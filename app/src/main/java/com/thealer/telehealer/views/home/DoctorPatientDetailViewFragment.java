@@ -53,6 +53,7 @@ import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiResponseModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
+import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.GetUserDetails;
@@ -140,6 +141,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private AskToAddCardViewModel askToAddCardViewModel;
     private ConnectionListApiViewModel connectionListApiViewModel;
     private DesignationResponseModel designationResponseModel;
+    private UserPermissionApiViewModel userPermissionApiViewModel;
 
     private List<Fragment> fragmentList;
     private List<String> titleList;
@@ -157,7 +159,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private int doctorId = 0, patientId = 0;
 
     private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
-            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7,paymentHistoryTab=8;
+            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7, paymentHistoryTab = 8;
     private List<String> designationList = new ArrayList<>();
 
     @Override
@@ -170,8 +172,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
         connectionListApiViewModel = new ViewModelProvider(this).get(ConnectionListApiViewModel.class);
         getUsersApiViewModel = new ViewModelProvider(this).get(GetUsersApiViewModel.class);
+        userPermissionApiViewModel = new ViewModelProvider(this).get(UserPermissionApiViewModel.class);
         attachObserverInterface.attachObserver(connectionListApiViewModel);
         attachObserverInterface.attachObserver(getUsersApiViewModel);
+        attachObserverInterface.attachObserver(userPermissionApiViewModel);
         connectionListApiViewModel.getDesignationList();
         getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -325,6 +329,37 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         });
             }
         });
+        userPermissionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if(baseApiResponseModel != null && baseApiResponseModel.isSuccess())
+                    if(baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.MAKE_CALLS_CODE))
+                        setUpMakeCall();
+                    else if(baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.CHAT_CODE))
+                        setUpMakeCall();
+                    else if(baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.ADD_VITALS_CODE))
+                        visitVitalFragment();
+            }
+        });
+
+        userPermissionApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                Utils.showAlertDialog(getContext(), getString(R.string.error),
+                        errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                        null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+            }
+        });
     }
 
     private void createPatientInvite() {
@@ -413,10 +448,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 Bundle bundle = getArguments();
                 switch (menuItem.getItemId()) {
                     case R.id.menu_chat:
-                        startActivity(new Intent(getActivity(), ChatActivity.class).putExtras(bundle));
+                        if(UserType.isUserAssistant() && resultBean!=null && resultBean.getPermissions() != null && resultBean.getPermissions().size()>0) {
+                            userPermissionApiViewModel.checkSupportStaffPermission(ArgumentKeys.CHAT_CODE, resultBean.getUser_guid());
+                        }else
+                            setUpChat(bundle);
                         break;
                     case R.id.menu_schedules:
-
                         if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) &&
                                 resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
 
@@ -442,60 +479,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     case R.id.menu_call:
                         if (CallManager.shared.isActiveCallPresent()) {
                             return false;
+                        } else {
+                            if(UserType.isUserAssistant() && resultBean!=null && resultBean.getUser_guid() != null)
+                                userPermissionApiViewModel.checkSupportStaffPermission(ArgumentKeys.MAKE_CALLS_CODE,resultBean.getUser_guid());
+                            else
+                                setUpMakeCall();
                         }
-
-                        CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
-
-                        if (commonUserApiResponseModel == null) {
-                            commonUserApiResponseModel = resultBean;
-                        }
-
-                        ArrayList<String> callTypes = new ArrayList<>();
-                        if (resultBean.getApp_details() != null) {
-                            if (resultBean.isAvailable() && !(resultBean.getApp_details().isWebUser())) {
-                                callTypes.add(getString(R.string.audio_call));
-                                callTypes.add(getString(R.string.video_call));
-                            }
-                        }
-                        callTypes.add(getString(R.string.one_way_call));
-                        if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPayment_account_info())) {
-                            if (UserType.isUserDoctor()) {
-                                if (UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status())
-                                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
-                            } else if (UserType.isUserAssistant()) {
-                                if (doctorModel != null && doctorModel.isCan_view_card_status())
-                                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
-                            }
-                        }
-
-                        CommonUserApiResponseModel finalCommonUserApiResponseModel = commonUserApiResponseModel;
-                        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
-                            @Override
-                            public void didSelectedItem(int position) {
-
-                                String callType;
-                                if (getString(R.string.audio_call).equals(callTypes.get(position))) {
-                                    callType = OpenTokConstants.audio;
-                                } else if (getString(R.string.video_call).equals(callTypes.get(position))) {
-                                    callType = OpenTokConstants.video;
-                                } else if (getString(R.string.lbl_ask_to_add_credit_card).equals(callTypes.get(position))) {
-                                    askToAddCardViewModel.askToAddCard(finalCommonUserApiResponseModel.getUser_guid(), doctorGuid);
-                                    return;
-                                } else {
-                                    callType = OpenTokConstants.oneWay;
-                                }
-                                startCall(finalCommonUserApiResponseModel, callType);
-
-                            }
-
-                            @Override
-                            public void didCancelled() {
-
-                            }
-                        });
-                        itemPickerDialog.setCancelable(false);
-                        itemPickerDialog.show();
-
                         break;
                     case R.id.menu_upload:
                         if (bundle == null)
@@ -518,11 +507,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             addFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle inviteBundle=getArguments();
-                    if(inviteBundle==null)
-                        inviteBundle=new Bundle();
+                    Bundle inviteBundle = getArguments();
+                    if (inviteBundle == null)
+                        inviteBundle = new Bundle();
 
-                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
+                    inviteBundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
                     Utils.showInviteAlert(getActivity(), getArguments());
                 }
             });
@@ -585,6 +574,65 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 onCloseActionInterface.onClose(false);
             }
         });
+    }
+
+    private void setUpChat(Bundle bundle) {
+        startActivity(new Intent(getActivity(), ChatActivity.class).putExtras(bundle));
+    }
+
+    private void setUpMakeCall() {
+        CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+        if (commonUserApiResponseModel == null) {
+            commonUserApiResponseModel = resultBean;
+        }
+
+        ArrayList<String> callTypes = new ArrayList<>();
+        if (resultBean.getApp_details() != null) {
+            if (resultBean.isAvailable() && !(resultBean.getApp_details().isWebUser())) {
+                callTypes.add(getString(R.string.audio_call));
+                callTypes.add(getString(R.string.video_call));
+            }
+        }
+        callTypes.add(getString(R.string.one_way_call));
+        if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPayment_account_info())) {
+            if (UserType.isUserDoctor()) {
+                if (UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status())
+                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+            } else if (UserType.isUserAssistant()) {
+                if (doctorModel != null && doctorModel.isCan_view_card_status())
+                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+            }
+        }
+
+        CommonUserApiResponseModel finalCommonUserApiResponseModel = commonUserApiResponseModel;
+        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
+            @Override
+            public void didSelectedItem(int position) {
+
+                String callType;
+                if (getString(R.string.audio_call).equals(callTypes.get(position))) {
+                    callType = OpenTokConstants.audio;
+                } else if (getString(R.string.video_call).equals(callTypes.get(position))) {
+                    callType = OpenTokConstants.video;
+                } else if (getString(R.string.lbl_ask_to_add_credit_card).equals(callTypes.get(position))) {
+                    askToAddCardViewModel.askToAddCard(finalCommonUserApiResponseModel.getUser_guid(), doctorGuid);
+                    return;
+                } else {
+                    callType = OpenTokConstants.oneWay;
+                }
+                startCall(finalCommonUserApiResponseModel, callType);
+
+            }
+
+            @Override
+            public void didCancelled() {
+
+            }
+        });
+        itemPickerDialog.setCancelable(false);
+        itemPickerDialog.show();
+
     }
 /*
     private void showWithoutCardOptions(CommonUserApiResponseModel finalCommonUserApiResponseModel, String callType) {
@@ -884,8 +932,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             addFragment(getString(R.string.about), aboutFragment);
                             break;
                         case vitalTab:
-                            VitalsListFragment vitalsFragment = new VitalsListWithGoogleFitFragment();
-                            addFragment(getString(R.string.vitals), vitalsFragment);
+                                visitVitalFragment();
                             break;
                         case schedulesTab:
                             bundle = new Bundle();
@@ -989,6 +1036,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             } else
                 hasCardIV.setVisibility(View.GONE);
         }
+    }
+
+    private void visitVitalFragment() {
+        VitalsListFragment vitalsFragment = new VitalsListWithGoogleFitFragment();
+        addFragment(getString(R.string.vitals), vitalsFragment);
     }
 
     private void showAssociationSelection(int requestCode, String searchType, String user_guid) {

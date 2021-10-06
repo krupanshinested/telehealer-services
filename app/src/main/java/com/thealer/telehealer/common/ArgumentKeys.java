@@ -152,6 +152,7 @@ public class ArgumentKeys {
     public static final String PRESCRIPTION_CODE ="PRESCRIPTIONS";
     public static final String ADD_VITALS_CODE ="ADD_VITALS";
     public static final String MAKE_CALLS_CODE ="MAKE_CALLS";
+    public static final String CHAT_CODE ="CHAT";
     public static final String REFERRALS_CODE ="REFERRALS";
     public static final String LABS_CODE ="LABS";
     public static final String RADIOLOGY_CODE ="RADIOLOGY";

@@ -780,5 +780,7 @@ public interface ApiInterface {
     @GET("/api/users/cancel-plan")
     Observable<PlanInfoBean> unSubscribePlan();
 
+    @GET("/api/check-staff-permission")
+    Observable<BaseApiResponseModel> checkSupportStaffPermission(@HeaderMap Map<String,String> headers,@Query("doctor_guid") String doctor_guid);
 
 }
