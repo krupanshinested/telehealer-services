@@ -131,6 +131,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
     private GetUsersApiViewModel getUsersApiViewModel;
     private CommonUserApiResponseModel resultBean, doctorModel;
+
     private OnCloseActionInterface onCloseActionInterface;
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private OnActionCompleteInterface onActionCompleteInterface;
@@ -448,8 +449,13 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 Bundle bundle = getArguments();
                 switch (menuItem.getItemId()) {
                     case R.id.menu_chat:
-                        if(UserType.isUserAssistant() && resultBean!=null && resultBean.getPermissions() != null && resultBean.getPermissions().size()>0) {
-                            userPermissionApiViewModel.checkSupportStaffPermission(ArgumentKeys.CHAT_CODE, resultBean.getUser_guid());
+                        if(UserType.isUserAssistant() && doctorModel!=null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0) {
+                            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.MAKE_CALLS_CODE);
+                            if(isPermissionAllowed){
+                                setUpChat(bundle);
+                            }else{
+                                Utils.displayPermissionMsg(getContext());
+                            }
                         }else
                             setUpChat(bundle);
                         break;
@@ -480,9 +486,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         if (CallManager.shared.isActiveCallPresent()) {
                             return false;
                         } else {
-                            if(UserType.isUserAssistant() && resultBean!=null && resultBean.getUser_guid() != null)
-                                userPermissionApiViewModel.checkSupportStaffPermission(ArgumentKeys.MAKE_CALLS_CODE,resultBean.getUser_guid());
-                            else
+                            if(UserType.isUserAssistant() && doctorModel!=null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0) {
+                                boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.MAKE_CALLS_CODE);
+                                if(isPermissionAllowed){
+                                    setUpMakeCall();
+                                }else{
+                                    Utils.displayPermissionMsg(getContext());
+                                }
+                            }else
                                 setUpMakeCall();
                         }
                         break;

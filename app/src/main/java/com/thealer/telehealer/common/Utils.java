@@ -68,6 +68,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionBean;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Util.TeleCacheUrl;
@@ -812,6 +813,20 @@ public class Utils {
         return "";
     }
 
+    public  static  void displayPermissionMsg(Context context){
+        showAlertDialog(context, context.getString(R.string.error), context.getString(R.string.str_please_ask_for_permission),
+                null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+    }
     public static String getCurrentFomatedTime() {
 
         DateFormat outDateFormat = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
@@ -1990,6 +2005,15 @@ public class Utils {
         }else{
             return false;
         }
+    }
+
+    public static boolean checkPermissionStatus(List<PermissionBean> lstPermissions, String makeCallsCode) {
+        for(PermissionBean currentPermission:lstPermissions){
+            if(currentPermission.getPermission()!=null && currentPermission.getPermission().getCode().equals(makeCallsCode)){
+                return currentPermission.getValue()!= null ? currentPermission.getValue(): false;
+            }
+        }
+        return  false;
     }
 
     public interface OnMultipleChoiceInterface {
