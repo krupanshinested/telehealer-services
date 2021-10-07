@@ -18,6 +18,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.orders.OrderConstant;
@@ -41,6 +42,7 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
     private String viewType;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private Bundle bundle;
+    private Boolean isAllowToAddVital=true;
 
     public VitalsOrdersListAdapter(FragmentActivity fragmentActivity, List<String> typeList, List<Integer> imageList, String viewType, Bundle bundle) {
         this.fragmentActivity = fragmentActivity;
@@ -89,7 +91,10 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
         viewHolder.listCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(UserType.isUserAssistant() && !isAllowToAddVital){
+                    Utils.displayPermissionMsg(fragmentActivity);
+                    return;
+                }
                 Fragment fragment = null;
 
                 if (viewType.equals(Constants.VIEW_VITALS)) {
@@ -128,6 +133,10 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
     @Override
     public int getItemCount() {
         return titleList.size();
+    }
+
+    public void UpdatePermission(boolean isAllowToAddVital) {
+        this.isAllowToAddVital=isAllowToAddVital;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -461,6 +461,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 if (resultModel.getEntity_id() == null) {
                                     VitalsListFragment vitalsListFragment = new VitalsListFragment();
                                     bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
+                                    bundle.putString(ArgumentKeys.DOCTOR_GUID, finalDoctorModel.getUser_guid());
                                     vitalsListFragment.setArguments(bundle);
                                     showSubFragmentInterface.onShowFragment(vitalsListFragment);
                                 } else {

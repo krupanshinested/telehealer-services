@@ -2013,7 +2013,7 @@ public class Utils {
                 return currentPermission.getValue()!= null ? currentPermission.getValue(): false;
             }
         }
-        return  false;
+        return true;
     }
 
     public interface OnMultipleChoiceInterface {

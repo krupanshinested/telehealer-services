@@ -456,31 +456,21 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             }else{
                                 Utils.displayPermissionMsg(getContext());
                             }
-                        }else
+                        }else {
                             setUpChat(bundle);
+                        }
                         break;
                     case R.id.menu_schedules:
-                        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) &&
-                                resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-
-                            if (resultBean.getAppt_requests()) {
-                                startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
-                            } else {
-
-                                Utils.showAlertDialog(getActivity(), getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create)), resultBean.getOfficePhoneNo(), getString(R.string.ok)
-                                        , new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Uri uri = Uri.parse("tel:" + resultBean.getOfficePhoneNo());
-                                                startActivity(new Intent(Intent.ACTION_DIAL, uri));
-                                            }
-                                        }, null);
+                        if(UserType.isUserAssistant() && doctorModel!=null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0) {
+                            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.SCHEDULING_CODE);
+                            if(isPermissionAllowed){
+                                manageSchedule();
+                            }else{
+                                Utils.displayPermissionMsg(getContext());
                             }
-
-                        } else {
-                            startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+                        }else {
+                            manageSchedule();
                         }
-
                         break;
                     case R.id.menu_call:
                         if (CallManager.shared.isActiveCallPresent()) {
@@ -585,6 +575,29 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 onCloseActionInterface.onClose(false);
             }
         });
+    }
+
+    private void manageSchedule() {
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) &&
+                resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+
+            if (resultBean.getAppt_requests()) {
+                startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+            } else {
+
+                Utils.showAlertDialog(getActivity(), getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create)), resultBean.getOfficePhoneNo(), getString(R.string.ok)
+                        , new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Uri uri = Uri.parse("tel:" + resultBean.getOfficePhoneNo());
+                                startActivity(new Intent(Intent.ACTION_DIAL, uri));
+                            }
+                        }, null);
+            }
+
+        } else {
+            startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+        }
     }
 
     private void setUpChat(Bundle bundle) {
