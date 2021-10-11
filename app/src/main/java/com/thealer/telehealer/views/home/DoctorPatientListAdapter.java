@@ -97,10 +97,17 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                     viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
-                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
-                                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
-                            );
+                            if(UserType.isUserAssistant() &&
+                            doctorModel.getPermissions()!= null && doctorModel.getPermissions().size()>0){
+                                boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.CHARGES_CODE);
+                                if(isPermissionAllowed){
+                                    visitAddChargeActivity(userModel);
+                                }else{
+                                    Utils.displayPermissionMsg(fragmentActivity);
+                                }
+                            }else {
+                                visitAddChargeActivity(userModel);
+                            }
                         }
                     });
 
@@ -120,6 +127,13 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 viewHolder.userListIv.setStatus(userModel.getStatus(), userModel.getLast_active());
                 break;
         }
+    }
+
+    private void visitAddChargeActivity(CommonUserApiResponseModel userModel) {
+        fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
+                .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+                .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
+        );
     }
 
     private void proceed(CommonUserApiResponseModel resultBean) {

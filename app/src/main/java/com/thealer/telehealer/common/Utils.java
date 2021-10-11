@@ -2007,10 +2007,20 @@ public class Utils {
         }
     }
 
-    public static boolean checkPermissionStatus(List<PermissionBean> lstPermissions, String makeCallsCode) {
+    public static boolean checkPermissionStatus(List<PermissionBean> lstPermissions, String permissionCode) {
         for(PermissionBean currentPermission:lstPermissions){
-            if(currentPermission.getPermission()!=null && currentPermission.getPermission().getCode().equals(makeCallsCode)){
+            if(currentPermission.getPermission()!=null && currentPermission.getPermission().getCode().equals(permissionCode)){
                 return currentPermission.getValue()!= null ? currentPermission.getValue(): false;
+            }else{
+                if(currentPermission.getChildren()!= null && currentPermission.getChildren().size()>0){
+                    List<PermissionBean> lstChildPermission = currentPermission.getChildren();
+                    for(PermissionBean currentChildPermission:lstChildPermission){
+                        if(currentChildPermission != null && currentChildPermission.getPermission()!= null &&
+                        currentChildPermission.getPermission().getCode().equals(permissionCode)){
+                            return currentChildPermission.getValue()!= null ? currentChildPermission.getValue(): false;
+                        }
+                    }
+                }
             }
         }
         return true;

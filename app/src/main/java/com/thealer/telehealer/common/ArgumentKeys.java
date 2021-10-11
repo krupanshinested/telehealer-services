@@ -160,6 +160,7 @@ public class ArgumentKeys {
     public static final String FORMS_CODE ="FORMS";
     public static final String EDUCATIONAL_VIDEOS_CODE ="EDUCATIONAL_VIDEOS";
     public static final String BILLING_AND_CHARGES_CODE ="BILLING_AND_CHARGES";
+    public static final String CHARGES_CODE ="CHARGES";
     public static final String MANAGE_REFUND_CODE ="MANAGE_REFUND";
     public static final String PAYMENT_PROCESSING_CODE ="PAYMENT_PROCESSING";
     public static final String SCHEDULING_CODE ="SCHEDULING";
