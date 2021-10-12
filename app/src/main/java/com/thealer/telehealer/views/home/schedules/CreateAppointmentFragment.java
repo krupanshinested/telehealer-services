@@ -199,8 +199,8 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(), getString(R.string.success),
-                            String.format(getString(R.string.appointment_request_success), requestee_name));
+                    String msg= String.format(getString(R.string.appointment_request_success), requestee_name);
+                    sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(), getString(R.string.success), msg );
                 }
             }
         });
@@ -209,8 +209,8 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure),
-                            String.format(getString(R.string.appointment_request_failure), requestee_name));
+                    String msg = errorModel.getMessage()!= null ? errorModel.getMessage() : String.format(getString(R.string.appointment_request_failure), requestee_name);
+                    sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure), msg);
                 }
             }
         });
