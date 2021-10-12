@@ -11,12 +11,15 @@ import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddChargeViewModel extends BaseApiViewModel {
 
@@ -139,8 +142,12 @@ public class AddChargeViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                            headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.CHARGES_CODE);
+                    }
                     if (isUpdate) {
-                        getAuthApiService().updateCharge(chargeId, req).compose(applySchedulers())
+                        getAuthApiService().updateCharge(headers,chargeId, req).compose(applySchedulers())
                                 .subscribe(new RAObserver<AddChargeResp>(Constants.SHOW_PROGRESS) {
                                     @Override
                                     public void onSuccess(AddChargeResp baseApiResponseModel) {
@@ -148,7 +155,7 @@ public class AddChargeViewModel extends BaseApiViewModel {
                                     }
                                 });
                     } else {
-                        getAuthApiService().addCharge(req).compose(applySchedulers())
+                        getAuthApiService().addCharge(headers,req).compose(applySchedulers())
                                 .subscribe(new RAObserver<AddChargeResp>(Constants.SHOW_PROGRESS) {
                                     @Override
                                     public void onSuccess(AddChargeResp baseApiResponseModel) {

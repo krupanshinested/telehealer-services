@@ -69,8 +69,6 @@ public class VitalsListFragment extends BaseFragment {
 
     private OnCloseActionInterface onCloseActionInterface;
     private boolean isKnowYourNumberOpened = false;
-    private  boolean isAllowToAddVital=true;
-    VitalsOrdersListAdapter vitalsOrdersListAdapter;
 
     @Nullable
     @Override
@@ -115,10 +113,8 @@ public class VitalsListFragment extends BaseFragment {
         listRv = (RecyclerView) view.findViewById(R.id.vitals_orders_list_rv);
         listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        vitalsOrdersListAdapter = new VitalsOrdersListAdapter(getActivity(), SupportedMeasurementType.getItems(), Constants.VIEW_VITALS, getArguments());
-        listRv.setAdapter(vitalsOrdersListAdapter);
-
         if (getArguments() != null) {
+            doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
                 toolbarTitle.setText(getString(R.string.vitals));
@@ -132,40 +128,10 @@ public class VitalsListFragment extends BaseFragment {
             } else {
                 appbarLayout.setVisibility(View.GONE);
             }
-            if(UserType.isUserAssistant()) {
-                doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
-                String doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID, "");
-                if(doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0){
-                    isAllowToAddVital=Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.ADD_VITALS_CODE);
-                }else if (doctorModel == null && !doctorGuid.isEmpty()) {
-                    Set<String> guidSet = new HashSet<>();
-                    guidSet.add(doctorGuid);
-                    GetUserDetails
-                            .getInstance(getActivity())
-                            .getDetails(guidSet)
-                            .getHashMapMutableLiveData().observe(getViewLifecycleOwner(), new Observer<HashMap<String, CommonUserApiResponseModel>>() {
-                        @Override
-                        public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> userDetailHashMap) {
-                            if (userDetailHashMap != null) {
-                                for (String guid : guidSet) {
-                                    CommonUserApiResponseModel model = userDetailHashMap.get(guid);
-                                    if (model != null) {
-                                        if (Constants.ROLE_DOCTOR.equals(model.getRole())) {
-                                            doctorModel = model;
-                                            isAllowToAddVital=Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.ADD_VITALS_CODE);
-                                            vitalsOrdersListAdapter.UpdatePermission(isAllowToAddVital);
-                                        }
-                                    }
-                                }
-                                ;
-                            }
-                        }
-                    });
-                }
-
-            }
         }
-
+        VitalsOrdersListAdapter vitalsOrdersListAdapter = new VitalsOrdersListAdapter(getActivity(), SupportedMeasurementType.getItems(), Constants.VIEW_VITALS, getArguments());
+        vitalsOrdersListAdapter.setDoctorModel(doctorModel);
+        listRv.setAdapter(vitalsOrdersListAdapter);
 
     }
 

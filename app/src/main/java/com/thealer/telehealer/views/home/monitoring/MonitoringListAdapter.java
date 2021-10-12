@@ -17,9 +17,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.monitoring.diet.DietDetailFragment;
 import com.thealer.telehealer.views.home.monitoring.diet.DietUserListingFragment;
@@ -39,6 +41,7 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
     private List<String> titleList;
     private List<Drawable> imageList;
     private Bundle bundle;
+    private CommonUserApiResponseModel doctorModel;
 
     public MonitoringListAdapter(FragmentActivity activity,@Nullable Bundle arguments) {
         this.activity = activity;
@@ -49,6 +52,8 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
 
         if (arguments != null) {
             String openAutomaticType = arguments.getString(ArgumentKeys.OPEN_AUTOMATICALLY);
+            doctorModel = (CommonUserApiResponseModel) arguments.getSerializable(Constants.DOCTOR_DETAIL);
+
             if (openAutomaticType != null) {
                 switch (openAutomaticType) {
                     case MonitoringFragment.DIET_OPEN_TYPE:
@@ -100,6 +105,15 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
     }
 
     private void openFragment(int i) {
+        if(i==0){
+            if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
+                if (!isPermissionAllowed) {
+                    Utils.displayPermissionMsg(activity);
+                    return;
+                }
+            }
+        }
         Fragment fragment = null;
         if (bundle == null) {
             bundle = new Bundle();

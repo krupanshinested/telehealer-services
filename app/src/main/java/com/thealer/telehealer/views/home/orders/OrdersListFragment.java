@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
@@ -45,7 +46,7 @@ public class OrdersListFragment extends BaseFragment {
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle;
-
+    private CommonUserApiResponseModel doctorModel;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class OrdersListFragment extends BaseFragment {
 
             typesList.addAll(Arrays.asList(OrderConstant.ORDER_PRESCRIPTIONS, OrderConstant.ORDER_REFERRALS, OrderConstant.ORDER_LABS, OrderConstant.ORDER_RADIOLOGY, OrderConstant.ORDER_FORM, OrderConstant.ORDER_MISC));
             imageList.addAll(Arrays.asList(R.drawable.ic_orders_prescriptions, R.drawable.ic_orders_referrals, R.drawable.ic_orders_labs, R.drawable.ic_orders_radiology, R.drawable.ic_orders_forms, R.drawable.ic_orders_documents));
-
+            doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
             if (appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_SPECIALIST)) {
                 typesList.remove(1);
                 imageList.remove(1);
@@ -101,7 +102,9 @@ public class OrdersListFragment extends BaseFragment {
             }
 
             VitalsOrdersListAdapter ordersListAdapter = new VitalsOrdersListAdapter(getActivity(), typesList, imageList, Constants.VIEW_ORDERS, getArguments());
+            ordersListAdapter.setDoctorModel(doctorModel);
             listRv.setAdapter(ordersListAdapter);
+
         }
     }
 }

@@ -213,7 +213,16 @@ public class RecentFragment extends BaseFragment {
                             userGuid = doctorGuid;
                             doctorGuid = null;
                         }
-                        recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
+                        if(UserType.isUserAssistant() && doctorDetail.getPermissions()!= null && doctorDetail.getPermissions().size()>0){
+                            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorDetail.getPermissions(),ArgumentKeys.VIEW_CALLS_CODE);
+                            if(isPermissionAllowed){
+                                recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
+                            }else{
+                                Utils.displayPermissionMsg(getContext());
+                            }
+                        }else {
+                            recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
+                        }
                     }
                 }
             }

@@ -2,18 +2,20 @@ package com.thealer.telehealer.views.home;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -42,7 +44,7 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
     private String viewType;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private Bundle bundle;
-    private Boolean isAllowToAddVital=true;
+    private CommonUserApiResponseModel doctorModel;
 
     public VitalsOrdersListAdapter(FragmentActivity fragmentActivity, List<String> typeList, List<Integer> imageList, String viewType, Bundle bundle) {
         this.fragmentActivity = fragmentActivity;
@@ -91,9 +93,44 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
         viewHolder.listCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(UserType.isUserAssistant() && !isAllowToAddVital){
-                    Utils.displayPermissionMsg(fragmentActivity);
-                    return;
+                if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                    String permissionCode = "";
+                    String vitalType="";
+                    if (viewType.equals(Constants.VIEW_VITALS)) {
+                        vitalType=vitalMeasurementTypes.get(i);
+                    }else if(viewType.equals(Constants.VIEW_ORDERS)){
+                        vitalType=typeList.get(i);
+                    }
+                    switch (vitalType) {
+                        case OrderConstant.ORDER_FORM:
+                            permissionCode=ArgumentKeys.FORMS_CODE;
+                            break;
+                        case OrderConstant.ORDER_PRESCRIPTIONS:
+                            permissionCode=ArgumentKeys.PRESCRIPTION_CODE;
+                            break;
+                        case OrderConstant.ORDER_REFERRALS:
+                            permissionCode=ArgumentKeys.REFERRALS_CODE;
+                            break;
+                        case OrderConstant.ORDER_LABS:
+                            permissionCode=ArgumentKeys.LABS_CODE;
+                            break;
+                        case OrderConstant.ORDER_RADIOLOGY:
+                            permissionCode=ArgumentKeys.RADIOLOGY_CODE;
+                            break;
+                        case OrderConstant.ORDER_MISC:
+                            permissionCode=ArgumentKeys.MEDICAL_DOCUMENTS_CODE;
+                            break;
+                        case OrderConstant.ORDER_EDUCATIONAL_VIDEO:
+                            permissionCode=ArgumentKeys.EDUCATIONAL_VIDEOS_CODE;
+                            break;
+                    }
+                    if(!permissionCode.isEmpty()) {
+                        boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), permissionCode);
+                        if (!isPermissionAllowed) {
+                            Utils.displayPermissionMsg(fragmentActivity);
+                            return;
+                        }
+                    }
                 }
                 Fragment fragment = null;
 
@@ -135,8 +172,9 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
         return titleList.size();
     }
 
-    public void UpdatePermission(boolean isAllowToAddVital) {
-        this.isAllowToAddVital=isAllowToAddVital;
+    public void setDoctorModel(CommonUserApiResponseModel doctorModel) {
+        this.doctorModel = doctorModel;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
