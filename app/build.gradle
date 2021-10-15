@@ -221,6 +221,10 @@ dependencies {
     //Image compression
     implementation 'id.zelory:compressor:2.1.0'
 
+    //Screen Resolution Library
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    implementation 'com.intuit.ssp:ssp-android:1.0.6'
+
     //CircularProgressIndicator
     implementation 'com.github.castorflex.smoothprogressbar:library-circular:1.3.0'
 
