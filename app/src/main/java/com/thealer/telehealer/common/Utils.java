@@ -1823,13 +1823,21 @@ public class Utils {
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
                 long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
+                long expiryTimeInMillis = lastActiveTime + Constants.ExpireTime;
                 if (currentTimeInMillis == lastActiveTime)
                     lastActiveTime = timestamp.getTime();
 
                 if (lastActiveTime == 0) {
                     lastActiveTime = timestamp.getTime();
                     appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-                } else if (timestamp.getTime() > currentTimeInMillis) {
+                }else if(timestamp.getTime()>= expiryTimeInMillis){
+                    UserDetailPreferenceManager.invalidateUser();
+                    PubnubUtil.shared.unsubscribe();
+
+                    EventRecorder.updateUserId(null);
+
+                    context.startActivity(new Intent(context, SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+                } else if (timestamp.getTime()>= currentTimeInMillis) {
                     lastActiveTime=timestamp.getTime();
                     appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                     if (!Constants.DisplayQuickLogin) {
