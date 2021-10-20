@@ -52,6 +52,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Signal.SignalKeyManager;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
@@ -229,7 +230,13 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (errorModel.isLocked()) {
+                    if(errorModel.getMessage().equals(getApplication().getString(R.string.str_refresh_token_expired)) ||
+                            errorModel.getMessage().equals(getApplication().getString(R.string.str_invalid_refresh_token))){
+                        UserDetailPreferenceManager.invalidateUser();
+                        PubnubUtil.shared.unsubscribe();
+                        EventRecorder.updateUserId(null);
+                        setQuickLoginText(false, null);
+                    } else if (errorModel.isLocked()) {
                         UserDetailPreferenceManager.invalidateUser();
                         setQuickLoginView();
 

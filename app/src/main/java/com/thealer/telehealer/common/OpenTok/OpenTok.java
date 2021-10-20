@@ -339,7 +339,7 @@ public class OpenTok implements Session.SessionListener,
             });
 
         } else {
-            if (!callRequest.isCallForDirectWaitingRoom() && !callRequest.isUserAdmitted()) {
+            if (!callRequest.isCallForDirectWaitingRoom()) {
                 addTimerForIncomingOrOutgoing();
             }
             if (callRequest.isCallForDirectWaitingRoom()) {
