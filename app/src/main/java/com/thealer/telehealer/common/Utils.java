@@ -30,16 +30,19 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
+import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
@@ -48,6 +51,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -55,6 +59,8 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -2014,24 +2020,32 @@ public class Utils {
             return false;
         }
     }
-
     public static boolean checkPermissionStatus(List<PermissionBean> lstPermissions, String permissionCode) {
         for(PermissionBean currentPermission:lstPermissions){
             if(currentPermission.getPermission()!=null && currentPermission.getPermission().getCode().equals(permissionCode)){
                 return currentPermission.getValue()!= null ? currentPermission.getValue(): false;
             }else{
-                if(currentPermission.getChildren()!= null && currentPermission.getChildren().size()>0){
-                    List<PermissionBean> lstChildPermission = currentPermission.getChildren();
-                    for(PermissionBean currentChildPermission:lstChildPermission){
-                        if(currentChildPermission != null && currentChildPermission.getPermission()!= null &&
-                        currentChildPermission.getPermission().getCode().equals(permissionCode)){
-                            return currentChildPermission.getValue()!= null ? currentChildPermission.getValue(): false;
+                    if (currentPermission.getChildren() != null && currentPermission.getChildren().size() > 0) {
+                        List<PermissionBean> lstChildPermission = currentPermission.getChildren();
+                        for (PermissionBean currentChildPermission : lstChildPermission) {
+                            if (currentChildPermission != null && currentChildPermission.getPermission() != null &&
+                                    currentChildPermission.getPermission().getCode().equals(permissionCode)) {
+                                if(!currentPermission.getValue()) {
+                                    return false;
+                                }
+                                return currentChildPermission.getValue() != null ? currentChildPermission.getValue() : false;
+                            }
                         }
                     }
-                }
             }
         }
         return true;
+    }
+
+    public static void changeMenuTitleColor(Context context, MenuItem menuItem, int currentColor) {
+        SpannableString s = new SpannableString(menuItem.getTitle());
+        s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, currentColor)), 0, s.length(), 0);
+        menuItem.setTitle(s);
     }
 
     public interface OnMultipleChoiceInterface {

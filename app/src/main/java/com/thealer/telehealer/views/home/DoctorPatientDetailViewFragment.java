@@ -7,9 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -26,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -402,6 +406,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             Log.d("enableOrDisableCall", "true");
             enableOrDisableCall(true);
         }
+        manageSAPermission();
     }
 
     @Override
@@ -442,7 +447,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         hasCardIV = (ImageView) view.findViewById(R.id.card_iv);
 
         userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(false);
-
+        manageSAPermission();
         userDetailBnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -450,7 +455,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 switch (menuItem.getItemId()) {
                     case R.id.menu_chat:
                         if(UserType.isUserAssistant() && doctorModel!=null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0) {
-                            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.MAKE_CALLS_CODE);
+                            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.CHAT_CODE);
                             if(isPermissionAllowed){
                                 setUpChat(bundle);
                             }else{
@@ -575,6 +580,46 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 onCloseActionInterface.onClose(false);
             }
         });
+    }
+
+    private void manageSAPermission() {
+        if(UserType.isUserAssistant()){
+            if(doctorModel!=null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0){
+                MenuItem callMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_call);
+                MenuItem scheduleMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_schedules);
+                MenuItem chatMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_chat);
+                boolean isCallEnable=Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.MAKE_CALLS_CODE);
+                boolean isScheduleEnable=Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.SCHEDULING_CODE);
+                boolean isChatEnable=Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.CHAT_CODE);
+                if(isCallEnable) {
+//                    callMenuItem.setEnabled(false);
+                    callMenuItem.getIcon().setColorFilter(null);
+                    Utils.changeMenuTitleColor(getContext(),callMenuItem,R.color.app_gradient_start);
+                }else{
+//                    callMenuItem.setEnabled(false);
+                    callMenuItem.getIcon().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+                    Utils.changeMenuTitleColor(getContext(),callMenuItem,R.color.colorGrey);
+                }
+                if(isScheduleEnable) {
+//                    scheduleMenuItem.setEnabled(true);
+                    scheduleMenuItem.getIcon().setColorFilter(null);
+                    Utils.changeMenuTitleColor(getContext(),scheduleMenuItem,R.color.app_gradient_start);
+                }else{
+//                    scheduleMenuItem.setEnabled(false);
+                    scheduleMenuItem.getIcon().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+                    Utils.changeMenuTitleColor(getContext(),scheduleMenuItem,R.color.colorGrey);
+                }
+                if(isChatEnable) {
+//                    chatMenuItem.setEnabled(true);
+                    chatMenuItem.getIcon().setColorFilter(null);
+                    Utils.changeMenuTitleColor(getContext(),chatMenuItem,R.color.app_gradient_start);
+                }else{
+//                    chatMenuItem.setEnabled(false);
+                    chatMenuItem.getIcon().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+                    Utils.changeMenuTitleColor(getContext(),chatMenuItem,R.color.colorGrey);
+                }
+            }
+        }
     }
 
     private void manageSchedule() {
@@ -737,6 +782,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 switch (model.getRole()) {
                                     case Constants.ROLE_DOCTOR:
                                         doctorModel = model;
+                                        manageSAPermission();
                                         if (UserType.isUserPatient() && resultBean == null) {
                                             resultBean = doctorModel;
                                         }
