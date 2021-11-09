@@ -339,7 +339,7 @@ public class OpenTok implements Session.SessionListener,
             });
 
         } else {
-            if (!callRequest.isCallForDirectWaitingRoom() && !callRequest.isUserAdmitted()) {
+            if (!callRequest.isCallForDirectWaitingRoom()) {
                 addTimerForIncomingOrOutgoing();
             }
             if (callRequest.isCallForDirectWaitingRoom()) {
@@ -1670,7 +1670,7 @@ public class OpenTok implements Session.SessionListener,
         });
         new Handler().postDelayed(speechRunnable, 60000);
 
-//        LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.did_subscriber_connected));
+        LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.did_subscriber_connected));
     }
 
     @Override

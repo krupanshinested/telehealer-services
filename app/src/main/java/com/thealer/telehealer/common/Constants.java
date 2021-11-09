@@ -19,7 +19,7 @@ public class Constants {
     public final static int MAX_PAUSE_TIME = 500;
     public final static int PARTIAL_DELAY_TIME = 500;
     public final static int ERROR_TIMEOUT = 5000;
-    public final static int AUDIO_BEEP_DISABLED_TIMEOUT = 40000;
+    public final static int AUDIO_BEEP_DISABLED_TIMEOUT = 30000;
 
 
     public static final String HEADER_AUTH_TOKEN = "X-Access-Token";
