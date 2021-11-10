@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -88,12 +89,13 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
 
                 viewHolder.titleTv.setText(userModel.getDisplayName());
                 loadAvatar(viewHolder.avatarCiv, userModel.getUser_avatar());
-
                 if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
                     viewHolder.actionIv.setVisibility(View.VISIBLE);
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
-                    if (doctorModel != null)
+                    if (doctorModel != null) {
                         viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
+                        ManageSAPermission(viewHolder,userModel);
+                    }
                     viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -126,6 +128,14 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
 
                 viewHolder.userListIv.setStatus(userModel.getStatus(), userModel.getLast_active());
                 break;
+        }
+    }
+
+    private void ManageSAPermission(ItemViewHolder viewHolder, CommonUserApiResponseModel userModel) {
+        if(UserType.isUserAssistant() &&
+                doctorModel.getPermissions()!= null && doctorModel.getPermissions().size()>0){
+            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.CHARGES_CODE);
+            viewHolder.userListIv.manageAddChargeButton(fragmentActivity,isPermissionAllowed);
         }
     }
 

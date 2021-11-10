@@ -527,6 +527,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                 AboutHistoryAdapter historyAdapter = new AboutHistoryAdapter(getActivity(), userDetail.getHistory());
                 rvHistory.setAdapter(historyAdapter);
                 clHistory.setVisibility(View.VISIBLE);
+                rvHistory.setVisibility(View.VISIBLE);
             } else {
                 clHistory.setVisibility(View.GONE);
             }
