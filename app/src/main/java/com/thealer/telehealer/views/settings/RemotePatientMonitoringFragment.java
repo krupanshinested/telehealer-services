@@ -216,6 +216,7 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utils.hideKeyboard(getActivity());
                 if(errorPos.size() ==0) {
                     isEditable = false;
                     setUpData();

@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.settings.Adapters;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,10 +82,19 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         double currentHigh = Utils.get2Decimal(vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).getHigh_value());
                         double prevHigh = Utils.get2Decimal(vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i - 1).getHigh_value());
 
-                        double currentLow = prevHigh + 1;
-                        if (currentHigh <= upperValue) {
-                            currentHigh = currentLow + 1;
+                        double currentLow=0.0;
+                        if(bundle.getString(ArgumentKeys.VITAL_TYPE).equals(SupportedMeasurementType.temperature)){
+                            currentLow= prevHigh + (double) 0.01;
+                            if (currentHigh <= upperValue) {
+                                currentHigh = currentLow + (double) 0.01;
+                            }
+                        }else{
+                            currentLow= prevHigh + 1;
+                            if (currentHigh <= upperValue) {
+                                currentHigh = currentLow + 1;
+                            }
                         }
+
                         vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).setLow_value(getUpdatedValue((currentLow), bundle.getString(ArgumentKeys.VITAL_TYPE)));
                         vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).getRanges().get(i).setHigh_value(getUpdatedValue((currentHigh), bundle.getString(ArgumentKeys.VITAL_TYPE)));
                     }

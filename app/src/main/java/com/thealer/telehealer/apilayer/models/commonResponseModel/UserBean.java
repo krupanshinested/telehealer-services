@@ -48,6 +48,7 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
     private boolean can_view_card_status=false;
     private PaymentInfo payment_account_info;
     private Boolean is_rpm_enabled=false;
+
     public UserBean() {
     }
 
@@ -65,8 +66,6 @@ public class UserBean extends BaseApiResponseModel implements Serializable {
         this.gender = gender;
         this.name = name;
     }
-
-
 
     public Boolean getIs_rpm_enabled() {
         return is_rpm_enabled;
