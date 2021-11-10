@@ -44,6 +44,8 @@ import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.SearchCellView;
 import com.thealer.telehealer.views.common.SearchInterface;
 
+import java.util.ArrayList;
+
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
@@ -218,6 +220,7 @@ public class RecentFragment extends BaseFragment {
                             if(isPermissionAllowed){
                                 recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
                             }else{
+                                recentsCrv.showOrhideEmptyState(true);
                                 Utils.displayPermissionMsg(getContext());
                             }
                         }else {

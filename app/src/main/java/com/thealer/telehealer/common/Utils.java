@@ -17,6 +17,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -820,7 +821,7 @@ public class Utils {
     }
 
     public  static  void displayPermissionMsg(Context context){
-        showAlertDialog(context, context.getString(R.string.error), context.getString(R.string.str_please_ask_for_permission),
+        showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.str_please_ask_for_permission),
                 null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -2042,10 +2043,11 @@ public class Utils {
         return true;
     }
 
-    public static void changeMenuTitleColor(Context context, MenuItem menuItem, int currentColor) {
+    public static void changeMenuItemColor(Context context, MenuItem menuItem, int currentColor) {
         SpannableString s = new SpannableString(menuItem.getTitle());
         s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, currentColor)), 0, s.length(), 0);
         menuItem.setTitle(s);
+        menuItem.getIcon().setColorFilter(ContextCompat.getColor(context,currentColor), PorterDuff.Mode.SRC_IN);
     }
 
     public interface OnMultipleChoiceInterface {

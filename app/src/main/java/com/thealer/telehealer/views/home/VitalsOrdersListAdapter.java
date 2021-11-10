@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -90,9 +92,11 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.listTv.setText(titleList.get(i));
         viewHolder.listIv.setImageDrawable(fragmentActivity.getDrawable(imageList.get(i)));
+        manageSAPermission(viewHolder,i,false);
         viewHolder.listCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                manageSAPermission(viewHolder,i,true);
                 if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
                     String permissionCode = "";
                     String vitalType="";
@@ -165,6 +169,55 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
                 }
             }
         });
+    }
+
+    private void manageSAPermission(ViewHolder viewHolder,int i,Boolean isClicked) {
+        if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+            String permissionCode = "";
+            String vitalType="";
+            if (viewType.equals(Constants.VIEW_VITALS)) {
+                vitalType=vitalMeasurementTypes.get(i);
+            }else if(viewType.equals(Constants.VIEW_ORDERS)){
+                vitalType=typeList.get(i);
+            }
+            switch (vitalType) {
+                case OrderConstant.ORDER_FORM:
+                    permissionCode=ArgumentKeys.FORMS_CODE;
+                    break;
+                case OrderConstant.ORDER_PRESCRIPTIONS:
+                    permissionCode=ArgumentKeys.PRESCRIPTION_CODE;
+                    break;
+                case OrderConstant.ORDER_REFERRALS:
+                    permissionCode=ArgumentKeys.REFERRALS_CODE;
+                    break;
+                case OrderConstant.ORDER_LABS:
+                    permissionCode=ArgumentKeys.LABS_CODE;
+                    break;
+                case OrderConstant.ORDER_RADIOLOGY:
+                    permissionCode=ArgumentKeys.RADIOLOGY_CODE;
+                    break;
+                case OrderConstant.ORDER_MISC:
+                    permissionCode=ArgumentKeys.MEDICAL_DOCUMENTS_CODE;
+                    break;
+                case OrderConstant.ORDER_EDUCATIONAL_VIDEO:
+                    permissionCode=ArgumentKeys.EDUCATIONAL_VIDEOS_CODE;
+                    break;
+            }
+            if(!permissionCode.isEmpty()) {
+                boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), permissionCode);
+                if (!isPermissionAllowed && isClicked) {
+                    Utils.displayPermissionMsg(fragmentActivity);
+                    return;
+                }
+                if(!isPermissionAllowed){
+                     viewHolder.listIv.setColorFilter(ContextCompat.getColor(fragmentActivity,R.color.colorGrey), PorterDuff.Mode.SRC_IN);
+                     viewHolder.listTv.setTextColor(ContextCompat.getColor(fragmentActivity,R.color.colorGrey));
+                }else{
+                    viewHolder.listTv.setTextColor(ContextCompat.getColor(fragmentActivity,R.color.colorBlack));
+                    viewHolder.listIv.setColorFilter(ContextCompat.getColor(fragmentActivity,R.color.app_gradient_start), PorterDuff.Mode.SRC_IN);
+                }
+            }
+        }
     }
 
     @Override

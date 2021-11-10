@@ -1,8 +1,10 @@
 package com.thealer.telehealer.views.home.monitoring;
 
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,6 +80,7 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.listTv.setText(titleList.get(i));
         viewHolder.listIv.setImageDrawable(imageList.get(i));
+        ManageSAPermission(viewHolder,i);
         viewHolder.listCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,13 +108,14 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
     }
 
     private void openFragment(int i) {
-        if(i==0){
+        if(i==0) {
             if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
                 boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
                 if (!isPermissionAllowed) {
                     Utils.displayPermissionMsg(activity);
                     return;
                 }
+
             }
         }
         Fragment fragment = null;
@@ -149,6 +153,22 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
 
         if (fragment != null) {
             showSubFragmentInterface.onShowFragment(fragment);
+        }
+    }
+
+    private void ManageSAPermission(ViewHolder viewHolder, int i) {
+        if(i==0) {
+            if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
+                if(!isPermissionAllowed){
+                    viewHolder.listIv.setColorFilter(ContextCompat.getColor(activity,R.color.colorGrey), PorterDuff.Mode.SRC_IN);
+                    viewHolder.listTv.setTextColor(ContextCompat.getColor(activity,R.color.colorGrey));
+                }else{
+                    viewHolder.listTv.setTextColor(ContextCompat.getColor(activity,R.color.colorBlack));
+                    viewHolder.listIv.setColorFilter(ContextCompat.getColor(activity,R.color.app_gradient_start), PorterDuff.Mode.SRC_IN);
+                }
+
+            }
         }
     }
 }
