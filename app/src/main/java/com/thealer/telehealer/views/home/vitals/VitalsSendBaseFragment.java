@@ -1,21 +1,16 @@
 package com.thealer.telehealer.views.home.vitals;
 
-import android.app.Activity;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
@@ -178,6 +173,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
             public void onChanged(@Nullable ErrorModel errorModel) {
                 Log.v("VitalsSendBaseFragment", "vitalsApiViewModel error");
                 String title = getString(R.string.failure);
+                callFailureView(errorModel);
                 if (!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
                     sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
                     PaymentInfo paymentInfo = new PaymentInfo();
@@ -185,25 +181,30 @@ public class VitalsSendBaseFragment extends BaseFragment {
                     paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
                     paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
                     AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
-                } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-
-                    if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                    } else {
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
-                    }
-
-                    LocalBroadcastManager
-                            .getInstance(getActivity())
-                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                    .putExtras(bundle));
                 }
+
             }
         });
     }
+
+    private void callFailureView(ErrorModel errorModel) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+
+        if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
+            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+        } else {
+            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
+        }
+        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+
+        LocalBroadcastManager
+                .getInstance(getActivity())
+                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                        .putExtras(bundle));
+    }
+
 
     @Override
     public void onAttach(Context context) {

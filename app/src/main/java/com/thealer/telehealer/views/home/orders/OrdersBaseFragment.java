@@ -146,14 +146,14 @@ public class OrdersBaseFragment extends BaseFragment {
                     boolean status = false;
                     String title = getString(R.string.failure);
                     String description = getString(R.string.order_posting_failed);
-                    if(!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
+                    if (!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
                         sendSuccessViewBroadCast(getActivity(), false, title, description);
                         PaymentInfo paymentInfo = new PaymentInfo();
                         paymentInfo.setCCCaptured(errorModel.isCCCaptured());
                         paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
                         paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
                         AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, patientName);
-                    }else {
+                    } else {
                         switch (currentOrder) {
                             case OrderConstant.ORDER_PRESCRIPTIONS:
                                 description = String.format(getString(R.string.create_prescription_failure), patientName);
@@ -260,10 +260,8 @@ public class OrdersBaseFragment extends BaseFragment {
 
     public void showQuickLogin() {
         try {
-            if (!Constants.DisplayQuickLogin) {
-                Constants.DisplayQuickLogin = true;
-                startActivity(new Intent(getActivity(), QuickLoginActivity.class));
-            }
+            Constants.DisplayQuickLogin = true;
+            startActivity(new Intent(getActivity(), QuickLoginActivity.class));
         } catch (Exception e) {
             startActivity(new Intent(getActivity(), QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
         }
@@ -331,7 +329,7 @@ public class OrdersBaseFragment extends BaseFragment {
         patientName = userDisplay_name;
         isSendFax = sendFax;
 
-       showSuccessView();
+        showSuccessView();
 
         ordersCreateApiViewModel.createPrescription(status, prescriptionModel, doctorGuid);
     }

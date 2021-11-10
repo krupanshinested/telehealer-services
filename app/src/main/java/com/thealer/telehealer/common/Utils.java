@@ -112,6 +112,7 @@ import me.toptas.fancyshowcase.FancyShowCaseView;
 import me.toptas.fancyshowcase.FocusShape;
 import me.toptas.fancyshowcase.listener.DismissListener;
 
+import static android.text.Html.FROM_HTML_MODE_COMPACT;
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
@@ -810,11 +811,32 @@ public class Utils {
     }
 
     @SuppressWarnings("deprecation")
-    public static Spanned fromHtml(String source) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+    public static Spanned fromHtml(String htmlString) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+            return Html.fromHtml(htmlString, Html.FROM_HTML_MODE_LEGACY);
         } else {
-            return Html.fromHtml(source);
+            return Html.fromHtml(htmlString);
+        }*/
+        // remove leading <br/>
+        while (htmlString.startsWith("<br/>")){
+
+            htmlString = htmlString.replaceFirst("<br/>", "");
+        }
+
+        // remove trailing <br/>
+        while (htmlString.endsWith("<br/>")){
+
+            htmlString =  htmlString.replaceAll("<br/>$", "");
+        }
+
+        // reduce multiple \n in the processed HTML string
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+            return Html.fromHtml(htmlString,  FROM_HTML_MODE_COMPACT);
+        }else{
+
+            return Html.fromHtml(htmlString);
         }
     }
 
@@ -1783,7 +1805,7 @@ public class Utils {
         String utcDate = Utils.getUTCfromGMT(timestamp.toString());
         String lastLogin = Utils.getDayMonthYearTime(utcDate);
         Log.e("aswin", "updateLastLogin: " + lastLogin);
-
+        storeLastActiveTime();
         appPreference.setString(PreferenceConstants.LAST_LOGIN, lastLogin);
         appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, timestamp.getTime() + "");
     }
@@ -1801,13 +1823,23 @@ public class Utils {
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
                 long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
+                long expiryTimeInMillis = lastActiveTime + Constants.ExpireTime;
                 if (currentTimeInMillis == lastActiveTime)
                     lastActiveTime = timestamp.getTime();
 
                 if (lastActiveTime == 0) {
                     lastActiveTime = timestamp.getTime();
                     appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-                } else if (timestamp.getTime() > currentTimeInMillis) {
+                }else if(timestamp.getTime()>= expiryTimeInMillis){
+                    UserDetailPreferenceManager.invalidateUser();
+                    PubnubUtil.shared.unsubscribe();
+
+                    EventRecorder.updateUserId(null);
+
+                    context.startActivity(new Intent(context, SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+                } else if (timestamp.getTime()>= currentTimeInMillis) {
+                    lastActiveTime=timestamp.getTime();
+                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                     if (!Constants.DisplayQuickLogin) {
                         Constants.DisplayQuickLogin = true;
                         try {
@@ -1976,6 +2008,5 @@ public class Utils {
                 new SimpleDateFormat(UTCFormat, Locale.getDefault());
         return simpleDateFormat.format(calendar.getTimeInMillis());
     }
-
 
 }

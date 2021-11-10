@@ -59,7 +59,6 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
-import com.thealer.telehealer.views.common.LockScreenReceiver;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
@@ -79,11 +78,9 @@ import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
-import com.thealer.telehealer.views.settings.GeneralSettingsFragment;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
-import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import java.util.Calendar;
 import java.util.List;
@@ -123,6 +120,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private boolean isCheckLicense = true;
     private boolean isPropserShown = false;
     private boolean isSigningOutInProcess = false;
+    private static boolean onAuthenticated = false;
 
     private NotificationApiViewModel notificationApiViewModel;
 
@@ -880,7 +878,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
-        if(Constants.isRedirectProfileSetting){
+        if (Constants.isRedirectProfileSetting) {
             Intent intent = new Intent(HomeActivity.this, ProfileSettingsActivity.class);
             this.startActivity(intent);
         }

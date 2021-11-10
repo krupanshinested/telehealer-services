@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.BuildConfig;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
@@ -41,14 +42,14 @@ public class OpenTokViewModel extends BaseApiViewModel {
     }
 
     public void getTokenForSession(String sessionId, @Nullable OpenTokTokenFetcher fetcher) {
-
+        if (BaseApiViewModel.isAuthExpired()) {
             getAuthApiService().refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), true,BuildConfig.VERSION_NAME,true)
                     .compose(applySchedulers())
                     .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                         @Override
                         public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                             Utils.updateLastLogin();
-
+                            Utils.storeLastActiveTime();
                             SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
                             if (signinApiResponseModel.isSuccess()) {
 
@@ -63,6 +64,9 @@ public class OpenTokViewModel extends BaseApiViewModel {
 
                         }
                     });
+        } else {
+            getToken(sessionId,null, fetcher);
+        }
     }
 
     private void getToken(String sessionId,@Nullable String expiredAuthToken, @Nullable  OpenTokTokenFetcher fetcher) {
@@ -240,5 +244,20 @@ public class OpenTokViewModel extends BaseApiViewModel {
             }
         });
     }
-
+    public void refreshToken() {
+        String refreshToken = TeleHealerApplication.appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN);
+        getAuthApiService().refreshToken(refreshToken,false,BuildConfig.VERSION_NAME,true)
+                .compose(applySchedulers())
+                .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                    @Override
+                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                        Utils.updateLastLogin();
+                        Utils.storeLastActiveTime();
+                        SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
+                        if (signinApiResponseModel.isSuccess()) {
+                            appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
+                        }
+                    }
+                });
+    }
 }

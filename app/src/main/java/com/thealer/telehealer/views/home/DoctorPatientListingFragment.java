@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -91,6 +92,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
     private DoctorInviteHandler doctorInviteHandler;
     private CustomPatientCountLayout customPatientCountLayout;
     private CommonUserApiResponseModel commonUserApiResponseModel;
+    private boolean isUserPatient;
 
 
     @Override
@@ -160,11 +162,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         addFab.setOnClickListener(this);
 
-        if (UserType.isUserPatient()) {
-            search_view.setSearchHint(getString(R.string.search_doctors));
-        } else {
-            search_view.setSearchHint(getString(R.string.search_associations));
-        }
+
 
         search_view.setSearchInterface(new SearchInterface() {
             @Override
@@ -175,6 +173,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         });
 
         if (getArguments() != null) {
+            isUserPatient= getArguments().getBoolean(ArgumentKeys.isUserPatient,false);
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
                 toolbarTitle.setText(getString(R.string.patients));
@@ -194,6 +193,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)) {
                 search_view.setVisibility(View.GONE);
             }
+            if(getArguments().getBoolean(ArgumentKeys.CLEAR_BG_SEARCH,false)){
+                search_view.setBackgroundColor(Color.TRANSPARENT);
+            }
             if (!getArguments().getBoolean(ArgumentKeys.SHOW_FAB_ADD, true)) {
                 addFab.setVisibility(View.GONE);
             }
@@ -201,9 +203,23 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 addFab.hide();
             }
         }
-
+        if (UserType.isUserPatient()) {
+            search_view.setSearchHint(getString(R.string.search_doctors));
+        } else if(UserType.isUserDoctor()) {
+            search_view.setSearchHint(getString(R.string.lbl_search_patient));
+        }else{
+            if(isUserPatient){
+                search_view.setSearchHint(getString(R.string.lbl_search_patient));
+            }else {
+                search_view.setSearchHint(getString(R.string.search_associations));
+            }
+        }
         if (UserType.isUserPatient() || UserType.isUserAssistant()) {
-            doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_WITH_BTN);
+            if(isUserPatient){
+                doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_PATIENT_WITH_BTN);
+            }else {
+                doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_WITH_BTN);
+            }
         } else if (UserType.isUserDoctor()) {
             doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_PATIENT_WITH_BTN);
         }
@@ -268,6 +284,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             String title;
             if (UserType.isUserPatient() || UserType.isUserAssistant()) {
                 title = getString(R.string.Doctors);
+                if(isUserPatient){
+                    title = getString(R.string.Patients);
+                }
             } else {
                 title = getString(R.string.Patients);
             }
@@ -307,9 +326,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                     }
                 };
 
-                if (UserType.isUserDoctor()) {
+                if (UserType.isUserDoctor() || isUserPatient) {
                     Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_PATIENT, dismissListener);
-                } else {
+                }else {
                     Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_DOCTOR, dismissListener);
                 }
             }
