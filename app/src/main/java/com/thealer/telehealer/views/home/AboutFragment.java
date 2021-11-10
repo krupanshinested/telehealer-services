@@ -129,11 +129,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         userPermissionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                try {
-                    Log.e("neem", "onChanged: " + baseApiResponseModel);
-                }catch (Exception e){
-                    Log.e("neem", "Success: ");
-                }
+
             }
         });
 
@@ -521,13 +517,13 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             } else {
                 clHistory.setVisibility(View.GONE);
             }
-
+            Log.e("neem", "rvVitalHistory: "+userDetail.getVitals().size() );
+            Log.e("neem", "rvHistory: "+userDetail.getHistory().size() );
             if(userDetail.getHistory() !=null && userDetail.getHistory().size()>0){
                 rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
                 AboutHistoryAdapter historyAdapter = new AboutHistoryAdapter(getActivity(), userDetail.getHistory());
                 rvHistory.setAdapter(historyAdapter);
                 clHistory.setVisibility(View.VISIBLE);
-                rvHistory.setVisibility(View.VISIBLE);
             } else {
                 clHistory.setVisibility(View.GONE);
             }
