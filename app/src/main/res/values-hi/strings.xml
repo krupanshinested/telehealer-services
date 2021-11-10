@@ -1547,4 +1547,5 @@
     <string name="str_refresh_token_expired">Refresh token expired.</string>
     <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
     <string name="str_please_ask_for_permission">Please ask your provider to enable this features.</string>
+    <string name="visit_questionary">Visit  Questionnaire</string>
 </resources>

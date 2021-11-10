@@ -54,7 +54,7 @@
     <string name="resend">Resend</string>
     <string name="select_your_role">Select your role</string>
     <string name="doctor">PROVIDER</string>
-    <string name="medical_assistant">Medical Assistants</string>
+    <string name="medical_assistant">Support Staff</string>
     <string name="title">Title</string>
     <string name="degree">Degree</string>
     <string name="image_of_certification">Image of certification</string>
@@ -1645,5 +1645,6 @@
     <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
     <string name="str_archive_id_not_found" translatable="false">Archive ID does not exist for the order</string>
     <string name="str_please_ask_for_permission">Please ask your provider to enable this features.</string>
+    <string name="visit_questionary">Visit Questionnaire</string>
 
 </resources>

@@ -116,14 +116,11 @@ public class AboutHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return historyList.size();
     }
 
-<<<<<<< HEAD
-=======
     public void setDataAdapter(List historyList) {
         this.historyList=historyList;
         notifyDataSetChanged();
     }
 
->>>>>>> 6d995c019ccbe57d17af5d6a4255538d1a426d88
     private class VitalHolder extends RecyclerView.ViewHolder {
         private TextView tvTitle, tvVital, tvDesc;
 
