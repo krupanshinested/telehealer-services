@@ -1572,9 +1572,12 @@
     <string name="lbl_patient_charges_payments">Patient charges/payment</string>
     <string name="disclaimer_for_secure_messaging">DISCLAIMER: ENABLING THIS SETTING WILL REMOVE EXISTING RESTRICTIONS ON TEMPLATED RESPONSES FROM THE PATIENT AND INSTEAD ALLOW THEM TO SEND FREE-FORM CONTENT GOING FORWARD.\n\nAlthough the patient will be notified not to use secure messaging for urgent or emergency medical attention, %s assumes no responsibility or liability arising from the use of any and all secure message communications send by and to the patient.</string>
     <string name="str_with_htmltag"><![CDATA[%s]]></string>
-    <string name="pin_not_match">>Pin does not match. You have %s attempt left.  Please try again</string>
+    <string name="pin_not_match">Pin does not match. You have %s attempt left.  Please try again</string>
     <string name="wrong_password">Password does not match. You have %s attempt left.  Please try again</string>
     <string name="BIOMETRIC_CANCEL">Cancel</string>
     <string name="wrong_fingure">Fingure Print does not match. You have %s attempt left.  Please try again</string>
+    <string name="str_refresh_token_expired">Refresh token expired.</string>
+    <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
+    <string name="str_archive_id_not_found" translatable="false">Archive ID does not exist for the order</string>
 
 </resources>
