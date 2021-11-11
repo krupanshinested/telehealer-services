@@ -172,12 +172,12 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getVitalThreshold(boolean isShowProgress) {
+    public void getVitalThreshold(String usertGuid,boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getVitalsThreshold()
+                    getAuthApiService().getVitalsThreshold(usertGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override

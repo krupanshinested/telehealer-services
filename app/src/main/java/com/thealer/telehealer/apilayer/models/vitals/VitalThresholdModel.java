@@ -21,12 +21,20 @@ public class VitalThresholdModel extends BaseApiResponseModel {
     }
 
     public class Result {
-
+        List<String> users = null;
         public List<VitalsThreshold> vitals_thresholds = null;
 
         public List<VitalsCron> vitals_cron = null;
         public Boolean is_rpm_enabled;
         public Boolean is_notify_on_capture;
+
+        public List<String> getUsers() {
+            return users;
+        }
+
+        public void setUsers(List<String> users) {
+            this.users = users;
+        }
 
         public List<VitalsThreshold> getVitals_thresholds() {
             return vitals_thresholds;

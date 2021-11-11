@@ -328,8 +328,8 @@ public interface ApiInterface {
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersLabApiResponseModel> getLabOrders(@Query(SEARCH_FILTER_LAB) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/vitals/thresholds")
-    Observable<VitalThresholdModel> getVitalsThreshold();
+    @GET("api/vitals/thresholds/{userGuid}")
+    Observable<VitalThresholdModel> getVitalsThreshold(@Path("userGuid") String userGuid);
 
     @POST("api/vitals/thresholds")
     Observable<BaseApiResponseModel> updateVitalsThreshold(@Body VitalThresholdModel.Result vitalThresholdModel);

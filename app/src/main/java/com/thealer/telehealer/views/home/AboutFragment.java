@@ -509,6 +509,9 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     }
     private void showRemotePatientMonitoring() {
         RemotePatientMonitoringFragment remotePatientMonitoringFragment = new RemotePatientMonitoringFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(ArgumentKeys.USER_GUID,userDetail.getUser_guid());
+        remotePatientMonitoringFragment.setArguments(bundle);
         showSubFragmentInterface.onShowFragment(remotePatientMonitoringFragment);
     }
     private void manageVitalHistory() {

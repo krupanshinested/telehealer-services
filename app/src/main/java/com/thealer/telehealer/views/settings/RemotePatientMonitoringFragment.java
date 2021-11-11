@@ -23,6 +23,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalErrorThreshold;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.views.settings.Adapters.VitalThresholdAdapter;
 import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
@@ -56,6 +57,7 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
     private SettingsCellView notificationCellView,rpmCellView;
     List<VitalThresholdModel.VitalsThreshold> vitalThresholdList = new ArrayList<>();
     private  boolean isEditable = false;
+    private  String userGuid="";
     public  static  List<VitalErrorThreshold> errorPos=new ArrayList<>();
 
 
@@ -68,6 +70,11 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         vitalsApiViewModel = new ViewModelProvider(this).get(VitalsApiViewModel.class);
         attachObserverInterface.attachObserver(vitalsApiViewModel);
 
+        if(getArguments() != null){
+            userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
+            if(userGuid != null && userGuid.isEmpty())
+                userGuid=null;
+        }
         vitalsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -172,7 +179,7 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         editTv.setText(getString(R.string.edit));
         editTv.setVisibility(View.VISIBLE);
         toolbarTitle.setText(R.string.vital_chart);
-        vitalsApiViewModel.getVitalThreshold(true);
+        vitalsApiViewModel.getVitalThreshold(userGuid,true);
         rpmCellView.updateTextviewPadding(20,20,25,20);
         notificationCellView.updateTextviewPadding(20,20,20,20);
         notificationCellView.setRightDrawableIcon(R.drawable.ic_baseline_info_24);
@@ -221,6 +228,11 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
                     isEditable = false;
                     setUpData();
                     result.vitals_thresholds = vitalThresholdList;
+                    if(userGuid != null && !userGuid.isEmpty()) {
+                        List<String> userGuidList=new ArrayList<>();
+                        userGuidList.add(userGuid);
+                        result.setUsers(userGuidList);
+                    }
                     vitalsApiViewModel.updateVitalThreshold(result);
                 }else{
                     showToast(getString(R.string.please_fill_up_details));
