@@ -80,7 +80,7 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.listTv.setText(titleList.get(i));
         viewHolder.listIv.setImageDrawable(imageList.get(i));
-        ManageSAPermission(viewHolder,i);
+//        ManageSAPermission(viewHolder,i);
         viewHolder.listCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,20 +108,22 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
     }
 
     private void openFragment(int i) {
-        if(i==0) {
-            if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
-                boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
-                if (!isPermissionAllowed) {
-                    Utils.displayPermissionMsg(activity);
-                    return;
-                }
-
-            }
-        }
         Fragment fragment = null;
         if (bundle == null) {
             bundle = new Bundle();
         }
+        if(i==0) {
+            if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.VIEW_VITALS_CODE);
+                bundle.putBoolean(ArgumentKeys.isPermissionAllowed,isPermissionAllowed);
+                /*if (!isPermissionAllowed) {
+                    Utils.displayPermissionMsg(activity);
+                    return;
+                }*/
+
+            }
+        }
+
         bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
 
         if (titleList.get(i).equals(activity.getString(R.string.vitals))) {

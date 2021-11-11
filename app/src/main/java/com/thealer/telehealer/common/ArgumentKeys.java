@@ -151,6 +151,7 @@ public class ArgumentKeys {
     public static final String SESSION_ID = "SESSION_ID";
     public static final String PRESCRIPTION_CODE ="PRESCRIPTIONS";
     public static final String ADD_VITALS_CODE ="ADD_VITALS";
+    public static final String VIEW_VITALS_CODE ="VIEW_VITALS";
     public static final String MAKE_CALLS_CODE ="MAKE_CALLS";
     public static final String VIEW_CALLS_CODE ="VIEW_CALLS";
     public static final String CHAT_CODE ="CHAT";
@@ -291,4 +292,5 @@ public class ArgumentKeys {
     public static final String BillingCycle="billing_cycle";
     public static String IS_CHANGE_PLAN="IS_CHANGE_PLAN";
     public static String IS_HIDE_BACK="IS_HIDE_BACK";
+    public static String isPermissionAllowed="IS_Permission_Allowed";
 }

@@ -73,6 +73,7 @@ public class VitalReportFragment extends BaseFragment {
     private View bottomView;
     private ImageView filterIv;
     private CustomRecyclerView patientListCrv;
+    private  Boolean isPermissionAllowed = true;
 
     private AttachObserverInterface attachObserverInterface;
     private VitalReportApiViewModel vitalReportApiViewModel;
@@ -327,6 +328,7 @@ public class VitalReportFragment extends BaseFragment {
 
         if (getArguments() != null) {
             doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            isPermissionAllowed = getArguments().getBoolean(ArgumentKeys.isPermissionAllowed,true);
             if (doctorModel != null) {
                 doctorGuid = doctorModel.getUser_guid();
             }
@@ -430,7 +432,8 @@ public class VitalReportFragment extends BaseFragment {
     }
 
     private void getUsersList(String filter, String startDate, String endDate) {
-        vitalReportApiViewModel.getVitalUsers(filter, startDate, endDate, doctorGuid, true);
+        if(isPermissionAllowed)
+            vitalReportApiViewModel.getVitalUsers(filter, startDate, endDate, doctorGuid, true);
     }
 
     private void setToolbarTitle(String text) {

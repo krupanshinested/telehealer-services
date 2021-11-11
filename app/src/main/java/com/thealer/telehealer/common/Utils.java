@@ -821,18 +821,22 @@ public class Utils {
     }
 
     public  static  void displayPermissionMsg(Context context){
-        showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.str_please_ask_for_permission),
-                null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+        try {
+            showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.str_please_ask_for_permission),
+                    null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     public static String getCurrentFomatedTime() {
 

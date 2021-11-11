@@ -92,11 +92,11 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.listTv.setText(titleList.get(i));
         viewHolder.listIv.setImageDrawable(fragmentActivity.getDrawable(imageList.get(i)));
-        manageSAPermission(viewHolder,i,false);
+//        manageSAPermission(viewHolder,i,false);
         viewHolder.listCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                manageSAPermission(viewHolder,i,true);
+//                manageSAPermission(viewHolder,i,true);
                 if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
                     String permissionCode = "";
                     String vitalType="";
@@ -130,10 +130,11 @@ public class VitalsOrdersListAdapter extends RecyclerView.Adapter<VitalsOrdersLi
                     }
                     if(!permissionCode.isEmpty()) {
                         boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), permissionCode);
-                        if (!isPermissionAllowed) {
+                        bundle.putBoolean(ArgumentKeys.isPermissionAllowed,isPermissionAllowed);
+                     /*   if (!isPermissionAllowed) {
                             Utils.displayPermissionMsg(fragmentActivity);
                             return;
-                        }
+                        }*/
                     }
                 }
                 Fragment fragment = null;
