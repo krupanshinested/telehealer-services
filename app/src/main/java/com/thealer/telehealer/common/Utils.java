@@ -31,6 +31,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -2047,10 +2048,16 @@ public class Utils {
         return true;
     }
 
-    public static void changeMenuItemColor(Context context, MenuItem menuItem, int currentColor) {
-        SpannableString s = new SpannableString(menuItem.getTitle());
-        s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, currentColor)), 0, s.length(), 0);
-        menuItem.setTitle(s);
+    public static void changeMenuIconColor(Context context, MenuItem menuItem, int currentColor) {
+
+        try {
+           SpannableString s = new SpannableString(menuItem.getTitle().toString());
+            s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, currentColor)), 0, s.length(), 0);
+            menuItem.setTitle(s);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         menuItem.getIcon().setColorFilter(ContextCompat.getColor(context,currentColor), PorterDuff.Mode.SRC_IN);
     }
 

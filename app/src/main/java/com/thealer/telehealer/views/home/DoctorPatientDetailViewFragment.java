@@ -8,11 +8,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -190,6 +196,13 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
                 resultBean = model;
                 patientId = resultBean.getUser_id();
+                if(UserType.isUserAssistant()) {
+                    doctorModel=resultBean;
+                    isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
+                    isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
+                    isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
+                    manageSAPermission();
+                }
                 if (doctorGuid != null) {
                     Set<String> set = new HashSet<>();
                     set.add(doctorGuid);
@@ -588,6 +601,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         });
     }
 
+
     private void manageSAPermission() {
         if(UserType.isUserAssistant()){
             if(doctorModel!=null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0){
@@ -595,14 +609,15 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 MenuItem scheduleMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_schedules);
                 MenuItem chatMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_chat);
 
-                Utils.changeMenuItemColor(getContext(),callMenuItem,
-                        isCallEnable ? R.color.app_gradient_start : R.color.colorGrey);
+                Utils.changeMenuIconColor(getContext(),callMenuItem,
+                        isCallEnable ? R.color.app_gradient_start :R.color.colorGrey);
 
-                Utils.changeMenuItemColor(getContext(),scheduleMenuItem,
-                        isScheduleEnable ? R.color.app_gradient_start:R.color.colorGrey);
+                Utils.changeMenuIconColor(getContext(),scheduleMenuItem,
+                        isScheduleEnable ? R.color.app_gradient_start :R.color.colorGrey);
 
-                Utils.changeMenuItemColor(getContext(),chatMenuItem,
-                        isChatEnable ? R.color.app_gradient_start: R.color.colorGrey);
+                Utils.changeMenuIconColor(getContext(),chatMenuItem,
+                        isChatEnable ? R.color.app_gradient_start :R.color.colorGrey);
+
             }
         }
     }
@@ -767,12 +782,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 switch (model.getRole()) {
                                     case Constants.ROLE_DOCTOR:
                                         doctorModel = model;
-                                        if(UserType.isUserAssistant()) {
+                                        /*if(UserType.isUserAssistant()) {
                                             isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
                                             isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
                                             isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
                                             manageSAPermission();
-                                        }
+                                        }*/
                                         if (UserType.isUserPatient() && resultBean == null) {
                                             resultBean = doctorModel;
                                         }
