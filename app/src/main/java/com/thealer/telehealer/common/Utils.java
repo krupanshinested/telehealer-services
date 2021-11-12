@@ -2047,11 +2047,10 @@ public class Utils {
         }
         return true;
     }
-
     public static void changeMenuIconColor(Context context, MenuItem menuItem, int currentColor) {
 
         try {
-           SpannableString s = new SpannableString(menuItem.getTitle().toString());
+            SpannableString s = new SpannableString(menuItem.getTitle());
             s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, currentColor)), 0, s.length(), 0);
             menuItem.setTitle(s);
         }catch (Exception e){
