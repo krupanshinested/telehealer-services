@@ -13,7 +13,10 @@
     <TextView
         android:id="@+id/title_tv"
         style="@style/registration_text_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:text="@string/enter_your_email"
+        app:layout_constraintBottom_toTopOf="@+id/email_til"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

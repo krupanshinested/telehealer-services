@@ -18,8 +18,10 @@ import com.hbb20.CountryCodePicker;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 
 import io.michaelrocks.libphonenumber.android.NumberParseException;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
@@ -42,6 +44,7 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
     private RelativeLayout numberRl;
     private TextView infoTv;
     private Bundle bundle = null;
+    private String currentUserPhone="";
 
     @Nullable
     @Override
@@ -67,12 +70,14 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
                 doctor_guid = commonUserApiResponseModel.getUser_guid();
             }
         }
-
+        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+        if(whoAmIApiResponseModel != null){
+            currentUserPhone=whoAmIApiResponseModel.getPhone();
+        }
         inviteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String number = countyCode.getSelectedCountryCodeWithPlus() + "" + phoneNumber.getNationalNumber();
-                showSuccessFragment();
                 InviteByEmailPhoneRequestModel inviteByEmailPhoneRequestModel = new InviteByEmailPhoneRequestModel();
                 bundle=getArguments();
                 String role="";
@@ -83,8 +88,13 @@ public class InviteByPhoneFragment extends InviteUserBaseFragment {
                     }
                 }
                 inviteByEmailPhoneRequestModel.setRole(role);
-                inviteByEmailPhoneRequestModel.getInvitations().add(new InviteByEmailPhoneRequestModel.InvitationsBean(null, number));
-                inviteUserApiViewModel.inviteUserByEmailPhone(doctor_guid, inviteByEmailPhoneRequestModel, false);
+                if(currentUserPhone.trim().equalsIgnoreCase(number.trim())){
+                    showToast(getString(R.string.str_you_can_not_invite_yourself));
+                }else {
+                    showSuccessFragment();
+                    inviteByEmailPhoneRequestModel.getInvitations().add(new InviteByEmailPhoneRequestModel.InvitationsBean(null, number));
+                    inviteUserApiViewModel.inviteUserByEmailPhone(doctor_guid, inviteByEmailPhoneRequestModel, false);
+                }
 
             }
         });
