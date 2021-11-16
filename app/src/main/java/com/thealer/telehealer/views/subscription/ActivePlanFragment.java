@@ -165,7 +165,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
 
     private void prePareData() {
         if (planList != null && planList.size() > 0) {
-
+            activatedPlan=-1;
             for (int i = 0; i < planList.size(); i++) {
                 PlanInfoBean.Result currentPlan = planList.get(i);
                 if (currentPlan.isPurchased()) {
