@@ -200,7 +200,6 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
     }
 
     private void setUserDetails() {
-
         if (!userDetailMap.isEmpty()) {
             labsResponseBean.setUserDetailMap(userDetailMap);
         }
@@ -219,12 +218,15 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
     private void setData(OrdersLabApiResponseModel.LabsResponseBean labsResponseBean) {
 
         if (labsResponseBean.getUserDetailMap() != null) {
+            try {
+                patientOcv.setTitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getPatient().getUser_guid()).getUserDisplay_name());
+                patientOcv.setSubtitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getPatient().getUser_guid()).getDob());
 
-            patientOcv.setTitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getPatient().getUser_guid()).getUserDisplay_name());
-            patientOcv.setSubtitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getPatient().getUser_guid()).getDob());
-
-            doctorOcv.setTitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getDoctor().getUser_guid()).getDoctorDisplayName());
-            doctorOcv.setSubtitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getDoctor().getUser_guid()).getDoctorSpecialist());
+                doctorOcv.setTitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getDoctor().getUser_guid()).getDoctorDisplayName());
+                doctorOcv.setSubtitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getDoctor().getUser_guid()).getDoctorSpecialist());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
         if (labsResponseBean.getStatus().equals(OrderStatus.STATUS_CANCELLED)) {
