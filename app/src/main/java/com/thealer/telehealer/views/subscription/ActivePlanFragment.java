@@ -112,7 +112,6 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                     if (baseApiResponseModel instanceof PlanInfoBean) {
                         PlanInfoBean planInfoBean = (PlanInfoBean) baseApiResponseModel;
                         if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
-                            if (planList == null || planList.isEmpty())
                                 planList = planInfoBean.getResults();
 
                             prePareData();
@@ -168,7 +167,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             activatedPlan=-1;
             for (int i = 0; i < planList.size(); i++) {
                 PlanInfoBean.Result currentPlan = planList.get(i);
-                if (currentPlan.isPurchased()) {
+                if (currentPlan.isPurchased() || currentPlan.isCanReshedule()) {
                     activatedPlan = i;
                     i = planList.size() + 1;
                 }
@@ -176,7 +175,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
 
             if (activatedPlan >= 0) {
                 PlanInfoBean.Result currentPlanInfo = planList.get(activatedPlan);
-                if (currentPlanInfo.isCanReshedule()) {
+                if (!currentPlanInfo.isPurchased() && currentPlanInfo.isCanReshedule()) {
                     btnUnsubscribe.setText(getString(R.string.str_subscribe));
                 }else {
                     btnUnsubscribe.setText(getString(R.string.str_unsubscribe));
@@ -224,7 +223,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private void manageSubscription(View v) {
         if (activatedPlan >= 0 && planList.size() > 0) {
             PlanInfoBean.Result currentPlan = planList.get(activatedPlan);
-            if (currentPlan.isCanReshedule())
+            if (!currentPlan.isPurchased() && currentPlan.isCanReshedule())
                 subscriptionViewModel.purchaseSubscriptionPlan(currentPlan.getPlan_id(), currentPlan.getBilling_cycle());
             else if(currentPlan.isCancelled() && currentPlan.isPurchased()){
                 showToast(getString(R.string.str_plan_is_continue_till));

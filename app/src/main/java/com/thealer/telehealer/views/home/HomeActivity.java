@@ -281,7 +281,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 startActivity(new Intent(this, DoctorOnBoardingActivity.class));
                 finish();
                 return false;
-            } else if(!appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
+            } else if (!appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
                 startActivity(new Intent(this, SubscriptionActivity.class));
                 finish();
                 return false;
@@ -533,16 +533,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
 
     private void showDoctorsOverflowMenu() {
-        Bundle bundle=new Bundle();
-        if(UserType.isUserAssistant()) {
+        Bundle bundle = new Bundle();
+        if (UserType.isUserAssistant()) {
             bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_ASSISTANT);
-        }else if(UserType.isUserPatient()) {
+        } else if (UserType.isUserPatient()) {
             bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
-        }else {
+        } else {
             bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_DOCTOR);
         }
 
-        Utils.showDoctorOverflowMenu(this,bundle);
+        Utils.showDoctorOverflowMenu(this, bundle);
     }
 
     private void showNotificationFragment() {
@@ -629,11 +629,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             String doctorGuid = bundle.getString(ArgumentKeys.DOCTOR_GUID);
             commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
             String designation = bundle.getString(Constants.DESIGNATION);
-            String currentUserGuid=userGuid;
-            if(!UserType.isUserAssistant())
-                currentUserGuid="";
+            String currentUserGuid = userGuid;
+            if (!UserType.isUserAssistant())
+                currentUserGuid = "";
 
-            addConnectionApiViewModel.connectUser(currentUserGuid,userGuid, doctorGuid, String.valueOf(selectedId), designation);
+            addConnectionApiViewModel.connectUser(currentUserGuid, userGuid, doctorGuid, String.valueOf(selectedId), designation);
 
         } else {
             showDetailView(bundle);
@@ -828,7 +828,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 } else if (UserType.isUserDoctor()) {
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
-                }else if(UserType.isUserAssistant()){
+                } else if (UserType.isUserAssistant()) {
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
                 }
